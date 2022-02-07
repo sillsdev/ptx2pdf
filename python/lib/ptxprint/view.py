@@ -4,14 +4,14 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
 import ptxprint.pdfrw.errors
-import pathlib, os, sys
+import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
@@ -21,16 +21,10 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "2.0.34"
+VersionStr = "2.1"
 ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
-
-varpaths = (
-    ('prjdir', ('settings_dir', 'prjid')),
-    ('settingsdir', ('settings_dir',)),
-    ('workingdir', ('working_dir',)),
-)
 
 FontModelMap = {
     "fontregular": ("bl_fontR", None),
@@ -39,41 +33,6 @@ FontModelMap = {
     "fontbolditalic": ("bl_fontBI", None),
     "fontextraregular": ("bl_fontExtraR", None)
 }
-
-class Path(pathlib.Path):
-
-    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
-
-    @staticmethod
-    def create_varlib(aView):
-        res = {}
-        for k, v in varpaths:
-            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
-        res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
-        return res
-
-    def __new__(cls, txt, view=None):
-        if view is None or not txt.startswith("${"):
-            return pathlib.Path.__new__(cls, txt)
-        varlib = cls.create_varlib(view)
-        k = txt[2:txt.find("}")]
-        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
-
-    def withvars(self, aView):
-        varlib = self.create_varlib(aView)
-        bestl = len(str(self))
-        bestk = None
-        for k, v in varlib.items():
-            try:
-                rpath = self.relative_to(v)
-            except ValueError:
-                continue
-            if len(str(rpath)) < bestl:
-                bestk = k
-        if bestk is not None:
-            return "${"+bestk+"}/"+rpath.as_posix()
-        else:
-            return self.as_posix()
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
@@ -1266,8 +1225,19 @@ class ViewModel:
                 fname = os.path.basename(f.filename)
                 res[f.filename] = "shared/fonts/"+fname
 
+        # sidebar images
+        mystyles = self.styleEditor.copy()
+        for k, v in mystyles.sheet.items():
+            for a in ('BgImage', 'FgImage'):
+                val = v.get(a, mystyles.basesheet.get(k, {}).get(a, None))
+                if val is not None:
+                    fname = os.path.basename(val)
+                    res[val] = "figures/"+fname
+                    mystyles.setval(k, a, "../../../figures/"+fname)
+
+
         tempfile = NamedTemporaryFile("w", encoding="utf-8", newline=None, delete=False)
-        self.styleEditor.output_diffile(tempfile, inArchive=True)
+        mystyles.output_diffile(tempfile, inArchive=True)
         tempfile.close()
         res[tempfile.name] = cfpath+"ptxprint.sty"
         tmpfiles.append(tempfile.name)

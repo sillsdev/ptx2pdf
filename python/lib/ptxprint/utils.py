@@ -1,6 +1,6 @@
 import gettext
 import locale, codecs, traceback
-import os, sys, re
+import os, sys, re, pathlib
 import xml.etree.ElementTree as et
 from inspect import currentframe
 from struct import unpack
@@ -396,6 +396,47 @@ def xdvigetpages(xdv):
         dat = inf.read(5)
         res = unpack(">I", dat[1:])[0]
     return res
+
+varpaths = (
+    ('prjdir', ('settings_dir', 'prjid')),
+    ('settingsdir', ('settings_dir',)),
+    ('workingdir', ('working_dir',)),
+)
+
+class Path(pathlib.Path):
+
+    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+
+    @staticmethod
+    def create_varlib(aView):
+        res = {}
+        for k, v in varpaths:
+            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
+        res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
+        return res
+
+    def __new__(cls, txt, view=None):
+        if view is None or not txt.startswith("${"):
+            return pathlib.Path.__new__(cls, txt)
+        varlib = cls.create_varlib(view)
+        k = txt[2:txt.find("}")]
+        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
+
+    def withvars(self, aView):
+        varlib = self.create_varlib(aView)
+        bestl = len(str(self))
+        bestk = None
+        for k, v in varlib.items():
+            try:
+                rpath = self.relative_to(v)
+            except ValueError:
+                continue
+            if len(str(rpath)) < bestl:
+                bestk = k
+        if bestk is not None:
+            return "${"+bestk+"}/"+rpath.as_posix()
+        else:
+            return self.as_posix()
 
 def brent(left, right, mid, fn, tol, log=None, maxiter=20):
     '''Brent method, see Numerical Recipes in C Ed. 2 p404'''

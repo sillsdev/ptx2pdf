@@ -45,6 +45,7 @@
 % | hv | hanging verses
 % | H | Headers, marks, etc
 % | i | inserts (tracking the value of holdinginserts)
+% | I | ifchecks
 % | j | paragraph adjustments
 % | m | milestones
 % | M | markers
@@ -101,7 +102,7 @@
 \def\r@storetrace#1{\csname #1\endcsname=\csname tracing-#1\endcsname}
 \def\alltrace#1{\ifnum#1>0\let\wh@t=\s@vens@ttrace\else\let\wh@t=\r@storetrace\fi\x@\pr@cessSp@cific \tc@mmands,\E}
 
-\def\traceifset#1{\x@\xdef\csname checkif@#1\endcsname{\currentiflevel}}
-\def\traceifcheck#1{\x@\ifnum\csname checkif@#1\endcsname=\currentiflevel\else
-    \message{IF CHECK #1 Failed \csname checkif@#1\encsname !=\the\currentiflevel}\fi}
+\def\traceifset#1{\trace{I}{Ifset: #1=\the\currentiflevel}\x@\xdef\csname checkif@#1\endcsname{\the\currentiflevel}}
+\def\traceifcheck#1{\xdef\tr@ceiflevel{\the\currentiflevel}\trace{I}{Ifcheck: #1 \tr@ceiflevel==\csname checkif@#1\endcsname}\x@\ifnum\csname checkif@#1\endcsname=\tr@ceiflevel\else
+    \message{IF CHECK #1 Failed. Entered at \csname checkif@#1\endcsname \space != exit at \tr@ceiflevel}\fi}
 %-tracing-support

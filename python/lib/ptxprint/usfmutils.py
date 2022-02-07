@@ -31,7 +31,7 @@ class _Reference(sfm.Position):
         return p
 
     def __str__(self):
-        return f"{self.book} {self.chapter}:{self.verse} line {self.line},{self.col}"
+        return f"{self.ref.book} {self.ref.chap}:{self.ref.verse} line {self.line},{self.col}"
 
 
 class Sheets(dict):

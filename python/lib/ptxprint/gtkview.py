@@ -149,7 +149,7 @@ tb_xrefs     c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
-tb_Pictures lb_Pictures lb_omitPics
+tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
 rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 """.split()
@@ -804,7 +804,7 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in ["lb_omitPics", "l_url_usfm", "lb_DBLdownloads", "lb_openBible",
+        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible",  # "lb_omitPics", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
             self.builder.get_object(w).set_visible(not val)
@@ -1123,6 +1123,8 @@ class GtkViewModel(ViewModel):
                 self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
             try: # Delete the entire output folder
                 rmtree(self.working_dir)
+            except FileNotFoundError:
+                pass
             except OSError:
                 self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + self.working_dir)
 
@@ -2442,7 +2444,9 @@ class GtkViewModel(ViewModel):
             vals = s[s.find("(")+1:-1].split(",")
             h = "#"+"".join("{:02x}".format(int(x)) for x in vals)
             return h
-        col = coltohex(self.get("col_styColor"))
+        c = self.get("col_styColor")
+        col = coltohex(c)
+        print(f"onStyColorSet {c=} {col=}")
         self.set("l_styColorValue", col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
@@ -3755,10 +3759,10 @@ class GtkViewModel(ViewModel):
         # we can do to lock controls etc. (e.g. hold Ctrl to toggle state)
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             widget.get_style_context().add_class("inactivewidget")
-            wname = Gtk.Buildable.get_name(widget)
+            # wname = Gtk.Buildable.get_name(widget)
             # if wname.startswith("c_"):
                 # self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
-            widget.set_sensitive(False)
+            # widget.set_sensitive(False)
         # else:
             # print("Ctrl not held")
 

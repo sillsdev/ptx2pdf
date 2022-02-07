@@ -68,7 +68,7 @@ class BorderStyle:
                 view.set(v, False)
 
     def initdialog(self, dialog, view):
-        self.BorderColor = textocol(self.BorderColor)
+        self.BorderColor = textocol(getattr(self, "BorderColor", "x000000"))
         self._dialogfrommap(dialog, view, fieldmap)
         self._dialogfrommap(dialog, view, bordermap)
 

@@ -1,9 +1,29 @@
-PTXprint 2.0.34 Release Notes 
-24 January 2022
+PTXprint 2.1 Release Notes 
+5 February 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1 (5 Feb 2022)
+
+  * Study Bible layouts are now supported (\ef, \ex, \esb, etc.)
+
   * 2 columns give the best balance that has a line difference <= Unbalanced Lines setting
+  
+  * Added outer gutter setting to layout options (for journaling layouts)
+  
+  * Added Space beside parameter for cutouts/sidebars
+  
+  * Added vertical and horizontal padding controls to sidebar borders
+  
+  * Added \zlabel, \zpage, \zref milestones (for cross-referencing page numbers)
+
+  * Fixed centre column notes lines heights, and prevent them overfilling
+  
+  * Fixed above rule spaces
+  
+  * Fixed editing booklist from the keyboard
+  
+  * Fixed window can't be resized to fit the narrower content #605
 
 Bug fixes and improvements in 2.0.34 (24 Jan 2022)
 

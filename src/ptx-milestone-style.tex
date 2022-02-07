@@ -282,11 +282,17 @@
   \fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
-  %\trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
-  \ifx\attr@b\relax\else\ifcsname ms:\thismil@stone=\x@\detokenize{\attr@b}\endcsname
-    \trace{m}{Running ms:\thismil@stone=\attr@b}%
-    \csname ms:\thismil@stone=\x@\detokenize{\attr@b}\endcsname
+  \tracingmacros=1
+  \tracingassigns=1
+  \ifx\attr@b\relax\else
+    \trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
+    \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+    \ifcsname \@@tmp\endcsname
+      \trace{m}{Running ms:\@@tmp}%
+      \csname \@@tmp\endcsname
   \fi\fi
+  \tracingassigns=0
+  \tracingmacros=0
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else

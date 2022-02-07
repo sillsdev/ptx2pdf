@@ -728,6 +728,7 @@
   \fi\fi\fi\fi\fi\fi}
 
 \def\p@geendcontent{%
+  \traceifset{p@geendcontent}%
   \ifdim\ht\bottomins>0pt \vfil\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
@@ -737,10 +738,12 @@
   \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt\vfil % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
   \fi\fi
+  \traceifcheck{p@geendcontent}%
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
   \traceifset{onecoltrial}%
   \tracingparagraphs=0
+  \vfuzz=\PaperHeight
   %\tracingall=1\tracingoutput=0\tracingpages=0\tracingparagraphs=0\tracingassigns=0\tracingscantokens=0
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
@@ -765,13 +768,13 @@
   \iffitonpage
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
     \if\XrefNotes\relax\else
-      \trace{o}{enter reheightcolnotess}%
+      \trace{o}{enter reheightcolnotes, colA=\the\ht\colA}%
       \reheightcolnotess{13}%
-      \trace{o}{exit reheightcolnotess}%
+      \trace{o}{exit reheightcolnotes, colA=\the\ht\colA}%
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins, botmark=\splitbotmark}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
@@ -802,17 +805,17 @@
 %+c_onecoltrial_pagefit
     \ifnum\ifdim\ht\colA>\baselineskip 1\else\ifdim\ht\partial>0pt 1\else 0\fi\fi =1
       \plainoutput\trace{p}{plainoutput from onecoltrial}%    %(+)
+      \notst@dynotesfalse\clearn@tes
       \s@tpage
-    \else\setbox0=\box255\deadcycles=0\fi % dump empty pages (typically at end)
-    \notst@dynotesfalse\clearn@tes
+    \else\setbox0=\box255\deadcycles=0
+      \notst@dynotesfalse\clearn@tes
+    \fi % dump empty pages (typically at end)
     \resetvsize
     \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
-      \global\output={\savepartialpage}% leave flag set to allow caller to trigger extra \eject   %(+)
-    \else\global\output={\onecol}\fi
-    \global\setbox255=\box\voidb@x
-    \traceifcheck{onecoltrial}%
+      \global\output={\savepartialpage}\global\rerunsavepartialpagedfalse\unvbox255% leave flag set to allow caller to trigger extra \eject   %(+)
+    \else\global\output={\onecol}\unvbox255\fi
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
@@ -820,12 +823,12 @@
     \trace{i}{1c REDUCING VSIZE \the\vsize \space by -\the\baselineskip, hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
     \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
-    \traceifcheck{onecoltrial}%
     \res@tpage
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
   \fi
+  \traceifcheck{onecoltrial}%
 }
 %-c_onecoltrial_fail
 
@@ -922,6 +925,7 @@
 
 \def\reheightcolnotess#1{%
   \trace{i}{height=\the\dimen3, xr@fbox=\the\ht\xr@fbox, baselineskip=\the\baselineskip}%\tracingassigns=1\tracingmacros=1\tracingifs=1
+  \traceifset{reheightcolnotes}%
   \ifdim\ht\xr@fbox>\dimen3 % reduce height of notes for smaller page
     \keepn@testrue\dimen4=\availht
     \count255=10
@@ -931,7 +935,7 @@
       \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
       \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip \tempfalse\fi\fi
       \ifdim\dimen5>2000pt \tempfalse\fi
-      \trace{o}{reheighting diff=\the\dimen5}%
+      \trace{o}{reheighting diff=\the\dimen5, will reheight=\iftemp true\else false\fi}%
       \iftemp
         \multiply\dimen5 by 32
         \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
@@ -958,10 +962,10 @@
         \trace{o}{New availht(1)=\the\availht, measured height=\the\dimen3, olddiff=\the\dimen5, newdiff=\the\dimen6, limit=\the\dimen4}%
       \fi
       \advance\count255 by -1
-      \ifnum\count255=0\tempfalse\fi
+      \ifnum\count255=0 \tempfalse\fi
     \iftemp\@REPEAT
-    \c@lcboxheights\keepn@tesfalse
   \fi%\tracingassigns=0\tracingmacros=0\tracingifs=0
+  \traceifcheck{reheightcolnotes}%
 }
 \newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
@@ -1497,6 +1501,7 @@
 
 \newdimen\bestavailht \bestavailht=0pt
 \def\c@lcavailht{
+  \traceifset{c@lcavailht}%
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
@@ -1528,6 +1533,7 @@
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \doColNotes{\availht}%
   \splittopskip=\topskip
+  \traceifcheck{c@lcavailht}%
 }
 \def\doColNotes#1{
   % creates column notes in coln@tebox with side effect of perhaps xr@fbox. Uses boxes 0,2,5
@@ -1618,6 +1624,7 @@
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
+      \c@lcboxheights\keepn@tesfalse
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
     %\setbox255=\box\voidb@x
@@ -1752,6 +1759,7 @@
     \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
     \if\XrefNotes\relax\else
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
+      \c@lcboxheights\keepn@tesfalse
     \fi
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
@@ -1773,10 +1781,10 @@
       \p@geendcontent
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
-    \notst@dynotesfalse\clearn@tes
-    \resetvsize % reset size of next page since it will not have any 1 column material
     \plainoutput\trace{p}{plainoutput twocoltrial}%
+    \notst@dynotesfalse\clearn@tes
     \s@tpage
+    \resetvsize % reset size of next page since it will not have any 1 column material
     \global\holdinginserts=1
     \ifrerunsavepartialpaged
       \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
@@ -1784,7 +1792,6 @@
     \ifnum\interactionmode=2
       \showlists
     \fi
-    \traceifcheck{twocoltrial}%
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
@@ -1792,12 +1799,12 @@
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
     \res@tpage
-    \traceifcheck{twocoltrial}%
     \global\let\whichtrial=\twocoltrial                                     %(+)
     \global\output={\backingup}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-  \fi}
+  \fi
+  \traceifcheck{twocoltrial}}
 \newif\iffitonpage
 \newif\ifrebalance
 %-c_twocoltrial

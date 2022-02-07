@@ -2,7 +2,7 @@
 import re
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s, textocol, coltotex, coltoonemax
+from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -137,6 +137,16 @@ def toOneMax(self, v, mrk=None, model=None):
     # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
+def fromFileName(self, v, mrk=None, model=None):
+    if model is not None:
+        rpath = model.configPath()
+        return os.path.abspath(os.path.relpath(v, rpath))
+    else:
+        return v
+
+def toFileName(self, v, mrk=None, model=None):
+    return v
+
 _fieldmap = {
     'Bold':             (fromBool, toBool),
     'Italic':           (fromBool, toBool),
@@ -158,7 +168,9 @@ _fieldmap = {
     'OccursUnder':      (fromSet, toSet),
     'BorderColor':      (fromOneMax, toOneMax),
     'BgImageColor':     (fromOneMax, toOneMax),
-    'BgColor':          (fromOneMax, toOneMax)
+    'BgColor':          (fromOneMax, toOneMax),
+    'BgImage':          (fromFileName, toFileName),
+    'FgImage':          (fromFileName, toFileName)
 }
 
 class StyleEditor:
@@ -169,6 +181,14 @@ class StyleEditor:
         self.basesheet = None
         self.marker = None
         self.registers = {}
+
+    def copy(self):
+        res = self.__class__(self.model)
+        res.sheet = Sheets(base=self.sheet)
+        res.basesheet = Sheets(base=self.basesheet)
+        res.marker = self.marker
+        res.registers = dict(self.registers)
+        return res
 
     def allStyles(self):
         if self.sheet is None:
@@ -294,7 +314,7 @@ class StyleEditor:
             om = basesheet.get(m, {})
             if 'zDerived' in om or 'zDerived' in sm:
                 continue
-            for k,v in sm.items():
+            for k, v in sm.items():
                 if k.startswith(" "):
                     continue
                 other = om.get(k, None)
