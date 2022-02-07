@@ -309,17 +309,20 @@
           \fi
           \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
           \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \E}%
-          \trace{e}{Saved box \wd\this@pic x\ht\this@pic}%
+          \trace{e}{Saved box \the\wd\this@pic x\the\ht\this@pic top:\b@drtop}%
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
           \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
-          \gdef\sb@rtopedge{\strut
+            \x@\xdef\x@\c@tskip{\the\numexpr \c@tskip + 1\relax}%
+            \trace{e}{Adjusted c@tskip \c@tskip}%
+          \gdef\sb@rtopedge{%
             \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
             \count255=\dimen0
             \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
             \divide\count255 by \baselineskip
             \advance\count255 by 1
-            \d@figureCut\this@pic}
+            \def\thisw@tsitslop{{0}{0}}%
+            \d@figureCut\this@pic\unvbox\voidb@x}%
         \fi
       \fi
     \fi
@@ -407,7 +410,7 @@
     %\let\b@xextadj\b@xminadj %b@xadj is for in-line boxes.
     \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth\FontSizeUnit +\border@vpadding\relax\else 0pt\fi\else 0pt\fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e 3pt\else 0pt\fi\else 0pt\fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
-    \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox + \ifx\b@drbottom\tr@e \border@vpadding +\b@drwidth\FontSizeUnit \fi \relax}% 
+    \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@vpadding +\b@drwidth\FontSizeUnit \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
   \else
     \setbox\b@rderbox\box\voidb@x

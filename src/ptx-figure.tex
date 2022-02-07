@@ -968,8 +968,12 @@
   \ifx\w@tsit\gr@phic 
    \edef\dr@pthingid{droppic\the\im@gecount}%
   \else
-   \advance\notim@gecount by 1
+   \global\advance\notim@gecount by 1
    \edef\dr@pthingid{drop\w@tsit\the\notim@gecount}%
+   \x@\ifx\csname thisw@tsitslop\endcsname\relax\else
+     \x@\setCutoutSlop\x@{\x@\dr@pthingid\x@}\thisw@tsitslop
+     \let\thisw@tsitslop\relax
+   \fi
   \fi
   \trace{g}{\w@tsit\space\dr@pthingid\space is in a cutout. \the\count255 x \the\baselineskip.}%
   %\setbox#1=\hbox{\vrule height\dimen0\kern 0.5pt\box#1}%TESTING.
