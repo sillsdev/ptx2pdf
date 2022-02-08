@@ -1387,7 +1387,10 @@
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
-          \shortavail=\b@lbestavail\rebalancefalse\fi
+          \ifdim\b@lbestdiff<\baselineskip \fitonpagefalse \shortavail=\availht
+          \else
+            \shortavail=\b@lbestavail\rebalancefalse
+        \fi\fi
         \ifnum\loopcount>20 
           \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
           \shortavail=\b@lbestavail
@@ -1739,7 +1742,7 @@
   \rem@indertrue\balanced
   \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi}
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
-  \else\ifnum\vsize<0pt \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
+  \else\ifdim\vsize<\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}
 %-c_twocoltrial_intro
