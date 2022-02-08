@@ -204,6 +204,7 @@ class Diglot(Snippet):
 %\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
 \FontSizeUnitR={diglot/fontfactor}pt
 \def\LineSpacingFactorR{{{diglot/linespacingfactor}}}
+\def\AfterChapterSpaceFactorR{{{diglot/afterchapterspace}}}
 \def\AfterVerseSpaceFactorR{{{diglot/afterversespace}}}
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}

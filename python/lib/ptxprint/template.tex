@@ -55,7 +55,7 @@
 \StudyGutterRule{studynotes/ifverticalrule}
 {document/marginalverses}\input ptxplus-marginalverses.tex
 {document/marginalverses}\columnshift={document/columnshift}pt
-{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
+%{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
 \endbooknoeject{project/ifstarthalfpage}
 \def\PageFullFactor{{0.66}}
 \def\BalanceThreshold{{{paper/bottomrag}}}
@@ -106,7 +106,7 @@
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
 {document/ifshowchapternums}\OmitChapterNumbertrue
-{document/ifshowchapternums}\def\AfterChapterSpaceFactor{{10}}
+\def\AfterChapterSpaceFactor{{{document/afterchapterspace}}}
 {document/ifshowversenums}\def\AfterVerseSpaceFactor{{{document/afterversespace}}}
 
 %%% Poetry - Hang Verse Numbers

@@ -185,6 +185,7 @@ ModelMap = {
     "document/ifshow1chbooknum": ("c_show1chBookNum", None),
     "document/ifomitverseone":  ("c_omitverseone", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums": ("c_verseNumbers", lambda w,v: "" if v else "%"),
+    "document/afterchapterspace": ("s_afterChapterSpace", lambda w,v: f2s(asfloat(v, 0) * 12)),
     "document/afterversespace": ("s_afterVerseSpace", lambda w,v: f2s(asfloat(v, 0) * 12)),
     "document/ifmainbodytext":  ("c_mainBodyText", None),
     "document/glueredupwords":  ("c_glueredupwords", None),
