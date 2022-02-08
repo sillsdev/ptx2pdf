@@ -1666,7 +1666,6 @@
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
-    \traceifcheck{savepartialpaged}%
   \else
     \trace{o}{sppd: Not fit on page}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
@@ -1679,7 +1678,6 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
-    \traceifcheck{savepartialpaged}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
@@ -1689,6 +1687,7 @@
      \unvbox\galley\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
     \fi%
   \fi%
+  \traceifcheck{savepartialpaged}%
   \trace{o}{endof savepartialpaged: iflevel=\the\currentiflevel}%
 }
 %-c_savepartialpaged
