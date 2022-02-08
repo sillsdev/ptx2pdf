@@ -1,8 +1,20 @@
 PTXprint 2.1 Release Notes 
-5 February 2022
+8 February 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.1 (8 Feb 2022)
+  
+  * Fixed missing Table of Contents
+  
+  * Added KBS max page size as an option
+  
+  * Added after chapter/verse space factor controls on Advanced tab
+
+  * Ensure sidebar foreground and background images are also archived
+  
+  * Removed superfluous error message when deleting a config
+  
 Bug fixes and improvements in 2.1 (5 Feb 2022)
 
   * Study Bible layouts are now supported (\ef, \ex, \esb, etc.)
