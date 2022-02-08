@@ -491,11 +491,13 @@
 
 \x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
 
-
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
   \ifhe@dings\endhe@dings\fi
   \relax
+  \getsbp@ram{posn}%
+  \edef\l@gstring{{\the\im@gecount}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
+  \x@\writefigp@gelog\x@{\l@gstring}%
   \global\let\t@st\false
   \ifinextended
    \end@llpoppedstyles{\ss@Sbar*}% May also close groups
@@ -632,7 +634,8 @@
     \ifdim\sb@rightshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
       \trace{e}{Adding \sb@rightshift to right of box}%
-      \setbox\extchunkb@x\vbox{\hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
+      \setbox\extchunkb@x\vbox{%
+        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x)}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \ifx\h@scol\tr@e

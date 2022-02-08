@@ -184,21 +184,35 @@ Notes:
 #### ```\setCutoutSlop``` - defining cutout offset permission.
 
 The TeX code allows a small amount of hysterisis (slop) in the positioning of
-cutouts.  (1 line higher for chapter numbers, +/- 2 relative to 'perfect' for other cutouts).
-This might mean, for instance, that if run 1 calculated that an
-in-cutout image should ideally start at line 14 in a given paragraph, if on 
-the next run  it finds the anchor-point has moved and the cutout should now be
-on line 13 or 15 the code considers this acceptable.  Rather than adjusting the
-shape of the paragraph again (which risks moving the anchor point again), an annotation 
-is made to the `.parlocs` file that the image is to raised or lowered relative to the 
-anchor point to fit into the cutout.
-The following allows `droppic4` (image number 4, in a cutout analagous to
-a drop-cap)  to accept being raised by 3 lines or lowered by two.
+cutouts that cannot be placed immediately.  (The default slop is 1 line higher
+for chapter numbers, +/- 2 relative to 'perfect' for most other cutouts).  This
+might mean, for instance, that if run 1 calculated that an in-cutout image
+should ideally start at line 14 in a given paragraph, if on the next run  it
+finds the anchor-point has moved and the cutout should now be on line 13 or 15
+the code considers this acceptable.  Rather than adjusting the shape of the
+paragraph again (which risks moving the anchor point again), an annotation is
+made to the `.delayed` file that the image is to raised or lowered relative to
+the anchor point to fit into the cutout.  The following command allows
+`droppic4` (image number 4, in a cutout analagous to a drop-cap)  to accept
+being raised by 3 lines or lowered by two.
 
 ```
 \setCutoutSlop{droppic4}{3}{2}
 ```
 
+It is not recommended to try to guess the image count by counting images, 
+as sidebars may also increase the number. Futhermore, some numbers may  
+be skipped. Instead, the `.delayed` file could be inspected. It will have a 
+format similar to this, with only the items which might be subject to these
+slop calculations included. The first item after '\DelayedItem` is the 
+name that should be supplied to `\setCutoutSlop`.
+
+```
+\DelayedItem{dropsidebarBox1}{GEN1.5}{2}{(95.354ptx12@2)R}
+\DelayedItem{dropgraphicInSidebar2}{GEN2.12}{1}{(53.677ptx3@1)R}
+\RaiseItem{droppic6}{TST1.7-preverse}{2}
+\DelayedItem{droppic6}{TST1.7-preverse}{11}{(58.91803ptx8@-4)R}
+```
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending

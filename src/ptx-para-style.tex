@@ -913,7 +913,8 @@
 \def\setCutoutSlopDefault#1#2{\xdef\defaultSlop{#1,#2}}
 \setCutoutSlop{chapter}{1}{0} % Up,Down
 \setCutoutSlopDefault{2}{1}% 2 up, 1 down
-\def\g@tCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
+\def\@@getCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname}%
+\def\g@tCutoutSlop#1{\@@getCutoutSlop{#1}\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
 \def\p@rselimit#1,#2\E{\edef\@djustmin{-#1}\edef\@djustmax{#2}}
 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
