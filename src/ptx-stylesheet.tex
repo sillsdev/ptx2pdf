@@ -803,7 +803,8 @@
      \trace{c}{Chapter numbers ommitted}%
      % If we are mid paragraph remove the space caused by the \n before the \c.
      % Not sure why the damage is already done (e.g. end of ior*)
-     \unskip 
+     %\ifhmode\unskip\fi
+     \unskip
      \pdfb@@kmark \pdfch@ptermark
    \else
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed

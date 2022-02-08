@@ -48,6 +48,13 @@ THE SOFTWARE.
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_afterChapterSpace">
+    <property name="lower">-0.20</property>
+    <property name="upper">1</property>
+    <property name="value">0.25</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.10</property>
+  </object>
   <object class="GtkAdjustment" id="a_afterVerseSpace">
     <property name="lower">-0.20</property>
     <property name="upper">1</property>
@@ -1586,7 +1593,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.1</property>
+    <property name="version">Version 2.1.1</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2920,14 +2927,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2938,27 +2945,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2975,7 +2982,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -23750,7 +23757,7 @@ other settings are applied. This file is rarely used.</property>
                               <placeholder/>
                             </child>
                             <child>
-                              <!-- n-columns=3 n-rows=3 -->
+                              <!-- n-columns=3 n-rows=4 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -23827,7 +23834,7 @@ text and the side of a figure/sidebar in a cutout.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -23842,16 +23849,17 @@ Cutout/Sidebar:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_afterVerseSpace">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">This is the space between 
-the text of the two columns 
-(measured in millimeters).</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the gap between the verse 
+number and the text following. The
+setting here is a multiple of the main
+body text size as specified in layout.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
@@ -23867,7 +23875,7 @@ the text of the two columns
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -23884,8 +23892,54 @@ Space Factor:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the gap between the chapter 
+number and the text following. The
+setting here is a multiple of the main
+body text size as specified in layout.</property>
+                                    <property name="halign">start</property>
+                                    <property name="label" translatable="yes">After Chapter
+Space Factor:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_afterChapterSpace">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the gap between the chapter 
+number and the text following. The
+setting here is a multiple of the main
+body text size as specified in layout.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">5</property>
+                                    <property name="text">0.25</property>
+                                    <property name="xalign">1</property>
+                                    <property name="caps-lock-warning">False</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="adjustment">a_afterChapterSpace</property>
+                                    <property name="climb-rate">0.01</property>
+                                    <property name="digits">2</property>
+                                    <property name="numeric">True</property>
+                                    <property name="value">0.25</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>

@@ -1387,7 +1387,10 @@
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
-          \shortavail=\b@lbestavail\rebalancefalse\fi
+          \ifdim\b@lbestdiff<\baselineskip \fitonpagefalse \shortavail=\availht
+          \else
+            \shortavail=\b@lbestavail\rebalancefalse
+        \fi\fi
         \ifnum\loopcount>20 
           \ifdim\b@lbestdiff>\BalanceThreshold\baselineskip \fitonpagefalse\fi
           \shortavail=\b@lbestavail
@@ -1666,7 +1669,6 @@
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
-    \traceifcheck{savepartialpaged}%
   \else
     \trace{o}{sppd: Not fit on page}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
@@ -1679,7 +1681,6 @@
     \tempfalse%\ifvoid\partial\else\temptrue\fi%
     % remember \holdingInserts=1 from \@emptyinserts
     \ifvoid\galley\temptrue\fi
-    \traceifcheck{savepartialpaged}%
     \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
     \iftemp
      \trace{i}{Using savedpage.pen=\the\outputpenalty}%
@@ -1689,6 +1690,7 @@
      \unvbox\galley\penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
     \fi%
   \fi%
+  \traceifcheck{savepartialpaged}%
   \trace{o}{endof savepartialpaged: iflevel=\the\currentiflevel}%
 }
 %-c_savepartialpaged
@@ -1740,7 +1742,7 @@
   \rem@indertrue\balanced
   \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi}
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
-  \else\ifnum\vsize<0pt \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
+  \else\ifdim\vsize<\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}
 %-c_twocoltrial_intro
