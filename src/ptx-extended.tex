@@ -313,14 +313,16 @@
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
           \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
-            \x@\xdef\x@\c@tskip{\the\numexpr \c@tskip + 1\relax}%
-            \trace{e}{Adjusted c@tskip \c@tskip}%
+          \x@\xdef\x@\c@tskip{\strip@pt{\dimexpr \c@tskip pt + 1 pt\relax}}% floating pt addition
+          \x@\c@tskipparse\c@tskip..\E
+          \trace{e}{Adjusted c@tskip \c@tskip (\c@tskipfrac)}%
           \gdef\sb@rtopedge{%
             \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
             \count255=\dimen0
             \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
             \divide\count255 by \baselineskip
             \advance\count255 by 1
+            \trace{e}{Cutout should be \the\count255 lines}%
             \def\thisw@tsitslop{{0}{0}}%
             \d@figureCut\this@pic\unvbox\voidb@x}%
         \fi
@@ -381,7 +383,7 @@
    \floatingpenalty=500\insertpenalties=0
  \fi\fi
  %\egroup\setbox\extb@x\vbox\bgroup
- \sb@rtopedge\ifhmode\endgraf\fi
+ \sb@rtopedge%\ifhmode\endgraf\fi
 }
 \let\b@drcol\relax
 \newif\ifdoIntskip % Skip should be applied in the text area, not 
