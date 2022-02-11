@@ -402,7 +402,7 @@
     %Spacing for the content-box:
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@hpadding  \ifx\b@drtop\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drsides+ \border@hpadding * \b@drsides\relax}%% Final width of border artwork
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
