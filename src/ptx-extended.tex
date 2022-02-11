@@ -294,7 +294,7 @@
           \xdef\sb@rtopedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
         \fi
         \ifx\tempa\@lignBot
-          \xdef\sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
+          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}}%
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
@@ -443,6 +443,19 @@
 \endbc@l}%
 }
 
+
+\def\@@sb@rbotedge#1{\bgroup
+  \setbox0\hbox{#1}\p@cheight=\ht0
+  \loop 
+    \advance\p@cheight by -\baselineskip 
+  \ifdim\p@cheight>0pt\repeat
+ % \advance\p@cheight by \baselineskip
+  \vskip-\p@cheight
+  \vskip 0pt
+  \unhbox0
+  \egroup}
+
+
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
 \def\mkb@rder@double#1{%
@@ -506,7 +519,10 @@
    \kill@PossParamCache
    \ifx\fgfigp@s
    \ifhmode\par\fi
-   \sb@rbotedge\ifhmode\endgraf\fi
+   \ifx\sb@rbotedge\empty\else
+     \vskip-\prevdepth
+     \sb@rbotedge\ifhmode\endgraf\fi
+   \fi
    \global\let\c@t@gory=\c@tegory\egroup 
   \else\global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}%
   \fi
