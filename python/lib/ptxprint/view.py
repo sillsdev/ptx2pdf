@@ -1171,7 +1171,7 @@ class ViewModel:
                 res[f] = "figures/"+os.path.basename(f)
         xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = "${prjdir}/" + os.path.basename(xrfile)
+            res[xrfile] = os.path.basename(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
 
         # adjlists

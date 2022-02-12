@@ -1397,7 +1397,7 @@
             \shortavail=\b@lbestavail\rebalancefalse
         \fi\fi
         \ifnum\loopcount>20 
-          \ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi
+          \ifrem@inder\ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi\fi
           \shortavail=\b@lbestavail
           \rebalancefalse\MSG{Rebalancing loop count bail}\fi
         \ifrebalance\repeat
@@ -1631,8 +1631,6 @@
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
-    \ifdim\dimen3>\availht \dimen3=\availht\fi
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
@@ -1641,12 +1639,18 @@
       \keepn@tesfalse
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
+    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \ifdim\dimen3>\availht \dimen3=\availht\fi
     %\setbox255=\box\voidb@x
     \advance\dimen3\lastd@pth
     % strip off full page height from c@lcboxheights and grab the depth
     \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
-    \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
-    \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
+    \ifdim\ht\colA>0pt
+      \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
+    \else \setbox\colA=\vbox to \dimen3{\hbox to \hsize{}}\fi
+    \ifdim\ht\colB>0pt
+      \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
+    \else \setbox\colB=\vbox to \dimen3{\hbox to \hsize{}}\fi
     \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
@@ -1767,12 +1771,12 @@
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     \trace{p}{twocoltrial: calculate dimen3 as min(\the\availht, max(\the\ht\colA, \the\ht\colB, \the\ht\xr@fbox))}
-    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
     \if\XrefNotes\relax\else
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
       \c@lcboxheights
       \keepn@tesfalse
     \fi
+    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
