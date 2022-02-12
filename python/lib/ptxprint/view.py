@@ -1169,7 +1169,7 @@ class ViewModel:
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = "figures/"+os.path.basename(f)
-        xrfile = sel.get("btn_selectXrFile")
+        xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
             res[xrfile] = "${prjdir}/" + os.path.basename(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
