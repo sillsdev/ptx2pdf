@@ -1270,6 +1270,8 @@
       \fi
       \doColNotes{#1}\advance\colhtB by -\ht\coln@tebox
     \fi
+    \ifdim\colhtA<0pt \colhtA=0pt\fi
+    \ifdim\colhtB<0pt \colhtB=0pt\fi
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 %-c_setcolhts
@@ -1377,14 +1379,16 @@
         \fi
 		% if second column longer than first column by less than .3*line height, quit loop
         \ifrebalance
-          \g@tcolhts
-          \ifColNotes\advance\colhtB\ht\coln@tebox\fi
-          \dimen0=\colhtB \advance\dimen0 by -\colhtA
-          \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
-          \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
-          \ifdim\dimen0<\b@lbestdiff
-            \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail
-        \fi\fi
+          \ifdim\colhtA>0pt\ifdim\colhtB>0pt
+            \g@tcolhts
+            \ifColNotes\advance\colhtB\ht\coln@tebox\fi
+            \dimen0=\colhtB \advance\dimen0 by -\colhtA
+            \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
+            \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
+            \ifdim\dimen0<\b@lbestdiff \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail \fi
+            \ifdim\dimen0<0.5\baselineskip \rebalancefalse\fi
+          \else\rebalancefalse\fi \else\rebalancefalse\fi
+        \fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi
@@ -1622,7 +1626,8 @@
   \rem@inderfalse\balanced
   \ifdim\availht<\baselineskip \fitonpagefalse \fi
   \iffitonpage
-    %\c@lcboxheights
+    \c@lcboxheights
+    \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -1631,16 +1636,15 @@
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
-      %\c@lcboxheights
+      \c@lcboxheights
+      \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
       \keepn@tesfalse
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
     %\setbox255=\box\voidb@x
     \advance\dimen3\lastd@pth
-    \setbox1=\vbox{\unvcopy\colA\unskip}%
-    \setbox2=\vbox{\unvcopy\colB\unskip}%
     % strip off full page height from c@lcboxheights and grab the depth
-    \locs@startstop{\colA}{1}\locs@startstop{\colB}{2}%
+    \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
     \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
     \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
     \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi
@@ -1753,7 +1757,7 @@
 %-c_twocoltrial_intro
 %+c_twocoltrial
   \iffitonpage
-    %\c@lcboxheights
+    \c@lcboxheights
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
     \locs@startstop{\colA}{1}%
@@ -1766,7 +1770,7 @@
     \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
     \if\XrefNotes\relax\else
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
-      %\c@lcboxheights
+      \c@lcboxheights
       \keepn@tesfalse
     \fi
     \ifdim\dimen3>\availht \dimen3=\availht\fi
@@ -1944,7 +1948,7 @@
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
     \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\box\partial}} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi

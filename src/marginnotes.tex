@@ -93,7 +93,8 @@
   \else\ifx\p@ram\relax\let\s@de\l@ft\else\let\s@de\p@ram\fi\fi\fi
   \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was \p@ram}%
   \getp@ram{leftmargin}{#3}{\styst@k}%
-  \ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram\IndentUnit\fi
+  %\ifx\p@ram\relax\dimen0=1pt\else\dimen0=-\p@ram\IndentUnit\fi
+  \dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
   \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%
