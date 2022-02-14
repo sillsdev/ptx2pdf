@@ -1029,7 +1029,7 @@
         \s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
-    \notst@dynotestrue\clearn@tes\notst@dynotesfalse
+    \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
     \else\trace{o}{Page empty cols=\the\ht\colA, \the\ht\colB, partial=\the\ht\partial}%
@@ -1581,6 +1581,7 @@
     \keepn@testrue\dimen4=\availht
     \@LOOP
       \setbox\th@cl@ss=\copy#1
+      \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
       \bestavailht=\dimen3
       \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3 \multiply\dimen5 by 32
       \divide\dimen5 by \colwidth\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
@@ -1631,6 +1632,8 @@
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
+    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \ifdim\dimen3>\availht \dimen3=\availht\fi
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
