@@ -193,7 +193,7 @@ class TTFontCache:
         if v is None:
             return
         for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order)), k)):
-            cbs.append([k])
+            cbs.append(["Regular" if k in (None, "") else k])
 
     def get(self, name, style=None):
         if self.busy:
