@@ -1066,6 +1066,7 @@ class TexModel:
         doti = outfname.rfind(".")
         if doti > 0:
             outfname = outfname[:doti] + draft + outfname[doti:]
+        os.makedirs(outdir, exist_ok=True)
         outfpath = os.path.join(outdir, outfname)
         codepage = self.ptsettings.get('Encoding', 65001)
         with universalopen(infpath, cp=codepage) as inf:
