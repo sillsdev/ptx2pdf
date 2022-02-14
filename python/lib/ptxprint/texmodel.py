@@ -104,7 +104,7 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/bottomrag":          ("s_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
+    "paper/bottomrag":          ("s_bottomRag", None),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
