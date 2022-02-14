@@ -30,14 +30,15 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\makeatletter{\catcode`\@=11}% Used by external code
+\makeatletter
 
 \plugin@startif{ornaments}
 %\plugins@needed{} % Just in case it becomes separate.
 
 % 
 \def\MSG#1{\immediate\write -1{#1}}
-\def\makeatletter{\catcode`\@=11}%
-\def\makeatother{\catcode`\@=12}%
+\def\makeatother{\catcode`\@=12}% Used by external code
 \newdimen\pdf@xunit
 \newdimen\pdf@yunit
 
@@ -912,7 +913,7 @@
     \let\ornamentlinecol\b@drcol
   \fi
   \getsbp@ram{borderpatterntop}\ifx\cp@ram\relax\edef\patternT{\DefaultOrnament||-}\else\let\patternT\cp@ram\fi
-  \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament||-}\else\let\patternB\cp@ram\fi
+  \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
   \getsbp@ram{borderlinewidth}\edef\ornamentlinewidth{\strip@pt{\dimexpr\cp@ram\FontSizeUnit\relax}}%
