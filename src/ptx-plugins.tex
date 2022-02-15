@@ -55,7 +55,7 @@
   \cstackdown#2,\E
 }
 
-\PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
+\PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth,RuleLineWidth,RulePattern}
 
 
 \def\plugins@ll{all}
@@ -66,7 +66,7 @@
 \def\plugin@endif{\fi}
 \def\plugin@check#1\E{%
   \ifcsname #1@plugin@loaded\endcsname\else
-    \unc@tcodespecials
+    %\unc@tcodespecials
     \input #1.tex
   \fi}
 

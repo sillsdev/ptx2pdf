@@ -13,6 +13,9 @@ The sequence ought to be before..start..text..end..after.
 now inside a qt-s..qt-e block \nd*
 \p with a paragraph break
 \qt-e\* And out of the block again
+\p This is an ornamental rule (0.9 wide, 5pt high):
+\zrule |style="ornaments" thick="5pt" width=".9" \*
+
 \p And yet another p class break
 \esb
 \cat inl\cat*
@@ -144,3 +147,5 @@ Iste dicta voluptatem enim quidem harum. Aut quia repellat nostrum eius eum recu
 Corporis dolorem similique in. Reprehenderit pariatur quia porro rerum cupiditate quasi. Eos consequuntur quo in. Itaque qui non qui iste libero nemo.
 
 \esbe
+
+

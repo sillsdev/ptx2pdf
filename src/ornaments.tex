@@ -894,6 +894,8 @@
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
 \def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}}
+\def\RuleLineWidth #1\relax{\defp@ram{rulelinewidth}{#1}}
+\def\RulePattern #1\relax{\defp@ram{rulepattern}{#1}}
 
 
 
@@ -922,6 +924,44 @@
   \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
+
+\x@\def\csname drawzrule-ornaments\endcsname{%
+  \getp@ram{rulepattern}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\p@ttern{88||-}%
+  \else
+    \let\p@ttern\p@ram
+  \fi
+  \getp@ram{rulelinewidth}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \edef\ornamentlinewidth{0.5}%
+  \else
+    \edef\ornamentlinewidth{\p@ram}%
+  \fi
+  \getp@ram{bordercolour}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\ornamentlinecol{0 0 0}%
+  \else 
+    \let\ornamentlinecol\p@ram
+  \fi
+  \getp@ram{borderfillcolour}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\ornamentfillcol{none}%
+  \else 
+    \let\ornamentfillcol\p@ram
+  \fi
+  \edef\ornamentheight{\dimexpr\rule@thk \relax}%
+  \edef\ornamentwidth{}%
+  \def\ornYalign{.5}%
+  \endgraf
+  \bgroup \edef\rule@width{\the\dimexpr \rule@wid\hsize\relax}%
+    \trace{m}{Rule will be \rule@width (hsize=\the\hsize)}%
+  \hbox to \hsize{\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \hbox to \rule@width{\orn@SetStretch{\rule@width}{x}{}{\p@ttern}\Ornaments{\p@ttern}}%
+    \ifx\rule@pos\@lignRight\else\hfil\fi}%
+  \egroup
+}
+
 \edef\borderstylelist{\borderstylelist, ornaments}
 \plugin@endif
 

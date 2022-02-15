@@ -386,13 +386,29 @@
     \m@kenumber{\attr@b}%
     \let\rule@thk\@@result%
   \fi
+  \get@ttribute{style}%
+  \ifx\attr@b\relax
+    \def\rule@style{plain}%
+  \else
+    \ifcsname drawzrule-\attr@b\endcsname
+      \let\rule@style\attr@b
+    \else
+      \def\rule@style{plain}%
+      \message{unrecognised rule style '\attr@b' near \c@rref}%
+    \fi
+  \fi
   \get@ttribute{align}%
   \ifx\attr@b\relax
-    \def\attr@b{c}%
+    \def\rule@pos{c}%
+  \else
+    \let\rule@pos\attr@b
   \fi
-  \hbox to \hsize{\ifx\attr@b\@lignLeft\else\hfil\fi
+  \csname drawzrule-\rule@style\endcsname
+}
+\x@\def\csname drawzrule-simple\endcsname{%
+  \hbox to \hsize{\ifx\rule@pos\@lignLeft\else\hfil\fi
     \vrule height \rule@thk width \rule@wid\hsize depth 0pt
-    \ifx\attr@b\@lignRight\else\hfil\fi}%
+    \ifx\rule@pos\@lignRight\else\hfil\fi}%
 }
 
 \x@\def\csname start-zgap\endcsname{%
