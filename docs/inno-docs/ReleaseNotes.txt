@@ -1,8 +1,22 @@
-PTXprint 2.1.3 Release Notes 
-13 February 2022
+PTXprint 2.1.4 Release Notes 
+14 February 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.4 (14 Feb 2022)
+
+  * Keep centre xref column the same height as the text blocks
+  
+  * Fixed final page single column footnotes #617
+  
+  * Fixed FileNotFoundError on generate final SFM #607
+  
+  * Fixed regular typeface doesn't always show in font chooser #609
+  
+  * Remove space leakage in marginal verses
+  
+  * Reduce threshold to actual rag
+  
 Bug fixes and improvements in 2.1.3 (13 Feb 2022)
   
   * Fixed typo in archive creation
