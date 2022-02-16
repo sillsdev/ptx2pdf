@@ -372,43 +372,61 @@
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
 \x@\def\csname start-zrule\endcsname{%
   \endgraf
-  \get@ttribute{width}%A
-  \ifx\attr@b\relax
-    \def\rule@wid{0.5}%
-  \else
-    \m@kenumber{\attr@b}%
-    \let\rule@wid\@@result%
-  \fi
-  \get@ttribute{thick}%A
-  \ifx\attr@b\relax
-    \def\rule@thk{0.5pt}%
-  \else
-    \m@kenumber{\attr@b}%
-    \let\rule@thk\@@result%
-  \fi
-  \get@ttribute{style}%
-  \ifx\attr@b\relax
-    \def\rule@style{plain}%
-  \else
-    \ifcsname drawzrule-\attr@b\endcsname
-      \let\rule@style\attr@b
+  \bgroup
+    \get@ttribute{cat}%
+    \ifx\attr@b\relax\else\s@tc@tprefix{\attr@b}\fi
+    \get@ttribute{width}%A
+    \ifx\attr@b\relax
+      \s@tsideskips{zrule}%
+      \edef\rule@wid{\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
-      \def\rule@style{plain}%
-      \message{unrecognised rule style '\attr@b' near \c@rref}%
+      \m@kenumber{\attr@b}%
+      \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}
     \fi
-  \fi
-  \get@ttribute{align}%
-  \ifx\attr@b\relax
-    \def\rule@pos{c}%
-  \else
-    \let\rule@pos\attr@b
-  \fi
-  \csname drawzrule-\rule@style\endcsname
+    \get@ttribute{thick}%A
+    \ifx\attr@b\relax
+      \getp@ram{borderwidth}{zrule}{\styst@k}%
+      \ifx\p@ram\relax
+        \def\rule@thk{0.5pt}%
+      \else
+        \edef\rule@thk{\the\dimexpr \p@ram\FontSizeUnit\relax}%
+        %\def\rule@thk{0.5pt}%
+      \fi
+    \else
+      \m@kenumber{\attr@b}%
+      \let\rule@thk\@@result%
+    \fi
+    \getp@ram{raise}{zrule}{\styst@k}%
+    \ifx\p@ram\relax
+      \edef\rule@adjust{0pt}%
+    \else
+      \edef\rule@adjust{\p@ram\FontSizeUnit}%
+    \fi
+    \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \ifx\p@ram\relax
+      \def\rule@style{plain}%
+    \else
+      \ifcsname drawzrule-\p@ram\endcsname
+        \let\rule@style\p@ram
+      \else
+        \def\rule@style{plain}%
+        \message{unrecognised rule style '\attr@b' near \c@rref}%
+      \fi
+    \fi
+    \get@ttribute{align}%
+    \ifx\attr@b\relax
+      \def\rule@pos{c}%
+    \else
+      \let\rule@pos\attr@b
+    \fi
+    \csname drawzrule-\rule@style\endcsname
+  \egroup 
 }
-\x@\def\csname drawzrule-simple\endcsname{%
-  \hbox to \hsize{\ifx\rule@pos\@lignLeft\else\hfil\fi
-    \vrule height \rule@thk width \rule@wid\hsize depth 0pt
-    \ifx\rule@pos\@lignRight\else\hfil\fi}%
+
+\x@\def\csname drawzrule-plain\endcsname{%
+  \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \vrule height \rule@thk depth 0pt width \rule@wid 
+    \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
 \x@\def\csname start-zgap\endcsname{%

@@ -894,8 +894,6 @@
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
 \def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}}
-\def\RuleLineWidth #1\relax{\defp@ram{rulelinewidth}{#1}}
-\def\RulePattern #1\relax{\defp@ram{rulepattern}{#1}}
 
 
 
@@ -904,7 +902,7 @@
 \catcode`\@=11
 \def\m@rker{esb}
 \setsbp@ram{borderfillcolour}{none}
-\setsbp@ram{borderlinewidth}{1}
+\setsbp@ram{borderlinewidth}{.5}
 
 \def\DefaultOrnament{80}
 \def\mkb@rder@ornaments{% Plugin for sidebars
@@ -926,13 +924,13 @@
 }
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
-  \getp@ram{rulepattern}{zrule}{\styst@k}%
+  \getp@ram{borderpatterntop}{zrule}{\styst@k}%
   \ifx\p@ram\relax
     \def\p@ttern{88||-}%
   \else
     \let\p@ttern\p@ram
   \fi
-  \getp@ram{rulelinewidth}{zrule}{\styst@k}%
+  \getp@ram{borderlinewidth}{zrule}{\styst@k}%
   \ifx\p@ram\relax
     \edef\ornamentlinewidth{0.5}%
   \else
@@ -952,13 +950,22 @@
   \fi
   \edef\ornamentheight{\dimexpr\rule@thk \relax}%
   \edef\ornamentwidth{}%
-  \def\ornYalign{.5}%
+  \getp@ram{verticalalign}{zrule}{\styst@k}%
+  \ifx\p@ram\@lignTop
+    \def\ornYalign{1}%
+  \else\ifx\p@ram\@lignBot
+      \def\ornYalign{0}%
+    \else
+      \def\ornYalign{.5}%
+    \fi
+  \fi
   \endgraf
-  \bgroup \edef\rule@width{\the\dimexpr \rule@wid\hsize\relax}%
-    \trace{m}{Rule will be \rule@width (hsize=\the\hsize)}%
-  \hbox to \hsize{\ifx\rule@pos\@lignLeft\else\hfil\fi
-    \hbox to \rule@width{\orn@SetStretch{\rule@width}{x}{}{\p@ttern}\Ornaments{\p@ttern}}%
-    \ifx\rule@pos\@lignRight\else\hfil\fi}%
+  \edef\rule@adjust{\the\dimexpr \rule@adjust + \ornYalign \dimexpr\rule@thk\relax\relax}%
+  \bgroup 
+    \trace{m}{Rule will be \rule@wid (hsize=\the\hsize)}%
+  \hbox{\raise\rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \hbox to \rule@wid{\orn@SetStretch{\rule@wid}{x}{}{\p@ttern}\Ornaments{\p@ttern}}%
+    \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
   \egroup
 }
 

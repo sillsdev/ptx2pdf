@@ -1,10 +1,10 @@
-# Ornamental borders
+# Ornamental borders and separators
 
 ## General introduction
 
 This 'plugin' provides access to ornamental borders around sidebars. 
-Eventually it is expected that it will also provide page-borders and 
 ornamental separator lines.
+Eventually it is expected that it will also provide page-borders.
 
 There is a LaTeX package called pgfornament (based on an earlier package 
 psvectorian), which provides access to pen-and-ink style vector-based artwork
@@ -33,7 +33,7 @@ While using the images from the above packages, the  ornament-including code is
 in no way intended to be a version of the large and complex pgf-drawing
 enviromnment. It only replicates fragments of code that are necessary to
 draw the ornaments in PDFs. Most of the documentation in the latex package is
-entirely irrelevant to using the ornaments with PTXprint.
+therefore entirely irrelevant to using the ornaments with PTXprint.
 
 ### What this plugin adds
 The ornaments plugin can be instructed to stretch or repeat ornaments to
@@ -61,6 +61,13 @@ via the TEXINPUTS enviromnent variable. E.g. on linux you might need to enter:
 export TEXINPUTS=.:/usr/lib/ptx2pdf/src:/usr/share/texlive/texmf-dist/tex/latex/pgfornament/:/usr/share/texlive/texmf-dist/tex/generic/pgfornament/vectorian/
 ptxprint
 ```
+
+## Specifying that a border or sidebar should use ornaments
+The relevant stylesheet entry to use the ornaments package is
+```
+\Borderstyle ornaments
+```
+This is true for rules and for sidebars.
 
 ## Configuring a border for a sidebar
 ### Ornament specification
@@ -117,16 +124,25 @@ This rule states that the top border is made up with:
  * Any number of spaces.
  * Corner piece ornament 39, flipped horizontally and scaled to 2.5.
 
+
 ```
 \BorderPatternBot 39|v||2.5,0||*,88|h|-,0||-,39|d||2.5
 \BorderPatternLeft 0|||0.2,88|l|-,0|l|*A,-2|l|*A,0|l|*A
 \BorderPatternRight 0|l|*A,-2|r|*A,0|r|*A,88|r|-
 ```
-The border pattern 
 
 ### Other styling options
 `\BorderFillColour` Where the ornament has a fill colour, what should that be? (the special value `none` means no fill)
 `\BorderLineWidth` Defines the line thickness of the 'pen'
+
+#### Ornamental Rules
+The `\zrule\*` horizontal rule's pattern is defined using `\BorderPatternTop`.
+It also  accepts the following options:
+
+`\VerticalAlign`  Accepted values `t` (top), `b` (bottom), and `c` (center).
+Normally ornaments for rules are aligned centrally (i.e. if an element is
+scaled, then its centre will used). Other choices can be imposed using parameter. 
+`\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
 ## Additional ornaments
 These ornaments have been defined in addition to the ornaments provided by the LaTeX package

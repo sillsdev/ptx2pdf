@@ -13,8 +13,12 @@ The sequence ought to be before..start..text..end..after.
 now inside a qt-s..qt-e block \nd*
 \p with a paragraph break
 \qt-e\* And out of the block again
-\p This is an ornamental rule (0.9 wide, 5pt high):
-\zrule |style="ornaments" thick="5pt" width=".9" \*
+\p This is an ornamental rule (0.9 wide, 5pt high, right-aligned), followed by a normal rule:
+\zrule |cat="ornaments" width="0.9" align="r"\*
+\zrule |width="0.9" align="r"\*
+
+\p This is another ornamental rule (at it's normal width, alignment controlled by margins):
+\zrule |cat="ornaments" \*
 
 \p And yet another p class break
 \esb
