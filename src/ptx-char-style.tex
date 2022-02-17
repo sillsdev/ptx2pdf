@@ -164,6 +164,8 @@
     \getmcp@ram{raise}%
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
+    \getmcp@ramR{background}%
+    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
     \ifx\@ttriblist\relax\let\@ttriblist\emtpy\fi
     \ifx\@ttriblist\empty\else\temptrue\fi 
     \getmcp@ram{underline}%
@@ -180,15 +182,41 @@
 \def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip 1ex plus 0.2ex minus 0.2ex}
 \def\@do@underline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt\let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
 \def\d@underline#1{\showboxbreadth=99
-  %\ifUnderlineSpaces
+  \ifUnderlineSpaces
     \let\@ulsp@ce\ulsp@ce
-  %\else\let\ulsp@ce\space\fi
+  \else
+    \let\@ulsp@ce\space
+  \fi
   \setbox\ulb@x\box\voidb@x
   {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#1 \endgraf\@do@underline}%
   %\showbox#1
   %\showbox\ulb@x
   \ifdim \wd#1=0pt\else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
     \unhbox#1\@ulsp@ce\fi
+  \unhbox\ulb@x}%
+}
+
+\def\s@tb@kgroundlower{%% Calculate where we don't chop off descenders from line above.
+  \bgroup\XeTeXuseglyphmetrics=0\relax
+  \setbox1=\hbox{~}%
+  \xdef\b@ckgroundlower{\the\dp1}%
+  \trace{s}{Set background lower to \b@ckgroundlower}%
+  \egroup
+}
+\def\BackgroundOverrun{0.25pt}
+\def\bgsp@ce{\bgc@l\leaders\hrule depth\dimen0 height \dimen1\hskip 1ex plus 0.2ex minus 0.2ex\endbgc@l}
+\def\@@do@background#1{\hbox to 0pt{\kern-\BackgroundOverrun\bgc@l\vrule height \dimen1 depth\dimen0 width \dimen2 \endbgc@l\hss}\box#1}%
+\def\@do@background{\let\@@@do\@do@background\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox 0}\dimen2=\wd0\advance\dimen2 by \dimexpr \BackgroundOverrun*2\relax\ifdim\wd0=0pt\let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@background{0}\ifvoid\ulb@x\else\@bgsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\d@background#1#2{\showboxbreadth=99
+  \let\@bgsp@ce\bgsp@ce
+  \setbox\ulb@x\box\voidb@x
+  \setbgc@l{#1}%
+  \s@tb@kgroundlower
+  {\dimen1=\baselineskip\advance\dimen1-\b@ckgroundlower\dimen0=\b@ckgroundlower\everypar={}\setbox#2=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#2 \endgraf\@do@background}%
+  %\showbox#1
+  %\showbox\ulb@x
+  \ifdim \wd#2=0pt\else\setbox#2\hbox{\@@do@background{#2}}%
+    \unhbox#2\@bgsp@ce\fi
   \unhbox\ulb@x}%
 }
 
@@ -212,12 +240,17 @@
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \getmcp@ramR{raise}%
      \tempfalse
+     \global\let\char@raise\p@ram
      \ifx\p@ram\relax\else \temptrue\fi
+     \getmcp@ramR{background}%
+     \global\let\char@background\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
      \ifx\@ttriblist\empty\else\temptrue\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
      \iftemp\egroup
        \ifx\p@ram\tru@ \d@underline{0}\unhbox0\fi
+       \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
@@ -228,10 +261,9 @@
            \csname complex-\oldch@rstyle\endcsname
          \fi
        \fi
-       \getmcp@ramR{raise}%
-       \ifx\p@ram\relax
+       \ifx\char@raise\relax
          \unhbox0
-       \else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0
+       \else\dimen9=\char@raise\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0
        \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks

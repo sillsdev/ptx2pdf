@@ -75,7 +75,7 @@
 \def \NotRepeatable  #1\relax{}
 \let \Notrepeatable\NotRepeatable
 \def \Color          #1\relax{\defp@ram{color}{#1}}
-\def \Background     #1\relax{\defp@ram{background}{#1}}
+\def \Background     #1\relax{\x@\checkh@x #1\end\edefp@ram{background}{\rgb@out}} %Store as r g b triplet
 \let \color\Color
 \def \ColorName      #1\relax{}
 
@@ -154,6 +154,7 @@
 
 \def\clearp@ram#1{\global\x@\let\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname=\relax}
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
+\def\edefp@ram#1#2{\x@\edef\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\setp@ram#1#2#3{

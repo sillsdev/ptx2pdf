@@ -808,16 +808,16 @@
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
-\def\BgImageColour       #1\relax{\initc@t\setsbp@ram{bgfigcolour}{#1}}
+\def\BgImageColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bgfigcolour}{\rgb@out}}
 \let\BgImageColor=\BgImageColour%for Americans
 \def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
 
-\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
+\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\x@\checkh@x #1\end\setsbp@ram{bgcolour}{\rgb@out}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
-\def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
+\def\BorderColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bordercolour}{\rgb@out}}
 \def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
 \def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
@@ -828,6 +828,8 @@
 \def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
+\def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
+\let\BorderFillColor\BorderFillColour
 
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
