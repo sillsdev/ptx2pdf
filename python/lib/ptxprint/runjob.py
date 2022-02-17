@@ -409,7 +409,7 @@ class RunJob:
             unlockme()
             return []
         self.books += donebooks
-        info["project/bookids"] = jobs
+        info["project/bookids"] = [r[0].first.book for r in jobs]
         info["project/books"] = donebooks
         res = self.sharedjob(jobs, info)
         if info['notes/ifxrexternalist']:
