@@ -193,7 +193,8 @@
   %\showbox\ulb@x
   \ifdim \wd#1=0pt\else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
     \unhbox#1\@ulsp@ce\fi
-  \unhbox\ulb@x}%
+  }%
+  \setbox#1\box\ulb@x
 }
 
 \def\s@tb@kgroundlower{%% Calculate where we don't chop off descenders from line above.
@@ -217,7 +218,9 @@
   %\showbox\ulb@x
   \ifdim \wd#2=0pt\else\setbox#2\hbox{\@@do@background{#2}}%
     \unhbox#2\@bgsp@ce\fi
-  \unhbox\ulb@x}%
+  %\unhbox\ulb@x
+  }%
+  \setbox#2\box\ulb@x
 }
 
 %+cchar_endcharstyle
@@ -249,7 +252,7 @@
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
      \iftemp\egroup
-       \ifx\p@ram\tru@ \d@underline{0}\unhbox0\fi
+       \ifx\p@ram\tru@ \d@underline{0}\fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
