@@ -58,7 +58,7 @@ class PdfStreamParser:
         
             elif isinstance(t, (PdfString, BasePdfName)):
                 operands.append(t)
-            elif re.match(r"^[+-]?(\d+|\d*\.\d*)", t):
+            elif re.match(r"^[+-]?(\d+(\.\d*)?|\.\d+)", t):
                 operands.append(t)
             elif t in ("true", "false", "null"):
                 operands.append(t)

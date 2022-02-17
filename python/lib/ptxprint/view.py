@@ -10,6 +10,7 @@ from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
+from ptxprint.reference import RefList, RefRange, Reference
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -103,6 +104,7 @@ class ViewModel:
         self.copyrightInfo = {}
         self.pubvars = {}
         self.strongsvars = {}
+        self.bookrefs = None
 
         # private to this implementation
         self.dict = {}
@@ -198,35 +200,47 @@ class ViewModel:
             fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
         return [fname]
         
-    def getBooks(self, scope=None, files=False):
-        bl = self.get("ecb_booklist", "").upper().split()
+    def _bookrefsBooks(self, bl, local):
+        res = []
+        if not local:
+            self.bookrefs = bl
+        for r in bl:
+            if not len(res) or r.first.book != res[-1]:
+                res.append(r.first.book)
+        return res
+
+    def getBooks(self, scope=None, files=False, local=False):
         if scope is None:
             scope = self.get("r_book")
-        if scope == "single":
-            bk = self.get("ecb_book")
-            # if bk == "FRT":   # Probably don't need to do this as no one in their right mind would only print FRT
-                # self.switchFRTsettings()
-            if bk:
-                bname = self.getBookFilename(bk, self.prjid)
-                if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    return [bk]
-            return []
-        elif scope == "multiple" and len(bl):
-            blst = []
-            for b in bl:
-                bname = self.getBookFilename(b, self.prjid)
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    if b == "FRT":
-                        self.switchFRTsettings()
-                    else:
-                        blst.append(b)
-            return blst
-        elif scope == "module":
+        if scope == "module":
             if self.moduleFile is None:
                 return []
             res = Path(self.moduleFile).as_posix()
-            # res = self.get("btn_chooseBibleModule")
             return [res] if files and res else []
+        elif not local and self.bookrefs is not None:
+            return self._bookrefsBooks(self.bookrefs, True)
+        bl = RefList.fromStr(self.get("ecb_booklist", ""))
+        if scope == "single" or not len(bl):
+            bk = self.get("ecb_book")
+            if bk:
+                bname = self.getBookFilename(bk, self.prjid)
+                if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                    fromchap = int(self.get("s_chapfrom"))
+                    tochap = int(self.get("s_chapto"))
+                    res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
+                    return self._bookrefsBooks(res, local)
+            return []
+        elif scope == "multiple":
+            res = []
+            self.bookrefs = RefList()
+            for b in bl:
+                bname = self.getBookFilename(b.first.book, self.prjid)
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                    if b.first.book == "FRT":
+                        self.switchFRTsettings()
+                    else:
+                        res.append(b)
+            return self._bookrefsBooks(res, local)
         else:
             # return self.booklist
             return []

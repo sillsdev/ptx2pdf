@@ -50,6 +50,7 @@ class RefSeparators(dict):
         "onechap": False,   # output chapter in single chapter books
         "mark": lambda r, s: (r.mark or "") + s,
         "bksp": " ",
+        "range": "-",
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -258,8 +259,9 @@ class RefRange:
 
     def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
-        res = "{}-{}".format(self.first.str(context, level, lastref, addsep=addsep),
-                             self.last.str(context, level, self.first, addsep=lastsep))
+        res = "{}{}{}".format(self.first.str(context, level, lastref, addsep=addsep),
+                              addsep['range'],
+                              self.last.str(context, level, self.first, addsep=lastsep))
         return res
 
     def __str__(self):
@@ -349,7 +351,7 @@ class BaseBooks:
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        return cls.bookNames.get(s, cls.bookNames.get(s.upper(), None))
+        return cls.bookNames.get(s, cls.bookNames.get(s.upper(), s.upper()))
 
     @classmethod
     def getLocalBook(cls, s, level=0):
@@ -405,7 +407,8 @@ class RefList(list):
         currmark = None
         start = None
         mode = ""
-        for b in rerefs.split(s):
+        txt = re.sub(r"[\u200F]", "", s)
+        for b in rerefs.split(txt):
             while len(b):
                 if b == "end":
                     if mode != "r":

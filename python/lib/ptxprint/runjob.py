@@ -14,6 +14,7 @@ from ptxprint.pdf.fixcol import fixpdffile
 from ptxprint.pdfrw.errors import PdfError
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
+from ptxprint.reference import RefRange, Reference
 from datetime import datetime
 import logging
 
@@ -431,9 +432,10 @@ class RunJob:
             diginfo[k]=info[k]
         syntaxErrors = []
         if len(jobs) == 1 and info["project/bookscope"] == "single":
-            chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
+            chaprange = [RefRange(Reference(jobs[0], int(info["document/chapfrom"]), 0), 
+                                  Reference(jobs[0], int(info["document/chapto"]), 200))]
         else:
-            chaprange = (-1, -1)
+            chaprange = None
 
         # create differential ptxprint.sty
         cfgname = info['config/name']

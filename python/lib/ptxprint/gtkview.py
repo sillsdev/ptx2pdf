@@ -1056,6 +1056,7 @@ class GtkViewModel(ViewModel):
     def doBookListChange(self):
         bls = " ".join(self.getBooks())
         self.set('ecb_booklist', bls)
+        self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
             self.set("r_book", "single")
@@ -2271,7 +2272,7 @@ class GtkViewModel(ViewModel):
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
-        bl = self.get("ecb_booklist").split(" ")
+        bl = self.getBooks(scope="multiple", local=True)
         self.alltoggles = []
         for i, b in enumerate(lsbooks):
             tbox = Gtk.ToggleButton(b[0])

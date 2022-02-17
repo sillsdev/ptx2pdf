@@ -1072,54 +1072,66 @@ class TexModel:
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
 
+        doc = None
+        #import pdb; pdb.set_trace()
+        if chaprange is None and self.dict["project/bookscope"] == "single":
+            chaprange = [RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
+                                 Reference(bk, int(float(self.dict["document/chapto"])), 200))]
+
+        if chaprange is None or not len(chaprange) or (chaprange[0].first.chap < 2 and len(chaprange) == 1 and chaprange[0].last.chap >= int(chaps[bk])):
             doc = None
-            if self.interlinear is not None:
+        else:
+            doc = self._makeUSFM(dat.splitlines(True), bk).getsubbook(chaprange)
+
+        if self.interlinear is not None:
+            if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-                linelengths = [len(x) for x in dat.splitlines(True)]
-                if doc is not None:
-                    doc.calc_PToffsets()
-                    self.interlinear.convertBk(bk, doc, linelengths)
-                    if len(self.interlinear.fails):
-                        printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
-                                        show=not printer.get("c_quickRun"))
-                        self.interlinear.fails = []
-            elif bk.lower().startswith("xx"):
+            linelengths = [len(x) for x in dat.splitlines(True)]
+            if doc is not None:
+                doc.calc_PToffsets()
+                self.interlinear.convertBk(bk, doc, linelengths)
+                if len(self.interlinear.fails):
+                    printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
+                                    show=not printer.get("c_quickRun"))
+                    self.interlinear.fails = []
+        elif bk.lower().startswith("xx"):
+            if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-                #import pdb; pdb.set_trace()
-                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
+            #import pdb; pdb.set_trace()
+            doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
-            if self.changes is not None and len(self.changes):
-                if doc is not None:
-                    dat = str(doc)
-                    doc = None
-                dat = self.runChanges(self.changes, bk, dat)
-                #self.analyzeImageCopyrights(dat)
-
-            if self.dict['project/canonicalise'] \
-                        or not self.asBool("document/bookintro") \
-                        or not self.asBool("document/introoutline")\
-                        or self.asBool("document/hidemptyverses"):
-                if doc is None:
-                    doc = self._makeUSFM(dat.splitlines(True), bk)
-                if doc is not None:
-                    if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-                        logger.debug("stripIntro")
-                        doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                    if self.asBool("document/hidemptyverses"):
-                        logger.debug("stripEmptyChVs")
-                        doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
-
-            if self.dict['fancy/endayah'] == "":
-                if doc is None:
-                    doc = self._makeUSFM(dat.splitlines(True), bk)
-                logger.debug("versesToEnd")
-                doc.versesToEnd()
-
-            if doc is not None and getattr(doc, 'doc', None) is not None:
+        if self.changes is not None and len(self.changes):
+            if doc is not None:
                 dat = str(doc)
+                doc = None
+            dat = self.runChanges(self.changes, bk, dat)
+            #self.analyzeImageCopyrights(dat)
 
-            if self.localChanges is not None:
-                dat = self.runChanges(self.localChanges, bk, dat)
+        if self.dict['project/canonicalise'] \
+                    or not self.asBool("document/bookintro") \
+                    or not self.asBool("document/introoutline")\
+                    or self.asBool("document/hidemptyverses"):
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            if doc is not None:
+                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                    logger.debug("stripIntro")
+                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                if self.asBool("document/hidemptyverses"):
+                    logger.debug("stripEmptyChVs")
+                    doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
+
+        if self.dict['fancy/endayah'] == "":
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            logger.debug("versesToEnd")
+            doc.versesToEnd()
+
+        if doc is not None and getattr(doc, 'doc', None) is not None:
+            dat = str(doc)
+
+        if self.localChanges is not None:
+            dat = self.runChanges(self.localChanges, bk, dat)
 
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
@@ -1277,13 +1289,6 @@ class TexModel:
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
-        if chaprange is not None:
-            first, last = chaprange
-        elif self.dict["project/bookscope"] == "single":
-            first = int(float(self.dict["document/chapfrom"]))
-            last = int(float(self.dict["document/chapto"]))
-        else:
-            first, last = (-1, -1)
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\r\n]+)(\\)", flags=regex.S), r"\1 \2"))
@@ -1304,12 +1309,6 @@ class TexModel:
                 self.localChanges.append((None,
                                           regex.compile(r"(\\c )", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 
-        # if self.dict["project/bookscope"] == "single":
-        if first > 1:
-            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
-        if last >=0 and last < int(chaps.get(bk, 999)):
-            self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
-
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))
 
@@ -1334,7 +1333,7 @@ class TexModel:
         
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
-            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
+            self.localChanges.append((None, regex.compile(r"\\c .+", flags=regex.S), ""))
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
