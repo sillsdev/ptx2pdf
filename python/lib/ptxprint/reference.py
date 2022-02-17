@@ -250,6 +250,12 @@ class Reference:
     def allrefs(self):
         yield self
 
+    def reify(self):
+        if self.chap == 0:
+            self.chap = 1
+        if self.verse == 0:
+            self.verse = 1
+
 
 class RefRange:
     ''' Inclusive range of verses with first and last '''
@@ -334,6 +340,25 @@ class RefRange:
                     r.book = allbooks[newbk]
                     r.chap = 1
                 maxvrs = self._getmaxvrs(r.book, r.chap)
+
+    def reify(self):
+        if self.first.chap == 0:
+            self.first.chap = 1
+        if self.last.chap == 0:
+            self.last.chap = chaps[self.last.book]
+        if self.first.verse == 0:
+            self.first.verse = 1
+        if self.last.verse == 0:
+            self.last.verse = self._getmaxvrs(self.last.book, self.last.chap)
+
+    @classmethod
+    def maxRange(cls, bk, chap):
+        f = Reference(bk, chap, 0)
+        if chap == 0:
+            chap = chaps[bk]
+        verse = self._getmaxvrs(bk, chap)
+        l = Reference(bk, chap, verse)
+        return cls(f, l)
 
 class AnyBooks:
     @classmethod
@@ -551,6 +576,13 @@ class RefList(list):
                 yield from r.allrefs()
             else:
                 yield r
+
+    def reify(self):
+        for i, r in enumerate(self[:]):
+            if isinstance(r, RefRange):
+                r.reify()
+            elif r.chap == 0 or r.verse == 0:
+                self[i] = RefRange.maxRange(r.book, r.chap)
 
 class RefJSONEncoder(json.JSONEncoder):
     def default(self, obj):

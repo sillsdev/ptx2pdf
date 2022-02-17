@@ -1054,8 +1054,9 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
-        bls = " ".join(self.getBooks())
-        self.set('ecb_booklist', bls)
+        #bls = " ".join(self.getBooks())
+        #self.set('ecb_booklist', bls)
+        bls = self.get('ecb_booklist', '')
         self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):

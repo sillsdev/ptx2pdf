@@ -265,6 +265,7 @@ class Usfm:
         return reduce(_g, chaps, [])
 
     def getsubbook(self, refrange, removes={}):
+        refrange.reify()
         d = self.doc[0]
         res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
         for c in d:
@@ -272,7 +273,7 @@ class Usfm:
                 break
             res.append(c)
         res.extend(self.subdoc(refrange, removes=removes, keepchap=True))
-        return self.copy(res)
+        return self.copy([res])
 
     def iter(self, e):
         def iterfn(el):

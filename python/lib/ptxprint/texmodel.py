@@ -1073,12 +1073,13 @@ class TexModel:
             dat = inf.read()
 
         doc = None
-        #import pdb; pdb.set_trace()
         if chaprange is None and self.dict["project/bookscope"] == "single":
-            chaprange = [RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
-                                 Reference(bk, int(float(self.dict["document/chapto"])), 200))]
+            chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
+                                 Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
 
-        if chaprange is None or not len(chaprange) or (chaprange[0].first.chap < 2 and len(chaprange) == 1 and chaprange[0].last.chap >= int(chaps[bk])):
+        if chaprange is None or not len(chaprange) or \
+            (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
+                (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
         else:
             doc = self._makeUSFM(dat.splitlines(True), bk).getsubbook(chaprange)

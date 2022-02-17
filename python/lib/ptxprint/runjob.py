@@ -14,7 +14,7 @@ from ptxprint.pdf.fixcol import fixpdffile
 from ptxprint.pdfrw.errors import PdfError
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
-from ptxprint.reference import RefRange, Reference
+from ptxprint.reference import RefList
 from datetime import datetime
 import logging
 
@@ -205,7 +205,15 @@ class RunJob:
             return
         self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
         os.makedirs(self.tmpdir, exist_ok=True)
-        jobs = self.printer.getBooks(files=True)
+        self.printer.getBooks(files=True)
+        jobs = []
+        lastbook = None
+        for r in self.printer.bookrefs:
+            if r.first.book != lastbook:
+                jobs.append(RefList((r, )))
+                lastbook = r.first.book
+            else:
+                jobs[-1].append(r)
 
         reasons = info.prePrintChecks()
         if len(reasons):
@@ -244,9 +252,9 @@ class RunJob:
             digbooks = self.printer.diglotView.getAllBooks()
             badbooks = set()
             for j in joblist:
-                allj = set(j)
-                j[:] = [b for b in j if b in digbooks]
-                badbooks.update(allj - set(j))
+                allj = set(r[0].first.book for r in j)
+                j[:] = [b for b in j if b[0].first.book in digbooks]
+                badbooks.update(allj - set(r[0].first.book for r in j))
             if len(badbooks):
                 self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                      show=not self.printer.get("c_quickRun"))
@@ -377,10 +385,11 @@ class RunJob:
 
     def dojob(self, jobs, info):
         donebooks = []
-        for b in jobs:
+        for j in jobs:
+            b = j[0].first.book
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
-                out = info.convertBook(b, None, self.tmpdir, self.prjdir)
+                out = info.convertBook(b, j, self.tmpdir, self.prjdir)
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -431,11 +440,6 @@ class RunJob:
         for k in _digSecSettings:
             diginfo[k]=info[k]
         syntaxErrors = []
-        if len(jobs) == 1 and info["project/bookscope"] == "single":
-            chaprange = [RefRange(Reference(jobs[0], int(info["document/chapfrom"]), 0), 
-                                  Reference(jobs[0], int(info["document/chapto"]), 200))]
-        else:
-            chaprange = None
 
         # create differential ptxprint.sty
         cfgname = info['config/name']
@@ -446,11 +450,12 @@ class RunJob:
         diginfo["project/ptxprintstyfile_"] = outstyname.replace("\\", "/")
 
         logger.debug('Diglot processing jobs: {}'.format(jobs))
-        for b in jobs:
+        for j in jobs:
+            b = j[0].first.book
             logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
             try:
-                out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
-                digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir, letterspace="\ufdd1")
+                out = info.convertBook(b, j, self.tmpdir, self.prjdir)
+                digout = diginfo.convertBook(b, j, self.tmpdir, digprjdir, letterspace="\ufdd1")
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -519,7 +524,7 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
+        outfname = info.printer.baseTeXPDFnames([r[0].first.book for r in jobs])[0] + ".tex"
         info.update()
         if info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
@@ -724,17 +729,18 @@ class RunJob:
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        for j in jobs:
+        books = [r[0].first.book for r in jobs]
+        for j in books:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
-        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
+        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
-        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
+        outfname = info.printer.baseTeXPDFnames(books)[0] + ".piclist"
         for k, v in list(picinfos.items()):
             m = v.get('media', '')
             if m and 'p' not in m:
                 del picinfos[k]
-        picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        picinfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 
