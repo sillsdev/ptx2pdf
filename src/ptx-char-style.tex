@@ -32,6 +32,10 @@
 
 \newwrite\f@ntl@g
 \newif\ifLogFonts
+\newtoks\end@box@run
+\newtoks\start@box@run
+\newif\ifbox@run
+
 
 %+cchar_parsecolor
 \def\hex#1{\count3=#1\relax%
@@ -251,7 +255,14 @@
      \ifx\@ttriblist\empty\else\temptrue\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
+     \global\tmpt@ks{}%
+     \ifbox@run
+       \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\temptrue
+     \else
+       \global\tmpt@ks{}%
+     \fi
      \iftemp\egroup
+       \the\tmpt@ks
        \ifx\p@ram\tru@ \d@underline{0}\fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
