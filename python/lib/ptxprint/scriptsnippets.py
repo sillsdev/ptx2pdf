@@ -1,9 +1,11 @@
 import re
 from ptxprint.minidialog import MiniCheckButton
+from ptxprint.reference import RefSeparators
 from ptxprint.utils import _
 
 class ScriptSnippet:
     dialogstruct = None
+    refseparators = RefSeparators()
 
     @classmethod
     def regexes(cls, model):
@@ -12,6 +14,10 @@ class ScriptSnippet:
     @classmethod
     def tex(cls, model):
         return ""
+
+    @classmethod
+    def getrefseps(cls, model):
+        return cls.refseparators
 
 nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
 
@@ -56,4 +62,14 @@ class thai(ScriptSnippet):
                (None, re.compile('/([\\s\u0E46])'), r'\1'),
                (None, re.compile(r'/'), "\u200B")]
         return res
+
+class arab(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrarabrefs", _("First verse on left"))
+    ]
+    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:"), RefSeparators(range="\u200F-", cv="\u200E:"))
+
+    @classmethod
+    def getrefseps(cls, model):
+        return cls.refseparators[1 if model["scripts/arab/lrcolon"] else 0]
 
