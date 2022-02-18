@@ -11,6 +11,7 @@ from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.reference import RefList, RefRange, Reference
+import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -292,6 +293,13 @@ class ViewModel:
                     (ptsettings['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, "A0"))  # FRT = A0
         return fname
+
+    def getScriptSnippet(self):
+        script = self.get("fcb_script")
+        gclass = getattr(scriptsnippets, script.lower(), None)
+        if gclass is None:
+            gclass = getattr(scriptsnippets, 'ScriptSnippet')
+        return gclass
 
     def setFont(self, btn, name, style):
         self.dict[btn+"/name"] = name

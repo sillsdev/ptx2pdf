@@ -428,7 +428,7 @@ class RunJob:
                            "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
-        diginfo["project/bookids"] = jobs
+        diginfo["project/bookids"] = [r[0].first.book for r in jobs]
         diginfo["project/books"] = digdonebooks
         diginfo["document/ifdiglot"] = "%"
         diginfo["footer/ftrcenter"] = "-empty-"
@@ -498,7 +498,7 @@ class RunJob:
                 "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
                 title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
 
-        info["project/bookids"] = jobs
+        info["project/bookids"] = [r[0].first.book for r in jobs]
         info["project/books"] = donebooks
         self.books += digdonebooks
 

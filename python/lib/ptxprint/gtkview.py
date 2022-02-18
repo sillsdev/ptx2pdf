@@ -1037,7 +1037,10 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         dialog.set_keep_above(False)
         dialog.hide()
-            
+
+    def onBookScopeClicked(self, btn):
+        self.bookrefs = None
+
     def onBookListChanged(self, ecb_booklist): #, foo): # called on "focus-out-event"
         if not self.initialised:
             return

@@ -8249,6 +8249,7 @@ to be printed from the project.</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -8268,6 +8269,7 @@ to be printed from the project.</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -8288,6 +8290,7 @@ to be printed from the project.</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_multiple</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>

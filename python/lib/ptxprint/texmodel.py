@@ -366,6 +366,7 @@ ModelMap = {
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
+    "scripts/arab/lrcolon":     ("c_scrarabrefs", None),
 
     "strongsndx/includenames":  ("c_strongsInclNames", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
