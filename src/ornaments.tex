@@ -169,7 +169,6 @@
 \def\sysprotocol@literal#1{\let\tmp\pdfpath\xdef\pdfpath{}\x@\pdf@special{\tmp#1}\xdef\pdfcommands{}}
 \edef\orn@clip{clip}
 \edef\orn@stroke{stroke}
-\edef\orn@none{none}
 
 \def\orn@usepath#1{%
   \edef\tmp{#1}%
@@ -255,7 +254,7 @@
         \x@\pdf@color@rgb@stroke\ornamentlinecol\E
       \fi
       \ifx\ornamentfillcol\empty\else
-        \ifx\ornamentfillcol\orn@none
+        \ifx\ornamentfillcol\fill@none
           \ornamentfillfalse
         \else
           \ornamentfilltrue
@@ -891,7 +890,6 @@
 \def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
-\def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}}
 
 
 
@@ -899,13 +897,11 @@
 \input pgflibraryvectorian.code.tex
 \catcode`\@=11
 \def\m@rker{esb}
-\setsbp@ram{borderfillcolour}{none}
-\setsbp@ram{borderlinewidth}{.5}
 
 \def\DefaultOrnament{80}
 \def\mkb@rder@ornaments{% Plugin for sidebars
   \def\ornamentheight{\b@drwidth}%
-  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\orn@none\else\let\ornamentfillcol\cp@ram\fi
+  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\fill@none\else\let\ornamentfillcol\cp@ram\fi
   \ifx\b@drcol\relax
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
@@ -914,7 +910,7 @@
   \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
-  \getsbp@ram{borderlinewidth}\edef\ornamentlinewidth{\strip@pt{\dimexpr\cp@ram\FontSizeUnit\relax}}%
+  \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
   \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%

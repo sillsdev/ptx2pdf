@@ -68,6 +68,7 @@
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
+%\setsbp@ram{borderfillcolour}{none} % For double.
 %\setsbp@ram{borderhpadding}{0} %FontSizeUnits
 %\setsbp@ram{bordervpadding}{0} %FontSizeUnits
 \let\m@rker\relax
@@ -403,8 +404,8 @@
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth\FontSizeUnit \fi\relax}%
-    \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
-    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drsides+ \border@hpadding * \b@drsides\relax}%% Final width of border artwork
+    \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drhsides+ \border@hpadding * \b@drhsides\relax}%% Final width of border artwork
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth\FontSizeUnit *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
     \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth\FontSizeUnit-\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
@@ -435,7 +436,7 @@
         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
       \fi
     \hss
-      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+      \ifx\b@drright\tr@e\trace{eb}{Drawing Border:right}%
         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
       \fi
     }\vss
@@ -458,14 +459,73 @@
 
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
-\def\mkb@rder@double#1{%
-  \let\Ob@drwidth\b@drwidth
-  \let\Os@vedhpadding\fb@hpadding
-  \edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}%
-  \mkb@rder#1\edef\fb@hpadding{\the\dimexpr\b@drwidth\FontSizeUnit\relax}%
-  \setbox#1\vbox{\vskip-1\dimen1\unvbox#1}% This helps, but it's not enough, for some reason.
-  \mkb@rder#1\let\b@drwidth\Ob@drwidth
-  \let\fb@hpadding\Os@vedhpadding}
+\def\mkb@rder@double{%
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
+  \ifx\b@drlinewidth\relax
+    \edef\b@drlinewidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}% Use pt for division.
+    \let\b@drfillwidth\b@drlinewidth
+  \else
+    \edef\b@drfillwidth{\strip@pt{\dimexpr \b@drwidth\FontSizeUnit - 2\dimexpr \b@drlinewidth\FontSizeUnit \relax\relax}}%
+    %\edef\b@drwidth{\strip@pt{\dimexpr \b@drlinewidth\FontSizeUnit\relax}}%
+  \fi
+  \ifdim \b@drfillwidth pt<0pt \let\b@drfillcolour\fill@none\fi
+  \temptrue
+  \ifx\b@drfillcolour\relax\tempfalse
+  \else\ifx\b@drfillcolour\fill@none\tempfalse\fi
+  \fi
+  \iftemp 
+    \def\fc@l{\special{color push rgb \b@drfillcolour}}\def\endfc@l{\special{color pop}}%
+  \else \def\fc@l{}\def\endfc@l{}%
+  \fi
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drsides\relax %Inner vertical
+  \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth\FontSizeUnit * \b@drsides\relax %Fill vertical
+  \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drsides\relax %Outer vertical
+  \dimen3=\b@rderbox@width\advance\dimen3 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drhsides\relax % Fill width
+  \dimen4=\dimen3\advance\dimen4 by \dimexpr -\b@drfillwidth\FontSizeUnit * \b@drhsides\relax %Inner horiz length
+  \trace{eb}{Borders: \b@rderbox@width - \b@drlinewidth*\the\FontSizeUnit  =\the\dimen3, \b@rderbox@height - }%
+  \dimen5=\dimexpr \b@drfillwidth\FontSizeUnit + \b@drlinewidth\FontSizeUnit\relax
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\lineskiplimit=0pt\hsize=\b@rderbox@width
+    \ifx\b@drtop\tr@e
+      \hbox to \b@rderbox@width{\bc@l\vrule height \b@drlinewidth\FontSizeUnit width \b@rderbox@width \endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth\FontSizeUnit\fi
+          \fc@l\vrule height \b@drfillwidth\FontSizeUnit width\dimen3\endfc@l
+          \ifx\b@drright\tr@e\kern\b@drlinewidth\FontSizeUnit\fi}%
+      \fi
+      \hbox{\ifx\b@drleft\tr@e\kern\dimen5\fi
+        \bc@l
+        \vrule height\b@drlinewidth\FontSizeUnit width\dimen4\endbc@l}%
+      \kern-\dimen5
+    \fi
+    \hbox to \b@rderbox@width{%   
+      \ifx\b@drleft\tr@e
+        \bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen0 \endbc@l
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else\raise\b@drfillwidth\FontSizeUnit\hbox{\fc@l \vrule width \b@drfillwidth\FontSizeUnit height \dimen1 \endfc@l}\fi%
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen2 \endbc@l}%
+      \fi
+    \hss
+      \ifx\b@drright\tr@e
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen2 \endbc@l}%
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else\raise\b@drfillwidth\FontSizeUnit\hbox{\fc@l \vrule width \b@drfillwidth\FontSizeUnit height \dimen1 \endfc@l}\fi%
+        \bc@l \vrule width \b@drlinewidth\FontSizeUnit height \dimen0 \endbc@l
+      \fi
+    }%
+    \vss
+    \ifx\b@drbottom\tr@e
+      \kern -\dimen5
+      \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\dimen5\fi\bc@l\vrule height\b@drlinewidth\FontSizeUnit width\dimen4\endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth\FontSizeUnit\fi\fc@l\vrule height \b@drfillwidth\FontSizeUnit width\dimen3\endfc@l}%
+      \fi
+      \hbox{\bc@l\vrule height \b@drlinewidth\FontSizeUnit width \b@rderbox@width \endbc@l}%
+    \fi
+  }%
+  \showbox\b@rderbox
+}
 
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -549,6 +609,9 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
+  \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
+  %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
@@ -684,16 +747,24 @@
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifhasb@rder % any border
       \ifx\b@drstyle\relax
-        \message{making box}%
-        \mkb@rder
-      \else
-        \ifcsname mkb@rder@\b@drstyle\endcsname 
-          \message{making box for \b@drstyle}%
-          \csname mkb@rder@\b@drstyle\endcsname
+        \ifx\b@drfillcolour\relax
+          \ifx\b@drlinewidth\relax
+            \edef\b@drstyle{plain}%
+          \else
+            \trace{eb}{Border line width defined and style not specified, assume double border}%
+            \edef\b@drstyle{double}%
+          \fi
         \else
-          \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
-        \fi 
+          \trace{eb}{Border fill defined to '\b@drfillcolour', and style not specified, assume double border}%
+          \edef\b@drstyle{double}%
+        \fi
       \fi
+      \ifcsname mkb@rder@\b@drstyle\endcsname 
+        \message{making box for \b@drstyle}%
+        \csname mkb@rder@\b@drstyle\endcsname
+      \else
+        \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+      \fi 
       %\setbox\extchunkb@x\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hss\hskip\dimen8\box\extchunkb@x\hskip\dimen9\hss}\vss}\box\b@rderbox}%
       %\showbox\extchunkb@x
       \dimen1=\dimexpr -\b@rderbox@depth\relax
@@ -830,6 +901,7 @@
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
 \let\BorderFillColor\BorderFillColour
+\def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}} % linewidth for double border (or ornament)
 
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
