@@ -205,12 +205,14 @@
 \def\endt@ble{%
   \ifdoingt@ble
     \trace{t}{endt@ble-\mcstack}%
-    \@ndcell
+    \@ndcell\@ndrow
     \t@talwidth=0pt
-    \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
+    \f@reachcol{\edef\tc@l{tc\the\@col}\getp@ram{rightmargin}{\tc@l}{\tc@l+\styst@k}\ifx\p@ram\relax \else
+        \dimen0=\wd\c@rrentcolbox\advance\dimen0 \p@ram\IndentUnit\wd\c@rrentcolbox=\dimen0
+      \fi\trace{t}{colwidth \the\@col \space is \the\wd\c@rrentcolbox}\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
-    \@ndrow\end@llpoppedstyles{\ss@Tbl*}%
+    \end@llpoppedstyles{\ss@Tbl*}%
     \doingt@blefalse\inn@tefalse
     \ifx\tablecategory\empty\else\@ndc@t\fi
     \egroup

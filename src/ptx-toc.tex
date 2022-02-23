@@ -208,9 +208,10 @@
   \count252=1
   \loop
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2 \l@drs}
-    \d@ftoc{tc\the\count252 :fill}{\l@drs\hskip #2}
+    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
+    \d@ftoc{tc\the\count252 :fill}{\l@drs}
     \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs\hskip #2}
+    \d@ftoc{leaders-tcc\the\count252}{\rightskip=0pt\leftskip=0pt\hskip #2 \l@drs\hskip #2}
     \advance\count252 by 1
   \ifnum\count252<5\repeat
 }
