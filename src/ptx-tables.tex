@@ -149,12 +149,12 @@
     \ifRTL\beginR\fi
     \dimen255=0pt
     \edef\tc@ll{tc\the\tablec@l}%
-    \getp@ram{leftmargin}{\tc@ll}{\styst@k}%
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{\tc@ll}{\styst@k}%
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
     \kern\dimen255
-    \s@tfont{tc\the\tablec@l}{\styst@k}%
+    \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
     \@celltrue}
 \def\dos@vedm@rk{\the\s@vedm@rks\relax\s@vedm@rks{}}
@@ -313,11 +313,12 @@
   \setbox0=\vbox{\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \ifRTL\beginR\fi
-    \getp@ram{leftmargin}{tc\the\@col}{\styst@k}%
+    \edef\tc@ll{tc\the\tablec@l}%
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit\fi
-    \getp@ram{firstindent}{tc\the\@col}{\styst@k}%
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \kern \p@ram\IndentUnit\fi
-    \getp@ram{rightmargin}{tc\the\@col}{\styst@k}%
+    \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
@@ -356,7 +357,7 @@
 
 \newif\ifh@lfrow
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
-  \getp@ram{verticalalign}{tc\the\@col}{\styst@k}%
+  \getp@ram{verticalalign}{tc\the\@col}{tc\the\@col+\styst@k}%
   \ifx\p@ram\relax\let\p@ram\@lignTop\fi
   \lct@mp=0
   \h@lfrowfalse
