@@ -54,9 +54,12 @@
   \setbox0=\vbox to 0pt{\vss\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
     \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
     \else\noindent\hfil\rlap{\kern #4\kern #3\box #1}%
-    \fi}%
+    \fi\vss}%
   %\ifx\t@mp\l@ft\else\showbox0
-  \dp0=0pt\vadjust {\kern -\dp\pstr@t\kern #5\box0\kern\dp\pstr@t\kern-#5}%
+  \dp0=0pt\vadjust {\kern -\dp\pstr@t
+    \kern #5\box0
+    \kern\dp\pstr@t
+    \kern-#5}%
 }
 
 \def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
