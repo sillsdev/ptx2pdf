@@ -26,14 +26,21 @@
     \s@tsideskips{v}%
     \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
-    \h@ngprintv@rse{2}%
-    \setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\ift@mp\else\hfil\fi}}%
+    \myh@ngprintv@rse{2}%
+    \setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\kern\AfterVerseSpaceFactor\FontSizeUnit\ift@mp\else\hfil\fi}}%
   \fi
-  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
+  \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}%
 }
 
 \let\defaultprintverse=\mymarginpverse
+\catcode`\~=12 \lccode`\~=32\lowercase{
+\def\myh@ngprintv@rse#1{%
+    \setbox1=\hbox{\ch@rstylepls{v}~\endash\adornv{\v@rseto}\ch@rstylepls{v}*}%
+    \setbox#1=\vbox{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*}%
+        \box1}}
+}
+
 %-cmargin_verse
 
 % Example integration code:

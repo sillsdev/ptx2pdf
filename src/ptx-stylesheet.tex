@@ -509,9 +509,10 @@
     \trace{s}{Found fontfeatures: '\r@s'}%
     \let\f@atureset\cstackempty
     \let\f@aturen@xt\n@xt
-    \x@\fe@turemaths\r@s[] \E
     \trace{s}{Merging options}%
-    \let\r@s\empty
+    \x@\fe@turemaths\r@s[] \E
+    % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
+    \let\r@s\empty % MUST start with empy list!
     \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty:\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
@@ -996,9 +997,10 @@
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
     \setbox1=\hbox{\ch@rstylepls{v}~\adornv{\v@rseto}\ch@rstylepls{v}*}%
-    \global\setbox#1=\vtop{\hbox{\llap{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
+    \global\setbox#1=\vtop{\s@tbaseline{v}{v}\hbox{\llap{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
                                  \vbox{\hbox to \wd1{\hskip\leftskip\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*\hskip\rightskip}%
-                                       \kern\dimen0\box1}}}%
+                                       %\kern\dimen0
+                                        \box1}}}%
     \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
 }
 \let\defaultprintverse=\simpleprintv@rse
