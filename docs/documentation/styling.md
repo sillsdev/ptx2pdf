@@ -232,7 +232,7 @@ Once the above list has been determined, it is rapidly reduced again, by compari
 
 
 ## Font features  and possibly unexpected behaviour for FontScale
-For most parameters, processing the list stops at the first encoutered value. For `FontFeatures`, `Bold` and `Italic` (and any others
+For most parameters, processing the list stops at the first encoutered value. For `\ztexFontFeatures`, `Bold` and `Italic` (and any others
  other values affected by `\Regular`), processing of the search-list continues until a `\Regular` is encountered, allowing  italic and bold to be specified by 
 different markers but still combine.
 
@@ -250,5 +250,29 @@ Thus if the stylesheet contains this:
 ```
 
 Then the base-size (before the reduction for superscript is applied) for a marker `\v` will be `0.8*12 = 9.6``FontSizeUnits`, but the stylesheet has specified that for a `\v` inside text marked as being the words of Jesus, the base size will be `0.8*0.8*12 = 7.68` `FontSizeUnits`.
+
+Font features can be specified in two manners, old style, where the exact fontfeatures are set:
+```
+\Marker v
+\ztexFontFeatures :embolden=.1
+```
+or *new* style, where the features are added to (`+[features]`) or subtracted from  (-[features]) the currently in-force 
+feature set. (Or set without referral to earlier settings: `=[features]`)
+```
+\Marker nd
+\ztexFontFeatures +[smcp,extend=1.1] 
+
+```
+Using the new style description, the final feature list is built up from features from the paragraph style or outer character style, with 
+additions and subtractions.  Multiple changes to the feature list can be specified on the same line. The different actions should be separated by a space, and features within the brackets by commas. E.g.:
+```
+
+\Marker zitalic-sc-s
+\EndMarker zitalic-sc-e
+\StyleType Milestone
+\ztexFontFeatures +[smcp,slant=.2] -[embolden]
+```
+Will add the small-caps and slant features and remove any embolden feature
+currently in force, but as no `=[...]` is given, no change will be made to `extend` or other features.
 
 

@@ -40,7 +40,7 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \s \zmine-s\* A test of a custom milestone
 \p 
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
-\v 7 And then \zmine-s\* another bit of disputed text\zmine-e\*
+\v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
 
 
 \ts-s|zwho="Alice"\*

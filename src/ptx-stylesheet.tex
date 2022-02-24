@@ -492,6 +492,10 @@
           \let\d@\cstackrelax
         \else
           \ifx\p@ram\empty\else
+            % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar 
+            % Reprocess to stacking format:
+            %\x@\ch@ckfontfeatures\p@ram\E % Initial colon test
+            \x@\ch@ckfontfeaturesbrk\p@ram[]\E % Lack of square brackets test.
             \xdef\r@s{\p@ram\space\r@s\space}%Processed left to right, so top level (overrides) go *LAST*
           \fi
         \fi
@@ -514,6 +518,45 @@
     \let\p@ram\r@s
   \fi
   \let\d@\d@gettheparam
+}
+
+\def\ch@ckfontfeatures#1#2\E{% Check for an initial colon
+  \def\t@st{#1}%
+  \ifx\t@st\c@lon
+    \let\p@ram\empty
+    \m@dernisefontfeatures#2:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\ch@ckfontfeaturesbrk#1[#2]#3\E{% Check for nothing in brackets
+  \def\t@st{#2#3}%
+  \ifx\t@st\empty
+    \let\p@ram\empty
+    \m@dernisefontfeatures#1:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\m@dernisefontfeatures#1:#2\E{%
+  \def\t@st{#2}%
+  \let\n@xtmff\m@dernisefontfeatures
+  \ifx\t@st\empty
+    \let\n@xtmff\endf@aturemaths
+  \fi
+  \def\t@st{#1}%
+  \ifx\t@st\empty\else
+    \ifx\p@ram\empty
+      \edef\p@ram{#1}%
+    \else
+      \edef\p@ram{\p@ram,#1}%
+    \fi
+  \fi
+  \n@xtmff #2\E
 }
 
 \def\endf@aturemaths#1\E{}
