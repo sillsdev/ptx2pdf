@@ -144,8 +144,8 @@ fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes c_includeFootnotes c_fneachnewline
-tb_xrefs     c_includeXrefs     c_xreachnewline
+tb_footnotes gr_footnotes c_includeFootnotes c_fneachnewline
+tb_xrefs                  c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
@@ -206,7 +206,7 @@ _sensitivities = {
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     # "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
-    "c_includeFootnotes" :     ["gr_footnotes"],
+    # "c_includeFootnotes" :     ["gr_footnotes"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
     "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
     
