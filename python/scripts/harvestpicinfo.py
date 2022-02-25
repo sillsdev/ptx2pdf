@@ -35,6 +35,8 @@ img2ref = {}
 prjtypes = {}
 picnopic = {}
 COUNT = 0
+openFailed = 0
+failedRead = 0
 counts = {}
 
 def getAllBooks(prjdir, prjid, ptsettings):
@@ -81,27 +83,39 @@ def incHashRef(d, *a):
 
 def process_sfm(bk, fname):
     count = 0
-    with universalopen(fname) as inf:
-        dat = inf.read()
-        blocks = ["0"] + chptre.split(dat)
-        for c, t in zip(blocks[0::2], blocks[1::2]):
-            for v in vrsre.findall(t):
-                lastv = v[0]
-                s = v[1]
-                r = "{} {}.{}".format(bk, c, lastv) if args.byverse else "{} {}".format(bk, c)
-                key = None
-                m = usfm2re.findall(s)
-                if len(m):
-                    for f in m:     # search for usfm 2 images
-                        count += 1
-                        incHashRef(img2ref, newBase(f[1]), r)
-                else: # only keep looking if no usfm2 images were found
-                    m = usfm3re.findall(s)
+    global failedRead, openFailed
+    fh = universalopen(fname)
+    if fh == None:
+        openFailed += 1
+        print("*** UNIVERSAL OPEN FAILED ***")
+        return 0
+    else:
+        with fh as inf:
+            try:
+                dat = inf.read()
+            except:
+                failedRead += 1
+                print("*** FAILED READ ***")
+                return 0
+            blocks = ["0"] + chptre.split(dat)
+            for c, t in zip(blocks[0::2], blocks[1::2]):
+                for v in vrsre.findall(t):
+                    lastv = v[0]
+                    s = v[1]
+                    r = "{} {}.{}".format(bk, c, lastv) if args.byverse else "{} {}".format(bk, c)
+                    key = None
+                    m = usfm2re.findall(s)
                     if len(m):
-                        for f in m:     # search for usfm 3 images
-                            # print("usfm3 found:", newBase(f[0]))
+                        for f in m:     # search for usfm 2 images
                             count += 1
-                            incHashRef(img2ref, newBase(f[0]), r)
+                            incHashRef(img2ref, newBase(f[1]), r)
+                    else: # only keep looking if no usfm2 images were found
+                        m = usfm3re.findall(s)
+                        if len(m):
+                            for f in m:     # search for usfm 3 images
+                                # print("usfm3 found:", newBase(f[0]))
+                                count += 1
+                                incHashRef(img2ref, newBase(f[0]), r)
     return count
 
 def universalopen(fname, cp=65001):
@@ -221,3 +235,5 @@ writeFile(args.outfile, images=img2ref, bookcounts=counts, projectypes=prjtypes,
 print("Done harvesting Pic statistics!")
 print(picnopic)
 print(prjtypes)
+print("Failed to open:", openFailed)
+print("Failed to read:", failedRead)
