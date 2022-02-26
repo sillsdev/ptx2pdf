@@ -642,15 +642,16 @@
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
     \ifdim\dimen1>#1\repeat
   \fi}
-\def\m@kexrefbox#1#2#3{
+\def\m@kexrefbox#1#2#3#4{
 % #1: height, #2: xrefbox width, #3: note marker/style, returns vbox of remaineder and results in xr@fbox
+% #4: justification (only r is significant)
   \setbox\xr@fbox=\ifXrefTopfill\vbox{\vfil}\else\box\voidb@x\fi
   \temptrue
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
-  \leftskip=0pt\rightskip=0pt plus 0.8\hsize
+  \if#4r\relax \leftskip=0pt plus 0.8\hsize\rightskip=0pt\parfillskip=0pt\else\leftskip=0pt\rightskip=0pt plus 0.8\hsize\fi
   % Empty the xref notes so that they don't crop up elsewhere
   \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
@@ -1546,11 +1547,13 @@
   \splittopskip=\topskip
   \traceifcheck{c@lcavailht}%
 }
+\newif\ifXrefSideAlign
 \def\doColNotes#1{
   % creates column notes in coln@tebox with side effect of perhaps xr@fbox. Uses boxes 0,2,5
   \ifColNotes\ifb@dy
     \ifx\XrefNotes\empty\relax\setbox5=\box\voidb@x\else
-      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}}%
+      \ifXrefSideAlign\testXrefSideL \ifnum\tmp=1 \edef\tmp{r}\else\edef\tmp{l}\fi\else\edef\tmp{l}\fi
+      \setbox5=\vbox{\m@kexrefbox{\ifdim\t@xttrialheight>0pt \ifdim\t@xttrialheight<#1 \t@xttrialheight\else #1\fi\else #1\fi}{\XrefNotesWidth}{\XrefNotes}\tmp}%
       \setbox\xr@fbox\vbox{\unvbox\xr@fbox\setbox0=\lastbox\dimen0=\dp0\box0\vskip\dimen0}%
     \fi
     \keepn@testrue\notst@dynotestrue\m@kenotebox\notst@dynotesfalse\keepn@tesfalse
@@ -1564,7 +1567,7 @@
           \footnoterule\prevdepth=-10000pt
           \unvbox5\setbox0\lastbox\dimen1=\ht0\dimen0=\dp0\box0\ifdim\dimen1>0pt \kern-\dimen0\fi%\vskip\bmg@p
       \fi\fi}%
-      \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox, xrefbox=\the\ht\xr@fbox+\the\dp\xr@fbox}%
+    \trace{o}{coln@tebox out=\the\ht\coln@tebox+\the\dp\coln@tebox, xrefbox=\the\ht\xr@fbox+\the\dp\xr@fbox}%
   \else
     \setbox\coln@tebox=\box\voidb@x\setbox\xr@fbox=\box\voidb@x
   \fi\fi

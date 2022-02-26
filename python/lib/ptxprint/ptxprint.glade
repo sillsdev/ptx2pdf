@@ -14355,7 +14355,7 @@ proper nouns (names of people and places).</property>
                                             <property name="margin-bottom">6</property>
                                             <property name="label-xalign">0.10000000149011612</property>
                                             <child>
-                                              <!-- n-columns=2 n-rows=5 -->
+                                              <!-- n-columns=2 n-rows=6 -->
                                               <object class="GtkGrid">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -14524,6 +14524,26 @@ of the page. </property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">4</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_xrSideAlign">
+                                                    <property name="label" translatable="yes">Side align notes</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">For side column notes, do we align
+the text of the notes to the side of
+the main text?</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-start">6</property>
+                                                    <property name="margin-end">2</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">5</property>
                                                     <property name="width">2</property>
                                                   </packing>
                                                 </child>

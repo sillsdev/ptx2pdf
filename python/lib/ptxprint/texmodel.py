@@ -294,6 +294,7 @@ ModelMap = {
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
     "notes/xrcolrule":          ("c_xrColumnRule", lambda w,v: "true" if v else "false"),
     "notes/xrcolbottom":        ("c_xrColumnBottom", lambda w,v: "true" if v else "false"),
+    "notes/xrcolalign":         ("c_xrSideAlign", lambda w,v: "true" if v else "false"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
