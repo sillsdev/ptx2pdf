@@ -769,9 +769,9 @@
   \iffitonpage
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
     \if\XrefNotes\relax\else
-      \trace{o}{enter reheightcolnotes, colA=\the\ht\colA}%
+      \trace{o}{enter reheightcolnotes, colA=\the\ht\colA, for colnotes \the\ht13}%
       \reheightcolnotess{13}%
-      \trace{o}{exit reheightcolnotes, colA=\the\ht\colA}%
+      \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, overflow notes=\the\ht\n@tesbox}%
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
@@ -936,13 +936,13 @@
       \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
       \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip \tempfalse\fi\fi
       \ifdim\dimen5>2000pt \tempfalse\fi
-      \trace{o}{reheighting diff=\the\dimen5, will reheight=\iftemp true\else false\fi}%
+      \trace{o}{reheighting \the\ht\th@cl@ss, diff=\the\dimen5, will reheight=\iftemp true\else false\fi}%
       \iftemp
         \multiply\dimen5 by 32
         \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
         \ifdim\dimen5<\baselineskip \dimen5=\baselineskip\fi
         \advance\bestavailht by \dimen5
-        \trace{o}{Retrying colnotes at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
+        \trace{o}{Retrying colnotes \the\ht\th@cl@ss, at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
         \c@lcavailht
         \setbox255=\copy\s@vedpage
         \global\setbox\colA=\vsplit255 to \availht
@@ -954,6 +954,7 @@
           %\ifdim\dimen3>\dimen4\tempfalse\fi
         \else\tempfalse \fi
         \iftemp\else
+          \setbox\th@cl@ss=\copy#1
           \bestavailht=\dimen3 \c@lcavailht
           \setbox255=\copy\s@vedpage
           \global\setbox\colA=\vsplit255 to \availht
