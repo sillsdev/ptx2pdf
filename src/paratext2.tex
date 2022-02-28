@@ -660,7 +660,7 @@
   \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
   \s@tbaseline{#3}{#3}%
-  \advance\baselineskip 0pt plus 1pt
+  \advance\baselineskip 0pt plus 1pt minus 0.1pt
   \loop
     \setbox0=\lastbox
     \dimen2=\ht0
@@ -1641,21 +1641,26 @@
     \s@veallnotes{1}%
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \dimen3=\colhtA
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \if\XrefNotes\relax\else
       \trace{o}{reheighting columns. xr@fbox: \the\ht\xr@fbox, colsheight: \the\dimen3. iflevel=\the\currentiflevel}%
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
-      \c@lcboxheights
+      %\c@lcboxheights
       \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
       \colhtA=\ht\colA \colhtB=\ht\colB
       \keepn@tesfalse
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
-    \dimen3=\ifdim\colhtA>\colhtB \colhtA\else\colhtB\fi
+    \dimen3=\ht\colA
+    \ifdim\ht\colB>\dimen3
+      \setbox1=\copy\colB
+      \setbox2=\vsplit1 to \dimen3
+      \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
+    \fi
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     %\setbox255=\box\voidb@x
-    \advance\dimen3\lastd@pth
+    %\advance\dimen3\lastd@pth
     % strip off full page height from c@lcboxheights and grab the depth
     \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
     \ifdim\ht\colA>0pt
@@ -1691,6 +1696,7 @@
     \s@ttrialheight
     \keepn@testrue\c@lcavailht\keepn@tesfalse
     \trace{o}{spdd: partial=\the\ht\partial, textheight=\the\textheight, availht=\the\availht}%
+    \if\XrefNotes\relax\else\trace{o}{IAFFM}\global\setbox\th@cl@ss=\box\voidb@x\global\setbox\xr@fbox=\box\voidb@x\fi
     \ifdim\availht<2\baselineskip \twocolp@geout \clearn@tes\else
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
@@ -1790,7 +1796,12 @@
       \keepn@tesfalse
       \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
     \fi
-    \dimen3=\ht\colA \ifdim\ht\colB>\dimen3 \dimen3=\ht\colB\fi
+    \dimen3=\ht\colA
+    \ifdim\ht\colB>\dimen3
+      \setbox1=\copy\colB
+      \setbox2=\vsplit1 to \dimen3
+      \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
+    \fi
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
