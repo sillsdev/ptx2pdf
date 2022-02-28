@@ -628,8 +628,9 @@
 \newbox\XrefB@x
 \newdimen\XrefSkip \XrefSkip=0pt
 \def\m@ke@te@mp#1{
-  \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
-  \setbox0=\hbox{}
+  \dimen0=\ht\xr@fbox \advance\dimen0 by \baselineskip
+  \advance\dimen0 by -\dimen2\advance\dimen0 by -\dp\xr@fbox
+  \setbox0=\hbox{}\trace{o}{current height=\the\dimen0}%
   \ifdim\dimen0>#1\loop
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
@@ -638,8 +639,10 @@
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
     \else\ifvoid3\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
-    \dimen1=\dimen0 \advance\dimen1 by \ht1
+    \dimen1=\dimen0 \advance\dimen1 by \ht1 \advance\dimen1 by \dp1
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
+    \advance\dimen1 by \baselineskip \advance\dimen1 by -\dimen2 \advance\dimen1 by \XrefSkip
+    \trace{o}{\space now height is \the\dimen1}%
     \ifdim\dimen1>#1\repeat
   \fi}
 \def\m@kexrefbox#1#2#3#4{
@@ -771,7 +774,7 @@
     \if\XrefNotes\relax\else
       \trace{o}{enter reheightcolnotes, colA=\the\ht\colA, for colnotes \the\ht13}%
       \reheightcolnotess{13}%
-      \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, overflow notes=\the\ht\n@tesbox}%
+      \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, xr@fbox=\the\ht\xr@fbox}%
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
@@ -934,14 +937,10 @@
       \setbox\th@cl@ss=\copy#1
       \bestavailht=\dimen3
       \dimen5=\ht\xr@fbox \advance\dimen5 -\dimen3
-      \temptrue\ifdim\dimen5<\baselineskip\ifdim\dimen5>-\baselineskip \tempfalse\fi\fi
+      \temptrue\ifdim\dimen5<0pt \ifdim\dimen5>-\baselineskip \tempfalse\fi\fi
       \ifdim\dimen5>2000pt \tempfalse\fi
       \trace{o}{reheighting \the\ht\th@cl@ss, diff=\the\dimen5, will reheight=\iftemp true\else false\fi}%
       \iftemp
-        \multiply\dimen5 by 32
-        \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
-        \ifdim\dimen5<\baselineskip \dimen5=\baselineskip\fi
-        \advance\bestavailht by \dimen5
         \trace{o}{Retrying colnotes \the\ht\th@cl@ss, at \the\bestavailht, versus \the\availht, from=\the\dimen3, diff=\the\dimen5, baselineskip=\the\baselineskip}%
         \c@lcavailht
         \setbox255=\copy\s@vedpage
@@ -965,7 +964,12 @@
       \fi
       \advance\count255 by -1
       \ifnum\count255=0 \tempfalse\fi
-    \iftemp\@REPEAT
+    \iftemp
+      \multiply\dimen5 by 32
+      \divide\dimen5 by \hsize\multiply\dimen5 by \XrefNotesWidth \divide\dimen5 by 32
+      \ifdim\dimen5<\baselineskip \dimen5=\baselineskip\fi
+      \advance\bestavailht by \dimen5
+      \@REPEAT
   \fi%\tracingassigns=0\tracingmacros=0\tracingifs=0
   \traceifcheck{reheightcolnotes}%
 }
