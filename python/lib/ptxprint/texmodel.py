@@ -1327,7 +1327,7 @@ class TexModel:
             else:
                 self.localChanges.append((None, regex.compile(r"\\ef . ", flags=regex.S), "\\ef - "))
         else:
-            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\* ", flags=regex.S), ""))
+            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\*", flags=regex.S), ""))
 
         if self.asBool("notes/showextxrefs"):
             self.localChanges.append((None, regex.compile(r"\\ex", flags=regex.S), r"\\x"))
