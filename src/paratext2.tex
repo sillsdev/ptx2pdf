@@ -635,15 +635,16 @@
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
     \setbox1=\box\voidb@x
-  \else\loop
+  \else\temptrue\loop
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
     \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
-    \else\ifvoid3\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
+    \else\ifvoid3\tempfalse\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
     \dimen1=\dimen0 \advance\dimen1 by \ht1 \advance\dimen1 by \dp1
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
     \advance\dimen1 by \baselineskip \advance\dimen1 by -\dimen2 \advance\dimen1 by \XrefSkip
     \trace{o}{\space now height is \the\dimen1}%
-    \ifdim\dimen1>#1\repeat
+    \ifdim\dimen1<#1\tempfalse\fi
+    \iftemp\repeat
   \fi}
 \def\m@kexrefbox#1#2#3#4{
 % #1: height, #2: xrefbox width, #3: note marker/style, returns vbox of remaineder and results in xr@fbox
