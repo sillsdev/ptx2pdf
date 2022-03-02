@@ -1032,7 +1032,7 @@ class TexModel:
                 dat = c[0](simple, bk, dat)
         return dat
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, letterspace="\uFDD0"):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
         printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -1043,7 +1043,7 @@ class TexModel:
             else:
                 self.changes = []
         draft = "-" + (printer.configName() or "draft")
-        self.makelocalChanges(printer, bk, chaprange=chaprange)
+        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
