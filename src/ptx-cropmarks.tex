@@ -661,7 +661,7 @@
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
     \ifnum\mainBodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
-      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\fi
+      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\advance\dimen2 -2\XrefNotesMargin\fi
     \else\dimen2=0pt\fi
     \divide\dimen2 by 2
     \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter
