@@ -359,7 +359,7 @@
 \def\parse@repeat@class#1-#2)#3\E{\ifnum 0#2=0\set@repeat@class{#3}{#1}{}\else\set@repeat@class{#3}{#1}{#2}\fi}
 \newif\ifpdf@ornament@stretch
 \newif\ifpdf@ornament@repeat
-\def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}}
+\def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}\uppercase{\edef\tmpu{#2}}}
 
 %#1 ornament
 %#2 orientation
@@ -402,7 +402,13 @@
       \ifx\tmp\ptn@ex% No variable, xleader-fill
 	\pdf@ornament@repeattrue
       \else
-	\x@\chk@cplx#3\E
+	\x@\chk@cplx#3\E %Split off first code
+        %\uppercase{\edef\tmpu{\tmpb}}%
+        \ifx\tmpb\tmpu\else % variable needs to be  upper case 
+          \MSG{\tmpb\space is lowercase! Treat as \tmpu}%
+          \let\tmpb\tmpu %make it upper
+          \pdf@ornament@stretchtrue
+        \fi
         \ifx\tmpa\ptn@sim
 	  \pdf@ornament@repeattrue
 	  \edef\orn@repeat@class{\tmpb}% Varable, range set elsewhere
@@ -521,9 +527,27 @@
     \ifnum\csname mult@class@num@#1\endcsname > \csname mult@repeat@max@#1\endcsname \advance\count255 by \numexpr  1500 *(\csname mult@class@num@#1\endcsname - \csname mult@repeat@max@#1\endcsname)\relax \fi
   \fi
 }
-\def\calcsc@re{\bgroup \dimen4=\ifdim\dimen1<0pt 0.1\dimen0\else 0.1\dimen2 \fi\count255=\dimen4  \dimen4=\dimexpr 10\dimen1 / \count255\relax \count255=\dimen4
+
+
+\def\prep@dims#1#2{%Prepare dimensions for calcsc@re
+  \advance\dimen1 -\dimexpr \t@mp * #2 \relax % reduce ideal length
+  \ifdim \t@mpstr>0pt
+    \advance\dimen0 by -\dimexpr\dimexpr \t@mpstr * #2\relax / 2\relax % it's stretchy
+  \fi
+  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+  \ifdim \dimen0 =0pt
+    \dimen0=-100sp
+  \fi
+  \MSG{remaining:\the\dimen1, shrink:\the\dimen0, \the\dimen2}% 
+}
+  
+\def\calcsc@re{\bgroup \dimen4=\ifdim\dimen1<0pt 0.1\dimen0\else 0.1\dimen2 \fi\count255=\dimen4 
+  \MSG{\the\dimen1 / \the\count255}% 
+  \dimen4=\dimexpr 10\dimen1 / \count255\relax \count255=\dimen4
+  \MSG{precheck score: \the\dimen4 (\the\count255)}%
   \let\D@\apply@checks\the\mult@classes
   \let\D@\m@lti@print\the\mult@classes
+  \MSG{postcheckdscore: \the\dimen4 (\the\count255)}%
   \print@multi
   \ifnum\count255<\best@score 
     \global\best@score=\count255
@@ -651,46 +675,58 @@
     \dimen\@@orndim=-\dimen\@@orndim
   \fi
   \message{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
-  \ifpdf@ornament@stretch
-    \advance\fill@stretch by \dimen\@@orndim %stretchy ones subtract roughly their own length
-  \else
-    \ifpdf@ornament@repeat
-      \advance\fill@mult by \dimen\@@orndim
-      \advance\mult@count by 1
-      \ifdim\fill@mult@min=0pt
-	\fill@mult@min=\dimen\@@orndim
-      \else 
-	\ifdim\fill@mult@min>\dimen\@@orndim
-	  \fill@mult@min=\dimen\@@orndim
-	\fi
+  \ifpdf@ornament@repeat
+    \advance\fill@mult by \dimen\@@orndim
+    \advance\mult@count by 1
+    \ifdim\fill@mult@min=0pt
+      \fill@mult@min=\dimen\@@orndim
+    \else 
+      \ifdim\fill@mult@min>\dimen\@@orndim
+        \fill@mult@min=\dimen\@@orndim
       \fi
-      \x@\let\x@\tmp\csname mult@class@dim@\orn@repeat@class\endcsname
-      \ifx\relax\tmp
-	\MSG{New class \orn@repeat@class}%
-	\ifx\orn@repeat@class\empty\else\x@\add@mult@class\x@{\orn@repeat@class}\fi
-	\x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
-	\x@\edef\csname mult@class@num@\orn@repeat@class\endcsname{0}%
-	\edef\mult@class@list{\ifx\mult@class@list\empty\else \mult@class@list,\fi \orn@repeat@class}%
+    \fi
+    \x@\let\x@\tmp\csname mult@class@dim@\orn@repeat@class\endcsname
+    \ifx\relax\tmp
+      \MSG{New class \orn@repeat@class}%
+      \ifx\orn@repeat@class\empty\else\x@\add@mult@class\x@{\orn@repeat@class}\fi
+      \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+      \ifpdf@ornament@stretch
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+        \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
       \else
-	\x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
-	\MSG{\orn@repeat@class: \csname mult@class@dim@\orn@repeat@class\endcsname}%
+        \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{0pt}%
       \fi
+      \x@\edef\csname mult@class@num@\orn@repeat@class\endcsname{0}%
+      \edef\mult@class@list{\ifx\mult@class@list\empty\else \mult@class@list,\fi \orn@repeat@class}%
+    \else
+      \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
+      \ifpdf@ornament@stretch
+        \x@\let\x@\tmpz\csname mult@class@stretch@dim@\orn@repeat@class\endcsname
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
+      \fi
+      \MSG{\orn@repeat@class: \csname mult@class@dim@\orn@repeat@class\endcsname}%
+    \fi
+  \else
+    \ifpdf@ornament@stretch
+      \advance\fill@stretch by \dimen\@@orndim %stretchy ones subtract roughly their own length
     \else
       \advance\fill@fixed by \dimen\@@orndim
     \fi
   \fi
   \def\tmp{#2}%
- \ifx\tmp\empty
-   \let\nxt=\endstack
- \else
-   \let\nxt\orn@meas@ornament
- \fi
- \x@\nxt\tmp\E
+  \ifx\tmp\empty
+    \let\nxt=\endstack
+  \else
+    \let\nxt\orn@meas@ornament
+  \fi
+  \x@\nxt\tmp\E
 }
 
 \def\multi@try#1,#2\E#3{\bgroup
     \MSG{multitry '#1' {#3}}%
     \x@\let\x@\t@mp\csname mult@class@dim@#1\endcsname
+    \x@\let\x@\t@mpstr\csname mult@class@stretch@dim@#1\endcsname
     \count255=#3
     \ifnum\count255=-1
       \ifdim\dimexpr \dimen1-\dimen0\relax > \t@mp
@@ -702,7 +738,7 @@
 	\ifcsname mult@repeat@min@#1\endcsname
 	  \ifnum \csname mult@repeat@min@#1\endcsname>\count255
 	    \count255=\csname mult@repeat@min@#1\endcsname
-	    \MSG{ min for #1 (\the\count255) doesn't fit, but try it anyway}%
+	    \MSG{ min for #1 (\the\count255) doesn't fit, but try it anyway (it might be shrinkable)}%
 	  \fi
 	\fi
       \else
@@ -711,25 +747,32 @@
     \fi
     \def\tmp{#2}%
     \global\tmptoks{}%
-    \ifx\tmp\empty
+    \ifx\tmp\empty % No more optional items
       \bgroup
-	\advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	\x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+        \prep@dims{#1}{\count255}%
 	\calcsc@re
       \egroup
-      \ifnum\count255>0
+      \ifnum\count255>0 %We included some over-run, Try one under...
 	\bgroup
 	  \advance\count255 by -1
-	  \advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+          \prep@dims{#1}{\count255}%
 	  \calcsc@re
 	\egroup
       \fi
+      \ifdim\t@mpstr >0pt % Item can shrink: also try 1 over. 
+        \bgroup
+          \advance\count255 by 1
+          \prep@dims{#1}{\count255}%
+          \calcsc@re
+        \egroup
+      \fi
     \else
+      \ifdim\t@mpstr>0pt
+          \advance\count255 by 1 % item can shrink; start at 1 over
+      \fi
       \loop\unless\ifnum\count255<0
 	\bgroup
-	  \advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+          \prep@dims{#1}{\count255}%
 	  \x@\multi@try#2\E{-1}%
 	\egroup
 	\advance\count255 by -1
