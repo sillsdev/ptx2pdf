@@ -218,7 +218,7 @@ class ViewModel:
                 return []
             res = Path(self.moduleFile).as_posix()
             return [res] if files and res else []
-        elif not local and self.bookrefs is not None:
+        elif scope != "single" and not local and self.bookrefs is not None:
             return self._bookrefsBooks(self.bookrefs, True)
         bl = RefList.fromStr(self.get("ecb_booklist", ""))
         if scope == "single" or not len(bl):
