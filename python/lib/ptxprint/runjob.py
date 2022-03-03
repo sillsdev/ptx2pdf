@@ -205,15 +205,18 @@ class RunJob:
             return
         self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
         os.makedirs(self.tmpdir, exist_ok=True)
-        self.printer.getBooks(files=True)
+        bks = self.printer.getBooks(files=True)
         jobs = []
-        lastbook = None
-        for r in self.printer.bookrefs:
-            if r.first.book != lastbook:
-                jobs.append(RefList((r, )))
-                lastbook = r.first.book
-            else:
-                jobs[-1].append(r)
+        if self.printer.bookrefs is None:
+            jobs = [(b, False) for b in bks]
+        else:
+            lastbook = None
+            for r in self.printer.bookrefs:
+                if r.first.book != lastbook:
+                    jobs.append((RefList((r, )), True))
+                    lastbook = r.first.book
+                else:
+                    jobs[-1].append(r)
 
         reasons = info.prePrintChecks()
         if len(reasons):
@@ -252,9 +255,9 @@ class RunJob:
             digbooks = self.printer.diglotView.getAllBooks()
             badbooks = set()
             for j in joblist:
-                allj = set(r[0].first.book for r in j)
-                j[:] = [b for b in j if b[0].first.book in digbooks]
-                badbooks.update(allj - set(r[0].first.book for r in j))
+                allj = set(r[0][0].first.book for r in j if r[1])
+                j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
+                badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
             if len(badbooks):
                 self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                      show=not self.printer.get("c_quickRun"))
@@ -386,10 +389,10 @@ class RunJob:
     def dojob(self, jobs, info):
         donebooks = []
         for j in jobs:
-            b = j[0].first.book
+            b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
-                out = info.convertBook(b, j, self.tmpdir, self.prjdir)
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -409,7 +412,7 @@ class RunJob:
             unlockme()
             return []
         self.books += donebooks
-        info["project/bookids"] = [r[0].first.book for r in jobs]
+        info["project/bookids"] = [r[0][0].first.book if r[1] else "MOD" for r in jobs]
         info["project/books"] = donebooks
         res = self.sharedjob(jobs, info)
         if info['notes/ifxrexternalist']:
@@ -428,7 +431,7 @@ class RunJob:
                            "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
-        diginfo["project/bookids"] = [r[0].first.book for r in jobs]
+        diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         diginfo["project/books"] = digdonebooks
         diginfo["document/ifdiglot"] = "%"
         diginfo["footer/ftrcenter"] = "-empty-"
@@ -451,11 +454,11 @@ class RunJob:
 
         logger.debug('Diglot processing jobs: {}'.format(jobs))
         for j in jobs:
-            b = j[0].first.book
+            b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
             try:
-                out = info.convertBook(b, j, self.tmpdir, self.prjdir)
-                digout = diginfo.convertBook(b, j, self.tmpdir, digprjdir, letterspace="\ufdd1")
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
+                digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], letterspace="\ufdd1")
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -498,7 +501,7 @@ class RunJob:
                 "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
                 title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
 
-        info["project/bookids"] = [r[0].first.book for r in jobs]
+        info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         info["project/books"] = donebooks
         self.books += digdonebooks
 
@@ -524,7 +527,7 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        outfname = info.printer.baseTeXPDFnames([r[0].first.book for r in jobs])[0] + ".tex"
+        outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         info.update()
         if info['project/iffrontmatter'] != '%':
             frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
@@ -729,7 +732,7 @@ class RunJob:
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        books = [r[0].first.book for r in jobs]
+        books = [r[0][0].first.book if r[1] else r[0] for r in jobs]
         for j in books:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)

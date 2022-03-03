@@ -294,6 +294,7 @@ ModelMap = {
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
     "notes/xrcolrule":          ("c_xrColumnRule", lambda w,v: "true" if v else "false"),
     "notes/xrcolbottom":        ("c_xrColumnBottom", lambda w,v: "true" if v else "false"),
+    "notes/xrcolalign":         ("c_xrSideAlign", lambda w,v: "true" if v else "false"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
@@ -1031,7 +1032,7 @@ class TexModel:
                 dat = c[0](simple, bk, dat)
         return dat
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, letterspace="\uFDD0"):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
         printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -1042,7 +1043,7 @@ class TexModel:
             else:
                 self.changes = []
         draft = "-" + (printer.configName() or "draft")
-        self.makelocalChanges(printer, bk, chaprange=chaprange)
+        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
@@ -1078,7 +1079,7 @@ class TexModel:
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
                                  Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
 
-        if chaprange is None or not len(chaprange) or \
+        if not isbk or not len(chaprange) or \
             (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
                 (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
@@ -1326,7 +1327,7 @@ class TexModel:
             else:
                 self.localChanges.append((None, regex.compile(r"\\ef . ", flags=regex.S), "\\ef - "))
         else:
-            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\* ", flags=regex.S), ""))
+            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\*", flags=regex.S), ""))
 
         if self.asBool("notes/showextxrefs"):
             self.localChanges.append((None, regex.compile(r"\\ex", flags=regex.S), r"\\x"))

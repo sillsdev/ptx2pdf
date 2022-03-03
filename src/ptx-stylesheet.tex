@@ -767,7 +767,7 @@
   \spl@tprintableverse
   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
   %\ if not cancelling first verse, output verse number
-  \ifc@ncelfirstverse\else
+  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\else
    \ifrotate
     \setbox0=\hbox{\printverse}\dimen0=\wd0%
     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
@@ -1800,7 +1800,7 @@
     \ifColNotesRule \advance \dimen9 by -1pt\fi  % width of rule
   \fi\fi\fi
   \global #1=\dimen9
-  \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+  %\trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 

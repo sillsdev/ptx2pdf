@@ -238,7 +238,7 @@ class Usfm:
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
         if not isinstance(refrange, list):
-            refrange = list(refrange)
+            refrange = [refrange]
         ispara = sfm.text_properties('paragraph')
         chaps = sum((self.chapters[r.first.chap:r.last.chap+1] for r in refrange), [])
         def pred(e):

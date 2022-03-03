@@ -1,8 +1,34 @@
-PTXprint 2.1.4 Release Notes 
-14 February 2022
+PTXprint 2.1.5 Release Notes 
+3 March 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.5 (3 Mar 2022)
+
+  * Enhanced book list which can also contain a list of references #76
+    (allows list of passages like: GEN 1:1-end PSA 23:1-end LUK 15:11-32 GLO)
+
+  * Added option to allow side column x-refs to align to the side of the text
+
+  * Use script-specific reference separators for Arabic script which fixes 
+    RTL marker causes printing a Bible Module to fail #618
+  
+  * Align marginal verses with the baseline
+  
+  * Cross-references in 2 cols now balance
+  
+  * Fixed table of contents widths and leaders #615, treat spacebefore=0 as autowidth
+  
+  * Fixed hang over missing verse numbers
+
+  * Fixed guide rules for centre notes
+  
+  * Fixed missing footnotes on final page #617
+  
+  * Minor improvements to tooltips
+  
+  * Multiple behind the scenes improvements to the TeX macros
+  
 Bug fixes and improvements in 2.1.4 (14 Feb 2022)
 
   * Keep centre xref column the same height as the text blocks
