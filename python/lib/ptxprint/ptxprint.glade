@@ -9699,7 +9699,13 @@ Lines (max):</property>
                                 <property name="tooltip-text" translatable="yes">If this setting is checked on, but
 inactive, it is due to Diglot being
 active (which obviously must use 
-the Two Column layout).</property>
+the Two Column layout).
+
+If you get an unexpected result, 
+check the Different Column Layout 
+setting near the end of the Body tab
+which is only accessible when using
+the Full View mode.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <property name="margin-start">2</property>
