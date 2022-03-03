@@ -378,7 +378,7 @@
     \get@ttribute{width}%A
     \ifx\attr@b\relax
       \s@tsideskips{zrule}%
-      \edef\rule@wid{\dimexpr \hsize - \leftskip - \rightskip\relax}%
+      \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
       \m@kenumber{\attr@b}%
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}
@@ -419,6 +419,7 @@
     \else
       \let\rule@pos\attr@b
     \fi
+    \trace{m}{Rule \rule@wid, thick \rule@thk,  style \rule@style}%
     \csname drawzrule-\rule@style\endcsname
   \egroup 
 }

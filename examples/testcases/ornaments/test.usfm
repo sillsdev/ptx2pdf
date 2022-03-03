@@ -17,7 +17,7 @@ We are now inside a qt-s..qt-e block \nd*
 \zrule |cat="ornaments" width="0.9" align="r"\*
 \zrule |width="0.9" align="r"\*
 
-\p This is another ornamental rule (at it's normal width, alignment controlled by margins):
+\p This is another ornamental rule of the same style (at it's normal width, alignment etc are controlled by the style's margins):
 \zrule |cat="ornaments" \*
 
 \p And yet another p class break
@@ -62,8 +62,9 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 \p
 This esb should be in a cut-out, a line below 'possimus'. It
 has a pale blue background, an orange border just inside the edge
-of the background, and a pdf image as a 'watermark', which
-because it has no inherent colour, we can pick the colour of in
+of the background, and a pdf image as a
+'watermark' which, because it has no inherent
+colour, we can pick the colour of in
 the style sheet.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.

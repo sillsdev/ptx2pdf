@@ -502,12 +502,13 @@
     \x@\orn@an@ornament#1,\E%
   \endgroup
 }% 
-\newdimen\fill@target
+\newdimen\fill@target % Target dimension
 \newcount\mult@count
-\newdimen\fill@mult
-\newdimen\fill@mult@min
-\newdimen\fill@fixed
-\newdimen\fill@stretch
+\newdimen\fill@fixed % length of rigid elements
+\newdimen\fill@stretch % length of flexible elements
+\newdimen\fill@mult % length of (non-stretchy) optional elements
+\newdimen\fill@mult@min % Smallest optional element (0pt if none)
+\newdimen\fill@mult@min@used % Smallest optional element currently in use. (0pt if none)
 
 \newtoks\mult@classes
 \mult@classes{}
@@ -520,6 +521,7 @@
 \def\foundb@st#1{\x@\global\x@\let\csname best@mult@class@num@#1\x@\endcsname\csname mult@class@num@#1\endcsname}
 \newcount\best@score
 \newdimen\best@adjust
+\newdimen\best@stretch
 
 \def\apply@checks#1{%
   \ifnum\csname mult@class@num@#1\endcsname < \csname mult@repeat@min@#1\endcsname \advance\count255 by \numexpr 1500 * (\csname mult@repeat@min@#1\endcsname - \csname mult@class@num@#1\endcsname) \relax\fi
@@ -529,37 +531,49 @@
 }
 
 
-\def\prep@dims#1#2{%Prepare dimensions for calcsc@re
-  \advance\dimen1 -\dimexpr \t@mp * #2 \relax % reduce ideal length
-  \ifdim \t@mpstr>0pt
-    \advance\dimen0 by -\dimexpr\dimexpr \t@mpstr * #2\relax / 2\relax % it's stretchy
+\def\prep@dims#1#2{%Prepare dimensions for calcsc@re. \t@mp is the natural length of the object \t@mpstr=\t@mp if the object is stretchy
+  \ifnum #2 > 0 
+    \ifdim\fill@mult@min@used=0pt
+      \fill@mult@min@used=\t@mp
+    \else\ifdim\fill@mult@min@used > \t@mp
+        \fill@mult@min@used=\t@mp
+    \fi\fi
+    \dimen0=-\fill@mult@min@used % Sane limit for overfull under-fill
+    \ifdim \t@mpstr>0pt
+      \advance\fill@stretch by #2\dimexpr \t@mpstr\relax %we have more stretch!
+    \else
+      \advance\fill@mult by #2\dimexpr \t@mp \relax 
+    \fi
   \fi
+  \dimen1=\dimexpr \fill@target - \fill@mult - \fill@stretch - \fill@fixed\relax
   \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
-  \ifdim \dimen0 =0pt
+  \ifdim \dimen0 =0pt % Sanity...
     \dimen0=-100sp
   \fi
-  \MSG{remaining:\the\dimen1, shrink:\the\dimen0, \the\dimen2}% 
+  \MSG{Try: remaining:\the\dimen1, stretch:\the\dimen0, \the\dimen2}% 
 }
   
 \def\calcsc@re{\bgroup \dimen4=\ifdim\dimen1<0pt 0.1\dimen0\else 0.1\dimen2 \fi\count255=\dimen4 
-  \MSG{\the\dimen1 / \the\count255}% 
+  \MSG{\the\dimen1 / \the\count255 }% 
   \dimen4=\dimexpr 10\dimen1 / \count255\relax \count255=\dimen4
   \MSG{precheck score: \the\dimen4 (\the\count255)}%
   \let\D@\apply@checks\the\mult@classes
   \let\D@\m@lti@print\the\mult@classes
-  \MSG{postcheckdscore: \the\dimen4 (\the\count255)}%
+  \MSG{postcheckdscore: \the\dimen4 (\the\count255) \the\fill@stretch}%
   \print@multi
   \ifnum\count255<\best@score 
     \global\best@score=\count255
     \global\best@adjust=\dimen1
+    \global\best@stretch=\fill@stretch
     \let\D@\foundb@st\the\mult@classes
-    \message{New best score:\the\best@score, \the\dimen1}%
+    \message{New best score:\the\best@score, \the\dimen1, \the\best@stretch}%
  \else
     \MSG{rejecting score:\the\count255, \the\dimen1}%
  \fi\egroup}
 
 \def\setup@meas@ornament{%
-  \fill@mult=0pt\fill@stretch=0pt\fill@fixed=0pt\best@score=\maxdimen
+  \fill@mult@min=0pt\fill@stretch=0pt\fill@fixed=0pt\best@score=\maxdimen
+  \best@stretch=\fill@stretch
   \mult@count=0
 }
 
@@ -588,12 +602,12 @@
     \fi
     \x@\orn@meas@ornament#4,\E%Measure the (horizontal) dimensions
     \dimen1=\dimexpr \fill@target - \fill@fixed - \fill@stretch \relax
-    %Set limits for stretch / shrink.
-    \dimen2=\fill@mult@min
+    %Set limits for stretch (dimen2) / shrink (dimen0)
+    \dimen2=\fill@mult@min % underrun of > smallest optional chunk is silly
     \ifdim\fill@stretch=0pt
       \dimen0=-100sp% Have *some* overrun, in case of rounding errors
     \else
-      \dimen0=-0.5\fill@stretch
+      \dimen0=-0.5\fill@stretch % Shrink up to 50% is OK.
     \fi
     \ifdim\dimen2=0pt
       \dimen2=1em
@@ -601,6 +615,7 @@
     \relax
     %\tracingifs=1
     \global\best@adjust=\dimen1
+    \global\best@stretch=\fill@stretch
     %
     \ifdim\dimen1 < 0pt
       \message{No space for optional parts}%
@@ -616,14 +631,14 @@
 	\let\D@\m@lti@print\the\mult@classes
       \fi
     \fi
-    \dimen4=\dimexpr \fill@stretch+\best@adjust\relax
+    \dimen4=\dimexpr \best@stretch+\best@adjust\relax
     \ifdim\fill@stretch=0pt 
     \else
-      \MSG{Stretch = \the\dimen4 / \the\fill@stretch}%
-      \dimen5=\dimexpr \fill@stretch*4\relax%
+      \MSG{Stretch = (a:\the\best@adjust,  s:\the\best@stretch) (a+s:\the\dimen4)/s)}%
+      \dimen5=\dimexpr \best@stretch*4\relax%
       \multiply\dimen4 by 4\relax
       \dimen6=\dimen4
-      \tracingassigns=1
+      %\tracingassigns=1
       \ifdim\dimen6<0pt \multiply \dimen6 by -1\relax\fi
       \ifdim \dimen5 > \dimen6 \dimen6=\dimen5 \fi
       \loop \ifdim\dimen6<0.4\maxdimen
@@ -631,7 +646,7 @@
 	\multiply\dimen4 by 2\relax
 	\multiply\dimen6 by 2\relax
 	\repeat
-      \tracingassigns=0
+      %\tracingassigns=0
       \count255=\dimen5 \divide\count255 by 65535 % Integer part only
       \MSG{\the\dimen4 / \the\count255}%
       \dimen4=\dimexpr \dimen4 / \count255\relax%Scale by 32
@@ -640,27 +655,7 @@
     \message{Ornament stretch set to \ornamentstretch}%
   \endgroup
 }
-      %\loop
-	%\dimen2=\dimexpr \dimen1 - \fill@mult \relax 
-	%\ifdim \dimen2
-	  %\advance\dimen1 -\fill@mult
-	  %\advance\dimen2 -\fill@mult
-	  %\let\D@\m@lti@inc\the\mult@classes % Increase all classes equally.
-	%\else
-	  %%FIXME Process, one-by-one, the classes
-	%\fi
-	%\ifdim \dimen2 < -\fill@mult@min % Overshot.
-	  %\tempfalse
-	%\else
-	  %\dimen3=\dimexpr \dimen2-\fill@mult@min \relax
-	  %\ifdim \dimen3<0pt \dimen3=-\dimen3\fi
-	  %\ifdim \dimen3 < \dimen2 
-	    %\tempfalse
-	  %\fi
-	%\fi
-      %\iftemp\repeat
-    %\fi
-%} 
+
 \def\E{}
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
@@ -676,7 +671,6 @@
   \fi
   \message{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
   \ifpdf@ornament@repeat
-    \advance\fill@mult by \dimen\@@orndim
     \advance\mult@count by 1
     \ifdim\fill@mult@min=0pt
       \fill@mult@min=\dimen\@@orndim
@@ -703,7 +697,7 @@
       \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
       \ifpdf@ornament@stretch
         \x@\let\x@\tmpz\csname mult@class@stretch@dim@\orn@repeat@class\endcsname
-        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmpz+\the\dimen\@@orndim\relax}%
       \fi
       \MSG{\orn@repeat@class: \csname mult@class@dim@\orn@repeat@class\endcsname}%
     \fi
@@ -1001,7 +995,8 @@
   \bgroup 
     \trace{m}{Rule will be \rule@wid (hsize=\the\hsize)}%
   \hbox{\raise\rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
-    \hbox to \rule@wid{\orn@SetStretch{\rule@wid}{x}{}{\p@ttern}\Ornaments{\p@ttern}}%
+    \hbox to \rule@wid{\orn@SetStretch{\rule@wid}{x}{}{\p@ttern}\Ornaments{\p@ttern}%\hss\vrule height \rule@thk width 0.1pt
+    }%
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
   \egroup
 }
