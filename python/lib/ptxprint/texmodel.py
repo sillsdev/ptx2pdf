@@ -1079,7 +1079,7 @@ class TexModel:
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
                                  Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
 
-        if chaprange is None or not len(chaprange) or \
+        if not isbk or not len(chaprange) or \
             (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
                 (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
