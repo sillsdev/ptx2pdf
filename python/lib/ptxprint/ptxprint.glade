@@ -8446,7 +8446,13 @@ be viewed or edited in Paratext.</property>
                                 <property name="tooltip-text" translatable="yes">After selecting one or more books to be
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
-if need be.</property>
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
                                 <property name="margin-end">6</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
@@ -8459,7 +8465,13 @@ if need be.</property>
                                     <property name="tooltip-text" translatable="yes">After selecting one or more books to be
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
-if need be.</property>
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                     <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
                                   </object>
@@ -14535,13 +14547,13 @@ of the page. </property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_xrSideAlign">
-                                                    <property name="label" translatable="yes">Side align notes</property>
+                                                    <property name="label" translatable="yes">Side Align Notes</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">For side column notes, do we align
-the text of the notes to the side of
-the main text?</property>
+                                                    <property name="tooltip-text" translatable="yes">For side column notes, should
+the text of the notes align to 
+the edge of the main text?</property>
                                                     <property name="valign">center</property>
                                                     <property name="margin-start">6</property>
                                                     <property name="margin-end">2</property>
