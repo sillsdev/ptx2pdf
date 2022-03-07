@@ -86,27 +86,27 @@ Corner elements normaly need to be larger than this, and
 scaling is used to ajusted their size to something appropriate.
 
 #### Rotation and mirroring
- `u` 0° rotation (up becomes Up)
- `v` Vertical mirror  (up becomes down)
- `h` Horizontal mirror (left becomes right)
- `d` 180° rotation (up becomes Down, left becomes right)
- `l` 90° rotation anticlockwise (up becomes Left)
- `r` 90° rotation clockise (up becomes Right)
- `L` 90° rotation anticlockwise, then mirror (up becomes Left, left becomes top)
- `R` 90° rotation clockise, then mirror (up becomes Right, right becomes top)
+ -  `u` 0° rotation (up becomes Up)
+ - `v` Vertical mirror  (up becomes down)
+ - `h` Horizontal mirror (left becomes right)
+ - `d` 180° rotation (up becomes Down, left becomes right)
+ - `l` 90° rotation anticlockwise (up becomes Left)
+ - `r` 90° rotation clockise (up becomes Right)
+ - `L` 90° rotation anticlockwise, then mirror (up becomes Left, left becomes top)
+ - `R` 90° rotation clockise, then mirror (up becomes Right, right becomes top)
 
 #### Stretching or repeating
- `x` use `\xleaders` to fill the space.
- `-` Stretch the ornament.
+ - `x` use `\xleaders` to fill the space.
+ - `-` Stretch the ornament.
 
 *Variable-based repetition*. 
 
- `?A`	Repeat A times, where A is 0 or 1
- `*A`	Repeat A times, where A >= 0
- `+A`   Repeat A times, where A > 0
- `(M,N)A` Repeat A times, where A>= M and A<=N
- `"A`	Repeat A times, using the same range for A as was last given (ditto marks)
- `=A`	Repeat A times, don't adjust A from previous sides.
+  - `?A`	Repeat A times, where A is 0 or 1
+  - `*A`	Repeat A times, where A >= 0
+  - `+A`   Repeat A times, where A > 0
+  - `(M,N)A` Repeat A times, where A>= M and A<=N
+  - `"A`	Repeat A times, using the same range for A as was last given (ditto marks)
+  - `=A`	Repeat A times, don't adjust A from previous sides.
 
 If conflicting definitions of the range are given, then the last range defined
 will take priority. Variables with *upper* case request a simple repetition,
@@ -207,11 +207,11 @@ scaled, then its centre will used). Other choices can be imposed using parameter
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
 ## Additional ornaments
-These ornaments have been defined in addition to the ornaments provided by the LaTeX package
- (0)	A square space
- (-1) 	A simple horizontal line across the middle of a square space 
- (-2)	A simple horizontal line across the middle of a rectangular space 1 high and 2 wide.
- (-3)	A simple horizontal line across the middle of a rectangular space 1 high and 5 wide.
+These ornaments have been defined in addition to the ornaments provided by the LaTeX package:
+ - (0)	A square space
+ - (-1) A simple horizontal line across the middle of a square space 
+ - (-2)	A simple horizontal line across the middle of a rectangular space 1 high and 2 wide.
+ - (-3)	A simple horizontal line across the middle of a rectangular space 1 high and 5 wide.
 
 ### Defining additional ornaments
 Ornament -1, for example, is defined as follows:
@@ -221,14 +221,14 @@ Ornament -1, for example, is defined as follows:
 The parameters to  `\LocalOrnament` are {ornament number} {x dimension} {y dimension} {code}
 Code elements recognised are:
 
- `\m X Y` Move to X,Y
- `\l X Y` Line from the current point to X,Y
- `\r X1 Y1 X2 Y2` Rectangle (X1,Y1) to (X2,Y2)
- `\c X1 Y1 X2 Y2 X3 y3` A bezier curve from the current point to (X3,Y3), using (X1,Y1) and (X2,Y2) as control points.
- `\o` Close path
- `\k`	Stroke
- `\s`	Fill and stroke (or just stroke if there's no fill colour)
- `\i` Clip to path
+ - `\m X Y` Move to X,Y
+ - `\l X Y` Line from the current point to X,Y
+ - `\r X1 Y1 X2 Y2` Rectangle (X1,Y1) to (X2,Y2)
+ - `\c X1 Y1 X2 Y2 X3 y3` A bezier curve from the current point to (X3,Y3), using (X1,Y1) and (X2,Y2) as control points.
+ - `\o` Close path
+ - `\k`	Stroke
+ - `\s`	Fill and stroke (or just stroke if there's no fill colour)
+ - `\i` Clip to path
  
 
 ## Debugging options
