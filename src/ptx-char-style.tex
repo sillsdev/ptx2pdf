@@ -101,9 +101,9 @@
   \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else
     \temptrue
-    \if\n@xt~\let\n@xt@\startch@rstyle@spc\else
-      \if\n@xt_\let\n@xt@\startch@rstyle@nl\else
-        \if\n@xt-\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\tempfalse\else
+    \if\n@xt~\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle}\else
+      \if\n@xt_\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
+        \if\n@xt-\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
 	  \let\n@xt@\startch@rstyle@misc\fi\fi\fi
     \iftemp
       \end@llpoppedstyles{\ss@Char}% Char style

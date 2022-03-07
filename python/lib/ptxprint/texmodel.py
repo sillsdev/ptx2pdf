@@ -1382,9 +1382,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{,6})) ([\S]{,9}\s*\n)", \
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{1,6})) ([\S]{1,9}\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{1,6}) ([^ 0-9\\\n\u2000\u00A0]{1,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
