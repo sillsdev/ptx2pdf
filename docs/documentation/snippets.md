@@ -24,12 +24,11 @@ editions where only limited verse hints are required.
 ```tex
 \newif\iffirstinpara \firstinparatrue
 \let\mytv=\defaultprintverse
-\def\defaultprintverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
-\def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname
-#1\endcsname
-    \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname
-_#1\endcsname}}
+\lowercase{\def\marginverse{\iffirstinpara\global\firstinparafalse\mytv\fi}}
+\def\paramarker#1{\expandafter\global\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
+    \expandafter\gdef\csname #1\endcsname{\firstinparatrue\csname _#1\endcsname}}
 \paramarker{p}\paramarker{q1}\paramarker{li}
+\let\defaultprintverse=\marginverse\newif\iffirstinpara \firstinparatrue
 ```
 
 ### Implementation
