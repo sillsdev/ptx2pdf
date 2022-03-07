@@ -238,9 +238,10 @@
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
-      \c@rrentcolwidth=\wd\c@rrentcolbox
+      \ifdim\c@rrentcolwidth=-1sp \c@rrentcolwidth=\wd\c@rrentcolbox\fi
       \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
-    \fi}%
+    \fi
+  }%
   \trace{t}{thr@shold=\the\thr@shold, exc@ss=\the\exc@ss, sp@re=\the\sp@re}%
   \f@reachcol{%
     \ifdim\c@rrentcolwidth=-1sp

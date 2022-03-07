@@ -3269,6 +3269,11 @@ class GtkViewModel(ViewModel):
     def onStyleEdit(self, btn):
         self.styleEditor.mkrDialog()
 
+    def editMarkerChanged(self, mkrw):
+        m = mkrw.get_text()
+        t = self.get("t_styName")
+        self.set("t_styName", re.sub(r"^.*?-", m+" -", t))
+
     def onStyleDel(self, btn):
         self.styleEditor.delKey()
 
