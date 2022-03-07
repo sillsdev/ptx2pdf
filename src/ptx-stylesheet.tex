@@ -816,7 +816,7 @@
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
   \ifdim\lastkern=-1sp \hangingversetrue\fi
-  \ifhangingverse\let\printverse\hangprintverse\else\let\printverse\defaultprintverse\fi
+  \ifhangingverse\global\let\baseprintverse\printverse\let\printverse\hangprintverse\else\let\printverse\baseprintverse\fi
   %\trace{hv}{lastkern \the\dimen0}%
   \bgroup\@v@}%
  %{.. was: \ll@p\bgroup\m@kedigitsother\@v@}%
@@ -1005,6 +1005,7 @@
 }
 \let\defaultprintverse=\simpleprintv@rse
 \let\printverse=\defaultprintverse                                               %(1)
+\let\baseprintverse=\printverse
 \def\@ne{1}
 \def\AdornVerseNumber#1{#1}                                                     %(3)
 

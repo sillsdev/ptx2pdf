@@ -234,7 +234,7 @@
   \f@reachcol{%
     \edef\tc@l{tc\the\@col}%
     \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}%
-    \ifx\p@ram\relax\c@rrentcolwidth=-1sp\else\ifnum\p@ram=0\relax\c@rrentcolwidth=-1sp\else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
+    \ifx\p@ram\relax\c@rrentcolwidth=-1sp\else\ifdim\p@ram\textwidth=0pt\relax\c@rrentcolwidth=-1sp\else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
