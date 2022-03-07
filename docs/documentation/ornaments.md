@@ -96,22 +96,84 @@ scaling is used to ajusted their size to something appropriate.
  `R` 90° rotation clockise, then mirror (up becomes Right, right becomes top)
 
 #### Stretching or repeating
-(At present there is no stretch *and* repeat)
-
  `x` use `\xleaders` to fill the space.
  `-` Stretch the ornament.
 
-*Variable-based repetition*. If conflicting definitions of the range are given, then the last range defined 
-will take priority.
- 
+*Variable-based repetition*. 
+
  `?A`	Repeat A times, where A is 0 or 1
  `*A`	Repeat A times, where A >= 0
  `+A`   Repeat A times, where A > 0
  `(M,N)A` Repeat A times, where A>= M and A<=N
  `"A`	Repeat A times, using the same range for A as was last given (ditto marks)
- `=A`	Repeat A times, don't adjust A.
+ `=A`	Repeat A times, don't adjust A from previous sides.
+
+If conflicting definitions of the range are given, then the last range defined
+will take priority. Variables with *upper* case request a simple repetition,
+variables with *lower* case indicate that the ornament is allowed to stretch 
+as well as repeat.
+
+The code determines the natural length of objects using the same variable, and
+then determines the values of the variables that give the best result (minimum 
+stretch or shrink required).
+
+#### Scaling
+The value of 1.0 means that for a horizontal border piece the element will 
+match the border-width. A value of `>1.0` means that the element will 
+appear larger than the requested border size, and a value `<1.0` means that the 
+element will be smaller. For *rules* the scaled ornaments aline along 
+the centre-line of the rule; for border objects the alingment edge  is away 
+from the centre, thus the corner pieces (which must be inculded in the top and bottom 
+patterns (and are often set with a scaling of 1.5-2.5), extend into the edges.
+
+##### Worked example
+E.g. If there are 4 ornaments in use (1,2,3,4), having natural lengths of 
+10pt, 13pt, 11pt and 15pt respectively, and the pattern elements are (shown
+here on separate lines and indented for clarity):
+```
+1||*A
+ 2||+B
+  3||+A
+   4||?c
+  3|h|"A
+ 2|h|*B
+1|h|"A
+```
+Then the final ranges are A(1 or more), B(0 or more), C(0 or 1). The length of the 
+border will be:
+```
+A*(10+11+11+10) + B*(13+13) + C*15
+```
+With a single stretchable component, ornament 4. The minimum length is 42pt (A=1,
+other variables 0). If a border of 50pt is requested, then ornament C will be 
+used to fill the missing 8pt of available space, but it will be shrunk to 8/15 of its 
+natural length. 
+
+If a border of 158 points is requested:
+
+ A | B | C |  Stretchy? | Stretch/Shrink
+---|---|---|------------|-------------
+ 3 | 1 | 1 |    Yes     |  -9pt
+ 3 | 1 | 0 |    No      |  6pt
+ 3 | 0 | 1 |    Yes     |  16pt
+ 2 | 3 | 0 |    No      |  -4pt
+ 2 | 2 | 1 |    Yes     | 7pt
+ 2 | 1 | 1 |    Yes     | 33pt
+ 1 | 4 | 1 |	Yes	| -3pt
+ 1 | 4 | 0 |	No	| 12pt
+ 0 | 6 | 0 | 	No 	| 2pt
+ 0 | 6 | 1 | 	Yes	| -12pt
+
+
+Although the combination (0,6,0) only has 2pt of stretch, the lack of
+stretchiness means that the combination (1,4,1) wins. If combination (0,6,0)
+were chosen, then there would be 2pt of whitespace in the border/rule, which is 
+highly undesirable. 
+
 
 ### The border pattern
+As a general rule, a pattern should *always* contain some stretch, even if this
+is by stretchable spacing elements.
 The border pattern is a comma-separated list of ornaments defined as above.
 Example:
 ```
@@ -124,7 +186,7 @@ This rule states that the top border is made up with:
  * Any number of spaces.
  * Corner piece ornament 39, flipped horizontally and scaled to 2.5.
 
-
+The other borders are specified as below:
 ```
 \BorderPatternBot 39|v||2.5,0||*,88|h|-,0||-,39|d||2.5
 \BorderPatternLeft 0|||0.2,88|l|-,0|l|*A,-2|l|*A,0|l|*A

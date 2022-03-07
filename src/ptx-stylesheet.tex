@@ -1660,7 +1660,8 @@
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
-\def\doc@t#1{
+\def\doc@t#1{%
+  \trace{sc}{Starting category #1}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands
