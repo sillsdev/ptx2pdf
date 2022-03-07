@@ -273,6 +273,7 @@ _sensitivities = {
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
+    "c_marginalverses" :       ["c_hangpoetry"],
     "c_noInternet" :           ["c_useEngLinks"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
@@ -3870,3 +3871,8 @@ class GtkViewModel(ViewModel):
 
     def btn_RemoveSBimage(self, btn):
         self.set("lb_sbFilename", "")
+
+    def onMarginalVersesClicked(self, btn):
+        self.onSimpleClicked(btn)
+        if self.sensiVisible("c_marginalverses"):
+            self.builder.get_object("c_hangpoetry").set_active(False)
