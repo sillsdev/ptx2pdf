@@ -148,6 +148,7 @@
 
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
+% \dimen1 ends up rounded down to an integral number of input \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
