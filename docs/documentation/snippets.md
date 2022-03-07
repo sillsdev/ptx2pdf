@@ -28,7 +28,7 @@ editions where only limited verse hints are required.
 \def\paramarker#1{\expandafter\global\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
     \expandafter\gdef\csname #1\endcsname{\firstinparatrue\csname _#1\endcsname}}
 \paramarker{p}\paramarker{q1}\paramarker{li}
-\let\defaultprintverse=\marginverse\newif\iffirstinpara \firstinparatrue
+\let\defaultprintverse=\marginverse
 ```
 
 ### Implementation
@@ -50,8 +50,10 @@ interested in tracking verse numbers in `\\q2` for example.
 
 ## Mirror Gutter
 
+[Note that this snippet is now redundant as the Layout page has an
+option for an "Outer Gutter"]
 This snippet puts the extra gutter margin on the outside of the page rather than
-the inside.
+the inside. 
 
 ```tex
 \BookOpenLefttrue
@@ -62,7 +64,7 @@ the inside.
 This is what happens implicitly when the RTL book order is specified. And it may
 have some unforeseen effects in regard to RTL type books.
 
-## Technique: Setting style paramaters in ptxprint-mods.tex
+## Technique: Setting style parameters in ptxprint-mods.tex
 
 This snippet is less a snippet as a technique. It shows two ways of setting
 style parameters from TeX.
