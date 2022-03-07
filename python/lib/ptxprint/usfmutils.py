@@ -600,6 +600,20 @@ class Module:
             with open(fname, encoding="utf-8") as inf:
                 self.doc = read_module(inf, self.sheets)
 
+    def getBookRefs(self):
+        books = set()
+        def _e(e, a, ca):
+            if e.name == "ref" or e.name == "refnp":
+                for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
+                    a.add(r.first.book)
+            else:
+                a.update(ca)
+            return a
+        def _t(e, a):
+            return a
+        res = sreduce(_e, _t, self.doc.doc, books)
+        return res
+
     def parse(self):
         if self.doc.doc is None:
             return []
@@ -645,7 +659,6 @@ class Module:
                                 p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
                             break
                     else:
-
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):

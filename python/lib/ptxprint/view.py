@@ -5,7 +5,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path
-from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
+from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
@@ -1170,14 +1170,18 @@ class ViewModel:
 
         # pictures and texts
         fpath = os.path.join(self.settings_dir, prjid)
+        scope = self.get("r_book")
+        if scope == "module":
+            bk = books[0]
+            res[os.path.join(fpath, bk)] = os.path.basename(bk)
+            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
+            cfgchanges['lb_bibleModule'] = os.path.basename(bk)
+            usfms = self.get_usfms()
+            mod = Module(os.path.join(fpath, bk), usfms=usfms)
+            books.extend(mod.getBookRefs())
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
-            if fname is None:
-                scope = self.get("r_book")
-                if scope == "module":
-                    res[os.path.join(fpath, bk)] = os.path.basename(bk)
-                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(bk)
-            else:
+            if fname is not None:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
