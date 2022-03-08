@@ -35,7 +35,7 @@ def readvrs(fname):
     for b in res:
         if len(b):
             b[0] = curr
-            curr += b[-1]
+            curr += b[-1] + len(b) - 1
         else:
             b.append(curr)
     return res
@@ -176,10 +176,10 @@ class Reference:
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(b64codes[v] for v in vals)
 
-    def asint(self):
+    def asint(self, chapshift=1):
         if self.vrs is None:
             self.loadvrs()
-        coffset = self.vrs[books[self.book]][self.chap-1] if self.chap > 1 else 0
+        coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
         return self.vrs[books[self.book]][0] + coffset + self.verse
 
     @classmethod
@@ -216,7 +216,7 @@ class Reference:
         return res
 
     @classmethod
-    def fromint(cls, val, bkstarts=None, chapshift=0):
+    def fromint(cls, val, bkstarts=None, chapshift=1):
         if cls.vrs is None:
             cls.loadvrs()
         if bkstarts is None:
@@ -236,7 +236,7 @@ class Reference:
                 return 0
             elif arr[i] > v:
                 return 1
-            elif i+1 < len(arr) and arr[i+1]  < v:
+            elif i+1 < len(arr) and arr[i+1] < v:
                 return -1
             return 0
         ind = binsearch(bkstarts, val, testbk)
@@ -275,6 +275,9 @@ class RefRange:
 
     def __str__(self):
         return self.str()
+
+    def __repr__(self):
+        return "RefRange({!r}-{!r})".format(self.first, self.last)
 
     def __eq__(self, other):
         if not isinstance(other, RefRange):
@@ -539,8 +542,12 @@ class RefList(list):
 
     def _addRefOrRange(self, start, curr, currmark, nextmark):
         curr.mark = currmark
-        self.append(curr if start is None else RefRange(start, curr))
-        res = Reference(curr.book, 0, 0)
+        if start is not None:
+            if curr.verse == 0:
+                curr.verse = 200
+            curr = RefRange(start, curr)
+        self.append(curr)
+        res = Reference(curr.first.book, 0, 0)
         currmark = nextmark
         return (res, currmark)
 
@@ -630,6 +637,8 @@ def tests():
         init = a.asint()
         end = b.asint()
         for r in res.allrefs():
+            if r.verse == 1 and r.chap != res[0].first.chap:
+                init += 1
             if r.asint() != init:
                 raise TestException("{} in {} is out of order".format(r, s))
             if init > end:
@@ -637,6 +646,7 @@ def tests():
             init += 1
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
+    testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
     t("JHN 3", "fQA", r("JHN", 3, 0))
     t("3JN 3", "kcD", r("3JN", 1, 3))
     t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
