@@ -234,3 +234,24 @@ Psalms (which may be drafted but unchecked). This snippet allows for specified c
 ```perl
 at PSA "(?s)\\c (3|5|9|24|119|142)[ \r\n].+?(?=\\c)" > ""
 ```
+
+## Display paragraph markers next to each paragraph
+
+A typesetter may use changes.txt to change the paragraph style for typesetting
+reasons. It can be helpful to know which paragraph styles are being used for
+each paragraph. This snippet adds that capability.
+
+Notice that you will need to define a zpmkr character style to style the marker
+text.
+
+```tex
+\catcode`\@=11
+\input marginnotes.tex
+\newcount\pcount \pcount=0
+{\catcode`\~=12 \lccode`\~=32 \lowercase{
+\gdef\parmkr{\setbox0=\vbox{\hbox{\ch@rstylepls{zpmkr}~\m@rker\ch@rstylepls{zpmkr}*}}%
+    \advance\pcount by 1
+    \d@marginnote{0}{\the\pcount}{zpmkr}}
+}}
+\addtoeveryparhooks{\parmkr}
+```
