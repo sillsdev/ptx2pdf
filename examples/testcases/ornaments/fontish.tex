@@ -1,0 +1,153 @@
+\def\pluginlist{ornaments}
+\input "paratext2.tex"
+\tracing{orn}
+\LocalOrnament{-11}{10}{10}{\m 0 0 \l 10 5 \k}
+\LocalOrnament{-12}{13}{10}{\m 0 5 \l 5 10 \k}
+\LocalOrnament{-13}{11}{10}{\m 0 10 \l 11 5 \k}
+\LocalOrnament{-14}{15}{10}{\m 0 5 \l 5 5 \l 7.5 0 \l 10 5 \l 15 5 \k }
+\StringOrnament{-15}{Gentium}{S}
+
+\catcode`\@=11
+\pluginjustwarntrue
+%\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
+%\input "ptx-extended.tex"
+%\input "ptxplus-marginalverses.tex"
+\showboxdepth=99\showboxbreadth=99
+\OmitVerseNumberOnetrue
+\def\ChapterVerseSeparator{\kern.1em:\kern.1em}
+\def\AfterVerseSpaceFactor{2}
+\def\AfterChapterSpaceFactor{3}
+% CROSSREFERENCES
+\AutoCallers{x}{}
+\ParagraphedNotes{x}
+
+% FOOTNOTES
+\ParagraphedNotes{f}
+\def\footnoterule{\hrule height 0.5pt\smallskip}
+
+% FONTSETTINGS
+\FontSizeUnit=1pt
+\def\LineSpacingFactor{1.0}
+\def\VerticalSpaceFactor{1}
+
+% HEADERFOOTER
+\def\HeaderPosition{0.33}
+\def\FooterPosition{0.5}
+
+% FOOTERCONTENT
+\def\RFtitleleft{\empty}
+\def\RFtitlecenter{\empty}
+\def\RFtitleright{\empty}
+\def\RFoddleft{\empty}
+\def\RFoddcenter{\empty}
+\def\RFoddright{\empty}
+\def\RFevenleft{\empty}
+\def\RFevencenter{\empty}
+\def\RFevenright{\empty}
+
+% HEADERCONTENT
+\VerseRefstrue
+\def\RHtitleleft{\empty}
+\def\RHtitlecenter{\empty}
+\def\RHtitleright{\empty}
+\def\RHoddleft{\firstref}
+\def\RHoddcenter{\pagenumber}
+\def\RHoddright{\lastref}
+\def\RHevenleft{\firstref}
+\def\RHevencenter{\pagenumber}
+\def\RHevenright{\empty}
+
+% HYPHENATION
+\hyphenpenalty=10000
+
+% ILLUSTRATIONS
+%\FigurePlaceholderstrue
+%\PicPath={/home/dennis/Publishing/testArea/ENG-LATN-JAS/Illustration/}
+
+% MARGINS
+\MarginUnit=15.0mm
+\def\TopMarginFactor{1.0}
+\def\BottomMarginFactor{0.67}
+\def\SideMarginFactor{0.67}
+
+% PAGELAYOUT
+\PaperHeight=210mm
+\PaperWidth=148mm
+
+% TEXTELEMENTS
+\expandafter\ifx\csname quotekernamount\endcsname\relax\else
+\quotekernamount=0.1em
+\fi
+% TEXBEHAVIOR
+\hfuzz=0.1pt
+\vfuzz=0.1pt
+
+% INSTALLED FONTS
+\def\regular{"Charis SIL"}
+\def\bold{"Charis SIL/B"}
+\def\italic{"Charis SIL/I"}
+\def\bolditalic{"Charis SIL/BI"}
+\font\charissilregular = "Charis SIL" at 12pt
+\font\charissilbold = "Charis SIL/B" at 12pt
+\font\charissilbolditalic = "Charis SIL/BI" at 12pt
+\font\charissilitalic = "Charis SIL/I" at 12pt
+
+% COLUMNS
+\BodyColumns=2
+\def\ColumnGutterFactor{15}
+
+
+\catcode`\@=12
+\stylesheet{usfm_sb.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{default-custom.sty}
+\tracing{sc}
+%\tracing{sC}
+\stylesheet{fontish.sty}
+%\tracing{C}
+%\tracing{e}
+\tracing{A}
+\tracing{m}
+\tracing{eb}
+%\tracing{s}
+%\tracing{sP}
+%\tracing{g}
+%\tracing{h}
+%\tracing{V}
+%\tracingmacros=1
+%\tracingassigns=1
+\tracing{orn}
+%\categorysheet{mycats.sty}
+\def\doLines{\doGridLines}
+%\unbalancedfalse
+\unbalancedtrue
+%\dimen\toprightins=13cm
+%\StyleCategory{People}{
+% \stylesheet{default-custom.sty}
+% \stylesheet{usfm.sty}
+%}
+% Set added material in desired form
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+\def\beginadd{\lower 1pt \hbox{\vrule width \addmtlqutelw height \addmtlquteht\vrule width \addmtlqutewd height \addmtlqutelw}\kern -1pt}
+\def\endadd{\kern -1pt \lower 1pt \hbox{\vrule width \addmtlqutewd height \addmtlqutelw\vrule width \addmtlqutelw height \addmtlquteht}}
+\def\RHoddcenter{\timestamp}
+\def\RHoddleft{\isodate}
+%\sethook{before}{m}{\dimen1=\prevdepth\message{TEST: \the\dimen1}\kern-\dimen1\vbox to 0pt{\vskip 0.5pt\hrule width 10em height 0.0pt depth 0.5pt}\vskip 0pt}
+%\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
+%\sethook{start}{m}{\beginadd\beginadd}
+%\sethook{end}{m}{\endadd\endadd}
+\sethook{before}{add}{|}
+\sethook{after}{add}{|}
+\sethook{start}{add}{\beginadd}
+\sethook{end}{add}{\endadd}
+\sethook{start}{cat:foo|cat}{}
+\sethook{end}{cat:foo|cat}{foo_hook>>}
+\csname ColorFontstrue\endcsname
+%\tracinggroups=1
+%\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
+%\boxorntrue
+%\nonstopmode
+\ptxfile{fontish.usfm}
+\bye

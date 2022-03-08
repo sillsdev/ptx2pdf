@@ -6,6 +6,8 @@ This 'plugin' provides access to ornamental borders around sidebars.
 ornamental separator lines.
 Eventually it is expected that it will also provide page-borders.
 
+### Sources of ornaments
+#### pgfornament package
 There is a LaTeX package called pgfornament (based on an earlier package 
 psvectorian), which provides access to pen-and-ink style vector-based artwork
 such as ornamental borders. Some of the artwork is unsuitable for use in
@@ -27,12 +29,25 @@ file.
 The stroke colour, stroke-width and fill colour may be selected at load-time.
 The current code provides for borders arround sidebars, with the parameters
 described within the style sheet.
+#### Locally defined ornaments
+Simple lines and other features can easily be hand-coded, using the same
+mechanisms as above. For future-compatability these have been given negative
+numbers.  (see section on additional ornaments, below).
 
-### Ignore other documentation: what this is not
+#### Border or dingbat fonts
+There are two mechanisms to access font-based border elements. Either:
+- a character or string from a specific font may be assigned an ornament number.
+- If most elements are from a global 'Ornament font', the desired string may
+be specified in the pattern string, instead of an ornament number. (Internally, this 
+auto-generates an ornament number). 
+
+If font-based elements are used, then only the (fill) colour can be specified.
+
+### This does not implement pgf!
 While using the images from the above packages, the  ornament-including code is
 in no way intended to be a version of the large and complex pgf-drawing
 enviromnment. It only replicates fragments of code that are necessary to
-draw the ornaments in PDFs. Most of the documentation in the latex package is
+draw the ornaments in PDFs. Almost all of the documentation from the latex package is
 therefore entirely irrelevant to using the ornaments with PTXprint.
 
 ### What this plugin adds
@@ -73,7 +88,7 @@ This is true for rules and for sidebars.
 ### Ornament specification
 Each ornament that builds part of the border is specified by four parameters. The parameters are separated by vertical bars `|`, and may be ommitted. 
 
- 1. Ornament number  
+ 1. Ornament number  (or string for font-based ornaments)
  2. Rotation/mirroring
  3. Stretch or repeat instructions.
  4. Scaling.
@@ -84,6 +99,11 @@ number.  Ornaments are normally set so that their height (width for
 vertical sides) matches the border thickness.  
 Corner elements normaly need to be larger than this, and 
 scaling is used to ajusted their size to something appropriate.
+
+If a string is specified, it must be enclosed in straight double quotes (`"thus"`).
+Specifying a string in the ornament specification is a shorthand which autogenerates a 
+new ornament number if there's no matching string already been used. Such ornaments always use the 
+font named by `\StringOrnamentFont`.
 
 #### Rotation and mirroring
  -  `u` 0° rotation (up becomes Up)
@@ -212,6 +232,39 @@ These ornaments have been defined in addition to the ornaments provided by the L
  - (-1) A simple horizontal line across the middle of a square space 
  - (-2)	A simple horizontal line across the middle of a rectangular space 1 high and 2 wide.
  - (-3)	A simple horizontal line across the middle of a rectangular space 1 high and 5 wide.
+
+### Font-based ornaments
+The following defines two new font-based ornaments. An ornament thus defined
+will be drawn using the fill colour, and will have no separate stroke or
+stroke-colour. It will scale and position just as other ornaments, (ignoring
+any font-defined baseline). The ornament may be mixed with ornaments from any
+other source, (including other fonts), and may be stretched, rotated, mirrored, etc 
+just like other ornaments. Numerical font positions may be given by the
+(strange) XeTeX notation of four carets followed by a four digit hexadecimal
+number. Multiple such characters may be used in a single string, as can any `\TeX` macros that 
+are acceptable for within a simple horizontal box (`\hbox`). 
+
+
+```
+\StringOrnament{402}{AGA Arabesque Desktop}{^^^^f057}
+\StringOrnament{403}{Times New Roman}{<-+=+->}
+\StringOrnament{403}{URW Chancery L}{\TeX}
+```
+
+If selecting ornaments as part of the pattern is preferred (and they all come from the same 
+`\StringOrnamentFont`), **and no TeX macros or primitives** are going to be used,
+ then the font to be used can be specified thus: (in the `ptx-premods.tex` file):
+```
+\def\StringOrnamentFont{AGA Arabesque Desktop}
+```
+
+And the stylesheet can include the string-pattern, enclosed in straight double-quotes:
+```
+\BorderPatternTop "^^^^f051"|||1.02,"^^^^f057"||*a,"^^^^f045"|||1.02
+```
+
+Behind the scenes, this checks for previous use of the string, and if it has not
+been used, calls `\StringOrnament` using the `\StringOrnamentFont`.
 
 ### Defining additional ornaments
 Ornament -1, for example, is defined as follows:

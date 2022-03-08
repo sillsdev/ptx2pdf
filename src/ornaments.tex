@@ -154,6 +154,8 @@
 % Transformation:
 \def\pdf@transformcm#1#2#3#4#5#6{%
   \addto@macro\pdfpath{#1 #2 #3 #4 #5 #6 }\sysprotocol@literal{cm}}
+\def\pdf@transformText{%
+  \pdf@transformcm{\strip@pt{\pdf@xunit}}{0}{0}{\strip@pt{\pdf@yunit}}{0}{0}}
 
 % Scopes
 \def\pdf@beginscope{\sysprotocol@literal{q}}
@@ -200,6 +202,27 @@
 	\x@\gdef\csname localornament@#1@Y\endcsname{#3}%
 	\x@\gdef\csname localornament@#1@code\endcsname{#4}%
 }
+\def\StringOrnament#1#2#3{\x@\global\x@\font\csname localornament@#1@font\endcsname "#2" at 32pt\setbox0\hbox{\csname localornament@#1@font\endcsname #3}%
+    \trace{orn}{Defining ornament #1 as box (\the\ht0+\the\dp0) x \the\wd0}%
+    \bgroup
+      \tracingassigns=1
+      \dimen0=\wd0\dimen1=\dimexpr \dimexpr \ht0+\dp0\relax\relax
+      \ifnum 1=\ifdim \the\dimen0=0pt 1 \else\ifdim \the\dimen1=0pt 1 \else 0\fi\fi
+	\x@\edef\csname localornament@#1@code\endcsname{\hbox{\csname localornament@#1@font\endcsname #3}}%
+	\x@\xdef\csname localornament@#1@X\endcsname{1}%
+	\x@\xdef\csname localornament@#1@Y\endcsname{1}%
+        \message{Cannot define zero-size ornament #1 properly}%
+      \else
+        \count255=\dimen0\advance\count255 by 32768 \divide\count255 by 65536
+	\x@\xdef\csname localornament@#1@X\endcsname{\the\count255}%
+        \count255=\dimen1\advance\count255 by 32768 \divide\count255 by 65536
+	\x@\xdef\csname localornament@#1@Y\endcsname{\the\count255}%
+        \tracingassigns=0
+	\x@\xdef\csname localornament@#1@code\endcsname{\noexpand\pdf@transformText\raise \the\dp0\hbox{\csname localornament@#1@font\endcsname #3}}%
+      \fi
+    \egroup
+  }
+
 \def\localornament@dims#1{\x@\let\x@\@pgfornamentX\csname localornament@#1@X\endcsname
   \x@\let\x@\@pgfornamentY\csname localornament@#1@Y\endcsname}%
 \LocalOrnament{0}{10}{10}{ }% A space
@@ -360,8 +383,24 @@
 \def\parse@repeat@class#1-#2)#3\E{\ifnum 0#2=0\set@repeat@class{#3}{#1}{}\else\set@repeat@class{#3}{#1}{#2}\fi}
 \newif\ifpdf@ornament@stretch
 \newif\ifpdf@ornament@repeat
+\def\StringOrnamentFont{AGA Arabesque Desktop}
+\newcount\orn@strings
+\orn@strings=1000
 \def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}\uppercase{\edef\tmpu{#2}}}
-
+\def\string@check #1"#2"#3\E{%
+  \edef\tmp{#1}\ifx\tmp\empty
+    \edef\tmp{#2}\ifx\tmp\empty\else
+      \stringornamenttrue
+      \edef\string@rnament{#2}%
+      \ifcsname orn@string\string@rnament\endcsname\else
+        \global\advance\orn@strings by 1 
+        \x@\xdef\csname orn@string\string@rnament\endcsname{\the\orn@strings}%
+        \StringOrnament{\the\orn@strings}{\StringOrnamentFont}{\string@rnament}%
+      \fi
+      \x@\let\x@\pdf@ornamentNum\csname orn@string\string@rnament\endcsname
+    \fi
+  \fi
+}
 %#1 ornament
 %#2 orientation
 %#3 Scale/mult
@@ -369,16 +408,23 @@
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
 % number in formal N.N, then a pre-set scale [which must have been set by setscale] will be applied 
 \newif\iflocalornament
+\newif\ifstringornament
 \def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
   \message{ornament@parse:#1:#2:#3}%
   \localornamentfalse
-  \get@ornamentDim{#1}%
+  \stringornamentfalse
+  \string@check#1""\E
+  \ifstringornament
+    \get@ornamentDim{\pdf@ornamentNum}%
+  \else
+    \get@ornamentDim{#1}%
+    \def\pdf@ornamentNum{#1}%
+  \fi
   %\ifx\dimen1=0pt
   %  \localornamenttrue
   %  \not@pgfornamentdim{#2}%
   %\fi
   \trace{orn}{Dimensions: \@pgfornamentX, \@pgfornamentY}%
-  \def\pdf@ornamentNum{#1}%
   \setornamenttransform{#2}%
   \pdf@ornament@stretchfalse
   \pdf@ornament@repeatfalse
