@@ -103,6 +103,9 @@ class Reference:
     def __str__(self):
         return self.str()
 
+    def __repr__(self):
+        return "Reference({mark} {book} {chap}:{verse} {subverse})".format(**self.__dict__)
+
     def __eq__(self, o):
         if not isinstance(o, Reference):
             return False
@@ -430,6 +433,7 @@ class RefList(list):
         self = cls()
         curr = Reference(None, 0, 0) if starting is None else starting
         currmark = None
+        nextmark = None
         start = None
         mode = ""
         txt = re.sub(r"[\u200F]", "", s)
@@ -437,7 +441,7 @@ class RefList(list):
             while len(b):
                 if b == "end":
                     if mode != "r":
-                        curr = self._addRefOrRange(start, curr)
+                        curr = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     if curr.chap > 0 and curr.verse == 0:
                         curr.chap = 200
@@ -450,13 +454,13 @@ class RefList(list):
                 if remarks is not None:
                     m = remarks.match(b)
                     if m:
-                        currmark = m.group(1)
+                        nextmark = m.group(1)
                         b = b[m.end():]
                         continue
                 m = rebook.match(b)
                 if m:
                     if mode != "r" and mode != "":
-                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     bookinfo = m.groups()
                     curr.book = context.getBook(bookinfo[-1])
@@ -466,7 +470,7 @@ class RefList(list):
                 m = recv.match(b)
                 if m:
                     if mode not in "br":
-                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     curr.chap = int(m.group(1))
                     if m.group(2):
@@ -487,14 +491,14 @@ class RefList(list):
                             raise SyntaxError("invalid string {} in context of {}".format(b, curr))
                         if mode not in "bcr":
                             c = curr.chap
-                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                             start = None
                             curr.chap = c
                         curr.subverse = m.group(2) or None
                         curr.verse = v
                     else:
                         if mode not in "bcr":
-                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                             start = None
                         mode = "c"
                         curr.chap = v
@@ -510,7 +514,7 @@ class RefList(list):
                     continue
                 raise SyntaxError("Unknown string component {} in {}".format(b, s))
         if mode != "r" and mode != "":
-            self._addRefOrRange(start, curr, currmark)
+            self._addRefOrRange(start, curr, currmark, nextmark)
         return self
 
     def str(self, context=None, level=0, addsep=RefSeparators()):
@@ -533,11 +537,11 @@ class RefList(list):
     def __contains__(self, other):
         return any(other in x for x in self)
 
-    def _addRefOrRange(self, start, curr, currmark):
+    def _addRefOrRange(self, start, curr, currmark, nextmark):
         curr.mark = currmark
         self.append(curr if start is None else RefRange(start, curr))
         res = Reference(curr.book, 0, 0)
-        currmark = None
+        currmark = nextmark
         return (res, currmark)
 
     def simplify(self):

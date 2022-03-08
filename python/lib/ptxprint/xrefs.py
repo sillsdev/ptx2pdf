@@ -102,10 +102,11 @@ class RefGroup(list):
     pass
 
 class XMLXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None, context=None):
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None, context=None, shownums=True):
         super().__init__(separators)
         self.filters = filters
         self.context = context or BaseBooks
+        self.shownums = shownums
         if localfile is not None:
             sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
             btmap = {}
@@ -154,7 +155,7 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None else ""
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
@@ -226,7 +227,7 @@ class XMLXrefs(BaseXrefs):
 
 
 class Xrefs:
-    def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile):
+    def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile, showstrongsnums):
         self.parent = parent
         self.prjdir = prjdir
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
@@ -239,7 +240,7 @@ class Xrefs:
         logger.debug(f"Source: {source}")
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
         if source == "strongs":
-            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, separators=seps, context=parent.ptsettings)
+            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums)
         elif xrfile is None:
             self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), filters, separators=seps, listsize=listsize)
         elif xrfile.endswith(".xml"):

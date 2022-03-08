@@ -1692,6 +1692,6 @@ class TexModel:
                     localfile = None
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
-                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile)
+                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile, self.dict['strongsndx/shownums'])
         self.xrefs.process(bk, outpath)
 
