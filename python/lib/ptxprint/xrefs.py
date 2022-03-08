@@ -111,7 +111,8 @@ class XMLXrefs(BaseXrefs):
             btmap = {}
             for s in sinfodoc.findall('.//strong'):
                 btmap[s.get('btid')] = s.get('ref')
-            termsdoc = et.parse(localfile)
+            with open(localfile, encoding="utf8") as inf:
+                termsdoc = et.parse(inf)
             self.strongsfilter = set()
             for r in termsdoc.findall('.//TermRendering'):
                 rend = r.findtext('Renderings')

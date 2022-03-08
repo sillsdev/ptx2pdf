@@ -369,7 +369,8 @@ ModelMap = {
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
     "scripts/arab/lrcolon":     ("c_scrarabrefs", None),
 
-    "strongsndx/includenames":  ("c_strongsInclNames", None),
+    # "strongsndx/includenames":  ("c_strongsInclNames", None),
+    "strongsndx/shownums":      ("c_strongsShowNums", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
     "strongsndx/showgreek":     ("c_strongsGrk", None),

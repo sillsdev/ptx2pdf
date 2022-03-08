@@ -1593,7 +1593,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.1.6</property>
+    <property name="version">Version 2.1.5</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -2927,14 +2927,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2945,27 +2945,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2982,7 +2982,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -7923,7 +7923,6 @@ describe the purpose of the style.</property>
                 <property name="max-length">25</property>
                 <property name="width-chars">20</property>
                 <property name="placeholder-text">xyz</property>
-                <signal name="changed" handler="editMarkerChanged" swapped="no"/>
               </object>
               <packing>
                 <property name="left-attach">2</property>
@@ -14326,16 +14325,19 @@ Biblical Terms List.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_strongsInclNames">
-                                                    <property name="label" translatable="yes">Include Proper Nouns</property>
-                                                    <property name="sensitive">False</property>
+                                                  <object class="GtkCheckButton" id="c_strongsShowNums">
+                                                    <property name="label" translatable="yes">Show Strong's Numbers</property>
+                                                    <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="no-show-all">True</property>
-                                                    <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
-cluttering the index and cross-references with
-too much detail, you may choose to exclude 
-proper nouns (names of people and places).</property>
+                                                    <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
+index, then it is highly recommended to
+include the Strong's numbers in the list 
+of cross-references in the text.
+
+But if you only want to show the references
+without any Strong's numbers, then uncheck
+this option for a more compact list.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
                                                     <property name="active">True</property>
@@ -14354,7 +14356,26 @@ proper nouns (names of people and places).</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <placeholder/>
+                                              <object class="GtkCheckButton">
+                                                <property name="label" translatable="yes">Include Proper Nouns
+(c_strongsInclNames)</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="no-show-all">True</property>
+                                                <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
+cluttering the index and cross-references with
+too much detail, you may choose to exclude 
+proper nouns (names of people and places).</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="active">True</property>
+                                                <property name="draw-indicator">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">4</property>
+                                              </packing>
                                             </child>
                                           </object>
                                           <packing>

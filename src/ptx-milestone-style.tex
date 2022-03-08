@@ -455,6 +455,7 @@
 }
 \def\dostr@ngs#1#2#3#4#5#6#7\E{%
 % #1 style, #2 align, #3 #4 #5 #6 4 digits, #7 dummy
+ \ifn@npublishable\else
   \trace{m}{dostr@ngs #1, #2, #3, #4, #5, #6, #7}%
   \bgroup\s@tfont{#1}{\styst@k}%
     \setbox0=\hbox{\if #4+\relax #3\else\if #6+\relax #3\else #3#4\fi\fi}%
@@ -465,4 +466,5 @@
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox0\if#2l\relax\hfil\fi}%
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
     }\egroup
+ \fi
 }

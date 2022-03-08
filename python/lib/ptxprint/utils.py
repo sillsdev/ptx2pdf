@@ -6,7 +6,7 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
 
-DataVersion = 1
+DataVersion = 2
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L

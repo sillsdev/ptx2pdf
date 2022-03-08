@@ -70,7 +70,7 @@ class ParatextSettings:
         doc = et.parse(fpath)
         for b in doc.findall(".//book"):
             bkid = b.get("code")
-            tocs = [b.get(a, None) for a in ("long", "short", "abbr")]
+            tocs = [b.get(a, "") for a in ("long", "short", "abbr")]
             for i in range(len(tocs)-2,-1, -1):
                 if tocs[i] == "":
                     tocs[i] = tocs[i+1]
