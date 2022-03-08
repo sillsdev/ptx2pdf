@@ -359,12 +359,13 @@ class RefRange:
 
     @classmethod
     def maxRange(cls, bk, chap):
-        f = Reference(bk, chap, 0)
+        res = cls(Reference(bk, chap, 0), Reference(bk, 0, 0))
         if chap == 0:
             chap = chaps[bk]
-        verse = self._getmaxvrs(bk, chap)
-        l = Reference(bk, chap, verse)
-        return cls(f, l)
+        verse = res._getmaxvrs(bk, chap)
+        res.last.chap = chap
+        res.last.verse = verse
+        return res
 
 class AnyBooks:
     @classmethod
