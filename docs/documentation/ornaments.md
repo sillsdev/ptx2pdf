@@ -226,6 +226,13 @@ Normally ornaments for rules are aligned centrally (i.e. if an element is
 scaled, then its centre will used). Other choices can be imposed using parameter. 
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
+## Using the pgfhan ornaments
+The pgfhan ornament set may be selected by adding this line to
+`ptx-premods.tex` file (after `ornaments.tex` has been loaded). 
+ ```
+\def\OrnamentsFamily{pgfhan}
+```
+
 ## Additional ornaments
 These ornaments have been defined in addition to the ornaments provided by the LaTeX package:
  - (0)	A square space

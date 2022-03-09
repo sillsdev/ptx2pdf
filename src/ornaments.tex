@@ -48,8 +48,8 @@
 \let\x@\expandafter
 \x@\let\csname orn@skip176\endcsname\relax
 \let\ornamentmaxwidth\empty
-\gdef\pgfOrnamentsObject{pgflibraryvectorian.code.tex} 
 \gdef\OrnamentsFamily{vectorian}
+\gdef\pgfOrnamentsObject{pgflibrary\OrnamentsFamily.code.tex} 
 \newtoks\tmptoks
 \def\setorn@scale{%
   \tmptoks{}%
@@ -171,6 +171,7 @@
 \def\sysprotocol@literal#1{\let\tmp\pdfpath\xdef\pdfpath{}\x@\pdf@special{\tmp#1}\xdef\pdfcommands{}}
 \edef\orn@clip{clip}
 \edef\orn@stroke{stroke}
+\edef\orn@bb{boundingbox}
 
 \def\orn@usepath#1{%
   \edef\tmp{#1}%
@@ -180,7 +181,11 @@
     \ifx\tmp\orn@stroke
       \pdf@stroke
     \else
-      \errmessage{orn@usepath: #1 unrecognised}%
+      \ifx\tmp\orn@bb
+        \pdf@clipnext
+      \else
+        \errmessage{orn@usepath: #1 unrecognised}%
+      \fi
     \fi
   \fi
 }
@@ -188,6 +193,7 @@
 \def\orn@setup{%
   \def\i{\orn@usepath{clip}}%
   \def\k{\orn@usepath{stroke}}%
+  \def\ubb{\orn@usepath{boundingbox}}%
   \let\o\pdf@closepath
   \def\p ##1##2{\orn@qpoint{##1}{##2}}%
   \def\m ##1 ##2 {\edef\tmp{\p{##1}{##2}}\x@\pdf@moveto\tmp}%
@@ -234,7 +240,11 @@
   \ifcsname localornament@#1@X\endcsname
     \localornament@dims{#1}%
   \else
-    \@pgfornamentDim{#1}%
+    \ifcsname @pgfornamentDim\endcsname
+      \@pgfornamentDim{#1}%
+    \else
+      \errmessage{@pgfornamentDim not defined. Probably the path from the TEXINPUTS environment variable does not include \pgfOrnamentsObject}%
+    \fi
   \fi
 }
 \def\get@ornament@Code{%
@@ -242,6 +252,7 @@
     \csname localornament@\pdf@ornamentNum @code\endcsname
   \else
     \m@kedigitsother
+      \catcode`\%=5
       \input \OrnamentsFamily\pdf@ornamentNum.pgf%
     \m@kedigitsletters
   \fi
@@ -991,7 +1002,7 @@
 
 
 \def\ornamentheight{20pt}\def\ornamentwidth{}
-\input pgflibraryvectorian.code.tex
+\addtoinithooks{\includeifpresent{\pgfOrnamentsObject}}%
 \catcode`\@=11
 \def\m@rker{esb}
 
@@ -1063,4 +1074,5 @@
 
 \edef\borderstylelist{\borderstylelist, ornaments}
 \plugin@endif
-
+\let\typeout\message
+\let\pgfsetrectcap\relax

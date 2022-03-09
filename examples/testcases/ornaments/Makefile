@@ -1,10 +1,12 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+PATH:=$(DIR):/tmp/pgfornament//:$(shell kpsepath -n xetex tex)
+
 .tex.pdf:
 	#TEXINPUTS=.:$(DIR) xetex -no-pdf $<
-	TEXINPUTS=$(DIR):`kpsepath -n xetex tex` xetex $<
-	TEXINPUTS=$(DIR):`kpsepath -n xetex tex` xetex $<
+	TEXINPUTS="$(PATH)" xetex $<
+	TEXINPUTS="$(PATH)" xetex $<
 	
 
 test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty
