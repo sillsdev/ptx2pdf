@@ -37,6 +37,10 @@
 \newbox\sid@barnotes % Box in which notes are placed in a sidebar
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
+\def\S@tCat#1{\trace{sc}{Started Category #1}%
+  \gdef\c@tegory{#1}%
+  \s@tc@tpr@fix%
+}
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
 \def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
@@ -71,7 +75,10 @@
 %\setsbp@ram{borderfillcolour}{none} % For double.
 %\setsbp@ram{borderhpadding}{0} %FontSizeUnits
 %\setsbp@ram{bordervpadding}{0} %FontSizeUnits
-\let\m@rker\relax
+\S@tCat{pageborder}
+\setsbp@ram{borderlinewidth}{0.05}
+\S@tCat{}
+\let\c@tegory\empty
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 \newif\ifNoTransparency
@@ -444,6 +451,27 @@
 \endbc@l}%
 }
 
+\def\TextBorderStyle{plain}
+\def\doTextB@rder#1{%
+  \ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
+    \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
+      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1, \the\wd#1}%
+      \bgroup 
+        \S@tCat{pageborder}%
+        %\setbox\b@rderbox\vbox to \dimexpr #1 + \TextBorderExtra*2\relax{\hsize=\dimexpr \textwidth+\TextBorderExtra*2\relax\hss\vss}%Placeholder
+        \let\b@drtop\tr@e\let\b@drbottom\tr@e
+        \let\b@drleft\tr@e\let\b@drright\tr@e
+        \edef\b@drwidth{8}%
+        \edef\border@hpadding{2pt}%
+        \edef\border@vpadding{2pt}%
+        \prepb@rderbox{#1}%
+        \csname mkb@rder@\TextBorderStyle\endcsname
+        \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+      \egroup
+    \fi\fi
+  \fi\fi\fi
+}
+\def\TextBorderExtra{10pt}
 
 \def\@@sb@rbotedge#1{\bgroup
   \setbox0\hbox{#1}\p@cheight=\ht0
@@ -932,10 +960,6 @@
 
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
 
-\def\S@tCat#1{\trace{sc}{Started Category #1}%
-  \gdef\c@tegory{#1}%
-  \s@tc@tpr@fix%
-}
 \def\showTheCategory{\c@tegory\message{The category is \c@tegory}}
 
 \def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}

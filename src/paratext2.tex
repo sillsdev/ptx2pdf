@@ -784,7 +784,9 @@
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
       \dimen9=\ht\partial
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
+      \ifvoid\partial\else \vbox{%
+         % \doTextB@rder{\partial}%2
+          \hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -798,7 +800,11 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
         \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
-        \vbox to\dimen3{\box\colA\kern0pt\vfil}%
+        \vbox to\dimen3{%
+          \ifdim\ht\colA>14\FontSizeUnit
+            \doTextB@rder{\colA}%3
+          \fi
+          \box\colA\kern0pt\vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
@@ -1005,8 +1011,9 @@
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
     \locs@startstop{\colA}{1}%
-    \global\setbox\partial=\vbox{
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
+    \global\setbox\partial=\vbox{%
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{%
+        \vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -1048,6 +1055,7 @@
     \ifnum\outputpenalty<-10000 \temptrue\fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \def\pagecontents{%
+        \doTextB@rder{\partial}%
         \box\partial
         \p@geendcontent
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
@@ -1684,10 +1692,13 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
-      \vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
+      \setbox\colA=\vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
           \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
           \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}
-        \kern\lastd@pth}}%
+        \kern\lastd@pth}%
+      \doTextB@rder{\colA}%
+      \box\colA
+      }%
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
@@ -1811,14 +1822,17 @@
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
-        \vbox{\hbox to \dimen1{\vbox{\unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
+        \vbox{\hbox to \dimen1{\vbox{%
+          \unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
-      \hbox to \dimen1{\noindent\hbox to \columnshift{}%
+      \setbox\colA\hbox to \dimen1{\noindent\hbox to \columnshift{}%
         \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
         \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
+      \doTextB@rder{\colA}%
+      \box\colA
       \p@geendcontent
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
@@ -1979,6 +1993,7 @@
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
     \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
+      \doTextB@rder{\partial}%1
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
