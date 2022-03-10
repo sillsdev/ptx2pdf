@@ -51,8 +51,8 @@ class ViewModel:
         # modelname: (attribute, isMultiple, label)
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
-        "project/selectscript":     ("customScript", False, None),
-        "project/customXRfile":     ("customXRfile", False, None),
+        "project/selectscript":     ("customScript", False, "btn_selectScript"),
+        "project/selectxrfile":     ("customXRfile", False, "btn_customXrFile"),
         "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
