@@ -1023,7 +1023,7 @@ class TexModel:
                 hasrun = False
                 with open(script, encoding="utf-8") as scriptf:
                     l = scriptf.readline().replace("\uFEFF", "")
-                    if re.match(r"^#!.*?(?<=[ /!])python", l):
+                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
                         scriptf.seek(0)
                         sys._argv = sys.argv
                         sys.argv = [script, infpath, outfpath]

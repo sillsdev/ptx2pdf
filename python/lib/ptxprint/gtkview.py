@@ -1989,7 +1989,7 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_processScript"):
             self.builder.get_object("btn_editScript").set_sensitive(False)
         else:
-            if self.get("btn_selectScript") != None:
+            if self.customScript != None:
                 self.builder.get_object("btn_editScript").set_sensitive(True)
 
     def onIntroOutlineClicked(self, btn):
@@ -2680,10 +2680,9 @@ class GtkViewModel(ViewModel):
         self.editFile(fname, loc)
 
     def onEditScriptFile(self, btn):
-        customScriptFPath = self.get("btn_selectScript")
-        scriptName = os.path.basename(customScriptFPath)
-        scriptPath = customScriptFPath[:-len(scriptName)]
-        if len(customScriptFPath):
+        scriptName = os.path.basename(self.customScript)
+        scriptPath = os.path.dirname(self.customScript)
+        if self.customScript:
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):

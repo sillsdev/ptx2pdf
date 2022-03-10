@@ -1298,7 +1298,7 @@ class ViewModel:
         if interlang is not None:
             res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
 
-        script = self.get("btn_selectScript")
+        script = self.customScript
         if script is not None and len(script):
             res[script] = os.path.basename(script)
             cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
