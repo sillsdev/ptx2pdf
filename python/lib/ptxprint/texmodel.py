@@ -1,4 +1,4 @@
-import configparser, re, os, traceback
+import configparser, re, os, traceback, sys
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
@@ -1010,13 +1010,28 @@ class TexModel:
 
     def runConversion(self, infpath, outdir):
         outfpath = infpath
-        if self.dict['project/processscript'] and self.dict['project/selectscript']:
+        script = self.dict['project/selectscript']
+        if self.dict['project/processscript'] and script:
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
-            cmd = [self.dict["project/selectscript"], infpath, outfpath]
-            checkoutput(cmd) # dont't pass cmd as list when shell=True
+            cmd = [script, infpath, outfpath]
+            if script.lower().endswith(".bat") and sys.platform == "win32":
+                cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
+            else:
+                hasrun = False
+                with open(script, encoding="utf-8") as scriptf:
+                    l = scriptf.readline().replace("\uFEFF", "")
+                    if re.match(r"^#!.*?(?<=[ /!])python", l):
+                        scriptf.seek(0)
+                        sys._argv = sys.argv
+                        sys.argv = [script, infpath, outfpath]
+                        exec(scriptf.read())
+                        sys.argv = sys._argv
+                        hasrun = True
+                if not hasrun:
+                    checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def runChanges(self, changes, bk, dat):
