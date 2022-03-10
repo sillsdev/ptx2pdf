@@ -75,8 +75,14 @@
 %\setsbp@ram{borderfillcolour}{none} % For double.
 %\setsbp@ram{borderhpadding}{0} %FontSizeUnits
 %\setsbp@ram{bordervpadding}{0} %FontSizeUnits
-\S@tCat{pageborder}
+\def\m@rker{textborder}
 \setsbp@ram{borderlinewidth}{0.05}
+\setsbp@ram{borderwidth}{8}
+\setsbp@ram{borderhpadding}{2}
+\setsbp@ram{bordervpadding}{2}
+\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
+\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
+\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
 \S@tCat{}
 \let\c@tegory\empty
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
@@ -457,16 +463,21 @@
     \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
       \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1, \the\wd#1}%
       \bgroup 
-        \S@tCat{pageborder}%
+        \def\sb@rmarker{textborder}%
+        \S@tCat{\id@@@}%
         %\setbox\b@rderbox\vbox to \dimexpr #1 + \TextBorderExtra*2\relax{\hsize=\dimexpr \textwidth+\TextBorderExtra*2\relax\hss\vss}%Placeholder
-        \let\b@drtop\tr@e\let\b@drbottom\tr@e
-        \let\b@drleft\tr@e\let\b@drright\tr@e
-        \edef\b@drwidth{8}%
-        \edef\border@hpadding{2pt}%
-        \edef\border@vpadding{2pt}%
+        \get@border@style@params
+        %\let\b@drtop\tr@e\let\b@drbottom\tr@e
+        %\let\b@drleft\tr@e\let\b@drright\tr@e
+        %\hasb@rdertrue
+        \ifx\b@drstyle\relax
+          \let\b@drstyle\TextBorderStyle
+        \fi
         \prepb@rderbox{#1}%
-        \csname mkb@rder@\TextBorderStyle\endcsname
-        \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+        \ifhasb@rder
+          \csname mkb@rder@\b@drstyle\endcsname
+          \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+        \fi
       \egroup
     \fi\fi
   \fi\fi\fi
@@ -594,6 +605,24 @@
 
 \x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
 
+\def\get@border@style@params{%Read the border-related parameters
+  \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
+  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
+  \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
+  %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
+  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
+  \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
+}
+
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
   \ifhe@dings\endhe@dings\fi
@@ -625,22 +654,10 @@
   \inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
   \let\os@vedhpadding=\fb@hpadding%
-  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \get@border@style@params
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
-  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
-  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
-  \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
-  %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
-  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
@@ -770,8 +787,6 @@
       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
     \let\b@drtop=\fstb@drtop
-    \getsbp@ram{bordercolour}%
-    \let\b@drcol\cp@ram
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifhasb@rder % any border
       \ifx\b@drstyle\relax
@@ -975,7 +990,7 @@
 \def\B@rderINNER{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
 \def\B@rderOUTER{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
 \def\B@rderALL{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
-\def\B@rderNone{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
+\def\B@rderNONE{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
 
 \addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}
 \def\g@nbox#1{%For some reason, this prefers to be in its own macro.
