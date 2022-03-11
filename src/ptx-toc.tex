@@ -172,14 +172,15 @@
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
-  \edef\t@mpd{tcr\the\count252}%
+  \edef\t@mpd{tc\ifRTL\else r\fi\the\count252}%
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
   \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}%
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\count252}
     \d@ftoc{tc\the\count252 :fill}{}
-    \global\advance\count252 by -1
-    \d@ftoc{tc\the\count252 :fill}{\l@drs}
+    \ifRTL\d@ftoc{leaders-tcr\the\count252}{}\fi
+    %\global\advance\count252 by -1
+    %\d@ftoc{tc\the\count252 :fill}{\l@drs}
   \fi
   \gdef\tablecategory{}%
 }
@@ -208,10 +209,10 @@
   \count252=1
   \loop
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
+    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\rightskip=0pt\l@drs}
     \d@ftoc{tc\the\count252 :fill}{\l@drs}
-    \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs\hskip #2}
-    \d@ftoc{leaders-tcc\the\count252}{\rightskip=0pt\leftskip=0pt\hskip #2 \l@drs\hskip #2}
+    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs}
+    \d@ftoc{leaders-tcc\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs}
     \advance\count252 by 1
   \ifnum\count252<5\repeat
 }
