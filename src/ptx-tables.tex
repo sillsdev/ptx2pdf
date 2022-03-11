@@ -337,18 +337,10 @@
       \let\n@xt=\leftskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifx\the@lign\cell@r
-        \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil
-    \else\ifx\the@lign\cell@c
-        \nobreak\csname \c@tprefix leaders-tcc\the\@col\endcsname
-    \fi\fi
+    \ifcsname \c@tprefix leaders-tcr\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil\fi
     \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
-    \ifx\the@lign\cell@l
-        \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil
-    \else\ifx\the@lign\cell@c
-        \nobreak\csname \c@tprefix leaders-tcc\the\@col\endcsname
-    \fi\fi
+    \x@\ifx\csname \c@tprefix leaders-tc\the\@col\endcsname\empty\else\nobreak\csname \c@tprefix leaders-tc\the\@col\endcsname\hfil\fi
     \par}%
   \wd0=\c@rrentcolwidth
   \box0}
