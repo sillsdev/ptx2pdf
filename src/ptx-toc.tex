@@ -178,9 +178,7 @@
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\count252}
     \d@ftoc{tc\the\count252 :fill}{}
-    \ifRTL\d@ftoc{leaders-tcr\the\count252}{}\fi
-    %\global\advance\count252 by -1
-    %\d@ftoc{tc\the\count252 :fill}{\l@drs}
+    \d@ftoc{leaders-tc\the\count252}{}
   \fi
   \gdef\tablecategory{}%
 }
@@ -209,10 +207,11 @@
   \count252=1
   \loop
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\rightskip=0pt\l@drs}
+    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
+    \ifnum\count252>1
+      \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\l@drs\hskip #2}
+    \fi
     \d@ftoc{tc\the\count252 :fill}{\l@drs}
-    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs}
-    \d@ftoc{leaders-tcc\the\count252}{\rightskip=0pt\leftskip=0pt\l@drs}
     \advance\count252 by 1
   \ifnum\count252<5\repeat
 }
