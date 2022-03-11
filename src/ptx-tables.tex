@@ -100,7 +100,17 @@
   \@ndrow
   \global\advance\tabler@ws by 1
   \tablec@l=0
-  \@tablerowtrue \@TR \@tablerowfalse
+  \@tablerowtrue      
+   %\@TR 
+   %\p@rstyle{tr}%
+  
+   \s@tbaseline{\m@rker}{\styst@k}%
+   \global\startparatrue
+   \resetp@rstyle
+   \p@rstyle@everypar{tr}%
+   %\mcpop
+   %\s@tstyst@k
+  \@tablerowfalse
   \@rowtrue\trace{t}{rows=\the\tabler@ws}%
   \ignorespaces}
 
@@ -191,16 +201,18 @@
 %\tracingassigns=1
 \def\startt@ble{%
   \ifdoingt@ble \else
+    \ifhe@dings\endhe@dings\fi
+    \endlastp@rstyle{tr}%
     \let\stylet@pe\ss@Tbl
     \mcpush{\stylet@pe}{tr}%
-    \ifhe@dings\endhe@dings\fi
+    \s@tstyst@k
     \bgroup
     \tabler@ws=0
     \tablec@l=0
     \global\maxtablec@l=0
     \doingt@bletrue\inn@tetrue
     \message{starting table cat:\tablecategory \c@tegory}%
-    \ifx\tablecategory\empty\else\doc@t{\tablecategory}\fi
+    \ifx\tablecategory\empty\else\global\doc@t{\tablecategory}\fi
   \fi}
 \newdimen\t@talwidth
 \def\endt@ble{%
@@ -215,8 +227,8 @@
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
     \end@llpoppedstyles{\ss@Tbl*}%
     \doingt@blefalse\inn@tefalse
-    \ifx\tablecategory\empty\else\@ndc@t\fi
     \egroup
+    \let\tablecategory\empty
   \fi}
 
 \def\endt@blewrap{%
@@ -330,11 +342,13 @@
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
-      \let\n@xt=\rightskip
+      \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
+      %\let\n@xt=\leftskip
     \else\ifx\the@lign\cell@c
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
-      \let\n@xt=\leftskip
+      \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
+      %\let\n@xt=\rightskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
     \ifx\the@lign\cell@r

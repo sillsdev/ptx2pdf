@@ -443,8 +443,12 @@
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
-  \trace{sP}{Redefined everypar}%
+  \p@rstyle@everypar{#1}%
+  \traceifcheck{p@rstyle}%
+ \fi}
 %+cpar_parstyle_start
+\def\p@rstyle@everypar#1{%
+  \trace{sP}{Redefined everypar}%
   \everypar={%
    \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname'}%
    %
@@ -550,8 +554,7 @@
    \startparafalse\first@fterheadingfalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }% end everypar
-  \traceifcheck{p@rstyle}%
- \fi}
+}
 %-cpar_parstyle_final
 
 %+cpar_pdfbookmark
