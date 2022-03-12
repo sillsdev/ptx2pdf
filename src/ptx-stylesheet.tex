@@ -87,7 +87,7 @@
 \let \Texttype\TextType
 \def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
 \let \Textproperties\TextProperties
-\def \FontSize       #1\relax{\clearp@ram{fontscale}\defp@ram{fontsize}{#1}}
+\def \FontSize       #1\relax{\edef\t@mp{#1}\ifx\t@mp\empty\else\clearp@ram{fontscale}\defp@ram{fontsize}{#1}\fi}
 \let \Fontsize\FontSize
 \def \FontScale      #1\relax{\clearp@ram{fontsize}\defp@ram{fontscale}{#1}}
 \let \Fontscale\FontScale

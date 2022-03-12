@@ -1299,7 +1299,7 @@ class ViewModel:
             res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
 
         script = self.customScript
-        if script is not None and len(script):
+        if script: # is not None and len(script):
             res[script] = os.path.basename(script)
             cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
 
