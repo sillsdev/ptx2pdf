@@ -17,7 +17,7 @@
 \tracing{i}
 %\ParagraphedNotes{fe}
 \AutoCallers{fe}{A,B,C,D,E,F,G,H,I,J,K}
-\scrollmode
+%\scrollmode
 % Set added material in desired form
 \def\addmtlquteht{2pt}
 \def\addmtlqutewd{1.5pt}
@@ -33,5 +33,11 @@
 \def\logoutput{1}
 \def\testpoint{%\tracinggroups=1
   \edef\thetp{test point \the\tp}\expandafter\write\expandafter\logoutput\expandafter{\thetp}\message{\thetp}\global\advance\tp by 1\relax}
+%\tracingassigns=1
+\tracing{n}
+\tracing{f}
+\tracing{p}
+\global\lastptxfiletrue
+%\expandafter\def\csname bookend-all\endcsname{\message{ENDOFBOOK}==END+OF+BOOK}%
 \ptxfile{table.usfm}
 \bye

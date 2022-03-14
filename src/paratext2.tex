@@ -866,7 +866,7 @@
 
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
-\gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break}\global\output={\savepartialpagedbounce}\par\eject\eject}
+\gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break (double col)}\global\output={\savepartialpagedbounce}\par\eject\eject}
 \def\doublecolumns{
   \traceifset{doublecolumns}%
   \ifnum\c@rrentcols=1
@@ -983,7 +983,7 @@
 \newdimen\t@xttrialheight
 \def\savepartialpage{% save a partially-full page when switching to 2-column format,
   \xdef\p@gebotmark{\botmark}%
-  \trace{o}{savepartialpage: partial=\the\ht\partial}%
+  \trace{o}{savepartialpage: hIns=\the\holdinginserts\space partial=\the\ht\partial}%
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -1436,7 +1436,7 @@
 %-c_balanced_loop
 
 %+c_calcboxheights
-\def\c@lcboxheights{
+\def\c@lcboxheights{%
   \g@tcolhts
   \trace{b}{BALANCE pageout: cols=2: texta=\the\ht\colA , \the\dp\colA : textb=\the\ht\colB , \the\dp\colB : partial=\the\ht\partial, \the\dp\partial : topins=\the\ht\topins+\the\skip\topins, \the\ht\topleftins+\the\skip\topleftins, \the\ht\toprightins+\the\skip\toprightins : bottomins=\the\ht\bottomins+\the\skip\bottomins, \the\ht\bottomleftins+\the\skip\bottomleftins, \the\ht\bottomrightins+\the\skip\bottomrightins}%
   \dimen9=\textheight
@@ -1591,6 +1591,7 @@
 \newif\ifXrefTopfill \XrefTopfillfalse
 
 \def\s@ttrialheight{
+  \trace{o}{s@ttrialheight \the\textheight - \the\ht\partial (\the\t@xttrialheight)}%
   \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial %\advance\trialheight by -\bmg@p
 }
 
@@ -1630,7 +1631,7 @@
 %+c_savepartialpaged_intro
 \newif\ifrerunsavepartialpaged
 \def\savepartialpaged{%Double columnn version of save partial page
-  \trace{o}{savepartialpaged. iflevel=\the\currentiflevel}%
+  \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
@@ -1658,7 +1659,7 @@
       %\c@lcboxheights
       \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
       \colhtA=\ht\colA \colhtB=\ht\colB
-      \keepn@tesfalse
+      \space\keepn@tesfalse
       \trace{o}{after reheightening to \the\dimen3, iflevel=\the\currentiflevel}%
     \fi
     \dimen3=\ht\colA
@@ -1672,12 +1673,14 @@
     %\advance\dimen3\lastd@pth
     % strip off full page height from c@lcboxheights and grab the depth
     \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
+    \trace{o}{\the\ht\colA//\the\ht\colB}
     \ifdim\ht\colA>0pt
       \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
-    \else \setbox\colA=\vbox to \dimen3{\hbox to \hsize{}}\fi
+    \else \setbox\colA=\vbox to \dimen3{\hbox to \hsize{}}\dimen8=0pt \fi
     \ifdim\ht\colB>0pt
       \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
-    \else \setbox\colB=\vbox to \dimen3{\hbox to \hsize{}}\fi
+    \else \setbox\colB=\vbox to \dimen3{\hbox to \hsize{}}\dimen9=0pt \fi
+    \trace{o}{Setting lastdepth to max of (\the\dimen8,\the\dimen9)}%
     \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi
     \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
     % do this after we have the final boxes
@@ -1703,6 +1706,7 @@
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
+    %\iflastptxfile\showbox\partial\fi
     \global\holdinginserts=1
     \global\setbox255=\box\voidb@x
     \s@ttrialheight
@@ -1752,7 +1756,7 @@
   \else
     %Removed because depth is descended not true box depth
     \setbox0=\lastbox
-    \trace{i}{Inserted notes, ht \the\ht0, dp \the\lastd@pth,\the\dp0}%
+    \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%
     \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
   \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
@@ -2029,18 +2033,21 @@
 
 \def\singlecolumn{%
   %\tracingmacros=0\tracingassigns=0
-  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial}%\tracingmacros=1
+  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \iflastpage LASTPAGE\fi}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     %\temptrue
     \layoutstylebreak % save any partially-full page into \partial
-    \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
     %LOTS happens before this line is reached!
+    \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
     \onecolwidth{\hsize}%
     \global\vsize=\textheight
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?}%
-    \ifdim\ht\partial>\PageFullFactor\textheight \iflastptxfile\else
-      \twocolp@geout \fi\fi%Set up pagecontents and call \plainoutput
+    \ifnum 1=\iflastpage 1 \else \ifdim\ht\partial>\PageFullFactor\textheight 1 \else 0\fi\fi
+      \ifdim \ht\partial>0pt
+        \twocolp@geout %Set up pagecontents and call \plainoutput
+      \fi
+    \fi
     \global\c@rrentcols=1
   \else\ifdim\ht\partial<\baselineskip
     \global\holdinginserts=0

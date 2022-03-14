@@ -9,12 +9,11 @@ This\f + \ft Below\f* is the beginning of the table:
 \testpoint
 \p
 \tr
-\th1 Head1 \th2 Head2 \th3 Head3\testpoint
+\th1 Head1~~\th2 Head2~~\th3 Head3\testpoint
 \tr\tc1 l1c1 \tc2 l1c2 \tc3 l1c3
 \tr\tc1 l2c1\f + \ft A footnote\f*
 \tc2 l2c2 \tc3 l2c3
 \tr\tc1 l3c1 \tc2 l3c2 \tc3 l3c3
 \p
 
-\p The end of the table
-
+\p The end of the table\f + \ft last note\f*
