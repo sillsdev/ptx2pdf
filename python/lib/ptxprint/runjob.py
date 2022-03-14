@@ -54,6 +54,8 @@ _errmsghelp = {
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
                                           "the selected font has not been installed for all users. See FAQ."),
+"! Improper `at' size":                  _("Font size setting issue. Check to see if the font size in a style\n" +\
+                                          "in or near the reference below is incorrect (maybe it is set to 0.00)."),
 "! Too many }'s":                        _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
@@ -305,7 +307,7 @@ class RunJob:
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
+                    secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
@@ -344,26 +346,28 @@ class RunJob:
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
-        for i in range(1, 30):
+        s = 40
+        e = 0
+        for i in range(1, 40):
             if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
-                break
-        else:
-            i = 0
-        finalLogLines = self.loglines[-i-20:-i]
+                e = i
+            if self.loglines[-i].startswith("!"):
+                s = i
+        finalLogLines = []
+        for l in self.loglines[-s:-e]:
+            if len(l.strip()):
+                finalLogLines.append(l.replace("   ", " "))
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
         for l in reversed(finalLogLines):
-            if not foundmsg: # l[:1] == "!" and 
-                # for m in _errmsghelp.keys():
+            if l[:1] == "!" and not foundmsg:
                 for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                     if m in l or l.startswith(m):
-                        if l[:-1] != m:
-                            finalLogLines.append("{}\n".format(m))
                         finalLogLines.append(_errmsghelp[m]+"\n")
                         foundmsg = True
                         break
         if not foundmsg:
-            finalLogLines.append(_errmsghelp["Unknown"]+"\n")
+            finalLogLines.append(_errmsghelp["Unknown"])
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])
@@ -371,7 +375,7 @@ class RunJob:
             book = ""
         refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
         if len(refs):
-            finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
+            finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
 
         texmrkrs = [r"\fi", "\if", "\ifx", "\box", "\hbox", "\vbox", "\else", "\book", "\par",
                      "\edef", "\gdef", "\dimen" "\hsize", "\relax"]
@@ -383,7 +387,7 @@ class RunJob:
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
-            finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
+            finalLogLines.append("File(s) to check: {}".format(", ".join(files)))
         return finalLogLines
 
     def dojob(self, jobs, info):

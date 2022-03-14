@@ -253,7 +253,7 @@ class Usfm:
                 if pred(e):
                     a.append(sfm.Text(e, e.pos, a or None))
                 return a
-            if e.name in removes:
+            if e is None or e.name in removes:
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
             reduce(_g, e, e_)
