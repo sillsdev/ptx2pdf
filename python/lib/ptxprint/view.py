@@ -1147,13 +1147,10 @@ class ViewModel:
         return res
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
-        sfiles = {'c_useCustomSty': ("custom.sty", False),
-                  'c_useModsSty': ("ptxprint-mods.sty", True),
-                  'c_useModsTex': ("ptxprint-mods.tex", True),
+        sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
-                  'c_usePrintDraftChanges': (("PrintDraftChanges.txt", False), ("changes.txt", True)),
-                  'c_frontmatter': ("FRTlocal.sfm", True),
-                  None: ("picChecks.txt", False)}
+                  'c_usePrintDraftChanges': "PrintDraftChanges.txt",
+                  None: "picChecks.txt"}
         res = {}
         cfgchanges = {}
         tmpfiles = []
@@ -1199,15 +1196,6 @@ class ViewModel:
         if xrfile is not None:
             res[xrfile] = os.path.basename(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
-
-        # adjlists
-        for a,e in (("AdjLists", ".adj"), ("triggers", ".triggers")):
-            adjpath = os.path.join(basecfpath, a)
-            adjbks = set(self.getAdjListFilename(bk, ext=e) for x in books)
-            if os.path.exists(adjpath):
-                for adj in os.listdir(adjpath):
-                    if adj.endswith(e) and adj in adjbks:
-                        res[os.path.join(adjpath, adj)] = cfpath+a+"/"+adj
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -1272,29 +1260,26 @@ class ViewModel:
         res[tempfile.name] = cfpath+"ptxprint.sty"
         tmpfiles.append(tempfile.name)
 
-        # config files
+        # config files - take the whole tree even if not needed
+        for dp, dn, fn in os.walk(basecfpath):
+            op = os.path.join(cfpath, os.path.relpath(dp, basecfpath))
+            for f in fn:
+                res[os.path.join(dp, f)] = os.path.join(op, f)
+        sp = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint')
+        for f in os.listdir(sp):
+            fp = os.path.join(sp, f)
+            if os.path.isfile(fp):
+                res[fp] = os.path.join('shared', 'ptxprint', f)
+
+        # special config files not in config tree
         for t, b in sfiles.items():
             if isinstance(t, str) and not self.get(t): continue
-            c = [b] if isinstance(b[0], str) else b
+            c = [b] if isinstance(b, str) else b
             for a  in c:
-                if a[1]:
-                    s = os.path.join(basecfpath, a[0])
-                    d = cfpath + a[0]
-                else:
-                    s = os.path.join(self.settings_dir, prjid, a[0])
-                    d = a[0]
+                s = os.path.join(self.settings_dir, prjid, a)
                 if os.path.exists(s):
-                    res[s] = d
+                    res[s] = a
 
-        if self.get("c_useModsTex"):
-            loaded = False
-            if cfgid is not None:
-                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
-                loaded = os.path.exists(p)
-            if not loaded:
-                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
-                if os.path.exists(p):
-                    res[p] = "shared/ptxprint/ptxprint-mods.tex"
         if interlang is not None:
             res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
 
@@ -1302,12 +1287,6 @@ class ViewModel:
         if script: # is not None and len(script):
             res[script] = os.path.basename(script)
             cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
-
-        hyphenfpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
-        hyphentpath = "shared/ptxprint/"
-        hyphenfile = "hyphen-{}.tex".format(self.prjid)
-        if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
-            res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
 
         pts = self._getPtSettings(prjid=prjid)
         ptres = pts.getArchiveFiles()
