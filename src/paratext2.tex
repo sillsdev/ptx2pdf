@@ -225,7 +225,7 @@
     \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
   \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
   % if note omitting caller from note (i.e. all callers are *'s)
-  \mcpush{\ss@Note}{#2}%
+  \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
   \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
     % save copy of caller in temporary box, if non-empty add a little space
     \setbox0=\hbox{#3}%
