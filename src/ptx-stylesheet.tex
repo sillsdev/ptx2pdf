@@ -654,7 +654,7 @@
 
 \x@\def\csname getthep@ram-fontsize\endcsname#1{%Called with p@ssParams set up. work up through possParam list
   \let\savep@ssParams\p@ssParams\let\savestyst@k\tmpstyst@k
-  \getp@ram{fontsize}{p}{p}%
+  \getp@r@m{fontsize}{p}%
   \ifx\p@ram\relax \edef\ps@ze{12}\edef\tmpfr@m{default}\else \edef\ps@ze{\p@ram}\edef\tmpfr@m{p}\fi
   \trace{s}{getthep@ram-fontsize starting with \ps@ze\space from \tmpfr@m}%
   \def\d@##1\E{\getp@r@m{fontsize}{##1}\ifx\p@ram\relax\else\edef\tmpfr@m{##1}\let\ps@ze\p@ram\fi}\cstackbottom\p@ssParams,\E
