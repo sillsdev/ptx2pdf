@@ -39,6 +39,8 @@
 \catcode`\@=11\catcode`\^=7
 \gdef\zpdf{\bgroup\obeylines\unc@tcodespecials\@zdpf}
 \gdef\@zdpf#1#2^^M{\egroup\includepdf{#2}}
+%\gdef\rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@rem}
+%\gdef\@rem#1^^M{\egroup}
 \gdef\zBottomRag{\bgroup\obeylines\m@kedigitsother\@zbottomrag}
 \gdef\@zbottomrag #1^^M{\egroup\xdef\BalanceThreshold{#1}}
 \gdef\include{\bgroup\obeylines\unc@tcodespecials\catcode`\/=12 \@include}

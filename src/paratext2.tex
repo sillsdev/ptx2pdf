@@ -182,7 +182,7 @@
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
   \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth \space wide (page is \the\hsize)}%
-  \the\d@note\bgroup% insert note-f (or note-x)
+  \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     % \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \hsize=\n@tewidth
 %%% single-column notes:
@@ -343,7 +343,7 @@
   \fi
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
-  \mcpop
+  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable}\ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi\egroup
   }
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
@@ -1550,6 +1550,7 @@
   \bmg@p=\availht
   \dimen0=8\baselineskip
   \ifdim\dimen0>0.5pt
+      \trace{i}{dimen0=\the\dimen0, availht=\the\availht}%
       \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
   \fi
   \advance\bmg@p by -\availht
