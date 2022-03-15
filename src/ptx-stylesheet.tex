@@ -1680,7 +1680,10 @@
     %\cl@singhooks{after}{cat}%
   \fi
   \ifx\stylet@pe\ss@Para
-    %\bgroup % There is no containing group, so need to provide one.
+    %NOTE To potential vandals: This bit of code should ONLY be reached from a 
+    % normal parargraph style. If you are trying to solve something else, fix
+    % the something else, maybe stylet@pe is incorrectly set.
+    \bgroup% DO NOT COMMENT THIS OUT! There is no containing group, so NEED to provide one.
     \let\stylet@pe\ss@ParCtgy
   \else 
     \let\stylet@pe\ss@Ctgy
