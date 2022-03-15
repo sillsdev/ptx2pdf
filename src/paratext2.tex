@@ -1673,12 +1673,13 @@
     %\advance\dimen3\lastd@pth
     % strip off full page height from c@lcboxheights and grab the depth
     \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
-    \trace{o}{\the\ht\colA//\the\ht\colB}
+    \trace{o}{\the\ht\colA+\the\dp\colA//\the\ht\colB+\the\dp\colB}%
+    \dimen8=\dp\colA \dimen9=\dp\colB
     \ifdim\ht\colA>0pt
-      \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\global\dimen8=\dp0\box0}%
+      \setbox\colA=\vbox to \dimen3{\unvbox\colA\unskip\setbox0\lastbox\ifvoid0\else\global\dimen8=\dp0\box0\fi}%
     \else \setbox\colA=\vbox to \dimen3{\hbox to \hsize{}}\dimen8=0pt \fi
     \ifdim\ht\colB>0pt
-      \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\global\dimen9=\dp0\box0}%
+      \setbox\colB=\vbox to \dimen3{\unvbox\colB\unskip\setbox0\lastbox\ifvoid0\else\global\dimen9=\dp0\box0\fi}%
     \else \setbox\colB=\vbox to \dimen3{\hbox to \hsize{}}\dimen9=0pt \fi
     \trace{o}{Setting lastdepth to max of (\the\dimen8,\the\dimen9)}%
     \lastd@pth=\ifdim\dimen8>\dimen9 \dimen8\else\dimen9\fi
@@ -2042,9 +2043,9 @@
     \onecolwidth{\hsize}%
     \global\vsize=\textheight
     %\tempfalse
-    \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?}%
-    \ifnum 1=\iflastpage 1 \else \ifdim\ht\partial>\PageFullFactor\textheight 1 \else 0\fi\fi
-      \ifdim \ht\partial>0pt
+    \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
+    \ifdim\ht\partial>\PageFullFactor\textheight 
+      \iflastpage\else %Don't force a break before a colophon
         \twocolp@geout %Set up pagecontents and call \plainoutput
       \fi
     \fi

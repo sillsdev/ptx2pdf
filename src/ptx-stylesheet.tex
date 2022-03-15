@@ -1569,20 +1569,21 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \ifdiglot\enddigl@t\fi
+ \iflastptxfile \global\lastpagetrue\fi
  \ifx\b.ok\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \csname bookend-all\endcsname
  \the\@ndptxhooks
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \singlecolumn\zplaceallnotes\fi
- \iflastptxfile\closepiclist\fi
- \closeadjlist
  \unprepusfm
- \iflastptxfile\global\lastpagetrue\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
+ \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  % no idea why we need \noindent here:
  \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt\noindent\eject\fi
+ \iflastptxfile\closepiclist\fi
+ \closeadjlist
  \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
 }
 %-csty_ptxfile_end
