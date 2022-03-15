@@ -2039,16 +2039,17 @@
     %\temptrue
     \layoutstylebreak % save any partially-full page into \partial
     %LOTS happens before this line is reached!
-    \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
-    \onecolwidth{\hsize}%
-    \global\vsize=\textheight
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
     \ifdim\ht\partial>\PageFullFactor\textheight 
       \iflastpage\else %Don't force a break before a colophon
         \twocolp@geout %Set up pagecontents and call \plainoutput
+        \clearn@tes
       \fi
     \fi
+    \onecolwidth{\hsize}%
+    \global\vsize=\textheight
+    \global\let\layoutstylebreak\layoutstylebreak@singlecolumn
     \global\c@rrentcols=1
   \else\ifdim\ht\partial<\baselineskip
     \global\holdinginserts=0
