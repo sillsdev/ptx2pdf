@@ -1,8 +1,108 @@
-PTXprint 2.1.1 Release Notes 
-8 February 2022
+PTXprint 2.1.8 Release Notes 
+12 March 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.8 (12 Mar 2022)
+
+  * Get custom scripts working #629 and allow .py files to be run directly
+
+  * Fixed missing filepath tooltips on some key files
+  
+  * Fixed table columns for RTL and TOC
+  
+  * Fixed table leaders incl for RTL
+  
+  * Solve (most?) issues for tables with categories
+
+Bug fixes and improvements in 2.1.7 (9 Mar 2022)
+
+  * Allow reference chapter ranges like PSA 23 or JHN 2-4
+  
+  * Added option Show Strong's Numbers
+  
+  * Fixed Strong's reference issue specific to Windows encoding
+  
+  * Various TeX bug fixes
+
+Bug fixes and improvements in 2.1.6 (8 Mar 2022)
+
+  * Fixed RTL Table of Contents
+  
+  * Include referenced books in Module archive
+  
+  * Fix table column widths
+  
+  * Ensure Marginal Verses and Hanging Verses are not both enabled at the same time
+  
+  * Fix marginal verses
+  
+  * Fix setting table column widths
+  
+  * Add automatic name update on marker creation (in Styles)
+
+Bug fixes and improvements in 2.1.5 (3 Mar 2022)
+
+  * Enhanced book list which can also contain a list of references #76
+    (allows list of passages like: GEN 1:1-end PSA 23:1-end LUK 15:11-32 GLO)
+
+  * Added option to allow side column x-refs to align to the side of the text
+
+  * Use script-specific reference separators for Arabic script which fixes 
+    RTL marker causes printing a Bible Module to fail #618
+  
+  * Align marginal verses with the baseline
+  
+  * Cross-references in 2 cols now balance
+  
+  * Fixed table of contents widths and leaders #615, treat spacebefore=0 as autowidth
+  
+  * Fixed hang over missing verse numbers
+
+  * Fixed guide rules for centre notes
+  
+  * Fixed missing footnotes on final page #617
+  
+  * Minor improvements to tooltips
+  
+  * Multiple behind the scenes improvements to the TeX macros
+  
+Bug fixes and improvements in 2.1.4 (14 Feb 2022)
+
+  * Keep centre xref column the same height as the text blocks
+  
+  * Fixed final page single column footnotes #617
+  
+  * Fixed FileNotFoundError on generate final SFM #607
+  
+  * Fixed regular typeface doesn't always show in font chooser #609
+  
+  * Remove space leakage in marginal verses
+  
+  * Reduce threshold to actual rag
+  
+Bug fixes and improvements in 2.1.3 (13 Feb 2022)
+  
+  * Fixed typo in archive creation
+  
+  * Fixed cross ref files in archives
+  
+  * Fixed bad last page breaks
+  
+Bug fixes and improvements in 2.1.2 (12 Feb 2022)
+  
+  * Improved ending 2 cols to the minimum balanced height
+  
+  * Improved slop handling for cutouts
+
+  * Fixed shifting marginal verses
+  
+  * Fixed missing pictures
+  
+  * Fixed poor page breaking
+  
+  * Fixed gridding for bottom-aligned sidebar figures
+  
 Bug fixes and improvements in 2.1.1 (8 Feb 2022)
   
   * Fixed missing Table of Contents

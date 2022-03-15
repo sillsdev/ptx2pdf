@@ -100,7 +100,17 @@
   \@ndrow
   \global\advance\tabler@ws by 1
   \tablec@l=0
-  \@tablerowtrue \@TR \@tablerowfalse
+  \@tablerowtrue      
+   %\@TR 
+   %\p@rstyle{tr}%
+  
+   \s@tbaseline{\m@rker}{\styst@k}%
+   \global\startparatrue
+   \resetp@rstyle
+   \p@rstyle@everypar{tr}%
+   %\mcpop
+   %\s@tstyst@k
+  \@tablerowfalse
   \@rowtrue\trace{t}{rows=\the\tabler@ws}%
   \ignorespaces}
 
@@ -114,12 +124,12 @@
     \loop \ifnum\tablec@l<\maxtablec@l
       \advance\tablec@l by 1
       \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
-      \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+      \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\hbox{}\unvbox\c@rrentcolbox}%
       \repeat
     \@rowfalse
     % store inserts in reverse row order for easy extraction later
     % most inserts are in 0ht vboxes so use 1sp is a flag for empty
-    \setbox\t@bleinserts=\vbox{\ifvoid\t@blenotes\vbox to 1sp{}\else\box\t@blenotes\fi\unvbox\t@bleinserts}%
+    \setbox\t@bleinserts=\vbox{\parfillskip=0pt\ifvoid\t@blenotes\vbox to 1sp{}\else\box\t@blenotes\fi\unvbox\t@bleinserts}%
   \fi}
 
 \catcode`\~=12 \lccode`\~=32
@@ -146,15 +156,15 @@
     \aftergroup\dos@vedm@rk%
     \hsize=\maxdimen
     \resetp@rstyle \everypar={}\noindent
-    \ifRTL\beginR\fi
+    %\ifRTL\beginR\fi
     \dimen255=0pt
     \edef\tc@ll{tc\the\tablec@l}%
-    \getp@ram{leftmargin}{\tc@ll}{\styst@k}%
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
-    \getp@ram{firstindent}{\tc@ll}{\styst@k}%
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance\dimen255 \p@ram\IndentUnit \fi
     \kern\dimen255
-    \s@tfont{tc\the\tablec@l}{\styst@k}%
+    \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
     \@celltrue}
 \def\dos@vedm@rk{\the\s@vedm@rks\relax\s@vedm@rks{}}
@@ -167,18 +177,19 @@
     \end@llpoppedstyles{tc*}%
     \let\p@ram\p@r@m
     \ifx\p@ram\relax\else\trace{t}{rightkern(tc\the\tablec@l) \p@ram}\kern\p@ram\IndentUnit\fi
+    \parfillskip=0pt
     \egroup
-    \setbox0=\vbox{\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
+    \setbox0=\vbox{\parfillskip=0pt\unvbox\cellb@x \global\setbox\cellb@x=\lastbox}%
     \global\setbox\cellb@x=\hbox{\unhbox\cellb@x \unskip\unskip\unpenalty}%
     \x@\let\x@\c@rrentcolbox\csname tablecol-\the\tablec@l\endcsname
     \ifvoid\c@rrentcolbox % adding a column, may need to add empty cells above
       \count255=1
       \loop \ifnum\count255<\tabler@ws \advance\count255 by 1
-        \setbox\c@rrentcolbox=\vbox{\hbox{}\unvbox\c@rrentcolbox}%
+        \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\hbox{}\unvbox\c@rrentcolbox}%
         \repeat
     \fi
     \trace{t}{Add cell width \the\wd\cellb@x, to row \the\tabler@ws}%
-    \setbox\c@rrentcolbox=\vbox{\box\cellb@x\unvbox\c@rrentcolbox}%
+    \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\box\cellb@x\unvbox\c@rrentcolbox}%
       % note that this stacks the cells upwards! they'll be reversed later
   \fi}
 
@@ -190,30 +201,34 @@
 %\tracingassigns=1
 \def\startt@ble{%
   \ifdoingt@ble \else
+    \ifhe@dings\endhe@dings\fi
+    \endlastp@rstyle{tr}%
     \let\stylet@pe\ss@Tbl
     \mcpush{\stylet@pe}{tr}%
-    \ifhe@dings\endhe@dings\fi
+    \s@tstyst@k
     \bgroup
     \tabler@ws=0
     \tablec@l=0
     \global\maxtablec@l=0
     \doingt@bletrue\inn@tetrue
     \message{starting table cat:\tablecategory \c@tegory}%
-    \ifx\tablecategory\empty\else\doc@t{\tablecategory}\fi
+    \ifx\tablecategory\empty\else\global\doc@t{\tablecategory}\fi
   \fi}
 \newdimen\t@talwidth
 \def\endt@ble{%
   \ifdoingt@ble
     \trace{t}{endt@ble-\mcstack}%
-    \@ndcell
+    \@ndcell\@ndrow
     \t@talwidth=0pt
-    \f@reachcol{\advance\t@talwidth by \wd\c@rrentcolbox}%
+    \f@reachcol{\edef\tc@l{tc\the\@col}\getp@ram{rightmargin}{\tc@l}{\tc@l+\styst@k}\ifx\p@ram\relax \else
+        \dimen0=\wd\c@rrentcolbox\advance\dimen0 \p@ram\IndentUnit\wd\c@rrentcolbox=\dimen0
+      \fi\trace{t}{colwidth \the\@col \space is \the\wd\c@rrentcolbox}\advance\t@talwidth by \wd\c@rrentcolbox}%
     \endt@blewrap
     \f@reachcol{\setbox\c@rrentcolbox=\box\voidb@x}%
-    \@ndrow\end@llpoppedstyles{\ss@Tbl*}%
+    \end@llpoppedstyles{\ss@Tbl*}%
     \doingt@blefalse\inn@tefalse
-    \ifx\tablecategory\empty\else\@ndc@t\fi
     \egroup
+    \let\tablecategory\empty
   \fi}
 
 \def\endt@blewrap{%
@@ -228,17 +243,22 @@
   \getp@ram{leftmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \getp@ram{rightmargin}{tr}{\styst@k}\ifx\p@ram\relax\else\advance\thr@shold by -\p@ram\IndentUnit\fi 
   \divide\thr@shold by \maxtablec@l
-  \trace{t}{thr@shold=\the\thr@shold, textwidth=\the\textwidth}%
+  \trace{t}{thr@shold=\the\thr@shold, hsize=\the\hsize, textwidth=\the\textwidth, max:\the\maxtablec@l}%
   \f@reachcol{%
     \edef\tc@l{tc\the\@col}%
     \getp@ram{spacebefore}{\tc@l}{\tc@l+\styst@k}%
-    \c@rrentcolwidth=\ifx\p@ram\relax-1sp\else\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi
+    \ifx\p@ram\relax\c@rrentcolwidth=-1sp \else\ifdim\p@ram\textwidth=0pt \c@rrentcolwidth=-1sp \else\c@rrentcolwidth=\p@ram\textwidth\divide\c@rrentcolwidth 12\trace{t}{width=\the\c@rrentcolwidth}\fi\fi
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
-      \c@rrentcolwidth=\wd\c@rrentcolbox
+      \ifdim \c@rrentcolwidth=-1sp\relax \c@rrentcolwidth=\wd\c@rrentcolbox
+      \else
+        \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
+      \fi
+      \trace{t}{Adding \the\thr@shold - \the\wd\c@rrentcolbox (\the\c@rrentcolwidth) \space to spare (\the\sp@re)}%
       \advance\sp@re by \thr@shold \advance\sp@re by -\c@rrentcolwidth
-    \fi}%
+    \fi
+  }%
   \trace{t}{thr@shold=\the\thr@shold, exc@ss=\the\exc@ss, sp@re=\the\sp@re}%
   \f@reachcol{%
     \ifdim\c@rrentcolwidth=-1sp
@@ -253,7 +273,7 @@
         \c@rrentcolwidth=\wd\c@rrentcolbox
       \fi
     \fi
-    \trace{t}{Table col width \the\c@rrentcolwidth}%
+    \trace{t}{Table col width for \the\@col: \the\c@rrentcolwidth}%
   }%
 %  \f@reachcol{%
 %    \MSG{column \the\@col: width=\the\c@rrentcolwidth\space
@@ -284,8 +304,8 @@
         \hskip\dimen1}%
       \ifnum\nth@line<\linec@unt \nobreak \fi
     \@@REPEAT
-    \setbox\t@bleinserts=\vbox{\unvbox\t@bleinserts \global\setbox0=\lastbox}%
-    \ifdim\ht0=1sp\else\unvbox0\fi
+    \setbox\t@bleinserts=\vbox{\parfillskip=0pt\unvbox\t@bleinserts \global\setbox0=\lastbox}%
+    \ifdim\ht0=1sp \else\unvbox0\fi
   }%
 }
 \newcount\linec@unt \newcount\lct@mp
@@ -306,62 +326,56 @@
  \else \global\let\@@@NEXT\relax \fi \@@@NEXT}
 \let\@@@REPEAT\fi
 
-\def\wr@pcolumn{\@row=1\setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \wr@pboxes}}
+\def\wr@pcolumn{\@row=1\setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\unvbox\c@rrentcolbox \wr@pboxes}}
 \def\wr@pboxes{% line-wrap a list of \hboxes
   \setbox0=\lastbox 
   \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
-  \setbox0=\vbox{\hsize=\c@rrentcolwidth
+  \setbox0=\vbox{\parfillskip=0pt\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \ifRTL\beginR\fi
-    \getp@ram{leftmargin}{tc\the\@col}{\styst@k}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit\fi
-    \getp@ram{firstindent}{tc\the\@col}{\styst@k}%
+    \edef\tc@ll{tc\the\tablec@l}%
+    \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
+    \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \kern \p@ram\IndentUnit\fi
-    \getp@ram{rightmargin}{tc\the\@col}{\styst@k}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit\fi
+    \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+    \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
       \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
+      %\let\n@xt=\leftskip
     \else\ifx\the@lign\cell@c
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
       \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
+      %\let\n@xt=\rightskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifx\the@lign\cell@r
-        \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil
-    \else\ifx\the@lign\cell@c
-        \nobreak\csname \c@tprefix leaders-tcc\the\@col\endcsname
-    \fi\fi
+    \ifcsname \c@tprefix leaders-tcr\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil\fi
     \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
-    \ifx\the@lign\cell@r\else
-      \ifx\the@lign\cell@c
-        \nobreak\csname \c@tprefix leaders-tcc\the\@col\endcsname\relax
-      \else
-        \nobreak\csname \c@tprefix leaders-tc\the\@col\endcsname\hfil\relax
-    \fi\fi
+    \x@\ifx\csname \c@tprefix leaders-tc\the\@col\endcsname\empty\else\nobreak\csname \c@tprefix leaders-tc\the\@col\endcsname\hfil\fi
     \par}%
   \wd0=\c@rrentcolwidth
   \box0}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
-  \setbox\c@rrentcolbox=\vbox{\unvbox\c@rrentcolbox \unskip\unpenalty
+  \setbox\c@rrentcolbox=\vbox{\parfillskip=0pt\unvbox\c@rrentcolbox \unskip\unpenalty
     \global\setbox\c@rrentcell=\lastbox}}
 \def\updatelinec@unt{% count lines in \c@rrentcell, update \linec@unt if more than current value
   \global\lct@mp=0
-  \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}%
+  \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell \c@untlines}%
   \ifnum\lct@mp>\linec@unt \global\linec@unt=\lct@mp \fi}
 \def\c@untlines{\setbox0=\lastbox
   \ifhbox0 \global\advance\lct@mp by 1 \unskip\unpenalty\c@untlines\fi}
 
 \newif\ifh@lfrow
 \def\getnth@line{% return content of line nth@line from box \c@rrentcell
-  \getp@ram{verticalalign}{tc\the\@col}{\styst@k}%
+  \getp@ram{verticalalign}{tc\the\@col}{tc\the\@col+\styst@k}%
   \ifx\p@ram\relax\let\p@ram\@lignTop\fi
   \lct@mp=0
   \h@lfrowfalse
   \bgroup %protect nth@line and count255
-    \setbox0=\vbox{\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
+    \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell \c@untlines}% count lines into \lct@mp
     \count255=0
     \ifx\p@ram\@lignTop\else
       \count255=\numexpr \linec@unt - \lct@mp \relax
@@ -375,7 +389,7 @@
     \trace{t}{column \@col. linecount:\the\linec@unt, lct@mp:\the\lct@mp, nthline:\the\nth@line, adj \the\count255 \ifh@lfrow .5\fi}%
     \advance \nth@line by -\count255
     \ifnum 1 = \ifnum\nth@line>\lct@mp 1 \else \ifnum\nth@line<1 1\else 0\fi\fi \global\setbox1=\hbox to \c@rrentcolwidth{\hfil}\else
-      \setbox0=\vbox{\unvcopy\c@rrentcell
+      \setbox0=\vbox{\parfillskip=0pt\unvcopy\c@rrentcell
         \@@@LOOP \ifnum\nth@line<\lct@mp
           \setbox0=\lastbox \unskip\unpenalty
           \advance\lct@mp by -1 \@@@REPEAT
@@ -425,6 +439,6 @@
 \let\n@wbox=\newbox
 \let\n@wdimen=\newdimen
 \bgroup \catcode`\^=7\obeylines
-\def\ztablecategory{\bgroup\unc@tcodespecials\obeylines\zt@blecategory}
-\def\zt@blecategory #1^^M{\gdef\tablecategory{#1}\egroup}
+\gdef\ztablecategory{\bgroup\unc@tcodespecials\obeylines\zt@blecategory}
+\gdef\zt@blecategory #1^^M{\gdef\tablecategory{#1}\egroup}
 \egroup

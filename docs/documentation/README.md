@@ -119,7 +119,7 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 
 <a name="ptx2pdf-MacroSetupParameters-Fonts">
 
-*   \FontSizeUnit=```0.75``` – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9)
+*   \FontSizeUnit=```0.75pt``` – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9pt)
 
 </a>
 

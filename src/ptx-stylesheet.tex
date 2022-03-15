@@ -75,7 +75,7 @@
 \def \NotRepeatable  #1\relax{}
 \let \Notrepeatable\NotRepeatable
 \def \Color          #1\relax{\defp@ram{color}{#1}}
-\def \Background     #1\relax{\defp@ram{background}{#1}}
+\def \Background     #1\relax{\x@\checkh@x #1\end\edefp@ram{background}{\rgb@out}} %Store as r g b triplet
 \let \color\Color
 \def \ColorName      #1\relax{}
 
@@ -87,7 +87,7 @@
 \let \Texttype\TextType
 \def \TextProperties #1\relax{\lowercase{\defp@ram{properties}{#1}}}
 \let \Textproperties\TextProperties
-\def \FontSize       #1\relax{\clearp@ram{fontscale}\defp@ram{fontsize}{#1}}
+\def \FontSize       #1\relax{\edef\t@mp{#1}\ifx\t@mp\empty\else\clearp@ram{fontscale}\defp@ram{fontsize}{#1}\fi}
 \let \Fontsize\FontSize
 \def \FontScale      #1\relax{\clearp@ram{fontsize}\defp@ram{fontscale}{#1}}
 \let \Fontscale\FontScale
@@ -154,6 +154,7 @@
 
 \def\clearp@ram#1{\global\x@\let\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname=\relax}
 \def\defp@ram#1#2{\x@\def\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
+\def\edefp@ram#1#2{\x@\edef\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{s}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
 \def\setp@ram#1#2#3{
@@ -491,6 +492,10 @@
           \let\d@\cstackrelax
         \else
           \ifx\p@ram\empty\else
+            % Param might be in stacking (issue #575) [foo,bar] format or older :foo:bar 
+            % Reprocess to stacking format:
+            %\x@\ch@ckfontfeatures\p@ram\E % Initial colon test
+            \x@\ch@ckfontfeaturesbrk\p@ram[]\E % Lack of square brackets test.
             \xdef\r@s{\p@ram\space\r@s\space}%Processed left to right, so top level (overrides) go *LAST*
           \fi
         \fi
@@ -504,15 +509,55 @@
     \trace{s}{Found fontfeatures: '\r@s'}%
     \let\f@atureset\cstackempty
     \let\f@aturen@xt\n@xt
-    \x@\fe@turemaths\r@s[] \E
     \trace{s}{Merging options}%
-    %\let\r@s\empty
+    \x@\fe@turemaths\r@s[] \E
+    % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
+    \let\r@s\empty % MUST start with empy list!
     \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty:\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
     \let\p@ram\r@s
   \fi
   \let\d@\d@gettheparam
+}
+
+\def\ch@ckfontfeatures#1#2\E{% Check for an initial colon
+  \def\t@st{#1}%
+  \ifx\t@st\c@lon
+    \let\p@ram\empty
+    \m@dernisefontfeatures#2:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\ch@ckfontfeaturesbrk#1[#2]#3\E{% Check for nothing in brackets
+  \def\t@st{#2#3}%
+  \ifx\t@st\empty
+    \let\p@ram\empty
+    \m@dernisefontfeatures#1:\E
+    \ifx\p@ram\empty\else
+      \edef\p@ram{=[\p@ram]}%
+    \fi
+  \fi
+}
+
+\def\m@dernisefontfeatures#1:#2\E{%
+  \def\t@st{#2}%
+  \let\n@xtmff\m@dernisefontfeatures
+  \ifx\t@st\empty
+    \let\n@xtmff\endf@aturemaths
+  \fi
+  \def\t@st{#1}%
+  \ifx\t@st\empty\else
+    \ifx\p@ram\empty
+      \edef\p@ram{#1}%
+    \else
+      \edef\p@ram{\p@ram,#1}%
+    \fi
+  \fi
+  \n@xtmff #2\E
 }
 
 \def\endf@aturemaths#1\E{}
@@ -609,7 +654,7 @@
 
 \x@\def\csname getthep@ram-fontsize\endcsname#1{%Called with p@ssParams set up. work up through possParam list
   \let\savep@ssParams\p@ssParams\let\savestyst@k\tmpstyst@k
-  \getp@ram{fontsize}{p}{p}%
+  \getp@r@m{fontsize}{p}%
   \ifx\p@ram\relax \edef\ps@ze{12}\edef\tmpfr@m{default}\else \edef\ps@ze{\p@ram}\edef\tmpfr@m{p}\fi
   \trace{s}{getthep@ram-fontsize starting with \ps@ze\space from \tmpfr@m}%
   \def\d@##1\E{\getp@r@m{fontsize}{##1}\ifx\p@ram\relax\else\edef\tmpfr@m{##1}\let\ps@ze\p@ram\fi}\cstackbottom\p@ssParams,\E
@@ -722,7 +767,7 @@
   \spl@tprintableverse
   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
   %\ if not cancelling first verse, output verse number
-  \ifc@ncelfirstverse\else
+  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\else
    \ifrotate
     \setbox0=\hbox{\printverse}\dimen0=\wd0%
     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
@@ -952,9 +997,10 @@
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
     \setbox1=\hbox{\ch@rstylepls{v}~\adornv{\v@rseto}\ch@rstylepls{v}*}%
-    \global\setbox#1=\vtop{\hbox{\llap{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
+    \global\setbox#1=\vtop{\s@tbaseline{v}{v}\hbox{\llap{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
                                  \vbox{\hbox to \wd1{\hskip\leftskip\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*\hskip\rightskip}%
-                                       \kern\dimen0\box1}}}%
+                                       %\kern\dimen0
+                                        \box1}}}%
     \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
 }
 \let\defaultprintverse=\simpleprintv@rse
@@ -1516,7 +1562,8 @@
 }
 %-csty_ptxfile_start
 %+csty_ptxfile_end
-\def\postptxfile{
+\def\postptxfile{%
+ \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
@@ -1529,8 +1576,7 @@
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \unprepusfm
- \lastpagetrue
- \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
+ \iflastptxfile\global\lastpagetrue\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
@@ -1595,6 +1641,7 @@
   \fi
   \trace{sc}{Stylesheet prefix for '\c@tegory': '\c@tprefix'}%
 }
+\newif\ifn@npublishablec@t
 \def\endc@tmarker{t*}
 \def\@ndc@t{%
   \trace{sc}{@ndc@t}%
@@ -1604,6 +1651,13 @@
       \ifp@pping\else
         \end@llpoppedstyles{\endc@tmarker}%pop any styles closed by an end of t
       \fi
+      %\n@npublishablefalse\getmcp@ram{properties}%
+      \ifn@npublishable\temptrue\else\tempfalse\fi
+      \n@npublishablefalse\getp@ram{properties}{\styst@kfirst}{\styst@kfirst}%
+      \trace{i}{cat \c@tegory, properties=\p@ram, from \styst@kfirst}%
+      \x@\t@stnonpub\p@ram nonpublishable!
+      \ifn@npublishable\global\n@npublishablec@ttrue\else\global\n@npublishablec@tfalse\fi
+      \iftemp\n@npublishabletrue\else\n@npublishablefalse\fi
       \endgroup %End the group started between the cat groups     %(3)
       \cl@singhooks{after}{cat}%
       \s@tc@tprefix{}%
@@ -1614,7 +1668,8 @@
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
-\def\doc@t#1{
+\def\doc@t#1{%
+  \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands
@@ -1624,9 +1679,8 @@
     %\cl@singhooks{after}{cat}%
   \fi
   \ifx\stylet@pe\ss@Para
-    \bgroup % There is no containing group, so need to provide one.
+    %\bgroup % There is no containing group, so need to provide one.
     \let\stylet@pe\ss@ParCtgy
-    \tracinggroups=1
   \else 
     \let\stylet@pe\ss@Ctgy
   \fi
@@ -1640,6 +1694,8 @@
   \op@ninghooks{start}{cat}%
   \let\styst@k=\empty
   \s@tstyst@k%
+  %\n@npublishablefalse\getmcp@ram{properties}%
+  %\x@\t@stnonpub\p@ram nonpublishable!
   \bgroup % This group will be closed by the end-of footnote marker / other container.  %(2)
   %I.e. we're borrowing the egroup from other bits of code.  
   \ifx\stylet@pe\ss@Ctgy
@@ -1754,7 +1810,7 @@
     \ifColNotesRule \advance \dimen9 by -1pt\fi  % width of rule
   \fi\fi\fi
   \global #1=\dimen9
-  \trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
+  %\trace{o}{setonecolwidth textwidth=\the\textwidth, columnshift=\the\columnshift, with notes width=\the\XrefNotesWidth, margin=\the\XrefNotesMargin, gutter=\the\gutter, result=\the #1, xrefnotes=\XrefNotes, ch@pter=\ch@pter, body columns=\the\BodyColumns}%
 }
 
 

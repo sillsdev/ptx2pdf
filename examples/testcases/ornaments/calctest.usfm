@@ -1,0 +1,10 @@
+\id TST Test file
+\h Caclulation test file
+\c 1
+\s Caclulation test file
+\p
+\v 1 This file is to check the maths of a simple border.
+\zrule |cat="orntest" thick="10pt" width="0.91089908045" \*
+
+\zrule |cat="plain" thick="10pt" width=".91089908045" \*
+\p The end

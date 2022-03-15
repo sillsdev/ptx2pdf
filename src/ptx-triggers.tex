@@ -93,7 +93,7 @@
     \xdef\dc@rref{\odc@rref\TriggerP@rSep\the\p@rnum}%
   \fi
   \ifMarkTriggerPoints\trigg@rmark{TP}\fi
-  \trace{T}{running triggers \c@rref \c@rrdstat \the\p@rnum, \the\curr@djpar}%
+  \trace{T}{running triggers \c@rref\space  \c@rrdstat \the\p@rnum, \the\curr@djpar}%
   \the\trigg@rchecks
   \global\let\c@rref=\oc@rref\global\let\dc@rref=\odc@rref
 }
@@ -137,7 +137,8 @@
   \settrign@me{#1}%
   \addtr@gger{#2}}% Not expected to be long 
 
-\def\AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
+\def\AddTrigger{\prepusfm\@AddTrigger}
+\def\@AddTrigger#1 {% #1 is space-delimited, input may contain blank lines.
   \settrign@me{#1}%
   \catcode"FDEC=0\catcode`\\=12
   \@@AddTrigger}
@@ -147,6 +148,7 @@
  \catcode"FDEC=0\catcode`\\=12
  ﷬long﷬gdef﷬@@AddTrigger#1 \EndTrigger{%
   ﷬r@storbkslsh
+  ﷬unprepusfm
   ﷬addtr@gger{#1}}%
  ﷬r@storbkslsh
 }
@@ -188,16 +190,20 @@
 }
 
 \def\stdtrigger{%Run any triggers if they exist.
-   \settrign@me{\c@rref}\x@\let\x@\tmp\csname\trign@me\endcsname
-   \ifx\relax\tmp\else
+  \settrign@me{\c@rref}\ifcsname \trign@me\endcsname
+    \x@\let\x@\tmp\csname\trign@me\endcsname
+    \ifx\relax\tmp\else
       \c@llr@ntr@g
-   \fi%
-   \ifdiglot
-     \settrign@me{\dc@rref}\x@\let\x@\tmp\csname\trign@me\endcsname
-     \ifx\relax\tmp\else
-      \c@llr@ntr@g
-     \fi%
-   \fi
+    \fi%
+  \fi
+  \ifdiglot
+    \settrign@me{\dc@rref}\ifcsname \trign@me\endcsname
+      \x@\let\x@\tmp\csname\trign@me\endcsname
+      \ifx\relax\tmp\else
+        \c@llr@ntr@g
+      \fi%
+    \fi
+  \fi
 }
 
 \addtotrigg@rchecks{\stdtrigger}

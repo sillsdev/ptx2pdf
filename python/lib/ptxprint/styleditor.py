@@ -1,5 +1,5 @@
 
-import re
+import re, os
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path

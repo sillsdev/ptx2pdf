@@ -5,11 +5,13 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path
-from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm
+from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
+from ptxprint.reference import RefList, RefRange, Reference
+import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
@@ -21,7 +23,7 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "2.1.1"
+VersionStr = "2.1.8"
 ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -49,8 +51,8 @@ class ViewModel:
         # modelname: (attribute, isMultiple, label)
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
-        "project/selectscript":     ("customScript", False, None),
-        "project/customXRfile":     ("customXRfile", False, None),
+        "project/selectscript":     ("customScript", False, "btn_selectScript"),
+        "project/selectxrfile":     ("customXRfile", False, "btn_customXrFile"),
         "project/modulefile":       ("moduleFile", False, "lb_bibleModule"),
         "paper/watermarkpdf":       ("watermarks", False, "lb_applyWatermark"),
         "fancy/pageborderpdf":      ("pageborder", False, "lb_inclPageBorder"),
@@ -103,6 +105,7 @@ class ViewModel:
         self.copyrightInfo = {}
         self.pubvars = {}
         self.strongsvars = {}
+        self.bookrefs = None
 
         # private to this implementation
         self.dict = {}
@@ -198,35 +201,47 @@ class ViewModel:
             fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
         return [fname]
         
-    def getBooks(self, scope=None, files=False):
-        bl = self.get("ecb_booklist", "").upper().split()
+    def _bookrefsBooks(self, bl, local):
+        res = []
+        if not local:
+            self.bookrefs = bl
+        for r in bl:
+            if not len(res) or r.first.book != res[-1]:
+                res.append(r.first.book)
+        return res
+
+    def getBooks(self, scope=None, files=False, local=False):
         if scope is None:
             scope = self.get("r_book")
-        if scope == "single":
-            bk = self.get("ecb_book")
-            # if bk == "FRT":   # Probably don't need to do this as no one in their right mind would only print FRT
-                # self.switchFRTsettings()
-            if bk:
-                bname = self.getBookFilename(bk, self.prjid)
-                if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    return [bk]
-            return []
-        elif scope == "multiple" and len(bl):
-            blst = []
-            for b in bl:
-                bname = self.getBookFilename(b, self.prjid)
-                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    if b == "FRT":
-                        self.switchFRTsettings()
-                    else:
-                        blst.append(b)
-            return blst
-        elif scope == "module":
+        if scope == "module":
             if self.moduleFile is None:
                 return []
             res = Path(self.moduleFile).as_posix()
-            # res = self.get("btn_chooseBibleModule")
             return [res] if files and res else []
+        elif scope != "single" and not local and self.bookrefs is not None:
+            return self._bookrefsBooks(self.bookrefs, True)
+        bl = RefList.fromStr(self.get("ecb_booklist", ""))
+        if scope == "single" or not len(bl):
+            bk = self.get("ecb_book")
+            if bk:
+                bname = self.getBookFilename(bk, self.prjid)
+                if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                    fromchap = int(self.get("s_chapfrom"))
+                    tochap = int(self.get("s_chapto"))
+                    res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
+                    return self._bookrefsBooks(res, local)
+            return []
+        elif scope == "multiple":
+            res = []
+            self.bookrefs = RefList()
+            for b in bl:
+                bname = self.getBookFilename(b.first.book, self.prjid)
+                if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
+                    if b.first.book == "FRT":
+                        self.switchFRTsettings()
+                    else:
+                        res.append(b)
+            return self._bookrefsBooks(res, local)
         else:
             # return self.booklist
             return []
@@ -278,6 +293,13 @@ class ViewModel:
                     (ptsettings['FileNamePostPart'] or "")
         fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, "A0"))  # FRT = A0
         return fname
+
+    def getScriptSnippet(self):
+        script = self.get("fcb_script")
+        gclass = getattr(scriptsnippets, script.lower(), None)
+        if gclass is None:
+            gclass = getattr(scriptsnippets, 'ScriptSnippet')
+        return gclass
 
     def setFont(self, btn, name, style):
         self.dict[btn+"/name"] = name
@@ -1125,13 +1147,10 @@ class ViewModel:
         return res
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):
-        sfiles = {'c_useCustomSty': ("custom.sty", False),
-                  'c_useModsSty': ("ptxprint-mods.sty", True),
-                  'c_useModsTex': ("ptxprint-mods.tex", True),
+        sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
-                  'c_usePrintDraftChanges': (("PrintDraftChanges.txt", False), ("changes.txt", True)),
-                  'c_frontmatter': ("FRTlocal.sfm", True),
-                  None: ("picChecks.txt", False)}
+                  'c_usePrintDraftChanges': "PrintDraftChanges.txt",
+                  None: "picChecks.txt"}
         res = {}
         cfgchanges = {}
         tmpfiles = []
@@ -1148,14 +1167,18 @@ class ViewModel:
 
         # pictures and texts
         fpath = os.path.join(self.settings_dir, prjid)
+        scope = self.get("r_book")
+        if scope == "module":
+            bk = books[0]
+            res[os.path.join(fpath, bk)] = os.path.basename(bk)
+            cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
+            cfgchanges['lb_bibleModule'] = os.path.basename(bk)
+            usfms = self.get_usfms()
+            mod = Module(os.path.join(fpath, bk), usfms=usfms)
+            books.extend(mod.getBookRefs())
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
-            if fname is None:
-                scope = self.get("r_book")
-                if scope == "module":
-                    res[os.path.join(fpath, bk)] = os.path.basename(bk)
-                    cfgchanges['btn_chooseBibleModule'] = os.path.basename(bk)
-            else:
+            if fname is not None:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
             if interlang is not None:
                 intpath = "Interlinear_{}".format(interlang)
@@ -1169,19 +1192,10 @@ class ViewModel:
         pathkey = 'src path'
         for f in (p[pathkey] for p in self.picinfos.values() if pathkey in p and p['anchor'][:3] in books):
                 res[f] = "figures/"+os.path.basename(f)
-        xrfile = sel.get("btn_selectXrFile")
+        xrfile = self.get("btn_selectXrFile")
         if xrfile is not None:
-            res[xrfile] = "${prjdir}/" + os.path.basename(xrfile)
+            res[xrfile] = os.path.basename(xrfile)
             cfgchanges["btn_selectXrFile"] = res[xrfile]
-
-        # adjlists
-        for a,e in (("AdjLists", ".adj"), ("triggers", ".triggers")):
-            adjpath = os.path.join(basecfpath, a)
-            adjbks = set(self.getAdjListFilename(bk, ext=e) for x in books)
-            if os.path.exists(adjpath):
-                for adj in os.listdir(adjpath):
-                    if adj.endswith(e) and adj in adjbks:
-                        res[os.path.join(adjpath, adj)] = cfpath+a+"/"+adj
 
         # piclists
         piclstpath = os.path.join(basecfpath, "PicLists")
@@ -1246,42 +1260,33 @@ class ViewModel:
         res[tempfile.name] = cfpath+"ptxprint.sty"
         tmpfiles.append(tempfile.name)
 
-        # config files
+        # config files - take the whole tree even if not needed
+        for dp, dn, fn in os.walk(basecfpath):
+            op = os.path.join(cfpath, os.path.relpath(dp, basecfpath))
+            for f in fn:
+                res[os.path.join(dp, f)] = os.path.join(op, f)
+        sp = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint')
+        for f in os.listdir(sp):
+            fp = os.path.join(sp, f)
+            if os.path.isfile(fp):
+                res[fp] = os.path.join('shared', 'ptxprint', f)
+
+        # special config files not in config tree
         for t, b in sfiles.items():
             if isinstance(t, str) and not self.get(t): continue
-            c = [b] if isinstance(b[0], str) else b
+            c = [b] if isinstance(b, str) else b
             for a  in c:
-                if a[1]:
-                    s = os.path.join(basecfpath, a[0])
-                    d = cfpath + a[0]
-                else:
-                    s = os.path.join(self.settings_dir, prjid, a[0])
-                    d = a[0]
+                s = os.path.join(self.settings_dir, prjid, a)
                 if os.path.exists(s):
-                    res[s] = d
+                    res[s] = a
 
-        if self.get("c_useModsTex"):
-            loaded = False
-            if cfgid is not None:
-                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', cfgid, 'ptxprint-mods.tex')
-                loaded = os.path.exists(p)
-            if not loaded:
-                p = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint', 'ptxprint-mods.tex')
-                if os.path.exists(p):
-                    res[p] = "shared/ptxprint/ptxprint-mods.tex"
         if interlang is not None:
             res[os.path.join(fpath, 'Lexicon.xml')] = 'Lexicon.xml' 
 
-        script = self.get("btn_selectScript")
-        if script is not None and len(script):
+        script = self.customScript
+        if script: # is not None and len(script):
             res[script] = os.path.basename(script)
             cfgchanges["btn_selectScript"] = os.path.join(self.settings_dir, prjid, os.path.basename(script))
-
-        hyphenfpath = os.path.join(self.settings_dir, prjid, "shared", "ptxprint")
-        hyphentpath = "shared/ptxprint/"
-        hyphenfile = "hyphen-{}.tex".format(self.prjid)
-        if os.path.exists(os.path.join(hyphenfpath, hyphenfile)):
-            res[os.path.join(hyphenfpath, hyphenfile)] = hyphentpath + hyphenfile
 
         pts = self._getPtSettings(prjid=prjid)
         ptres = pts.getArchiveFiles()

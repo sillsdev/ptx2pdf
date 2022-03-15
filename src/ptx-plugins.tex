@@ -34,13 +34,30 @@
 \def\kn@wnplugins{polyglot-simplecols,polyglot-simplepages,ornaments}
 \newif\ifpluginjustwarn
 \pluginjustwarntrue %Should the code just warn, or try to load the code?
+\def\sw@llowignoredarg #1\relax{}
 \def\PluginOptions#1#2{% #2 is a comma-separated list of stylesheet entries that would trigger a warning if used.
   \def\d@##1\E{%
     \ifcsname ##1\endcsname\else
-    \x@\def\csname ##1\endcsname{\message{\ifpluginjustwarn Stylesheet option '##1' requires missing \else Loading required \fi plugin: #1}\ifpluginjustwarn\else\x@\let\csname##1\endcsname\relax \plugin@check #1\E\csname ##1\endcsname\fi}\fi}%
-\cstackdown#2,\E}
+    \x@\def\csname ##1\endcsname{%
+      \let\@fterpl@g\relax
+      \message{\ifpluginjustwarn Stylesheet option '##1' requires missing \else Loading required \fi plugin: #1}%
+      \ifpluginjustwarn
+        \let\@fterpl@g\sw@llowignoredarg
+      \else
+        \x@\let\csname##1\endcsname\relax
+        \catcode`\@=11
+        \m@kedigitsother
+        \plugin@check #1\E
+        \catcode`\@=12
+        \x@\let\x@\@fterpl@g\csname ##1\endcsname
+      \fi\@fterpl@g}
+    \fi}%
+  \cstackdown#2,\E
+}
 
-\PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
+\PluginOptions{ornaments}{BorderFillColour,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
+
+
 \def\plugins@ll{all}
 \def\plugin@startif#1{%
   \ifcsname #1@plugin@loaded\endcsname\else
@@ -49,6 +66,7 @@
 \def\plugin@endif{\fi}
 \def\plugin@check#1\E{%
   \ifcsname #1@plugin@loaded\endcsname\else
+    %\unc@tcodespecials
     \input #1.tex
   \fi}
 

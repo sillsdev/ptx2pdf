@@ -148,6 +148,7 @@
 
 %+cpar_gridbox2
 % returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
+% \dimen1 ends up rounded down to an integral number of input \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
@@ -442,8 +443,12 @@
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
-  \trace{sP}{Redefined everypar}%
+  \p@rstyle@everypar{#1}%
+  \traceifcheck{p@rstyle}%
+ \fi}
 %+cpar_parstyle_start
+\def\p@rstyle@everypar#1{%
+  \trace{sP}{Redefined everypar}%
   \everypar={%
    \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname'}%
    %
@@ -549,8 +554,7 @@
    \startparafalse\first@fterheadingfalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
   }% end everypar
-  \traceifcheck{p@rstyle}%
- \fi}
+}
 %-cpar_parstyle_final
 
 %+cpar_pdfbookmark
@@ -582,8 +586,9 @@
   \fi
 }
 
-\def\pdfb@@km@rk{\ifx\book\prevb@ok\else
-  \global\dr@ppednumberfalse
+\def\pdfb@@km@rk{\trace{V}{pdfbookmark: \book \space after \prevb@ok}%
+ \global\dr@ppednumberfalse
+ \ifx\book\prevb@ok\else
   \ifDropActions\else\bgroup\liter@lspecials
     \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
     \ifrefbookmarks\let\t@mp=\id@@@\fi
@@ -1107,6 +1112,7 @@
  \parfillskip=0pt plus 1fil
  %\emergencystretch=11in
  \parindent=0pt }
+
 %-cpar_resetparstyle
 
 \endinput

@@ -1,9 +1,11 @@
 import re
 from ptxprint.minidialog import MiniCheckButton
+from ptxprint.reference import RefSeparators
 from ptxprint.utils import _
 
 class ScriptSnippet:
     dialogstruct = None
+    refseparators = RefSeparators()
 
     @classmethod
     def regexes(cls, model):
@@ -12,6 +14,37 @@ class ScriptSnippet:
     @classmethod
     def tex(cls, model):
         return ""
+
+    @classmethod
+    def getrefseps(cls, model):
+        return cls.refseparators
+
+    @classmethod
+    def indicSyls(cls):
+        res = []
+        # Define nonWordChars to also exclude the hyphenChar
+        # (Variable name beginning with 'g' indicates Grouping parentheses used.)
+        nonWordChar = r"(?:[^\u003d" + cls.hyphenChar + cls.wordChars + "])"
+        gNonWordChar = r"([^\u003d" + cls.hyphenChar + cls.wordChars + "]|^|$)"
+
+        # components of syllable patterns
+        consPattern = "[" + cls.cons + "][" + cls.cmodifiers + "]*"
+        viramasPattern = "[" + cls.viramas + r"][\u200c\u200d\u0324]*"  # Temporarily included: 0324 (combining diaeresis) until permanent nukta is available
+        optMatras = "[" + cls.matras + cls.vmodifiers + "]*"
+
+        # Syllable patterns
+        syllPattern1 = "(?:(?:" + consPattern + viramasPattern + ")*" + consPattern + optMatras + ")"
+        syllPattern2 = "(?:(?:" + consPattern + viramasPattern + ")*" + consPattern + viramasPattern + "(?=" + nonWordChar + "))"
+        syllPattern3 = "(?:[" + cls.indVowels + "][" + cls.vmodifiers + "]*)"
+        gSyllPattern = "(" + syllPattern1 + "|" + syllPattern2 + "|" + syllPattern3 + ")"
+
+        res += [(onlybody, re.compile(gSyllPattern), cls.hyphenChar + r'\1')]                  # Begin by inserting a break before EVERY syllable
+        res += [(onlybody, re.compile(gNonWordChar + cls.hyphenChar), r'\1')]                  # Remove break at start of word
+        res += [(onlybody, re.compile(gNonWordChar + gSyllPattern + cls.hyphenChar), r'\1\2')] # Remove break after 1st syllable (need 2 syll before break.)
+        res += [(onlybody, re.compile(cls.hyphenChar + gSyllPattern + gNonWordChar), r'\1\2')] # Remove break before last syllable (need 2 syll after break.)
+        res += [(onlybody, re.compile(cls.hyphenChar + r"(?=[\u0d7a-\u0d7f])"), '')]           # Remove break before MAL atomic chillu  \u0d7a-\u0d7f
+        res += [(onlybody, re.compile(cls.hyphenChar + r"(?=[\u0d23\u0d28\u0d30\u0d32\u0d33\u0d15]\u0d4d\u200d)"), '')] # Remove break before MAL old-style chillu 
+        return res
 
 nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
 
@@ -57,3 +90,107 @@ class thai(ScriptSnippet):
                (None, re.compile(r'/'), "\u200B")]
         return res
 
+class arab(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrarabrefs", _("First verse on left"))
+    ]
+    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:"), RefSeparators(range="\u200F-", cv="\u200E:"))
+
+    @classmethod
+    def getrefseps(cls, model):
+        return cls.refseparators[1 if model["scripts/arab/lrcolon"] else 0]
+
+class mlym(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrmlymSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        if model["scripts/mlym/syllables"]:
+            cls.hyphenChar = '\u200B'
+            cls.indVowels = r'\u0d05-\u0d14\u0d60\u0d61'
+            cls.vmodifiers = r'\u0d02-\u0d03\u0d3d\u0324'
+            cls.cmodifiers = r'\u0324'
+            cls.cons = r'\u0d15-\u0d39\u0d7a-\u0d7f'
+            cls.matras = r'\u0d3e-\u0d4c\u0d57\u0d62\u0d63'
+            cls.viramas = r'\u0d4d'
+            cls.wordChars = r'\u0d01-\u0d63\u0d7a-\u0d7f\u200c\u200d\u0324'
+            res = cls.indicSyls()
+        return res
+
+class taml(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrtamlSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        if model["scripts/taml/syllables"]:
+            cls.hyphenChar = '\u200B'
+            cls.wordChars = r'\u0b81-\u0be3'
+            cls.cons = r'\u0b95-\u0bb9'
+            cls.indVowels = r'\u0b85-\u0b94'
+            cls.matras = r'\u0bbc-\u0bcc\u0bd7'
+            cls.viramas = r'\u0bcd'
+            cls.cmodifiers = r'\u0324'
+            cls.vmodifiers = r'\u0b82'
+            res = cls.indicSyls()
+        return res
+            
+class telu(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrteluSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        if model["scripts/telu/syllables"]:
+            cls.hyphenChar = '\u200B'
+            cls.wordChars = r'\u0c01-\u0c63\u0c7f'
+            cls.cons = r'\u0c15-\u0c39\u0c58\u0c59'
+            cls.indVowels = r'\u0c05-\u0c14\u0c60\u0c61'
+            cls.matras = r'\u0c3e-\u0c4c\u0c55\u0c56\u0c62\u0c63'
+            cls.viramas = r'\u0c4d'
+            cls.cmodifiers = r'\u0324'
+            cls.vmodifiers = r'\u0c01-\u0c03\u0c4d'
+            res = cls.indicSyls()
+        return res
+            
+class knda(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrkndaSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        if model["scripts/knda/syllables"]:
+            cls.hyphenChar = '\u200B'
+            cls.wordChars = r'\u0c81-\u0ce3\u0cf1\u0cf2'
+            cls.cmodifiers = r'\u0324\u0cbc'  # KAN nukta
+            cls.cons = r'\u0c95-\u0cb9\u0cde'
+            cls.indVowels = r'\u0c85-\u0c94\u0ce0\u0ce1'
+            cls.matras = r'\u0cbe-\u0ccc\u0cd5\u0cd6\u0ce2\u0ce3'
+            cls.viramas = r'\u0ccd'
+            cls.vmodifiers = r'\u0c82-\u0c83\u0cbd'
+            res = cls.indicSyls()
+        return res
+            
+class orya(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scroryaSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        if model["scripts/orya/syllables"]:
+            cls.hyphenChar = '\u200B'
+            cls.wordChars = r'\u0b01-\u0b63\u0b70\u0b71'
+            cls.cmodifiers = r'\u0324\u0b3c'  # ORI nukta
+            cls.cons = r'\u0b15-\u0b39\u0b5c\u0b5d\u0b5f\u0b70\u0b71'
+            cls.indVowels = r'\u0b05-\u0b14\u0b60\u0b61'
+            cls.matras = r'\u0b3e-\u0b4c\u0b56\u0b57\u0b62\u0b63'
+            cls.viramas = r'\u0b4d'
+            cls.vmodifiers = r'\u0b01-\u0b03\u0b4d'  
+            res = cls.indicSyls()
+        return res

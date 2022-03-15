@@ -37,6 +37,10 @@
 \newbox\sid@barnotes % Box in which notes are placed in a sidebar
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
+\def\S@tCat#1{\trace{sc}{Started Category #1}%
+  \gdef\c@tegory{#1}%
+  \s@tc@tpr@fix%
+}
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
 
 \def\setsbp@ram#1#2{\trace{sc}{Styling \m@rker:#1 #2}\setp@ram{#1}{\m@rker}{#2}}
@@ -68,9 +72,19 @@
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
+%\setsbp@ram{borderfillcolour}{none} % For double.
 %\setsbp@ram{borderhpadding}{0} %FontSizeUnits
 %\setsbp@ram{bordervpadding}{0} %FontSizeUnits
-\let\m@rker\relax
+\def\m@rker{textborder}
+\setsbp@ram{borderlinewidth}{0.05}
+\setsbp@ram{borderwidth}{8}
+\setsbp@ram{borderhpadding}{2}
+\setsbp@ram{bordervpadding}{2}
+\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
+\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
+\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
+\S@tCat{}
+\let\c@tegory\empty
 \def\fb@hpadding{1pt}%Added left and right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 \newif\ifNoTransparency
@@ -294,7 +308,7 @@
           \xdef\sb@rtopedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
         \fi
         \ifx\tempa\@lignBot
-          \xdef\sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
+          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}}%
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
@@ -402,9 +416,9 @@
     %Spacing for the content-box:
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
     \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@hpadding  \ifx\b@drtop\tr@e +\border@hpadding + \b@drwidth\FontSizeUnit \fi\relax}%
-    \edef\b@drsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
-    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drsides+ \border@hpadding * \b@drsides\relax}%% Final width of border artwork
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth\FontSizeUnit \fi\relax}%
+    \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth\FontSizeUnit *\b@drhsides+ \border@hpadding * \b@drhsides\relax}%% Final width of border artwork
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth\FontSizeUnit *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
     \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth\FontSizeUnit \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth\FontSizeUnit-\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
@@ -435,7 +449,7 @@
         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1 
       \fi
     \hss
-      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+      \ifx\b@drright\tr@e\trace{eb}{Drawing Border:right}%
         \vrule width \b@drwidth\FontSizeUnit height \dimen0 depth \dimen1
       \fi
     }\vss
@@ -443,16 +457,114 @@
 \endbc@l}%
 }
 
+%\def\TextBorderStyle{}
+\def\doTextB@rder#1{%
+  \ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
+    \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
+      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1, \the\wd#1}%
+      \bgroup 
+        \def\sb@rmarker{textborder}%
+        \S@tCat{\id@@@}%
+        %\setbox\b@rderbox\vbox to \dimexpr #1 + \TextBorderExtra*2\relax{\hsize=\dimexpr \textwidth+\TextBorderExtra*2\relax\hss\vss}%Placeholder
+        \get@border@style@params
+        %\let\b@drtop\tr@e\let\b@drbottom\tr@e
+        %\let\b@drleft\tr@e\let\b@drright\tr@e
+        %\hasb@rdertrue
+        \ifx\b@drstyle\relax
+          \let\b@drstyle\TextBorderStyle
+        \fi
+        \prepb@rderbox{#1}%
+        \ifhasb@rder
+          \csname mkb@rder@\b@drstyle\endcsname
+          \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+        \fi
+      \egroup
+    \fi\fi
+  \fi\fi\fi
+}
+\def\TextBorderExtra{10pt}
+
+\def\@@sb@rbotedge#1{\bgroup
+  \setbox0\hbox{#1}\p@cheight=\ht0
+  \loop 
+    \advance\p@cheight by -\baselineskip 
+  \ifdim\p@cheight>0pt\repeat
+ % \advance\p@cheight by \baselineskip
+  \vskip-\p@cheight
+  \vskip 0pt
+  \unhbox0
+  \egroup}
+
+
 \def\borderstylelist{plain, double}
 \let\mkb@rder@plain\mkb@rder
-\def\mkb@rder@double#1{%
-  \let\Ob@drwidth\b@drwidth
-  \let\Os@vedhpadding\fb@hpadding
-  \edef\b@drwidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}%
-  \mkb@rder#1\edef\fb@hpadding{\the\dimexpr\b@drwidth\FontSizeUnit\relax}%
-  \setbox#1\vbox{\vskip-1\dimen1\unvbox#1}% This helps, but it's not enough, for some reason.
-  \mkb@rder#1\let\b@drwidth\Ob@drwidth
-  \let\fb@hpadding\Os@vedhpadding}
+\def\mkb@rder@double{%
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
+  \ifx\b@drlinewidth\relax
+    \edef\b@drlinewidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}% Use pt for division.
+    \let\b@drfillwidth\b@drlinewidth
+  \else
+    \edef\b@drfillwidth{\strip@pt{\dimexpr \b@drwidth\FontSizeUnit - 2\dimexpr \b@drlinewidth\FontSizeUnit \relax\relax}}%
+    %\edef\b@drwidth{\strip@pt{\dimexpr \b@drlinewidth\FontSizeUnit\relax}}%
+  \fi
+  \ifdim \b@drfillwidth pt<0pt \let\b@drfillcolour\fill@none\fi
+  \temptrue
+  \ifx\b@drfillcolour\relax\tempfalse
+  \else\ifx\b@drfillcolour\fill@none\tempfalse\fi
+  \fi
+  \iftemp 
+    \def\fc@l{\special{color push rgb \b@drfillcolour}}\def\endfc@l{\special{color pop}}%
+  \else \def\fc@l{}\def\endfc@l{}%
+  \fi
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drsides\relax %Inner vertical
+  \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth\FontSizeUnit * \b@drsides\relax %Fill vertical
+  \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drsides\relax %Outer vertical
+  \dimen3=\b@rderbox@width\advance\dimen3 by \dimexpr -\b@drlinewidth\FontSizeUnit * \b@drhsides\relax % Fill width
+  \dimen4=\dimen3\advance\dimen4 by \dimexpr -\b@drfillwidth\FontSizeUnit * \b@drhsides\relax %Inner horiz length
+  \trace{eb}{Borders: \b@rderbox@width - \b@drlinewidth*\the\FontSizeUnit  =\the\dimen3, \b@rderbox@height - }%
+  \dimen5=\dimexpr \b@drfillwidth\FontSizeUnit + \b@drlinewidth\FontSizeUnit\relax
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\lineskiplimit=0pt\hsize=\b@rderbox@width
+    \ifx\b@drtop\tr@e
+      \hbox to \b@rderbox@width{\bc@l\vrule height \b@drlinewidth\FontSizeUnit width \b@rderbox@width \endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth\FontSizeUnit\fi
+          \fc@l\vrule height \b@drfillwidth\FontSizeUnit width\dimen3\endfc@l
+          \ifx\b@drright\tr@e\kern\b@drlinewidth\FontSizeUnit\fi}%
+      \fi
+      \hbox{\ifx\b@drleft\tr@e\kern\dimen5\fi
+        \bc@l
+        \vrule height\b@drlinewidth\FontSizeUnit width\dimen4\endbc@l}%
+      \kern-\dimen5
+    \fi
+    \hbox to \b@rderbox@width{%   
+      \ifx\b@drleft\tr@e
+        \bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen0 \endbc@l
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else\raise\b@drfillwidth\FontSizeUnit\hbox{\fc@l \vrule width \b@drfillwidth\FontSizeUnit height \dimen1 \endfc@l}\fi%
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen2 \endbc@l}%
+      \fi
+    \hss
+      \ifx\b@drright\tr@e
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth\FontSizeUnit height \dimen2 \endbc@l}%
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else\raise\b@drfillwidth\FontSizeUnit\hbox{\fc@l \vrule width \b@drfillwidth\FontSizeUnit height \dimen1 \endfc@l}\fi%
+        \bc@l \vrule width \b@drlinewidth\FontSizeUnit height \dimen0 \endbc@l
+      \fi
+    }%
+    \vss
+    \ifx\b@drbottom\tr@e
+      \kern -\dimen5
+      \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\dimen5\fi\bc@l\vrule height\b@drlinewidth\FontSizeUnit width\dimen4\endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth\FontSizeUnit\else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth\FontSizeUnit\fi\fc@l\vrule height \b@drfillwidth\FontSizeUnit width\dimen3\endfc@l}%
+      \fi
+      \hbox{\bc@l\vrule height \b@drlinewidth\FontSizeUnit width \b@rderbox@width \endbc@l}%
+    \fi
+  }%
+  \showbox\b@rderbox
+}
 
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
@@ -493,6 +605,24 @@
 
 \x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
 
+\def\get@border@style@params{%Read the border-related parameters
+  \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
+  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
+  \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
+  %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
+  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
+  \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
+}
+
 \def\@sbe{%
   \endlastp@rstyle{esbe}%
   \ifhe@dings\endhe@dings\fi
@@ -506,7 +636,10 @@
    \kill@PossParamCache
    \ifx\fgfigp@s
    \ifhmode\par\fi
-   \sb@rbotedge\ifhmode\endgraf\fi
+   \ifx\sb@rbotedge\empty\else
+     \vskip-\prevdepth
+     \sb@rbotedge\ifhmode\endgraf\fi
+   \fi
    \global\let\c@t@gory=\c@tegory\egroup 
   \else\global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}%
   \fi
@@ -521,19 +654,10 @@
   \inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
   \let\os@vedhpadding=\fb@hpadding%
-  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
-  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram\FontSizeUnit\relax}\fi
+  \get@border@style@params
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
   \getsbp@ram{hascol}\let\h@scol\cp@ram%
-  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
-  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bgfigalpha}\let\bgf@galpha\cp@ram
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
@@ -663,21 +787,27 @@
       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \fi
     \let\b@drtop=\fstb@drtop
-    \getsbp@ram{bordercolour}%
-    \let\b@drcol\cp@ram
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifhasb@rder % any border
       \ifx\b@drstyle\relax
-        \message{making box}%
-        \mkb@rder
-      \else
-        \ifcsname mkb@rder@\b@drstyle\endcsname 
-          \message{making box for \b@drstyle}%
-          \csname mkb@rder@\b@drstyle\endcsname
+        \ifx\b@drfillcolour\relax
+          \ifx\b@drlinewidth\relax
+            \edef\b@drstyle{plain}%
+          \else
+            \trace{eb}{Border line width defined and style not specified, assume double border}%
+            \edef\b@drstyle{double}%
+          \fi
         \else
-          \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
-        \fi 
+          \trace{eb}{Border fill defined to '\b@drfillcolour', and style not specified, assume double border}%
+          \edef\b@drstyle{double}%
+        \fi
       \fi
+      \ifcsname mkb@rder@\b@drstyle\endcsname 
+        \message{making box for \b@drstyle}%
+        \csname mkb@rder@\b@drstyle\endcsname
+      \else
+        \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+      \fi 
       %\setbox\extchunkb@x\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hss\hskip\dimen8\box\extchunkb@x\hskip\dimen9\hss}\vss}\box\b@rderbox}%
       %\showbox\extchunkb@x
       \dimen1=\dimexpr -\b@rderbox@depth\relax
@@ -792,16 +922,16 @@
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
-\def\BgImageColour       #1\relax{\initc@t\setsbp@ram{bgfigcolour}{#1}}
+\def\BgImageColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bgfigcolour}{\rgb@out}}
 \let\BgImageColor=\BgImageColour%for Americans
 \def\BgImageAlpha       #1\relax{\initc@t\setsbp@ram{bgfigalpha}{#1}}
 \def\BgImageOversize       #1\relax{\initc@t\setsbp@ram{bgfigoversize}{#1}}
 
-\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\setsbp@ram{bgcolour}{#1}\fi}%For British/Australian/NZ/etc.
+\def\BgColour   #1\relax{\initc@t\tempfalse\uppercase{\edef\t@st{#1}}\setbox0\hbox{\if F\t@st \global\temptrue\trace{e}{Cancelling colour}\else\if\tr@e\t@st\global\temptrue\fi\fi}\iftemp\setsbp@ram{hascol}{\t@st}\else\setsbp@ram{hascol}{T}\x@\checkh@x #1\end\setsbp@ram{bgcolour}{\rgb@out}\fi}%For British/Australian/NZ/etc.
 \let\BgColor\BgColour%For Americans
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
 \def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
-\def\BorderColour       #1\relax{\initc@t\setsbp@ram{bordercolour}{#1}}
+\def\BorderColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bordercolour}{\rgb@out}}
 \def\BorderStyle       #1\relax{\initc@t\setsbp@ram{borderstyle}{#1}}
 \def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
@@ -812,6 +942,9 @@
 \def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
+\def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
+\let\BorderFillColor\BorderFillColour
+\def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}} % linewidth for double border (or ornament)
 
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
@@ -842,10 +975,6 @@
 
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
 
-\def\S@tCat#1{\trace{sc}{Started Category #1}%
-  \gdef\c@tegory{#1}%
-  \s@tc@tpr@fix%
-}
 \def\showTheCategory{\c@tegory\message{The category is \c@tegory}}
 
 \def\StyleCategory#1#2{\S@tCat{#1}#2\EndCategory}
@@ -861,7 +990,7 @@
 \def\B@rderINNER{\ifBookOpenLeft\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\else\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\fi}
 \def\B@rderOUTER{\ifBookOpenLeft\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenright}{T}\else\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenleft}{T}\fi}
 \def\B@rderALL{\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}}
-\def\B@rderNone{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
+\def\B@rderNONE{\setsbp@ram{borderoddleft}{F}\setsbp@ram{borderevenleft}{F}\setsbp@ram{borderoddright}{F}\setsbp@ram{borderevenright}{F}\setsbp@ram{bordertop}{F}\setsbp@ram{borderbottom}{F}}
 
 \addtoinithooks{\let\@SB=\esb\let\@SBE=\esbe \let\esb=\@sb\let\esbe=\@sbe}
 \def\g@nbox#1{%For some reason, this prefers to be in its own macro.

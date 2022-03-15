@@ -1593,7 +1593,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.1.1</property>
+    <property name="version">Version 2.1.8</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -8249,6 +8249,7 @@ to be printed from the project.</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -8268,6 +8269,7 @@ to be printed from the project.</property>
                                 <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_single</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -8288,6 +8290,7 @@ to be printed from the project.</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                                 <property name="group">r_book_multiple</property>
+                                <signal name="clicked" handler="onBookScopeClicked" swapped="no"/>
                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
@@ -8443,7 +8446,13 @@ be viewed or edited in Paratext.</property>
                                 <property name="tooltip-text" translatable="yes">After selecting one or more books to be
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
-if need be.</property>
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
                                 <property name="margin-end">6</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
@@ -8456,7 +8465,13 @@ if need be.</property>
                                     <property name="tooltip-text" translatable="yes">After selecting one or more books to be
 printed, the book codes will be listed here.
 This list is editable, so books can be re-ordered
-if need be.</property>
+if need be.
+
+A list of references can also be entered manually
+for ranges of scripture to be printed. For example:
+  JHN 2:1-12
+  EXO 20:12-17 MAT 5:3-11
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                     <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
                                   </object>
@@ -9696,7 +9711,13 @@ Lines (max):</property>
                                 <property name="tooltip-text" translatable="yes">If this setting is checked on, but
 inactive, it is due to Diglot being
 active (which obviously must use 
-the Two Column layout).</property>
+the Two Column layout).
+
+If you get an unexpected result, 
+check the Different Column Layout 
+setting near the end of the Body tab
+which is only accessible when using
+the Full View mode.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <property name="margin-start">2</property>
@@ -11852,7 +11873,7 @@ column to fit the verse numbers.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
-                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -14304,16 +14325,19 @@ Biblical Terms List.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_strongsInclNames">
-                                                    <property name="label" translatable="yes">Include Proper Nouns</property>
-                                                    <property name="sensitive">False</property>
+                                                  <object class="GtkCheckButton" id="c_strongsShowNums">
+                                                    <property name="label" translatable="yes">Show Strong's Numbers</property>
+                                                    <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="no-show-all">True</property>
-                                                    <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
-cluttering the index and cross-references with
-too much detail, you may choose to exclude 
-proper nouns (names of people and places).</property>
+                                                    <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
+index, then it is highly recommended to
+include the Strong's numbers in the list 
+of cross-references in the text.
+
+But if you only want to show the references
+without any Strong's numbers, then uncheck
+this option for a more compact list.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
                                                     <property name="active">True</property>
@@ -14332,7 +14356,26 @@ proper nouns (names of people and places).</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <placeholder/>
+                                              <object class="GtkCheckButton">
+                                                <property name="label" translatable="yes">Include Proper Nouns
+(c_strongsInclNames)</property>
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="no-show-all">True</property>
+                                                <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
+cluttering the index and cross-references with
+too much detail, you may choose to exclude 
+proper nouns (names of people and places).</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="active">True</property>
+                                                <property name="draw-indicator">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">4</property>
+                                              </packing>
                                             </child>
                                           </object>
                                           <packing>
@@ -14352,7 +14395,7 @@ proper nouns (names of people and places).</property>
                                             <property name="margin-bottom">6</property>
                                             <property name="label-xalign">0.10000000149011612</property>
                                             <child>
-                                              <!-- n-columns=2 n-rows=5 -->
+                                              <!-- n-columns=2 n-rows=6 -->
                                               <object class="GtkGrid">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -14521,6 +14564,26 @@ of the page. </property>
                                                   <packing>
                                                     <property name="left-attach">0</property>
                                                     <property name="top-attach">4</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_xrSideAlign">
+                                                    <property name="label" translatable="yes">Side Align Notes</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">For side column notes, should
+the text of the notes align to 
+the edge of the main text?</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-start">6</property>
+                                                    <property name="margin-end">2</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">5</property>
                                                     <property name="width">2</property>
                                                   </packing>
                                                 </child>

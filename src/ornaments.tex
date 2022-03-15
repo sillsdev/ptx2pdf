@@ -30,14 +30,15 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\makeatletter{\catcode`\@=11}% Used by external code
+\makeatletter
 
 \plugin@startif{ornaments}
 %\plugins@needed{} % Just in case it becomes separate.
 
 % 
 \def\MSG#1{\immediate\write -1{#1}}
-\def\makeatletter{\catcode`\@=11}%
-\def\makeatother{\catcode`\@=12}%
+\def\makeatother{\catcode`\@=12}% Used by external code
 \newdimen\pdf@xunit
 \newdimen\pdf@yunit
 
@@ -47,8 +48,8 @@
 \let\x@\expandafter
 \x@\let\csname orn@skip176\endcsname\relax
 \let\ornamentmaxwidth\empty
-\gdef\pgfOrnamentsObject{pgflibraryvectorian.code.tex} 
 \gdef\OrnamentsFamily{vectorian}
+\gdef\pgfOrnamentsObject{pgflibrary\OrnamentsFamily.code.tex} 
 \newtoks\tmptoks
 \def\setorn@scale{%
   \tmptoks{}%
@@ -56,7 +57,7 @@
   \ifx\ornamentwidth\empty
     \tmptoks{\pdf@xunit=\pdf@yunit\relax
     \ifx\ornamentmaxwidth\empty\else
-      \MSG{Applying x-limit \ornamentmaxwidth}%
+      \trace{orn}{Applying x-limit \ornamentmaxwidth}%
       \ifdim \@pgfornamentX\pdf@xunit > \ornamentmaxwidth
 	\pdf@xunit=\dimexpr \ornamentmaxwidth / \@pgfornamentX\relax
 	\pdf@yunit=\pdf@xunit
@@ -72,7 +73,7 @@
     \pdf@yunit=\dimexpr \ornamentheight / \@pgfornamentY\relax
   \fi
   \the\tmptoks
-  \MSG{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
+  \trace{orn}{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
 }
 
 \def\check@orn@dot#1.#2.#3\E{%
@@ -142,7 +143,7 @@
 \def\pdf@clipnext{\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi \pdf@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
 %\def\pdf@clipnext{\pdf@stroke\pdf@discardpath}%
 \def\pdf@discardpath{\sysprotocol@literal{n}}
-\def\pdf@parse@clip@rect#1 #2 #3 #4{\MSG{ParseClip: #1 #2 #3 #4}\dimen2=#1 pt \dimen3=#2 pt \dimen4=#3 pt \dimen 5=#4 pt}
+\def\pdf@parse@clip@rect#1 #2 #3 #4{\trace{orn}{ParseClip: #1 #2 #3 #4}\dimen2=#1 pt \dimen3=#2 pt \dimen4=#3 pt \dimen 5=#4 pt}
 %Pen
 \def\pdf@setlinewidth#1{\addto@macro\pdfpath{#1 }\sysprotocol@literal{w}}
 \def\pdf@color@rgb@stroke#1 #2 #3\E{\sysprotocol@literal{#1 #2 #3 RG}}
@@ -153,6 +154,8 @@
 % Transformation:
 \def\pdf@transformcm#1#2#3#4#5#6{%
   \addto@macro\pdfpath{#1 #2 #3 #4 #5 #6 }\sysprotocol@literal{cm}}
+\def\pdf@transformText{%
+  \pdf@transformcm{\strip@pt{\pdf@xunit}}{0}{0}{\strip@pt{\pdf@yunit}}{0}{0}}
 
 % Scopes
 \def\pdf@beginscope{\sysprotocol@literal{q}}
@@ -168,7 +171,7 @@
 \def\sysprotocol@literal#1{\let\tmp\pdfpath\xdef\pdfpath{}\x@\pdf@special{\tmp#1}\xdef\pdfcommands{}}
 \edef\orn@clip{clip}
 \edef\orn@stroke{stroke}
-\edef\orn@none{none}
+\edef\orn@bb{boundingbox}
 
 \def\orn@usepath#1{%
   \edef\tmp{#1}%
@@ -178,7 +181,11 @@
     \ifx\tmp\orn@stroke
       \pdf@stroke
     \else
-      \errmessage{orn@usepath: #1 unrecognised}%
+      \ifx\tmp\orn@bb
+        \pdf@clipnext
+      \else
+        \errmessage{orn@usepath: #1 unrecognised}%
+      \fi
     \fi
   \fi
 }
@@ -186,6 +193,7 @@
 \def\orn@setup{%
   \def\i{\orn@usepath{clip}}%
   \def\k{\orn@usepath{stroke}}%
+  \def\ubb{\orn@usepath{boundingbox}}%
   \let\o\pdf@closepath
   \def\p ##1##2{\orn@qpoint{##1}{##2}}%
   \def\m ##1 ##2 {\edef\tmp{\p{##1}{##2}}\x@\pdf@moveto\tmp}%
@@ -200,6 +208,27 @@
 	\x@\gdef\csname localornament@#1@Y\endcsname{#3}%
 	\x@\gdef\csname localornament@#1@code\endcsname{#4}%
 }
+\def\StringOrnament#1#2#3{\x@\global\x@\font\csname localornament@#1@font\endcsname "#2" at 32pt\setbox0\hbox{\csname localornament@#1@font\endcsname #3}%
+    \trace{orn}{Defining ornament #1 as box (\the\ht0+\the\dp0) x \the\wd0}%
+    \bgroup
+      \tracingassigns=1
+      \dimen0=\wd0\dimen1=\dimexpr \dimexpr \ht0+\dp0\relax\relax
+      \ifnum 1=\ifdim \the\dimen0=0pt 1 \else\ifdim \the\dimen1=0pt 1 \else 0\fi\fi
+	\x@\edef\csname localornament@#1@code\endcsname{\hbox{\csname localornament@#1@font\endcsname #3}}%
+	\x@\xdef\csname localornament@#1@X\endcsname{1}%
+	\x@\xdef\csname localornament@#1@Y\endcsname{1}%
+        \message{Cannot define zero-size ornament #1 properly}%
+      \else
+        \count255=\dimen0\advance\count255 by 32768 \divide\count255 by 65536
+	\x@\xdef\csname localornament@#1@X\endcsname{\the\count255}%
+        \count255=\dimen1\advance\count255 by 32768 \divide\count255 by 65536
+	\x@\xdef\csname localornament@#1@Y\endcsname{\the\count255}%
+        \tracingassigns=0
+	\x@\xdef\csname localornament@#1@code\endcsname{\noexpand\pdf@transformText\raise \the\dp0\hbox{\csname localornament@#1@font\endcsname #3}}%
+      \fi
+    \egroup
+  }
+
 \def\localornament@dims#1{\x@\let\x@\@pgfornamentX\csname localornament@#1@X\endcsname
   \x@\let\x@\@pgfornamentY\csname localornament@#1@Y\endcsname}%
 \LocalOrnament{0}{10}{10}{ }% A space
@@ -211,7 +240,11 @@
   \ifcsname localornament@#1@X\endcsname
     \localornament@dims{#1}%
   \else
-    \@pgfornamentDim{#1}%
+    \ifcsname @pgfornamentDim\endcsname
+      \@pgfornamentDim{#1}%
+    \else
+      \errmessage{@pgfornamentDim not defined. Probably the path from the TEXINPUTS environment variable does not include \pgfOrnamentsObject}%
+    \fi
   \fi
 }
 \def\get@ornament@Code{%
@@ -219,6 +252,7 @@
     \csname localornament@\pdf@ornamentNum @code\endcsname
   \else
     \m@kedigitsother
+      \catcode`\%=5
       \input \OrnamentsFamily\pdf@ornamentNum.pgf%
     \m@kedigitsletters
   \fi
@@ -245,6 +279,7 @@
     \fi
     \global\let\orn@clip@rect\empty
     \global\let\orn@last@rect\empty
+    \trace{orn}{orn@do@ornament(\ifpdf@ornament@stretch *\ornamentstretch\fi) \the\dimen0 x \the\dimen1}%
     \setbox0\hbox to \dimen0{%
       \pdf@beginscope
       \pdf@beginpic
@@ -254,7 +289,7 @@
         \x@\pdf@color@rgb@stroke\ornamentlinecol\E
       \fi
       \ifx\ornamentfillcol\empty\else
-        \ifx\ornamentfillcol\orn@none
+        \ifx\ornamentfillcol\fill@none
           \ornamentfillfalse
         \else
           \ornamentfilltrue
@@ -272,7 +307,7 @@
     }%
     \ifx\orn@clip@rect\empty
       \dimen2=0pt\dimen3=0pt\dimen4=0pt\dimen5=0pt
-      \MSG{No clip rect}%
+      \trace{orn}{No clip rect}%
     \else
       \x@\pdf@parse@clip@rect\orn@clip@rect
     \fi
@@ -359,8 +394,24 @@
 \def\parse@repeat@class#1-#2)#3\E{\ifnum 0#2=0\set@repeat@class{#3}{#1}{}\else\set@repeat@class{#3}{#1}{#2}\fi}
 \newif\ifpdf@ornament@stretch
 \newif\ifpdf@ornament@repeat
-\def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}}
-
+\def\StringOrnamentFont{AGA Arabesque Desktop}
+\newcount\orn@strings
+\orn@strings=1000
+\def\chk@cplx#1#2\E{\edef\tmpa{#1}\edef\tmpb{#2}\uppercase{\edef\tmpu{#2}}}
+\def\string@check #1"#2"#3\E{%
+  \edef\tmp{#1}\ifx\tmp\empty
+    \edef\tmp{#2}\ifx\tmp\empty\else
+      \stringornamenttrue
+      \edef\string@rnament{#2}%
+      \ifcsname orn@string\string@rnament\endcsname\else
+        \global\advance\orn@strings by 1 
+        \x@\xdef\csname orn@string\string@rnament\endcsname{\the\orn@strings}%
+        \StringOrnament{\the\orn@strings}{\StringOrnamentFont}{\string@rnament}%
+      \fi
+      \x@\let\x@\pdf@ornamentNum\csname orn@string\string@rnament\endcsname
+    \fi
+  \fi
+}
 %#1 ornament
 %#2 orientation
 %#3 Scale/mult
@@ -368,16 +419,23 @@
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
 % number in formal N.N, then a pre-set scale [which must have been set by setscale] will be applied 
 \newif\iflocalornament
+\newif\ifstringornament
 \def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
   \message{ornament@parse:#1:#2:#3}%
   \localornamentfalse
-  \get@ornamentDim{#1}%
+  \stringornamentfalse
+  \string@check#1""\E
+  \ifstringornament
+    \get@ornamentDim{\pdf@ornamentNum}%
+  \else
+    \get@ornamentDim{#1}%
+    \def\pdf@ornamentNum{#1}%
+  \fi
   %\ifx\dimen1=0pt
   %  \localornamenttrue
   %  \not@pgfornamentdim{#2}%
   %\fi
-  \MSG{Dimensions: \@pgfornamentX, \@pgfornamentY}%
-  \def\pdf@ornamentNum{#1}%
+  \trace{orn}{Dimensions: \@pgfornamentX, \@pgfornamentY}%
   \setornamenttransform{#2}%
   \pdf@ornament@stretchfalse
   \pdf@ornament@repeatfalse
@@ -390,19 +448,25 @@
     \ifx\tmp\ptn@eq\else
       \x@\check@orn@dot\tmp..\E
     \fi
-    \MSG{orn@scale@#4: xunit \the\pdf@xunit\space yunit \the\pdf@yunit}%
+    \trace{orn}{orn@scale@#4: xunit \the\pdf@xunit\space yunit \the\pdf@yunit}%
     %\tracingassigns=0
   \fi
   \edef\tmp{#3}%
   \ifx\tmp\empty\else
     \ifx\tmp\ptn@minus
       \pdf@ornament@stretchtrue
-      \MSG{Stretchd #1}%
+      \trace{orn}{Stretchd #1}%
     \else
       \ifx\tmp\ptn@ex% No variable, xleader-fill
 	\pdf@ornament@repeattrue
       \else
-	\x@\chk@cplx#3\E
+	\x@\chk@cplx#3\E %Split off first code
+        %\uppercase{\edef\tmpu{\tmpb}}%
+        \ifx\tmpb\tmpu\else % variable needs to be  upper case 
+          \trace{orn}{\tmpb\space is lowercase! Treat as \tmpu}%
+          \let\tmpb\tmpu %make it upper
+          \pdf@ornament@stretchtrue
+        \fi
         \ifx\tmpa\ptn@sim
 	  \pdf@ornament@repeattrue
 	  \edef\orn@repeat@class{\tmpb}% Varable, range set elsewhere
@@ -464,20 +528,20 @@
   \fi
   \ifpdf@ornament@repeat
     \ifx\orn@repeat@class\empty
-      \MSG{Repeating ornament using xleaders for \orn@repeat@class}%
+      \trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
       \xleaders\hbox{\orn@do@ornament}\hskip 0pt plus 1 fil\relax
     \else
       \x@\let\x@\tmp \csname best@mult@class@num@\orn@repeat@class\endcsname
       \ifx\tmp\relax
-	\MSG{Repeating ornament using xleaders for \orn@repeat@class}%
+	\trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
 	\xleaders\hbox{\orn@do@ornament}\hskip 0pt plus 1 fil\relax
       \else
-	\MSG{Repeating ornament #1 (\tmp times)}%
+	\trace{orn}{Repeating ornament #1 (\tmp times)}%
 	\bgroup\setbox1=\hbox{\orn@do@ornament}\count255=\tmp\loop\ifnum\count255>0\copy1\advance\count255 by -1\repeat\egroup%
       \fi
     \fi
   \else
-    \MSG{Simple ornament #1}%
+    \trace{orn}{Simple ornament #1}%
     \orn@do@ornament
   \fi
   \def\tmp{#2}%
@@ -496,12 +560,13 @@
     \x@\orn@an@ornament#1,\E%
   \endgroup
 }% 
-\newdimen\fill@target
+\newdimen\fill@target % Target dimension
 \newcount\mult@count
-\newdimen\fill@mult
-\newdimen\fill@mult@min
-\newdimen\fill@fixed
-\newdimen\fill@stretch
+\newdimen\fill@fixed % length of rigid elements
+\newdimen\fill@stretch % length of flexible elements
+\newdimen\fill@mult % length of (non-stretchy) optional elements
+\newdimen\fill@mult@min % Smallest optional element (0pt if none)
+\newdimen\fill@mult@min@used % Smallest optional element currently in use. (0pt if none)
 
 \newtoks\mult@classes
 \mult@classes{}
@@ -510,10 +575,12 @@
 \def\m@lti@dec#1{\x@\edef\csname mult@class@num@#1\endcsname{\the\numexpr \csname mult@class@num@#1\endcsname -1\relax}}
 \def\O@tp@t{}
 \def\m@lti@print#1{\edef\O@tp@t{\O@tp@t #1: \csname mult@class@num@#1\endcsname\space}}
+\def\best@m@lti@print#1{\edef\O@tp@t{\O@tp@t #1: \csname best@mult@class@num@#1\endcsname\space}}
 \def\print@multi{\immediate\write-1{\O@tp@t}\let\O@tp@t\empty}
 \def\foundb@st#1{\x@\global\x@\let\csname best@mult@class@num@#1\x@\endcsname\csname mult@class@num@#1\endcsname}
 \newcount\best@score
 \newdimen\best@adjust
+\newdimen\best@stretch
 
 \def\apply@checks#1{%
   \ifnum\csname mult@class@num@#1\endcsname < \csname mult@repeat@min@#1\endcsname \advance\count255 by \numexpr 1500 * (\csname mult@repeat@min@#1\endcsname - \csname mult@class@num@#1\endcsname) \relax\fi
@@ -521,21 +588,59 @@
     \ifnum\csname mult@class@num@#1\endcsname > \csname mult@repeat@max@#1\endcsname \advance\count255 by \numexpr  1500 *(\csname mult@class@num@#1\endcsname - \csname mult@repeat@max@#1\endcsname)\relax \fi
   \fi
 }
-\def\calcsc@re{\bgroup \dimen4=\ifdim\dimen1<0pt 0.1\dimen0\else 0.1\dimen2 \fi\count255=\dimen4  \dimen4=\dimexpr 10\dimen1 / \count255\relax \count255=\dimen4
+
+
+\def\prep@dims#1#2{%Prepare dimensions for calcsc@re. \t@mp is the natural length of the object \t@mpstr=\t@mp if the object is stretchy
+  \ifnum #2 > 0 
+    \ifdim\fill@mult@min@used=0pt
+      \fill@mult@min@used=\t@mp
+    \else\ifdim\fill@mult@min@used > \t@mp
+        \fill@mult@min@used=\t@mp
+    \fi\fi
+    \dimen0=-\fill@mult@min@used % Sane limit for overfull under-fill
+    \ifdim \t@mpstr>0pt
+      \advance\fill@mult by #2\dimexpr \t@mp -\t@mpstr\relax  % mult-value also includes stretchy portion
+      \advance\fill@stretch by #2\dimexpr \t@mpstr\relax %
+    \else
+      \advance\fill@mult by #2\dimexpr \t@mp \relax 
+    \fi
+  \fi
+  \ifdim\fill@stretch=0pt
+    \dimen0=-100sp% Have *some* overrun, in case of rounding errors
+    \dimen2=1pt%
+  \else
+    \dimen2=\fill@mult@min % underrun of > smallest optional chunk is silly
+    \dimen0=-0.5\fill@stretch % Shrink up to 50% is OK.
+  \fi
+  \dimen1=\dimexpr \fill@target - \fill@mult - \fill@stretch - \fill@fixed\relax
+  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+  \ifdim \dimen0 =0pt % Sanity...
+    \dimen0=-100sp
+  \fi
+  \trace{orn}{Try: remaining:\the\dimen1 (\the\fill@target - \the\fill@mult - \the\fill@stretch - \the\fill@fixed), flex:\the\dimen0, \the\dimen2}% 
+}
+  
+\def\calcsc@re{\bgroup \dimen4=\ifdim\dimen1<0pt 0.1\dimen0\else 0.1\dimen2 \fi\count255=\dimen4 
+  \trace{orn}{\the\dimen1 / \the\count255 }% 
+  \dimen4=\dimexpr 10\dimen1 / \count255\relax \count255=\dimen4
+  \trace{orn}{precheck score: \the\dimen4 (\the\count255)}%
   \let\D@\apply@checks\the\mult@classes
   \let\D@\m@lti@print\the\mult@classes
+  \trace{orn}{postcheckdscore: \the\dimen4 (\the\count255) \the\fill@stretch}%
   \print@multi
   \ifnum\count255<\best@score 
     \global\best@score=\count255
     \global\best@adjust=\dimen1
+    \global\best@stretch=\fill@stretch
     \let\D@\foundb@st\the\mult@classes
-    \message{New best score:\the\best@score, \the\dimen1}%
+    \message{New best score:\the\best@score, \the\dimen1, \the\best@stretch}%
  \else
-    \MSG{rejecting score:\the\count255, \the\dimen1}%
+    \trace{orn}{rejecting score:\the\count255, \the\dimen1}%
  \fi\egroup}
 
 \def\setup@meas@ornament{%
-  \fill@mult=0pt\fill@stretch=0pt\fill@fixed=0pt\best@score=\maxdimen
+  \fill@mult@min=0pt\fill@stretch=0pt\fill@fixed=0pt\best@score=\maxdimen
+  \best@stretch=\fill@stretch
   \mult@count=0
 }
 
@@ -548,7 +653,7 @@
 }
 
 \def\orn@SetStretch#1#2#3#4{%
-  \MSG{SetStretch #1 #2 #3 #4}%
+  \trace{orn}{SetStretch #1 #2 #3 #4}%
   \fill@target=#1%
   \ifornscale
     \setorn@scale
@@ -564,19 +669,14 @@
     \fi
     \x@\orn@meas@ornament#4,\E%Measure the (horizontal) dimensions
     \dimen1=\dimexpr \fill@target - \fill@fixed - \fill@stretch \relax
-    %Set limits for stretch / shrink.
-    \dimen2=\fill@mult@min
-    \ifdim\fill@stretch=0pt
-      \dimen0=-100sp% Have *some* overrun, in case of rounding errors
-    \else
-      \dimen0=-0.5\fill@stretch
-    \fi
+    %Set limits for stretch (dimen2) / shrink (dimen0)
     \ifdim\dimen2=0pt
       \dimen2=1em
     \fi
     \relax
     %\tracingifs=1
     \global\best@adjust=\dimen1
+    \global\best@stretch=\fill@stretch
     %
     \ifdim\dimen1 < 0pt
       \message{No space for optional parts}%
@@ -589,17 +689,18 @@
       \ifnum\mult@count>0
 	\x@\multi@try\mult@class@list,\E{-1}%
 	\relax
-	\let\D@\m@lti@print\the\mult@classes
+	\let\D@\best@m@lti@print\the\mult@classes
+        \trace{orn}{Final result: stretch:\the\best@stretch, score:\the\best@score}\print@multi
       \fi
     \fi
-    \dimen4=\dimexpr \fill@stretch+\best@adjust\relax
-    \ifdim\fill@stretch=0pt 
+    \dimen4=\dimexpr \best@stretch+\best@adjust\relax
+    \ifdim\best@stretch=0pt 
     \else
-      \MSG{Stretch = \the\dimen4 / \the\fill@stretch}%
-      \dimen5=\dimexpr \fill@stretch*4\relax%
+      \trace{orn}{Stretch = (a:\the\best@adjust,  s:\the\best@stretch) (a+s:\the\dimen4)/s)}%
+      \dimen5=\dimexpr \best@stretch*4\relax%
       \multiply\dimen4 by 4\relax
       \dimen6=\dimen4
-      \tracingassigns=1
+      %\tracingassigns=1
       \ifdim\dimen6<0pt \multiply \dimen6 by -1\relax\fi
       \ifdim \dimen5 > \dimen6 \dimen6=\dimen5 \fi
       \loop \ifdim\dimen6<0.4\maxdimen
@@ -607,36 +708,16 @@
 	\multiply\dimen4 by 2\relax
 	\multiply\dimen6 by 2\relax
 	\repeat
-      \tracingassigns=0
+      %\tracingassigns=0
       \count255=\dimen5 \divide\count255 by 65535 % Integer part only
-      \MSG{\the\dimen4 / \the\count255}%
+      \trace{orn}{\the\dimen4 / \the\count255}%
       \dimen4=\dimexpr \dimen4 / \count255\relax%Scale by 32
       \xdef\ornamentstretch{\strip@pt{\dimen4}}%
     \fi
     \message{Ornament stretch set to \ornamentstretch}%
   \endgroup
 }
-      %\loop
-	%\dimen2=\dimexpr \dimen1 - \fill@mult \relax 
-	%\ifdim \dimen2
-	  %\advance\dimen1 -\fill@mult
-	  %\advance\dimen2 -\fill@mult
-	  %\let\D@\m@lti@inc\the\mult@classes % Increase all classes equally.
-	%\else
-	  %%FIXME Process, one-by-one, the classes
-	%\fi
-	%\ifdim \dimen2 < -\fill@mult@min % Overshot.
-	  %\tempfalse
-	%\else
-	  %\dimen3=\dimexpr \dimen2-\fill@mult@min \relax
-	  %\ifdim \dimen3<0pt \dimen3=-\dimen3\fi
-	  %\ifdim \dimen3 < \dimen2 
-	    %\tempfalse
-	  %\fi
-	%\fi
-      %\iftemp\repeat
-    %\fi
-%} 
+
 \def\E{}
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
@@ -651,58 +732,78 @@
     \dimen\@@orndim=-\dimen\@@orndim
   \fi
   \message{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
-  \ifpdf@ornament@stretch
-    \advance\fill@stretch by \dimen\@@orndim %stretchy ones subtract roughly their own length
-  \else
-    \ifpdf@ornament@repeat
-      \advance\fill@mult by \dimen\@@orndim
-      \advance\mult@count by 1
-      \ifdim\fill@mult@min=0pt
-	\fill@mult@min=\dimen\@@orndim
-      \else 
-	\ifdim\fill@mult@min>\dimen\@@orndim
-	  \fill@mult@min=\dimen\@@orndim
-	\fi
+  \ifpdf@ornament@repeat
+    \advance\mult@count by 1
+    \ifdim\fill@mult@min=0pt
+      \fill@mult@min=\dimen\@@orndim
+    \else 
+      \ifdim\fill@mult@min>\dimen\@@orndim
+        \fill@mult@min=\dimen\@@orndim
       \fi
-      \x@\let\x@\tmp\csname mult@class@dim@\orn@repeat@class\endcsname
-      \ifx\relax\tmp
-	\MSG{New class \orn@repeat@class}%
-	\ifx\orn@repeat@class\empty\else\x@\add@mult@class\x@{\orn@repeat@class}\fi
-	\x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
-	\x@\edef\csname mult@class@num@\orn@repeat@class\endcsname{0}%
-	\edef\mult@class@list{\ifx\mult@class@list\empty\else \mult@class@list,\fi \orn@repeat@class}%
+    \fi
+    \x@\let\x@\tmp\csname mult@class@dim@\orn@repeat@class\endcsname
+    \ifx\relax\tmp
+      \trace{orn}{New class \orn@repeat@class}%
+      \ifx\orn@repeat@class\empty\else\x@\add@mult@class\x@{\orn@repeat@class}\fi
+      \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+      \ifpdf@ornament@stretch
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+        \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
       \else
-	\x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
-	\MSG{\orn@repeat@class: \csname mult@class@dim@\orn@repeat@class\endcsname}%
+        \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimen\@@orndim}%
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{0pt}%
       \fi
+      \x@\edef\csname mult@class@num@\orn@repeat@class\endcsname{0}%
+      \edef\mult@class@list{\ifx\mult@class@list\empty\else \mult@class@list,\fi \orn@repeat@class}%
+    \else
+      \x@\edef\csname mult@class@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmp+\the\dimen\@@orndim\relax}%
+      \ifpdf@ornament@stretch
+        \x@\let\x@\tmpz\csname mult@class@stretch@dim@\orn@repeat@class\endcsname
+        \x@\edef\csname mult@class@stretch@dim@\orn@repeat@class\endcsname{\the\dimexpr\tmpz+\the\dimen\@@orndim\relax}%
+      \fi
+    \fi
+    \trace{orn}{\orn@repeat@class: \csname mult@class@dim@\orn@repeat@class\endcsname, \csname mult@class@stretch@dim@\orn@repeat@class\endcsname}%
+  \else
+    \ifpdf@ornament@stretch
+      \advance\fill@stretch by \dimen\@@orndim %stretchy ones subtract roughly their own length
     \else
       \advance\fill@fixed by \dimen\@@orndim
     \fi
   \fi
   \def\tmp{#2}%
- \ifx\tmp\empty
-   \let\nxt=\endstack
- \else
-   \let\nxt\orn@meas@ornament
- \fi
- \x@\nxt\tmp\E
+  \ifx\tmp\empty
+    \let\nxt=\endstack
+  \else
+    \let\nxt\orn@meas@ornament
+  \fi
+  \x@\nxt\tmp\E
 }
 
 \def\multi@try#1,#2\E#3{\bgroup
-    \MSG{multitry '#1' {#3}}%
+    \trace{orn}{multitry '#1' {#3}}%
     \x@\let\x@\t@mp\csname mult@class@dim@#1\endcsname
+    \x@\let\x@\t@mpstr\csname mult@class@stretch@dim@#1\endcsname
     \count255=#3
     \ifnum\count255=-1
-      \ifdim\dimexpr \dimen1-\dimen0\relax > \t@mp
+      \ifdim 3\dimexpr \dimen1-\dimen0\relax > \t@mp
 	\dimen3=\dimexpr \dimen1 \ifdim -\dimen0 >\t@mp  + \t@mp \else -\dimen0 \fi\relax
 	\dimen4=\t@mp
 	\count255=\dimen4
 	\count255=\numexpr  \dimen3 / \count255 \relax
-	\MSG{ #1 (\t@mp) fits into \the\dimen3 \the\count255\space times}%
+	\trace{orn}{ #1 (\t@mp) fits into \the\dimen3 \the\count255\space times}%
+	\ifcsname mult@repeat@max@#1\endcsname
+          \x@\ifx\csname mult@repeat@max@#1\endcsname\empty\else
+            \ifnum \csname mult@repeat@max@#1\endcsname < \count255
+              \count255=\csname mult@repeat@max@#1\endcsname
+              \trace{orn}{That's above max for #1 (\the\count255); limiting range}%
+              \advance \count255 by 1
+            \fi
+          \fi
+        \fi
 	\ifcsname mult@repeat@min@#1\endcsname
 	  \ifnum \csname mult@repeat@min@#1\endcsname>\count255
 	    \count255=\csname mult@repeat@min@#1\endcsname
-	    \MSG{ min for #1 (\the\count255) doesn't fit, but try it anyway}%
+	    \trace{orn}{ min for #1 (\the\count255) doesn't fit, but try it anyway (it might be shrinkable)}%
 	  \fi
 	\fi
       \else
@@ -711,25 +812,32 @@
     \fi
     \def\tmp{#2}%
     \global\tmptoks{}%
-    \ifx\tmp\empty
+    \ifx\tmp\empty % No more optional items
       \bgroup
-	\advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	\x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+        \prep@dims{#1}{\count255}%
 	\calcsc@re
       \egroup
-      \ifnum\count255>0
+      \ifnum\count255>0 %We included some over-run, Try one under...
 	\bgroup
 	  \advance\count255 by -1
-	  \advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+          \prep@dims{#1}{\count255}%
 	  \calcsc@re
 	\egroup
       \fi
+      \ifdim\t@mpstr >0pt % Item can shrink: also try 1 over. 
+        \bgroup
+          \advance\count255 by 1
+          \prep@dims{#1}{\count255}%
+          \calcsc@re
+        \egroup
+      \fi
     \else
+      \ifdim\t@mpstr>0pt
+          \advance\count255 by 1 % item can shrink; start at 1 over
+      \fi
       \loop\unless\ifnum\count255<0
 	\bgroup
-	  \advance\dimen1 -\dimexpr \t@mp * \count255 \relax
-	  \x@\edef\csname mult@class@num@#1\endcsname{\the\count255}%
+          \prep@dims{#1}{\count255}%
 	  \x@\multi@try#2\E{-1}%
 	\egroup
 	\advance\count255 by -1
@@ -796,14 +904,14 @@
 % Given X and Y values,
 \def\ornamentheight{10pt}
 \def\trybox#1#2#3{%
-  \MSG{TRYBOX}%
+  \trace{orn}{TRYBOX}%
   \def\ornamentheight{#3}%
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
   \orn@SetStretch{#1}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to #1{\Ornaments{\patternT}}%
   \def\ornYalign{0}%
   \orn@SetStretch{#1}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to #1{\Ornaments{\patternB}}%
-  \MSG{#2 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
+  \trace{orn}{#2 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
   \dimen1=\dimexpr #2 - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
@@ -821,7 +929,7 @@
   \vbox to #2{\baselineskip=0pt\lineskip=0pt\hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
-  \MSG{OrnamentBorder}%
+  \trace{orn}{OrnamentBorder}%
   \def\ornamentheight{#1}%
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
@@ -836,7 +944,7 @@
   \else
     \setbox\orn@bdr@bot\hbox{}%
   \fi
-  \MSG{#1 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
+  \trace{orn}{#1 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
   \dimen1=\dimexpr \b@rderbox@height - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
   \dimen2=\dimexpr \dimen1 - \ht\b@rderbox\relax
   \divide\dimen2 by \b@drsides
@@ -886,41 +994,85 @@
 }
 
 %Stylesheet Options
-\def\BorderFillColour #1\relax{\initc@t\setsbp@ram{borderfillcolour}{#1}}
-\let\BorderFillColor\BorderFillColour
 \def\BorderPatternTop #1\relax{\initc@t\setsbp@ram{borderpatterntop}{#1}}
 \def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
-\def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}}
 
 
 
 \def\ornamentheight{20pt}\def\ornamentwidth{}
-\input pgflibraryvectorian.code.tex
+\addtoinithooks{\includeifpresent{\pgfOrnamentsObject}}%
 \catcode`\@=11
 \def\m@rker{esb}
-\setsbp@ram{borderfillcolour}{none}
-\setsbp@ram{borderlinewidth}{1}
 
-\def\DefaultOrnament{80}
+\def\DefaultOrnament{-1}
 \def\mkb@rder@ornaments{% Plugin for sidebars
   \def\ornamentheight{\b@drwidth}%
-  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\orn@none\else\let\ornamentfillcol\cp@ram\fi
+  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\fill@none\else\let\ornamentfillcol\cp@ram\fi
   \ifx\b@drcol\relax
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
   \fi
   \getsbp@ram{borderpatterntop}\ifx\cp@ram\relax\edef\patternT{\DefaultOrnament||-}\else\let\patternT\cp@ram\fi
-  \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament||-}\else\let\patternB\cp@ram\fi
+  \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
-  \getsbp@ram{borderlinewidth}\edef\ornamentlinewidth{\strip@pt{\dimexpr\cp@ram\FontSizeUnit\relax}}%
+  \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
   \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
+
+\x@\def\csname drawzrule-ornaments\endcsname{%
+  \getp@ram{borderpatterntop}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\p@ttern{88||-}%
+  \else
+    \let\p@ttern\p@ram
+  \fi
+  \getp@ram{borderlinewidth}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \edef\ornamentlinewidth{0.5}%
+  \else
+    \edef\ornamentlinewidth{\p@ram}%
+  \fi
+  \getp@ram{bordercolour}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\ornamentlinecol{0 0 0}%
+  \else 
+    \let\ornamentlinecol\p@ram
+  \fi
+  \getp@ram{borderfillcolour}{zrule}{\styst@k}%
+  \ifx\p@ram\relax
+    \def\ornamentfillcol{none}%
+  \else 
+    \let\ornamentfillcol\p@ram
+  \fi
+  \edef\ornamentheight{\dimexpr\rule@thk \relax}%
+  \edef\ornamentwidth{}%
+  \getp@ram{verticalalign}{zrule}{\styst@k}%
+  \ifx\p@ram\@lignTop
+    \def\ornYalign{1}%
+  \else\ifx\p@ram\@lignBot
+      \def\ornYalign{0}%
+    \else
+      \def\ornYalign{.5}%
+    \fi
+  \fi
+  \endgraf
+  \edef\rule@adjust{\the\dimexpr \rule@adjust + \ornYalign \dimexpr\rule@thk\relax\relax}%
+  \bgroup 
+    \trace{m}{Rule will be \rule@wid (hsize=\the\hsize)}%
+  \hbox{\raise\rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \hbox to \rule@wid{\orn@SetStretch{\rule@wid}{x}{}{\p@ttern}\Ornaments{\p@ttern}%\hss\vrule height \rule@thk width 0.1pt
+    }%
+    \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
+  \egroup
+}
+
 \edef\borderstylelist{\borderstylelist, ornaments}
 \plugin@endif
-
+\let\typeout\message
+\let\pgfsetrectcap\relax

@@ -129,17 +129,25 @@ class Usfm:
         tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
         self.sheets = sheets
-        with warnings.catch_warnings(record=True) as self.warnings:
-            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
-                                canonicalise_footnotes=False,
-                                error_level=sfm.ErrorLevel.Unrecoverable,
-                                tag_escapes=tag_escapes))
+        if iterable is not None:
+            with warnings.catch_warnings(record=True) as self.warnings:
+                self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+                                    canonicalise_footnotes=False,
+                                    error_level=sfm.ErrorLevel.Unrecoverable,
+                                    tag_escapes=tag_escapes))
         # self.warnings is a list of Exception type errors use print(w.message)
         self.cvaddorned = False
         self.tocs = []
 
     def __str__(self):
         return sfm.generate(self.doc)
+
+    def copy(self, newdoc=None):
+        res = self.__class__(None, self.sheets)
+        res.doc = newdoc
+        res.cvaddorned = False
+        res.tocs = []
+        return res
 
     def addorncv(self):
         if self.cvaddorned:
@@ -225,16 +233,16 @@ class Usfm:
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, refrange, removes={}, strippara=False):
+    def subdoc(self, refrange, removes={}, strippara=False, keepchap=False):
         ''' Creates a document consisting of only the text covered by the reference
-            ranges. ref is a tuple in the form:
-                (fromc, fromv, toc, tov)
-            The list must include overlapping ranges'''
+            ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
+        if not isinstance(refrange, list):
+            refrange = [refrange]
         ispara = sfm.text_properties('paragraph')
-        chaps = self.chapters[refrange.first.chap:refrange.last.chap+1]
+        chaps = sum((self.chapters[r.first.chap:r.last.chap+1] for r in refrange), [])
         def pred(e):
-            if isinstance(e.pos, _Reference) and e.pos.ref in refrange:
+            if isinstance(e.pos, _Reference) and any(e.pos.ref in r for r in refrange):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
@@ -245,16 +253,27 @@ class Usfm:
                 if pred(e):
                     a.append(sfm.Text(e, e.pos, a or None))
                 return a
-            if e.name in removes:
+            if e is None or e.name in removes:
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
             reduce(_g, e, e_)
-            if pred(e):
+            if pred(e) or (keepchap and (len(e_) or e.name == "cl")):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
             return a
         return reduce(_g, chaps, [])
+
+    def getsubbook(self, refrange, removes={}):
+        refrange.reify()
+        d = self.doc[0]
+        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
+        for c in d:
+            if isinstance(c, sfm.Element) and c.name == "c":
+                break
+            res.append(c)
+        res.extend(self.subdoc(refrange, removes=removes, keepchap=True))
+        return self.copy([res])
 
     def iter(self, e):
         def iterfn(el):
@@ -581,6 +600,20 @@ class Module:
             with open(fname, encoding="utf-8") as inf:
                 self.doc = read_module(inf, self.sheets)
 
+    def getBookRefs(self):
+        books = set()
+        def _e(e, a, ca):
+            if e.name == "ref" or e.name == "refnp":
+                for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
+                    a.add(r.first.book)
+            else:
+                a.update(ca)
+            return a
+        def _t(e, a):
+            return a
+        res = sreduce(_e, _t, self.doc.doc, books)
+        return res
+
     def parse(self):
         if self.doc.doc is None:
             return []
@@ -626,7 +659,6 @@ class Module:
                                 p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
                             break
                     else:
-
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):

@@ -169,9 +169,14 @@
       \fi
     \fi
   \fi
-  \edef\bgc@l{#1}\ifx\bgc@l\empty\let\endbgc@l\empty\else\edef\bgc@l{\special{color push rgb #1}}\let\endbgc@l=\cp@p\fi%
-  \edef\fgc@l{#2}\ifx\fgc@l\empty\let\endfgc@l\empty\else\edef\fgc@l{\special{color push rgb #2}}\let\endfgc@l=\cp@p\fi%
+  \setbgc@l{#1}%
+  \setfgc@l{#2}%
   \setbox0\hbox{\hbox to 0pt{\bgc@l\vrule depth #4 height #5 width #3 \hss}\endbgc@l\fgc@l\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\endfgc@l}
+
+\def\setbgc@l#1{\edef\bgc@l{#1}\ifx\bgc@l\empty\let\endbgc@l\empty\else\edef\bgc@l{\special{color push rgb #1}}\let\endbgc@l=\cp@p\fi}%
+\def\setfgc@l#1{\edef\fgc@l{#1}\ifx\fgc@l\empty\let\endfgc@l\empty\else\edef\fgc@l{\special{color push rgb #1}}\let\endfgc@l=\cp@p\fi}%
+
+
 
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
 \def\r@acwSet{\edef\@ngle{90}\kern\ht0}% anticlockwise
@@ -656,7 +661,7 @@
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
     \ifnum\mainBodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
-      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\fi
+      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\advance\dimen2 -2\XrefNotesMargin\fi
     \else\dimen2=0pt\fi
     \divide\dimen2 by 2
     \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter

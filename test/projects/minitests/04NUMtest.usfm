@@ -1,0 +1,146 @@
+\id TST Test file
+\h small test file
+\c 1
+\s This is a title
+\p
+\v 1 This is normal text. There are 4 hook positions: before, start, end,
+after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
+and d\endadd\ to show how close they ought to be when they get put in by the hooks.
+The sequence ought to be before..start..text..end..after.
+\p And that was a  new  parargaph.\f ab \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
+\p And that was a p class paragraph \nd break 
+\qt-s | foo \*
+now inside a qt-s..qt-e block \nd*
+\p with a paragraph break
+\qt-e\* And out of the block again
+\p And yet another p class break
+\esb
+\cat inl\cat*
+\p This is an esb with 
+\p category "\showTheCategory"
+\p It is put inline\f + \ft hmm \f* 
+It just has a plain line border, slightly separated from the coloured-background.
+\esbe
+
+\esb
+\s1 Testing
+\p This is an esb with no category
+\esbe
+
+
+\esb \cat foo\cat*
+\s Testing 3
+\p This esb (category foo) has a bit more text, and is set top-right. 
+\m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
+\p But they still have an indent which looks a bit odd. Foo category esbs have an ornamented border by no background colour, etc.
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+\p Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+\p Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
+doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
+\esbe
+
+\p  We're outside the esb (after esb testing3) so ought to be back to normal now
+\v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+\p
+\v 4
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+\p Et harum quidem rerum facilis est et expedita distinctio.
+\p
+\v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, 
+\esb\cat cut\cat*
+\s1 Testing 4
+\p
+This esb should be in a cut-out, a line below 'possimus'. It
+has a pale blue background, an orange border just inside the edge
+of the background, and a pdf image as a 'watermark', which
+because it has no inherent colour, we can pick the colour of in
+the style sheet.
+\esbe
+omnis voluptas assumenda est, omnis dolor repellendus.
+\p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
+\p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
+\esb \cat foo\cat*
+\s Testing 5
+\p
+ This ought to be  on the 2nd page
+\esbe
+\esb \cat something\cat*
+\cancelcutouts
+\s1 Testing 6
+\p This is a box of category "\showTheCategory", which is not defined.
+\esbe
+\p 
+\v 7 There are no more esbs in this book. However many we have on one page is sufficient.
+\v 8 Dolore doloribus sunt aut libero expedita dolorem qui. Quod atque doloribus ab. Et aperiam vel placeat a aut architecto voluptas id. Quo illo quos saepe eum quia. Earum laudantium recusandae dicta itaque.
+\v 9 Quasi ad in ex nostrum. Repellendus corporis facere necessitatibus recusandae tempore. Tenetur optio et aut fugit ut.
+
+\p
+\v 10
+Culpa optio nihil a doloribus omnis quidem dolorem inventore. Dolorem quo et amet sed. Earum et aliquam molestias sunt in. Et sint dicta quia culpa laboriosam iste.
+
+
+\v 12 Oh all right then, just one more:
+\p
+\esb\cat pictest\cat*
+\p This  esb of category "\showTheCategory" ought to
+contain a foreground picture (a rose) and background
+picture. (an artist's impression of Slithy Toves,
+mentioned  in the nonsense poem Jaberwocky).
+
+\p
+Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est placeat tempora. Est et saepe molestiae fugit quas officiis. Omnis hic est quas aut. Ut amet hic harum sed voluptates quia beatae.
+\esbe
+
+\p
+\v 11
+Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
+
+\esb\cat pl2\cat*
+\p Using a 'p' category side bar, you can nest one
+(single) sidebar in another.  It's not recommended! 
+\esbe
+\esb\cat top\cat*
+\p This ESB is of category '\showTheCategory' and ought to be at the top.
+\esbe
+
+\esb\cat hc\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+
+
+\p Happily there no longer needs to be text between sidebars.
+\esb\cat hr\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+
+\p This is Just a normal ParaGraPh.
+
+\p This is a normal paragraph.
+
+\s \cat testpar\cat* Categorised paragraphs
+\p
+\v 14 This is a paragraph of category "\showTheCategory" and is testing the appropriate
+formatting.
+\p\cat testpar\cat*
+\v 15
+This is a p paragraph of category "\showTheCategory" and is testing the appropriate
+formatting.
+\q3\cat testpar\cat*
+\v 16 This is a q // to see what we can do
+
+\m The end. Back to '\showTheCategory'
+
+\esb\cat page\cat*
+\p 
+Est molestiae veritatis est. Dolorem sapiente ut et accusamus nulla beatae vitae. Soluta quod et illo accusantium. Quis perferendis ratione voluptatum. Dignissimos et non ex recusandae enim.
+
+\p Aperiam laudantium sequi nemo omnis voluptas. Consectetur possimus nam error occaecati ut harum omnis et. Tempore rerum consequatur recusandae totam eum qui dolorum nulla. Nihil qui molestiae quos tempore quasi sit dolores quos. Aut non et cum velit ut officiis magnam impedit.
+\p 
+Iste dicta voluptatem enim quidem harum. Aut quia repellat nostrum eius eum recusandae expedita voluptas. Quas non commodi error commodi. Voluptate sequi tempore nihil rem. Dolore vel quia fuga quis quas incidunt ea.
+\p 
+Corporis dolorem similique in. Reprehenderit pariatur quia porro rerum cupiditate quasi. Eos consequuntur quo in. Itaque qui non qui iste libero nemo.
+
+\esbe

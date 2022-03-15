@@ -6,7 +6,7 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
 
-DataVersion = 1
+DataVersion = 2
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -378,7 +378,7 @@ def cachedData(filepath, fn):
     for l in os.listdir(cfgdir):
         if l.startswith(testbase):
             os.unlink(os.path.join(cfgdir, l))
-    with open(filepath, "r") as inf:
+    with open(filepath, "r", encoding="utf8") as inf:
         res = fn(inf)
     with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:
         pickle.dump(res, outf)

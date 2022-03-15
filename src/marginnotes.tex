@@ -38,7 +38,7 @@
 % #6 = height, #7 = x-shift, #8 = y-shift
   \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#7}%
   \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#8}%
-  \@m@rginnote{#1}{#2}
+  \@m@rginnote{#1}{#2}%
 }
 
 \def\@m@rginnote#1#2#3#4#5{%
@@ -51,12 +51,15 @@
 % #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
   \edef\t@mp{#2}%
   \trace{M}{kerns: pstrut=\the\dp\pstr@t, y-shift=\the#5, text = \the#3, side = #2}%
+  \dimen9=\ht#1
   \setbox0=\vbox to 0pt{\vss\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
     \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
     \else\noindent\hfil\rlap{\kern #4\kern #3\box #1}%
-    \fi}%
+    \fi\vss}%
   %\ifx\t@mp\l@ft\else\showbox0
-  \dp0=0pt\vadjust {\kern -\dp\pstr@t\kern #5\box0\kern\dp\pstr@t\kern-#5}%
+  \dp0=0pt\vadjust {\kern -\dimen9
+    \kern #5\box0
+    \kern-#5 \kern \dimen9}%
 }
 
 \def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
@@ -93,7 +96,8 @@
   \else\ifx\p@ram\relax\let\s@de\l@ft\else\let\s@de\p@ram\fi\fi\fi
   \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was \p@ram}%
   \getp@ram{leftmargin}{#3}{\styst@k}%
-  \ifx\p@ram\relax\dimen0=1pt\else\dimen0=\p@ram\IndentUnit\fi
+  %\ifx\p@ram\relax\dimen0=1pt\else\dimen0=-\p@ram\IndentUnit\fi
+  \dimen0=0pt
   \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
   \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
   \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%

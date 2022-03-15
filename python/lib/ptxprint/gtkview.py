@@ -144,8 +144,8 @@ fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes c_includeFootnotes c_fneachnewline
-tb_xrefs     c_includeXrefs     c_xreachnewline
+tb_footnotes gr_footnotes c_includeFootnotes c_fneachnewline
+tb_xrefs                  c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
@@ -206,7 +206,7 @@ _sensitivities = {
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     # "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
-    "c_includeFootnotes" :     ["gr_footnotes"],
+    # "c_includeFootnotes" :     ["gr_footnotes"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
     "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
     
@@ -273,6 +273,7 @@ _sensitivities = {
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
 _nonsensitivities = {
+    "c_marginalverses" :       ["c_hangpoetry"],
     "c_noInternet" :           ["c_useEngLinks"],
     "c_styFaceSuperscript" :   ["l_styRaise", "s_styRaise"],
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
@@ -1037,7 +1038,10 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         dialog.set_keep_above(False)
         dialog.hide()
-            
+
+    def onBookScopeClicked(self, btn):
+        self.bookrefs = None
+
     def onBookListChanged(self, ecb_booklist): #, foo): # called on "focus-out-event"
         if not self.initialised:
             return
@@ -1054,8 +1058,10 @@ class GtkViewModel(ViewModel):
         self.doBookListChange()
 
     def doBookListChange(self):
-        bls = " ".join(self.getBooks())
-        self.set('ecb_booklist', bls)
+        #bls = " ".join(self.getBooks())
+        #self.set('ecb_booklist', bls)
+        bls = self.get('ecb_booklist', '')
+        self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
             self.set("r_book", "single")
@@ -1983,7 +1989,7 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_processScript"):
             self.builder.get_object("btn_editScript").set_sensitive(False)
         else:
-            if self.get("btn_selectScript") != None:
+            if self.customScript != None:
                 self.builder.get_object("btn_editScript").set_sensitive(True)
 
     def onIntroOutlineClicked(self, btn):
@@ -2271,7 +2277,7 @@ class GtkViewModel(ViewModel):
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
-        bl = self.get("ecb_booklist").split(" ")
+        bl = self.getBooks(scope="multiple", local=True)
         self.alltoggles = []
         for i, b in enumerate(lsbooks):
             tbox = Gtk.ToggleButton(b[0])
@@ -2674,10 +2680,9 @@ class GtkViewModel(ViewModel):
         self.editFile(fname, loc)
 
     def onEditScriptFile(self, btn):
-        customScriptFPath = self.get("btn_selectScript")
-        scriptName = os.path.basename(customScriptFPath)
-        scriptPath = customScriptFPath[:-len(scriptName)]
-        if len(customScriptFPath):
+        scriptName = os.path.basename(self.customScript)
+        scriptPath = os.path.dirname(self.customScript)
+        if self.customScript:
             self._editProcFile(scriptName, scriptPath)
 
     def onEditChangesFile(self, btn):
@@ -3262,6 +3267,11 @@ class GtkViewModel(ViewModel):
 
     def onStyleEdit(self, btn):
         self.styleEditor.mkrDialog()
+
+    def editMarkerChanged(self, mkrw):
+        m = mkrw.get_text()
+        t = self.get("t_styName")
+        self.set("t_styName", re.sub(r"^.*?-", m+" -", t))
 
     def onStyleDel(self, btn):
         self.styleEditor.delKey()
@@ -3865,3 +3875,8 @@ class GtkViewModel(ViewModel):
 
     def btn_RemoveSBimage(self, btn):
         self.set("lb_sbFilename", "")
+
+    def onMarginalVersesClicked(self, btn):
+        self.onSimpleClicked(btn)
+        if self.sensiVisible("c_marginalverses"):
+            self.builder.get_object("c_hangpoetry").set_active(False)

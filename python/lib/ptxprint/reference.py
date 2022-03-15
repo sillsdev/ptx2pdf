@@ -35,7 +35,7 @@ def readvrs(fname):
     for b in res:
         if len(b):
             b[0] = curr
-            curr += b[-1]
+            curr += b[-1] + len(b) - 1
         else:
             b.append(curr)
     return res
@@ -50,6 +50,7 @@ class RefSeparators(dict):
         "onechap": False,   # output chapter in single chapter books
         "mark": lambda r, s: (r.mark or "") + s,
         "bksp": " ",
+        "range": "-",
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -101,6 +102,9 @@ class Reference:
 
     def __str__(self):
         return self.str()
+
+    def __repr__(self):
+        return "Reference({mark} {book} {chap}:{verse} {subverse})".format(**self.__dict__)
 
     def __eq__(self, o):
         if not isinstance(o, Reference):
@@ -172,10 +176,10 @@ class Reference:
         vals = [(c >> 5) & 63, ((v & 64) >> 6) + ((c & 31) << 1), v & 63]
         return subverse + "".join(b64codes[v] for v in vals)
 
-    def asint(self):
+    def asint(self, chapshift=1):
         if self.vrs is None:
             self.loadvrs()
-        coffset = self.vrs[books[self.book]][self.chap-1] if self.chap > 1 else 0
+        coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
         return self.vrs[books[self.book]][0] + coffset + self.verse
 
     @classmethod
@@ -212,7 +216,7 @@ class Reference:
         return res
 
     @classmethod
-    def fromint(cls, val, bkstarts=None, chapshift=0):
+    def fromint(cls, val, bkstarts=None, chapshift=1):
         if cls.vrs is None:
             cls.loadvrs()
         if bkstarts is None:
@@ -232,7 +236,7 @@ class Reference:
                 return 0
             elif arr[i] > v:
                 return 1
-            elif i+1 < len(arr) and arr[i+1]  < v:
+            elif i+1 < len(arr) and arr[i+1] < v:
                 return -1
             return 0
         ind = binsearch(bkstarts, val, testbk)
@@ -249,6 +253,12 @@ class Reference:
     def allrefs(self):
         yield self
 
+    def reify(self):
+        if self.chap == 0:
+            self.chap = 1
+        if self.verse == 0:
+            self.verse = 1
+
 
 class RefRange:
     ''' Inclusive range of verses with first and last '''
@@ -258,12 +268,16 @@ class RefRange:
 
     def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
-        res = "{}-{}".format(self.first.str(context, level, lastref, addsep=addsep),
-                             self.last.str(context, level, self.first, addsep=lastsep))
+        res = "{}{}{}".format(self.first.str(context, level, lastref, addsep=addsep),
+                              addsep['range'],
+                              self.last.str(context, level, self.first, addsep=lastsep))
         return res
 
     def __str__(self):
         return self.str()
+
+    def __repr__(self):
+        return "RefRange({!r}-{!r})".format(self.first, self.last)
 
     def __eq__(self, other):
         if not isinstance(other, RefRange):
@@ -333,6 +347,26 @@ class RefRange:
                     r.chap = 1
                 maxvrs = self._getmaxvrs(r.book, r.chap)
 
+    def reify(self):
+        if self.first.chap == 0:
+            self.first.chap = 1
+        if self.last.chap == 0:
+            self.last.chap = chaps[self.last.book]
+        if self.first.verse == 0:
+            self.first.verse = 1
+        if self.last.verse == 0:
+            self.last.verse = self._getmaxvrs(self.last.book, self.last.chap)
+
+    @classmethod
+    def maxRange(cls, bk, chap):
+        res = cls(Reference(bk, chap, 0), Reference(bk, 0, 0))
+        if chap == 0:
+            chap = chaps[bk]
+        verse = res._getmaxvrs(bk, chap)
+        res.last.chap = chap
+        res.last.verse = verse
+        return res
+
 class AnyBooks:
     @classmethod
     def getBook(cls, s):
@@ -349,7 +383,7 @@ class BaseBooks:
     @classmethod
     def getBook(cls, s):
         ''' Returns canonical book name if the book is matched in our list '''
-        return cls.bookNames.get(s, cls.bookNames.get(s.upper(), None))
+        return cls.bookNames.get(s, cls.bookNames.get(s.upper(), s.upper()))
 
     @classmethod
     def getLocalBook(cls, s, level=0):
@@ -403,13 +437,15 @@ class RefList(list):
         self = cls()
         curr = Reference(None, 0, 0) if starting is None else starting
         currmark = None
+        nextmark = None
         start = None
         mode = ""
-        for b in rerefs.split(s):
+        txt = re.sub(r"[\u200F]", "", s)
+        for b in rerefs.split(txt):
             while len(b):
                 if b == "end":
                     if mode != "r":
-                        curr = self._addRefOrRange(start, curr)
+                        curr = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     if curr.chap > 0 and curr.verse == 0:
                         curr.chap = 200
@@ -422,13 +458,13 @@ class RefList(list):
                 if remarks is not None:
                     m = remarks.match(b)
                     if m:
-                        currmark = m.group(1)
+                        nextmark = m.group(1)
                         b = b[m.end():]
                         continue
                 m = rebook.match(b)
                 if m:
                     if mode != "r" and mode != "":
-                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     bookinfo = m.groups()
                     curr.book = context.getBook(bookinfo[-1])
@@ -438,7 +474,7 @@ class RefList(list):
                 m = recv.match(b)
                 if m:
                     if mode not in "br":
-                        (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                        (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
                     curr.chap = int(m.group(1))
                     if m.group(2):
@@ -459,14 +495,14 @@ class RefList(list):
                             raise SyntaxError("invalid string {} in context of {}".format(b, curr))
                         if mode not in "bcr":
                             c = curr.chap
-                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                             start = None
                             curr.chap = c
                         curr.subverse = m.group(2) or None
                         curr.verse = v
                     else:
                         if mode not in "bcr":
-                            (curr, currmark) = self._addRefOrRange(start, curr, currmark)
+                            (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                             start = None
                         mode = "c"
                         curr.chap = v
@@ -482,7 +518,7 @@ class RefList(list):
                     continue
                 raise SyntaxError("Unknown string component {} in {}".format(b, s))
         if mode != "r" and mode != "":
-            self._addRefOrRange(start, curr, currmark)
+            self._addRefOrRange(start, curr, currmark, nextmark)
         return self
 
     def str(self, context=None, level=0, addsep=RefSeparators()):
@@ -505,11 +541,15 @@ class RefList(list):
     def __contains__(self, other):
         return any(other in x for x in self)
 
-    def _addRefOrRange(self, start, curr, currmark):
+    def _addRefOrRange(self, start, curr, currmark, nextmark):
         curr.mark = currmark
-        self.append(curr if start is None else RefRange(start, curr))
-        res = Reference(curr.book, 0, 0)
-        currmark = None
+        if start is not None:
+            if curr.verse == 0:
+                curr.verse = 200
+            curr = RefRange(start, curr)
+        self.append(curr)
+        res = Reference(curr.first.book, 0, 0)
+        currmark = nextmark
         return (res, currmark)
 
     def simplify(self):
@@ -548,6 +588,13 @@ class RefList(list):
                 yield from r.allrefs()
             else:
                 yield r
+
+    def reify(self):
+        for i, r in enumerate(self[:]):
+            if isinstance(r, RefRange):
+                r.reify()
+            elif r.chap == 0 or r.verse == 0:
+                self[i] = RefRange.maxRange(r.book, r.chap)
 
 class RefJSONEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -591,6 +638,8 @@ def tests():
         init = a.asint()
         end = b.asint()
         for r in res.allrefs():
+            if r.verse == 1 and r.chap != res[0].first.chap:
+                init += 1
             if r.asint() != init:
                 raise TestException("{} in {} is out of order".format(r, s))
             if init > end:
@@ -598,6 +647,7 @@ def tests():
             init += 1
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
+    testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
     t("JHN 3", "fQA", r("JHN", 3, 0))
     t("3JN 3", "kcD", r("3JN", 1, 3))
     t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))

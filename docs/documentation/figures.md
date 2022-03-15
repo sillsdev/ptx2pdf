@@ -134,6 +134,10 @@ Notes:
     or fully on the next. A negative number (e.g. cr-1) will raise the image and
     cut-out, but while this can raise the image into the preceeding paragraph, 
     it  cannot make the cutout begin earlier than the paragraph containing the anchor.
+    A fractional number (e.g. cr0.2) will adjust the image by a fractional
+    amount within the cutout. i.e. cr1.9 will be 0.1 lines higher than cr2. 
+    cr1.5 is treated as cr2 (two full-width lines before the image) with an
+    adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
 [7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
 [8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
@@ -147,7 +151,7 @@ Notes:
     is normally a mistake leading to part of the image or caption. 
     Alignment actively attempts to get the picture/caption to the
     specified edge of the page. ```\FullPageFudgeFactor``` (normally defined to
-    be -2pt) is available for tweaking if top alignment does not actually coincide 
+    be 0pt) is available for tweaking if top alignment does not actually coincide 
     with the top of the image. 
 
 #### Restrictions  / notes on certain picture positions
@@ -256,8 +260,11 @@ An image in a cutout needs some space beside it, so that the text does not touch
 This can be controlled globally by puting a different distance in the the configuration 
 parameter `\def\DefaultSpaceBeside{10pt}` If a particular figure needs a different value,
 this can be controlled by setting the x-spacebeside USFM3 attribute. e.g.
-`x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts. Sidebars in cutouts 
-may set the `\SpaceBeside` value in the appropriate stylesheet. 
+`x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts.
+Sidebars in cutouts may set the `\SpaceBeside` value in the appropriate
+stylesheet. Note that the code currently assumes no one will have a cutout
+'foreground' image in a sidebar that is itself in a cutout, and uses
+`\SpaceBeside` for both cutouts.
 
 
 ### x-xetex Attribute - Rotation control

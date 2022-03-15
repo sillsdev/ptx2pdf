@@ -24,12 +24,11 @@ editions where only limited verse hints are required.
 ```tex
 \newif\iffirstinpara \firstinparatrue
 \let\mytv=\defaultprintverse
-\def\defaultprintverse{\iffirstinpara\global\firstinparafalse\mytv\fi}
-\def\paramarker#1{\expandafter\let\csname _#1\expandafter\endcsname \csname
-#1\endcsname
-    \expandafter\gdef\csname #1\endcsname{\global\firstinparatrue\csname
-_#1\endcsname}}
+\lowercase{\def\marginverse{\iffirstinpara\global\firstinparafalse\mytv\fi}}
+\def\paramarker#1{\expandafter\global\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
+    \expandafter\gdef\csname #1\endcsname{\firstinparatrue\csname _#1\endcsname}}
 \paramarker{p}\paramarker{q1}\paramarker{li}
+\let\defaultprintverse=\marginverse
 ```
 
 ### Implementation
@@ -51,8 +50,10 @@ interested in tracking verse numbers in `\\q2` for example.
 
 ## Mirror Gutter
 
+[Note that this snippet is now redundant as the Layout page has an
+option for an "Outer Gutter"]
 This snippet puts the extra gutter margin on the outside of the page rather than
-the inside.
+the inside. 
 
 ```tex
 \BookOpenLefttrue
@@ -63,7 +64,7 @@ the inside.
 This is what happens implicitly when the RTL book order is specified. And it may
 have some unforeseen effects in regard to RTL type books.
 
-## Technique: Setting style paramaters in ptxprint-mods.tex
+## Technique: Setting style parameters in ptxprint-mods.tex
 
 This snippet is less a snippet as a technique. It shows two ways of setting
 style parameters from TeX.
@@ -232,4 +233,25 @@ Psalms (which may be drafted but unchecked). This snippet allows for specified c
 
 ```perl
 at PSA "(?s)\\c (3|5|9|24|119|142)[ \r\n].+?(?=\\c)" > ""
+```
+
+## Display paragraph markers next to each paragraph
+
+A typesetter may use changes.txt to change the paragraph style for typesetting
+reasons. It can be helpful to know which paragraph styles are being used for
+each paragraph. This snippet adds that capability.
+
+Notice that you will need to define a zpmkr character style to style the marker
+text.
+
+```tex
+\catcode`\@=11
+\input marginnotes.tex
+\newcount\pcount \pcount=0
+{\catcode`\~=12 \lccode`\~=32 \lowercase{
+\gdef\parmkr{\setbox0=\vbox{\hbox{\ch@rstylepls{zpmkr}~\m@rker\ch@rstylepls{zpmkr}*}}%
+    \advance\pcount by 1
+    \d@marginnote{0}{\the\pcount}{zpmkr}}
+}}
+\addtoeveryparhooks{\parmkr}
 ```

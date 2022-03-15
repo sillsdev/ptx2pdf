@@ -1,4 +1,4 @@
-import configparser, re, os, traceback
+import configparser, re, os, traceback, sys
 from shutil import copyfile
 from pathlib import Path
 from functools import reduce
@@ -104,7 +104,7 @@ ModelMap = {
     "paper/gutter":             ("s_pagegutter", lambda w,v: round(float(v)) if v else "0"),
     "paper/colgutteroffset":    ("s_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
-    "paper/bottomrag":          ("s_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
+    "paper/bottomrag":          ("s_bottomRag", None),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
@@ -294,6 +294,7 @@ ModelMap = {
     "notes/xrguttermargin":     ("s_xrGutterWidth", lambda w,v: "{:.1f}".format(float(v)) if v else "2.0"),
     "notes/xrcolrule":          ("c_xrColumnRule", lambda w,v: "true" if v else "false"),
     "notes/xrcolbottom":        ("c_xrColumnBottom", lambda w,v: "true" if v else "false"),
+    "notes/xrcolalign":         ("c_xrSideAlign", lambda w,v: "true" if v else "false"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
@@ -366,8 +367,15 @@ ModelMap = {
     "thumbtabs/groups":         ("t_thumbgroups", None),
 
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
+    "scripts/arab/lrcolon":     ("c_scrarabrefs", None),
+    "scripts/mlym/syllables":   ("c_scrmlymSyllable", None),
+    "scripts/taml/syllables":   ("c_scrtamlSyllable", None),
+    "scripts/telu/syllables":   ("c_scrteluSyllable", None),
+    "scripts/knda/syllables":   ("c_scrkndaSyllable", None),
+    "scripts/orya/syllables":   ("c_scroryaSyllable", None),
 
-    "strongsndx/includenames":  ("c_strongsInclNames", None),
+    # "strongsndx/includenames":  ("c_strongsInclNames", None),
+    "strongsndx/shownums":      ("c_strongsShowNums", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
     "strongsndx/showgreek":     ("c_strongsGrk", None),
@@ -1007,13 +1015,28 @@ class TexModel:
 
     def runConversion(self, infpath, outdir):
         outfpath = infpath
-        if self.dict['project/processscript'] and self.dict['project/selectscript']:
+        script = self.dict['project/selectscript']
+        if self.dict['project/processscript'] and script:
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
             if doti > 0:
                 outfpath = outfpath[:doti] + "-conv" + outfpath[doti:]
-            cmd = [self.dict["project/selectscript"], infpath, outfpath]
-            checkoutput(cmd) # dont't pass cmd as list when shell=True
+            cmd = [script, infpath, outfpath]
+            if script.lower().endswith(".bat") and sys.platform == "win32":
+                cmd = [os.environ.get('COMSPEC', 'cmd.exe'), '/c'] + cmd
+            else:
+                hasrun = False
+                with open(script, encoding="utf-8") as scriptf:
+                    l = scriptf.readline().replace("\uFEFF", "")
+                    if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
+                        scriptf.seek(0)
+                        sys._argv = sys.argv
+                        sys.argv = [script, infpath, outfpath]
+                        exec(scriptf.read())
+                        sys.argv = sys._argv
+                        hasrun = True
+                if not hasrun:
+                    checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def runChanges(self, changes, bk, dat):
@@ -1030,7 +1053,7 @@ class TexModel:
                 dat = c[0](simple, bk, dat)
         return dat
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, letterspace="\uFDD0"):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
         printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -1041,7 +1064,7 @@ class TexModel:
             else:
                 self.changes = []
         draft = "-" + (printer.configName() or "draft")
-        self.makelocalChanges(printer, bk, chaprange=chaprange)
+        self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
         if not os.path.exists(customsty):
             self.dict["/nocustomsty"] = "%"
@@ -1066,59 +1089,73 @@ class TexModel:
         doti = outfname.rfind(".")
         if doti > 0:
             outfname = outfname[:doti] + draft + outfname[doti:]
+        os.makedirs(outdir, exist_ok=True)
         outfpath = os.path.join(outdir, outfname)
         codepage = self.ptsettings.get('Encoding', 65001)
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
 
+        doc = None
+        if chaprange is None and self.dict["project/bookscope"] == "single":
+            chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
+                                 Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
+
+        if not isbk or not len(chaprange) or \
+            (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
+                (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
-            if self.interlinear is not None:
+        else:
+            doc = self._makeUSFM(dat.splitlines(True), bk).getsubbook(chaprange)
+
+        if self.interlinear is not None:
+            if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-                linelengths = [len(x) for x in dat.splitlines(True)]
-                if doc is not None:
-                    doc.calc_PToffsets()
-                    self.interlinear.convertBk(bk, doc, linelengths)
-                    if len(self.interlinear.fails):
-                        printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
-                                        show=not printer.get("c_quickRun"))
-                        self.interlinear.fails = []
-            elif bk.lower().startswith("xx"):
+            linelengths = [len(x) for x in dat.splitlines(True)]
+            if doc is not None:
+                doc.calc_PToffsets()
+                self.interlinear.convertBk(bk, doc, linelengths)
+                if len(self.interlinear.fails):
+                    printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
+                                    show=not printer.get("c_quickRun"))
+                    self.interlinear.fails = []
+        elif bk.lower().startswith("xx"):
+            if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-                #import pdb; pdb.set_trace()
-                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
+            #import pdb; pdb.set_trace()
+            doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
-            if self.changes is not None and len(self.changes):
-                if doc is not None:
-                    dat = str(doc)
-                    doc = None
-                dat = self.runChanges(self.changes, bk, dat)
-                #self.analyzeImageCopyrights(dat)
-
-            if self.dict['project/canonicalise'] \
-                        or not self.asBool("document/bookintro") \
-                        or not self.asBool("document/introoutline")\
-                        or self.asBool("document/hidemptyverses"):
-                if doc is None:
-                    doc = self._makeUSFM(dat.splitlines(True), bk)
-                if doc is not None:
-                    if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-                        logger.debug("stripIntro")
-                        doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                    if self.asBool("document/hidemptyverses"):
-                        logger.debug("stripEmptyChVs")
-                        doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
-
-            if self.dict['fancy/endayah'] == "":
-                if doc is None:
-                    doc = self._makeUSFM(dat.splitlines(True), bk)
-                logger.debug("versesToEnd")
-                doc.versesToEnd()
-
-            if doc is not None and getattr(doc, 'doc', None) is not None:
+        if self.changes is not None and len(self.changes):
+            if doc is not None:
                 dat = str(doc)
+                doc = None
+            dat = self.runChanges(self.changes, bk, dat)
+            #self.analyzeImageCopyrights(dat)
 
-            if self.localChanges is not None:
-                dat = self.runChanges(self.localChanges, bk, dat)
+        if self.dict['project/canonicalise'] \
+                    or not self.asBool("document/bookintro") \
+                    or not self.asBool("document/introoutline")\
+                    or self.asBool("document/hidemptyverses"):
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            if doc is not None:
+                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+                    logger.debug("stripIntro")
+                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+                if self.asBool("document/hidemptyverses"):
+                    logger.debug("stripEmptyChVs")
+                    doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
+
+        if self.dict['fancy/endayah'] == "":
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            logger.debug("versesToEnd")
+            doc.versesToEnd()
+
+        if doc is not None and getattr(doc, 'doc', None) is not None:
+            dat = str(doc)
+
+        if self.localChanges is not None:
+            dat = self.runChanges(self.localChanges, bk, dat)
 
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
@@ -1276,13 +1313,6 @@ class TexModel:
         self.localChanges = []
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
-        if chaprange is not None:
-            first, last = chaprange
-        elif self.dict["project/bookscope"] == "single":
-            first = int(float(self.dict["document/chapfrom"]))
-            last = int(float(self.dict["document/chapto"]))
-        else:
-            first, last = (-1, -1)
         
         # Fix things that other parsers accept and we don't
         self.localChanges.append((None, regex.compile(r"(\\[cv] [^ \\\r\n]+)(\\)", flags=regex.S), r"\1 \2"))
@@ -1303,12 +1333,6 @@ class TexModel:
                 self.localChanges.append((None,
                                           regex.compile(r"(\\c )", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 
-        # if self.dict["project/bookscope"] == "single":
-        if first > 1:
-            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+(?=\\c {} ?\r?\n)".format(first), flags=regex.S), ""))
-        if last >=0 and last < int(chaps.get(bk, 999)):
-            self.localChanges.append((None, regex.compile(r"\\c {} ?\r?\n.+".format(last+1), flags=regex.S), ""))
-
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))
 
@@ -1324,7 +1348,7 @@ class TexModel:
             else:
                 self.localChanges.append((None, regex.compile(r"\\ef . ", flags=regex.S), "\\ef - "))
         else:
-            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\* ", flags=regex.S), ""))
+            self.localChanges.append((None, regex.compile(r"\\ef( .*?)\\ef\*", flags=regex.S), ""))
 
         if self.asBool("notes/showextxrefs"):
             self.localChanges.append((None, regex.compile(r"\\ex", flags=regex.S), r"\\x"))
@@ -1333,7 +1357,7 @@ class TexModel:
         
         # If a printout of JUST the book introductions is needed (i.e. no scripture text) then this option is very handy
         if not self.asBool("document/ifmainbodytext"):
-            self.localChanges.append((None, regex.compile(r"\\c 1 ?\r?\n.+".format(first), flags=regex.S), ""))
+            self.localChanges.append((None, regex.compile(r"\\c .+", flags=regex.S), ""))
 
         # Probably need to make this more efficient for multi-book and lengthy glossaries (cache the GLO & changes reqd etc.)
         if self.asBool("notes/glossaryfootnotes"):
@@ -1379,9 +1403,9 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
 
         if self.asBool("document/preventorphans"): # Prevent orphans at end of *any* paragraph
-            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{,6})) ([\S]{,9}\s*\n)", \
+            self.localChanges.append((None, regex.compile(r"(\\q\d?(\s?\r?\n?\\v)?( \S+)+( (?!\\)[^\\\s]{1,6})) ([\S]{1,9}\s*\n)", \
                                             flags=regex.M), r"\1\u2000\5"))
-            self.localChanges.append((None, regex.compile(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{,6}) ([^ 0-9\\\n\u2000\u00A0]{,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
+            self.localChanges.append((None, regex.compile(r"(?<=\\[^ctm][^\\]+)(\s+[^ 0-9\\\n\u2000\u00A0]{1,6}) ([^ 0-9\\\n\u2000\u00A0]{1,8}\n(?:\\[pmqsc]|$))", flags=regex.S), r"\1\u2000\2"))
 
         if self.asBool("document/preventwidows"):
             # Push the verse number onto the next line (using NBSP) if there is
@@ -1688,6 +1712,6 @@ class TexModel:
                     localfile = None
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
-                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile)
+                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile, self.dict['strongsndx/shownums'])
         self.xrefs.process(bk, outpath)
 
