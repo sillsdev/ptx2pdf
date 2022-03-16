@@ -59,7 +59,7 @@ parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
-parser.add_argument('-l','--logging',help="Enable logging level [DEBUG, *INFO*, WARN, ERROR]")
+parser.add_argument('-l','--logging',help="Enable logging level [DEBUG, *INFO*, WARN, ERROR, number]")
 parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [ptxprint.log] or "none"')
 parser.add_argument('--timeout',default=1200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
@@ -85,7 +85,10 @@ if os.path.exists(logconffile):
     logging.config.fileConfig(logconffile)
     log = logging.getLogger('ptxprint')
 elif args.logging:
-    loglevel = getattr(logging, args.logging.upper(), None)
+    try:
+        loglevel = int(args.logging)
+    except ValueError:
+        loglevel = getattr(logging, args.logging.upper(), None)
     if isinstance(loglevel, int):
         parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
         if args.logfile.lower != "none":

@@ -1040,16 +1040,22 @@ class TexModel:
         return outfpath
 
     def runChanges(self, changes, bk, dat):
+        def wrap(t):
+            def proc(m):
+                res = m.expand(t)
+                logger.log(7, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+                return res
+            return proc
         for c in changes:
             logger.debug("Change: {}".format(c))
             if c[0] is None:
-                dat = c[1].sub(c[2], dat)
+                dat = c[1].sub(wrap(c[2]), dat)
             elif isinstance(c[0], str):
                 if c[0] == bk:
-                    dat = c[1].sub(c[2], dat)
+                    dat = c[1].sub(wrap(c[2]), dat)
             else:
                 def simple(s):
-                    return c[1].sub(c[2], s)
+                    return c[1].sub(wrap(c[2]), s)
                 dat = c[0](simple, bk, dat)
         return dat
 
@@ -1127,6 +1133,7 @@ class TexModel:
         if self.changes is not None and len(self.changes):
             if doc is not None:
                 dat = str(doc)
+                logger.log(5, "Unparsing text to run user changes\n"+dat)
                 doc = None
             dat = self.runChanges(self.changes, bk, dat)
             #self.analyzeImageCopyrights(dat)
@@ -1153,6 +1160,7 @@ class TexModel:
 
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
+            logger.log(5, "Unparsing text to run local changes\n"+dat)
 
         if self.localChanges is not None:
             dat = self.runChanges(self.localChanges, bk, dat)
