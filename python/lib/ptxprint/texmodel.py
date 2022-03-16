@@ -827,7 +827,7 @@ class TexModel:
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
-        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).sub("//","\u2028")
+        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(pycodedir(), template)) as inf:

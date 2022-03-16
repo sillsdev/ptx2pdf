@@ -518,7 +518,8 @@ class parser(collections.Iterable):
                  default_meta=default_meta,
                  private_prefix=None, error_level=ErrorLevel.Content,
                  tag_escapes=r'\\',
-                 tokeniser=None):
+                 tokeniser=None,
+                 debug=False):
         """
         Create a SFM parser object. This object is an interator over SFM
         Element trees. For simple unstructured documents this is one element
@@ -560,6 +561,7 @@ class parser(collections.Iterable):
         self._tokens = _put_back_iter(self.__lexer(source, tokeniser))
         self._error_level = error_level
         self._escaped_tag = re.compile(rf'^\\{tag_escapes}', re.DOTALL | re.UNICODE)
+        self.debug = debug
 
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}

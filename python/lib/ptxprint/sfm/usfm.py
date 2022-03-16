@@ -307,7 +307,6 @@ class parser(sfm.parser):
                  tag_escapes=r"[\\+%!@#$^&()=-_`/]",
                  debug=False,
                  *args, **kwds):
-        self.debug = debug
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
@@ -320,6 +319,7 @@ class parser(sfm.parser):
                          default_meta,
                          private_prefix='z',
                          tag_escapes=tag_escapes,
+                         debug=debug,
                          *args, **kwds)
 
     @classmethod
