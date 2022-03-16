@@ -107,6 +107,7 @@ class mlym(ScriptSnippet):
 
     @classmethod
     def regexes(cls, model):
+        res = []
         if model["scripts/mlym/syllables"]:
             cls.hyphenChar = '\u200B'
             cls.indVowels = r'\u0d05-\u0d14\u0d60\u0d61'
@@ -126,6 +127,7 @@ class taml(ScriptSnippet):
 
     @classmethod
     def regexes(cls, model):
+        res = []
         if model["scripts/taml/syllables"]:
             cls.hyphenChar = '\u200B'
             cls.wordChars = r'\u0b81-\u0be3'
@@ -145,6 +147,7 @@ class telu(ScriptSnippet):
 
     @classmethod
     def regexes(cls, model):
+        res = []
         if model["scripts/telu/syllables"]:
             cls.hyphenChar = '\u200B'
             cls.wordChars = r'\u0c01-\u0c63\u0c7f'
@@ -164,6 +167,7 @@ class knda(ScriptSnippet):
 
     @classmethod
     def regexes(cls, model):
+        res = []
         if model["scripts/knda/syllables"]:
             cls.hyphenChar = '\u200B'
             cls.wordChars = r'\u0c81-\u0ce3\u0cf1\u0cf2'
@@ -183,6 +187,7 @@ class orya(ScriptSnippet):
 
     @classmethod
     def regexes(cls, model):
+        res = []
         if model["scripts/orya/syllables"]:
             cls.hyphenChar = '\u200B'
             cls.wordChars = r'\u0b01-\u0b63\u0b70\u0b71'
