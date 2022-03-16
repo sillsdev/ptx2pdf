@@ -34,7 +34,7 @@ else:
     outf = sys.stdout
 
 def makedoc(inf, sheets):
-    return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=True))
+    return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=True, debug=True))
 
 def outdoc(doc):
     if args.literal:

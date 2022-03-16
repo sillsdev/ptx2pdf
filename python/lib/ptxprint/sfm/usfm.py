@@ -305,11 +305,16 @@ class parser(sfm.parser):
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
                  tag_escapes=r"[\\+%!@#$^&()=-_`/]",
+                 debug=False,
                  *args, **kwds):
+        self.debug = debug
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
         stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
+        for m in stylesheet.values():
+            if m['StyleType'] == 'Milestone':
+                m.update(Endmarker='*')
         super().__init__(source,
                          stylesheet,
                          default_meta,
@@ -464,6 +469,10 @@ class parser(sfm.parser):
 
         return self._canonicalise_footnote(self._default_(parent))
     _notetext_ = _NoteText_
+
+    def _Milestone_(self, parent):
+        return tuple()
+    _milestone = _Milestone_
 
     def _Unspecified_(self, parent):
         orig_name = parent.name

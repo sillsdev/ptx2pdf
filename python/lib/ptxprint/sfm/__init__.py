@@ -555,7 +555,7 @@ class parser(collections.Iterable):
         self._default_meta = default_meta
         self._pua_prefix = private_prefix
         if tokeniser is None:
-            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|*]+\*?',
+            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|*]*\*?',
                 re.DOTALL | re.UNICODE)
         self._tokens = _put_back_iter(self.__lexer(source, tokeniser))
         self._error_level = error_level
@@ -627,17 +627,25 @@ class parser(collections.Iterable):
     def __pp_marker_list(tags):
         return ', '.join('\\'+c if c else 'toplevel' for c in sorted(tags))
 
-    @staticmethod
-    def __lexer(lines, tokeniser):
+    def __lexer(self, lines, tokeniser):
         """ Return an iterator that returns tokens in a sequence:
             marker, text, marker, text, ...
         """
         lmss = enumerate(map(tokeniser.finditer, lines))
+        if getattr(self, 'debug', False):
+            lmss = list(lmss)
         fs = (Text(m.group(), Position(l+1, m.start()+1))
               for l, ms in lmss for m in ms)
+        if getattr(self, 'debug', False):
+            fs = list(fs)
         gs = groupby(fs, operator.methodcaller('startswith', '\\'))
-        return chain.from_iterable(g if istag else (Text.concat(g),)
-                                   for istag, g in gs)
+        for istag, g in gs:
+            if istag:
+                yield from g
+            else:
+                yield Text.concat(g)
+        #return chain.from_iterable(g if istag else (Text.concat(g),)
+        #                           for istag, g in gs)
 
     def __get_tag(self, parent: Element, tok: str):
         if tok[0] != '\\' or self._escaped_tag.match(str(tok)):
@@ -671,7 +679,7 @@ class parser(collections.Iterable):
     @staticmethod
     def __need_subnode(parent, tag, meta):
         occurs = meta['OccursUnder']
-        if not occurs:  # No occurs under means it can occur anywhere.
+        if not occurs or meta['StyleType'] == 'Milestone':  # No occurs under means it can occur anywhere.
             return True
 
         parent_tag = None
@@ -691,7 +699,8 @@ class parser(collections.Iterable):
                 tok.parent = parent
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
-                if tag.name == "*" and parent is not None:
+                if tag.name == "*":
+                    parent.annotations['milestone'] = True
                     return
                 meta = self.__get_style(tag.name)
                 if force_need or self.__need_subnode(parent, tag, meta):
