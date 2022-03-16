@@ -75,7 +75,7 @@ ModelMap = {
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
-                                                                   lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
+                                                                   lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
     "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
     "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("txbf_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
@@ -827,7 +827,7 @@ class TexModel:
         self.dict['jobname'] = jobname
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
-        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext'])
+        self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).sub("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         with universalopen(os.path.join(pycodedir(), template)) as inf:
@@ -1443,7 +1443,7 @@ class TexModel:
             # Force all footnotes/x-refs to be either '+ ' or '- ' rather than '*/#'
             if self.asBool("notes/{}override".format(c)):
                 t = "+" if self.asBool("notes/if{}autocallers".format(c)) else "-"
-                self.localChanges.append((None, regex.compile(r"\\{} .".format(c[0])), r"\\{} {}".format(c[0],t)))
+                self.localChanges.append((None, regex.compile(r"\\{} ([^\\\s]+)".format(c[0])), r"\\{} {}".format(c[0],t)))
             # Remove the [spare] space after a note caller if the caller is omitted AND if after a digit (verse number).
             if self.asBool("notes/{}omitcaller".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\d )(\\[{0}] - .*?\\[{0}]\*)\s+".format(c[0])), r"\1\2"))
@@ -1452,7 +1452,7 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Paratext marks forced line breaks as //
-        self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
+        # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
 
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\(?:f|x|ef)\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
