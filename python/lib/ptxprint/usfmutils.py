@@ -126,15 +126,15 @@ class UsfmCollection:
 
 class Usfm:
     def __init__(self, iterable, sheets):
-        tag_escapes = r"[^0-9A-Za-z]"
+        #tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
         self.sheets = sheets
         if iterable is not None:
             with warnings.catch_warnings(record=True) as self.warnings:
                 self.doc = list(usfm.parser(iterable, stylesheet=sheets,
                                     canonicalise_footnotes=False,
-                                    error_level=sfm.ErrorLevel.Unrecoverable,
-                                    tag_escapes=tag_escapes))
+                                    error_level=sfm.ErrorLevel.Unrecoverable))
+                                    #tag_escapes=tag_escapes))
         # self.warnings is a list of Exception type errors use print(w.message)
         self.cvaddorned = False
         self.tocs = []

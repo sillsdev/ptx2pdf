@@ -1127,7 +1127,6 @@ class TexModel:
         elif bk.lower().startswith("xx"):
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-            #import pdb; pdb.set_trace()
             doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
         if self.changes is not None and len(self.changes):
