@@ -32,7 +32,7 @@ the `loc` attribute it says "a list of verses where it might be inserted", and
 for size it offers only 'span' and 'col'. The ptx2pdf XeTeX macros give better
 control on both of these, offering multiple positioning options and if you want
 a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see
-a later discusion also). They also add the extra sizes 'page' and 'full'. 
+a later discusion also). They also add the extra sizes 'width', 'page' and 'full'. 
 'Full' suppresses headers and footers.
 
 ## Attributes
@@ -235,6 +235,13 @@ images in cutouts.
 - hl / hr Handy for a sponsor's or publisher's logo, perhaps?
 
 ### size Attribute
+
+Valid values for this attribute are:
+- full: the entire size of the paper, a page reserved for images.
+- page: the normal printed area of the page, on a page reserved for images.
+- col: the width of the current column (only valid for 2 column text or diglot).
+- span: the width of the normal printed area of the page.
+- width: the full width of the paper 
 
 The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
