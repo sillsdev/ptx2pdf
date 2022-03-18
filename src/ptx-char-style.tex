@@ -475,9 +475,9 @@
     \let\typef@ce=\extraregular
     \stystacksplit\styst@k+\E
     \getp@ram{fontsize}{#1}{\@xfname}%
-    \dimen0=\c@rrfontsize\FontSizeUnit
+    \dimen0=\p@ram\FontSizeUnit
     \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
-    \ifx\p@ram\relax\else \multiply\dimen0 by \p@ram\fi
+    \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0 \fi
     \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
     \trace{s}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
   \fi
