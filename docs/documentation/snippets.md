@@ -168,7 +168,7 @@ We also throw in some vertical space, a horizontal rule followed by a pagebreak.
 
 ## Add a rule after the intro (for all books)
 
-Use a hoizontal rule (line) after the introductory outline, before the 1st chapter.
+Use a horizontal rule (line) after the introductory outline, before the 1st chapter.
 
 ```perl
 '(\\c 1 ?\r?\n)' > '\\zrule\\*\r\n\1 '
@@ -241,7 +241,7 @@ A typesetter may use changes.txt to change the paragraph style for typesetting
 reasons. It can be helpful to know which paragraph styles are being used for
 each paragraph. This snippet adds that capability.
 
-Notice that you will need to define a zpmkr character style to style the marker
+Notice that you will need to define a **character** style called zpmkr to style the marker
 text.
 
 ```tex
