@@ -1264,7 +1264,8 @@ class ViewModel:
         for dp, dn, fn in os.walk(basecfpath):
             op = os.path.join(cfpath, os.path.relpath(dp, basecfpath))
             for f in fn:
-                res[os.path.join(dp, f)] = os.path.join(op, f)
+                if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != basecfpath:
+                    res[os.path.join(dp, f)] = os.path.join(op, f)
         sp = os.path.join(self.settings_dir, prjid, 'shared', 'ptxprint')
         for f in os.listdir(sp):
             fp = os.path.join(sp, f)
