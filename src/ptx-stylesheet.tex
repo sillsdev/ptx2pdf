@@ -1710,6 +1710,11 @@
 \global\let\mspr@fix\empty % Milestone-specific prefix
 %-csty_category
 
+\def\mapinput "#1"{%
+  \message{INPUTFILE: #1}%
+  \input "#1"
+}
+
 %+csty_hooks
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks

@@ -44,7 +44,7 @@
 \gdef\zBottomRag{\bgroup\obeylines\m@kedigitsother\@zbottomrag}
 \gdef\@zbottomrag #1^^M{\egroup\xdef\BalanceThreshold{#1}}
 \gdef\include{\bgroup\obeylines\unc@tcodespecials\catcode`\/=12 \@include}
-\gdef\@include#1#2^^M{\egroup\input "#2" \relax}
+\gdef\@include#1#2^^M{\egroup\mapinput "#2" \relax}
 \gdef\nopagenums{\global\let\pagenumberL=\relax\global\let\pagenumberR=\relax\global\let\pagenumber=\relax}
 \gdef\dopagenums{\global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio}
 \gdef\resetpagenums{\bgroup\m@kedigitsother\obeylines\r@setpagenums}
