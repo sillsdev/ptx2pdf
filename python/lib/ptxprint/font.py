@@ -110,6 +110,7 @@ class TTFontCache:
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
+            logger.debug(f"fc-list: {f}")
             if ": " not in f:
                 continue
             try:
@@ -119,6 +120,7 @@ class TTFontCache:
                 else:
                     name = full
                     style = ""
+                name = re.sub(r"\\([-])", r"\1", name)
                 if "," in name:
                     names = name.split(",")
                 else:
