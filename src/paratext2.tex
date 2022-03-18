@@ -2102,12 +2102,12 @@
   \msg{includepdf #2 pages=\the\totalp@ges}
   \loop \ifnum\whichp@ge<\totalp@ges
     \advance\whichp@ge by 1
-    \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1}%
+    \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{#2}{page \whichp@ge #1}}%
     \ifdim\wd0>\pdfpagewidth
-      \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1 width \pdfpagewidth}%
+      \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{#2}{page \whichp@ge #1 width \pdfpagewidth}}%
     \fi
     \ifdim\ht0>\pdfpageheight
-      \setbox0=\hbox{\XeTeXpdffile "#2" page \whichp@ge #1 height \pdfpageheight}%
+      \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{#2}{page \whichp@ge #1 height \pdfpageheight}}%
     \fi
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
       \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%

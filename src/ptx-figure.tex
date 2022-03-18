@@ -541,13 +541,14 @@
   \kern-.2pt \hrule height .2pt}}
 
 \def\ins@rtpic#1#2#3#4#5#6#7{%
- \trace{g}{ins@rtpic #1 #7 #2 #3 (#4) #5 #6}%
+ \edef\tmpfile{\mapinputfile{#1}}%
+ \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
  \openin\t@stread=#1
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
-     \message{INPUTFILE: #1}%
-     \picfilecomm@nd #1 #7 #2 #3 #5 #6
+     \message{INPUTFILE: #1 -> \tmpfile}%
+     \picfilecomm@nd \tmpfile #7 #2 #3 #5 #6
    \fi
 }
 

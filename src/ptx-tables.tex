@@ -264,10 +264,11 @@
     \ifdim\c@rrentcolwidth=-1sp
       \ifdim\exc@ss>\sp@re % we have to wrap at least one column
         \c@rrentcolwidth=\wd\c@rrentcolbox \advance\c@rrentcolwidth by -\thr@shold
-        \multiply\c@rrentcolwidth by 20
+        \ifdim\c@rrentcolwidth>1638pt\tempfalse\message{Table column overflow, reducing resolution}\else\temptrue\fi
+        \iftemp\multiply\c@rrentcolwidth by 20\fi
         \divide\c@rrentcolwidth by \exc@ss
         \multiply\c@rrentcolwidth by \sp@re
-        \divide\c@rrentcolwidth by 20
+        \iftemp\divide\c@rrentcolwidth by 20\fi
         \advance\c@rrentcolwidth by \thr@shold
       \else % there was enough sp@re, just give columns their desired width
         \c@rrentcolwidth=\wd\c@rrentcolbox
