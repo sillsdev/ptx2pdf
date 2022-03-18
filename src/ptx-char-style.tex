@@ -67,7 +67,7 @@
 %
 
 %+cchar_charstyle
-\def\ch@rstyle#1{\trace{s}{CH@RSTYLE:#1}%
+\def\ch@rstyle#1{\trace{sa}{CH@RSTYLE:#1}%
  \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -76,7 +76,7 @@
 
 %Version of above for plus versions
 \def\ch@rstylepls#1{\leavevmode%Stacking character styles (at least in headers) seem to break paragraph styling if they are invoked before leaving vertical mode. It's something to do with grouping. On the assumption that there will *be* text coming, it ought to be safe to leave vertical mode on meeting a stacking character style
- \trace{s}{CH@RSTYLEPLS:#1}%
+ \trace{sa}{CH@RSTYLEPLS:#1}%
  \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -117,7 +117,7 @@
  \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker %(1)
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
-  \trace{s}{charstyleplus}%
+  \trace{sa}{charstyleplus}%
   %\tracingassigns=1
   \if\n@xt*\let\n@xt@\endch@rstylepls % check for "*", if so then we need to end the style
   \else\if\n@xt~\let\n@xt@\startch@rstyle@spc
@@ -205,7 +205,7 @@
   \bgroup\XeTeXuseglyphmetrics=0\relax
   \setbox1=\hbox{~}%
   \xdef\b@ckgroundlower{\the\dp1}%
-  \trace{s}{Set background lower to \b@ckgroundlower}%
+  \trace{sa}{Set background lower to \b@ckgroundlower}%
   \egroup
 }
 \def\BackgroundOverrun{0.25pt}
@@ -287,9 +287,9 @@
      \egroup % end the style's group, so formatting reverts             %(2)
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
-    \trace{s}{ending charstyle}%
+    \trace{sa}{ending charstyle}%
     \mcpop
-    \trace{s}{end char style, stack now: \mcstack}%
+    \trace{sa}{end char style, stack now: \mcstack}%
     \ifp@pping\else\setwh@tvrstyle\fi
   \fi
  }
@@ -378,7 +378,7 @@
 %+cchar_setfont
 \xdef\z@ros{000000}%What does ParseColor come out with for black?
 \def\s@tfont#1#2{%
- \trace{s}{s@tfont #1 / #2}%
+ \trace{sa}{s@tfont #1 / #2}%
  \edef\r@qmkr{#1}\ifx\empty\r@qmkr\trace{F}{Font for empty marker requested. Nonsense! Substituting p}\def\r@qmkr{p}\fi
  \edef\r@qstyst@k{#2}\ifx\empty\r@qstyst@k\trace{F}{Empty style stack requested. Substituting \r@qmkr}\edef\r@qstyst@k{\r@qmkr}%
  \else
@@ -479,9 +479,9 @@
     \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0 \fi
     \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
-    \trace{s}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
+    \trace{sa}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
   \fi
-  \trace{s}{extrafont<\@xfname> =\csname extrafont<\@xfname>\endcsname}%
+  \trace{sa}{extrafont<\@xfname> =\csname extrafont<\@xfname>\endcsname}%
   \csname extrafont<\@xfname>\endcsname
 }
 \def\SuperscriptFactor{0.75}
