@@ -72,6 +72,9 @@
 \def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
 \newtoks\@veryparhooks
 
+\def\addtoeveryparstarthooks#1{\x@\global\x@\@veryparstarthooks\x@{\the\@veryparstarthooks #1}}
+\newtoks\@veryparstarthooks
+
 %: `\addtoparstylehooks` is for stuff to do at each new parstyle marker
 \def\addtoparstylehooks#1{\x@\global\x@\p@rstylehooks\x@{\the\p@rstylehooks #1}}
 \newtoks\p@rstylehooks
