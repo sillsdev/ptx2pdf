@@ -447,6 +447,11 @@
   \traceifcheck{p@rstyle}%
  \fi}
 %+cpar_parstyle_start
+
+%Some user-supplied code may cause unwanted side-effects, e.g. to newch@rstyle 
+\def\preservesettings{\let\epch@rstyle\newch@rstyle}
+\def\restoresettings{\let\newch@rstyle\epch@rstyle}
+
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
@@ -455,7 +460,9 @@
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
    %
+   \preservesettings % Needed?
    \the\@veryparhooks
+   \restoresettings
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
@@ -551,8 +558,8 @@
    \tmpn@xtparstart
    \op@ninghooks{start}{\m@rker}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
-   \startparafalse\first@fterheadingfalse
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
+   \startparafalse\first@fterheadingfalse
   }% end everypar
 }
 %-cpar_parstyle_final

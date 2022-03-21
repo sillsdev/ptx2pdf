@@ -67,7 +67,7 @@
 %
 
 %+cchar_charstyle
-\def\ch@rstyle#1{\trace{sa}{CH@RSTYLE:#1}%
+\def\ch@rstyle#1{\trace{sa}{CH@RSTYLE:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
  \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -76,7 +76,7 @@
 
 %Version of above for plus versions
 \def\ch@rstylepls#1{\leavevmode%Stacking character styles (at least in headers) seem to break paragraph styling if they are invoked before leaving vertical mode. It's something to do with grouping. On the assumption that there will *be* text coming, it ought to be safe to leave vertical mode on meeting a stacking character style
- \trace{sa}{CH@RSTYLEPLS:#1}%
+ \trace{sa}{CH@RSTYLEPLS:#1 nesting:(\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
  \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
@@ -163,6 +163,7 @@
    \op@ninghooks{before}{\newch@rstyle}\relax% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
    \bgroup % start a group to encapsulate the style's formatting changes
+    \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
@@ -263,7 +264,9 @@
      \else
        \global\tmpt@ks{}%
      \fi
+     \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
      \iftemp\egroup
+       \let\newch@rstyle\@newch@rstyle
        \the\tmpt@ks
        \ifx\p@ram\tru@ \d@underline{0}\fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
@@ -286,12 +289,14 @@
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
      \else \global\advance\p@ranesting by -1
      \fi
+     \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
      \egroup % end the style's group, so formatting reverts             %(2)
+     \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
-    \trace{sa}{ending charstyle}%
+    \trace{sa}{ending charstyle \newch@rstyle}%
     \mcpop
-    \trace{sa}{end char style, stack now: \mcstack}%
+    \trace{sa}{end char style, stack now: \mcstack (\styst@kfirst)}%
     \ifp@pping\else\setwh@tvrstyle\fi
   \fi
  }
