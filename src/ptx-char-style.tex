@@ -68,7 +68,7 @@
 
 %+cchar_charstyle
 \def\ch@rstyle#1{\trace{sa}{CH@RSTYLE:#1}%
- \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
+ \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  \futurelet\n@xt\doch@rstyle % look at following character and call \doch@rstyle
@@ -77,7 +77,7 @@
 %Version of above for plus versions
 \def\ch@rstylepls#1{\leavevmode%Stacking character styles (at least in headers) seem to break paragraph styling if they are invoked before leaving vertical mode. It's something to do with grouping. On the assumption that there will *be* text coming, it ought to be safe to leave vertical mode on meeting a stacking character style
  \trace{sa}{CH@RSTYLEPLS:#1}%
- \gdef\newch@rstyle{\detokenize{#1}}% record the name of the style
+ \edef\newch@rstyle{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
  \catcode13=12 % ditto for <return>
  %\tracingassigns=1
@@ -387,7 +387,7 @@
    \x@\stystacksplit#2+\E
    \ifx\r@qmkr\tmpstyst@kfirst\else
      \edef\r@qstyst@k{\r@qmkr+\r@qstyst@k}%
-     \trace{F}{Fixed broken stystak}%
+     \trace{F}{Fixed broken stystak \r@qstyst@k}%
    \fi
  \fi 
  \g@tfontname{\r@qmkr}{\r@qstyst@k}%
