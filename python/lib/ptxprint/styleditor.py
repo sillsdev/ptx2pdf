@@ -215,7 +215,9 @@ class StyleEditor:
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet.get(mrk, {}).get(key, default)
         if key in _fieldmap and res is not None:
-            return _fieldmap[key][0](self, res, mrk=mrk, model=self.model)
+            res = _fieldmap[key][0](self, res, mrk=mrk, model=self.model)
+        if key == "FontSize":
+            print(f"getval: {mrk}, {key} = {res}")
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
@@ -237,6 +239,8 @@ class StyleEditor:
             self.sheet.setdefault(mrk, {})[key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
+        if key == "FontSize":
+            print(f"setval: {mrk}, {key} = {val}")
 
     def haskey(self, mrk, key):
         if self.sheet is None:
