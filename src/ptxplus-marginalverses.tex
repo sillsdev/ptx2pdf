@@ -21,7 +21,8 @@
   \ifnum \ifx\p@ram\@nner\ift@mp 0\else 1\fi\else\ifx\p@ram\@uter\ift@mp 1\else 0\fi\else\ifx\p@ram\r@ght 1\else 0\fi\fi\fi =0
     \t@mptrue\else\t@mpfalse
   \fi
-  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}\trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
+  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}%
+    \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
     \s@tsideskips{v}%
     \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
