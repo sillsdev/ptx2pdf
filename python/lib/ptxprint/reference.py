@@ -91,7 +91,7 @@ class Reference:
             if not len(res):
                 sep = sep or addsep['chaps']
             res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
-            if self.verse > 0:
+            if self.verse > 0 and (lastref is None or self.verse < 200 or lastref.verse > 0):
                 res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
         elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
@@ -632,6 +632,7 @@ def tests():
         temp.subverse = None
         if intref != temp:
             raise TestException("{} has int({}) but that is {}".format(res[0].first, refint, intref))
+        print("{} = {}".format(s, str(res)))
 
     def testrange(s, a, b):
         res = RefList.fromStr(s)
@@ -645,6 +646,7 @@ def tests():
             if init > end:
                 raise TestException("{} in {} is beyond the end {}".format(r, s, b))
             init += 1
+        print("{} = {}".format(s, str(res)))
 
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
