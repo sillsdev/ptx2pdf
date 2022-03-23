@@ -72,7 +72,7 @@
 \setsbp@ram{bgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
-%\setsbp@ram{borderfillcolour}{none} % For double.
+%\setsbp@ram{borderfillcolour}{NONE} % For double. (Should match fill@none)
 %\setsbp@ram{borderhpadding}{0} %pt
 %\setsbp@ram{bordervpadding}{0} %pt
 \def\m@rker{textborder}
@@ -853,12 +853,12 @@
         \ifx\picl@c\loc@Inl
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
-	  %\vskip -\oldlastdepth
-          %\lastdepth=0pt
+	  \vskip -\oldlastdepth
+          \lastdepth=0pt
+          \d@figureInl\extchunkb@x
           \ifhmode\else
            \lastdepth=\oldlastdepth
           \fi
-          \d@figureInl\extchunkb@x
         \fi
         \ifx\picl@c\loc@Par
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
