@@ -428,7 +428,7 @@
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
     \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth pt -\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
-    \let\b@xadj\b@xminadj %b@xadj is for in-line boxes.
+    \let\b@xadj\b@xminadj %b@xadj puts the top edge of the border at the top of an insert.
     \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@vpadding\relax\else 0pt\fi\else 0pt\fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth pt  \ifx\b@drtop\tr@e 3pt\else 0pt\fi\else 0pt\fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@vpadding +\b@drwidth pt  \fi \relax}% 
@@ -791,6 +791,15 @@
     \fi
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
+    \ifx\picl@c\loc@Inl
+      \headingtopspace=-\oldlastdepth
+    \else
+      \headingtopspace=0pt
+    \fi
+    \trace{e}{heading topspace=\the\headingtopspace}%
+    \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
+      \advance\headingtopspace by \cp@ram\verticalsp@ceunit
+    \fi
     \ifhasb@rder % any border
       \ifx\b@drstyle\relax
         \ifx\b@drfillcolour\relax
@@ -811,19 +820,17 @@
       \else
         \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
       \fi 
-      %\setbox\extchunkb@x\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hss\hskip\dimen8\box\extchunkb@x\hskip\dimen9\hss}\vss}\box\b@rderbox}%
-      %\showbox\extchunkb@x
       \dimen1=\dimexpr -\b@rderbox@depth\relax
       \relax
       \message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
       \@LOOP\ifdim\dimen1 <0.1\onel@neunit
         \advance\dimen1 by \onel@neunit
       \@REPEAT
-      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width)  is offset \the\dimen7 (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
-      \trace{e}{Box adj (\c@tegory):\the\dimen7, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\ifdoIntskip\else\fi}%
+      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
+      \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\ifdoIntskip\else\fi}%
     \else
-      \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x}%
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x}%
     \fi
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
@@ -849,11 +856,12 @@
         \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
         \divide\dimen0 by \baselineskip \count255=\dimen0
         \advance\count255 by 1
-        \trace{g}{Inline \w@tsit takes \the\count255 lines, ls:\l@cspec@b, oldlastsdepth:\oldlastdepth}%
+        \trace{g}{Inline \w@tsit takes \the\count255 lines, ls:\l@cspec@b, oldlastsdepth:\oldlastdepth, hts=\the\headingtopspace}%
         \ifx\picl@c\loc@Inl
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
-	  \vskip -\oldlastdepth
+          %\headingtopspace=\oldlastdepth
+	  %\vskip -\oldlastdepth
           \lastdepth=0pt
           \d@figureInl\extchunkb@x
           \ifhmode\else

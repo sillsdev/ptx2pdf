@@ -857,6 +857,7 @@
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
     \ifx\picl@c\loc@Inl
+      \headingtopspace=0pt
       \d@figureInl 0%
     \fi
     %
@@ -896,7 +897,6 @@
   %\splittopskip\baselineskip
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
-      \headingtopspace=0pt
     \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
