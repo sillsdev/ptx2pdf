@@ -374,6 +374,11 @@
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
   %\end@llpoppedstyles{\ss@Sbar}
+  \edef\sb@numcuts{\the\@numcuts}%
+  \trace{e}{Saving cutouts: \sb@numcuts}%
+  \ifnum\sb@numcuts>0
+    \save@cutouts{esb}%
+  \fi
   \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
@@ -890,6 +895,12 @@
   \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
   \global\c@th@@ks{}%
+  \ifnum \sb@numcuts>0
+    \@numcuts=\sb@numcuts
+    \trace{e}{Re-doing cutouts for \sb@numcuts}%
+    \restore@cutouts{esb}%
+    \makecutouts
+  \fi
   %\ifhmode +\fi
 }
 
