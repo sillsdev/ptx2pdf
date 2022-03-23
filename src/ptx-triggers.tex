@@ -93,7 +93,7 @@
     \xdef\dc@rref{\odc@rref\TriggerP@rSep\the\p@rnum}%
   \fi
   \ifMarkTriggerPoints\trigg@rmark{TP}\fi
-  \trace{T}{running triggers \c@rref\space  \c@rrdstat \the\p@rnum, \the\curr@djpar}%
+  \trace{T}{running triggers(par) \c@rref\space  \c@rrdstat \the\p@rnum, \the\curr@djpar}%
   \the\trigg@rchecks
   \global\let\c@rref=\oc@rref\global\let\dc@rref=\odc@rref
 }
@@ -193,6 +193,7 @@
   \settrign@me{\c@rref}\ifcsname \trign@me\endcsname
     \x@\let\x@\tmp\csname\trign@me\endcsname
     \ifx\relax\tmp\else
+      \trace{T}{Trigger(\trign@me ) present}%
       \c@llr@ntr@g
     \fi%
   \fi
@@ -200,6 +201,7 @@
     \settrign@me{\dc@rref}\ifcsname \trign@me\endcsname
       \x@\let\x@\tmp\csname\trign@me\endcsname
       \ifx\relax\tmp\else
+        \trace{T}{Trigger(\trign@me ) present}%
         \c@llr@ntr@g
       \fi%
     \fi

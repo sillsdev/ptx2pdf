@@ -1636,16 +1636,16 @@
 \def\s@tc@tpr@fix{%
   \trace{sc}{c@tegory is '\meaning\c@tegory' empty is '\meaning\empty'}%
   \ifx\c@tegory\empty
-    \let\c@tprefix\empty
+    \global\let\c@tprefix\empty
   \else
-    \edef\c@tprefix{cat:\c@tegory|}% See above...
+    \xdef\c@tprefix{cat:\c@tegory|}% See above...
   \fi
   \trace{sc}{Stylesheet prefix for '\c@tegory': '\c@tprefix'}%
 }
 \newif\ifn@npublishablec@t
 \def\endc@tmarker{t*}
 \def\@ndc@t{%
-  \trace{sc}{@ndc@t}%
+  \trace{sc}{@ndc@t(\c@tegory)}%
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else

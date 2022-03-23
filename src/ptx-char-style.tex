@@ -287,9 +287,9 @@
      \fi
      \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
+       \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
      \else \global\advance\p@ranesting by -1
      \fi
-     \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
      \egroup % end the style's group, so formatting reverts             %(2)
      \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
