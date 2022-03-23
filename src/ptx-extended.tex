@@ -365,7 +365,7 @@
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
   \trace{e}{Starting side bar from \m@rker, \the\lastdepth}%
-  \endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
+  %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
   \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
   \ifhe@dings\endhe@dings\fi% Sidebars should close a heading section.
@@ -374,7 +374,7 @@
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
   %\end@llpoppedstyles{\ss@Sbar}
-  \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup
+  \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \s@tsb@rwidth\inextendedtrue
     \global\sb@rchunkh@ight=\maxdimen
     \global\c@th@@ks{\st@rtsb@r}%
@@ -563,7 +563,6 @@
       \hbox{\bc@l\vrule height \b@drlinewidth\FontSizeUnit width \b@rderbox@width \endbc@l}%
     \fi
   }%
-  \showbox\b@rderbox
 }
 
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
@@ -812,10 +811,10 @@
       %\showbox\extchunkb@x
       \dimen1=\dimexpr -\b@rderbox@depth\relax
       \relax
-      \@LOOP\ifdim\dimen1 <0.1\baselineskip
-        \advance\dimen1 by \baselineskip
+      \message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
+      \@LOOP\ifdim\dimen1 <0.1\onel@neunit
+        \advance\dimen1 by \onel@neunit
       \@REPEAT
-      %\repeat
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width)  is offset \the\dimen7 (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\dimen7, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
       \x@\setbox\extchunkb@x\vbox{\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\ifdoIntskip\else\fi}%
@@ -854,7 +853,7 @@
           \ifx\h@scol\tr@e
             \ifdim\lastdepth>0.2pt\vskip\baselineskip\fi%
           \fi
-          \lastdepth=\oldlastdepth
+          \lastdepth=0pt%\oldlastdepth
           \d@figureInl\extchunkb@x
         \fi
         \ifx\picl@c\loc@Par
