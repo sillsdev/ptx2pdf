@@ -898,6 +898,7 @@
       \headingtopspace=0pt
     \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
     %\lastdepth=0pt
+    %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
     \ifx\w@tsit\gr@phic
       \dimen9=\lastdepth \kern\dimen9
@@ -927,9 +928,8 @@
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
       \headingtopspace=0pt
-      %\vskip-\prevdepth
       \gridb@x\picb@@x
-      \prevdepth=0pt
+      \lastdepth=0pt
       \penalty10
    }%
    \def\temp{}%

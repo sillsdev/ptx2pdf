@@ -117,7 +117,9 @@ the background layer, so on a green background black will become a darker
 shade of green, not grey.
 
 `\BgImageColor` value(0-1) value(0-1) value(0-1) 
+`\BgImageColor` x7f7f7f
 `\BgImageColour` value(0-1) value(0-1) value(0-1) 
+`\BgImageColour` x7f7fef
 Some (rare) PDF line-art images do not set the colour of their lines, relying
 instead on the 'default' colour, which is normally black. This control sets the
 default colour to something other than black, and thus such images can be
@@ -125,16 +127,18 @@ recoloured with this option. If (as most PDF images do) the image defines its
 own colour, this option will have no visible effect at all. It is also possible
 that an image will *partly* contain colour information, but only starting part
 way through the file, a situation that might produce unexpected results.
+Colours are either specified as 3 decimal numbers or as a hexadecimal number.
+In both cases the sequence is Red, Green, Blue.
 
-`\BorderWidth` measurement
-Default: 0.5
-Define the thickness of the border-line around the box, measured in FontSizeUnits (unless extensive stylesheet 
-modification has been done, normal body text is 12 FontSizeUnits.
+`\BoxPadding` measurement
+`\BoxHPadding` measurement
+`\BoxVPadding` measurement
+If a coloured background is used, this is how much that box should be larger than the enclosed text.
+Measurement is interpreted as being in points (72.27pt = 1 inch), and should not have a unit attached.
+Horizontal and Vertical padding can be controlled separately.
 
-`\BorderColour` value(0-1) value(0-1) value(0.1)
-`\BorderColor` value(0-1) value(0-1) value(0.1)
-` Default: 0 0 0 (Black)
-The 3 values (0-1) for red, green and blue components of the border-line arount the box [*Unimplemented*]
+
+## Border-related Parameters
 
 `\Border` options
 * Options: are one or more of these (separated by a space): None Top Bottom Left Right Inner Outer All
@@ -149,6 +153,53 @@ The option None clears all borders set until now. Thus:
 `\Border All None Left`
  is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
  while adding a Left-hand border.
+`\BorderWidth` measurement
+Default: 0.5
+Define the thickness of the border around the box, measured in pt.
+
+`\BorderColour` value(0-1) value(0-1) value(0.1)
+`\BorderColor` value(0-1) value(0-1) value(0.1)
+`\BorderColour` x00ff00
+`\BorderColor` x34ff12
+ Default: 0 0 0 (Black)
+The 3 values (0-1) for red, green and blue components of the (optional) border-line around the box 
+Colours are either specified as 3 decimal numbers (0.0-1.0) or as a hexadecimal number.
+In both cases the sequence is Red, Green, Blue.
+
+
+`\BorderStyle` option
+* Options: `plain`|`double`
+* Options with plugin: `ornaments`
+* Default: `plain`
+
+Normal borders are of style `plain`. The style `double` is also available, which gives a border that has double-line. The `ornaments` 
+plugin provides for more complex ornaments.
+
+`\BorderFillColour` and `\BorderFillColor`
+Certain border styles have a region or regions that can be filled, e.g. the space between the 2 lines of borderstyle `double`
+
+`\BorderLineWidth` measurement
+Where relevant (e.g. the `double` and `ornaments` border styles), this
+determines the thickness of the lines that are used to draw the border.  Thus
+in `double` style, there will be two lines of width equal to the specified
+amount with a gap or filled region (see `\BorderFillColour`), and the *total*
+width of the border will be `\BorderWidth`.
+
+
+`\BorderPadding` measurement
+`\BorderHPadding` measurement
+`\BorderVPadding` measurement
+Default: 0
+
+This measurement (in points) specifies how much further out the (inside) edge of
+the border is from from the (outside) of the surrounded item (the nominal
+coloured box, in the case of side-bars).
+This can be negative in which case the border will overwrite the coloured box
+(or text margins).
+
+Horizontal and Vertical padding can be controlled separately.
+
+## Ending the category
 
 `\EndCategory`
 Cancels the current category (sets the value to empty). 
