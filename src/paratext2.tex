@@ -1767,7 +1767,7 @@
 
 \def\pr@pinserts{
   \ifdim\ht\topins>0pt
-    \s@tbaseline{p}{p}
+    \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
     \dimen1=\ht\topins\advance\dimen1\dp\topins \dimen0=\baselineskip
     \m@d \ifdim\dimen0<\baselineskip
       \dimen1=\ht\topins\advance\dimen1\dimen0 \ht\topins=\dimen1 \dp\topins=0pt

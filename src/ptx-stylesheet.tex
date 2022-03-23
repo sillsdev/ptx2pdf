@@ -1095,7 +1095,8 @@
  %
  \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{\styst@k}\ifx\p@ram\relax
-     \s@tbaseline{p}{p}\vskip\baselineskip
+     \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
+     \vskip\baselineskip
     \else
       \vskip\p@ram
     \fi\egroup} 

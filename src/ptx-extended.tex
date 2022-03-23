@@ -833,7 +833,8 @@
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
         \penalty10000
-        \unvbox\extchunkb@x%\vskip-\the\dimen0
+        \gridp@ctrue\gridb@x\extchunkb@x\gridp@cfalse% make sure we align to the page grid
+        %\unvbox\extchunkb@x%\vskip-\the\dimen0
         \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
