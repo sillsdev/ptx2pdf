@@ -84,7 +84,7 @@ of the meaning of the Bible.
 \periph Alphabetical Contents|id="alphacontents"
 \rem -------------------------------------------------------------------------
 \is Alphabetical Order of Books
-\rem sorta will sort by \toc1, sortb by \toc2, sortc by \toc3
+\rem sorta will sort by toc1, sortb by toc2, sortc by toc3
 \ip \ztoc|sortc\*
 \ip
 
