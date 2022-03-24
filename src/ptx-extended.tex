@@ -792,7 +792,7 @@
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifx\picl@c\loc@Inl
-      \headingtopspace=-\oldlastdepth
+      \headingtopspace=0pt%-\oldlastdepth
     \else
       \headingtopspace=0pt
     \fi
@@ -862,7 +862,7 @@
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
           %\headingtopspace=\oldlastdepth
 	  %\vskip -\oldlastdepth
-          \lastdepth=0pt
+          \lastdepth=\oldlastdepth
           \d@figureInl\extchunkb@x
           \ifhmode\else
            \lastdepth=\oldlastdepth

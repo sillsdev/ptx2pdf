@@ -901,10 +901,10 @@
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
     \gridb@x#1%
-    \ifx\w@tsit\gr@phic
+    %\ifx\w@tsit\gr@phic
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
-    \fi
+    %\fi
   \penalty10}%
   \ifvmode \picc@ntents
   \else\vadjust pre{\picc@ntents}\fi
