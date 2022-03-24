@@ -1400,6 +1400,11 @@
 \newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
+{
+\obeylines
+\gdef\@@rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@@rem@}
+\gdef\@@rem@#1^^M{\egroup\@@realrem #1}
+}
 
 %+csty_onetime
 \def\@netimesetup{
@@ -1419,6 +1424,8 @@
    \font\VisTracefont="Arial":color=3f7f3f at 6pt\fi
  \ifdiglot\setc@rdstat{L}%
  \fi
+ \let\@@realrem\rem
+ \let\rem\@@rem
  %\global\lastptxfiletrue
  \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
