@@ -1400,11 +1400,24 @@
 \newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 
-{
-\obeylines
+{\obeylines
 \gdef\@@rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@@rem@}
 \gdef\@@rem@#1^^M{\egroup\@@realrem #1}
+\gdef\@periph #1^^M{\x@\@@periph #1||\E}
 }
+
+\x@\def\csname @ttriblist-periph\endcsname{id}
+
+\def\@@periph #1|#2|#3\E{%
+  \def\tmp{#2}%
+  \ifx\tmp\empty\else\let\@ttributes\tmp
+    \parse@ttribs{\@ttributes}%
+    %\let\d@\apply@attr@specials
+    \x@\cstackdown \attribsus@d,\E
+  \fi
+  \@@realattrib
+}
+
 
 %+csty_onetime
 \def\@netimesetup{
@@ -1426,6 +1439,9 @@
  \fi
  \let\@@realrem\rem
  \let\rem\@@rem
+ \let\@@realperiph\periph
+ \let\periph\@periph
+ 
  %\global\lastptxfiletrue
  \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
