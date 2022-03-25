@@ -13,7 +13,7 @@ test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
-	cp *.tex *.usfm *.sty *.piclist Makefile image.jpg ../bisect
+	cp *.tex *.usfm *.sty *.piclist Makefile image.jpg tiger.pdf ../bisect
 
 map.jpg:?/test.pdf Makefile
 	for  A in `seq 1 8` ; do test -f $$A/test.pdf && gs -q -dNOPAUSE -dSAFER -sDEVICE=jpeg -dFirstPage=1 -dLastPage=1 -dBATCH -r144x144 -dTextAlphaBits=4 -dDownScaleFactor=2 -sOutputFile=$$A/test.jpg $$A/test.pdf   || true ; done
