@@ -549,7 +549,7 @@
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
      \message{INPUTFILE: #1 -> \tmpfile}%
-     \picfilecomm@nd \tmpfile #7 #2 #3 #5 #6
+     \picfilecomm@nd \tmpfile\space  #7 #2 #3 #5 #6
    \fi
 }
 
@@ -1243,13 +1243,13 @@
           }%
         \plainoutput
       \else% Full page, past margins (9) or 0 
-        \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+        \dimen8=\pdfpagewidth \dimen9=\pdfpageheight
         %\showbox 0
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset, PaperHeight=\the\PaperHeight, pdfpageheight=\the\pdfpageheight}%
         \setbox0\vbox to \PaperHeight{\unvbox0}%  
         \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
         \shipcompletep@gewithcr@pmarks{\box0}
-        \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
+        \pdfpagewidth=\dimen8 \pdfpageheight=\dimen9
         \advancepageno
       \fi
     \fi
