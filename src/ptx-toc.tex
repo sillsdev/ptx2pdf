@@ -178,7 +178,7 @@
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\count252}
     \d@ftoc{tc\the\count252 :fill}{}
-    \d@ftoc{leaders-tc\the\count252}{}
+    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{}
   \fi
   \gdef\tablecategory{}%
 }
@@ -206,9 +206,16 @@
   \edef\rm@{\strip@pt{\dimen1}}
   \count252=1
   \loop
+    \ifcsname tocalign\the\count252\endcsname
+      \x@\let\x@\the@lign\csname tocalign\the\count252\endcsname
+    \else
+      \def\the@lign{}
+    \fi
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
-    \ifnum\count252>1
+    \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
+      \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
+    \fi
+    \ifx\the@lign\cell@r \else
       \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\l@drs\hskip #2}
     \fi
     \d@ftoc{tc\the\count252 :fill}{\l@drs}
