@@ -355,7 +355,7 @@
     \ifcsname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname\hfil\fi
     \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
-    \x@\ifx\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\empty\else\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
+    \x@\ifcsname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
     \par}%
   \wd0=\c@rrentcolwidth
   \box0}
