@@ -760,7 +760,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifnoinkinmargin \advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
+  \ifnoinkinmargin \advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
@@ -850,7 +850,7 @@
 %-c_onecoltrial_fail
 
 %+c_pagebody
-\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}}
+\def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
 \def\makeheadline{%
   \nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
@@ -1009,7 +1009,7 @@
     \setbox13=\copy\th@cl@ss
   \fi
   \s@ttrialheight
-  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight by -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\trialheight by -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
   %\global\t@xttrialheight=\ht0
@@ -1079,7 +1079,7 @@
         \doTextB@rder{\partial}%
         \box\partial
         \p@geendcontent
-        \box14
+        \ifnoinkinmargin\box14\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
     \fi
     \fin@lverybottom
@@ -1657,7 +1657,7 @@
   \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
-  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -1805,7 +1805,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifnoinkinmargin\advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
+  \ifnoinkinmargin\advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
@@ -1865,7 +1865,7 @@
       \doTextB@rder{\colA}%
       \box\colA
       \p@geendcontent
-      \box14
+      \ifnoinkinmargin\box14\fi
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%
@@ -2042,10 +2042,11 @@
       \trace{o}{verybottom(fin@lverybottom) height=\the\ht\verybottomins, textheight=\the\textheight, vsize=\the\vsize,
                 verybottomins=\the\count\verybottomins, \the\dimen\verybottomins}
       \setbox0=\vsplit\verybottomins to \textheight
-      \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}}
+      \setbox15=\copy14
+      \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}\ifnoinkinmargin\box14\fi}
       \plainoutput\trace{plainoutput for fin@lverybottom}%
       \s@tpage
-      \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\repeat
+      \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\setbox14=\copy15\repeat
   \fi
 }
 %-c_twocolpageout
@@ -2069,6 +2070,7 @@
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
     \ifdim\ht\partial>\PageFullFactor\textheight 
       \iflastpage\else %Don't force a break before a colophon
+        \setbox14=\makefootbox
         \twocolp@geout %Set up pagecontents and call \plainoutput
         \clearn@tes
       \fi
