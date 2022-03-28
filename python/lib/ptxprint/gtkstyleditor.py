@@ -5,7 +5,9 @@ from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
 from ptxprint.borderstyle import borderStyleFromStyle, BorderStyle
-import re
+import re, logging
+
+logger = logging.getLogger(__name__)
 
 stylemap = {
     'Marker':       ('l_styleTag',          None,               None, None, None),
@@ -204,6 +206,7 @@ class StyleEditorView(StyleEditor):
             raise e.__class__("{} for widget {}".format(e, key))
 
     def load(self, sheetfiles):
+        logger.debug(f"Loading stylesheets: {sheetfiles}")
         super().load(sheetfiles)
         results = {"Tables": {"th": {"thc": {}, "thr": {}}, "tc": {"tcc": {}, "tcr": {}}},
                    "Peripheral Materials": {"zpa-": {}},
@@ -317,6 +320,7 @@ class StyleEditorView(StyleEditor):
             return
         if self.marker in aliases:
             self.marker += "1"
+        logger.debug(f"Start editing style {self.marker}")
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
@@ -441,6 +445,7 @@ class StyleEditorView(StyleEditor):
             return a == b
 
     def _setFieldVal(self, k, v, oldval, val):
+        logger.debug(f"Set style field {k} to {val} from {oldval} in context {v}")
         w = self.builder.get_object(v[0])
         if w is None:
             print("Can't find widget {}".format(v[0]))
@@ -470,6 +475,7 @@ class StyleEditorView(StyleEditor):
         data = self.asStyle(self.marker)
         v = stylemap[key]
         val = self.get(v[0], v[2])
+        logger.debug(f"Style edit {key} in {self.marker} -> {val}")
         if key == '_publishable':
             if val:
                 add, rem = "non", ""
@@ -566,7 +572,7 @@ class StyleEditorView(StyleEditor):
             wid.set_sensitive(newkey)
         tryme = True
         while tryme:
-            response = dialog.run()
+            response = dialogger.run()
             if response != Gtk.ResponseType.OK:
                 break
             key = self.model.get(dialogKeys['Marker']).strip().replace("\\","")
@@ -632,7 +638,7 @@ class StyleEditorView(StyleEditor):
                 self.setval(key, 'EndMarker', None)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
-        dialog.hide()
+        dialogger.hide()
 
     def resolveEndMarker(self, key, newval):
         endm = self.getval(self.marker, key, ' endMilestone')

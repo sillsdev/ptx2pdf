@@ -12432,7 +12432,7 @@ be set in single-column layout.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">2</property>
-                                    <property name="width">4</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -12445,6 +12445,30 @@ be set in single-column layout.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_useSectIntros">
+                                    <property name="label" translatable="yes">Use Peripheral Introductory Sections</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Check this option if the INT book contains 
+peripheral divisions (sub-sections) which 
+need to be inserted at the appropriate position
+between books. For example:
+  \periph Old Testament Introduction|id="intot"
+  \periph New Testament Introduction|id="intnt"
+  \periph Gospels Introduction|id="intgospels"</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -24337,7 +24361,7 @@ PTXprint from accessing the internet.</property>
                                 <property name="valign">start</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=3 n-rows=3 -->
+                                  <!-- n-columns=3 n-rows=4 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -24376,7 +24400,7 @@ troubleshooting use only.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -24396,6 +24420,34 @@ Font metrics gives more consistent results.</property>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_AdvCompatFtrInMargin">
+                                        <property name="label" translatable="yes">Bottom Footer in Margin</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Normally the page number on an intro book
+occurs above the page margin (in the area
+that text would normally flow until.). However
+if you need that bottom footer page number
+to go below the bottom margin, then you
+need to activate this compatibility option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                     <child>
                                       <placeholder/>
