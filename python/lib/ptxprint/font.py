@@ -110,7 +110,7 @@ class TTFontCache:
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
-            logger.debug(f"fc-list: {f}")
+            logger.log(8, f"fc-list: {f}")
             if ": " not in f:
                 continue
             try:

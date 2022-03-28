@@ -1,4 +1,4 @@
-%skip
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
@@ -759,6 +759,8 @@
   \fi
   \pr@pinserts
   \s@ttrialheight
+  \setbox14=\makefootbox
+  \ifnoinkinmargin \advance\t@xttrialheight -\ht14\fi
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
@@ -814,6 +816,7 @@
         \fi\fi
         \hbox to \ExtraRMargin{}}%
         \p@geendcontent
+        \box14
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -865,6 +868,20 @@
     \kern-\FooterPosition\MarginUnit
      \hbox to \textwidth{\the\footline}\vss}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
+\newif\ifnoinkinmargin \noinkinmargintrue
+\def\makefootbox{%
+  \vbox{
+    \setbox8=\hbox{\the\footline}%
+    \ifdim\wd8>0pt
+      \dimen0=\textwidth\advance\dimen0 by -\columnshift
+      \dimen1=\bottomm@rgin\advance\dimen1 by -\FooterPosition\MarginUnit
+      \kern\dimen1
+      \hbox to \textwidth{\unhbox8}%
+    \else
+      \box\voidb@x
+    \fi
+  }
+}
 %-c_pagebody
 
 %+c_doublecolumns
@@ -992,6 +1009,7 @@
     \setbox13=\copy\th@cl@ss
   \fi
   \s@ttrialheight
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight by -\ht14\fi
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
   %\global\t@xttrialheight=\ht0
@@ -1061,6 +1079,7 @@
         \doTextB@rder{\partial}%
         \box\partial
         \p@geendcontent
+        \box14
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
     \fi
     \fin@lverybottom
@@ -1638,6 +1657,7 @@
   \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight -\ht14\fi
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -1784,6 +1804,8 @@
   \fi
   \pr@pinserts
   \s@ttrialheight
+  \setbox14=\makefootbox
+  \ifnoinkinmargin\advance\t@xttrialheight -\ht14\fi
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
@@ -1843,6 +1865,7 @@
       \doTextB@rder{\colA}%
       \box\colA
       \p@geendcontent
+      \box14
     }%
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%

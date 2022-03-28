@@ -728,7 +728,7 @@
 \m@rksonpagefalse
 \newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody\makefootline}}}
+\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody}}}%\makefootline}}}
 \def\emptyoutput{\pl@inoutput{\vbox{}}}
 \def\pl@inoutput#1{%
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
