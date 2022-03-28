@@ -82,6 +82,7 @@ ModelMap = {
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
+    "project/sectintros":       ("c_useSectIntros", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
@@ -147,7 +148,7 @@ ModelMap = {
     "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v), dp=8) if v else "15"),
-    "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
+    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
@@ -268,7 +269,7 @@ ModelMap = {
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
-    # "footer/noinkinfooter":     ("c_noInkFooter", None),
+    "footer/noinkinmargin":     ("c_AdvCompatFtrInMargin", lambda w,v :"false" if v else "true"),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
