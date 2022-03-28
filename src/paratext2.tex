@@ -760,7 +760,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifnoinkinmargin \advance\t@xttrialheight -\ht14\fi
+  \ifnoinkinmargin \advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
@@ -1009,7 +1009,7 @@
     \setbox13=\copy\th@cl@ss
   \fi
   \s@ttrialheight
-  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight by -\ht14\fi
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight by -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \trace{o}{savepartialpage: b@dy\ifb@dy true\else false\fi\space for trialheight \the\trialheight}%
   \setbox0=\vbox{\unvcopy255}%
   %\global\t@xttrialheight=\ht0
@@ -1657,7 +1657,7 @@
   \traceifset{savepartialpaged}%
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
-  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight -\ht14\fi
+  \setbox14=\makefootbox\ifnoinkinmargin\advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \if\XrefNotes\relax\else
     \x@\let\x@\th@cl@ss\csname note-\XrefNotes\endcsname % make \th@cl@ss be a synonym for the current note class
     \setbox13=\copy\th@cl@ss
@@ -1805,7 +1805,7 @@
   \pr@pinserts
   \s@ttrialheight
   \setbox14=\makefootbox
-  \ifnoinkinmargin\advance\t@xttrialheight -\ht14\fi
+  \ifnoinkinmargin\advance\t@xttrialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifdim\availht<0pt
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
