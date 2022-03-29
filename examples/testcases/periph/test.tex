@@ -1,0 +1,37 @@
+% Test the 'hook' code.
+%\tracingassigns=1
+%\tracinggroups=1
+\input "paratext2.tex"
+\stylesheet{usfm.sty}
+\stylesheet{ptx2pdf.sty}
+\stylesheet{default-custom.sty}
+\stylesheet{test.sty}
+\input "usfmTex-settings.tex"
+%\input "usfmTex-ext.tex"
+%\input "hooks.tex"
+%\tracingmacros=1
+%\tracinggroups=1
+%\tracingifs=1
+\tracing{m}
+\tracing{s}
+\tracing{sh}
+\tracing{C}
+\tracing{F}
+\tracing{T}
+\CropMarkstrue
+%\def\doLines{\doGridLines\doGraphPaper}
+%\tracing{P}
+%\tracingoutput=1
+% Set added material in desired form
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+\csname ColorFontstrue\endcsname
+\lastptxfiletrue
+\unbalancedtrue
+%\tracingmacros=1
+%\tracinggroups=1
+\NoStorePeriph{intnt}
+\ptxfile{int.usfm}
+\ptxfile{test.usfm}
+\bye
