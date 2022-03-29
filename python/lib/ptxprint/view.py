@@ -287,12 +287,7 @@ class ViewModel:
         ptsettings = self._getPtSettings(prjid)
         if ptsettings is None:
             return None
-        fbkfm = ptsettings['FileNameBookNameForm']
-        bknamefmt = (ptsettings['FileNamePrePart'] or "") + \
-                    fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    (ptsettings['FileNamePostPart'] or "")
-        fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, "A0"))  # FRT = A0
-        return fname
+        return ptsettings.getBookFilename(bk)
 
     def getScriptSnippet(self):
         script = self.get("fcb_script")

@@ -133,6 +133,8 @@ class ParatextSettings:
         self.calcbookspresent()
 
     def calcbookspresent(self):
+        self.bookmap = {}
+        booksfound = set()
         path = os.path.join(self.basedir, self.prjid)
         fbkfm = self.dict['FileNameBookNameForm']
         bknamefmt = self.get('FileNamePrePart', "") + \
@@ -140,11 +142,32 @@ class ParatextSettings:
                     self.get('FileNamePostPart', "")
         bookspresent = [0] * len(allbooks)
         for k, v in books.items():
-            if os.path.exists(os.path.join(path, bknamefmt.format(bkid=k, bkcode=v+1))):
+            fname = bknamefmt.format(bkid=k, bkcode=v+1)
+            if os.path.exists(os.path.join(path, fname)):
                 bookspresent[v-1] = 1
+                self.bookmap[k] = fname
+                booksfound.add(fname)
+        for f in os.listdir(path):
+            if not f.lower().endswith("sfm") or f in booksfound:
+                continue
+            with open(os.path.join(path, f), encoding="utf-8") as inf:
+                l = inf.readline()
+                m = re.match(r"^\uFEFF?\\id\s+(\S{3})\s*", l)
+                if m:
+                    bkid = m.group(1).upper()
+                    self.bookmap[bkid] = f
+                    booksfound.add(f)
+                    try:
+                        v = int(bookcodes.get(bkid, -1))
+                    except ValueError:
+                        v = -1
+                    if 0 <= v < len(allbooks):
+                        bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
 
     def getBookFilename(self, bk):
+        if bk in self.bookmap:
+            return self.bookmap[bk]
         fbkfm = self.get('FileNameBookNameForm', "")
         bknamefmt = self.get('FileNamePrePart', "") + \
                     fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
