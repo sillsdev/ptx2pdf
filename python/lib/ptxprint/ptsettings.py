@@ -135,18 +135,19 @@ class ParatextSettings:
     def calcbookspresent(self):
         self.bookmap = {}
         booksfound = set()
-        path = os.path.join(self.basedir, self.prjid)
-        fbkfm = self.dict['FileNameBookNameForm']
-        bknamefmt = self.get('FileNamePrePart', "") + \
-                    fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
-                    self.get('FileNamePostPart', "")
         bookspresent = [0] * len(allbooks)
-        for k, v in books.items():
-            fname = bknamefmt.format(bkid=k, bkcode=v+1)
-            if os.path.exists(os.path.join(path, fname)):
-                bookspresent[v-1] = 1
-                self.bookmap[k] = fname
-                booksfound.add(fname)
+        path = os.path.join(self.basedir, self.prjid)
+        if 'FileNameBookNameForm' in self.dict:
+            fbkfm = self.dict['FileNameBookNameForm']
+            bknamefmt = self.get('FileNamePrePart', "") + \
+                        fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
+                        self.get('FileNamePostPart', "")
+            for k, v in books.items():
+                fname = bknamefmt.format(bkid=k, bkcode=v+1)
+                if os.path.exists(os.path.join(path, fname)):
+                    bookspresent[v-1] = 1
+                    self.bookmap[k] = fname
+                    booksfound.add(fname)
         for f in os.listdir(path):
             if not f.lower().endswith("sfm") or f in booksfound:
                 continue
