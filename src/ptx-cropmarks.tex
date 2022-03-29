@@ -294,7 +294,7 @@
  \else%Unrotated tabs
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
-    \dimen0\ifodd\pageno\TabBleed\else-\TabBleed\fi
+    \dimen0=\ifodd\pageno\TabBleed\else-\TabBleed\fi
     \if\st@rtatedge F\hss\else\kern \dimen0\fi% Bleed of 1pt
     \dimen0=\TabBleed \advance\dimen0\tabwidth
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\dimen0}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
@@ -728,7 +728,7 @@
 \m@rksonpagefalse
 \newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody\makefootline}}}
+\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody}}}%\makefootline}}}
 \def\emptyoutput{\pl@inoutput{\vbox{}}}
 \def\pl@inoutput#1{%
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%

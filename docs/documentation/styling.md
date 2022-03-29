@@ -82,7 +82,8 @@ and the `\q1` line of this this (as a paragraph style):
 ```
 
 * `\Marker nd+Angel|qt-s+p`
-Special styling for when an angel says the name of the LORD, in a standard `\p`-type  paragraph.
+Special styling for when an angel says the name of the LORD, in a standard `\p`-type  paragraph, as  above.
+ 
 
 * `\Marker cat:special|p` Styling for a special type of paragraph:
 `\p\cat special\cat*`

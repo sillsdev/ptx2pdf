@@ -1,8 +1,44 @@
-PTXprint 2.1.10 Release Notes 
-23 March 2022
+PTXprint 2.1.12 Release Notes 
+29 March 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.12 (29 Mar 2022)
+
+  * Add debug logging for style editing (known issue still lurking here!)
+  
+  * Footers are no longer placed in bottom margin area (but there is a
+    compatibility option to allow footers into the bottom margin area)
+  
+  * Added support for id:MAT| style prefixes 
+  
+  * Stop switching page dimensions with full page images
+
+  * Fixed after-paragraph image positions
+  
+  * Fixed ToCs (both RTL and LTR) to work properly again with leaders
+  
+  * Fixed known gridding issues with sidebars 
+    NB: If the linespacing is different to the main text, then it is the
+        *bottom* line that should be expected to be on-grid.
+
+  * Fixed the line spacing so that categories don't nobble it
+  
+  * Get sidebars back on the grid
+  
+  * Save/restore cutout parameters before/after a side-bar
+  
+  * Fixed top of page inline esb gridding, and quotes around image files
+
+  * Fixed tabs output
+  
+  * Auto-expand Paragraph settings twisty for table cell styles in editor
+  
+  * Fixed minor typo in 2.1.11
+  
+  * Update Text Script tooltip with list of complex scripts that have
+    additional script settings
+  
 Bug fixes and improvements in 2.1.10 (23 Mar 2022)
 
   * Fixed \zfiga bug which meant pictures in non-scripture books were missing

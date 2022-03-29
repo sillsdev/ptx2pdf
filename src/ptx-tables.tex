@@ -352,10 +352,10 @@
       %\let\n@xt=\rightskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifcsname \c@tprefix leaders-tcr\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tcr\the\@col\endcsname\hfil\fi
+    \ifcsname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname\hfil\fi
     \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
-    \x@\ifx\csname \c@tprefix leaders-tc\the\@col\endcsname\empty\else\nobreak\csname \c@tprefix leaders-tc\the\@col\endcsname\hfil\fi
+    \x@\ifcsname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
     \par}%
   \wd0=\c@rrentcolwidth
   \box0}
@@ -440,6 +440,6 @@
 \let\n@wbox=\newbox
 \let\n@wdimen=\newdimen
 \bgroup \catcode`\^=7\obeylines
-\gdef\ztablecategory{\bgroup\unc@tcodespecials\obeylines\zt@blecategory}
-\gdef\zt@blecategory #1^^M{\gdef\tablecategory{#1}\egroup}
+\gdef\ztablecategory{\bgroup\unc@tcodespecials\catcode`\ =10\obeylines\zt@blecategory}
+\gdef\zt@blecategory #1^^M{\stripspace#1\end/ \end/\relax{#1}\xdef\tablecategory{\p@ram}\egroup\trace{t}{table category="\tablecategory"}}
 \egroup

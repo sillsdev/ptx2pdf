@@ -82,6 +82,7 @@ ModelMap = {
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", lambda w,v: "" if v else "%"),
     "project/pgbreakcolophon":  ("c_standAloneColophon", lambda w,v: "" if v else "%"),
+    "project/sectintros":       ("c_useSectIntros", None),
 
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
@@ -147,7 +148,7 @@ ModelMap = {
     "fancy/endayah":            ("c_decorator_endayah", lambda w,v: "" if v else "%"), # In the UI this is "Move Ayah"
 
     "paragraph/linespacing":       ("s_linespacing", lambda w,v: f2s(float(v), dp=8) if v else "15"),
-    "paragraph/linespacebase":  ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
+    "paragraph/linespacebase":     ("c_AdvCompatLineSpacing", lambda w,v: 14 if v else 12),
     "paragraph/useglyphmetrics":   ("c_AdvCompatGlyphMetrics", lambda w,v: "%" if v else ""),
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
@@ -268,7 +269,7 @@ ModelMap = {
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
-    # "footer/noinkinfooter":     ("c_noInkFooter", None),
+    "footer/noinkinmargin":     ("c_AdvCompatFtrInMargin", lambda w,v :"false" if v else "true"),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
@@ -407,6 +408,9 @@ Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 pa
 
 class TexModel:
     _peripheralBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
+    _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
+                    ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
+                    ("MAT-REV", "intnt"), ("MAT-JHN", "intgospel"), ("ROM-PHM", "intepistles"), ("HEB-REV", "intletters"))
     _fonts = {
         "fontregular":              ("bl_fontR", None, None, None, None),
         "fontbold":                 ("bl_fontB", None, "c_fakebold", "fontbold/embolden", "fontbold/slant"),
@@ -515,6 +519,7 @@ class TexModel:
         self.imageCopyrightLangs = {}
         self.frontperiphs = None
         self.xrefs = None
+        self.inserts = {}
         libpath = pycodedir()
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -817,6 +822,18 @@ class TexModel:
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
+    def _getinsert(self, bk):
+        res = []
+        bki = bookCodes.get(bk, 200)
+        for b, i in self._bookinserts:
+            r = [bookCodes[s] for s in b.split("-")]
+            if i not in self.inserts and r[0] <= bki <= r[1]:
+                self.inserts[i] = bk
+                t = self._doperiph(i)
+                if t != "":
+                    res.append(t)
+        return "\n".join(t)
+
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -836,6 +853,10 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        if self.dict.get('project/sectintros'):
+                            inserttext = self._getinsert(f)
+                            if len(inserttext):
+                                res.append(inserttext)
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
@@ -939,38 +960,35 @@ class TexModel:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
 
-    def _doperiph(self, m):
+    def _doperiph(self, k):
         if self.frontperiphs is None:
-            frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename("FRT"))
-            self.frontperiphs = {}
-            if not os.path.exists(frtfile):
-                return ""
-            with open(frtfile, encoding="utf-8") as inf:
-                mode = 0        # default
-                currperiphs = []
-                currk = None
-                for l in inf.readlines():
-                    ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
-                    if ma:
-                        if mode == 1:    # already collecting so save
-                            self.frontperiphs[currk] = "\n".join(currperiphs)
-                        currk = ma[2] or ma[3]
-                        if not currk:
-                            currk = self._periphids.get(m[1].lower(), m[1].lower())
-                        currperiphs = []
-                        mode = 1
-                    elif mode == 1:
-                        if r"\periph" in l:
-                            mode = 0
-                        else:
-                            currperiphs.append(l.rstrip())
-                if currk is not None:
-                    self.frontperiphs[currk] = "\n".join(currperiphs)
-        k = m[1]
-        if k in self.frontperiphs:
-            return self.frontperiphs[k]
-        else:
-            return ""
+            for a in ('FRT', 'INT'):
+                frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
+                self.frontperiphs = {}
+                if not os.path.exists(frtfile):
+                    return ""
+                with open(frtfile, encoding="utf-8") as inf:
+                    mode = 0        # default
+                    currperiphs = []
+                    currk = None
+                    for l in inf.readlines():
+                        ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
+                        if ma:
+                            if mode == 1:    # already collecting so save
+                                self.frontperiphs[currk] = "\n".join(currperiphs)
+                            currk = ma[2] or ma[3]
+                            if not currk:
+                                currk = self._periphids.get(m[1].lower(), m[1].lower())
+                            currperiphs = []
+                            mode = 1
+                        elif mode == 1:
+                            if r"\periph" in l:
+                                mode = 0
+                            else:
+                                currperiphs.append(l.rstrip())
+                    if currk is not None:
+                        self.frontperiphs[currk] = "\n".join(currperiphs)
+        return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
         self.dict['project/frontfile'] = os.path.basename(outfname)
@@ -986,7 +1004,7 @@ class TexModel:
                     if l.strip().startswith(r"\periph"):
                         l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
-                    l = re.sub(r"\\zperiphfrt\s*\|([^\\\s]+)\s*\\\*", self._doperiph, l)
+                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \

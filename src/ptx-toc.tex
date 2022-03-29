@@ -177,8 +177,16 @@
   \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}%
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\count252}
+    \deftocalign{\the\count252}{r}
     \d@ftoc{tc\the\count252 :fill}{}
-    \d@ftoc{leaders-tc\the\count252}{}
+    \ifcsname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname
+      \x@\let\x@\tmpl\csname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname\else
+      \let\tmpl=\empty\fi
+    \ifcsname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname
+      \x@\let\x@\tmpr\csname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname\else
+      \let\tmpr=\empty\fi
+    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\tmpr}
+    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\tmpl}
   \fi
   \gdef\tablecategory{}%
 }
@@ -206,10 +214,18 @@
   \edef\rm@{\strip@pt{\dimen1}}
   \count252=1
   \loop
+    \ifcsname tocalign\the\count252\endcsname
+      \x@\let\x@\the@lign\csname tocalign\the\count252\endcsname
+    \else
+      \def\the@lign{}
+    \fi
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{leaders-tc\the\count252}{\rightskip=0pt\hskip #2\l@drs}
-    \ifnum\count252>1
-      \d@ftoc{leaders-tcr\the\count252}{\rightskip=0pt\l@drs\hskip #2}
+    \d@ftoc{tc\the\count252 :leftmargin}{\rm@}
+    \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
+      \d@ftoc{leaders-tc\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
+    \fi
+    \ifx\the@lign\cell@r \else
+      \d@ftoc{leaders-tcr\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi
     \d@ftoc{tc\the\count252 :fill}{\l@drs}
     \advance\count252 by 1

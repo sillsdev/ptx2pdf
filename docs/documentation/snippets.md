@@ -244,6 +244,8 @@ each paragraph. This snippet adds that capability.
 Notice that you will need to define a **character** style called zpmkr to style the marker
 text.
 
+[Note that this approach is currently buggy, as it changes the output in certain situations.]
+
 ```tex
 \catcode`\@=11
 \input marginnotes.tex
@@ -254,4 +256,29 @@ text.
     \d@marginnote{0}{\the\pcount}{zpmkr}}
 }}
 \addtoeveryparhooks{\parmkr}
+```
+
+## Forces better calculation of the number of lines 
+
+Sometimes when your apply a +1 to a reference in an AdjList, it ends up doing a +2.
+To prevent this unwanted behaviour, you can force a more fine-grained adjustment at
+the specific verse location.
+```tex
+\setcvhook{LUK7.48}{\pretolerance=1}
+\setcvhook{LUK8.1}{\pretolerance=100}
+```
+
+## Table of Contents right-align column 2
+
+```tex
+\deftocalign{2}{r}
+```
+
+## Set a larger space before footnote caller in the text
+
+If the space before a footnote caller (defined by style zcf) needs to be
+increased, then this can be done by adding the following line.
+
+```tex
+\sethook{start}{zcf}{\hskip 0.1em}
 ```

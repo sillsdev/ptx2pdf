@@ -266,7 +266,7 @@
       \fi
       %\tracingmacros=1
       %\tracingassigns=1
-      \def\d@##1\E{\trace{sk}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
+      \def\d@##1\E{\trace{sko}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
         \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
@@ -281,6 +281,8 @@
 
 \def\StackComplexity{3}
 \def\this@stystak{}
+\def\periph@@@{} % Eventually will hold the current periphery type
+
 \def\s@tpossParams#1#2{\trace{sa}{s@tpossParams {#1}{#2}\m@rker (\styst@kfirst / \styst@k)}%
   \ifdiglot
      \edef\p@ssParams{#1\c@rrdstat,#1}%
@@ -299,21 +301,32 @@
     \x@\fullstack@xpand\x@\StackComplexity\x@|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
-  \trace{sa}{1. Checking list: \p@ssParams}%
+  \trace{sk}{1. Checking list: \p@ssParams}%
   \ifx\mspr@fix\empty\else
-     %If we expand our prefix list for special styling of milestone+marker, then:
+     %If we expand our prefix list for special styling of milestone+marker, (rather than just relying on the stack) then:
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
   \fi
-  \trace{sa}{1b. Checking list (\mspr@fix,\tmp=\m@rker?): \p@ssParams}%
-  \ifx\c@tprefix\empty\else
-    \edef\@lso{\c@tprefix}%
-    \let\@ut=\empty \let\tmpd@=\d@\let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
-    \edef\p@ssParams{\@ut,\c@t@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
-    \let\d@=\tmpd@
-  \fi
-  \trace{sa}{2. Checking list: \p@ssParams}%
-  \let\@ut\empty
   \let\tmpd@=\d@
+  \ifx\c@tprefix\empty\else
+    \trace{sk}{1b. Checking list (\mspr@fix,\tmp=\m@rker?): \p@ssParams}%
+    \edef\@lso{\c@tprefix}%
+    \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+    \edef\p@ssParams{\@ut,\c@t@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+  \fi
+  \ifx\empty\periph@@@\else
+    \edef\@lso{periphery:\periph@@@|}%
+    \trace{sk}{1c. Checking list (\@lso): \p@ssParams}%
+    \let\@ut=\empty\let\d@=\cs@lsolist
+    \x@\cstackdown \p@ssParams,\E 
+    \edef\p@ssParams{\@ut}%
+  \fi
+  \edef\@lso{id:\id@@@|}%
+  \trace{sk}{1d. Checking list (\@lso): \p@ssParams}%
+  \let\@ut=\empty\let\d@=\cs@lsolist
+  \x@\cstackdown \p@ssParams,\E 
+  \edef\p@ssParams{\@ut}%
+  \trace{sk}{2. Checking list: \p@ssParams}%
+  \let\@ut\empty
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
   \let\d@=\tmpd@
   \global\let\p@ssParams=\@ut
