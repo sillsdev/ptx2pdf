@@ -277,7 +277,9 @@
          \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
            \csname complex-\oldch@rstyle\c@rrdstat\endcsname
          \else 
-           \csname complex-\oldch@rstyle\endcsname
+           \ifcsname complex-\oldch@rstyle\endcsname
+             \csname complex-\oldch@rstyle\endcsname
+           \fi
          \fi
        \fi
        \ifx\char@raise\relax

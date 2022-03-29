@@ -444,6 +444,8 @@
   \trace{m}{zgap \gap@dim}%
   \vbox{}\penalty10000\vskip\gap@dim\relax%
 }
+\x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
+\x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
 
 \def\proc@strong#1{%
   \get@ttribute{align}%

@@ -281,7 +281,7 @@
 
 \def\StackComplexity{3}
 \def\this@stystak{}
-\def\periph@@@{} % Eventually will hold the current periphery type
+\def\periph@@@{} % Eventually will hold the current peripheral type
 
 \def\s@tpossParams#1#2{\trace{sa}{s@tpossParams {#1}{#2}\m@rker (\styst@kfirst / \styst@k)}%
   \ifdiglot
@@ -314,7 +314,7 @@
     \edef\p@ssParams{\@ut,\c@t@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
   \fi
   \ifx\empty\periph@@@\else
-    \edef\@lso{periphery:\periph@@@|}%
+    \edef\@lso{periph:\periph@@@|}%
     \trace{sk}{1c. Checking list (\@lso): \p@ssParams}%
     \let\@ut=\empty\let\d@=\cs@lsolist
     \x@\cstackdown \p@ssParams,\E 
@@ -1412,25 +1412,80 @@
 \newif\iflastptxfile
 \newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
-
-{\obeylines
-\gdef\@@rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@@rem@}
-\gdef\@@rem@#1^^M{\egroup\@@realrem #1}
-\gdef\@periph #1^^M{\x@\@@periph #1||\E}
+\newif\ifinperiph
+\def\codesforperiphgr@b{\catcode13=12 \catcode92=12 }
+\def\endofperiph{\relax}
+{\catcode13=12 %
+\gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
+\gdef\@@rem@#1^^M{\egroup\@@realrem #1}%
+%Code to read periph sections line by line.
+\gdef\@periph{\ifinperiph\endperiph\inperiphfalse\fi\bgroup\catcode13=12 \@@periph}%
+\gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
+\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endperiph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
+%% DO NOT COMMENT END OF FOLLOWING LINE:
+\gdef\getp@riphlines{\bgroup\inperiphtrue\codesforperiphgr@b\let\p@riphlines\empty\let\getp@riphline\g@tp@riphline\everyeof{\relax
+\noexpand} \getp@riphline}%
 }
 
-\x@\def\csname @ttriblist-periph\endcsname{id}
+\gdef\n@wperiph{\expandafter\newperiphb\p@riphtst\E}%
+%Code to check periph sections line by line until the next periph section or end of file. Slash is made inactive
+\catcode`\~=0 \catcode`\\=12 
+  ~gdef~testp@riph #1{~expandafter~def~expandafter~p@riphtst~expandafter{#1}%
+    ~ifx~p@riphtst~relax~inperiphfalse~fi%
+    ~ifinperiph~expandafter~@testp@riph#1\periph~E~else~let~getp@riphline~endperiph~E~fi}%
+{~catcode13=12 %
+  ~gdef~@testp@riph #1\periph#2~E{% NOTE that line feeds are not spaces any more! Comment them!
+    ~def~tstb{#1}~ifx~tstb~empty%
+      ~trace{T}{New periph starting}%
+      ~let~getp@riphline~n@wperiph%
+    ~else%
+       ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~space~fi~p@riphtst}%
+    ~fi}% DO NOT COMMENT THE END OF THE NEXT LINE!
+  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~space~fi #1}~endperiph ~periph #2
+}%
+}
+~catcode`\=0 
+\catcode`\~=13
 
-\def\@@periph #1|#2|#3\E{%
+\def\StorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\relax}
+\def\NoStorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\undefined} %A thing let to undefined does not ifcsname
+
+\StorePeriph{intbible}
+\StorePeriph{intnt}
+\StorePeriph{intot}
+\StorePeriph{intpent}
+\StorePeriph{inthistory}
+\StorePeriph{intpoetry}
+\StorePeriph{intprophesy}
+\StorePeriph{intdc}
+\StorePeriph{intgospels}
+\StorePeriph{intepistles}
+\StorePeriph{intletters}
+\StorePeriph{cover}
+\StorePeriph{spine}
+
+
+\def\endperiph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}}
+
+\def\@@@periph #1|#2|#3\E{%
   \def\tmp{#2}%
+  \unset@ttribs
   \ifx\tmp\empty\else\let\@ttributes\tmp
     \parse@ttribs{\@ttributes}%
     %\let\d@\apply@attr@specials
-    \x@\cstackdown \attribsus@d,\E
+    %\x@\cstackdown \attribsus@d,\E
   \fi
-  \@@realattrib
+  \get@ttribute{id}%
+  \global\let\periph@@@\attr@b
+  \ifcsname storeperiph-\attr@b\endcsname
+    \tracingassigns=1
+    \let\n@xt\getp@riphlines
+  \else 
+    \egroup
+    \let\n@xt\@@realperiph
+  \fi
+  \n@xt
 }
-
 
 %+csty_onetime
 \def\@netimesetup{
@@ -1520,6 +1575,7 @@
   \global\let\LRspecificCount\LRspecificCountFixed %Properly track paragraph numbers in diglots.
  \fi
  \@netimesetup
+ \let\periph@@@\empty
  \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \diglots@tup
    \ifx\PDFBookMarkColumn\relax
@@ -1763,13 +1819,24 @@
 %+csty_hooks
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
-   \trace{sa}{op@ninghooks #1 #2}%
-   \csname #1-#2\endcsname
-   \ifx\c@tegory\empty\else\csname #1-\c@tprefix#2\endcsname\fi
+   \trace{sh}{op@ninghooks #1 #2}%
+   \ifcsname #1-#2\endcsname
+     \trace{sh}{#1-#2 exists}%
+     \csname #1-#2\endcsname
+   \fi
+   \ifx\c@tegory\empty\else
+      \ifcsname #1-\c@tprefix#2\endcsname
+        \csname #1-\c@tprefix#2\endcsname
+      \fi
+   \fi
    \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
-     \csname #1-#2\sid@\endcsname\relax % handle side-specific <before> hook
+     \ifcsname #1-#2\sid@\endcsname\relax 
+       \csname #1-#2\sid@\endcsname\relax % handle side-specific <before> hook
+     \fi
      \ifx\c@tegory\empty\else
-        \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
+        \ifcsname #1-\c@tprefix#2\sid@\endcsname
+          \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
+        \fi
      \fi
    \fi
 }
