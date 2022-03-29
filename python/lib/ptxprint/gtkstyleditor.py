@@ -400,7 +400,9 @@ class StyleEditorView(StyleEditor):
         for i, w in enumerate(('Para', 'Char', 'Note')):
             self.builder.get_object("ex_sty"+w).set_expanded(visibles[i])
 
-        self.builder.get_object("ex_styTable").set_expanded(self.marker.startswith("tc"))
+        self.builder.get_object("ex_styTable").set_expanded("tc" in self.marker)
+        if "tc" in self.marker:
+            self.builder.get_object("ex_styPara").set_expanded(True)
         sb = self.marker.startswith("cat:") and self.marker.endswith("esb")
         self.builder.get_object("ex_stySB").set_expanded(sb)
         if sb:
@@ -572,7 +574,7 @@ class StyleEditorView(StyleEditor):
             wid.set_sensitive(newkey)
         tryme = True
         while tryme:
-            response = dialogger.run()
+            response = dialog.run()
             if response != Gtk.ResponseType.OK:
                 break
             key = self.model.get(dialogKeys['Marker']).strip().replace("\\","")
@@ -638,7 +640,7 @@ class StyleEditorView(StyleEditor):
                 self.setval(key, 'EndMarker', None)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
-        dialogger.hide()
+        dialog.hide()
 
     def resolveEndMarker(self, key, newval):
         endm = self.getval(self.marker, key, ' endMilestone')
