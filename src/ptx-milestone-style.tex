@@ -63,6 +63,7 @@
  \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
  \def\startmst@nestyle@nl_{\startmst@nestyle}%
 }
+
 \def\startmst@nestyle@pipe|{\trace{m}{Immediate start of attributes}\in@ttribtrue\startmst@nestyle\@ttrSlash}%
 \def\startmst@nestyle@minus-#1{%
   \def\milestoneOp{#1}%
@@ -212,10 +213,13 @@
     \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}%
     \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}%
 } 
+
 % If there is '\s \qt-s\*' in the input, should the qt-s have effect on the paragraph style? If the boolean is true, 
 % then it does not, and the paragaph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
 % all it does is ensure that a parargaph waiting to start *is* safely started.
-\newif\ifDefineParBeforeMilestone\DefineParBeforeMilestonetrue 
+\newif\ifDefineParBeforeMilestone
+\DefineParBeforeMilestonetrue 
+
 \def\st@rtmilestone{%
   % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
   % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
@@ -246,6 +250,7 @@
   \trace{m}{Style stack now: \mcstack}%
   \op@ninghooks{start}{\thismil@stone}%
 }
+
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
   \cl@singhooks{end}{\thismil@stone}%
@@ -262,6 +267,7 @@
   \global\let\thismil@stone\empty
   \global\let\thisattrmil@stone\empty
 }
+
 \def\figmil@stone{zfiga}
 
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
@@ -288,7 +294,7 @@
     \trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
     \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \ifcsname \@@tmp\endcsname
-      \trace{m}{Running ms:\@@tmp}%
+      \trace{m}{Running \@@tmp}%
       \csname \@@tmp\endcsname
   \fi\fi
   %\tracingassigns=0
@@ -444,8 +450,67 @@
   \trace{m}{zgap \gap@dim}%
   \vbox{}\penalty10000\vskip\gap@dim\relax%
 }
+
+
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
+
+%ISBN and barcode routines
+%
+% First, barcode generating code from 
+%http://tex.stackexchange.com/questions/6895/is-there-a-good-latex-package-for-generating-barcodes
+%
+\def\barcode#1#2#3#4#5#6#7{\begingroup%
+  \dimen0=0.1em
+  \def\stack##1##2{\oalign{##1\cr\hidewidth##2\hidewidth}}%
+  \def\0##1{\kern##1\dimen0}%
+  \def\1##1{\vrule height10ex width##1\dimen0}%
+  \def\L##1{\ifcase##1\bc3211##1\or\bc2221##1\or\bc2122##1\or\bc1411##1%
+    \or\bc1132##1\or\bc1231##1\or\bc1114##1\or\bc1312##1\or\bc1213##1%
+    \or\bc3112##1\fi}%
+  \def\R##1{\bgroup\let\next\1\let\1\0\let\0\next\L##1\egroup}%
+  \def\G##1{\bgroup\let\bc\bcg\L##1\egroup}% reverse
+  \def\bc##1##2##3##4##5{\stack{\0##1\1##2\0##3\1##4}##5}%
+  \def\bcg##1##2##3##4##5{\stack{\0##4\1##3\0##2\1##1}##5}%
+  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09%
+    \endgroup}%
+  \stack{\09}#1\11\01\11\L#2%
+  \ifcase#1\L#3\L#4\L#5\L#6\L#7\or\L#3\G#4\L#5\G#6\G#7%
+    \or\L#3\G#4\G#5\L#6\G#7\or\L#3\G#4\G#5\G#6\L#7%
+    \or\G#3\L#4\L#5\G#6\G#7\or\G#3\G#4\L#5\L#6\G#7%
+    \or\G#3\G#4\G#5\L#6\L#7\or\G#3\L#4\G#5\L#6\G#7%
+    \or\G#3\L#4\G#5\G#6\L#7\or\G#3\G#4\L#5\G#6\L#7%
+  \fi\01\11\01\11\01\bcR}
+
+%\barcode 9789731650937
+%ISBNs use minuses to separate number groups. There seems no guaranteed pattern
+%  Call barcode using stripped down version
+\def\bcode#1-{\barcode#1}
+% strip off minuses one by one. There's probably a more efficient way, but this seems to work
+% Call with \isbn _code_-\emptything-
+\def\emptything{}
+\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
+%
+%A beautiful ISBN has "ISBN 123-435-763-124" above the top exactly matching the
+%width of the barcode. Do some maths to get it right.  Adding up numbers above,
+%the barcode seems like it should be 12*.7+.4+.5+.4=9.7em wide. It actually
+%seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
+\newdimen\ISBNfontdim
+\ISBNfontdim=10pt
+\def\ISBN#1{\font\belowISBN="Andika" at \ISBNfontdim
+\trace{m}{ISBN barcode for \attr@b}%
+\bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
+%I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
+\font\aboveISBN="Andika" at 0.02\dimen0
+\belowISBN\vbox{\hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
+%\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
+\hbox{\expandafter\isbn#1-\empty-}}\egroup}
+
+\x@\def\csname start-zISBNbarcode\endcsname{%
+  \bgroup
+  \get@ttribute{isbn}%
+  \bgroup\m@kedigitsother\let\tmp\attr@b\xdef\tmp{\x@\scantokens\x@{\tmp\noexpand}}%
+  \egroup\ISBN{\tmp}\egroup}
 
 \def\proc@strong#1{%
   \get@ttribute{align}%

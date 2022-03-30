@@ -1,4 +1,7 @@
 \id INT
+\periph InsideCover|id="insidecover"
+\zISBNbarcode|isbn="123-45-789"\*
+
 \periph Bible Introduction |id="intbible"
 \mt1 The Bible
 \rem What does this do?
