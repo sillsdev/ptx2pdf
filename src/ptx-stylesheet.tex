@@ -1425,6 +1425,8 @@
 %% DO NOT COMMENT END OF FOLLOWING LINE:
 \gdef\getp@riphlines{\bgroup\inperiphtrue\codesforperiphgr@b\let\p@riphlines\empty\let\getp@riphline\g@tp@riphline\everyeof{\relax
 \noexpand} \getp@riphline}%
+\gdef\n@wline{
+}%
 }
 
 \gdef\n@wperiph{\expandafter\newperiphb\p@riphtst\E}%
@@ -1439,9 +1441,9 @@
       ~trace{T}{New periph starting}%
       ~let~getp@riphline~n@wperiph%
     ~else%
-       ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~space~fi~p@riphtst}%
+       ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~n@wline~fi~p@riphtst}%
     ~fi}% DO NOT COMMENT THE END OF THE NEXT LINE!
-  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~space~fi #1}~endperiph ~periph #2
+  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~n@wline~fi #1}~endperiph ~periph #2
 }%
 }
 ~catcode`\=0 
