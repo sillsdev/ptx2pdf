@@ -460,11 +460,13 @@
 % First, barcode generating code from 
 %http://tex.stackexchange.com/questions/6895/is-there-a-good-latex-package-for-generating-barcodes
 %
+\def\b@rheight{10ex}
+
 \def\barcode#1#2#3#4#5#6#7{\begingroup%
   \dimen0=0.1em
   \def\stack##1##2{\oalign{##1\cr\hidewidth##2\hidewidth}}%
   \def\0##1{\kern##1\dimen0}%
-  \def\1##1{\vrule height10ex width##1\dimen0}%
+  \def\1##1{\vrule height\b@rheight width##1\dimen0}%
   \def\L##1{\ifcase##1\bc3211##1\or\bc2221##1\or\bc2122##1\or\bc1411##1%
     \or\bc1132##1\or\bc1231##1\or\bc1114##1\or\bc1312##1\or\bc1213##1%
     \or\bc3112##1\fi}%
@@ -472,7 +474,7 @@
   \def\G##1{\bgroup\let\bc\bcg\L##1\egroup}% reverse
   \def\bc##1##2##3##4##5{\stack{\0##1\1##2\0##3\1##4}##5}%
   \def\bcg##1##2##3##4##5{\stack{\0##4\1##3\0##2\1##1}##5}%
-  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09%
+  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09 %
     \endgroup}%
   \stack{\09}#1\11\01\11\L#2%
   \ifcase#1\L#3\L#4\L#5\L#6\L#7\or\L#3\G#4\L#5\G#6\G#7%
@@ -485,11 +487,11 @@
 %\barcode 9789731650937
 %ISBNs use minuses to separate number groups. There seems no guaranteed pattern
 %  Call barcode using stripped down version
-\def\bcode#1-{\barcode#1}
+\def\bcode#1-{\lineskip=10pt \lineskiplimit=0pt \barcode#1}
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
-\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
+\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
 %
 %A beautiful ISBN has "ISBN 123-435-763-124" above the top exactly matching the
 %width of the barcode. Do some maths to get it right.  Adding up numbers above,
@@ -504,13 +506,16 @@
 \font\aboveISBN="Andika" at 0.02\dimen0
 \belowISBN\vbox{\hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
 %\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
-\hbox{\expandafter\isbn#1-\empty-}}\egroup}
+\hbox{\expandafter\isbn#1--}}\egroup}
 
+
+%\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
 \x@\def\csname start-zISBNbarcode\endcsname{%
   \bgroup
+  \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
   \bgroup\m@kedigitsother\let\tmp\attr@b\xdef\tmp{\x@\scantokens\x@{\tmp\noexpand}}%
-  \egroup\ISBN{\tmp}\egroup}
+  \egroup\hbox{\ISBN{\tmp}}\egroup}
 
 \def\proc@strong#1{%
   \get@ttribute{align}%
