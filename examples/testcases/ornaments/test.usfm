@@ -1,12 +1,11 @@
 \id TST Test file
 \h small test file
+\mt Ornaments Test File
 \c 1
 \s This is a title
-\p
-\v 1 This is normal text. There are 4 hook positions: before, start, end,
-after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
-and d\endadd\ to show how close they ought to be when they get put in by the hooks.
-The sequence ought to be before..start..text..end..after.
+\p \bd
+\v 1 See below for a complete(?) catalogue of ornaments! \bd*
+
 \p And that was a  new  parargaph.\f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
 \p And that was a p \nd break.
 \qt-s | foo \*
@@ -52,6 +51,16 @@ doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 \v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 \p
+\esb \cat foo\cat*
+\s Testing 5
+\p
+ This ought to be  on the 2nd page
+\esbe
+\esb \cat something\cat*
+\cancelcutouts
+\s1 Testing 6
+\p This is a box of category "\showTheCategory", which is not defined.
+\esbe
 \v 4
 At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
@@ -70,16 +79,6 @@ the style sheet.
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
-\esb \cat foo\cat*
-\s Testing 5
-\p
- This ought to be  on the 2nd page
-\esbe
-\esb \cat something\cat*
-\cancelcutouts
-\s1 Testing 6
-\p This is a box of category "\showTheCategory", which is not defined.
-\esbe
 \p 
 \v 7 There are no more esbs in this book. However many we have on one page is sufficient.
 \v 8 Dolore doloribus sunt aut libero expedita dolorem qui. Quod atque doloribus ab. Et aperiam vel placeat a aut architecto voluptas id. Quo illo quos saepe eum quia. Earum laudantium recusandae dicta itaque.
@@ -138,19 +137,13 @@ This is a p paragraph of category "\showTheCategory" and is testing the appropri
 formatting.
 \q3\cat testpar\cat*
 \v 16 This is a q // to see what we can do
-
 \m The end. Back to '\showTheCategory'
+\pb
 
-\esb\cat page\cat*
-\p 
-Est molestiae veritatis est. Dolorem sapiente ut et accusamus nulla beatae vitae. Soluta quod et illo accusantium. Quis perferendis ratione voluptatum. Dignissimos et non ex recusandae enim.
+\s1 The default ornaments (vectorian)
+\p
+\testornamentsv
 
-\p Aperiam laudantium sequi nemo omnis voluptas. Consectetur possimus nam error occaecati ut harum omnis et. Tempore rerum consequatur recusandae totam eum qui dolorum nulla. Nihil qui molestiae quos tempore quasi sit dolores quos. Aut non et cum velit ut officiis magnam impedit.
-\p 
-Iste dicta voluptatem enim quidem harum. Aut quia repellat nostrum eius eum recusandae expedita voluptas. Quas non commodi error commodi. Voluptate sequi tempore nihil rem. Dolore vel quia fuga quis quas incidunt ea.
-\p 
-Corporis dolorem similique in. Reprehenderit pariatur quia porro rerum cupiditate quasi. Eos consequuntur quo in. Itaque qui non qui iste libero nemo.
-
-\esbe
-
-
+\s1 pgfhan ornaments
+\p
+\testornamentsh

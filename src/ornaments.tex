@@ -1002,7 +1002,24 @@
 
 
 \def\ornamentheight{20pt}\def\ornamentwidth{}
-\addtoinithooks{\includeifpresent{\pgfOrnamentsObject}}%
+\def\SwitchOrnamentsFamily#1{%
+  \tracingassigns=1
+  \edef\ornDimname{nopgfornamentDim-#1}%
+  \ifcsname\ornDimname\endcsname\else 
+    \bgroup\let\@pgfornamentDim\relax
+      \def\OrnamentsFamily{#1}\includeifpresent{\pgfOrnamentsObject}%
+      \ifx\@pgfornamentDim\relax\else\x@\global\x@\let\csname\ornDimname\endcsname\@pgfornamentDim\fi
+    \egroup
+  \fi
+  \ifcsname\ornDimname\endcsname
+    \x@\global\x@\let\x@\@pgfornamentDim\csname \ornDimname\endcsname
+    \xdef\OrnamentsFamily{#1}%
+  \else\message{Could not load \pgfOrnamentsObject}%
+  \fi
+  \tracingassigns=0
+}
+
+\addtoinithooks{\x@\SwitchOrnamentsFamily\x@{\OrnamentsFamily}}%
 \catcode`\@=11
 \def\m@rker{esb}
 
@@ -1071,8 +1088,9 @@
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
   \egroup
 }
-
+\def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}
 \plugin@endif
+\let\pgfsetroundjoin\relax
 \let\typeout\message
 \let\pgfsetrectcap\relax

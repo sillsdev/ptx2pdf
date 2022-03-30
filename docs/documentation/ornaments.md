@@ -2,9 +2,9 @@
 
 ## General introduction
 
-This 'plugin' provides access to ornamental borders around sidebars. 
-ornamental separator lines.
-Eventually it is expected that it will also provide page-borders.
+This 'plugin' provides access to ornamental borders around sidebars,  
+ornamental separator lines and (probably incomplete support) for ornamental
+page-borders (note that these extend beyond the normal text area).
 
 ### Sources of ornaments
 #### pgfornament package
@@ -226,12 +226,41 @@ Normally ornaments for rules are aligned centrally (i.e. if an element is
 scaled, then its centre will used). Other choices can be imposed using parameter. 
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
+#### Page Borders
+In .tex file:
+```
+\def\TextBorderStyle{ornaments}
+```
+In the style sheet: ```\Marker textborder```
+or ```\Marker id:MAT|textborder ```
+ borders are not put on title sections or on negative page numbers.
+
 ## Using the pgfhan ornaments
 The pgfhan ornament set may be selected by adding this line to
 `ptx-premods.tex` file (after `ornaments.tex` has been loaded). 
  ```
 \def\OrnamentsFamily{pgfhan}
 ```
+
+## Using both ornament sets in the same document
+In the situation that some parts of the document need one family of ornaments and other parts need another,
+that switching can be done using this command (in one of the `.tex` file):
+```
+\SwitchOrnamentsFamily{pgfhan}
+```
+This command attempts to load the relevant dimension set for the specified
+family. If it is successful, then the `\OrnamentsFamily` value will be altered.
+Subsequent calls with the same family specified will not bother to re-load the
+file, instead the loaded settings will be remembered.
+If loading the file is unsuccessful, a warning message will be produced and the
+original family will remain selected. 
+
+Note that while the caching of settings mentioned above means that the command
+can be used to switch to a previously-loaded ornament family by a hook or
+milestone, it *cannot* be used to perform the initial loading without reassigning
+all relevant catcodes. Thus if such switching is expected, the `.tex` file 
+that sets up the hooks should switch to all expected families in turn.
+
 
 ## Additional ornaments
 These ornaments have been defined in addition to the ornaments provided by the LaTeX package:

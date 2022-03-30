@@ -141,5 +141,36 @@
 %\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
 %\boxorntrue
 %\nonstopmode
+\def\testornamentsv{
+  \SwitchOrnamentsFamily{vectorian}
+\xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.7\hsize\relax}
+\lineskip 1em
+\count255=-3
+\ornscaletrue
+\def\max{197}
+\ornloop
+}
+\def\typeout#1{}
+\def\testornamentsh{
+  \SwitchOrnamentsFamily{pgfhan}
+  \catcode`\#=6 \catcode`\%=14
+  %\includeifpresent{\pgfOrnamentsObject}
+  \count255=1
+  \ornscaletrue
+  \def\max{79}
+  \ornloop
+}
+\def\ornloop{\loop\ifnum\count255<\max \relax
+  \the\count255
+  \vrule height 0.5pt width 1em
+    \ifcsname orn@skip\the\count255\endcsname (skipped)\else
+    \doOrnament{\the\count255}\fi
+  \vrule height 0.5pt width 1em \hfil\penalty0\hfil
+  \advance\count255 by 1
+  \repeat
+\par
+}
+\SwitchOrnamentsFamily{pgfhan}
+\SwitchOrnamentsFamily{vectorian}
 \ptxfile{test.usfm}
 \bye
