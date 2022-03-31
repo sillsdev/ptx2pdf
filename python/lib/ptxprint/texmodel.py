@@ -44,7 +44,9 @@ ModelMap = {
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
+    "config/name":              ("_cfgid", None),
 
+    "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
     "project/uilevel":          ("fcb_uiLevel", None),
     "project/book":             ("ecb_book", None),
@@ -555,6 +557,7 @@ class TexModel:
         self.dict['config/name'] = self.printer.configId
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
+        self.dict['/ptxprint_version'] = self.VersionStr
         self.processHdrFtr(self.printer)
         # sort out caseless figures folder. This is a hack
         for p in ("Figures", "figures"):
@@ -856,7 +859,7 @@ class TexModel:
                         if self.dict.get('project/sectintros'):
                             inserttext = self._getinsert(f)
                             if len(inserttext):
-                                res.append(inserttext)
+                                res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
