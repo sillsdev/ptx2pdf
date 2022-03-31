@@ -7,16 +7,16 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-bkranges = {'ot':   [b for b, i in _allbkmap.items() if 1  < i < 41],
-            'nt':   [b for b, i in _allbkmap.items() if 60 < i < 88],
-            'dc':   [b for b, i in _allbkmap.items() if 40 < i < 61],
-            'pre':  [b for b, i in _allbkmap.items() if 0 <= i < 2],
-            'post': [b for b, i in _allbkmap.items() if 87 < i],
-            'heb':  _hebOrder}
+bkranges = {'ot':   ([b for b, i in _allbkmap.items() if 1  < i < 41], True),
+            'nt':   ([b for b, i in _allbkmap.items() if 60 < i < 88], True),
+            'dc':   ([b for b, i in _allbkmap.items() if 40 < i < 61], True),
+            'pre':  ([b for b, i in _allbkmap.items() if 0 <= i < 2], False),
+            'post': ([b for b, i in _allbkmap.items() if 87 < i], False),
+            'heb':  (_hebOrder, True)}
 
 def sortToC(toc, booklist):
-    bknums = {k:i for i,k in enumerate(booklist)}
-    return sorted(toc, key=lambda b: refKey(b[0]))
+    bknums = {k:i for i,k in enumerate(booklist[0])}
+    return sorted(toc, key=(lambda b: refKey(b[0])) if booklist[1] else (lambda b: b[-1]))
 
 def generateTex(alltocs):
     res = []
@@ -56,7 +56,7 @@ class TOC:
                 ttoc = []
                 for e in tocentries:
                     try:
-                        if e[0][:3] in r:
+                        if e[0][:3] in r[0]:
                             ttoc.append(e)
                     except ValueError:
                         pass

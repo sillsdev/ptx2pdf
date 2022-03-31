@@ -1691,6 +1691,7 @@
 % mechanism to define active chars within the ptx files
 \catcode`\~=\active
 \def\DefineActiveChar#1#2{\count255=`#1
+  \trace{ch}{DefineActiveChar: \the\count255}%
   \do@ctive=\x@\x@\x@{\x@\the\x@\do@ctive
     \x@\d@something\the\count255 }%
   \lccode`\~=\count255
