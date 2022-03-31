@@ -191,7 +191,7 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
-    \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
+    \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
     \xspaceskip=0pt
     \getp@ram{justification}{#2}{#2}%
     \ifx\p@ram\c@nter
@@ -232,10 +232,10 @@
   \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
     % save copy of caller in temporary box, if non-empty add a little space
     \setbox0=\hbox{#3}%
-    \ifdim\wd0>0pt\ifdim\wd0<\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth, for better alignment
+    \ifdim\wd0>0pt \ifdim\wd0 <\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth, for better alignment
       \setbox0=\hbox{\hbox to \NoteCallerWidth{\hfil\box0\hfil}}%
     \fi\fi
-    \setbox1=\copy0\unhbox1\ifdim\wd0>0pt\kern\NoteCallerSpace\fi
+    \setbox1=\copy0\unhbox1\ifdim\wd0>0pt \kern\NoteCallerSpace\fi
   \fi
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
@@ -277,7 +277,7 @@
     %\showbox\csname endn@te-#1\endcsname
     \checkp@ranotes{#1}%
     \ifp@ranotes
-      \ifdim \dimen0>0pt\kern-\dimen0\fi
+      \ifdim \dimen0>0pt \kern-\dimen0\fi
       \ifvoid\csname endn@te-#1\endcsname\else
         \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
       \fi
@@ -465,7 +465,7 @@
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
   \FootNoteRuleRightIndent}}
 
-\def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt\vskip\dimen1 minus 0.5 \dimen1
+\def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt \vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 % what's this for? \kern -\dimen1
   \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
   \vskip \dimen1 minus 0.5\dimen1\kern 0pt}\prevdepth=-1000pt}
@@ -493,10 +493,10 @@
   \EndNoteRuleRightIndent}}
 
 \def\zpostendnoterule{\if@ndnotesfound{%
-    \toks0=\everypar\everypar={}\parskip=0pt\parindent=0pt\let\par=\endgraf\parfillskip=0pt%
+    \toks0=\everypar\everypar={}\parskip=0pt \parindent=0pt \let\par=\endgraf\parfillskip=0pt %
 %  \noindent\hbox{\noindent\kern\columnshift\vbox{\hrule width \dimen0}}\par
     \par
-    \dimen0=\prevdepth\ifdim \dimen0>0pt\kern-\dimen0\fi
+    \dimen0=\prevdepth\ifdim \dimen0>0pt \kern-\dimen0\fi
     \vbox{\kern 0.5\baselineskip
       \EndNoteSeparator
       \kern 0.5\baselineskip}%
@@ -583,7 +583,7 @@
   \s@tbaseline{#2}{#2}%
   % Enable justification according to marker.
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
-  \lineskiplimit=-10pt\leftskip=0pt\rightskip=0pt\parskip=0pt\parfillskip=0pt plus 1fil%\lineskip=10pt
+  \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
   \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
@@ -603,7 +603,7 @@
   % an extra line to be created.
   \linepenalty50
   \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics}%
-  \par\leftskip=0pt\XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi}
+  \par\leftskip=0pt \XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi}
 %-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
 %+c_makehboxofhboxes
@@ -636,11 +636,11 @@
   \setbox0=\hbox{}\trace{o}{current height=\the\dimen0}%
   \ifdim\dimen0>#1\loop
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
+    \ifdim\ht3>0pt \setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
     \setbox1=\box\voidb@x
   \else\temptrue\loop
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \ifdim\ht3>0pt\setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
+    \ifdim\ht3>0pt \setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
     \else\ifvoid3\tempfalse\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
     \dimen1=\dimen0 \advance\dimen1 by \ht1 \advance\dimen1 by \dp1
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
@@ -658,7 +658,7 @@
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
-  \if#4r\relax \leftskip=0pt plus 0.8\hsize\rightskip=0pt\parfillskip=0pt\else\leftskip=0pt\rightskip=0pt plus 0.8\hsize\fi
+  \if#4r\relax \leftskip=0pt plus 0.8\hsize\rightskip=0pt \parfillskip=0pt \else\leftskip=0pt \rightskip=0pt plus 0.8\hsize\fi
   % Empty the xref notes so that they don't crop up elsewhere
   \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
@@ -677,21 +677,21 @@
         \tempfalse % we're done with the main loop
         \setbox0=\hbox{}
         \m@ke@te@mp{#1}
-        \ifdim\ht0>0pt\hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
+        \ifdim\ht0>0pt \hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
       \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen2\XrefSkip
-      \ifdim\ht1>0pt\global\setbox\xr@fbox=\vbox{\unvbox\xr@fbox\vskip\dimen1\unvbox1}\fi
+      \ifdim\ht1>0pt \global\setbox\xr@fbox=\vbox{\unvbox\xr@fbox\vskip\dimen1\unvbox1}\fi
     \else \ifvoid0\else\trace{o}{Unexpected 0 height box in m@kexrefbox}\fi\tempfalse
     \fi
   \iftemp\repeat
-  %\ifdim\ht\xr@fbox=0pt\message{empty xref box}\setbox\xr@fbox=\vbox{\hbox to \hsize{\space}}\fi
+  %\ifdim\ht\xr@fbox=0pt \message{empty xref box}\setbox\xr@fbox=\vbox{\hbox to \hsize{\space}}\fi
 % completed the main box. Now capture the rest as a normal paragraphed note
   \setbox1=\vbox{}
   \loop
     \setbox0\lastbox
-    \ifdim\ht0>0pt\setbox1=\vbox{\unvbox1\box0}\repeat
+    \ifdim\ht0>0pt \setbox1=\vbox{\unvbox1\box0}\repeat
   \trace{o}{m@kexrefbox(\the#1, \the#2, marker #3): othernotes=\the\ht1, dimensions of xr@fbox= \the\ht\xr@fbox x \the\wd\xr@fbox, copy \the\ht\XrefB@x}%
-  \prevdepth=-10000pt\maken@tepara{1}{#3}%
+  \prevdepth=-10000pt \maken@tepara{1}{#3}%
 }
 %-c_makehboxofhboxes
 
@@ -743,7 +743,7 @@
   \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \noteseenfalse
   \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-  \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt\vfil % \kern-\dimen0
+  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \vfil % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
   \fi\fi
   \traceifcheck{p@geendcontent}%
@@ -809,7 +809,7 @@
           \ifdim\ht\colA>14\FontSizeUnit
             \doTextB@rder{\colA}%3
           \fi
-          \box\colA\kern0pt\vfil}%
+          \box\colA\kern0pt \vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
@@ -1056,7 +1056,7 @@
         %\f@rstnotetrue\m@kenotebox
         \trace{b}{BALANCE pageouttxt: notes=\the\ht2 , \the\dp2}%
         \unvbox\n@tesbox %\kern-\lastd@pth\lastdepth=\dp2\unvbox2
-        \ifdim\ht\verybottomins>0pt\ifdim\availht > 0pt%
+        \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt %
           \trace{o}{verybottomins(savepartialpage): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight}
           \kern-\lastd@pth \lastd@pth=0pt \vskip\skip\verybottomins \unvbox\verybottomins
         \fi\fi
@@ -1307,8 +1307,8 @@
       \fi
       \doColNotes{#1}\advance\colhtB by -\ht\coln@tebox
     \fi
-    \ifdim\colhtA<0pt \colhtA=0pt\fi
-    \ifdim\colhtB<0pt \colhtB=0pt\fi
+    \ifdim\colhtA<0pt \colhtA=0pt \fi
+    \ifdim\colhtB<0pt \colhtB=0pt \fi
     \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 %-c_setcolhts
@@ -1332,7 +1332,7 @@
     \setbox\colA=\vsplit#1 to \colhtA
     \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
     \setbox9=\copy#1
-    \ifdim\colhtB<0pt\setbox#1=\box9\setbox\colB\box\voidb@x\else
+    \ifdim\colhtB<0pt \setbox#1=\box9\setbox\colB\box\voidb@x\else
       \setbox\colB=\vsplit#1 to \colhtB
       \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
     \fi
@@ -1373,7 +1373,7 @@
     %\ifColNotes\advance\shortavail by -\ht\coln@tebox\fi
     %\advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \dimen0=\colhtB \advance\dimen0 by -\colhtA
-    \ifdim\dimen0<0pt\dimen0=-\dimen0\fi
+    \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
     \ifdim\dimen0>5\baselineskip
       \shortavail=\colhtA \advance\shortavail\colhtB
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
@@ -1416,7 +1416,7 @@
         \fi
 		% if second column longer than first column by less than .3*line height, quit loop
         \ifrebalance
-          \ifdim\colhtA>0pt\ifdim\colhtB>0pt
+          \ifdim\colhtA>0pt \ifdim\colhtB>0pt
             \g@tcolhts
             \ifColNotes\advance\colhtB\ht\coln@tebox\fi
             \dimen0=\colhtB \advance\dimen0 by -\colhtA
@@ -1923,7 +1923,7 @@
     \ifnum#5=1\hbox to \XrefNotesMargin{}\else\ifnum#5=3\hbox to \XrefNotesMargin{}\fi\fi
     \ifdim\ht\xr@fbox>0pt
       \vbox to #4{\vbox to #1{\ifdim\ht\xr@fbox>0.9\dimen0 \unvbox\xr@fbox\unpenalty\unskip
-        \else\ifdim\ht\xr@fbox=0pt\message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}%
+        \else\ifdim\ht\xr@fbox=0pt \message{empty xrefbox}\vbox{\hsize=\XrefNotesWidth\hskip\XrefNotesWidth\hbox{}}%
           \else\trace{o}{underful xr@fbox=\the\ht\xr@fbox \space against \the\dimen0}\unvbox\xr@fbox\unpenalty\unskip\fi
           \ifXrefTopfill\else\vfil\fi
         \fi}\vfil}%

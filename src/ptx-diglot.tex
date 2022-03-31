@@ -251,10 +251,10 @@
 \newsideSpecificIf{OmitVerseNumberOneR}
 
 \def\doVisTrace#1{%
-  \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt\hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt\dp0=0pt
+  \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt \hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt \dp0=0pt
 }
 \def\doVisTraceT#1{%
-  \setbox0=\vbox to 0pt{\vss\hbox{\VisTracefont #1 \the\TRACEcount}\hrule height 0pt depth 0.5pt width 15pt}\ht0=0pt\dp0=0pt
+  \setbox0=\vbox to 0pt{\vss\hbox{\VisTracefont #1 \the\TRACEcount}\hrule height 0pt depth 0.5pt width 15pt}\ht0=0pt \dp0=0pt
 }
 
 \diglotfalse%
@@ -436,7 +436,7 @@
   %\splittopskip=0pt
   \setbox1=\vsplit0 to \trialheight
   \setbox1=\vbox{\unvbox1}%
-  \ifnum 1=\ifdim \ht1=0pt\ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
+  \ifnum 1=\ifdim \ht1=0pt \ifdim\dp1=0pt 1 \else 0\fi \else 0\fi
     \trace{D}{Nothing wants to split from top of box: trial failed}%
     \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
     \trialfailedtrue
@@ -569,7 +569,7 @@
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
     \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
-    \ifdim\ht\galley=0pt\ifdim\dp\galley=0pt
+    \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
         \showbox\galley
@@ -1217,7 +1217,7 @@
  \setbox0=\copy#1\setbox1=\vtop{\unvbox 0\setbox2=\lastbox}%Work on a copy so we don't break stuff.
  \trace{D}{pd:\the\dp2, ph=\the\ht2, d:\the\TempDim}%
  % Now ready to (A) remove topskip, later replacing it with baselineskip. (B) append kern if needed.
- \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt\ifdim\TempDim=0pt\else\kern-\TempDim\fi\fi}
+ \global\setbox#1=\vtop{\unvbox#1\ifdim\dp2=0pt \ifdim\TempDim=0pt \else\kern-\TempDim\fi\fi}
 }
 \let\lAd@do\relax
 \let\log@ut\empty
@@ -1336,7 +1336,7 @@
  \bgroup
   \setbox0=\box#1
   \setbox1=\box#2
-  \dimen0=0pt\relax
+  \dimen0=0pt \relax
   \ifdim\ht0>0pt \ifdim\dp0<0.5\baselineskip
     %box0 is not a vtop, it's a vbox, so won't have text hanging below its baseline.
     \advance\dimen0 by -\baselineskip\relax % 
@@ -1450,7 +1450,7 @@
     \dimen9=\dimen1
     % apply columngutterruleskip?
     \tempfalse
-    \ifdim\ht\partial=0pt\ifdim\dp\partial=0pt
+    \ifdim\ht\partial=0pt \ifdim\dp\partial=0pt
       \advance\dimen8 by -\ColumnGutterRuleSkip\relax
       \ifdim\ColumnGutterRuleSkip < 0pt
        \ifColumnGutterRule
@@ -1494,7 +1494,7 @@
   % Normal
   %
   \global\setbox\n@xtpartialNrml\vtop{%
-    \ifdim\dimen6=0pt\else
+    \ifdim\dimen6=0pt \else
       \vskip\dimen6
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\copy0}\fi%
@@ -1504,7 +1504,7 @@
   }%
   \let\l@stcol\empty %Reset this so that @@simplecols behaves properly
   \global\setbox\n@xtpartialRev\vtop{%For the next page, thus no joint delta considerations
-    \ifdim\dimen6=0pt\else
+    \ifdim\dimen6=0pt \else
       \vskip\dimen6
     \fi
     \hbox to \textwidth{\ifVisTrace\llap{\box0}\fi%
@@ -2203,7 +2203,7 @@
 } 
 
 \def\count@dim@simplecols#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list
-  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
+  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt \else
     \advance\curactivecols by 1 % how many columns contain text?
     \edef\cts@list{\cts@list#1}%
   \fi

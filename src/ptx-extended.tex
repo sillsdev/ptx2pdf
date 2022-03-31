@@ -92,7 +92,7 @@
 \newcount\feintb@xnum
 \feintb@xnum=1
 \def\remove@transpancy#1 #2 #3|#4\E{\@lphacalc{#4}{#1} \@lphacalc{#4}{#2} \@lphacalc{#4}{#3}}
-\def\@lphacalc#1#2{\strip@pt{\dimexpr #2\dimexpr #1 pt\relax + 1pt -\dimexpr #1 pt\relax\relax} }
+\def\@lphacalc#1#2{\strip@pt{\dimexpr #2\dimexpr #1 pt \relax + 1pt -\dimexpr #1 pt \relax\relax} }
 
 \addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
 \def\f@intthing#1#2#3{%
@@ -103,13 +103,13 @@
   \edef\thisalpha{#1}%
   \edef\thisRGB{#2}%
   \ifNoTransparency
-    \ifdim 1pt = #1 pt\relax\else
+    \ifdim 1pt = #1 pt \relax\else
       \edef\thisRGB{\x@\remove@transpancy\thisRGB|\thisalpha\noexpand\E }%
       \edef\thisalpha{1}%
       \MSG{* Transparency is disabled, anything behind transparent item will be hidden. #2 -> \thisRGB}%
     \fi
   \fi
-  \ifdim 1pt = \thisalpha pt\relax %Not feint
+  \ifdim 1pt = \thisalpha pt \relax %Not feint
     \x@\special\x@{pdf:code q \thisRGB\space rg}%
   \else 
     \edef\thisalpha{#1 }% Important space
@@ -327,7 +327,7 @@
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
           \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
-          \x@\xdef\x@\c@tskip{\strip@pt{\dimexpr \c@tskip pt + 1 pt\relax}}% floating pt addition
+          \x@\xdef\x@\c@tskip{\strip@pt{\dimexpr \c@tskip pt + 1 pt \relax}}% floating pt addition
           \x@\c@tskipparse\c@tskip..\E
           \trace{e}{Adjusted c@tskip \c@tskip (\c@tskipfrac)}%
           \gdef\sb@rtopedge{%
@@ -427,10 +427,10 @@
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth pt  *\b@drhsides+ \border@hpadding * \b@drhsides\relax}%% Final width of border artwork
     \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
-    \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth pt -\border@vpadding\relax\else 0pt\fi\else 0pt\fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
+    \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth pt -\border@vpadding\relax\else 0pt \fi\else 0pt \fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \let\b@xadj\b@xminadj %b@xadj puts the top edge of the border at the top of an insert.
-    \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@vpadding\relax\else 0pt\fi\else 0pt\fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
-    \edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth pt  \ifx\b@drtop\tr@e 3pt\else 0pt\fi\else 0pt\fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
+    \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@vpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
+    \edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth pt  \ifx\b@drtop\tr@e 3pt \else 0pt \fi\else 0pt \fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@vpadding +\b@drwidth pt  \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
   \else
@@ -448,7 +448,7 @@
   \fi
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drsides\relax
   \dimen1=0pt
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\hsize=\b@rderbox@width\bc@l
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
     \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
     \hbox to \b@rderbox@width{%
       \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
@@ -494,7 +494,7 @@
   \setbox0\hbox{#1}\p@cheight=\ht0
   \loop 
     \advance\p@cheight by -\baselineskip 
-  \ifdim\p@cheight>0pt\repeat
+  \ifdim\p@cheight>0pt \repeat
  % \advance\p@cheight by \baselineskip
   \vskip-\p@cheight
   \vskip 0pt
@@ -533,7 +533,7 @@
   \dimen4=\dimen3\advance\dimen4 by \dimexpr -\b@drfillwidth pt  * \b@drhsides\relax %Inner horiz length
   \trace{eb}{Borders: \b@rderbox@width - \b@drlinewidth pt   =\the\dimen3, \b@rderbox@height - }%
   \dimen5=\dimexpr \b@drfillwidth pt  + \b@drlinewidth pt \relax
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\lineskiplimit=0pt\hsize=\b@rderbox@width
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \lineskiplimit=0pt \hsize=\b@rderbox@width
     \ifx\b@drtop\tr@e
       \hbox to \b@rderbox@width{\bc@l\vrule height \b@drlinewidth pt  width \b@rderbox@width \endbc@l}%
       \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth pt \else

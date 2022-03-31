@@ -125,13 +125,13 @@
 %
 %+cpar_gridbox1
 \def\gr@db@x#1{%
-% \setbox0=\vbox{\kern-#1pt\vrule\kern#1pt\kern-.4pt\box#1\kern-.4pt\vrule}%
+% \setbox0=\vbox{\kern-#1pt \vrule\kern#1pt \kern-.4pt \box#1\kern-.4pt \vrule}%
 \setbox0=\vbox{\unvbox#1}%\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
 \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0 (dp was \the\dimen4)}%
 %\MSG{after killd: ht0=\the\ht0; dp0=\the\dp0}
 %{\showboxbreadth=100 \showboxdepth=10 \showbox0 }%
  \dimen2=\ht0 \advance\dimen2 by \dp0
- %\dimen0=\ifnum\@djustment>0 -\baselineskip\else0pt\fi
+ %\dimen0=\ifnum\@djustment>0 -\baselineskip\else0pt \fi
  \dimen0=0pt
  \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
                               % when doing a picture box, because it's not part of the
@@ -152,7 +152,7 @@
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
 \def\gr@db@@x#1{%
-  \ifdim\baselineskip < 0.5pt\unvbox#1
+  \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
       \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
       \prevdepth=0pt
@@ -162,7 +162,7 @@
       \ifVisTraceExtra
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
       \fi
-	  \ift@tle\lastdepth=0pt\fi
+	  \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
       \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
@@ -170,7 +170,7 @@
       \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
       \advance\dimen2 by \headingtopspace                                           %(1)
       \ifgridp@c\else\ifdiglot\else
-        \ifdim\lastdepth>0pt\advance\dimen2 by -\lastdepth\fi
+        \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
       \fi\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
@@ -280,7 +280,7 @@
    %  \fi\else\tolerance=10\fi
    \p@r
    \ifvmode
-    %\ifdim\prevdepth>0pt\lastdepth=\prevdepth\else\lastdepth=-1pt\fi
+    %\ifdim\prevdepth>0pt \lastdepth=\prevdepth\else\lastdepth=-1pt \fi
    \else
      %\lastdepth=0pt
      \ifinner\trace{sa}{Inner mode at end of paragraph style \m@rker}\fi
@@ -359,9 +359,9 @@
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
-    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \ifRTL\parfillskip=0pt\fi
+    \ifRTL\leftskip\else\rightskip\fi=0pt plus \gl@e \ifRTL\parfillskip=0pt \fi
    \else\ifx\p@ram\r@ght
-    \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \ifRTL\else\parfillskip=0pt\fi
+    \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \ifRTL\else\parfillskip=0pt \fi
    \fi\fi\fi
    \getp@ram{leftmargin}{#1}{\styst@k}%
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
@@ -419,8 +419,8 @@
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
     \else
         % Headingtopspace gets removed at top of page, preserve for titles.
-        \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt\else
-          \ift@tle\headingtopspace=0pt\else\headingtopspace=\p@ram\verticalsp@ceunit\fi\fi
+        \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
+          \ift@tle\headingtopspace=0pt \else\headingtopspace=\p@ram\verticalsp@ceunit\fi\fi
         \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}{\styst@k}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count

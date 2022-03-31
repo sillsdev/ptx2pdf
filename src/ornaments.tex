@@ -208,7 +208,7 @@
 	\x@\gdef\csname localornament@#1@Y\endcsname{#3}%
 	\x@\gdef\csname localornament@#1@code\endcsname{#4}%
 }
-\def\StringOrnament#1#2#3{\x@\global\x@\font\csname localornament@#1@font\endcsname "#2" at 32pt\setbox0\hbox{\csname localornament@#1@font\endcsname #3}%
+\def\StringOrnament#1#2#3{\x@\global\x@\font\csname localornament@#1@font\endcsname "#2" at 32pt \setbox0\hbox{\csname localornament@#1@font\endcsname #3}%
     \trace{orn}{Defining ornament #1 as box (\the\ht0+\the\dp0) x \the\wd0}%
     \bgroup
       \tracingassigns=1
@@ -311,7 +311,7 @@
     \else
       \x@\pdf@parse@clip@rect\orn@clip@rect
     \fi
-    \ifdim\dimen2=0pt\else
+    \ifdim\dimen2=0pt \else
       \setbox0=\hbox to \dimen0{\kern-\dimen2\unhbox0\kern\dimen2}%
     \fi
     \ht0=\dimen1%\@pgfornamentY\pdf@yunit
@@ -334,9 +334,9 @@
       \setbox0=\hbox{%
       \raise\dimen1\hbox{\vrule height 0.02pt width\dimen0}%
       \kern-\dimen0
-      \kern -0.02pt\vrule height \dimen1 width 0.02pt
+      \kern -0.02pt \vrule height \dimen1 width 0.02pt
       \vrule height 0.02pt width\dimen0 
-      \vrule height \dimen1 width 0.02pt\kern -0.02pt
+      \vrule height \dimen1 width 0.02pt \kern -0.02pt
       \kern-\dimen0
       \ifdim\dimen7=0pt
 	\box0
@@ -916,17 +916,17 @@
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
   \message{Box side is \the\dimen1}%
-  \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\baselineskip=0pt\Ornaments{\patternL}}%
+  \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
   \ifx\patternL\patternR
     \setbox\orn@bdr@right\copy\orn@bdr@left
   \else
-    \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\baselineskip=0pt\Ornaments{\patternR}}%
+    \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
   \fi
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
-  \vbox to #2{\baselineskip=0pt\lineskip=0pt\hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
+  \vbox to #2{\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
   \trace{orn}{OrnamentBorder}%
@@ -955,7 +955,7 @@
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
-    \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternL}}%
+    \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
     \def\border@l@pad{\border@hpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
@@ -969,7 +969,7 @@
   %\showbox\orn@bdr@left
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
-      \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt\lineskiplimit=0pt\baselineskip=0pt\Ornaments{\patternR}}%
+      \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
       \def\border@r@pad{\border@hpadding}%
     \fi
   \fi
@@ -979,7 +979,7 @@
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
-  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt\lineskip=0pt\hsize=\b@rderbox@width
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
     \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
