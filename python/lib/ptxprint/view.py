@@ -812,9 +812,11 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config):
-        def setv(k, v): self.set(k, v, skipmissing=True)
-        self.clearvars()
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False):
+        if setv is None:
+            def setv(k, v): self.set(k, v, skipmissing=True)
+            def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
+            self.clearvars()
         for sect in config.sections():
             # if sect == "paper":
                 # import pdb; pdb.set_trace()
@@ -836,7 +838,8 @@ class ViewModel:
                             val = Path(val, self) if val is not None else None
                             if w[2] is not None and val is not None:
                                 setv(w[2], pdfre.sub(r"\1", val.as_posix()))
-                        setattr(self, w[0], val)
+                        if not dummyload:
+                            setattr(self, w[0], val)
                     else:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
                             if v[0].startswith("s_"):
@@ -850,9 +853,9 @@ class ViewModel:
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
-                    self.setvar(opt, val or "")
+                    setvar(opt, val or "", None)
                 elif sect == "strongsvars":
-                    self.setvar(opt, val or "", dest="strongs")
+                    setvar(opt, val or "", "strongs")
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
@@ -877,8 +880,25 @@ class ViewModel:
                 val = config.get(sect, name)
             except configparser.NoOptionError:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
-        if self.get("c_thumbtabs"):
+        if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
+
+    def mergeConfigs(self, base, new):
+        config = self.createConfig()
+        for sect in config.sections():
+            allopts = set(config.options(sect))
+            if base.has_section(sect):
+                allopts.update(base.options(sect))
+            if new.has_section(sect):
+                allopts.update(new.options(sect))
+            for opt in allopts:
+                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
+                        or config.get(sect, opt) != base.get(sect, opt)):
+                    continue
+                if new.has_option(sect, opt):
+                    config.set(sect, opt, new.get(sect, opt))
+        self.loadConfig(config)
+
 
     def updateStyles(self, version):
         if version < 0:

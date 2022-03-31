@@ -197,6 +197,11 @@ class StyleEditor:
         res.update(self.sheet.keys())
         return res
 
+    def allValueKeys(self, m):
+        res = set(self.basesheet.get(m, {}).keys())
+        res.update(self.sheet.get(m, {}).keys())
+        return res
+
     def asStyle(self, m):
         if m is None:
             res = {}
@@ -216,8 +221,6 @@ class StyleEditor:
             res = self.basesheet.get(mrk, {}).get(key, default)
         if key in _fieldmap and res is not None:
             res = _fieldmap[key][0](self, res, mrk=mrk, model=self.model)
-        # if key == "FontSize":
-            # print(f"getval: {mrk}, {key} = {res}")
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
@@ -239,8 +242,6 @@ class StyleEditor:
             self.sheet.setdefault(mrk, {})[key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
-        # if key == "FontSize":
-            # print(f"setval: {mrk}, {key} = {val}")
 
     def haskey(self, mrk, key):
         if self.sheet is None:
@@ -328,3 +329,16 @@ class StyleEditor:
                         markerout = True
                     outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
 
+    def merge(self, basese, newse):
+        for m in newse.sheet.keys():
+            allkeys = newse.allValueKeys(m)
+            allkeys.update(basese.allValueKeys(m))
+            allkeys.update(self.allValueKeys(m))
+            for k in allkeys:
+                nv = newse.getval(m, k)
+                bv = basese.getval(m, k)
+                sv = self.getval(m, k)
+                if sv != bv:
+                    continue
+                if nv != bv:
+                    self.setval(m, k, nv)

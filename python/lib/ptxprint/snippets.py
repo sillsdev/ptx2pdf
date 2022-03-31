@@ -20,7 +20,7 @@ class PDFx1aOutput(Snippet):
 /Title({document/title})%
 /Subject({document/subject})%
 /Author({document/author})%
-/Creator(PTXprint ({config/name}))%
+/Creator(PTXprint {/ptxprint_version} ({config/name}))%
 /CreationDate(D:{pdfdate_})%
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
