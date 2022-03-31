@@ -264,7 +264,7 @@
     \ifdim\c@rrentcolwidth=-1sp
       \ifdim\exc@ss>\sp@re % we have to wrap at least one column
         \c@rrentcolwidth=\wd\c@rrentcolbox \advance\c@rrentcolwidth by -\thr@shold
-        \ifdim\c@rrentcolwidth>1638pt\tempfalse\message{Table column overflow, reducing resolution}\else\temptrue\fi
+        \ifdim\c@rrentcolwidth>1638pt \tempfalse\message{Table column overflow, reducing resolution}\else\temptrue\fi
         \iftemp\multiply\c@rrentcolwidth by 20\fi
         \divide\c@rrentcolwidth by \exc@ss
         \multiply\c@rrentcolwidth by \sp@re
