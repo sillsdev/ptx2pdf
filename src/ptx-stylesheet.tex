@@ -1718,7 +1718,8 @@
 \def/{\futurelet\n@xt\sl@sh}
 \def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
 \def\OptionalBreakPenalty{300}
-\def\sl@shbreak/{\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
+\let\oldlinepenalty\relax
+\def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
 \def\sl@shprint{\char`\/}
 \catcode`\/=12
 %-csty_slash

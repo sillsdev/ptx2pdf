@@ -462,6 +462,10 @@
    % or something like a verse number); then we'll set up margins/indents and font
    %
    \preservesettings % Needed?
+   \ifx\oldlinepenalty\relax\else
+     \linepenalty=\oldlinepenalty
+     \let\oldlinepenalty\relax
+   \fi
    \the\@veryparhooks
    \restoresettings
    \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
