@@ -76,7 +76,8 @@ class Reference:
         cls.vrs = readvrs(fname)
         return cls.vrs
 
-    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators(), allowzero=False):
+        minverse = -1 if allowzero else 0
         sep = ""
         hasbook = False
         if lastref is None or lastref.book != self.book:
@@ -91,9 +92,9 @@ class Reference:
             if not len(res):
                 sep = sep or addsep['chaps']
             res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
-            if self.verse > 0 and (lastref is None or self.verse < 200 or lastref.verse > 0):
+            if self.verse > minverse and (lastref is None or self.verse < 200 or lastref.verse > minverse):
                 res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
-        elif (lastref is None or lastref.verse != self.verse) and 0 < self.verse:
+        elif (lastref is None or lastref.verse != self.verse) and minverse < self.verse:
             res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
             if lastref is not None:
                 sep = sep or addsep['verses']
@@ -268,7 +269,7 @@ class RefRange:
 
     def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
-        res = "{}{}{}".format(self.first.str(context, level, lastref, addsep=addsep),
+        res = "{}{}{}".format(self.first.str(context, level, lastref, addsep=addsep, allowzero=self.first.chap==self.last.chap),
                               addsep['range'],
                               self.last.str(context, level, self.first, addsep=lastsep))
         return res
@@ -435,7 +436,7 @@ class RefList(list):
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
         self = cls()
-        curr = Reference(None, 0, 0) if starting is None else starting
+        curr = Reference(None, 0, -1) if starting is None else starting
         currmark = None
         nextmark = None
         start = None
@@ -447,10 +448,10 @@ class RefList(list):
                     if mode != "r":
                         curr = self._addRefOrRange(start, curr, currmark, nextmark)
                         start = None
-                    if curr.chap > 0 and curr.verse == 0:
+                    if curr.chap > 0 and curr.verse < 0:
                         curr.chap = 200
                         mode = "c"
-                    elif curr.verse > 0:
+                    elif curr.verse >= 0:
                         curr.verse = 200
                         mode = "v"
                     b = ""
@@ -487,11 +488,11 @@ class RefList(list):
                 m = rec.match(b)
                 if m:
                     v = int(m.group(1))
-                    if m.group(2) or curr.verse > 0 or curr.book in oneChbooks:
+                    if m.group(2) or curr.verse >= 0 or curr.book in oneChbooks:
                         if curr.book in oneChbooks:
                             curr.chap = 1
                             mode = "c"
-                        if m.group(2) and curr.chap == 0:
+                        if m.group(2) and curr.chap < 0:
                             raise SyntaxError("invalid string {} in context of {}".format(b, curr))
                         if mode not in "bcr":
                             c = curr.chap
@@ -512,6 +513,8 @@ class RefList(list):
                 if b.startswith("-"):
                     start = curr
                     curr = start.copy()
+                    if start.verse < 0:
+                        start.verse = 0
                     curr.subverse = None
                     b = b[1:]
                     mode = "r"
@@ -543,12 +546,14 @@ class RefList(list):
 
     def _addRefOrRange(self, start, curr, currmark, nextmark):
         curr.mark = currmark
+        if curr.verse < 0:
+            curr.verse = 0
         if start is not None:
             if curr.verse == 0:
                 curr.verse = 200
             curr = RefRange(start, curr)
         self.append(curr)
-        res = Reference(curr.first.book, 0, 0)
+        res = Reference(curr.first.book, 0, -1)
         currmark = nextmark
         return (res, currmark)
 
@@ -653,6 +658,7 @@ def tests():
     t("JHN 3", "fQA", r("JHN", 3, 0))
     t("3JN 3", "kcD", r("3JN", 1, 3))
     t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
+    testrange("LEV 13:0-4", r("LEV", 13, 0), r("LEV", 13, 4))
     t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
     t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
     t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
