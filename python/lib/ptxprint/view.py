@@ -608,6 +608,8 @@ class ViewModel:
                 return (1, k, v)
         if self.get("_version", skipmissing=True) is None:
             self.set("_version", ConfigVersion)
+        for a in (("_prjid", self.prjid), ("_cfgid", self.configName())):
+            self.set(a[0], a[1])
         config = configparser.ConfigParser()
         for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None or k.endswith("_"):

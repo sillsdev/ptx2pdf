@@ -44,7 +44,9 @@ ModelMap = {
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
+    "config/name":              ("_cfgid", None),
 
+    "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
     "project/uilevel":          ("fcb_uiLevel", None),
     "project/book":             ("ecb_book", None),
