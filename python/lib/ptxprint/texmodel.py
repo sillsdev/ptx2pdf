@@ -1453,10 +1453,13 @@ class TexModel:
         if self.asBool("notes/addcolon"): # Insert a colon between \fq (or \xq) and following \ft (or \xt)
             self.localChanges.append((None, regex.compile(r"(\\[fx]q .+?):* ?(\\[fx]t)", flags=regex.M), r"\1: \2")) 
 
-        # HELP NEEDED from Martin to fix this section up again.
+        # HELP NEEDED from MH to fix this section up again.
         # Keep book number together with book name "1 Kings", "2 Samuel" within \xt and \xo
         self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),
                         regex.compile(r"(\d)\s(\p{L})"), r"\1\u00A0\2"))
+                        
+        # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
+        self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),

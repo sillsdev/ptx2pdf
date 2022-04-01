@@ -1,3 +1,4 @@
+\id FRT
 \rem This template has been created for use with PTXprint for semi-automatic 
 \rem generation of front matter. Though it is structured on the USFM specification
 \rem for Paratext's FRT book, there are additional \zvar variables used which

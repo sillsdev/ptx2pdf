@@ -1,3 +1,4 @@
+\id FRT
 \rem ----------Page 1----------------
 \periph Title Page|id="title"
 \nopagenums
