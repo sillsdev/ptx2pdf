@@ -149,7 +149,7 @@ class ParatextSettings:
                     self.bookmap[k] = fname
                     booksfound.add(fname)
         for f in os.listdir(path):
-            if not f.lower().endswith("sfm") or f in booksfound:
+            if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
                 continue
             with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
                 l = inf.readline()
