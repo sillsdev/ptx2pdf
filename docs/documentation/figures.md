@@ -156,10 +156,10 @@ Notes:
 
 #### Restrictions  / notes on certain picture positions
 - p : The delayed picture is saved until the end of the Nth paragraph in a
-  certain 'box'. There is no code to have either an adjustable stack of boxes 
-  or multiple images in the box. (But diglots have a second box for the
-  right/outer text).  If an attempt is made to put a second picture into the
-  box while it still contains the first, the first picture will be lost.
+  certain 'box'. There is no code to have an adjustable stack of boxes 
+  but multiple images can now be put into the same after-paragraph box 
+  (code for this added in late March 2022).
+  Diglots have a second box for the right/outer text.
 - F : 
   -  If a caption is used, this will normally be off the page. It may,
      however, still affect the alignment of the image, preventing top / bottom alignment from 
