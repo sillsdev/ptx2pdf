@@ -15,6 +15,8 @@ bkranges = {'ot':   ([b for b, i in _allbkmap.items() if 1  < i < 41], True),
             'heb':  (_hebOrder, True)}
 
 def sortToC(toc, booklist):
+    if len(booklist) < 2:
+        return booklist
     bknums = {k:i for i,k in enumerate(booklist[0])}
     return sorted(toc, key=(lambda b: refKey(b[0])) if booklist[1] else (lambda b: b[-1]))
 
