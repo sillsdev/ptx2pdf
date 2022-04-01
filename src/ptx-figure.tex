@@ -932,7 +932,7 @@
   \trace{g}{\w@tsit is post-paragraph, \the\hsize/\the\p@cinswid \ifpicNarrow , narrow\fi}%
   \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
   \ifpicNarrow
-    \@lignpic{\picb@@x}%
+    \@lignpic{#1}%
     %\ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
     %\else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
     %\fi
