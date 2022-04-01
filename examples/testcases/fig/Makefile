@@ -12,7 +12,7 @@ testpages.pdf:testpages.tex
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist testpages.pdf
 
 bisect:
-	mkdir ../bisect || rm -f ../bisect/*
+	-mkdir ../bisect || rm -f ../bisect/* 
 	cp *.tex *.usfm *.sty *.piclist Makefile image.jpg tiger.pdf ../bisect
 
 map.jpg:?/test.pdf Makefile

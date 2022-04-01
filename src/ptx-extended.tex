@@ -765,6 +765,12 @@
         \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x)}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
+    \getsbp@ram{spaceafter}%
+    \ifx\cp@ram\relax
+      \let\sp@ceafter\empty
+    \else
+      \edef\sp@ceafter{\vskip\cp@ram\onel@neunit }%
+    \fi
     \ifx\h@scol\tr@e
       %\dimen0=\ht\extchunkb@x
       %\advance\dimen0 by -\lstch@nkdp
@@ -776,7 +782,7 @@
         \fi
        % \vskip\baselineskip
         \let\fb@htadjust=\lstch@nkdp
-        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}\sp@ceafter}%
       %\setbox\extchunkb@x\vbox{%
         %\vskip \lstch@nkdp
         %\unvbox\extchunkb@x}%
@@ -787,7 +793,11 @@
       \xdef\lstch@nkdp{\thsch@nkdp}%
       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \else
-      \dp\extchunkb@x=\dimexpr \dp\extchunkb@x + \fb@vpadding\relax
+      \ifx\empty\sp@ceafter
+        \dp\extchunkb@x=\dimexpr \dp\extchunkb@x + \fb@vpadding\relax
+      \else
+        \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\vskip\dimexpr \cp@ram\onel@neunit+\fb@vpadding \relax}%
+      \fi
     \fi
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder

@@ -273,6 +273,15 @@ stylesheet. Note that the code currently assumes no one will have a cutout
 'foreground' image in a sidebar that is itself in a cutout, and uses
 `\SpaceBeside` for both cutouts.
 
+### x-spacebefore and x-spaceafter Attributes - Additional whitespace
+Figures by default have a small amount of space  above or below them (0.3 and
+0.5 of the main lineskip respectively), depending where the caption is (the space 
+taking the place of the caption). Additionally they may have additional
+whitespace before and after them. This is controlled by the 
+USFM-3 parameters `x-spacebefore` and `x-spaceafter`. Alternatively, the
+stylesheet parameters `\SpaceBefore` and `\SpaceAfter` will alter the 
+default value for all figures inserted via the `\fig` mechanism (including figures 
+from piclists). Sidebars similarly have these stylesheet parameters.
 
 ### x-xetex Attribute - Rotation control
 
@@ -427,21 +436,23 @@ the combinations do not trigger an unprintable page.
   while processing either column, and the user has no preference about
   which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
 - The anchor for a key term (e.g. ```\k This (Odd) Term\k*```) is the book and
-  the exact text (including punctuation) between `\k` and `\k*`, but excluding
+  the exact text (including punctuation) between `\k` and ```\k*```, but excluding
   any spaces. (i.e.  in the above example it will be ```_bk_ This(Odd)Term```
 - The anchor for a stand-alone milestones is the book and the ```id```
   attribute for that marker e.g. ```\zfiga |id="rabbit123\*``` will trigger piclist 
   entries starting ```_bk_ rabbit123```  If ```id``` is the default attribute
-  (as it is for ```\zfiga```, the shorter form ```\zfiga|rabbit123``` may also be used 
+  (as it is for ```\zfiga```, the shorter form ```\zfiga|rabbit123\*``` may also be used 
   in the USFM. Note that at present only stand-alone milestones trigger figure 
-  inclusion.
-- A second or subsequent paragraph within a verse or keyterm entry may be referenced 
-  by appending a separator (by default an equals sign) and a number. e.g. ```_bk_ 1.2=3``` will 
-  trigger on the third paragraph within verse 2 of chapter 1. The following should be noted: 
+  inclusion, but there is nothing particularly magic about `\zfiga`, it's just a 'neutral' 
+  stand-alone milestone.
+- A second or subsequent paragraph within a verse or keyterm entry, or after a stand-alone 
+  milestone may be referenced  by appending a separator (by default an equals
+  sign) and a number. e.g. ```_bk_ 1.2=3``` will trigger on the third paragraph
+  within verse 2 of chapter 1. The following should be noted: 
   - There is only one paragraph counter which is reset at each change of
     trigger. Thus the above example *will not* trigger if there
     is no 3rd paragraph before the next verse number, nor will it trigger if some other
-    potential marker occurs.
+    potential anchor occurs.
   - As the first paragraph of the verse / key term is the one containing  that
     item, a suffix of ```=1``` is normally an invalid trigger point and will never match.
     The exception to this is when a *stand-alone milestone* **immediately** follows a paragraph break. 

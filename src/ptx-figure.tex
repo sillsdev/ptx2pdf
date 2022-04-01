@@ -80,6 +80,22 @@
 } 
 
 
+% Helper function for figure parameters which might come from the fig line, a stylesheet, or a default.
+\def\setf@gval#1#2#3{\let#1\empty
+  \ifcsname figparam-x-#2\endcsname
+    \x@\let\x@#1\csname figparam-x-#2\endcsname
+  \else
+    \getp@ram{#2}{fig}{fig}%
+    \ifx\p@ram\relax
+      \edef#1{#3}%
+    \else
+      \let#1\p@ram
+    \fi
+  \fi
+  \ifx#1\empty
+    \edef#1{#3}%
+  \fi
+} 
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
@@ -100,11 +116,11 @@
   \ifnum \p@ramnumber<0 
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>17 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>19 \global\morep@ramsfalse\fi
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
         scale\or media\or pgpos\or x-credit\or x-creditpos\or
-	x-creditrot\or x-creditbox\or x-spacebeside\else UNK-\the\p@ramnumber\fi}%
+	x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -713,15 +729,11 @@
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
-  \ifcsname figparam-x-spacebeside\endcsname
-    \x@\let\x@\sp@cebeside\csname figparam-x-spacebeside\endcsname%
-    \ifx\sp@cebeside\empty
-      \edef\sp@cebeside{\DefaultSpaceBeside}%
-    \fi
-  \else
-    \edef\sp@cebeside{\DefaultSpaceBeside}%
-  \fi
+  \setf@gval{\sp@cebeside}{spacebeside}{\DefaultSpaceBeside}%
+  \setf@gval{\sp@cebefore}{spacebefore}{0}%
+  \setf@gval{\sp@ceafter}{spaceafter}{0}%
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
+  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -729,9 +741,10 @@
     \else
       \hsize=\p@cinswid
     \fi
+    \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
     \ifCaptionFirst\d@caption\else
       \tempfalse
-      \ifpicUsesIns\temptrue\fi
+      %\ifpicUsesIns\temptrue\fi
       \ifx\picl@c\loc@Inl\temptrue\fi
       \ifx\picl@c\loc@Par\temptrue\fi
       \ifx\picl@c\loc@Cut\temptrue\fi
@@ -815,7 +828,8 @@
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
       \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
-    \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
+    \ifCaptionFirst\vskip 0.5\onel@neunit\else\d@caption\fi
+    \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
   }% END of box0
   \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
 %-cfig_dofigure_4
