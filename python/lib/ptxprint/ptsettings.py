@@ -151,7 +151,7 @@ class ParatextSettings:
         for f in os.listdir(path):
             if not f.lower().endswith("sfm") or f in booksfound:
                 continue
-            with open(os.path.join(path, f), encoding="utf-8") as inf:
+            with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
                 l = inf.readline()
                 m = re.match(r"^\uFEFF?\\id\s+(\S{3})\s*", l)
                 if m:
