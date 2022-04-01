@@ -548,12 +548,12 @@ class TexModel:
         cpath = self.printer.configPath(self.printer.configName())
         rcpath = self.printer.configPath("")
         self.updatefields(ModelMap.keys())
+        self.dict['project/id'] = self.printer.prjid
         docdir, base = self.docdir()
         self.dict["document/directory"] = "." # os.path.abspath(docdir).replace("\\","/")
         self.dict['project/adjlists'] = rel(j(cpath, "AdjLists"), docdir).replace("\\","/") + "/"
         self.dict['project/triggers'] = rel(j(cpath, "triggers"), docdir).replace("\\","/") + "/"
         self.dict['project/piclists'] = rel(j(self.printer.working_dir, "tmpPicLists"), docdir).replace("\\","/") + "/"
-        self.dict['project/id'] = self.printer.prjid
         self.dict['config/name'] = self.printer.configId
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
