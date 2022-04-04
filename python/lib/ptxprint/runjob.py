@@ -736,7 +736,7 @@ class RunJob:
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        books = [r[0][0].first.book if r[1] else r[0] for r in jobs]
+        books = [r[0][0].first.book if r[1] else r[0] for r in jobs] + ["FRT"]
         for j in books:
             picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
