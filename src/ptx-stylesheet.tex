@@ -1782,7 +1782,7 @@
 % remember as c@t, onetime setup will define \cat to this, protecting the definition from stylesheet
 \def\nofin@lspace #1 #2\E{#1}%Eat a final space
 \def\c@t #1\cat*{\doc@t{#1}}
-\def\doc@t#1{%
+\def\doc@t#1{% Called to start categorry from all sorts of places, including footnotes. No extra parargaphs please!
   \trace{sc}{Starting category #1, with stylet@pe=\stylet@pe, mcstack=\mcstack}%
   \ifx\c@tegory\empty\else                                      %(5)
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
@@ -1805,7 +1805,6 @@
   \x@\s@tc@tprefix\x@{\tmp}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
-  \ifhmode\par\fi
   \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
   \mcpush{\stylet@pe}{#1}%
   \op@ninghooks{start}{cat}%
