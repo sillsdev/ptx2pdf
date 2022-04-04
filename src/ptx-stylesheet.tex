@@ -1743,15 +1743,15 @@
 %+csty_category
 % Define the current category
 \def\s@tc@tprefix#1{%
-  \def\c@tegory{#1}%global or NOT global? No apparent issue with either, so stick with local, as that allows nesting.
+  \def\c@tegory{#1}%global or NOT global? No apparent issue with either, so stick with local, as that allows nesting. Which we need.
   \s@tc@tpr@fix
 }
 \def\s@tc@tpr@fix{%
   \trace{sc}{c@tegory is '\meaning\c@tegory' empty is '\meaning\empty'}%
   \ifx\c@tegory\empty
-    \global\let\c@tprefix\empty
+    \let\c@tprefix\empty
   \else
-    \xdef\c@tprefix{cat:\c@tegory|}% See above...
+    \edef\c@tprefix{cat:\c@tegory|}% See above...
   \fi
   \trace{sc}{Stylesheet prefix for '\c@tegory': '\c@tprefix'}%
 }

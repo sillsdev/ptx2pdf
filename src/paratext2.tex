@@ -1537,6 +1537,9 @@
   \s@veallnotes{1}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
   \nextshipout
+  \ifcsname page-\the\pageno\endcsname
+    \csname page-\the\pageno\endcsname
+  \fi
 }
 
 %+c_calcavailht
