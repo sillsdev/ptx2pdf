@@ -1419,9 +1419,9 @@
 \gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
 \gdef\@@rem@#1^^M{\egroup\@@realrem #1}%
 %Code to read periph sections line by line.
-\gdef\@periph{\ifinperiph\endperiph\inperiphfalse\fi\bgroup\catcode13=12 \@@periph}%
+\gdef\@periph{\ifinperiph\endp@riph\inperiphfalse\fi\bgroup\catcode13=12 \@@periph}%
 \gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
-\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endperiph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
+\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endp@riph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
 %% DO NOT COMMENT END OF FOLLOWING LINE:
 \gdef\getp@riphlines{\bgroup\inperiphtrue\codesforperiphgr@b\let\p@riphlines\empty\let\getp@riphline\g@tp@riphline\everyeof{\relax
 \noexpand} \getp@riphline}%
@@ -1432,9 +1432,11 @@
 \gdef\n@wperiph{\expandafter\newperiphb\p@riphtst\E}%
 %Code to check periph sections line by line until the next periph section or end of file. Slash is made inactive
 \catcode`\~=0 \catcode`\\=12 
-  ~gdef~testp@riph #1{~expandafter~def~expandafter~p@riphtst~expandafter{#1}%
+  ~gdef~@@testendperiph{\zendperiph}%
+  ~gdef~testp@riph #1{~edef~t@mp{#1}~ifx~t@mp~@@testendperiph~inperiphfalse~fi
+    ~expandafter~def~expandafter~p@riphtst~expandafter{#1}%
     ~ifx~p@riphtst~relax~inperiphfalse~fi%
-    ~ifinperiph~expandafter~@testp@riph#1\periph~E~else~let~getp@riphline~endperiph~E~fi}%
+    ~ifinperiph~expandafter~@testp@riph#1\periph~E~else~let~getp@riphline~endp@riph~E~fi}%
 {~catcode13=12 %
   ~gdef~@testp@riph #1\periph#2~E{% NOTE that line feeds are not spaces any more! Comment them!
     ~def~tstb{#1}~ifx~tstb~empty%
@@ -1443,7 +1445,7 @@
     ~else%
        ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~n@wline~fi~p@riphtst}%
     ~fi}% DO NOT COMMENT THE END OF THE NEXT LINE!
-  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~n@wline~fi #1}~endperiph ~periph #2
+  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~n@wline~fi #1}~endp@riph ~periph #2
 }%
 }
 ~catcode`\=0 
@@ -1451,6 +1453,7 @@
 
 \def\StorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\relax}
 \def\NoStorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\undefined} %A thing let to undefined does not ifcsname
+\def\KeepPeriph#1{\x@\global\x@\let\csname keepperiph-#1\endcsname\relax}
 
 \StorePeriph{intbible}
 \StorePeriph{intnt}
@@ -1467,20 +1470,33 @@
 \StorePeriph{spine}
 
 
-\def\endperiph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}}
+\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}\ifcsname keepperiph-\periphattr@b\endcsname\else\global\keeptriggerfalse\fi}\everyeof{}}
+\def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{periph}\global\let\periph@@@\empty}
+
+\newif\ifStorePeriph\StorePeriphtrue
 
 \def\@@@periph #1|#2|#3\E{%
   \def\tmp{#2}%
   \unset@ttribs
-  \ifx\tmp\empty\else\let\@ttributes\tmp
+  \def\thisdefault@ttrkey{id}%
+  \ifx\tmp\empty
+    \let\attr@b\empty
+  \else\let\@ttributes\tmp
     \parse@ttribs{\@ttributes}%
     %\let\d@\apply@attr@specials
     %\x@\cstackdown \attribsus@d,\E
+    \get@ttribute{id}%
+    \ifx\attr@b\relax
+      \let\attr@b\empty
+    \fi
   \fi
-  \get@ttribute{id}%
   \global\let\periph@@@\attr@b
-  \ifcsname storeperiph-\attr@b\endcsname
-    \tracingassigns=1
+  \tempfalse
+  \ifStorePeriph
+    \ifcsname storeperiph-\attr@b\endcsname \temptrue\fi
+  \fi
+  \iftemp
+    %\tracingassigns=1
     \let\n@xt\getp@riphlines
   \else 
     \egroup

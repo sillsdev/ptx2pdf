@@ -254,7 +254,7 @@
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
   \cl@singhooks{end}{\thismil@stone}%
-  \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@trrtibs)
+  \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@ttribs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
   \else
@@ -291,11 +291,20 @@
   %\tracingmacros=1
   %\tracingassigns=1
   \ifx\attr@b\relax\else
-    \trace{m}{Checking for  ms:\thismil@stone=\attr@b}%
     \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+    \trace{m}{Checking for  \@@tmp}%
+    \keeptriggertrue %By default keep ms: type triggers.
     \ifcsname \@@tmp\endcsname
       \trace{m}{Running \@@tmp}%
-      \csname \@@tmp\endcsname
+      \bgroup
+      \csname \@@tmp\endcsname 
+      \egroup
+      \ifkeeptrigger\else 
+        \trace{m}{Destroying \@@tmp HERE}%
+        \x@\global\x@\let\csname \@@tmp\endcsname\undefined
+      \fi
+    \else
+      \trace{m}{No \@@tmp defined}%
   \fi\fi
   %\tracingassigns=0
   %\tracingmacros=0
@@ -373,7 +382,7 @@
 %-csty_milestone
 \def\attrid{}
 \notlocation{zvar}
-\notlocation{zuseperiph}
+%\notlocation{zuseperiph}
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
 \def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}

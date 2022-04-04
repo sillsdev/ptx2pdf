@@ -15,27 +15,28 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
     -  [**2.2** Crop Marks](#ptx2pdf-MacroSetupParameters-CropMarks)
     -  [**2.3** Margins](#ptx2pdf-MacroSetupParameters-Margins)
     -  [**2.4** Columns](#ptx2pdf-MacroSetupParameters-Columns)
--  [**3** Fonts](#ptx2pdf-MacroSetupParameters-Fonts)
-    -  [**3.1** Faces](#ptx2pdf-MacroSetupParameters-Faces)
--  [**4** Text Spacing](#ptx2pdf-MacroSetupParameters-TextSpacing)
--  [**5** Chapters & Verses](#ptx2pdf-MacroSetupParameters-Chapters&Verses)
--  [**6** Running Header/Footer](#ptx2pdf-MacroSetupParameters-RunningHeader/Footer)
-    -  [**6.1** Header/Footer Position](#ptx2pdf-MacroSetupParameters-Header/FooterPosition)
-    -  [**6.2** Odd Header](#ptx2pdf-MacroSetupParameters-OddHeader)
-    -  [**6.3** Even Header](#ptx2pdf-MacroSetupParameters-EvenHeader)
-    -  [**6.4** Title-page Header](#ptx2pdf-MacroSetupParameters-TitlepageHeader)
-    -  [**6.5** Front-/Back-matter Header](#ptx2pdf-MacroSetupParameters-NoVpage)
-    -  [**6.6** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
-    -  [**6.8** Header Contents](#ptx2pdf-MacroSetupParameters-HeaderContent)
-    -  [**6.7** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
--  [**7** Other](#ptx2pdf-MacroSetupParameters-Other)
--  [**8** Notes](#ptx2pdf-MacroSetupParameters-Notes)
--  [**9** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
--  [**10** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
--  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
--  [**12** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
--  [**12** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
--  [**13** PageNumbers](#ptx2pdf-PageNumbers)
+-  [**3** Peripherals](#ptx2pdf-Periph)
+-  [**4** Fonts](#ptx2pdf-MacroSetupParameters-Fonts)
+    -  [**4.1** Faces](#ptx2pdf-MacroSetupParameters-Faces)
+-  [**5** Text Spacing](#ptx2pdf-MacroSetupParameters-TextSpacing)
+-  [**6** Chapters & Verses](#ptx2pdf-MacroSetupParameters-Chapters&Verses)
+-  [**7** Running Header/Footer](#ptx2pdf-MacroSetupParameters-RunningHeader/Footer)
+    -  [**7.1** Header/Footer Position](#ptx2pdf-MacroSetupParameters-Header/FooterPosition)
+    -  [**7.2** Odd Header](#ptx2pdf-MacroSetupParameters-OddHeader)
+    -  [**7.3** Even Header](#ptx2pdf-MacroSetupParameters-EvenHeader)
+    -  [**7.4** Title-page Header](#ptx2pdf-MacroSetupParameters-TitlepageHeader)
+    -  [**7.5** Front-/Back-matter Header](#ptx2pdf-MacroSetupParameters-NoVpage)
+    -  [**7.6** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
+    -  [**7.8** Header Contents](#ptx2pdf-MacroSetupParameters-HeaderContent)
+    -  [**7.7** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
+-  [**8** Other](#ptx2pdf-MacroSetupParameters-Other)
+-  [**9** Notes](#ptx2pdf-MacroSetupParameters-Notes)
+-  [**10** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
+-  [**11** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
+-  [**12** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
+-  [**13** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
+-  [**14** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
+-  [**15** PageNumbers](#ptx2pdf-PageNumbers)
 
    [**A.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
@@ -114,6 +115,38 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 *   \ColumnGutterRule```true``` – Place a vertical line between the columns in the column gutter? (default = false)
 
 </a>
+## <a name="ptx2pdf-Periph"> Peripheral mater</a>
+Assuming that the perpheral matter has been marked with a USFM-3 id="...", thus:
+```
+\periph Introduction to OT|id="intot"
+```
+Then the ptx2pdf code now automatically stores certain peripheral divisions for
+later use. The material can be retrieved by e.g. `\zgetperiph|intot\*`.
+ The divisions that are stored by default are:
+intbible, intnt, intot, intpent, inthistory, intpoetry, intprophesy, intdc, intgospels, intepistles, 
+intletters, cover, spine. Control of which divisions are stored or not is via the configuration macros:
+```
+\StorePeriph{promo}
+\NoStorePeriph{intbible}
+\StorePeriphtrue
+\StorePeriphfalse
+```
+
+(If `\StorePeriphfalse` is declared, then no storing of peripherals will occur,
+and the assumption is that they have been (re-)positioned correctly).
+
+Stored periph items are assumed to be single use, and are tidied away (deleted)
+unless otherwise instructed, in order to save memory.  `\KeepPeriph{intbible}`
+instructs the code to keep the 'intbible' periphery for re-use.  Irrespective
+of a periphery division being stored or not, material within a
+periph division may be styled with the prefix `periph:id|` , e.g. 
+```tex
+\Marker periph:intbible|p
+```
+See [styling.md](styling.md) for more details of how more complex styling may be applied.
+
+**NOTE** that all of the above refers to the behaviour of the TeX macros. The python
+PTXprint code which pre-process the code may take different actions.
 
 ## <a name="ptx2pdf-MacroSetupParameters-Columns"></a><a name="ptx2pdf-MacroSetupParameters-Fonts">Fonts</a>
 

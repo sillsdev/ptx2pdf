@@ -92,6 +92,23 @@ Special styling for when an angel says the name of the LORD, in a standard `\p`-
 * `\Marker cat:special|Jim|qt-s+p` Extra special styling for 'THIS BIT' in the example below:
 `\p\cat special\cat* Jim said <<\qt-s|Jim\*THIS BIT\qt-e\*>>`
 
+### Styling based on book and/or periph
+There are times when a certain book (e.g. the glossary) or a certain periph
+division (e.g. the imprimatur) should be styled differently. These prefix the
+style stack in an analagous manner to categories. The codes for these are
+`id:GEN|` and `periph:title|` repsectively.
+If the USFM is:
+```tex
+\id FRT
+\periph Promotional Page|promo
+\ip \cat Main\cat*  The \bk Holy Bible\bk*  is the Word of God, a valuable part
+of the life of any Christian's life...
+```
+Then not leaving anything unspecified, the book name `Holy Bible` is formatted:
+```
+\Marker id:FRT|periph:promo|cat:Main|bk+ip
+``` 
+
 ### Style stack boundaries
 As paragraph styling does not affect a footnote, the stylestack for inside a footnote ends at the `\f` or `\x`
 Similarly, the style-stack in force outside a sidebar does not affect anything inside.
