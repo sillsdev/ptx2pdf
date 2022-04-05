@@ -84,7 +84,7 @@ The relevant stylesheet entry to use the ornaments package is
 This is true for rules and for sidebars. 
 
 ## The Ornament Catalogue
-See [OrnamentsCatalogue.pdf](here).
+See [OrnamentsCatalogue.pdf](OrnamentsCatalogue.pdf).
 
 ## Configuring a border for a sidebar
 ### Ornament specification
