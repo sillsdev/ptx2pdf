@@ -14,11 +14,13 @@ bkranges = {'ot':   ([b for b, i in _allbkmap.items() if 1  < i < 41], True),
             'post': ([b for b, i in _allbkmap.items() if 87 < i], False),
             'heb':  (_hebOrder, True)}
 
-def sortToC(toc, booklist):
-    if len(booklist) < 2:
-        return booklist
-    bknums = {k:i for i,k in enumerate(booklist[0])}
-    return sorted(toc, key=(lambda b: refKey(b[0])) if booklist[1] else (lambda b: b[-1]))
+def sortToC(toc, bksorted):
+    if bksorted:
+        bksrt = lambda b: refKey(b[0])
+    else:
+        bksrt = lambda b: int(b[-1])
+    # bknums = {k:i for i,k in enumerate(booklist)}
+    return sorted(toc, key=bksrt)
 
 def generateTex(alltocs):
     res = []
@@ -53,7 +55,7 @@ class TOC:
         res = {}
         for s in list(self.sides) + [""]:
             tocentries = [t for t in self.tocentries if s == "" or t[0][3:] == s]
-            res['main' + s] = sortToC(tocentries, booklist)
+            res['main' + s] = sortToC(tocentries, False)  # sort in page order
             for k, r in bkranges.items():
                 ttoc = []
                 for e in tocentries:
@@ -62,7 +64,7 @@ class TOC:
                             ttoc.append(e)
                     except ValueError:
                         pass
-                res[k+s] = sortToC(ttoc, booklist)
+                res[k+s] = sortToC(ttoc, r[1])
             for i in range(3):
                 ttoc = []
                 k = "sort"+chr(97+i)+s
