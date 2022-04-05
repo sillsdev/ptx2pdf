@@ -54,26 +54,31 @@
 \def\setorn@scale{%
   \tmptoks{}%
   \pdf@yunit=1bp
-  \ifx\ornamentwidth\empty
-    \tmptoks{\pdf@xunit=\pdf@yunit\relax
-    \ifx\ornamentmaxwidth\empty\else
-      \trace{orn}{Applying x-limit \ornamentmaxwidth}%
-      \ifdim \@pgfornamentX\pdf@xunit > \ornamentmaxwidth
-	\pdf@xunit=\dimexpr \ornamentmaxwidth / \@pgfornamentX\relax
-	\pdf@yunit=\pdf@xunit
+  \ifx\undefined\@pgfornamentY
+    \message{setorn@scale: Setting a scale for undefined object!}%
+    \pdf@yunit=1bp
+  \else
+    \ifx\ornamentwidth\empty
+      \tmptoks{\pdf@xunit=\pdf@yunit\relax
+      \ifx\ornamentmaxwidth\empty\else
+        \trace{orn}{Applying x-limit \ornamentmaxwidth}%
+        \ifdim \@pgfornamentX\pdf@xunit > \ornamentmaxwidth
+          \pdf@xunit=\dimexpr \ornamentmaxwidth / \@pgfornamentX\relax
+          \pdf@yunit=\pdf@xunit
+        \fi
       \fi
+      }%
+    \else
+      \pdf@xunit=\dimexpr \ornamentwidth / \@pgfornamentX\relax
     \fi
-    }%
-  \else
-    \pdf@xunit=\dimexpr \ornamentwidth / \@pgfornamentX\relax
+    \ifx\ornamentheight\empty
+      \x@\tmptoks\x@{\the\tmptoks\pdf@yunit=\pdf@xunit}%
+    \else
+        \pdf@yunit=\dimexpr \ornamentheight / \@pgfornamentY\relax
+    \fi
+    \the\tmptoks
+    \trace{orn}{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
   \fi
-  \ifx\ornamentheight\empty
-    \x@\tmptoks\x@{\the\tmptoks\pdf@yunit=\pdf@xunit}%
-  \else
-    \pdf@yunit=\dimexpr \ornamentheight / \@pgfornamentY\relax
-  \fi
-  \the\tmptoks
-  \trace{orn}{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
 }
 
 \def\check@orn@dot#1.#2.#3\E{%
@@ -1031,6 +1036,7 @@
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
   \fi
+  \getsbp@ram{borderstyleextra}\ifx\cp@ram\relax\else\x@\SwitchOrnamentsFamily\x@{\cp@ram}\fi
   \getsbp@ram{borderpatterntop}\ifx\cp@ram\relax\edef\patternT{\DefaultOrnament||-}\else\let\patternT\cp@ram\fi
   \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
@@ -1048,6 +1054,11 @@
     \def\p@ttern{88||-}%
   \else
     \let\p@ttern\p@ram
+  \fi
+  \let\oldOrnamentsFamily\OrnamentsFamily
+  \getp@ram{borderstyleextra}{zrule}{\styst@k}%
+  \ifx\p@ram\relax\else 
+    \x@\SwitchOrnamentsFamily\x@{\p@ram}%
   \fi
   \getp@ram{borderlinewidth}{zrule}{\styst@k}%
   \ifx\p@ram\relax
@@ -1087,6 +1098,10 @@
     }%
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
   \egroup
+  \ifx\oldOrnamentsFamily\OrnamentsFamily\else
+    \trace{m}{Restoring \oldOrnamentsFamily (from \OrnamentsFamily)}%
+    \SwitchOrnamentsFamily{\oldOrnamentsFamily}%
+  \fi
 }
 \def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}

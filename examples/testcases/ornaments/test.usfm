@@ -3,8 +3,8 @@
 \mt Ornaments Demonstration File
 \c 1
 \s This is demonstration file 
-\p \bd
-\v 1 See below for a complete(?) catalogue of ornaments! \bd*
+\p 
+\v 1 \bd See below for a complete(?) catalogue of ornaments! \bd*
 
 \p And that was a p \nd break.
 \qt-s | foo \*
@@ -74,15 +74,15 @@ This esb should be in a cut-out, a line below 'possimus'. It
 has a pale blue background, an orange border just inside the edge
 of the background, and a pdf image as a
 'watermark' which, because it has no inherent
-colour, we can pick the colour of in
+colour\f + \cat class\cat* \fk Inherent colour\fk* \ft Sadly, colour-unspecified PDFs are quite hard to do with most drawing packages. This one was created from LaTeX. (This note from a sidebar has a category)\f*, we can pick the colour of in
 the style sheet.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 \p 
-\v 7 There are no more esbs\f + \cat class\cat* \ft This note has a category\f*
- in this book. However many we have on one page is sufficient.
+\v 7 There are no more esbs
+ in this book. 
 \v 8 Dolore doloribus sunt aut libero expedita dolorem qui. Quod atque doloribus ab. Et aperiam vel placeat a aut architecto voluptas id. Quo illo quos saepe eum quia. Earum laudantium recusandae dicta itaque.
 \v 9 Quasi ad in ex nostrum. Repellendus corporis facere necessitatibus recusandae tempore. Tenetur optio et aut fugit ut.
 
@@ -144,8 +144,8 @@ formatting.
 
 \s1 The default ornaments (vectorian)
 \p
-\rem \testornamentsv
+\testornamentsv
 
 \s1 pgfhan ornaments
 \p
-\rem \testornamentsh
+\testornamentsh

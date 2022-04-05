@@ -23,16 +23,19 @@ the traditional patterns of the Han style using the same mechanism.
 
 Adding alternative graphical elements is also possible. Each
 'ornament' resides in its own file, (but with dimensions defined separately).
-The images are loaded on use and transcribed (as vector drawing) into the PDF
+The images are loaded on use and transcribed (as vector drawings) into the PDF
 file. 
 
 The stroke colour, stroke-width and fill colour may be selected at load-time.
 The current code provides for borders arround sidebars, with the parameters
 described within the style sheet.
+
+PTXprint now includes the ornaments from version 1.2 of the package.
+
 #### Locally defined ornaments
 Simple lines and other features can easily be hand-coded, using the same
 mechanisms as above. For future-compatability these have been given negative
-numbers.  (see section on additional ornaments, below).
+numbers.  (See section on additional ornaments, below).
 
 #### Border or dingbat fonts
 There are two mechanisms to access font-based border elements. Either:
@@ -56,16 +59,12 @@ hopefully provide a pleasing result, no matter what the final size of the
 side-bar is.  Repeated elements can have matching or dissimilar counts.
 Counts determined from the top of the box can be re-used by other edges.
 
-## Installation
-It is necessary to install the LaTeX package, but there is no requirement 
-to install any of its dependencies for this task.
-[https://ctan.org/pkg/pgfornament](https://ctan.org/pkg/pgfornament)
-
 ## Using the module
-At present ptxprint has no way to select plugins, not even on the advanced tab.
-For the plugin to function, it must be loaded manually, and until some bugs 
-are worked out with auto-loading, it must be loaded before style files are
-loaded. The ptxprint-premods.tex file should include the line:
+At present the PTXprint user-interface has no way to select plugins, not even
+on the advanced tab.  For the plugin to function, it must be loaded manually,
+and until some bugs are worked out with auto-loading, it must be loaded before
+any style files are loaded. The ptxprint-premods.tex file should include the
+line:
 ```
 \input ornaments
 ```
@@ -80,9 +79,12 @@ ptxprint
 ## Specifying that a border or sidebar should use ornaments
 The relevant stylesheet entry to use the ornaments package is
 ```
-\Borderstyle ornaments
+\BorderStyle ornaments
 ```
-This is true for rules and for sidebars.
+This is true for rules and for sidebars. 
+
+## The Ornament Catalogue
+See [OrnamentsCatalogue.pdf](here).
 
 ## Configuring a border for a sidebar
 ### Ornament specification
@@ -115,7 +117,7 @@ font named by `\StringOrnamentFont`.
  - `L` 90° rotation anticlockwise, then mirror (up becomes Left, left becomes top)
  - `R` 90° rotation clockise, then mirror (up becomes Right, right becomes top)
 
-#### Stretching or repeating
+#### Stretching and/or repeating
  - `x` use `\xleaders` to fill the space.
  - `-` Stretch the ornament.
 
@@ -128,7 +130,7 @@ font named by `\StringOrnamentFont`.
   - `"A`	Repeat A times, using the same range for A as was last given (ditto marks)
   - `=A`	Repeat A times, don't adjust A from previous sides.
 
-If conflicting definitions of the range are given, then the last range defined
+If conflicting definitions of the range are given, then the **last range defined**
 will take priority. Variables with *upper* case request a simple repetition,
 variables with *lower* case indicate that the ornament is allowed to stretch 
 as well as repeat.
@@ -147,9 +149,12 @@ from the centre, thus the corner pieces (which must be inculded in the top and b
 patterns (and are often set with a scaling of 1.5-2.5), extend into the edges.
 
 ##### Worked example
-E.g. If there are 4 ornaments in use (1,2,3,4), having natural lengths of 
-10pt, 13pt, 11pt and 15pt respectively, and the pattern elements are (shown
-here on separate lines and indented for clarity):
+Let us suppose that an ornamental rule border should be made of 4 ornaments,
+(1,2,3,4), having natural lengths of 10pt, 13pt, 11pt and 15pt respectively.
+Further, it has been decided that the rule should be symmetrical, and elements
+1 and 3 should occur an equal number of times. The user writes the pattern below
+(shown here on separate lines and indented, purely for clarity, in reality it should be 
+a simple comma-separated list):
 ```
 1||*A
  2||+B
@@ -185,7 +190,7 @@ If a border of 158 points is requested:
  0 | 6 | 1 | 	Yes	| -12pt
 
 
-Although the combination (0,6,0) only has 2pt of stretch, the lack of
+Although the combination (0,6,0) only has 2pt of stretch required, the lack of
 stretchiness means that the combination (1,4,1) wins. If combination (0,6,0)
 were chosen, then there would be 2pt of whitespace in the border/rule, which is 
 highly undesirable. 
@@ -235,7 +240,7 @@ In the style sheet: ```\Marker textborder```
 or ```\Marker id:MAT|textborder ```
  borders are not put on title sections or on negative page numbers.
 
-## Using the pgfhan ornaments
+## Using the pgfhan ornaments througout the document
 The pgfhan ornament set may be selected by adding this line to
 `ptx-premods.tex` file (after `ornaments.tex` has been loaded). 
  ```
@@ -243,11 +248,18 @@ The pgfhan ornament set may be selected by adding this line to
 ```
 
 ## Using both ornament sets in the same document
-In the situation that some parts of the document need one family of ornaments and other parts need another,
-that switching can be done using this command (in one of the `.tex` file):
+In the situation that some parts of the document need one family of ornaments
+and other parts need another, that switching can be done using this command (in
+one of the `.tex` file):
 ```
 \SwitchOrnamentsFamily{pgfhan}
 ```
+Further, the stylesheet can include:
+```
+\BorderStyleExtra pgfhan
+```
+for a border or zrule, which calls the above.
+
 This command attempts to load the relevant dimension set for the specified
 family. If it is successful, then the `\OrnamentsFamily` value will be altered.
 Subsequent calls with the same family specified will not bother to re-load the
@@ -257,10 +269,10 @@ original family will remain selected.
 
 Note that while the caching of settings mentioned above means that the command
 can be used to switch to a previously-loaded ornament family by a hook or
-milestone, it *cannot* be used to perform the initial loading without reassigning
-all relevant catcodes. Thus if such switching is expected, the `.tex` file 
-that sets up the hooks should switch to all expected families in turn.
-
+milestone or stylesheet, it *cannot* be used to perform the initial loading
+without reassigning all relevant catcodes, which it does not do at present.
+Thus if such switching is expected, the `.tex` file that sets up the hooks
+should switch to all expected families in turn.
 
 ## Additional ornaments
 These ornaments have been defined in addition to the ornaments provided by the LaTeX package:
@@ -319,6 +331,13 @@ Code elements recognised are:
  - `\s`	Fill and stroke (or just stroke if there's no fill colour)
  - `\i` Clip to path
  
+## Installation of updated ornaments
+PTXprint now includes the ornaments from version 1.2 of the package. The full
+package is here:
+[https://ctan.org/pkg/pgfornament](https://ctan.org/pkg/pgfornament). No
+dependencies are needed, indeed much of the package itself is irrelevant for use with these macros,
+as the ornaments.tex plugin replicates the needed functions.  Only files
+`*.pgf` and `*.code.tex` are required.
 
 ## Debugging options
 If the flag `\boxorntrue` is set (in the .tex file or via a hook), then 
