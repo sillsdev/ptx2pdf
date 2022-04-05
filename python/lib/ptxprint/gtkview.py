@@ -19,7 +19,7 @@ from gi.repository import GtkSource
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
-from ptxprint.view import ViewModel, Path, VersionStr
+from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir
 from ptxprint.ptsettings import ParatextSettings
@@ -369,13 +369,14 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True):
     if secondary:
         logger.error(secondary)
     if copy2clip:
+        if secondary is not None:
+            secondary += _("\nPTXprint Version {}").format(GitVersionStr)
         lines = [title or ""]
         if text is not None and len(text):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _("PTXprint Version {}\nPlease send to:").format(VersionStr) \
-          + " ptxprint_support@sil.org\n\n{}".format("\n\n".join(lines))
+        s = _("Please send to: ptxprint_support@sil.org") + "\n\n{}".format("\n\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
