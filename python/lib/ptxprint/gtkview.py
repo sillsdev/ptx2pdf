@@ -1400,7 +1400,7 @@ class GtkViewModel(ViewModel):
         if self.bookNoUpdate == True:
             return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
-        self.onViewerChangePage(None,None,pg)
+        self.onViewerChangePage(None, None, pg, forced=True)
 
     def onBookSelectorChange(self, btn):
         status = self.sensiVisible("r_book_multiple")
@@ -1741,6 +1741,7 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pgnum][0]
         if not forced and buf.get_char_count():
             return
+        logger.debug(f"Viewing({pgid[7:]} {bk} -> {fpath}")
         if os.path.exists(fpath):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
