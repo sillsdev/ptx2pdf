@@ -4,7 +4,8 @@ from ptxprint.texmodel import ModelMap, TexModel, Borders
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
-                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path
+                            global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
+                            get_gitver
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
@@ -24,9 +25,13 @@ import json
 from shutil import copyfile, copytree, move
 
 VersionStr = "2.1.13"
+GitVersionStr = "generated"
 ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
+
+if GitVersionStr == "generated":
+    GitVersionStr = get_gitver()
 
 FontModelMap = {
     "fontregular": ("bl_fontR", None),

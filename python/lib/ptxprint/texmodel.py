@@ -509,8 +509,9 @@ class TexModel:
         # '|': 'pipe'
 
     def __init__(self, printer, path, ptsettings, prjid=None, inArchive=False):
-        from ptxprint.view import VersionStr
+        from ptxprint.view import VersionStr, GitVersionStr
         self.VersionStr = VersionStr
+        self.GitVersionStr = GitVersionStr
         self.printer = printer
         self.ptsettings = ptsettings
         self.inArchive = inArchive
@@ -558,6 +559,7 @@ class TexModel:
         self.dict['/ptxrpath'] = rel(self.dict['/ptxpath'], docdir)
         self.dict['/cfgrpath'] = rel(cpath, docdir)
         self.dict['/ptxprint_version'] = self.VersionStr
+        self.dict['/ptxprint_gitversion'] = self.GitVersionStr
         self.processHdrFtr(self.printer)
         # sort out caseless figures folder. This is a hack
         for p in ("Figures", "figures"):

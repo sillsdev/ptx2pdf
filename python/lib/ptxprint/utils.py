@@ -5,6 +5,7 @@ import xml.etree.ElementTree as et
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
+from subprocess import check_output
 
 DataVersion = 2
 
@@ -137,7 +138,6 @@ def coltoonemax(s):
     except (ValueError, TypeError):
         return [0.8, 0.8, 0.8]
         
-
 def textocol(s):
     if s is None:
         vals = [0, 0, 0]
@@ -279,6 +279,10 @@ def get_ptsettings():
     else:
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
+
+def get_gitver():
+    res = check_output(["git", "describe", "--long"]).decode("utf-8", errors="ignore")
+    return res.strip()
 
 headermappings = {
     "First Reference":           r"\firstref",

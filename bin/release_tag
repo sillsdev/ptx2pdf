@@ -47,6 +47,10 @@ def get_branches():
             res[name] = upstream
     return res
 
+def get_gitver()
+    txt = check_output(["git", "describe"]).decode("utf-8", errors="ignore")
+    return txt.strip()
+
 parser = argparse.ArgumentParser()
 parser.add_argument("version")
 parser.add_argument("-a", action="store_true")
@@ -68,6 +72,9 @@ git("commit", "-a", "-m", "Releasing "+args.version)
 git("tag", tagopt, "-m", "Tagging "+args.version, args.version)
 git("push", "--tag")
 git("push")
+
+gitversion = get_gitver()
+replacefile("python/lib/ptxprint/view.py", r'(GitVersionStr = ").*?"', r'\g<1>'+gitversion+'"')
 
 if 'origin/packaging' not in branches.values():
     git("checkout", "-t", "-b", "packaging", "origin/packaging")
