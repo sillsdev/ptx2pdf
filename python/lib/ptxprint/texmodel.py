@@ -44,6 +44,7 @@ ModelMap = {
     "config/notes":             ("t_configNotes", lambda w,v: v or ""),
     "config/pwd":               ("t_invisiblePassword", lambda w,v: v or ""),
     "config/version":           ("_version", None),
+    "config/gitversion":        ("_gitversion", None),
     "config/name":              ("_cfgid", None),
 
     "project/id":               ("_prjid", None),
