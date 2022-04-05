@@ -46,6 +46,7 @@ ModelMap = {
     "config/version":           ("_version", None),
     "config/gitversion":        ("_gitversion", None),
     "config/name":              ("_cfgid", None),
+    "config/filterpics":        ("c_filterPicList", None),
 
     "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
