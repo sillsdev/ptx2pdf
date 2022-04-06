@@ -297,10 +297,10 @@
     \ifcsname \@@tmp\endcsname
       \trace{m}{Running \@@tmp}%
       \bgroup
-      \csname \@@tmp\endcsname 
+       \csname \@@tmp\endcsname 
       \egroup
       \ifkeeptrigger\else 
-        \trace{m}{Destroying \@@tmp HERE}%
+        \trace{m}{Destroying \@@tmp}%
         \x@\global\x@\let\csname \@@tmp\endcsname\undefined
       \fi
     \else
