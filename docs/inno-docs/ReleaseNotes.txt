@@ -29,6 +29,8 @@ Bug fixes and improvements in 2.1.13 (2 Apr 2022)
   
   * Introduced spacebefore/spaceafter for figs and sidebars (not yet in UI)
   
+  * Handle unsupported \fp marker in footnotes (insert ' --- ' instead)
+  
 Bug fixes and improvements in 2.1.12 (29 Mar 2022)
 
   * Add debug logging for style editing (known issue still lurking here!)
