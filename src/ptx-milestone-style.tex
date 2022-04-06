@@ -295,7 +295,7 @@
     \trace{m}{Checking for  \@@tmp}%
     \keeptriggertrue %By default keep ms: type triggers.
     \ifcsname \@@tmp\endcsname
-      \trace{m}{Running \@@tmp}%
+      \trace{mx}{Running \@@tmp (\x@\meaning\csname\@@tmp\endcsname)}%
       \bgroup
        \csname \@@tmp\endcsname 
       \egroup
@@ -385,7 +385,7 @@
 %\notlocation{zuseperiph}
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
 \def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
-\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
+\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{ #2}}
 \x@\def\csname start-zrule\endcsname{%
   \endgraf
   \bgroup
