@@ -198,7 +198,6 @@
 \def\addt@tmptok#1#2{\x@\tmpt@ks\x@{\the\tmpt@ks \csname #1\endcsname #2}}%
 \def\gentoche@dfoot{\let\toch@ad\empty\let\tocf@@t\empty
   \tmpt@ks{\tr }%
-  \tracingassigns=1
   \tempfalse
   \get@ttribute{h1}\ifx\relax\attr@b\let\attr@b\empty\else\temptrue\edef\tmp{{th1}{\attr@b}}\x@\addt@tmptok\tmp\fi
   \get@ttribute{h2}\ifx\relax\attr@b\let\attr@b\empty\else\temptrue\edef\tmp{{th2}{\attr@b}}\x@\addt@tmptok\tmp\fi
