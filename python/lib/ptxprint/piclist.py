@@ -502,7 +502,7 @@ class PicInfo(dict):
             if exclusive:
                 search = [(srchdir, [], os.listdir(srchdir))]
             else:
-                search = os.walk(srchdir)
+                search = os.walk(srchdir, followlinks=True, topdown=True)
             for subdir, dirs, files in search:
                 for f in files:
                     doti = f.rfind(".")

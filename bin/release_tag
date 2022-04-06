@@ -7,6 +7,7 @@ from datetime import datetime
 
 def _replacefile(file, match, replace, dryrun=False):
     if dryrun:
+        print(f"{file}: {match} -> {replace}")
         return
     with open(file, encoding="utf-8") as inf:
         lines = [re.sub(match, replace, l) for l in inf.readlines()]
