@@ -889,7 +889,7 @@
       \d@figureCut 0%
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
-    \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
+    \ifvoid0\else\message{Placement for image \the\im@gecount (at \c@rref) could not be understood. Image Lost!}\fi
    \fi
  \fi% end \ifIncludeFigures
 }
