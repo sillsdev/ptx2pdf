@@ -416,7 +416,7 @@
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
   \ifhasb@rder
-    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hss\vss}%Placeholder
+    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
     \dp\b@rderbox=\dp#1\relax
     %Spacing for the content-box:
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
@@ -439,6 +439,7 @@
     \edef\b@xminadj{0pt}%
     %\edef\b@xadj{\the\dimexpr -\fb@vpadding\relax}%
   \fi
+  \trace{eb}{b@rderbox: \the\ht\b@rderbox+\the\dp\b@rderbox x\the\wd\b@rderbox}%
 }
 \def\mkb@rder{%Put a simple border around a box
   \ifx\b@drcol\relax
@@ -449,13 +450,13 @@
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drsides\relax
   \dimen1=0pt
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
-    \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
+    \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top \b@rderbox@width}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
     \hbox to \b@rderbox@width{%
-      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left}%
+      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left \the\dimen0+\the\dimen1}%
         \vrule width \b@drwidth pt  height \dimen0 depth \dimen1 
       \fi
     \hss
-      \ifx\b@drright\tr@e\trace{eb}{Drawing Border:right}%
+      \ifx\b@drright\tr@e\trace{eb}{Drawing Border:right \the\dimen0+\the\dimen1}%
         \vrule width \b@drwidth pt  height \dimen0 depth \dimen1
       \fi
     }\vss
@@ -467,7 +468,7 @@
 \def\doTextB@rder#1{%
   \ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
     \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
-      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1, \the\wd#1}%
+      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
       \bgroup 
         \def\sb@rmarker{textborder}%
         \S@tCat{\id@@@}%
