@@ -1,25 +1,26 @@
 PTXprint 2.1.14 Release Notes 
-6 April 2022
+7 April 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.1.14 (6 Apr 2022)
+Bug fixes and improvements in 2.1.15 (7 Apr 2022)
 
   * Fixed \cat in footnotes
   
-  * Put git version into cfg (Linux only)
+  * Put git version into config, and into PDF properties
   
   * Fixed book change not changing view+edit
   
   * Fixed save picture list filtering to config
   
-  * Get ptxprint version and sha in error messages people submit
+  * Put PTXprint version and SHA into the error messages people submit
   
   * Fixed Table of Contents ordering
   
   * Improved docs and control for ornaments
   
-  * Follow (symbolic) links in the figures folders
+  * Follow (symbolic) links in the figures folders 
+   (enabling multiple locations to be searched for the most appropriate image)
   
   * Added documentation for periph: and id: styling. 
     (mechanism for python to use for periph-based formatting)
