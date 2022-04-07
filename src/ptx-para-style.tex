@@ -1072,7 +1072,9 @@
   \trace{C}{raise@test: \id@@@\ifdiglot\c@rrdstat\fi.\ch@pter: #1 \c@rref ::\t@str@ise}}%
 
 \def\ptx@nb{%
-  \x@\unless\x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
+  \ifx\csname ch@pter\g@tdstat waiting\endcsname\relax
+    \MSG{nb ignored near \ifdiglot\dc@rref\else\c@rref\fi: not after chapter}%
+  \else
     \delay@test{chapter}%
     %\x@\let\x@\t@st\csname delay-\id@@@.\ch@pter\endcsname
     \ifx\t@std@lay\relax
@@ -1109,8 +1111,6 @@
      \add@pending{chapter}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
      \run@pending
     \fi
-  \else
-    \MSG{nb ignored near \ifdiglot\dc@rref\else\c@rref\fi: not after chapter}%
   \fi}
 
 \newbox\str@tbox

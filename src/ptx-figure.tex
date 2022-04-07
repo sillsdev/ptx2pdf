@@ -848,7 +848,14 @@
       \fi
     \fi
     \trace{g}{Picture now \the\ht0 \space into insert box \the\p@cins}%
-    \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
+    \ifinextended\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+      \ifdoingt@ble\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes}\else%
+        \ifhe@dings\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}\else
+          \let\@wrap\empty
+        \fi
+      \fi
+    \fi%
+    \@wrap\insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
       \headingtopspace=0pt%
@@ -858,7 +865,7 @@
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
       \pdfsavepos
       \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
-    }%
+    }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
 %+cfig_dofigure_6
   \else
