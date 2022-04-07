@@ -24,8 +24,8 @@ import datetime, time
 import json
 from shutil import copyfile, copytree, move
 
-VersionStr = "2.1.14"
-GitVersionStr = "2.1.14"
+VersionStr = "2.1.15"
+GitVersionStr = "2.1.14-2-ga19faab5"
 ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
