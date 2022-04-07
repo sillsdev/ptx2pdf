@@ -30,8 +30,9 @@ ConfigVersion = "2.07"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
-if GitVersionStr == "generated":
-    GitVersionStr = get_gitver(version=VersionStr)
+gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
+if os.path.exists(gitdir):
+    GitVersionStr = get_gitver(gitdir=gitdir, version=VersionStr)
 
 FontModelMap = {
     "fontregular": ("bl_fontR", None),

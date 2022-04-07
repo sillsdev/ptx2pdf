@@ -58,7 +58,7 @@ def get_branches():
     return res
 
 def get_gitver():
-    txt = check_output(["git", "describe"]).decode("utf-8", errors="ignore")
+    txt = check_output(["git", "describe", "--long"]).decode("utf-8", errors="ignore")
     return txt.strip()
 
 parser = argparse.ArgumentParser()
@@ -78,10 +78,12 @@ def git(*a, **kw):
 def dch(*a, **kw):
     _dch(*a, dryrun=args.noaction, **kw)
 
+gitversion = get_gitver()
 replacefile("setup.py", r'(version=").*?"', r'\g<1>'+args.version+'"')
 replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
 replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
-replacefile("python/lib/ptxprint/view.py", r'(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/view.py", r'^\s*(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/view.py", r'^\s*(GitVersionStr = ").*?"', r'\g<1>'+gitversion+'"')
 replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
 
 branches = get_branches()
@@ -97,8 +99,6 @@ else:
     git("checkout", "packaging")
 git("pull")
 dch(args.version)
-gitversion = get_gitver()
-replacefile("python/lib/ptxprint/view.py", r'(GitVersionStr = ").*?"', r'\g<1>'+gitversion+'"')
 git("commit", "-a", "-m", "Bumped release version to "+args.version)
 git("push")
 

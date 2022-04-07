@@ -280,12 +280,19 @@ def get_ptsettings():
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
 
-def get_gitver(version=None):
-    if sys.platform == "linux":
-        res = check_output(["git", "describe", "--long"]).decode("utf-8", errors="ignore")
-        return res.strip()
-    else:
-        return version
+def get_gitver(gitdir=None, version=None):
+    if gitdir is None:
+        gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
+        if not os.path.exists(gitdir):
+            return version
+    with open(os.path.join(gitdir, 'HEAD')) as inf:
+        l = inf.readline()
+        ref = l[l.index(":")+1:].strip()
+    with open(os.path.join(gitdir, *ref.split("/"))) as inf:
+        res = inf.readline().strip()[:8]
+    if version is not None:
+        res = f"{version}-g{res}"
+    return res
 
 headermappings = {
     "First Reference":           r"\firstref",
