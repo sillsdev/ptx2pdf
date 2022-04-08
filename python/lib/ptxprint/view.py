@@ -23,6 +23,7 @@ from shutil import rmtree
 import datetime, time
 import json
 from shutil import copyfile, copytree, move
+from difflib import Differ
 
 VersionStr = "2.1.15"
 GitVersionStr = "2.1.14-2-ga19faab5"
@@ -382,33 +383,119 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    def _copyConfig(self, oldcfg, newcfg, moving=False, newprj=None):
+    def applyConfig(self, oldcfg, newcfg, action=0, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
-        if os.path.exists(newp):
+        if action == 0 and os.path.exists(newp):
             return False
         self.triggervcs = True
-        os.makedirs(newp)
-        jobs = {k:k for k in('ptxprint-mods.sty', 'ptxprint.sty', 'ptxprint-mods.tex', "changes.txt",
-                             'ptxprint.cfg', 'FRTlocal.sfm', 'PicLists', 'AdjLists')}
+        os.makedirs(newp, exist_ok=True)
+        jobs = {'ptxprint.cfg': (self._copyfile, self._mergecfg),
+                'ptxprint.sty': (self._copyfile, self._mergesty),
+                'ptxprint-mods.sty': (self._copyfile, self._mergesty),
+                'ptxprint-mods.tex': (self._copyfile, self._mergetxt),
+                'changes.txt': (self._copyfile, self._mergetxt),
+                'FRTlocal.sfm': (self._copyfile, self._mergetxt),
+                'PicLists': (self._copydir, self._mergenothing),
+                'AdjLists': (self._copydir, self._mergenothing)}
         if newprj is not None:
             del jobs['AdjLists']
         else:
-            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = "{}-{}.piclist".format(self.prjid, newcfg)
-        for f, n in jobs.items():
+            jobs["{}-{}.piclist".format(self.prjid, oldcfg)] = (self._copyfile, self._mergenothing, "{}-{}.piclist".format(self.prjid, newcfg))
+        for f, a in jobs.items():
             srcp = os.path.join(oldp, f)
-            destp = os.path.join(newp, n)
+            destp = os.path.join(newp, a[2] if len(a) > 2 else f)
+            mergep = os.path.join(newp, 'base', a[2] if len(a) > 2 else f)
             if os.path.exists(srcp):
-                if moving:
-                    move(srcp, destp)
-                elif os.path.isdir(srcp):
-                    os.makedirs(destp, exist_ok=True)
-                    for p in os.listdir(srcp):
-                        op = p.replace(oldcfg, newcfg)
-                        copyfile(os.path.join(srcp, p), os.path.join(destp, op))
-                else:
-                    copyfile(srcp, destp)
+                a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj)
         return True
+
+    def _copyfile(self, srcp, destp, mergep, moving=False, **kw):
+        if moving:
+            move(srcp, destp)
+        else:
+            copyfile(srcp, destp)
+
+    def _copydir(self, srcp, destp, mergep, moving=False, oldcfg="", newcfg="", **kw):
+        if moving:
+            move(srcp, destp)
+        else:
+            os.makedirs(destp, exist_ok=True)
+            for p in os.listdir(srcp):
+                op = p.replace(oldcfg, newcfg)
+                copyfile(os.path.join(srcp, p), os.path.join(destp, op))
+
+    def _mergenothing(self, srcp, destp, mergep, **kw):
+        pass
+
+    def _mergeconfig(self, srcp, destp, mergep, **kw):
+        configs = []
+        for a in (destp, srcp, mergep):
+            config = configparser.ConfigParser()
+            with open(a, encoding="utf-8", errors="ignore") as inf:
+                config.read_file(inf)
+            configs.append(config)
+        (this, new, base) = configs
+        for sect in this.sections():
+            allopts = set(this.options(sect))
+            if base.has_section(sect):
+                allopts.update(base.options(sect))
+            if new.has_section(sect):
+                allopts.update(new.options(sect))
+            for opt in allopts:
+                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
+                        or config.get(sect, opt) != base.get(sect, opt)):
+                    continue
+                if new.has_option(sect, opt):
+                    this.set(sect, opt, new.get(sect, opt))
+        copyfile(srcp, mergep)
+        with open(destp, "w", encoding="utf-8") as outf:
+            this.write(outf)
+
+    def _mergesty(self, srcp, destp, mergep, oldcfg="", newcfg="", newprj=None, **kw):
+        srcse = StyleEditor(self)
+        srcse.load(self.getStyleSheets(oldcfg))
+        destse = StyleEditor(self)
+        destse.load(self.getStyleSheets(newcfg, prjid=newprj))
+        mergese = StyleEditor(self)
+        mergese.load(self.getStyleSheets(newcfg, prjid=newprj, subdir="base"))
+        destse.merge(mergese, srcse)
+        with open(destp, "w", encoding="utf-8") as outfh:
+            destse.output_difffile(outfh, inArchive=True)
+        copyfile(srcp, mergep)
+
+    def _mergetxt(self, srcp, destp, mergep, **kw):
+        lines = []
+        for a in (srcp, destp, mergep):
+            with open(a, encoding="utf-8"):
+                lines.append(list(a.readlines()))
+        this = [x for x in Differ().compare(lines[2], lines[0]) if x[0] != "?"]
+        other = [x for x in Differ().compare(lines[2], lines[1]) if x[0] != "?"]
+        ti = 0
+        oi = 0
+        res = []
+        while ti < len(this) and oi < len(other):
+            if this[ti] == other[oi] and this[ti][0] in " +":  # both normal or insert the same
+                res.append(this[ti][2:])
+                ti += 1
+                oi += 1
+            elif this[ti][2:] == other[oi][2:] and (this[ti][0] == "-" or other[oi][0] == "-"):
+                ti += 1
+                oi += 1
+            elif this[ti][0] == "+": # and other[oi][0] == " ": default clash = this wins
+                res.append(this[ti][2:])
+                ti += 1
+            elif other[oi][0] == "+" and this[ti][0] == " ":
+                res.append(other[oi][2:])
+                oi += 1
+        res.extend([x[2:] for x in this[ti:]])
+        res.extend([x[2:] for x in other[oi:]])
+        with open(destp, "w", encoding="utf-8"):
+            destp.write("".join(res))
+        copyfile(srcp, mergep)
+
+    def _copyConfig(self, oldcfg, newcfg, **kw):
+        return self.applyConfig(oldcfg, newcfg, action=0, **kw)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
         currprj = self.prjid
@@ -892,23 +979,6 @@ class ViewModel:
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
 
-    def mergeConfigs(self, base, new):
-        config = self.createConfig()
-        for sect in config.sections():
-            allopts = set(config.options(sect))
-            if base.has_section(sect):
-                allopts.update(base.options(sect))
-            if new.has_section(sect):
-                allopts.update(new.options(sect))
-            for opt in allopts:
-                if config.has_option(sect, opt) and (not base.has_option(sect, opt)
-                        or config.get(sect, opt) != base.get(sect, opt)):
-                    continue
-                if new.has_option(sect, opt):
-                    config.set(sect, opt, new.get(sect, opt))
-        self.loadConfig(config)
-
-
     def updateStyles(self, version):
         if version < 0:
             return
@@ -1150,24 +1220,26 @@ class ViewModel:
     def incrementProgress(self, val=None):
         pass
 
-    def getStyleSheets(self, cfgname=None, generated=False):
-        if self.prjid is None:
+    def getStyleSheets(self, cfgname=None, generated=False, prjid=None, subdir=""):
+        if prjid is None:
+            prjid = self.prjid
+        if prjid is None:
             return []
         res = []
         if cfgname is None:
             cfgname = self.configName()
-        cpath = self.configPath(cfgname=cfgname, makePath=False)
-        rcpath = self.configPath("", makePath=False)
+        cpath = self.configPath(cfgname=cfgname, makePath=False, prjid=prjid)
+        rcpath = self.configPath("", makePath=False, prjid=prjid)
         res.append(os.path.join(self.scriptsdir, "ptx2pdf.sty"))
         if self.get('c_useCustomSty'):
-            res.append(os.path.join(self.settings_dir, self.prjid, "custom.sty"))
+            res.append(os.path.join(self.settings_dir, prjid, "custom.sty"))
         if self.get('c_useModsSty'):
             for p in (cpath, rcpath):
-                fp = os.path.join(p, "ptxprint-mods.sty")
+                fp = os.path.join(p, subdir, "ptxprint-mods.sty")
                 if os.path.exists(fp):
                     res.append(fp)
                     break
-        res.append(os.path.join(cpath, "ptxprint.sty"))
+        res.append(os.path.join(cpath, subdir, "ptxprint.sty"))
         return res
 
     def _getArchiveFiles(self, books, prjid=None, cfgid=None):

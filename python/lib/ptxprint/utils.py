@@ -299,8 +299,8 @@ headermappings = {
     "Last Reference":            r"\lastref",
     "Reference Range":           r"\rangeref",
     "Page Number":               r"\pagenumber",
-    "Book (\h)":                 r"\book",
-    "Book Alt (\h1)":            r"\bookalt",
+    r"Book (\h)":                r"\book",
+    r"Book Alt (\h1)":           r"\bookalt",
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
     "-empty-":                   r"\empty"
@@ -312,8 +312,8 @@ def localhdrmappings():
         _("Last Reference"):            r"\lastref",
         _("Reference Range"):           r"\rangeref",
         _("Page Number"):               r"\pagenumber",
-        _("Book (\h)"):                 r"\book",
-        _("Book Alt (\h1)"):            r"\bookalt",
+        _(r"Book (\h)"):                r"\book",
+        _(r"Book Alt (\h1)"):           r"\bookalt",
         _("Time (HH:MM)"):              r"\hrsmins",
         _("Date (YYYY-MM-DD)"):         r"\isodate",
         _("-empty-"):                   r"\empty"
