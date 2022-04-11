@@ -1,0 +1,18 @@
+\id OTH
+\periph Spine|id="spine" rotation="right" align="top" width="4mm"
+\pc The Test Case Bible
+\periph cover|id="cover"
+\ip
+\nopagenums
+\esb \cat frontcover\cat*
+\esb \cat TitleBox\cat*
+\mt3 The 
+\mt1 Test-case Bible
+\esbe
+\ip
+\esb \cat footbox\cat*
+\pc \sc New Amsterdam \sc* 2022
+\p
+\esbe
+\esbe
+\pb
