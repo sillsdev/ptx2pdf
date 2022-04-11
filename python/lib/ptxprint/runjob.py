@@ -1,5 +1,5 @@
 import os, sys, re, subprocess
-from PIL import Image
+from PIL import Image, ImageChops
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
@@ -182,7 +182,8 @@ class RunJob:
         self.inArchive = inArchive
         self.noview = False
         self.nothreads = False
-        self.oldversions = 0
+        self.oldversions = 1
+        self.docreatediff = True
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -284,6 +285,8 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         if self.res == 0:
+            if self.docreatediff:
+                self.createDiff(pdfname)
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
@@ -706,6 +709,54 @@ class RunJob:
                 os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, pdffile, info)
+
+    def createDiff(self, pdfname, basename=None, color=None, maxdiff=False):
+        outname = pdfname[:-4] + "_diff.pdf"
+        othername = basename or pdfname[:-4] + "_1.pdf"
+        if color is None:
+            color = (0, 255, 255)
+        if not os.path.exists(othername):
+            return None
+        try:
+            ingen = self.pdfimages(pdfname)
+            ogen = self.pdfimages(othername)
+        except ImportError:
+            return None
+        results = []
+        for iimg in ingen:
+            oimg = next(ogen, None)
+            if oimg is None:
+                break
+            dmask = ImageChops.difference(oimg, iimg).convert("L")
+            if maxdiff:
+                dmask = dmask.point(lambda x: 255 if x else 0)
+            translucent = Image.new("RGB", iimg.size, color)
+            iimg.paste(translucent, (0, 0), dmask)
+            results.append(iimg)
+        if len(results):
+            results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
+
+    def pdfimages(self, infile):
+        import gi
+        gi.require_version('Poppler', '0.18')
+        from gi.repository import Poppler
+        import cairo
+        doc = Poppler.Document.new_from_file("file://"+infile)
+        numpages = doc.get_n_pages()
+        for i in range(numpages):
+            page = doc.get_page(i)
+            w, h = (int(x*3) for x in page.get_size())
+            surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
+            ctx = cairo.Context(surface)
+            ctx.scale(3., 3.)
+            ctx.set_source_rgba(1., 1., 1., 1.)
+            ctx.rectangle(0, 0, w, h)
+            ctx.fill()
+            page.render(ctx)
+            imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
+            b, g, r, a = imgr.split()
+            img = Image.merge('RGB', (r, g, b))
+            yield img
 
     def checkForMissingDecorations(self, info):
         deco = {"pageborder" :     "Page Border",

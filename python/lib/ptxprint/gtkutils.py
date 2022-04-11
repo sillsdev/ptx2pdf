@@ -1,5 +1,6 @@
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
+from PIL import Image
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     v = None
@@ -104,3 +105,5 @@ def makeSpinButton(mini, maxi, start, step=1, page=1):
     res = Gtk.SpinButton()
     res.set_adjustment(adj)
     return res
+
+

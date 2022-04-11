@@ -885,7 +885,6 @@ class ViewModel:
                     with open(cfile, "w", encoding="utf-8") as outf:
                         outf.write(chgsHeader)
         if v < 2.08:
-            import pdb; pdb.set_trace()
             if config.get("snippets", "pdfoutput", fallback="None") == "None":
                 self._configset(config, "snippets/pdfoutput", "Screen")
         self._configset(config, "config/version", ConfigVersion)
