@@ -3,6 +3,7 @@
 import sys, os, re, regex, gi, subprocess, traceback #, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
+gi.require_version('Poppler', '0.18')
 from shutil import rmtree
 import time, locale, urllib.request, json
 from ptxprint.utils import universalopen, refKey, chgsHeader
@@ -15,7 +16,8 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     pass
 else:
     gi.require_version('GtkSource', '3.0')
-from gi.repository import GtkSource
+from gi.repository import GtkSource, Poppler
+import cairo
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
@@ -993,10 +995,11 @@ class GtkViewModel(ViewModel):
         pdfnames = self.baseTeXPDFnames()
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
+            exists = os.path.exists(pdfname)
             fileLocked = True
             while fileLocked:
                 try:
-                    with open(pdfname, "wb+") as outf:
+                    with open(pdfname, "ab+") as outf:
                         outf.close()
                 except PermissionError:
                     question = _("                   >>> PLEASE CLOSE the PDF <<<\
@@ -1011,6 +1014,8 @@ class GtkViewModel(ViewModel):
                         self.finished()
                         return
                 fileLocked = False
+            if not exists:
+                os.remove(pdfname)
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)

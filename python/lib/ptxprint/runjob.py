@@ -184,6 +184,8 @@ class RunJob:
         self.nothreads = False
         self.oldversions = 1
         self.docreatediff = True
+        self.onlydiffs = True
+        self.diffPdf = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -232,6 +234,7 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
+        # set values based on UI components
         self.ispdfxa = self.printer.get("fcb_outputFormat") or "Screen"
         if not self.inArchive:
             self.checkForMissingDecorations(info)
@@ -286,7 +289,7 @@ class RunJob:
             print(pdfname)
         if self.res == 0:
             if self.docreatediff:
-                self.createDiff(pdfname)
+                self.createDiff(pdfname, basename=self.diffPdf)
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
@@ -585,6 +588,16 @@ class RunJob:
             pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
         else:
             pdffile = outpath + ".pdf"
+        logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
+        if self.oldversions > 0:
+            for c in range(self.oldversions, 0, -1):
+                opdffile = pdffile[:-4] + "_{}.pdf".format(c)
+                ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
+                if os.path.exists(opdffile):
+                    os.remove(opdffile)
+                if os.path.exists(ipdffile):
+                    logger.debug(f"Rename {ipdffile} to {opdffile}")
+                    os.rename(ipdffile, opdffile)
         if self.nothreads:
             self.run_xetex(outfname, pdffile, info)
         else:
@@ -675,14 +688,6 @@ class RunJob:
 
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            if self.oldversions > 0:
-                for c in range(self.oldversions, 0, -1):
-                    opdffile = pdffile[:-4] + "_{}.pdf".format(c)
-                    ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
-                    if os.path.exists(opdffile):
-                        os.remove(opdffile)
-                    if os.path.exists(ipdffile):
-                        os.rename(ipdffile, opdffile)
             tmppdf = pdffile if self.ispdfxa == "Screen" else outfname.replace(".tex", ".prepress.pdf")
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
@@ -715,6 +720,7 @@ class RunJob:
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
             color = (240, 0, 0)
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
         if not os.path.exists(othername):
             return None
         try:
@@ -723,11 +729,17 @@ class RunJob:
         except ImportError:
             return None
         results = []
+        hasdiffs = False
         for iimg in ingen:
             oimg = next(ogen, None)
             if oimg is None:
                 break
             dmask = ImageChops.difference(oimg, iimg).convert("L")
+            if not dmask.getbbox():
+                if self.onlydiffs:
+                    continue
+            else:
+                hasdiffs = True
             if maxdiff:
                 dmask = dmask.point(lambda x: 255 if x else 0)
             translucent = Image.new("RGB", iimg.size, color)
@@ -736,7 +748,9 @@ class RunJob:
             nimg = enhanceb.enhance(1.5)
             nimg.paste(translucent, (0, 0), dmask)
             results.append(nimg)
-        if len(results):
+        if os.path.exists(outname):
+            os.remove(outname)
+        if hasdiffs and len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
 
     def pdfimages(self, infile):
@@ -745,6 +759,7 @@ class RunJob:
         from gi.repository import Poppler, GLib
         import cairo
         uri = GLib.filename_to_uri(infile, None)
+        logger.debug(f"Poppler load '{uri}'")
         doc = Poppler.Document.new_from_file(uri, None)
         numpages = doc.get_n_pages()
         for i in range(numpages):
