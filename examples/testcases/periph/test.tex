@@ -2,10 +2,12 @@
 %\tracingassigns=1
 %\tracinggroups=1
 \input "paratext2.tex"
+\input ptx-ptxprint.tex
 \stylesheet{usfm.sty}
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
+\stylesheet{cover.sty}
 \input "usfmTex-settings.tex"
 %\input "usfmTex-ext.tex"
 %\input "hooks.tex"
@@ -14,12 +16,17 @@
 %\tracingifs=1
 \tracing{A}
 \tracing{m}
-%\tracing{s}
-\tracing{sh}
+\tracing{e}
+\tracing{s}
+\tracing{sa}
+\tracing{sc}
+%\tracing{sh}
+%\tracing{sk}
 \tracing{C}
 \tracing{F}
 \tracing{T}
 \tracing{V}
+\tracing{g}
 \CropMarkstrue
 %\def\doLines{\doGridLines\doGraphPaper}
 %\tracing{P}
@@ -34,8 +41,10 @@
 %\tracingmacros=1
 %\tracinggroups=1
 %\KeepPeriph{intbible}
-\NoStorePeriph{intnt}
+\def\dotrace{\tracinggroups=1\tracingmacros=1}
+\NoStorePeriph{cover}
+\ptxfile{cover.usfm}
 \ptxfile{int.usfm}
 %\tracingassigns=1
-\ptxfile{test.usfm}
+%\ptxfile{test.usfm}
 \bye

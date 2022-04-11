@@ -1238,11 +1238,11 @@
 \mcp@pCont{\ss@Sbar*}{\ss@ChrP}% sidebar end pops embedded charstyle
 \mcp@pCont{\ss@Sbar*}{\ss@Char}% sidebar end pops Charstyle
 \mcp@pEnd{\ss@Sbar*}{\ss@Sbar}% sidebar end pops ONE sidebar, then finish
-\mcp@pEnd{t*}{\ss@Ctgy}% cat end pops one old cat, then finish
-\mcp@pEnd{t*}{\ss@ParCtgy}% cat end pops one old cat, then finish
-\mcp@pCont{N*}{\ss@ChrP}% Ending Note pops c
-\mcp@pCont{N*}{\ss@Char}% Ending Note pops C
-\mcp@pCont{N*}{\ss@Para}% Ending Note pops P
+\mcp@pEnd{\ss@Ctgy*}{\ss@Ctgy}% cat end pops one old cat, then finish
+\mcp@pEnd{\ss@Ctgy*}{\ss@ParCtgy}% cat end pops one old cat, then finish
+\mcp@pCont{\ss@Note*}{\ss@ChrP}% Ending Note pops c
+\mcp@pCont{\ss@Note*}{\ss@Char}% Ending Note pops C
+\mcp@pCont{\ss@Note*}{\ss@Para}% Ending Note pops P
 \mcp@pCont{tc*}{\ss@Char}% Ending table cell pops C (\char)
 \mcp@pCont{tc*}{\ss@ChrP}% Ending table cell pops c (\+char)
 \mcp@pCont{\ss@Tbl*}{\ss@Ctgy}
@@ -1758,7 +1758,7 @@
 \newif\ifn@npublishablec@t
 \def\endc@tmarker{t*}
 \def\@ndc@t{%
-  \trace{sc}{@ndc@t(\c@tegory)}%
+  \trace{sc}{@ndc@t(\c@tegory) \ifp@pping[popping]\fi}%
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else

@@ -38,7 +38,7 @@
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
 \def\S@tCat#1{\trace{sc}{Started Category #1}%
-  \gdef\c@tegory{#1}%
+  \edef\c@tegory{#1}%
   \s@tc@tpr@fix%
 }
 \gdef\sb@rmarker{esb} % future-proofing. What's the current sidebar marker?
@@ -368,12 +368,13 @@
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
   \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
+  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi% Sidebars should close a heading section.
+  \ifdoingt@ble\endt@ble\fi% Sidebars should close a table, too
   % kill cached possParam-\m@rker values  
   \kill@PossParamCache
   \edef\hs@ze{\the\hsize}%
   \s@tc@tpr@fix
-  %\end@llpoppedstyles{\ss@Sbar}
   \edef\sb@numcuts{\the\@numcuts}%
   \trace{e}{Saving cutouts: \sb@numcuts}%
   \ifnum\sb@numcuts>0
@@ -381,8 +382,8 @@
   \fi
   \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \s@tsb@rwidth\inextendedtrue
-    \global\sb@rchunkh@ight=\maxdimen
-    \global\c@th@@ks{\st@rtsb@r}%
+    \sb@rchunkh@ight=\maxdimen
+    \c@th@@ks{\st@rtsb@r}%
 }
 \newdimen\sb@rchunkh@ight
 \newdimen\sb@rus@dheightl
@@ -392,12 +393,12 @@
  \s@tsb@rwidth
  \trace{e}{startESB \the\dimen1}%
  \kill@PossParamCache
- \global\sb@rchunkh@ight=\maxdimen
+ \sb@rchunkh@ight=\maxdimen
  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
    \ifx\cp@ram\tr@e
-     \global\sb@rchunkh@ight=0.2\textheight
+     \sb@rchunkh@ight=0.2\textheight
    \else
-     \global\sb@rchunkh@ight=\cp@ram\textheight
+     \sb@rchunkh@ight=\cp@ram\textheight
    \fi
    \floatingpenalty=500\insertpenalties=0
  \fi\fi
@@ -630,15 +631,25 @@
 }
 
 \def\@sbe{%
-  \endlastp@rstyle{esbe}%
+  \endlastp@rstyle{esbe}% Fire any triggers, etc.
   \ifhe@dings\endhe@dings\fi
-  \relax
-  \getsbp@ram{posn}%
-  \edef\l@gstring{{\the\im@gecount}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
-  \x@\writefigp@gelog\x@{\l@gstring}%
-  \global\let\t@st\false
+  \ifdoingt@ble\endt@ble\fi% Sidebar end should close a table, too
+  \let\@fter@sbe\relax
   \ifinextended
+    \let\@fter@sbe\@@sbe
+  \else
+    \let\c@t@gory=\empty \trace{e}{ebse called without esb}%
+  \fi
+  \@fter@sbe
+}
+
+\def\@@sbe{%The real meat of an esbe
+   \getsbp@ram{posn}%
+   \edef\l@gstring{{\the\im@gecount}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
+   \x@\writefigp@gelog\x@{\l@gstring}%
+   \global\let\t@st\false
    \end@llpoppedstyles{\ss@Sbar*}% May also close groups
+   \trace{e}{Stack now \mcstack}%
    \kill@PossParamCache
    \ifx\fgfigp@s
    \ifhmode\par\fi
@@ -646,10 +657,13 @@
      \vskip-\prevdepth
      \sb@rbotedge\ifhmode\endgraf\fi
    \fi
+   %Pass some values out of the group (which won't affect enclosing side-bars)
+   \trace{e}{Ending group}%
+   \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
+   \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
-  \else\global\let\c@t@gory=\empty \trace{e}{\\ebse called without \\esb}%
-  \fi
-  \trace{e}{ESBE \the\sb@rchunkh@ight}%
+   \global\p@ppingfalse%suppress another end@llpoppedstyles
+  \trace{e}{ESBE \sb@rchunkheight}%
   \ifx\fgfig@cutout\tr@e
     \cancelcutouts
   \fi
@@ -657,7 +671,7 @@
   \s@tc@tpr@fix
   \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x)}%
   %\showbox\extb@x
-  \inextendedfalse
+  %\inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
   \let\os@vedhpadding=\fb@hpadding%
   \get@border@style@params
@@ -694,7 +708,7 @@
         \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
       \fi
     \fi
-    \sb@rchunkh@ight=\maxdimen% Background images and page-broken chunks are incompatible 
+    \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
     \if\bgf@gl@w F
       \temptrue
@@ -715,8 +729,9 @@
     \doIntskiptrue %Skip inside the frame, not outside it, so that frame lines up with page boundaries
   \fi
   \ifdoIntskip
-    \setbox\extb@x\vbox{%\dbghrule
-      \kern\b@xadj\unvbox\extb@x}%
+    \trace{e}{hts: \the\headingtopspace, b@xadj:\b@xadj}%
+    %\setbox\extb@x\vbox{\dbghrule
+      %\kern\b@xadj\unvbox\extb@x}%
   \fi
   \iftemp
     %modify the esbbox to include the picture
@@ -735,17 +750,17 @@
   \fi
   \def\lstch@nkdp{0pt}%
   \loop %Breakable box:
-    \ifdim\ht\extb@x>\sb@rchunkh@ight % to enable page splitting, the box should be chunked.
-      \dimen1=\sb@rchunkh@ight
+    \ifdim\ht\extb@x>\sb@rchunkheight % to enable page splitting, the box should be chunked.
+      \dimen1=\sb@rchunkheight
       {% 
-        \loop
+        \@LOOP
           \setbox2=\copy\extb@x
           \global\setbox\extchunkb@x=\vsplit\extb@x to \dimen1
           \ifnum\badness>999999
             \setbox\extb@x=\box2
             \advance\dimen1 by \baselineskip %Couldnt split, make the chunk bigger.
             \trace{e}{Chunk grown to \the\dimen1}%
-        \repeat
+        \@REPEAT
       }%
       \setbox\extchunkb@x=\vbox{\unvbox\extchunkb@x}% Reset to natural size
       \let\b@drbottom=\relax
@@ -768,9 +783,9 @@
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
     \ifx\cp@ram\relax
-      \let\sp@ceafter\empty
+      \edef\sp@ceafter{0pt}
     \else
-      \edef\sp@ceafter{\vskip\cp@ram\onel@neunit }%
+      \edef\sp@ceafter{\the\dimexpr\cp@ram\verticalsp@ceunit\relax}%
     \fi
     \ifx\h@scol\tr@e
       %\dimen0=\ht\extchunkb@x
@@ -783,7 +798,7 @@
         \fi
        % \vskip\baselineskip
         \let\fb@htadjust=\lstch@nkdp
-        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}\sp@ceafter}%
+        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
       %\setbox\extchunkb@x\vbox{%
         %\vskip \lstch@nkdp
         %\unvbox\extchunkb@x}%
@@ -794,11 +809,9 @@
       \xdef\lstch@nkdp{\thsch@nkdp}%
       \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \else
-      \ifx\empty\sp@ceafter
-        \dp\extchunkb@x=\dimexpr \dp\extchunkb@x + \fb@vpadding\relax
-      \else
-        \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\vskip\dimexpr \cp@ram\onel@neunit+\fb@vpadding \relax}%
-      \fi
+      %\ifx\empty\sp@ceafter
+        %\dp\extchunkb@x=\dimexpr \dp\extchunkb@x + \fb@vpadding\relax
+      %\fi
     \fi
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
@@ -839,14 +852,24 @@
       \@REPEAT
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\ifdoIntskip\else\fi}%
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
     \else
-      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x}%
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x\vskip\sp@ceafter}%
     \fi
+    \let\sp@ceafter\empty
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
     \ifpicUsesIns
       \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
+      \trace{g}{Sidebar aligned into hbox \the\p@cinswid (\pic@lign)}%
+      \ifdim\wd\extchunkb@x<\p@cinswid
+        \setbox\extchunkb@x\vbox{%
+          \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\extchunkb@x}%
+          \else
+            \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\extchunkb@x\hss}%
+            \else\hbox to \p@cinswid{\hss\box\extchunkb@x\hss}\fi
+        \fi}%
+      \fi
       \trace{e}{using ins-\loc@ption}%
       \insert\@xtins{%\vskip\baselineskip
         \dimen0=-\dp\extchunkb@x
@@ -912,14 +935,13 @@
   \let\fb@hpadding\os@vedhpadding
   \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
-  \global\c@th@@ks{}%
+  \c@th@@ks{}% Just in case
   \ifnum \sb@numcuts>0
     \@numcuts=\sb@numcuts
     \trace{e}{Re-doing cutouts for \sb@numcuts}%
     \restore@cutouts{esb}%
     \makecutouts
   \fi
-  %\ifhmode +\fi
 }
 
 % Category file parsing 

@@ -10,7 +10,7 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 4; else rm  -f 4/* ; fi 
 	
 
-test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm int.usfm $(DIR)/*.tex *.sty test.usfm.piclist
+test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm int.usfm cover.usfm int.usfm $(DIR)/*.tex *.sty test.usfm.piclist
 
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
