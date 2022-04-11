@@ -68,11 +68,11 @@ _errmsghelp = {
                                            "for further assistance. Please include a description of the problem, and if\n" +\
                                            "known, tell us which setting was changed since it last worked.")
 }
-# \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
-# \def\VerticalSpaceFactor{{1.0}}
-# \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
-# \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
-# %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
+
+_pdfmodes = {
+    'rgb': ("Screen", "Digital"),
+    'cmyk': ("CMYK", "PDF/X-1A", "PDF/A-1")
+}
 
 def base(fpath):
     doti = fpath.rfind(".")
@@ -178,10 +178,11 @@ class RunJob:
         self.res = 0
         self.thread = None
         self.busy = False
-        self.ispdfxa = "None"
+        self.ispdfxa = "Screen"
         self.inArchive = inArchive
         self.noview = False
         self.nothreads = False
+        self.oldversions = 0
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -230,7 +231,7 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
-        self.ispdfxa = self.printer.get("fcb_outputFormat") or "None"
+        self.ispdfxa = self.printer.get("fcb_outputFormat") or "Screen"
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -665,8 +666,21 @@ class RunJob:
         pdffile = None
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q",
-                   "-o", outfname.replace(".tex", ".prepress.pdf")]
+            outpath = os.path.join(self.tmpdir, outfname[:-4])
+            if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
+                pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
+            else:
+                pdffile = outpath + ".pdf"
+            if self.oldversions > 0:
+                for c in range(self.oldversions, 0, -1):
+                    opdffile = pdffile[:-4] + "_{}.pdf".format(c)
+                    ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
+                    if os.path.exists(opdffile):
+                        os.remove(opdffile)
+                    if os.path.exists(ipdffile):
+                        os.rename(ipdffile, opdffile)
+            tmppdf = pdffile if self.ispdfxa == "Screen" else outfname.replace(".tex", ".prepress.pdf")
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             if self.args.extras & 7:
@@ -682,18 +696,14 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            outpath = os.path.join(self.tmpdir, outfname[:-4])
-            if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-                pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
-            else:
-                pdffile = outpath + ".pdf"
-            try:
-                fixpdffile(outpath + ".prepress.pdf", pdffile,
-                        colour="rgbx4" if self.ispdfxa == "None" else "cmyk",
-                        parlocs = outpath + ".parlocs")
-            except PdfError:
-                self.res = 1
-            os.remove(outpath + ".prepress.pdf")
+            if self.ispdfxa != "Screen":
+                try:
+                    fixpdffile(outpath + ".prepress.pdf", pdffile,
+                            colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
+                            parlocs = outpath + ".parlocs")
+                except PdfError:
+                    self.res = 1
+                os.remove(outpath + ".prepress.pdf")
         print("Done")
         self.done_job(outfname, pdffile, info)
 
@@ -791,7 +801,7 @@ class RunJob:
         return im
 
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
-        if self.ispdfxa != "None" and not self.printer.get("c_figplaceholders"):
+        if self.ispdfxa in _pdfmodes['cmyk'] and not self.printer.get("c_figplaceholders"):
             fmt = "CMYK"
         else:
             fmt = "RGB"
@@ -850,7 +860,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa != "None" or (ratio is not None and iw/ih < ratio) \
+        if cropme or self.ispdfxa != "Screen" or (ratio is not None and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             try:

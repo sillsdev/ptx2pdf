@@ -27,7 +27,7 @@ from difflib import Differ
 
 VersionStr = "2.1.15"
 GitVersionStr = "2.1.14-2-ga19faab5"
-ConfigVersion = "2.07"
+ConfigVersion = "2.08"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -428,7 +428,7 @@ class ViewModel:
     def _mergenothing(self, srcp, destp, mergep, **kw):
         pass
 
-    def _mergeconfig(self, srcp, destp, mergep, **kw):
+    def _mergecfg(self, srcp, destp, mergep, **kw):
         configs = []
         for a in (destp, srcp, mergep):
             config = configparser.ConfigParser()
@@ -884,6 +884,10 @@ class ViewModel:
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
                         outf.write(chgsHeader)
+        if v < 2.08:
+            import pdb; pdb.set_trace()
+            if config.get("snippets", "pdfoutput", fallback="None") == "None":
+                self._configset(config, "snippets/pdfoutput", "Screen")
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

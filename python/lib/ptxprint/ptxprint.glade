@@ -4690,8 +4690,12 @@ the text. This may be useful for precise measuring.</property>
     </columns>
     <data>
       <row>
+        <col id="0" translatable="yes">Screen (PDF)</col>
+        <col id="1" translatable="yes">Screen</col>
+      </row>
+      <row>
         <col id="0" translatable="yes">Digital (PDF/X-4)</col>
-        <col id="1">None</col>
+        <col id="1">Digital</col>
       </row>
       <row>
         <col id="0" translatable="yes">Print (PDF/X-1a:2003)</col>
