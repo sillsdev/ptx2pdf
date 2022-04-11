@@ -887,6 +887,7 @@ class ViewModel:
         if v < 2.08:
             if config.get("snippets", "pdfoutput", fallback="None") == "None":
                 self._configset(config, "snippets/pdfoutput", "Screen")
+        # print(f"{forcerewrite} {v} {ConfigVersion} {cfgname} {self.configPath(cfgname)}")
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

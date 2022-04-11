@@ -1,4 +1,4 @@
-import os, sys, re, subprocess
+import os, sys, re, subprocess, time
 from PIL import Image, ImageChops, ImageEnhance
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
@@ -580,13 +580,20 @@ class RunJob:
         # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
-        if self.nothreads:
-            self.run_xetex(outfname, info)
+        outpath = os.path.join(self.tmpdir, outfname[:-4])
+        if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
+            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
         else:
-            self.thread = Thread(target=self.run_xetex, args=(outfname, info))
+            pdffile = outpath + ".pdf"
+        if self.nothreads:
+            self.run_xetex(outfname, pdffile, info)
+        else:
+            self.thread = Thread(target=self.run_xetex, args=(outfname, pdffile, info))
             self.busy = True
             logger.debug("sharedjob: Starting thread to run xetex")
             self.thread.start()
+            self.wait()
+        self.done_job(outfname, pdffile, info)
         return genfiles
 
     def wait(self):
@@ -596,7 +603,7 @@ class RunJob:
         unlockme()
         return self.res
 
-    def run_xetex(self, outfname, info):
+    def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
         cacheexts = {"toc":     (_("table of contents"), True), 
@@ -666,14 +673,8 @@ class RunJob:
             if not rererun:
                 break
 
-        pdffile = None
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            outpath = os.path.join(self.tmpdir, outfname[:-4])
-            if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-                pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
-            else:
-                pdffile = outpath + ".pdf"
             if self.oldversions > 0:
                 for c in range(self.oldversions, 0, -1):
                     opdffile = pdffile[:-4] + "_{}.pdf".format(c)
@@ -708,7 +709,6 @@ class RunJob:
                     self.res = 1
                 os.remove(outpath + ".prepress.pdf")
         print("Done")
-        self.done_job(outfname, pdffile, info)
 
     def createDiff(self, pdfname, basename=None, color=None, maxdiff=False):
         outname = pdfname[:-4] + "_diff.pdf"
@@ -742,9 +742,10 @@ class RunJob:
     def pdfimages(self, infile):
         import gi
         gi.require_version('Poppler', '0.18')
-        from gi.repository import Poppler
+        from gi.repository import Poppler, GLib
         import cairo
-        doc = Poppler.Document.new_from_file("file://"+infile)
+        uri = GLib.filename_to_uri(infile, None)
+        doc = Poppler.Document.new_from_file(uri, None)
         numpages = doc.get_n_pages()
         for i in range(numpages):
             page = doc.get_page(i)

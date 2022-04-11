@@ -16,7 +16,7 @@ The key issue here is NOT to have an installation of python under MSYS2, but to 
 
 4. Install the necessary packages:
 ```
-pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-fonttools mingw-w64-x86_64-python-regex mingw-w64-x86_64-python-cairo mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-libffi mingw-w64-x86_64-gcc mingw-w64-x86_64-glade mingw-w64-x86_64-python-pyopenssl
+pacman -S mingw-w64-x86_64-python mingw-w64-x86_64-python-pip mingw-w64-x86_64-python-setuptools mingw-w64-x86_64-gtksourceview3 mingw-w64-x86_64-python-pillow mingw-w64-x86_64-python-fonttools mingw-w64-x86_64-python-regex mingw-w64-x86_64-python-cairo mingw-w64-x86_64-python-gobject mingw-w64-x86_64-gtk3 mingw-w64-x86_64-glib2 mingw-w64-x86_64-libffi mingw-w64-x86_64-gcc mingw-w64-x86_64-glade mingw-w64-x86_64-python-pyopenssl mingw-w64-x86_64-poppler
 ```
 
 5. Install a couple of other important pieces:
