@@ -1,5 +1,5 @@
 import os, sys, re, subprocess
-from PIL import Image, ImageChops
+from PIL import Image, ImageChops, ImageEnhance
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
@@ -714,7 +714,7 @@ class RunJob:
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
-            color = (0, 255, 255)
+            color = (240, 0, 0)
         if not os.path.exists(othername):
             return None
         try:
@@ -731,8 +731,11 @@ class RunJob:
             if maxdiff:
                 dmask = dmask.point(lambda x: 255 if x else 0)
             translucent = Image.new("RGB", iimg.size, color)
-            iimg.paste(translucent, (0, 0), dmask)
-            results.append(iimg)
+            enhancec = ImageEnhance.Contrast(iimg)
+            enhanceb = ImageEnhance.Brightness(enhancec.enhance(0.7))
+            nimg = enhanceb.enhance(1.5)
+            nimg.paste(translucent, (0, 0), dmask)
+            results.append(nimg)
         if len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
 
