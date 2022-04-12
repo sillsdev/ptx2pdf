@@ -189,18 +189,20 @@
 
 \newdimen\sb@rwidth
 \def\s@tsb@rwidth{%Set default / specific width of esb box
- %h*,c*,p* take the current page width as their base
- %tX,bX take the column width 
- %t,b,B take the text width
- \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols}%
- \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
- \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
- \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
- \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\xdef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
- \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\xdef\border@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
- \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
- \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
- \getsbp@ram{posn}%
+  %h*,c*,p* take the current page width as their base
+  %tX,bX take the column width 
+  %t,b,B take the text width
+  %F* takes the whole paper.
+  %F* and P* might need to fill the vertical dimension.
+  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \m@rker}%
+  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
+  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
+  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\xdef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\xdef\border@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ifcsname fig\the\im@gecount p@ge\endcsname
     \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
@@ -209,7 +211,7 @@
   \fi
   \ifx\pgn@\relax
     \whichp@ge=\pageno
-    \trace{e}{Sidebar \the\im@gecount may not be mirrored/rotated/aligned properly}%
+    \trace{e}{Sidebar \the\im@gecount may not be aligned properly}%
   \else
     \whichp@ge=\pgn@
     \trace{e}{Sidebar \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
@@ -227,6 +229,7 @@
   \ifx\cp@ram\relax
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
     \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+    %Which of these do we need to distingiush between t, tl, tr, etc (and don't have sub-specifications)?
     \x@\let\csname sb@onlypure-t\endcsname\tr@e
     \x@\let\csname sb@onlypure-b\endcsname\tr@e
     \let\@t@st\tempc
@@ -356,6 +359,19 @@
         \setsbp@ram{w@dth}{\the\dimen1}%
       \fi
     \fi
+    \let\t@mploc\tempc
+    \ifx\tempd\empty\else
+      \tempfalse
+      \ifx\t@mploc\loc@Full\temptrue\else
+        \ifx\t@mploc\loc@Page\temptrue\fi
+      \fi
+      \iftemp
+        \x@\minip@rs@two\tempd\end
+        \if f\tempd\relax
+          \setsbp@ram{outerh@ight}{\the\dimexpr\ifx\t@mploc\loc@Full \PaperHeight\else\textheight\fi}%
+        \fi
+      \fi
+    \fi  
  \else
    \dimen1=\cp@ram
  \fi
@@ -363,8 +379,11 @@
  \hsize=\dimen1
 }
 % Sidebar 
-\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix 
-  \trace{e}{Starting side bar from \m@rker, \the\lastdepth}%
+\def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
+  \@@sbar{esb}%
+}
+\def\@@sbar#1{%
+  \trace{e}{Starting side bar (\sb@rmarker) from \m@rker, \the\lastdepth}%
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
   \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
@@ -381,7 +400,11 @@
     \save@cutouts{esb}%
   \fi
   \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
+    \edef\sb@rmarker{#1}%
+    \let\m@rker\sb@rmarker
     \s@tsb@rwidth\inextendedtrue
+    \mcpush{\ss@Para}{\if@ntro ip\else p\fi}%
+    \textwidth=\hsize
     \sb@rchunkh@ight=\maxdimen
     \c@th@@ks{\st@rtsb@r}%
 }
@@ -410,24 +433,40 @@
 \newbox\b@rderbox
 \newif\ifhorizb@rder
 \newif\ifhasb@rder
-\def\prepb@rderbox#1{% Prepare b@rderbox
+\def\prepb@rderdims{% Prepare b@rderbox
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
   \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
   \ifhasb@rder
-    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
-    \dp\b@rderbox=\dp#1\relax
+    \edef\b@drtopgap{\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding +  \b@drwidth pt  +\fi \fi  \fb@vpadding\relax}%
+    \edef\b@drbotgap{\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding +  \b@drwidth pt  +\fi \fi  \fb@vpadding\relax}%
     %Spacing for the content-box:
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
     \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
     \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}%
     \xdef\b@dr@bottom@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}%
     \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+    \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
+  \else
+    \edef\b@drvsides{0}%
+    \edef\b@drhsides{0}%
+    \edef\b@drtopgap{\fb@vpadding}%
+    \edef\b@drbotgap{\fb@vpadding}%
+    \xdef\b@dr@left@pad{\fb@hpadding}%
+    \xdef\b@dr@right@pad{\fb@hpadding}%
+    \xdef\b@dr@top@pad{\fb@vpadding}%
+    \xdef\b@dr@bottom@pad{\fb@vpadding}%
+  \fi
+}
+
+\def\prepb@rderbox#1{% Prepare b@rderbox
+  \ifhasb@rder
+    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
+    \dp\b@rderbox=\dp#1\relax
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth pt  *\b@drhsides+ \border@hpadding * \b@drhsides\relax}%% Final width of border artwork
-    \edef\b@drsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
-    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drsides + \border@vpadding *\b@drsides\relax}% Final height of border artwork 
+    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drvsides + \border@vpadding *\b@drvsides\relax}% Final height of border artwork 
     \edef\b@xminadj{\ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drtop\tr@e\the\dimexpr -\b@drwidth pt -\border@vpadding\relax\else 0pt \fi\else 0pt \fi}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \let\b@xadj\b@xminadj %b@xadj puts the top edge of the border at the top of an insert.
     \edef\b@xextadj{\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@vpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
@@ -448,7 +487,7 @@
   \else
     \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
   \fi
-  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drsides\relax
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drvsides\relax
   \dimen1=0pt
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
     \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top \b@rderbox@width}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
@@ -481,6 +520,7 @@
         \ifx\b@drstyle\relax
           \let\b@drstyle\TextBorderStyle
         \fi
+        \prepb@rderdims
         \prepb@rderbox{#1}%
         \ifhasb@rder
           \csname mkb@rder@\b@drstyle\endcsname
@@ -528,9 +568,9 @@
     \def\fc@l{\special{color push rgb \b@drfillcolour}}\def\endfc@l{\special{color pop}}%
   \else \def\fc@l{}\def\endfc@l{}%
   \fi
-  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth pt  * \b@drsides\relax %Inner vertical
-  \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth pt  * \b@drsides\relax %Fill vertical
-  \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth pt  * \b@drsides\relax %Outer vertical
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Inner vertical
+  \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth pt  * \b@drvsides\relax %Fill vertical
+  \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Outer vertical
   \dimen3=\b@rderbox@width\advance\dimen3 by \dimexpr -\b@drlinewidth pt  * \b@drhsides\relax % Fill width
   \dimen4=\dimen3\advance\dimen4 by \dimexpr -\b@drfillwidth pt  * \b@drhsides\relax %Inner horiz length
   \trace{eb}{Borders: \b@rderbox@width - \b@drlinewidth pt   =\the\dimen3, \b@rderbox@height - }%
@@ -632,6 +672,7 @@
 
 \def\@sbe{%
   \endlastp@rstyle{esbe}% Fire any triggers, etc.
+  \let\m@rker\sb@rmarker
   \ifhe@dings\endhe@dings\fi
   \ifdoingt@ble\endt@ble\fi% Sidebar end should close a table, too
   \let\@fter@sbe\relax
@@ -682,13 +723,15 @@
   \getsbp@ram{bgfigcolour}\let\bgf@gcol\cp@ram
   \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
   \let\s@vedvpadding=\fb@vpadding%%Preserve old value
+  \prepb@rderdims
   \tempfalse
-  \dimen4=-\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding +  \b@drwidth pt  +\fi \fi  \fb@vpadding\relax
+  \dimen4=-\b@drtopgap
   \trace{e}{b@xadj =\ifx\b@drtop\tr@e \ifdim \border@vpadding > -\b@drwidth pt  \b@drwidth pt  + \border@vpadding +\fi \fi  \fb@vpadding  = \the\dimen4 |baseline: \the\onel@neunit}%
   \loop\ifdim\dimen4> \onel@neunit
     \advance\dimen4 by -\onel@neunit
   \repeat
   \edef\b@xadj{\the\dimen4}%
+  \prepb@rderdims
   \trace{e}{=\b@xadj}%
   \ifx\bgf@gsp@c\relax\else
     \p@rsefigscale{bg}%
@@ -750,6 +793,14 @@
   \fi
   \def\lstch@nkdp{0pt}%
   \loop %Breakable box:
+    %Does the box have a defined size? 
+    \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
+    \ifx\cp@ram\relax
+      \let\sb@rheightspec\empty
+    \else
+      \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@drtopgap - \b@drbotgap\relax}%
+      \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
+    \fi  
     \ifdim\ht\extb@x>\sb@rchunkheight % to enable page splitting, the box should be chunked.
       \dimen1=\sb@rchunkheight
       {% 
@@ -762,10 +813,10 @@
             \trace{e}{Chunk grown to \the\dimen1}%
         \@REPEAT
       }%
-      \setbox\extchunkb@x=\vbox{\unvbox\extchunkb@x}% Reset to natural size
+      \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extchunkb@x}% Reset to natural size
       \let\b@drbottom=\relax
     \else
-      \setbox\extchunkb@x=\box\extb@x
+      \setbox\extchunkb@x=\vbox\sb@rheightspec{\unvbox\extb@x}%
       \let\fb@vpadding=\s@vedvpadding
       \let\b@drbottom=\lstb@drbot
     \fi
@@ -850,6 +901,10 @@
       \@LOOP\ifdim\dimen1 <0.1\onel@neunit
         \advance\dimen1 by \onel@neunit
       \@REPEAT
+      \ifx\empty\sb@rheightspec\else
+        \trace{e}{Killing kerns/skips as box is stretch-to-fit}%
+        \dimen1=0pt \def\b@xextadj{0pt}\def\b@xminadj{0pt}\def\b@xadj{0pt}%
+      \fi
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
       \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
@@ -890,7 +945,7 @@
         \dimen0=\ht\extchunkb@x \advance\dimen0 by \dp\extchunkb@x \advance\dimen0 by 0.5\baselineskip % Rounding correction
         \divide\dimen0 by \baselineskip \count255=\dimen0
         \advance\count255 by 1
-        \trace{g}{Inline \w@tsit takes \the\count255 lines, ls:\l@cspec@b, oldlastsdepth:\oldlastdepth, hts=\the\headingtopspace}%
+        \trace{g}{Inline \w@tsit [\c@tegory:\sb@rmarker] (\picl@c) takes \the\count255 lines, ls:\l@cspec@b, oldlastsdepth:\oldlastdepth, hts=\the\headingtopspace}%
         \ifx\picl@c\loc@Inl
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi

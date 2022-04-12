@@ -215,7 +215,7 @@
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
-%returns \@@ut and \c@t@ut.  For expansions, (\@@ut,) should be used, \c@t@ut has cat:foo|* before the final entries.
+%returns \@@ut and \c@t@ut.  For further expansions, (\@@ut,) should be used, \c@t@ut has cat:foo|* before the final entries.
 \def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
   \trace{sk}{fullstack@xpand}%
   \edef\exp@stystak{#2}%

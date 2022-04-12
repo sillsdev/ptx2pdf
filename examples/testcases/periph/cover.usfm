@@ -5,14 +5,15 @@
 \ip
 \nopagenums
 \esb \cat frontcover\cat*
+\vfill
 \esb \cat TitleBox\cat*
+\leavevmode
 \mt3 The 
 \mt1 Test-case Bible
 \esbe
-\ip
+\vfill
 \esb \cat footbox\cat*
-\pc \sc New Amsterdam \sc* 2022
-\p
+\pc Printed in: \sc Târgu Mureș\sc* 2022
 \esbe
 \esbe
 \pb
