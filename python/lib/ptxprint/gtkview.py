@@ -2337,16 +2337,12 @@ class GtkViewModel(ViewModel):
                 except AttributeError:
                     pass
             for p in projlist:
-                newcdir = self.configPath(cfgname=cfg, makePath=False, prjid=p)
-                # if self.get("c_overwriteExisting") and os.path.exists(newcdir):
-                    # rmtree(newcdir)
                 if self.get("r_copyConfig") == "noReplace":
-                    pass
+                    self.applyConfig(cfg, cfg, newprj=p)
                 elif self.get("r_copyConfig") == "merge":
-                    pass
+                    self.applyConfig(cfg, cfg, action=1, newprj=p)
                 elif self.get("r_copyConfig") == "overwrite":
-                    pass
-                self._copyConfig(cfg, cfg, newprj=p)
+                    self.applyConfig(cfg, cfg, action=0, newprj=p)
         dialog.set_keep_above(False)
         dialog.hide()
         

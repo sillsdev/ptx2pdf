@@ -383,11 +383,13 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    def applyConfig(self, oldcfg, newcfg, action=0, moving=False, newprj=None):
+    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
-        if action == 0 and os.path.exists(newp):
-            return False
+        if action is None:
+            if os.path.exists(newp):
+                return False
+            action = 0
         self.triggervcs = True
         os.makedirs(newp, exist_ok=True)
         jobs = {'ptxprint.cfg': (self._copyfile, self._mergecfg),
@@ -494,9 +496,6 @@ class ViewModel:
             destp.write("".join(res))
         copyfile(srcp, mergep)
 
-    def _copyConfig(self, oldcfg, newcfg, **kw):
-        return self.applyConfig(oldcfg, newcfg, action=0, **kw)
-
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
         currprj = self.prjid
         if currprj is None or currprj != prjid:
@@ -527,9 +526,9 @@ class ViewModel:
             self.resetToInitValues()
             if currprj == self.prjid:
                 if configName == "Default":
-                    self._copyConfig(None, configName, moving=True)
+                    self.applyConfig(None, configName, moving=True)
                 else:
-                    self._copyConfig(self.configId, configName)
+                    self.applyConfig(self.configId, configName)
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
