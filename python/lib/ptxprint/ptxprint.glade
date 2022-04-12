@@ -235,6 +235,12 @@ THE SOFTWARE.
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_foldCutMargin">
+    <property name="upper">25</property>
+    <property name="value">5</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">5</property>
+  </object>
   <object class="GtkAdjustment" id="a_fontExtend">
     <property name="lower">0.5</property>
     <property name="upper">2</property>
@@ -316,6 +322,12 @@ THE SOFTWARE.
     <property name="step-increment">0.01</property>
     <property name="page-increment">0.10</property>
   </object>
+  <object class="GtkAdjustment" id="a_keepVersions">
+    <property name="upper">20</property>
+    <property name="value">1</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_letterShrink">
     <property name="upper">100</property>
     <property name="value">1</property>
@@ -395,6 +407,20 @@ THE SOFTWARE.
     <property name="value">2</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_paperThickness">
+    <property name="lower">25</property>
+    <property name="upper">250</property>
+    <property name="value">90</property>
+    <property name="step-increment">5</property>
+    <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_paperWeight">
+    <property name="lower">20</property>
+    <property name="upper">140</property>
+    <property name="value">70</property>
+    <property name="step-increment">5</property>
+    <property name="page-increment">10</property>
   </object>
   <object class="GtkAdjustment" id="a_picListadjustment1">
     <property name="upper">100</property>
@@ -1051,6 +1077,11 @@ contained within the sidebar.</property>
     <property name="step-increment">0.05</property>
     <property name="page-increment">0.10</property>
   </object>
+  <object class="GtkAdjustment" id="a_sheetsPerSignature">
+    <property name="upper">30</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_sidemargin">
     <property name="lower">-20</property>
     <property name="upper">20</property>
@@ -1085,6 +1116,19 @@ contained within the sidebar.</property>
     <property name="upper">100</property>
     <property name="step-increment">5</property>
     <property name="page-increment">10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_spineThickness">
+    <property name="lower">5</property>
+    <property name="upper">150</property>
+    <property name="value">20</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="a_spotColorTolerance">
+    <property name="upper">20</property>
+    <property name="value">15</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_startPageNum">
     <property name="lower">1</property>
@@ -1186,6 +1230,13 @@ contained within the sidebar.</property>
     <property name="value">18</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
+  </object>
+  <object class="GtkAdjustment" id="a_totalPages">
+    <property name="lower">100</property>
+    <property name="upper">5000</property>
+    <property name="value">500</property>
+    <property name="step-increment">10</property>
+    <property name="page-increment">100</property>
   </object>
   <object class="GtkAdjustment" id="a_verseDecoratorScale">
     <property name="upper">10</property>
@@ -2805,7 +2856,7 @@ since it was first shared will be kept
 (i.e. modified target settings are 
 retained if there is a clash of settings).</property>
                         <property name="draw-indicator">True</property>
-                        <property name="group">r_copyConfig_overwrite</property>
+                        <property name="group">r_copyConfig_noReplace</property>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -3007,6 +3058,7 @@ saved configuration.</property>
       <action-widget response="-5">btn_pw_cancel</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
@@ -4274,21 +4326,15 @@ as the baselines of the body text.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_cropmarks">
-                <property name="label" translatable="yes">Crop Marks (Shows Page Edge for Trimming)</property>
+              <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Some printers require crop marks
-on the PDF to show where the page
-should be trimmed after printing.
-
-The cropmarks also show the top and
-bottom text margins.</property>
+                <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="margin-top">6</property>
-                <property name="draw-indicator">True</property>
+                <property name="margin-start">12</property>
+                <property name="label" translatable="yes">Looking for Crop Marks? That option is now on the Finishing tab.</property>
+                <attributes>
+                  <attribute name="foreground" value="#616135358383"/>
+                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -4793,6 +4839,32 @@ the text. This may be useful for precise measuring.</property>
       <row>
         <col id="0" translatable="yes">Archive (Print+Unicode Text)</col>
         <col id="1">PDF/A-1</col>
+      </row>
+    </data>
+  </object>
+  <object class="GtkListStore" id="ls_pagesPerSpread">
+    <columns>
+      <!-- column-name number -->
+      <column type="gchararray"/>
+      <!-- column-name id -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">No booklet</col>
+        <col id="1">1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">2-up</col>
+        <col id="1">2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">4-up</col>
+        <col id="1" translatable="yes">4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">8-up</col>
+        <col id="1" translatable="yes">8</col>
       </row>
     </data>
   </object>
@@ -23945,58 +24017,6 @@ other settings are applied. This file is rarely used.</property>
                                 <property name="row-spacing">9</property>
                                 <property name="column-spacing">6</property>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select the appropriate standard 
-for the output format to optimize
-the PDF for its intended purpose.
-
-Digital (smallest size, for local printing)
-Print (for professional printers)
-Transparency (if CMYK is required)
-Archive (largest size, for keeping long-term)
-
-Note: All comply with archive standard PDF/A-1b.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">PDF Output Format:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkComboBox" id="fcb_outputFormat">
-                                    <property name="width-request">150</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="can-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Select the appropriate standard 
-for the output format to optimize
-the PDF for its intended purpose.
-
-Digital (smallest size, for local printing)
-Print (for professional printers)
-Transparency (if CMYK is required)
-Archive (largest size, for keeping long-term)
-
-Note: All comply with archive standard PDF/A-1b.</property>
-                                    <property name="halign">start</property>
-                                    <property name="model">ls_outputFormat</property>
-                                    <property name="wrap-width">1</property>
-                                    <property name="entry-text-column">0</property>
-                                    <property name="id-column">1</property>
-                                    <property name="active-id">None</property>
-                                    <signal name="changed" handler="warnSlowRun" swapped="no"/>
-                                    <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_cutouterpadding">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -24115,6 +24135,12 @@ body text size as specified in layout.</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -25941,6 +25967,1114 @@ after the scripture text.</property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkBox" id="tb_Finishing">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <!-- n-columns=5 n-rows=1 -->
+                      <object class="GtkGrid">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="row-spacing">3</property>
+                        <property name="column-spacing">6</property>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_outputFormat">
+                            <property name="width-request">150</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Select the appropriate standard 
+for the output format to optimize
+the PDF for its intended purpose.
+
+Digital (smallest size, for local printing)
+Print (for professional printers)
+Transparency (if CMYK is required)
+Archive (largest size, for keeping long-term)
+
+Note: All comply with archive standard PDF/A-1b.</property>
+                            <property name="halign">start</property>
+                            <property name="model">ls_outputFormat</property>
+                            <property name="wrap-width">1</property>
+                            <property name="active">0</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">None</property>
+                            <signal name="changed" handler="warnSlowRun" swapped="no"/>
+                            <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Select the appropriate standard 
+for the output format to optimize
+the PDF for its intended purpose.
+
+Digital (smallest size, for local printing)
+Print (for professional printers)
+Transparency (if CMYK is required)
+Archive (largest size, for keeping long-term)
+
+Note: All comply with archive standard PDF/A-1b.</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">PDF Output Format:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_cropmarks">
+                            <property name="label" translatable="yes">Crop Marks</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Some printers require crop marks
+on the PDF to show where the page
+should be trimmed after binding.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">4</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="label-xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
+                            <child>
+                              <!-- n-columns=5 n-rows=3 -->
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="row-spacing">3</property>
+                                <property name="column-spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">By keeping previous versions of the
+PDF, it is possible to compare the
+final output of the PDFs. Upto 9 
+previous versions can be saved.
+
+If you need to keep a PDF around
+longer, then manually rename it
+so that it can be compared to at a
+later date.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">How Many Previous Versions
+of the PDF Should be Kept:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_keepVersions">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">By default, PTXprint only keeps
+one previous PDF. But upto 9 
+previous versions can be kept.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="adjustment">a_keepVersions</property>
+                                    <property name="value">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_selectDiffPDF">
+                                    <property name="label" translatable="yes">Select...</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Select a particular PDF file to be
+compared against the current
+output PDF. If you just want to
+compare to the previous run,
+then click Cancel in the dialog
+to reset the filename (which will
+default to _1).
+
+The most recent file has _1 as a suffix; the
+oldest file has _9 at the end of the PDF name.
+You can also select a historical (re-)named PDF.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_diffPDF">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="opacity">0.80</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-top">4</property>
+                                    <property name="margin-bottom">4</property>
+                                    <property name="label" translatable="yes">Previous PDF (-1)</property>
+                                    <property name="ellipsize">middle</property>
+                                    <property name="max-width-chars">30</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_onlyDiffs">
+                                    <property name="label" translatable="yes">Only Show Pages
+With Differences</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">When comparing two PDF files the
+resulting "Diff" PDF can get rather
+large. This option reduces the size
+of the PDF by not including any
+identical pages. This also saves
+time as you don't need to search
+through a lengthy PDF to find
+out what might have changed.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">30</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">This tool allows you to compare 2 different
+PDFs to highlight what has changed between
+runs.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Compare With a Previous PDF:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_createDiff">
+                                    <property name="label" translatable="yes">Create "Diff" PDF</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to print and generate a PDF
+showing the differences between
+the current PDF and the selected 
+previous version. It should open
+in the default PDF viewer.</property>
+                                    <property name="halign">end</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkColorButton" id="col_diffColor">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Select a color to highlight the
+differences between the PDFs.</property>
+                                    <property name="halign">start</property>
+                                    <property name="title" translatable="yes">Color to Highlight Differences</property>
+                                    <property name="rgba">rgb(240,0,0)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Select a color to highlight the
+differences between the PDFs.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">30</property>
+                                    <property name="label" translatable="yes">Color to Highlight
+Differences With:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Compare with History</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="label-xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
+                            <child>
+                              <!-- n-columns=5 n-rows=2 -->
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="row-spacing">6</property>
+                                <property name="column-spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">How many pages will be printed on
+one side of the physical paper?
+
+For example, for an A5-sized booklet,
+2 pages will fit on each side, making a
+total of 4 pages on a single sheet.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Pages Per Spread:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">This is the actual size of the sheet of
+paper on which multiple pages will
+be printed. For example, if printing
+an A5-sized booklet, the actual sheet
+of paper that you print on will be
+2x the A5-sized page, which is an
+A4-sized sheet of paper.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">Physical Paper Size:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">A signature is a collection of pages folded
+and bound together as a unit. A signature
+may be made up of multiple sheets.
+
+If unsure, leave this setting at 0 to indicate
+that the publication will not be bound 
+using separate signatures.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Sheets Per Signature:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="ecb_sheetSize">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">If the required size is not displayed, then 
+just type the required page width and 
+height separated by a comma. 
+
+For example: 203mm, 330mm (Foolscap)</property>
+                                    <property name="active">2</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="active-id">0</property>
+                                    <items>
+                                      <item translatable="yes">420mm, 594mm (A2)</item>
+                                      <item translatable="yes">297mm, 420mm (A3)</item>
+                                      <item translatable="yes">210mm, 297mm (A4)</item>
+                                      <item translatable="yes">17in, 22in (ANSI C)</item>
+                                      <item translatable="yes">11in, 17in (ANSI B)</item>
+                                      <item translatable="yes">8.5in, 11in (Letter)</item>
+                                      <item translatable="yes">353mm, 500mm (B3)</item>
+                                      <item translatable="yes">250mm, 353mm (B4)</item>
+                                      <item translatable="yes">176mm, 250mm (B5)</item>
+                                    </items>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="can-focus">True</property>
+                                        <property name="width-chars">22</property>
+                                        <property name="overwrite-mode">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="fcb_pagesPerSpread">
+                                    <property name="width-request">88</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="can-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">How many pages will be printed on
+one side of the physical paper?
+
+For example, for an A5-sized booklet,
+2 pages will fit on each side, making a
+total of 4 pages on a single sheet.</property>
+                                    <property name="halign">start</property>
+                                    <property name="model">ls_pagesPerSpread</property>
+                                    <property name="wrap-width">1</property>
+                                    <property name="active">0</property>
+                                    <property name="has-entry">True</property>
+                                    <property name="entry-text-column">0</property>
+                                    <property name="id-column">1</property>
+                                    <property name="active-id">No booklet</property>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="width-chars">10</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_scaleToFit">
+                                    <property name="label" translatable="yes">Scale to fit</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Enable this option if it is acceptable
+to slightly scale the Page Size (set on
+the Layout tab) in order to fit the
+Physical Paper Size based on the Pages
+per Spread (both set on this tab).</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">The width of the area to be cut
+after folding of the signature.
+Measured in millimeters (mm).</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="label" translatable="yes">Fold Cut Margin (mm):</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_sheetsPerSignature">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">A signature is a collection of pages folded
+and bound together as a unit. A signature
+may be made up of multiple sheets.
+
+If unsure, leave this setting at 0 to indicate
+that the publication will not be bound 
+using separate signatures.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="text" translatable="yes">1</property>
+                                    <property name="adjustment">a_sheetsPerSignature</property>
+                                    <property name="climb-rate">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_foldCutMargin">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">The width of the area to be cut
+after folding of the signature.
+Measured in millimeters (mm).</property>
+                                    <property name="halign">start</property>
+                                    <property name="width-chars">5</property>
+                                    <property name="text">6.0</property>
+                                    <property name="adjustment">a_foldCutMargin</property>
+                                    <property name="climb-rate">0.5</property>
+                                    <property name="digits">1</property>
+                                    <property name="value">5</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Whether you need a simple booklet
+or a more complex signature, these
+options allow plenty of scope.</property>
+                            <property name="label" translatable="yes">Booklet Pagination</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">9</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="label-xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <!-- n-columns=4 n-rows=1 -->
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="row-spacing">3</property>
+                                    <property name="column-spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Spot Color Hue:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkColorButton" id="col_spotColor">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                                        <property name="halign">start</property>
+                                        <property name="title" translatable="yes">Spot Color Hue</property>
+                                        <property name="rgba">rgb(28,113,216)</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_spotColorTolerance">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
+to 0%. If text in similar colors are also to be
+set to this Spot Color, then select an acceptable
+tolerance range (suggested default is 15%).
+
+Note that this will include similar colors either 
+side (e.g. -15% to +15%) of the selected hue.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">start</property>
+                                        <property name="text">0.50</property>
+                                        <property name="input-purpose">number</property>
+                                        <property name="adjustment">a_spotColorTolerance</property>
+                                        <property name="climb-rate">1</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update-policy">if-valid</property>
+                                        <property name="value">15</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
+to 0%. If text in similar colors are also to be
+set to this Spot Color, then select an acceptable
+tolerance range (suggested default is 15%).
+
+Note that this will include similar colors either 
+side (e.g. -15% to +15%) of the selected hue.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">18</property>
+                                        <property name="label" translatable="yes">Tolerance (%):</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
+could be useful as a cost-effective alternative
+to full-color (CMYK) printing.
+
+For example, you may use a spot color to mark
+the words of Jesus in a distinct color, or to make
+section headings distinct from the scripture text.</property>
+                                <property name="label" translatable="yes">Spot Color</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame">
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-left">6</property>
+                            <property name="margin-right">6</property>
+                            <property name="margin-start">9</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="label-xalign">0.039999999105930328</property>
+                            <child>
+                              <object class="GtkAlignment">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="left-padding">12</property>
+                                <child>
+                                  <!-- n-columns=3 n-rows=1 -->
+                                  <object class="GtkGrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-left">12</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="row-spacing">3</property>
+                                    <property name="column-spacing">6</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">ISBN</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEntry">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="margin-bottom">3</property>
+                                        <property name="max-length">17</property>
+                                        <property name="width-chars">17</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="placeholder-text" translatable="yes">978-3-16-148410-0</property>
+                                        <property name="completion">entrycompletion1</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="width-request">180</property>
+                                        <property name="height-request">40</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="stock">gtk-dnd</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
+could be useful as a cost-effective alternative
+to full-color (CMYK) printing.
+
+For example, you may use a spot color to mark
+the words of Jesus in a distinct color, or to make
+section headings distinct from the scripture text.</property>
+                                <property name="label" translatable="yes">ISBN Barcode</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFrame">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="label-xalign">0.019999999552965164</property>
+                        <child>
+                          <object class="GtkAlignment">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="left-padding">12</property>
+                            <child>
+                              <!-- n-columns=8 n-rows=2 -->
+                              <object class="GtkGrid">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="row-spacing">6</property>
+                                <property name="column-spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Weight of the paper being
+used to print the publication.
+Measured in Grams per Square
+Meter (GSM). Normal copy
+paper is around 70-80 GSM.</property>
+                                    <property name="label" translatable="yes">Weight
+of Paper:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">To be more precise in the calculation
+of the spine thickness, the precise
+paper thickness can be entered (in 
+micons) rather than relying on GSM.</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="label" translatable="yes">Thickness
+of Paper:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_paperWeight">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">Weight of the paper being
+used to print the publication.
+Measured in Grams per Square
+Meter (GSM). Normal copy
+paper is around 70-80 GSM.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="text" translatable="yes">0</property>
+                                    <property name="adjustment">a_paperWeight</property>
+                                    <property name="climb-rate">5</property>
+                                    <property name="value">70</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_paperThickness">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">To be more precise in the calculation
+of the spine thickness, the precise
+paper thickness can be entered (in 
+micons) rather than relying on GSM.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="text" translatable="yes">70</property>
+                                    <property name="adjustment">a_paperThickness</property>
+                                    <property name="climb-rate">5</property>
+                                    <property name="value">90</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">The total number of pages in the
+book will automatically be filled
+in after the PDF has been created.</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="label" translatable="yes">Total
+Pages:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_paperThickness1">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">The total number of pages in the
+book will automatically be filled
+in after the PDF has been created.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="width-chars">5</property>
+                                    <property name="text" translatable="yes">70</property>
+                                    <property name="adjustment">a_totalPages</property>
+                                    <property name="climb-rate">10</property>
+                                    <property name="value">500</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">The width of the spine will be
+automatically calculated using
+the other values, but can be
+manually overwritten if needed.
+
+Note that the spine thickness also
+includes a small factor for wrapping
+the cover around the binding.</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="label" translatable="yes">Thickness
+of Spine:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_spineThickness">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">The width of the spine will be
+automatically calculated using
+the other values, but can be
+manually overwritten if needed.
+
+Note that the spine thickness also
+includes a small factor for wrapping
+the cover around the binding.</property>
+                                    <property name="halign">start</property>
+                                    <property name="width-chars">6</property>
+                                    <property name="text">5.0</property>
+                                    <property name="adjustment">a_spineThickness</property>
+                                    <property name="climb-rate">0.5</property>
+                                    <property name="digits">1</property>
+                                    <property name="value">5</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">7</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_flipSpine180">
+                                    <property name="label" translatable="yes">Flip Spine Title by 180°</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Printing traditions in some countries
+use </property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Cover Design...</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton">
+                                    <property name="label" translatable="yes">Spine Design...</property>
+                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child type="label">
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Cover &amp; Spine</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">13</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_Finishing">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">Finishing</property>
+                  </object>
+                  <packing>
+                    <property name="menu-label">Finishing</property>
+                    <property name="position">13</property>
+                    <property name="tab-fill">False</property>
+                  </packing>
+                </child>
+                <child>
                   <object class="GtkBox" id="tb_Help">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -26488,7 +27622,7 @@ by deleting unneeded files.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -26502,7 +27636,7 @@ obtain help from others.</property>
                     <property name="label" translatable="yes">Help</property>
                   </object>
                   <packing>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -26544,7 +27678,7 @@ obtain help from others.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">14</property>
+                    <property name="position">15</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -26557,7 +27691,7 @@ from XeTeX processing.</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
-                    <property name="position">14</property>
+                    <property name="position">15</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
