@@ -2735,25 +2735,110 @@ current configuration (source) should be copied to:</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
-                <property name="spacing">6</property>
+                <property name="margin-end">12</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">6</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="margin-end">6</property>
+                    <property name="label" translatable="yes">IF Configuration Already 
+Exists in Target Project(s):</property>
+                    <attributes>
+                      <attribute name="foreground" value="#a4a400000000"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
-                  <object class="GtkCheckButton" id="c_overwriteExisting">
-                    <property name="label" translatable="yes">Overwrite Target Project Settings</property>
+                  <object class="GtkBox">
                     <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">False</property>
-                    <property name="tooltip-text" translatable="yes">If this option is checked, any existing
-settings with the same Config name in 
-the target project(s) will be overwritten.</property>
+                    <property name="can-focus">False</property>
                     <property name="halign">end</property>
-                    <property name="valign">end</property>
-                    <property name="margin-end">6</property>
-                    <property name="vexpand">True</property>
-                    <property name="active">True</property>
-                    <property name="draw-indicator">True</property>
+                    <property name="orientation">vertical</property>
+                    <property name="spacing">3</property>
+                    <child>
+                      <object class="GtkRadioButton" id="r_copyConfig_noReplace">
+                        <property name="label" translatable="yes">Do NOT Replace Existing Config</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Selecting this option will prevent
+any changes overwriting an
+existing configuration of the
+same name in the target project(s).
+
+This option is usually used when
+copying a configuration to other
+projects for the first time.</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_copyConfig_merge</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_copyConfig_merge">
+                        <property name="label" translatable="yes">Merge Configurations From Both</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Selecting this option will MERGE
+the settings from the source
+configuration with the identically
+named configuration in the target
+project. Any changes that were made
+to the target project's configuration
+since it was first shared will be kept
+(i.e. modified target settings are 
+retained if there is a clash of settings).</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_copyConfig_overwrite</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_copyConfig_overwrite">
+                        <property name="label" translatable="yes">Overwrite With Recent Changes</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Selecting this option will REPLACE
+(or overwrite) any settings in the 
+identically named configuration in 
+the target project IF those settings
+were changed in the source project
+since the configuration was first
+shared. (i.e. if both source and target
+projects modified a setting, then the
+source target setting will "win").</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_copyConfig_noReplace</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -2927,14 +3012,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -2945,27 +3030,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -2982,7 +3067,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
