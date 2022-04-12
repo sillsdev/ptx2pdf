@@ -2,18 +2,28 @@
 \periph Spine|id="spine" rotation="right" align="top" width="4mm"
 \pc The Test Case Bible
 \periph cover|id="cover"
-\ip
 \nopagenums
+\rem BACK COVER
+\esb \cat backcover\cat*
+\ip ~
+\vfill \rem vfill is infinintely expandable space
+\ip
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+\pc 500 copies, Klingon-Esperanto
+\par
+\esbe
+\rem FRONT COVER
 \esb \cat frontcover\cat*
-\vfill
 \esb \cat TitleBox\cat*
 \leavevmode
 \mt3 The 
 \mt1 Test-case Bible
 \esbe
 \vfill
+\ip ~
 \esb \cat footbox\cat*
-\pc Printed in: \sc Târgu Mureș\sc* 2022
+\pc \sc Târgu Mureș\sc* 2022
 \esbe
 \esbe
-\pb

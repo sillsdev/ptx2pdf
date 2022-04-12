@@ -222,6 +222,7 @@
   \else
     \global\let\sb@rpos\cp@ram
   \fi
+  \let\localsb@rpos\sb@rpos
   \getsbp@ram{fgfigpos}\let\fgfigp@s\cp@ram
   \getsbp@ram{fgfigspec}\let\fgfigsp@c\cp@ram
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
@@ -433,6 +434,7 @@
 \newbox\b@rderbox
 \newif\ifhorizb@rder
 \newif\ifhasb@rder
+\newif\ifearlybgimage
 \def\prepb@rderdims{% Prepare b@rderbox
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
@@ -670,9 +672,13 @@
   \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
 }
 
+
+\def\localsb@rpos{}
 \def\@sbe{%
+  \trace{e}{@sbe: \sb@rmarker|\localsb@rpos}%
   \endlastp@rstyle{esbe}% Fire any triggers, etc.
   \let\m@rker\sb@rmarker
+  \global\let\sb@rpos\localsb@rpos
   \ifhe@dings\endhe@dings\fi
   \ifdoingt@ble\endt@ble\fi% Sidebar end should close a table, too
   \let\@fter@sbe\relax
@@ -732,8 +738,19 @@
   \repeat
   \edef\b@xadj{\the\dimen4}%
   \prepb@rderdims
-  \trace{e}{=\b@xadj}%
-  \ifx\bgf@gsp@c\relax\else
+  \trace{e}{=\b@xadj \bgf@gsp@c}%
+  %Does the box have a defined size? 
+  \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
+  \ifx\cp@ram\relax
+    \let\sb@rheightspec\empty
+  \else
+    \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@drtopgap - \b@drbotgap\relax}%
+    \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
+  \fi  
+  \ifx\bgf@gsp@c\relax
+    \let\t@mpfigspec\relax
+  \else
+    \trace{e}{Sidebar has image}%
     \p@rsefigscale{bg}%
     \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\bgfig@dim@wd}%
     \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
@@ -754,10 +771,10 @@
     \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
     \if\bgf@gl@w F
-      \temptrue
+      \earlybgimagetrue
     \fi
     \if\h@scol F
-      \temptrue
+      \earlybgimagetrue
     \fi
   \fi
   \let\w@tsit\sb@rb@x % Make sure the item is identified properly - used in debugging and .delayed file
@@ -776,10 +793,13 @@
     %\setbox\extb@x\vbox{\dbghrule
       %\kern\b@xadj\unvbox\extb@x}%
   \fi
-  \iftemp
+  \ifearlybgimage
     %modify the esbbox to include the picture
     \trace{e}{Including background image below contents: \t@mpfigspec}%
-    \setbox\extb@x\vbox to \ht\extb@x{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\box\extb@x}%
+    \ifx\sb@rheightspec\empty
+      \edef\sb@rheightspec{to \ht\extb@x}%
+    \fi
+    \setbox\extb@x\vbox\edef\sb@rheightspec{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rchunkheight{\unvbox\extb@x}}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \ifx\h@scol\tr@e
@@ -793,14 +813,6 @@
   \fi
   \def\lstch@nkdp{0pt}%
   \loop %Breakable box:
-    %Does the box have a defined size? 
-    \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
-    \ifx\cp@ram\relax
-      \let\sb@rheightspec\empty
-    \else
-      \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@drtopgap - \b@drbotgap\relax}%
-      \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
-    \fi  
     \ifdim\ht\extb@x>\sb@rchunkheight % to enable page splitting, the box should be chunked.
       \dimen1=\sb@rchunkheight
       {% 
@@ -820,6 +832,7 @@
       \let\fb@vpadding=\s@vedvpadding
       \let\b@drbottom=\lstb@drbot
     \fi
+    %\showbox\extchunkb@x
     % Shift text for side image(s) 
     \ifdim\sb@leftshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
@@ -933,7 +946,7 @@
         \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
         \penalty10000
         %\gridp@ctrue\gridb@x\extchunkb@x\gridp@cfalse% make sure we align to the page grid
-        \unvbox\extchunkb@x\vskip\the\dimen0
+        \unvbox\sb@rheightspec\extchunkb@x\vskip\the\dimen0
         \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%

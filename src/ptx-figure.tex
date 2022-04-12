@@ -991,7 +991,17 @@
       \ifx\picV@lign\@lignCent \trace{g}{V alignment: center}\setbox#1\vbox{\vbox to #3{\vss\box#1\vss}}\else
         \trace{g}{V alignment: none}\setbox#1\vbox{\vskip 0pt plus \the\dimen0 \penalty10000\box#1\penalty10000\vskip 0pt plus \dimen0}%
     \fi\fi\fi
+  \tempfalse
+  \trace{g}{pagetotal=\the\pagetotal}%
+  \ifhmode\temptrue\else
+    \ifdim\pagetotal=0pt\else\temptrue\fi
+  \fi
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
+  \iftemp\else
+    %\def\pagecontents{\vss\box#1\vss}\plainoutput
+    \trace{g}{Can proceess immediately}%
+    \dofigp@ge
+  \fi
 }
 
 

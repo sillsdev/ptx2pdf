@@ -1,8 +1,7 @@
 \id INT
 \periph InsideCover|id="insidecover"
 \zgap|400pt\*
-\ip
-\hfill\zISBNbarcode|isbn="978-020137-962-4" height="medium"\*
+\ip ISBN 978-020137-962-4" 
 \pb
 
 \periph Bible Introduction |id="intbible"
