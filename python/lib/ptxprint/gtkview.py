@@ -3902,20 +3902,24 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_hangpoetry").set_active(False)
 
     def onBaseFontSizeChanged(self, btn):
-        if self.loadingConfig:
+        if self.loadingConfig or self.noUpdate:
             return
         if self.get("c_lockFontSize2Baseline"):
             lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
+            self.noUpdate = True
             self.set("s_linespacing", lnsp)
+            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
 
     def onBaseLineSpacingChanged(self, btn):
-        if self.loadingConfig:
+        if self.loadingConfig or self.noUpdate:
             return
         if self.get("c_lockFontSize2Baseline"):
             fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
+            self.noUpdate = True
             self.set("s_fontsize", fntsz)
+            self.noUpdate = False
         else:
             self.updateFont2BaselineRatio()
             

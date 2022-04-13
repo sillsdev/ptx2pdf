@@ -421,7 +421,6 @@ THE SOFTWARE.
     <property name="value">90</property>
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
-    <property name="page-size">5</property>
   </object>
   <object class="GtkAdjustment" id="a_paperWeight">
     <property name="lower">20</property>
@@ -429,7 +428,6 @@ THE SOFTWARE.
     <property name="value">70</property>
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
-    <property name="page-size">5</property>
   </object>
   <object class="GtkAdjustment" id="a_picListadjustment1">
     <property name="upper">100</property>
@@ -1264,7 +1262,6 @@ contained within the sidebar.</property>
     <property name="value">0.05</property>
     <property name="step-increment">0.01</property>
     <property name="page-increment">0.01</property>
-    <property name="page-size">0.01</property>
   </object>
   <object class="GtkAdjustment" id="a_verseDecoratorScale">
     <property name="upper">10</property>
@@ -1668,138 +1665,6 @@ download and use in a publication.</property>
       <action-widget response="-6">btn_dbl_cancel</action-widget>
       <action-widget response="-5">btn_dbl_ok</action-widget>
     </action-widgets>
-  </object>
-  <object class="GtkDialog" id="dlg_UnusedStuff">
-    <property name="can-focus">False</property>
-    <property name="type-hint">dialog</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
-            <child>
-              <placeholder/>
-            </child>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkFrame">
-            <property name="width-request">315</property>
-            <property name="visible">True</property>
-            <property name="sensitive">False</property>
-            <property name="can-focus">False</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="label-xalign">0.039999999105930328</property>
-            <child>
-              <object class="GtkAlignment">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="left-padding">12</property>
-                <child>
-                  <!-- n-columns=3 n-rows=1 -->
-                  <object class="GtkGrid">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="margin-left">12</property>
-                    <property name="margin-right">6</property>
-                    <property name="margin-start">12</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="row-spacing">3</property>
-                    <property name="column-spacing">6</property>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
-then select the closest hue
-which will get converted 
-to the closest matching 
-Pantone color code.</property>
-                        <property name="halign">end</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">ISBN</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkEntry" id="t_ISBN">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="max-length">17</property>
-                        <property name="width-chars">17</property>
-                        <property name="progress-pulse-step">0</property>
-                        <property name="placeholder-text" translatable="yes">978-3-16-148410-0</property>
-                        <property name="completion">entrycompletion1</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkImage">
-                        <property name="width-request">130</property>
-                        <property name="height-request">40</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="stock">gtk-dnd</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">2</property>
-                        <property name="top-attach">0</property>
-                      </packing>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child type="label">
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
-could be useful as a cost-effective alternative
-to full-color (CMYK) printing.
-
-For example, you may use a spot color to mark
-the words of Jesus in a distinct color, or to make
-section headings distinct from the scripture text.</property>
-                <property name="label" translatable="yes">ISBN Barcode</property>
-              </object>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
   </object>
   <object class="GtkAboutDialog" id="dlg_about">
     <property name="can-focus">False</property>
@@ -3239,6 +3104,138 @@ saved configuration.</property>
     </action-widgets>
   </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
+  <object class="GtkDialog" id="dlg_UnusedStuff">
+    <property name="can-focus">False</property>
+    <property name="type-hint">dialog</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame">
+            <property name="width-request">315</property>
+            <property name="visible">True</property>
+            <property name="sensitive">False</property>
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="label-xalign">0.039999999105930328</property>
+            <child>
+              <object class="GtkAlignment">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="left-padding">12</property>
+                <child>
+                  <!-- n-columns=3 n-rows=1 -->
+                  <object class="GtkGrid">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="margin-left">12</property>
+                    <property name="margin-right">6</property>
+                    <property name="margin-start">12</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="row-spacing">3</property>
+                    <property name="column-spacing">6</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">ISBN</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkEntry" id="t_ISBN">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="max-length">17</property>
+                        <property name="width-chars">17</property>
+                        <property name="progress-pulse-step">0</property>
+                        <property name="placeholder-text" translatable="yes">978-3-16-148410-0</property>
+                        <property name="completion">entrycompletion1</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkImage">
+                        <property name="width-request">130</property>
+                        <property name="height-request">40</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="stock">gtk-dnd</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child type="label">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
+could be useful as a cost-effective alternative
+to full-color (CMYK) printing.
+
+For example, you may use a spot color to mark
+the words of Jesus in a distinct color, or to make
+section headings distinct from the scripture text.</property>
+                <property name="label" translatable="yes">ISBN Barcode</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
