@@ -502,6 +502,10 @@ THE SOFTWARE.
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_border_cancel">
@@ -1314,6 +1318,10 @@ contained within the sidebar.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_dbl_cancel">
@@ -1672,6 +1680,10 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
           </object>
           <packing>
@@ -1708,8 +1720,10 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_gnr8frt_cancel">
@@ -1996,8 +2010,10 @@ here until you regenerate this (local) Front Matter.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_gnr8pl_cancel">
@@ -2264,6 +2280,10 @@ If in doubt, click Cancel.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_mbs_cancel">
@@ -2654,6 +2674,10 @@ start of the publication in this oder:
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_mps_cancel">
@@ -3064,14 +3088,14 @@ saved configuration.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3082,27 +3106,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3119,7 +3143,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -3380,6 +3404,10 @@ settings for a similar project.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="use-stock">True</property>
                 <property name="always-show-image">True</property>
               </object>
@@ -3632,9 +3660,10 @@ settings for a similar project.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-bottom">6</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_font_cancel">
@@ -4257,6 +4286,10 @@ are using supports these digits too.)</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_guides_cancel">
@@ -4981,6 +5014,10 @@ the text. This may be useful for precise measuring.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_ovrly_cancel">
@@ -5857,9 +5894,10 @@ information, position and other parameters.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-bottom">4</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="button1">
@@ -7895,8 +7933,10 @@ unbalanced lines on the page.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkButton" id="btn_sty_cancel">
@@ -9673,7 +9713,6 @@ spacing grows/shrinks according to
 the size of the font; or the font size
 changes when the spacing changes.</property>
                                         <property name="halign">start</property>
-                                        <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
@@ -26190,7 +26229,7 @@ You can also select a historical (re-)named PDF.</property>
                                     <property name="margin-bottom">4</property>
                                     <property name="label" translatable="yes">Previous PDF (-1)</property>
                                     <property name="ellipsize">start</property>
-                                    <property name="max-width-chars">35</property>
+                                    <property name="max-width-chars">55</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -26593,7 +26632,7 @@ options allow plenty of scope.</property>
                                 <property name="left-padding">12</property>
                                 <child>
                                   <!-- n-columns=4 n-rows=1 -->
-                                  <object class="GtkGrid">
+                                  <object class="GtkGrid" id="gr_spotColor">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="margin-start">12</property>
@@ -26691,9 +26730,11 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkLabel">
+                              <object class="GtkCheckButton" id="c_spotColor">
+                                <property name="label" translatable="yes">Spot Color</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">False</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
 could be useful as a cost-effective alternative
 to full-color (CMYK) printing.
@@ -26701,7 +26742,11 @@ to full-color (CMYK) printing.
 For example, you may use a spot color to mark
 the words of Jesus in a distinct color, or to make
 section headings distinct from the scripture text.</property>
-                                <property name="label" translatable="yes">Spot Color</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-top">4</property>
+                                <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>
@@ -26896,6 +26941,7 @@ paper is around 70-80 GSM.</property>
                                     <property name="adjustment">a_paperWeight</property>
                                     <property name="climb-rate">5</property>
                                     <property name="value">70</property>
+                                    <signal name="value-changed" handler="onPaperWeightChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -26916,6 +26962,7 @@ micons) rather than relying on GSM.</property>
                                     <property name="adjustment">a_paperThickness</property>
                                     <property name="climb-rate">5</property>
                                     <property name="value">90</property>
+                                    <signal name="value-changed" handler="onpaperThicknessChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
