@@ -165,14 +165,14 @@ class PDFx1aOutput(Snippet):
 # /MarkInfo <</Marked /False>>
 
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
-        pdftype = model['snippets/pdfoutput'] or "None"
+        pdftype = model['snippets/pdfoutput'] or "Screen"
         libpath = pycodedir()
-        if pdftype in ("None", "CMYK"):
+        if pdftype in ("Screen", "CMYK"):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             res += "\\Actionsfalse\n"
-        if pdftype == "None":
+        if pdftype == "Screen":
             model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
             extras['_iccnumcols'] = "3"
         else:

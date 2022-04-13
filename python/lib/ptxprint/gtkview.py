@@ -3,6 +3,7 @@
 import sys, os, re, regex, gi, subprocess, traceback #, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
+gi.require_version('Poppler', '0.18')
 from shutil import rmtree
 import time, locale, urllib.request, json
 from ptxprint.utils import universalopen, refKey, chgsHeader
@@ -15,7 +16,8 @@ if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
     pass
 else:
     gi.require_version('GtkSource', '3.0')
-from gi.repository import GtkSource
+from gi.repository import GtkSource, Poppler
+import cairo
 
 import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
@@ -265,6 +267,7 @@ _sensitivities = {
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
     "c_filterCats":            ["gr_filterCats"],
+    "c_spotColor":             ["gr_spotColor"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -279,6 +282,7 @@ _nonsensitivities = {
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
+    # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
@@ -487,8 +491,7 @@ class GtkViewModel(ViewModel):
         self.booklistKeypressed = False
         self.configKeypressed = False
         self.configNoUpdate = False
-        self.chapNoUpdate = False
-        self.bookNoUpdate = False
+        self.noUpdate = False
         self.pendingPid = None
         self.pendingConfig = None
         self.otherDiglot = None
@@ -618,6 +621,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=args.identify)
+        self.updateFont2BaselineRatio()
 
             # .mainnb {background-color: #d3d3d3;}
             # .mainnb panel {background-color: #d3d3d3;}
@@ -993,10 +997,11 @@ class GtkViewModel(ViewModel):
         pdfnames = self.baseTeXPDFnames()
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
+            exists = os.path.exists(pdfname)
             fileLocked = True
             while fileLocked:
                 try:
-                    with open(pdfname, "wb+") as outf:
+                    with open(pdfname, "ab+") as outf:
                         outf.close()
                 except PermissionError:
                     question = _("                   >>> PLEASE CLOSE the PDF <<<\
@@ -1011,6 +1016,8 @@ class GtkViewModel(ViewModel):
                         self.finished()
                         return
                 fileLocked = False
+            if not exists:
+                os.remove(pdfname)
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
@@ -1143,7 +1150,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def updateBookList(self):
-        self.bookNoUpdate = True
+        self.noUpdate = True
         cbbook = self.builder.get_object("ecb_book")
         cbbook.set_model(None)
         lsbooks = self.builder.get_object("ls_books")
@@ -1156,7 +1163,7 @@ class GtkViewModel(ViewModel):
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])
         cbbook.set_model(lsbooks)
-        self.bookNoUpdate = False
+        self.noUpdate = False
 
     def getConfigList(self, prjid):
         res = []
@@ -1398,7 +1405,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_sensitive(status)
         
     def onExamineBookChanged(self, cb_examineBook):
-        if self.bookNoUpdate == True:
+        if self.noUpdate == True:
             return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None, None, pg, forced=True)
@@ -1661,7 +1668,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_editZvars").set_sensitive(False)
         self.builder.get_object("btn_removeZeros").set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
-        self.bookNoUpdate = True
+        self.noUpdate = True
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
@@ -1758,7 +1765,7 @@ class GtkViewModel(ViewModel):
             self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry clicking... \
                                                \n   * the 'Generate' button \
                                                \n   * the 'Print' button to create the PDF first"))
-        self.bookNoUpdate = False
+        self.noUpdate = False
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -2332,10 +2339,12 @@ class GtkViewModel(ViewModel):
                 except AttributeError:
                     pass
             for p in projlist:
-                newcdir = self.configPath(cfgname=cfg, makePath=False, prjid=p)
-                if self.get("c_overwriteExisting") and os.path.exists(newcdir):
-                    rmtree(newcdir)
-                self._copyConfig(cfg, cfg, newprj=p)
+                if self.get("r_copyConfig") == "noReplace":
+                    self.applyConfig(cfg, cfg, newprj=p)
+                elif self.get("r_copyConfig") == "merge":
+                    self.applyConfig(cfg, cfg, action=1, newprj=p)
+                elif self.get("r_copyConfig") == "overwrite":
+                    self.applyConfig(cfg, cfg, action=0, newprj=p)
         dialog.set_keep_above(False)
         dialog.hide()
         
@@ -2818,7 +2827,7 @@ class GtkViewModel(ViewModel):
                 self.picListView.picinfo.build_searchlist()
                 self.picListView.onRadioChanged()
 
-    def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+    def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
         folderattr = getattr(self, attr, None)
         if folderattr is None:
             folderattr = basedir if isSingle else [basedir]
@@ -2832,7 +2841,8 @@ class GtkViewModel(ViewModel):
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = not isSingle, basedir=fldr)
         if vals != None and len(vals) and str(vals[0]) != "None":
-            self.builder.get_object("c_"+ident).set_active(True)
+            if chkbx:
+                self.builder.get_object("c_"+ident).set_active(True)
             if isSingle:
                 setattr(self, attr, vals[0])
                 btn.set_tooltip_text(str(vals[0]))
@@ -2844,9 +2854,10 @@ class GtkViewModel(ViewModel):
         else:
             setattr(self, attr, None)
             btn.set_tooltip_text("")
-            btn.set_sensitive(False)
-            self.set("c_"+ident, False)
             self.set("lb_"+ident, "")
+            if chkbx:
+                btn.set_sensitive(False)
+                self.set("c_"+ident, False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
@@ -2882,6 +2893,13 @@ class GtkViewModel(ViewModel):
         self._onPDFClicked(_("Select Verse Decorator PDF file"), True,
                 os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
+
+    def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
+        self._onPDFClicked(_("Select a PDF file to compare with"), True,
+                os.path.join(self.working_dir),
+                "diffPDF", "diffPDF", btn_selectDiffPDF, False)
+        if self.get("lb_diffPDF") == "":
+            self.set("lb_diffPDF", _("Previous PDF (_1)"))
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
@@ -3882,3 +3900,52 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         if self.sensiVisible("c_marginalverses"):
             self.builder.get_object("c_hangpoetry").set_active(False)
+
+    def onBaseFontSizeChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        if self.get("c_lockFontSize2Baseline"):
+            lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
+            self.noUpdate = True
+            self.set("s_linespacing", lnsp)
+            self.noUpdate = False
+        else:
+            self.updateFont2BaselineRatio()
+
+    def onBaseLineSpacingChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        if self.get("c_lockFontSize2Baseline"):
+            fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
+            self.noUpdate = True
+            self.set("s_fontsize", fntsz)
+            self.noUpdate = False
+        else:
+            self.updateFont2BaselineRatio()
+            
+    def onLockRatioClicked(self, btn):
+        if self.loadingConfig:
+            return
+        if self.get("c_lockFontSize2Baseline"):
+            self.updateFont2BaselineRatio()
+
+    def onCreateDiffclicked(self, btn):
+        self.docreatediff = True
+        self.onOK(None)
+        
+    def onPaperWeightChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        thck = int(float(self.get("s_paperWeight")) / 0.8)
+        self.noUpdate = True
+        self.set("s_paperThickness", thck)
+        self.noUpdate = False
+        
+    def onpaperThicknessChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        wght = int(float(self.get("s_paperThickness")) * 0.8)
+        self.noUpdate = True
+        self.set("s_paperWeight", wght)
+        self.noUpdate = False
+    

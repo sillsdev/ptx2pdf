@@ -66,6 +66,7 @@ class ViewModel:
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
         "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
+        "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
@@ -86,6 +87,7 @@ class ViewModel:
         self.ptsettings = None
         self.FrontPDFs = None
         self.BackPDFs = None
+        self.diffPDF = None
         self.customScript = None
         self.customXRfile = None
         self.moduleFile = None
@@ -113,6 +115,8 @@ class ViewModel:
         self.pubvars = {}
         self.strongsvars = {}
         self.bookrefs = None
+        self.font2baselineRatio = 1.
+        self.docreatediff = False
 
         # private to this implementation
         self.dict = {}
@@ -333,6 +337,9 @@ class ViewModel:
             return None
         return self.get(ctl[0])
 
+    def updateFont2BaselineRatio(self):
+        self.font2baselineRatio = float(self.get("s_fontsize")) / float(self.get("s_linespacing"))
+    
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
             return False
@@ -383,11 +390,13 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    def applyConfig(self, oldcfg, newcfg, action=0, moving=False, newprj=None):
+    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
-        if action == 0 and os.path.exists(newp):
-            return False
+        if action is None:
+            if os.path.exists(newp):
+                return False
+            action = 0
         self.triggervcs = True
         os.makedirs(newp, exist_ok=True)
         jobs = {'ptxprint.cfg': (self._copyfile, self._mergecfg),
@@ -494,9 +503,6 @@ class ViewModel:
             destp.write("".join(res))
         copyfile(srcp, mergep)
 
-    def _copyConfig(self, oldcfg, newcfg, **kw):
-        return self.applyConfig(oldcfg, newcfg, action=0, **kw)
-
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
         currprj = self.prjid
         if currprj is None or currprj != prjid:
@@ -527,9 +533,9 @@ class ViewModel:
             self.resetToInitValues()
             if currprj == self.prjid:
                 if configName == "Default":
-                    self._copyConfig(None, configName, moving=True)
+                    self.applyConfig(None, configName, moving=True)
                 else:
-                    self._copyConfig(self.configId, configName)
+                    self.applyConfig(self.configId, configName)
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName)
             self.styleEditor.load(self.getStyleSheets(configName))
@@ -887,6 +893,7 @@ class ViewModel:
         if v < 2.08:
             if config.get("snippets", "pdfoutput", fallback="None") == "None":
                 self._configset(config, "snippets/pdfoutput", "Screen")
+        # print(f"{forcerewrite} {v} {ConfigVersion} {cfgname} {self.configPath(cfgname)}")
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -981,6 +988,7 @@ class ViewModel:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
+        self.updateFont2BaselineRatio()
 
     def updateStyles(self, version):
         if version < 0:

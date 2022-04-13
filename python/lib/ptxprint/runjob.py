@@ -1,4 +1,4 @@
-import os, sys, re, subprocess
+import os, sys, re, subprocess, time
 from PIL import Image, ImageChops, ImageEnhance
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
@@ -182,8 +182,10 @@ class RunJob:
         self.inArchive = inArchive
         self.noview = False
         self.nothreads = False
-        self.oldversions = 1
+        # self.oldversions = 1
         self.docreatediff = True
+        # self.onlydiffs = True
+        # self.diffPdf = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -232,7 +234,9 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
+        # set values based on UI components
         self.ispdfxa = self.printer.get("fcb_outputFormat") or "Screen"
+        self.docreatediff = self.printer.docreatediff
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -285,14 +289,26 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         if self.res == 0:
-            if self.docreatediff:
-                self.createDiff(pdfname)
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', pdfname))
-                # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
+            print(f"{self.printer.docreatediff=}")
+            if self.printer.docreatediff:
+                basename = self.printer.get("btn_selectDiffPDF")
+                diffcolor = self.printer.get("col_diffColor")
+                onlydiffs = self.printer.get("c_onlyDiffs")
+                print(f"{basename=} {pdfname=}")
+                if len(basename):
+                    diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
+                    self.printer.docreatediff = False
+                    print(f"{diffname=}")
+                    if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
+                        if sys.platform == "win32":
+                            os.startfile(diffname)
+                        elif sys.platform == "linux":
+                            subprocess.call(('xdg-open', diffname))
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -580,13 +596,31 @@ class RunJob:
         # print(f"{pathjoin(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
-        if self.nothreads:
-            self.run_xetex(outfname, info)
+        outpath = os.path.join(self.tmpdir, outfname[:-4])
+        if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
+            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
         else:
-            self.thread = Thread(target=self.run_xetex, args=(outfname, info))
+            pdffile = outpath + ".pdf"
+        logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
+        oldversions = int(self.printer.get("s_keepVersions")) or 1
+        if oldversions > 0:
+            for c in range(oldversions, 0, -1):
+                opdffile = pdffile[:-4] + "_{}.pdf".format(c)
+                ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
+                if os.path.exists(opdffile):
+                    os.remove(opdffile)
+                if os.path.exists(ipdffile):
+                    logger.debug(f"Rename {ipdffile} to {opdffile}")
+                    os.rename(ipdffile, opdffile)
+        if self.nothreads:
+            self.run_xetex(outfname, pdffile, info)
+        else:
+            self.thread = Thread(target=self.run_xetex, args=(outfname, pdffile, info))
             self.busy = True
             logger.debug("sharedjob: Starting thread to run xetex")
             self.thread.start()
+            self.wait()
+        self.done_job(outfname, pdffile, info)
         return genfiles
 
     def wait(self):
@@ -596,7 +630,7 @@ class RunJob:
         unlockme()
         return self.res
 
-    def run_xetex(self, outfname, info):
+    def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
         cacheexts = {"toc":     (_("table of contents"), True), 
@@ -666,22 +700,8 @@ class RunJob:
             if not rererun:
                 break
 
-        pdffile = None
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            outpath = os.path.join(self.tmpdir, outfname[:-4])
-            if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-                pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
-            else:
-                pdffile = outpath + ".pdf"
-            if self.oldversions > 0:
-                for c in range(self.oldversions, 0, -1):
-                    opdffile = pdffile[:-4] + "_{}.pdf".format(c)
-                    ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
-                    if os.path.exists(opdffile):
-                        os.remove(opdffile)
-                    if os.path.exists(ipdffile):
-                        os.rename(ipdffile, opdffile)
             tmppdf = pdffile if self.ispdfxa == "Screen" else outfname.replace(".tex", ".prepress.pdf")
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
@@ -708,13 +728,13 @@ class RunJob:
                     self.res = 1
                 os.remove(outpath + ".prepress.pdf")
         print("Done")
-        self.done_job(outfname, pdffile, info)
 
-    def createDiff(self, pdfname, basename=None, color=None, maxdiff=False):
+    def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
             color = (240, 0, 0)
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
         if not os.path.exists(othername):
             return None
         try:
@@ -723,11 +743,17 @@ class RunJob:
         except ImportError:
             return None
         results = []
+        hasdiffs = False
         for iimg in ingen:
             oimg = next(ogen, None)
             if oimg is None:
                 break
             dmask = ImageChops.difference(oimg, iimg).convert("L")
+            if not dmask.getbbox():
+                if onlydiffs:
+                    continue
+            else:
+                hasdiffs = True
             if maxdiff:
                 dmask = dmask.point(lambda x: 255 if x else 0)
             translucent = Image.new("RGB", iimg.size, color)
@@ -736,15 +762,20 @@ class RunJob:
             nimg = enhanceb.enhance(1.5)
             nimg.paste(translucent, (0, 0), dmask)
             results.append(nimg)
-        if len(results):
+        if os.path.exists(outname):
+            os.remove(outname)
+        if hasdiffs and len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
+            return outname
 
     def pdfimages(self, infile):
         import gi
         gi.require_version('Poppler', '0.18')
-        from gi.repository import Poppler
+        from gi.repository import Poppler, GLib
         import cairo
-        doc = Poppler.Document.new_from_file("file://"+infile)
+        uri = GLib.filename_to_uri(infile, None)
+        logger.debug(f"Poppler load '{uri}'")
+        doc = Poppler.Document.new_from_file(uri, None)
         numpages = doc.get_n_pages()
         for i in range(numpages):
             page = doc.get_page(i)

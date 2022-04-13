@@ -9,7 +9,7 @@ if sys.platform in ("win32", "cygwin"):
     binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\{}.typelib'.format(x),
                                             'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
-                     'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0')] \
+                     'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
               + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', 'ptxprint')]
 else:
     binaries = []
@@ -63,7 +63,7 @@ exe = EXE(pyz,
           upx_exclude = ['tcl'],
           runtime_tmpdir = None,
           windowed=True,
-          console = False,
+          console = True,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 coll = COLLECT(exe,
                a.binaries,
