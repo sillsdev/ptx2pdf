@@ -491,8 +491,7 @@ class GtkViewModel(ViewModel):
         self.booklistKeypressed = False
         self.configKeypressed = False
         self.configNoUpdate = False
-        self.chapNoUpdate = False
-        self.bookNoUpdate = False
+        self.noUpdate = False
         self.pendingPid = None
         self.pendingConfig = None
         self.otherDiglot = None
@@ -1151,7 +1150,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def updateBookList(self):
-        self.bookNoUpdate = True
+        self.noUpdate = True
         cbbook = self.builder.get_object("ecb_book")
         cbbook.set_model(None)
         lsbooks = self.builder.get_object("ls_books")
@@ -1164,7 +1163,7 @@ class GtkViewModel(ViewModel):
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])
         cbbook.set_model(lsbooks)
-        self.bookNoUpdate = False
+        self.noUpdate = False
 
     def getConfigList(self, prjid):
         res = []
@@ -1406,7 +1405,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(c).set_sensitive(status)
         
     def onExamineBookChanged(self, cb_examineBook):
-        if self.bookNoUpdate == True:
+        if self.noUpdate == True:
             return
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
         self.onViewerChangePage(None, None, pg, forced=True)
@@ -1669,7 +1668,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_editZvars").set_sensitive(False)
         self.builder.get_object("btn_removeZeros").set_sensitive(False)
         pgid = Gtk.Buildable.get_name(page)
-        self.bookNoUpdate = True
+        self.noUpdate = True
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
         bks = self.getBooks()
@@ -1766,7 +1765,7 @@ class GtkViewModel(ViewModel):
             self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry clicking... \
                                                \n   * the 'Generate' button \
                                                \n   * the 'Print' button to create the PDF first"))
-        self.bookNoUpdate = False
+        self.noUpdate = False
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -3927,28 +3926,22 @@ class GtkViewModel(ViewModel):
             self.updateFont2BaselineRatio()
 
     def onCreateDiffclicked(self, btn):
-        # do something to call runjob method (MH - I need help here!!!!)
-        basename = self.printer.get("btn_selectDiffPDF")
-        diffcolor = self.printer.get("col_diffColor")
-        onlydiffs = self.printer.get("c_onlyDiffs")
-        if len(basename):
-            # self.createDiff(pdfname, basename=self.diffPdf)
-            diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
-            if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
-                if sys.platform == "win32":
-                    os.startfile(diffname)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', diffname))
-
+        self.docreatediff = True
+        self.onOK(None)
+        
     def onPaperWeightChanged(self, btn):
-        if self.loadingConfig:
+        if self.loadingConfig or self.noUpdate:
             return
         thck = int(float(self.get("s_paperWeight")) / 0.8)
-        # self.set("s_paperThickness", thck)
+        self.noUpdate = True
+        self.set("s_paperThickness", thck)
+        self.noUpdate = False
         
     def onpaperThicknessChanged(self, btn):
-        if self.loadingConfig:
+        if self.loadingConfig or self.noUpdate:
             return
         wght = int(float(self.get("s_paperThickness")) * 0.8)
-        # self.set("s_paperWeight", wght)
+        self.noUpdate = True
+        self.set("s_paperWeight", wght)
+        self.noUpdate = False
     

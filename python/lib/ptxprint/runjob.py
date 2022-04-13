@@ -236,6 +236,7 @@ class RunJob:
         self.changes = None
         # set values based on UI components
         self.ispdfxa = self.printer.get("fcb_outputFormat") or "Screen"
+        self.docreatediff = self.printer.docreatediff
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
@@ -293,12 +294,16 @@ class RunJob:
                     os.startfile(pdfname)
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', pdfname))
-            if self.docreatediff:
+            print(f"{self.printer.docreatediff=}")
+            if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 diffcolor = self.printer.get("col_diffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
+                print(f"{basename=} {pdfname=}")
                 if len(basename):
                     diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
+                    self.printer.docreatediff = False
+                    print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":
                             os.startfile(diffname)

@@ -116,6 +116,7 @@ class ViewModel:
         self.strongsvars = {}
         self.bookrefs = None
         self.font2baselineRatio = 1.
+        self.docreatediff = False
 
         # private to this implementation
         self.dict = {}
