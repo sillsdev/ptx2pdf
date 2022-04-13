@@ -3927,7 +3927,7 @@ class GtkViewModel(ViewModel):
             self.updateFont2BaselineRatio()
 
     def onCreateDiffclicked(self, btn):
-        # do something to call runjob method 
+        # do something to call runjob method (MH - I need help here!!!!)
         basename = self.printer.get("btn_selectDiffPDF")
         diffcolor = self.printer.get("col_diffColor")
         onlydiffs = self.printer.get("c_onlyDiffs")
@@ -3944,11 +3944,11 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         thck = int(float(self.get("s_paperWeight")) / 0.8)
-        self.set("s_paperThickness", thck)
+        # self.set("s_paperThickness", thck)
         
     def onpaperThicknessChanged(self, btn):
         if self.loadingConfig:
             return
         wght = int(float(self.get("s_paperThickness")) * 0.8)
-        self.set("s_paperWeight", wght)
+        # self.set("s_paperWeight", wght)
     

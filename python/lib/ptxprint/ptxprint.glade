@@ -26563,8 +26563,8 @@ to be rotated.
                                     <property name="active">2</property>
                                     <property name="has-entry">True</property>
                                     <property name="entry-text-column">0</property>
-                                    <property name="id-column">1</property>
-                                    <property name="active-id">0</property>
+                                    <property name="id-column">0</property>
+                                    <property name="active-id">2</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
                                         <property name="visible">True</property>
@@ -26673,6 +26673,7 @@ Spine:</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="width-request">330</property>
@@ -26817,7 +26818,7 @@ section headings distinct from the scripture text.</property>
                         </child>
                         <child>
                           <object class="GtkFrame">
-                            <property name="width-request">330</property>
+                            <property name="width-request">333</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="margin-start">6</property>

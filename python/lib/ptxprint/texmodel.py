@@ -268,6 +268,7 @@ ModelMap = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
 
     "document/keepversions":    ("s_keepVersions", None),
+    "document/settingsinpdf":   ("c_inclSettingsInPDF", None),
     "document/spinethickness":  ("s_spineThickness", None),
     "document/rotatespinetext": ("fcb_rotateSpineText", None),
     
