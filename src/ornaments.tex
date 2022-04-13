@@ -55,7 +55,7 @@
   \tmptoks{}%
   \pdf@yunit=1bp
   \ifx\undefined\@pgfornamentY
-    \message{setorn@scale: Setting a scale for undefined object!}%
+    \trace{orn}{setorn@scale: Setting a scale for undefined object!}%
     \pdf@yunit=1bp
   \else
     \ifx\ornamentwidth\empty
@@ -426,18 +426,19 @@
 \newif\iflocalornament
 \newif\ifstringornament
 \def\@@ornsetnum #1#2\E{%
+ %\trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
 \def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
-  \message{ornament@parse:#1:#2:#3}%
+  \trace{orn}{ornament@parse:#1:#2:#3}%
   \localornamentfalse
   \stringornamentfalse
   \string@check#1""\E
   \ifstringornament
     \get@ornamentDim{\pdf@ornamentNum}%
   \else
-    \x@\@@ornsetnum #1\E
-    \get@ornamentDim{#1}%
+    \x@\@@ornsetnum #1\empty\E
+    \get@ornamentDim{\pdf@ornamentNum}%
   \fi
   %\ifx\dimen1=0pt
   %  \localornamenttrue
@@ -453,7 +454,7 @@
   \else
     \ornscalefalse
     %\tracingassigns=1
-    \ifx\tmp\ptn@eq\else
+    \ifx\tmp\ptn@eq\else %a scale of = means keep the same scaling.
       \x@\check@orn@dot\tmp..\E
     \fi
     \trace{orn}{orn@scale@#4: xunit \the\pdf@xunit\space yunit \the\pdf@yunit}%
@@ -505,7 +506,7 @@
 		      \set@repeat@class{\tmpb}{1}{}%
 		    \fi
 		  \else
-		    \message{unrecognised control char '#3'}%
+		    \message{Ornamental border: unrecognised control char '#3'}%
 		  \fi
 		\fi
 	      \fi
@@ -521,7 +522,7 @@
 \def\set@repeat@class#1#2#3{\edef\orn@repeat@class{#1}%
   \ifx\orn@repeat@class\empty
     \edef\orn@rpt@c@missing{\the\numexpr 1+\orn@rpt@c@missing\relax}%
-    \message{Missing repeat class}%
+    \trace{orn}{Missing repeat class}%
     \edef\orn@repeat@class{Z\orn@rpt@c@missing}%
   \fi
   \x@\edef\csname mult@repeat@min@\orn@repeat@class\endcsname{#2}%
@@ -641,7 +642,7 @@
     \global\best@adjust=\dimen1
     \global\best@stretch=\fill@stretch
     \let\D@\foundb@st\the\mult@classes
-    \message{New best score:\the\best@score, \the\dimen1, \the\best@stretch}%
+    \trace{orn}{New best score:\the\best@score, \the\dimen1, \the\best@stretch}%
  \else
     \trace{orn}{rejecting score:\the\count255, \the\dimen1}%
  \fi\egroup}
@@ -687,13 +688,13 @@
     \global\best@stretch=\fill@stretch
     %
     \ifdim\dimen1 < 0pt
-      \message{No space for optional parts}%
+      \trace{orn}{No space for optional parts}%
       \ifdim\dimen1 < -0.7\fill@stretch
-	 \message{Oversquashed fill}%
+	 \trace{orn}{Oversquashed fill}%
       \fi
       \clear@vars
     \else
-      \message{Calculating \the\mult@count\space optional parts (\mult@class@list)}%
+      \trace{orn}{Calculating \the\mult@count\space optional parts (\mult@class@list)}%
       \ifnum\mult@count>0
 	\x@\multi@try\mult@class@list,\E{-1}%
 	\relax
@@ -722,7 +723,7 @@
       \dimen4=\dimexpr \dimen4 / \count255\relax%Scale by 32
       \xdef\ornamentstretch{\strip@pt{\dimen4}}%
     \fi
-    \message{Ornament stretch set to \ornamentstretch}%
+    \trace{orn}{Ornament stretch set to \ornamentstretch}%
   \endgroup
 }
 
@@ -739,7 +740,7 @@
   \ifdim\dimen\@@orndim<0pt
     \dimen\@@orndim=-\dimen\@@orndim
   \fi
-  \message{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
+  \trace{orn}{Ornament #1 is \the\dimen0 by \the\dimen1 \ifpdf@ornament@stretch Stretchy\fi\ifpdf@ornament@repeat Repeat\fi}%
   \ifpdf@ornament@repeat
     \advance\mult@count by 1
     \ifdim\fill@mult@min=0pt
@@ -923,7 +924,7 @@
   \dimen1=\dimexpr #2 - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
-  \message{Box side is \the\dimen1}%
+  \trace{orn}{Box side is \the\dimen1}%
   \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
   \ifx\patternL\patternR
@@ -958,7 +959,7 @@
   \divide\dimen2 by \b@drvsides
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
-  \message{Box side portion is \the\dimen1. Orig: \the\ht\b@rderbox +\the\dp\b@rderbox x\the\wd\b@rderbox, final:\b@rderbox@height }%
+  \trace{orn}{Box side portion is \the\dimen1. Orig: \the\ht\b@rderbox +\the\dp\b@rderbox x\the\wd\b@rderbox, final:\b@rderbox@height }%
   \tempfalse
   \def\border@l@pad{0pt}\def\border@r@pad{0pt}%
   \setbox\orn@bdr@right\box\voidb@x
@@ -1022,7 +1023,7 @@
   \ifcsname\ornDimname\endcsname
     \x@\global\x@\let\x@\@pgfornamentDim\csname \ornDimname\endcsname
     \xdef\OrnamentsFamily{#1}%
-  \else\message{Could not load \pgfOrnamentsObject}%
+  \else\trace{orn}{Could not load \pgfOrnamentsObject}%
   \fi
   %\tracingassigns=0
 }
@@ -1049,7 +1050,7 @@
   \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
-  \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
+  \trace{orn}{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
 \edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot}
