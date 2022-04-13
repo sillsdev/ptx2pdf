@@ -216,7 +216,7 @@
 \def\StringOrnament#1#2#3{\x@\global\x@\font\csname localornament@#1@font\endcsname "#2" at 32pt \setbox0\hbox{\csname localornament@#1@font\endcsname #3}%
     \trace{orn}{Defining ornament #1 as box (\the\ht0+\the\dp0) x \the\wd0}%
     \bgroup
-      \tracingassigns=1
+      %\tracingassigns=1
       \dimen0=\wd0\dimen1=\dimexpr \dimexpr \ht0+\dp0\relax\relax
       \ifnum 1=\ifdim \the\dimen0=0pt 1 \else\ifdim \the\dimen1=0pt 1 \else 0\fi\fi
 	\x@\edef\csname localornament@#1@code\endcsname{\hbox{\csname localornament@#1@font\endcsname #3}}%
@@ -228,7 +228,7 @@
 	\x@\xdef\csname localornament@#1@X\endcsname{\the\count255}%
         \count255=\dimen1\advance\count255 by 32768 \divide\count255 by 65536
 	\x@\xdef\csname localornament@#1@Y\endcsname{\the\count255}%
-        \tracingassigns=0
+        %\tracingassigns=0
 	\x@\xdef\csname localornament@#1@code\endcsname{\noexpand\pdf@transformText\raise \the\dp0\hbox{\csname localornament@#1@font\endcsname #3}}%
       \fi
     \egroup
@@ -425,6 +425,9 @@
 % number in formal N.N, then a pre-set scale [which must have been set by setscale] will be applied 
 \newif\iflocalornament
 \newif\ifstringornament
+\def\@@ornsetnum #1#2\E{%
+ \edef\pdf@ornamentNum{#1#2}%
+}
 \def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
   \message{ornament@parse:#1:#2:#3}%
   \localornamentfalse
@@ -433,8 +436,8 @@
   \ifstringornament
     \get@ornamentDim{\pdf@ornamentNum}%
   \else
+    \x@\@@ornsetnum #1\E
     \get@ornamentDim{#1}%
-    \def\pdf@ornamentNum{#1}%
   \fi
   %\ifx\dimen1=0pt
   %  \localornamenttrue
@@ -952,7 +955,7 @@
   \trace{orn}{#1 - \the\ht\orn@bdr@top -\the\dp\orn@bdr@top -\the\ht\orn@bdr@bot -\the\dp\orn@bdr@bot}%
   \dimen1=\dimexpr \b@rderbox@height - \ht\orn@bdr@top -\dp\orn@bdr@top -\ht\orn@bdr@bot -\dp\orn@bdr@bot\relax
   \dimen2=\dimexpr \dimen1 - \ht\b@rderbox\relax
-  \divide\dimen2 by \b@drsides
+  \divide\dimen2 by \b@drvsides
   %\def\ornamentheight{}
   %\def\ornamentwidth{#3}
   \message{Box side portion is \the\dimen1. Orig: \the\ht\b@rderbox +\the\dp\b@rderbox x\the\wd\b@rderbox, final:\b@rderbox@height }%
@@ -1008,7 +1011,7 @@
 
 \def\ornamentheight{20pt}\def\ornamentwidth{}
 \def\SwitchOrnamentsFamily#1{%
-  \tracingassigns=1
+  %\tracingassigns=1
   \edef\ornDimname{nopgfornamentDim-#1}%
   \ifcsname\ornDimname\endcsname\else 
     \bgroup\let\@pgfornamentDim\relax
@@ -1021,7 +1024,7 @@
     \xdef\OrnamentsFamily{#1}%
   \else\message{Could not load \pgfOrnamentsObject}%
   \fi
-  \tracingassigns=0
+  %\tracingassigns=0
 }
 
 \addtoinithooks{\x@\SwitchOrnamentsFamily\x@{\OrnamentsFamily}}%
@@ -1030,8 +1033,10 @@
 
 \def\DefaultOrnament{-1}
 \def\mkb@rder@ornaments{% Plugin for sidebars
+  \trace{eb}{mkb@rder@ornaments}%
   \def\ornamentheight{\b@drwidth}%
-  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol\fill@none\else\let\ornamentfillcol\cp@ram\fi
+  \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol{\fill@none}\else\let\ornamentfillcol\cp@ram\fi
+  \trace{eb}{Colour:\meaning\b@drcol, Fill:\meaning\ornamentfillcol}
   \ifx\b@drcol\relax
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
@@ -1047,6 +1052,7 @@
   \message{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
+\edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot}
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
   \getp@ram{borderpatterntop}{zrule}{\styst@k}%

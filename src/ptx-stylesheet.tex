@@ -41,6 +41,7 @@
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
 \def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\ds@ffix\endcsname{t}}
+\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi}
 \def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
   \trace{sC}{Remembering that #1 exists as a marker}%
   \remember@xists{#1}%
@@ -1508,6 +1509,7 @@
 %+csty_onetime
 \def\@netimesetup{
  % stuff to execute after loading all stylesheets but (just) before processing the first USFM file
+ \inheritb@rders
  \ifdiglot
   \trace{d}{Onetimesetup, (\c@rrdstat)}%
  \else

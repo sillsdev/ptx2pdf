@@ -1,10 +1,12 @@
 % Test the 'hook' code.
 %\tracingassigns=1
 %\tracinggroups=1
+\def\pluginlist{ornaments}%
 \input "paratext2.tex"
-\input ptx-ptxprint.tex
+\input "ptx-ptxprint.tex"
 \stylesheet{usfm.sty}
 \stylesheet{ptx2pdf.sty}
+\stylesheet{standardborders.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
 \stylesheet{cover.sty}
@@ -17,6 +19,8 @@
 \tracing{A}
 \tracing{m}
 \tracing{e}
+\tracing{eb}
+\tracing{ebi}
 \tracing{s}
 %\tracing{sa}
 \tracing{sc}
@@ -53,4 +57,5 @@
 \ptxfile{int.usfm}
 %\tracingassigns=1
 %\ptxfile{test.usfm}
+\tracingstats=1
 \bye
