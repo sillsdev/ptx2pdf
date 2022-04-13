@@ -115,6 +115,7 @@ class ViewModel:
         self.pubvars = {}
         self.strongsvars = {}
         self.bookrefs = None
+        self.font2baselineRatio = 1.
 
         # private to this implementation
         self.dict = {}
@@ -335,6 +336,9 @@ class ViewModel:
             return None
         return self.get(ctl[0])
 
+    def updateFont2BaselineRatio(self):
+        self.font2baselineRatio = float(self.get("s_fontsize")) / float(self.get("s_linespacing"))
+    
     def onNumTabsChanged(self, *a):
         if self.loadingConfig:
             return False
@@ -983,6 +987,7 @@ class ViewModel:
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
+        self.updateFont2BaselineRatio()
 
     def updateStyles(self, version):
         if version < 0:

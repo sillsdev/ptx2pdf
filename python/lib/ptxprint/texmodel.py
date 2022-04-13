@@ -93,7 +93,6 @@ ModelMap = {
     "paper/pagesize":           ("ecb_pagesize", None),
     "paper/weight":             ("s_paperWeight", None),
     "paper/thickness":          ("s_paperThickness", None),
-    "paper/thickness":          ("s_paperThickness", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),

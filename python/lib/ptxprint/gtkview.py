@@ -3903,6 +3903,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("c_hangpoetry").set_active(False)
 
     def onBaseFontSizeChanged(self, btn):
+        if self.loadingConfig:
+            return
         if self.get("c_lockFontSize2Baseline"):
             lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
             self.set("s_linespacing", lnsp)
@@ -3910,6 +3912,8 @@ class GtkViewModel(ViewModel):
             self.updateFont2BaselineRatio()
 
     def onBaseLineSpacingChanged(self, btn):
+        if self.loadingConfig:
+            return
         if self.get("c_lockFontSize2Baseline"):
             fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
             self.set("s_fontsize", fntsz)
@@ -3917,14 +3921,12 @@ class GtkViewModel(ViewModel):
             self.updateFont2BaselineRatio()
             
     def onLockRatioClicked(self, btn):
+        if self.loadingConfig:
+            return
         if self.get("c_lockFontSize2Baseline"):
             self.updateFont2BaselineRatio()
 
-    def updateFont2BaselineRatio(self):
-        self.font2baselineRatio = float(self.get("s_fontsize")) / float(self.get("s_linespacing"))
-    
     def onCreateDiffclicked(self, btn):
-        pass
         # do something to call runjob method 
         basename = self.printer.get("btn_selectDiffPDF")
         diffcolor = self.printer.get("col_diffColor")
@@ -3939,10 +3941,14 @@ class GtkViewModel(ViewModel):
                     subprocess.call(('xdg-open', diffname))
 
     def onPaperWeightChanged(self, btn):
+        if self.loadingConfig:
+            return
         thck = int(float(self.get("s_paperWeight")) * 0.8)
         self.set("s_paperThickness", thck)
         
     def onpaperThicknessChanged(self, btn):
+        if self.loadingConfig:
+            return
         wght = int(float(self.get("s_paperThickness")) / 0.8)
         self.set("s_paperWeight", wght)
     
