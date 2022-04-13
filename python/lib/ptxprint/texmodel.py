@@ -77,6 +77,7 @@ ModelMap = {
     "project/interlinear":      ("c_interlinear", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", None),
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
+    "project/plugins":          ("t_plugins", None),
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
@@ -267,9 +268,8 @@ ModelMap = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
 
     "document/keepversions":    ("s_keepVersions", None),
-    "document/totalpages":      ("s_totalPages", None),
     "document/spinethickness":  ("s_spineThickness", None),
-    "document/flipspine180":    ("c_flipSpine180", None),
+    "document/rotatespinetext": ("fcb_rotateSpineText", None),
     
     "finishing/pgsperspread":   ("fcb_pagesPerSpread", None),
     "finishing/scaletofit":     ("c_scaleToFit", None),

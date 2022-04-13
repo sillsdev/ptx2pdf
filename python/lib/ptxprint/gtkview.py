@@ -2900,7 +2900,7 @@ class GtkViewModel(ViewModel):
                 os.path.join(self.working_dir),
                 "diffPDF", "diffPDF", btn_selectDiffPDF, False)
         if self.get("lb_diffPDF") == "":
-            self.set("lb_diffPDF", "Previous PDF (-1)")
+            self.set("lb_diffPDF", _("Previous PDF (_1)"))
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
@@ -3943,12 +3943,12 @@ class GtkViewModel(ViewModel):
     def onPaperWeightChanged(self, btn):
         if self.loadingConfig:
             return
-        thck = int(float(self.get("s_paperWeight")) * 0.8)
+        thck = int(float(self.get("s_paperWeight")) / 0.8)
         self.set("s_paperThickness", thck)
         
     def onpaperThicknessChanged(self, btn):
         if self.loadingConfig:
             return
-        wght = int(float(self.get("s_paperThickness")) / 0.8)
+        wght = int(float(self.get("s_paperThickness")) * 0.8)
         self.set("s_paperWeight", wght)
     
