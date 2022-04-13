@@ -91,6 +91,9 @@ ModelMap = {
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
     "paper/pagesize":           ("ecb_pagesize", None),
+    "paper/weight":             ("s_paperWeight", None),
+    "paper/thickness":          ("s_paperThickness", None),
+    "paper/thickness":          ("s_paperThickness", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
@@ -111,6 +114,7 @@ ModelMap = {
     "paper/columns":            ("c_doublecolumn", lambda w,v: "2" if v else "1"),
     "paper/bottomrag":          ("s_bottomRag", None),
     "paper/fontfactor":         ("s_fontsize", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
+    "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", None),
 
     "grid/gridlines":           ("c_gridLines", lambda w,v: "\doGridLines" if v else ""),
     "grid/gridgraph":           ("c_gridGraph", lambda w,v: "\doGraphPaper" if v else ""),
@@ -254,7 +258,23 @@ ModelMap = {
     "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
     "document/noblankpage":     ("c_periphSuppressPage", None),
     "document/cutouterpadding": ("s_cutouterpadding", None),
+    
+    "document/onlyshowdiffs":   ("c_onlyDiffs", None),
+    "document/diffcolor":       ("col_diffColor", None),
+    "document/diffpdf":         ("btn_selectDiffPDF", lambda w,v: w.diffPDF.as_posix() \
+                                 if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
 
+    "document/keepversions":    ("s_keepVersions", None),
+    "document/totalpages":      ("s_totalPages", None),
+    "document/spinethickness":  ("s_spineThickness", None),
+    "document/flipspine180":    ("c_flipSpine180", None),
+    
+    "finishing/pgsperspread":   ("fcb_pagesPerSpread", None),
+    "finishing/scaletofit":     ("c_scaleToFit", None),
+    "finishing/sheetsize":      ("ecb_sheetSize", None),
+    "finishing/sheetsinsigntr": ("s_sheetsPerSignature", None),
+    "finishing/foldcutmargin":  ("s_foldCutMargin", None),
+    
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
     "header/ifshowverse":       ("c_rangeShowVerse", lambda w,v :"true" if v else "false"),
@@ -355,11 +375,14 @@ ModelMap = {
     "document/fontitalic":      ("bl_fontI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontbolditalic":  ("bl_fontBI", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
     "document/fontextraregular":("bl_fontExtraR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
+
     "snippets/fancyintro":      ("c_prettyIntroOutline", None),
     "snippets/pdfoutput":       ("fcb_outputFormat", None),
     "snippets/diglot":          ("c_diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", None),
+
     "document/includeimg":      ("c_includeillustrations", None),
+    
     "thumbtabs/ifthumbtabs":    ("c_thumbtabs", None),
     "thumbtabs/numtabs":        ("s_thumbtabs", None),
     "thumbtabs/length":         ("s_thumblength", None),
@@ -398,6 +421,10 @@ ModelMap = {
     "strongsndx/ndxbookid":     ("fcb_strongsNdxBookId", None),
     "strongsndx/twocols":       ("c_strongs2cols", None),
     "strongsndx/openineditor":  ("c_strongsOpenIndex", None),
+    
+    # "color/usespotcolor":       ("c_useSpotColor", None),
+    "color/spotcolhue":         ("col_SpotColor", None),
+    "color/spotcolrange":       ("s_spotColorTolerance", None),
 }
 
 Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 page border.pdf'),

@@ -9331,6 +9331,7 @@ space between lines of text.</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
                                         <property name="value">14</property>
+                                        <signal name="value-changed" handler="onBaseLineSpacingChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -9423,6 +9424,7 @@ Size (pt):</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="value">11</property>
+                                        <signal name="value-changed" handler="onBaseFontSizeChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -9659,7 +9661,26 @@ commonly seen in a journaling layout.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_lockFontSize2Baseline">
+                                        <property name="label" translatable="yes">Lock
+Ratio</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Lock the ratio of the Base Font Size
+to the Base Line Spacing so that the
+spacing grows/shrinks according to
+the size of the font; or the font size
+changes when the spacing changes.</property>
+                                        <property name="halign">start</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -25978,8 +25999,8 @@ after the scripture text.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="margin-start">6</property>
+                        <property name="halign">start</property>
+                        <property name="margin-start">13</property>
                         <property name="margin-end">12</property>
                         <property name="margin-top">12</property>
                         <property name="margin-bottom">6</property>
@@ -26012,7 +26033,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                             <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26032,10 +26053,11 @@ Archive (largest size, for keeping long-term)
 Note: All comply with archive standard PDF/A-1b.</property>
                             <property name="halign">end</property>
                             <property name="valign">center</property>
+                            <property name="margin-start">40</property>
                             <property name="label" translatable="yes">PDF Output Format:</property>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26050,6 +26072,7 @@ on the PDF to show where the page
 should be trimmed after binding.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
+                            <property name="margin-start">12</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
@@ -26058,10 +26081,45 @@ should be trimmed after binding.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkSpinButton" id="s_keepVersions">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">By default, PTXprint only keeps
+one previous PDF. But upto 9 
+previous versions can be kept.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="text" translatable="yes">1</property>
+                            <property name="adjustment">a_keepVersions</property>
+                            <property name="value">1</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                          </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">By keeping previous versions of the
+PDF, it is possible to compare the
+final output of the PDFs. Upto 9 
+previous versions can be saved.
+
+If you need to keep a PDF around
+longer, then manually rename it
+so that it can be compared to at a
+later date.</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">How Many Previous Versions
+of the PDF Should be Kept:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
@@ -26084,57 +26142,17 @@ should be trimmed after binding.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=5 n-rows=3 -->
+                              <!-- n-columns=5 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">3</property>
+                                <property name="row-spacing">6</property>
                                 <property name="column-spacing">6</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">By keeping previous versions of the
-PDF, it is possible to compare the
-final output of the PDFs. Upto 9 
-previous versions can be saved.
-
-If you need to keep a PDF around
-longer, then manually rename it
-so that it can be compared to at a
-later date.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">How Many Previous Versions
-of the PDF Should be Kept:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSpinButton" id="s_keepVersions">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">By default, PTXprint only keeps
-one previous PDF. But upto 9 
-previous versions can be kept.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="text" translatable="yes">0</property>
-                                    <property name="adjustment">a_keepVersions</property>
-                                    <property name="value">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
                                 <child>
                                   <object class="GtkButton" id="btn_selectDiffPDF">
                                     <property name="label" translatable="yes">Select...</property>
@@ -26154,10 +26172,11 @@ oldest file has _9 at the end of the PDF name.
 You can also select a historical (re-)named PDF.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <signal name="clicked" handler="onSelectDiffPDFclicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26170,12 +26189,12 @@ You can also select a historical (re-)named PDF.</property>
                                     <property name="margin-top">4</property>
                                     <property name="margin-bottom">4</property>
                                     <property name="label" translatable="yes">Previous PDF (-1)</property>
-                                    <property name="ellipsize">middle</property>
-                                    <property name="max-width-chars">30</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="max-width-chars">35</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">1</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -26201,25 +26220,28 @@ out what might have changed.</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This tool allows you to compare 2 different
-PDFs to highlight what has changed between
-runs.</property>
+                                    <property name="tooltip-text" translatable="yes">Select a PDF that was generated by a
+previous run (from the recent history)
+or a file that was saved/renamed earlier.
+
+Note that if you select Cancel from the
+Select PDF dialog, then it will default to
+the last but one "Previous PDF (_1)" version.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Compare With a Previous PDF:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26234,10 +26256,12 @@ the current PDF and the selected
 previous version. It should open
 in the default PDF viewer.</property>
                                     <property name="halign">end</property>
+                                    <property name="margin-start">21</property>
+                                    <signal name="clicked" handler="onCreateDiffclicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26253,7 +26277,7 @@ differences between the PDFs.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26264,20 +26288,14 @@ differences between the PDFs.</property>
 differences between the PDFs.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">30</property>
+                                    <property name="margin-start">60</property>
                                     <property name="label" translatable="yes">Color to Highlight
 Differences With:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -26290,7 +26308,10 @@ Differences With:</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Compare with History</property>
+                            <property name="tooltip-text" translatable="yes">This tool allows you to compare 2 different
+PDFs to highlight what has changed between
+runs.</property>
+                            <property name="label" translatable="yes">Compare PDFs</property>
                           </object>
                         </child>
                       </object>
@@ -26408,7 +26429,7 @@ For example: 203mm, 330mm (Foolscap)</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
                                         <property name="can-focus">True</property>
-                                        <property name="width-chars">22</property>
+                                        <property name="width-chars">18</property>
                                         <property name="overwrite-mode">True</property>
                                       </object>
                                     </child>
@@ -26695,8 +26716,6 @@ section headings distinct from the scripture text.</property>
                             <property name="visible">True</property>
                             <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-left">6</property>
-                            <property name="margin-right">6</property>
                             <property name="margin-start">9</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">6</property>
@@ -26738,7 +26757,7 @@ Pantone color code.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkEntry">
+                                      <object class="GtkEntry" id="t_ISBN">
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="halign">start</property>
@@ -26757,7 +26776,7 @@ Pantone color code.</property>
                                     </child>
                                     <child>
                                       <object class="GtkImage">
-                                        <property name="width-request">180</property>
+                                        <property name="width-request">130</property>
                                         <property name="height-request">40</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -26815,10 +26834,11 @@ section headings distinct from the scripture text.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=8 n-rows=2 -->
+                              <!-- n-columns=7 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
@@ -26834,6 +26854,7 @@ used to print the publication.
 Measured in Grams per Square
 Meter (GSM). Normal copy
 paper is around 70-80 GSM.</property>
+                                    <property name="halign">end</property>
                                     <property name="label" translatable="yes">Weight
 of Paper:</property>
                                   </object>
@@ -26850,12 +26871,13 @@ of Paper:</property>
 of the spine thickness, the precise
 paper thickness can be entered (in 
 micons) rather than relying on GSM.</property>
-                                    <property name="margin-start">12</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <property name="label" translatable="yes">Thickness
 of Paper:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -26896,7 +26918,7 @@ micons) rather than relying on GSM.</property>
                                     <property name="value">90</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -26907,17 +26929,19 @@ micons) rather than relying on GSM.</property>
                                     <property name="tooltip-text" translatable="yes">The total number of pages in the
 book will automatically be filled
 in after the PDF has been created.</property>
-                                    <property name="margin-start">12</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">20</property>
                                     <property name="label" translatable="yes">Total
 Pages:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkSpinButton" id="s_paperThickness1">
+                                  <object class="GtkSpinButton" id="s_totalPages">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The total number of pages in the
@@ -26925,14 +26949,14 @@ book will automatically be filled
 in after the PDF has been created.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="width-chars">5</property>
+                                    <property name="width-chars">6</property>
                                     <property name="text" translatable="yes">70</property>
                                     <property name="adjustment">a_totalPages</property>
                                     <property name="climb-rate">10</property>
                                     <property name="value">500</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">6</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -26948,13 +26972,15 @@ manually overwritten if needed.
 Note that the spine thickness also
 includes a small factor for wrapping
 the cover around the binding.</property>
-                                    <property name="margin-start">12</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">20</property>
                                     <property name="label" translatable="yes">Thickness
 of Spine:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">6</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -26978,13 +27004,14 @@ the cover around the binding.</property>
                                     <property name="value">5</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">7</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_flipSpine180">
-                                    <property name="label" translatable="yes">Flip Spine Title by 180°</property>
+                                    <property name="label" translatable="yes">Flip Spine
+Title 180°</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -26995,13 +27022,12 @@ use </property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">6</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="btn_designCover">
                                     <property name="label" translatable="yes">Cover Design...</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -27014,7 +27040,7 @@ use </property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton">
+                                  <object class="GtkButton" id="btn_designSpine">
                                     <property name="label" translatable="yes">Spine Design...</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
@@ -27022,15 +27048,21 @@ use </property>
                                     <property name="receives-default">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-start">22</property>
+                                    <property name="label" translatable="yes">OR</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>

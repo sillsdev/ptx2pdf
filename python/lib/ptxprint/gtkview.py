@@ -281,6 +281,7 @@ _nonsensitivities = {
     "c_interlinear" :          ["c_letterSpacing", "s_letterShrink", "s_letterStretch"],
     "c_fighidecaptions" :      ["c_fighiderefs"],
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
+    # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
@@ -620,6 +621,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=args.identify)
+        self.updateFont2BaselineRatio()
 
             # .mainnb {background-color: #d3d3d3;}
             # .mainnb panel {background-color: #d3d3d3;}
@@ -2825,7 +2827,7 @@ class GtkViewModel(ViewModel):
                 self.picListView.picinfo.build_searchlist()
                 self.picListView.onRadioChanged()
 
-    def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn):
+    def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
         folderattr = getattr(self, attr, None)
         if folderattr is None:
             folderattr = basedir if isSingle else [basedir]
@@ -2839,7 +2841,8 @@ class GtkViewModel(ViewModel):
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
                 multiple = not isSingle, basedir=fldr)
         if vals != None and len(vals) and str(vals[0]) != "None":
-            self.builder.get_object("c_"+ident).set_active(True)
+            if chkbx:
+                self.builder.get_object("c_"+ident).set_active(True)
             if isSingle:
                 setattr(self, attr, vals[0])
                 btn.set_tooltip_text(str(vals[0]))
@@ -2851,9 +2854,10 @@ class GtkViewModel(ViewModel):
         else:
             setattr(self, attr, None)
             btn.set_tooltip_text("")
-            btn.set_sensitive(False)
-            self.set("c_"+ident, False)
             self.set("lb_"+ident, "")
+            if chkbx:
+                btn.set_sensitive(False)
+                self.set("c_"+ident, False)
 
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
@@ -2889,6 +2893,13 @@ class GtkViewModel(ViewModel):
         self._onPDFClicked(_("Select Verse Decorator PDF file"), True,
                 os.path.join(pycodedir(), "PDFassets", "border-art"),
                 "inclVerseDecorator", "versedecorator", btn_selectVerseDecoratorPDF)
+
+    def onSelectDiffPDFclicked(self, btn_selectDiffPDF):
+        self._onPDFClicked(_("Select a PDF file to compare with"), True,
+                os.path.join(self.working_dir),
+                "diffPDF", "diffPDF", btn_selectDiffPDF, False)
+        if self.get("lb_diffPDF") == "":
+            self.set("lb_diffPDF", "Previous PDF (-1)")
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
@@ -3889,3 +3900,39 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         if self.sensiVisible("c_marginalverses"):
             self.builder.get_object("c_hangpoetry").set_active(False)
+
+    def onBaseFontSizeChanged(self, btn):
+        if self.get("c_lockFontSize2Baseline"):
+            lnsp = float(self.get("s_fontsize")) / self.font2baselineRatio
+            self.set("s_linespacing", lnsp)
+        else:
+            self.updateFont2BaselineRatio()
+
+    def onBaseLineSpacingChanged(self, btn):
+        if self.get("c_lockFontSize2Baseline"):
+            fntsz = float(self.get("s_linespacing")) * self.font2baselineRatio
+            self.set("s_fontsize", fntsz)
+        else:
+            self.updateFont2BaselineRatio()
+            
+    def onLockRatioClicked(self, btn):
+        if self.get("c_lockFontSize2Baseline"):
+            self.updateFont2BaselineRatio()
+
+    def updateFont2BaselineRatio(self):
+        self.font2baselineRatio = float(self.get("s_fontsize")) / float(self.get("s_linespacing"))
+    
+    def onCreateDiffclicked(self, btn):
+        pass
+        # do something to call runjob method 
+        basename = self.printer.get("btn_selectDiffPDF")
+        diffcolor = self.printer.get("col_diffColor")
+        onlydiffs = self.printer.get("c_onlyDiffs")
+        if len(basename):
+            # self.createDiff(pdfname, basename=self.diffPdf)
+            diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
+            if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
+                if sys.platform == "win32":
+                    os.startfile(diffname)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', diffname))

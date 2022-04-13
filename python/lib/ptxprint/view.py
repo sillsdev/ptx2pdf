@@ -66,6 +66,7 @@ class ViewModel:
         "fancy/sectionheaderpdf":   ("sectionheader", False, "lb_inclSectionHeader"),
         "fancy/endofbookpdf":       ("endofbook", False, "lb_inclEndOfBook"),
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
+        "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
@@ -86,6 +87,7 @@ class ViewModel:
         self.ptsettings = None
         self.FrontPDFs = None
         self.BackPDFs = None
+        self.diffPDF = None
         self.customScript = None
         self.customXRfile = None
         self.moduleFile = None

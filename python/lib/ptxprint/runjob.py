@@ -182,10 +182,10 @@ class RunJob:
         self.inArchive = inArchive
         self.noview = False
         self.nothreads = False
-        self.oldversions = 1
+        # self.oldversions = 1
         self.docreatediff = True
-        self.onlydiffs = True
-        self.diffPdf = None
+        # self.onlydiffs = True
+        # self.diffPdf = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -288,14 +288,22 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         if self.res == 0:
-            if self.docreatediff:
-                self.createDiff(pdfname, basename=self.diffPdf)
             if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', pdfname))
-                # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
+            if self.docreatediff:
+                basename = self.printer.get("btn_selectDiffPDF")
+                diffcolor = self.printer.get("col_diffColor")
+                onlydiffs = self.printer.get("c_onlyDiffs")
+                if len(basename):
+                    diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
+                    if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
+                        if sys.platform == "win32":
+                            os.startfile(diffname)
+                        elif sys.platform == "linux":
+                            subprocess.call(('xdg-open', diffname))
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -589,8 +597,9 @@ class RunJob:
         else:
             pdffile = outpath + ".pdf"
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
-        if self.oldversions > 0:
-            for c in range(self.oldversions, 0, -1):
+        oldversions = int(self.printer.get("s_keepVersions")) or 1
+        if oldversions > 0:
+            for c in range(oldversions, 0, -1):
                 opdffile = pdffile[:-4] + "_{}.pdf".format(c)
                 ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
                 if os.path.exists(opdffile):
@@ -715,7 +724,7 @@ class RunJob:
                 os.remove(outpath + ".prepress.pdf")
         print("Done")
 
-    def createDiff(self, pdfname, basename=None, color=None, maxdiff=False):
+    def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
@@ -736,7 +745,7 @@ class RunJob:
                 break
             dmask = ImageChops.difference(oimg, iimg).convert("L")
             if not dmask.getbbox():
-                if self.onlydiffs:
+                if onlydiffs:
                     continue
             else:
                 hasdiffs = True
@@ -752,6 +761,7 @@ class RunJob:
             os.remove(outname)
         if hasdiffs and len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
+            return outname
 
     def pdfimages(self, infile):
         import gi
