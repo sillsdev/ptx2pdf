@@ -58,7 +58,7 @@
 {document/marginalverses}\columnshift={document/columnshift}pt
 %{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
 \endbooknoeject{project/ifstarthalfpage}
-\def\PageFullFactor{{0.66}}
+\def\PageFullFactor{{{document/pagefullfactor}}}
 \def\BalanceThreshold{{{paper/bottomrag}}}
 
 %%%%% Text Spacing %%%%%
@@ -80,6 +80,9 @@
 {document/ifspacing}\def\SpaceStretchFactor{{{document/spacestretch}}}
 {document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
+
+\def\UnderlineThickness{{{document/underlinethickness}em}}
+\def\UnderlineLower{{{document/underlineposition}em}}
 
 %% Specify the fallback font to be used for special/missing characters
 %\extrafont

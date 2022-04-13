@@ -254,9 +254,12 @@ ModelMap = {
     "document/diglotnotesrule": ("c_diglotNotesRule", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", lambda w,v: "true" if v else "false"),
 
-    "document/hasnofront_":     ("c_frontmatter", lambda w,v: "%" if v else ""),
-    "document/noblankpage":     ("c_periphSuppressPage", None),
-    "document/cutouterpadding": ("s_cutouterpadding", None),
+    "document/hasnofront_":        ("c_frontmatter", lambda w,v: "%" if v else ""),
+    "document/noblankpage":        ("c_periphSuppressPage", None),
+    "document/cutouterpadding":    ("s_cutouterpadding", None),
+    "document/underlinethickness": ("s_underlineThickness", lambda w,v: float(v or "0.05")),
+    "document/underlineposition":  ("s_underlinePosition", lambda w,v: float(v or "-0.1")),
+    "document/pagefullfactor":     ("s_pageFullFactor", lambda w,v: float(v or "0.65")),
     
     "document/onlyshowdiffs":   ("c_onlyDiffs", None),
     "document/diffcolor":       ("col_diffColor", None),
