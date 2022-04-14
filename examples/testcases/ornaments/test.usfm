@@ -18,7 +18,7 @@ We are now inside a qt-s..qt-e block \nd*
 \p This is another ornamental rule of the same style (at it's normal width, alignment etc are controlled by the style's margins):
 \zrule |cat="ornaments" \*
 
-\p And yet another p class break
+\p And Yet 
 \esb
 \cat inl\cat*
 \p This is an esb with 
@@ -28,6 +28,7 @@ It just has a plain line\f + Options are \fk plain\fk*, \fk
 double\fk* and \fk ornaments\fk* \f*  border, slightly separated from the
 coloured-background. 
 \esbe
+another P class break.
 
 \esb
 \s1 Testing
@@ -36,7 +37,6 @@ coloured-background.
 
 
 \esb \cat foo\cat*
-\s Testing 3
 \p This esb (category foo) has a bit more text, and is set top-right. 
 \m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
 \p But they still have an indent which looks a bit odd. Foo category esbs have an ornamented border by no background colour, etc.
@@ -94,7 +94,7 @@ Culpa optio nihil a doloribus omnis quidem dolorem inventore. Dolorem quo et ame
 \v 12 Oh all right then, just one more:
 \p
 \esb\cat pictest\cat*
-\p This  esb of category "\showTheCategory" ought to
+This  esb of category "\showTheCategory" ought to
 contain a foreground picture (a rose) and background
 picture. (an artist's impression of Slithy Toves,
 mentioned  in the nonsense poem Jaberwocky).
@@ -107,12 +107,13 @@ Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est p
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
 
-\esb\cat pl2\cat*
-\p Using a 'p' category side bar, you can nest one
-(single) sidebar in another.  It's not recommended! 
+\esb\cat pl\cat*
+\p \info Using a 'p' category side bar, you can nest one
+(single) sidebar in another.  It's not recommended!  Use genuine nesting instead.
 \esbe
 \esb\cat top\cat*
 \p This ESB is of category '\showTheCategory' and ought to be at the top.
+\p It needs another line
 \esbe
 
 \esb\cat hc\cat*

@@ -1,5 +1,5 @@
 %:skip
-%%%%%%%%%%%%%%%%%%%%%%\ornamentfilltrue%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
 % written by Jonathan Kew
@@ -316,6 +316,7 @@
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
+          \prevdepth=1000pt % Ignore the presence of the figure
           \let\w@tsit\gr@phic
           \def\w@tsit{graphicInSidebar}%
           \trace{e}{Cutout for esb category '\c@tegory' (\tempa\tempb) will be: \fgfigsp@c}%
@@ -407,6 +408,7 @@
     \mcpush{\ss@Para}{\if@ntro ip\else p\fi}%
     \textwidth=\hsize
     \sb@rchunkh@ight=\maxdimen
+    \prevdepth=0pt
     \c@th@@ks{\st@rtsb@r}%
 }
 \newdimen\sb@rchunkh@ight
@@ -499,18 +501,23 @@
   \@fter@sbe
 }
 
+\newif\ifsb@rfillpage
+
 \def\@@sbe{%The real meat of an esbe
    \getsbp@ram{posn}%
+   \gdef\pic@lign{c}% How does the sidebar align within the box?
+   \gdef\picV@lign{c}% How does the sidebar align vertically on the page (Page/Full only)
    \edef\l@gstring{{\the\im@gecount}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \global\let\t@st\false
    \end@llpoppedstyles{\ss@Sbar*}% May also close groups
    \trace{e}{Stack now \mcstack}%
    \kill@PossParamCache
-   \ifx\fgfigp@s
    \ifhmode\par\fi
    \ifx\sb@rbotedge\empty\else
-     \vskip-\prevdepth
+     \ifdim\prevdepth<\baselineskip
+       \vskip-\prevdepth
+     \fi
      \sb@rbotedge\ifhmode\endgraf\fi
    \fi
    %Pass some values out of the group (which won't affect enclosing side-bars)
@@ -518,7 +525,7 @@
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
-   \global\p@ppingfalse%suppress another end@llpoppedstyles
+  \global\p@ppingfalse%suppress another end@llpoppedstyles
   \trace{e}{ESBE \sb@rchunkheight}%
   \ifx\fgfig@cutout\tr@e
     \cancelcutouts
@@ -540,20 +547,15 @@
   \let\s@vedvpadding=\fb@vpadding%%Preserve old value
   \prepb@rderdims
   \tempfalse
-  \dimen4=-\b@drtopgap
-  \trace{e}{b@xadj =\ifx\b@drtop\tr@e \ifdim \border@vpadding > -\b@drwidth pt  \b@drwidth pt  + \border@vpadding +\fi \fi  \fb@vpadding  = \the\dimen4 |baseline: \the\onel@neunit}%
-  \loop\ifdim\dimen4> \onel@neunit
-    \advance\dimen4 by -\onel@neunit
-  \repeat
-  \edef\b@xadj{\the\dimen4}%
-  \prepb@rderdims
-  \trace{e}{=\b@xadj \bgf@gsp@c}%
+  \trace{e}{= \bgf@gsp@c}%
   %Does the box have a defined size? 
   \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
   \ifx\cp@ram\relax
     \let\sb@rheightspec\empty
+    \sb@rfillpagefalse
   \else
-    \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@drtopgap - \b@drbotgap\relax}%
+    \sb@rfillpagetrue
+    \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
   \fi  
   \ifx\bgf@gsp@c\relax
@@ -596,17 +598,28 @@
   \doIntskipfalse% Upper baseline-preserving skip should be outside the border, not in the text area.
   \ifpicUsesIns
     \doIntskiptrue %Skip inside the frame, not outside it, so that frame lines up with page boundaries
+    \dimen4=-\b@dr@top@edge
+  \else
+    \dimen4=-\b@dr@top@pad
   \fi
+  \advance\dimen4 by -\ht\extb@x
+  \loop\ifdim\dimen4> \onel@neunit
+    \advance\dimen4 by -\onel@neunit
+  \repeat
+  \loop\ifdim\dimen4<0pt
+    \advance\dimen4 by \onel@neunit
+  \repeat
+  \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip
-    \trace{e}{hts: \the\headingtopspace, b@xadj:\b@xadj}%
-    %\setbox\extb@x\vbox{\dbghrule
-      %\kern\b@xadj\unvbox\extb@x}%
+    \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
+    \setbox\extb@x\vbox{%\dbghrule
+      \kern\b@xgridadj\unvbox\extb@x}%
   \fi
   \ifearlybgimage
     %modify the esbbox to include the picture
     \trace{e}{Including background image below contents: \t@mpfigspec}%
     \ifx\sb@rheightspec\empty
-      \edef\sb@rheightspec{to \ht\extb@x}%
+      \edef\sb@rheightspec{to \the\ht\extb@x}%
     \fi
     \setbox\extb@x\vbox\sb@rheightspec{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
@@ -700,20 +713,31 @@
     \ifhasb@rder % any border
       \dob@rder % Actually generate the border
       \dimen1=\dimexpr -\b@rderbox@depth\relax
+      \advance\dimen1 by -\sp@ceafter
       \relax
       \message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
       \@LOOP\ifdim\dimen1 <0.1\onel@neunit
         \advance\dimen1 by \onel@neunit
       \@REPEAT
-      \ifx\empty\sb@rheightspec\else
-        \trace{e}{Killing kerns/skips as box is stretch-to-fit}%
-        \dimen1=0pt \def\b@xextadj{0pt}\def\b@xminadj{0pt}\def\b@xadj{0pt}%
+      \ifsb@rfillpage
+        \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
+        \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
       \fi
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
-      \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xminadj / \b@xadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
+      \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
+      %\edef\t@st{pl}\trace{e}{\meaning\t@st // \meaning\c@tegory}\ifx\c@tegory\t@st
+      %  \showboxdepth=99\showboxbreadth=99
+      %  \showbox\extchunkb@x
+      %\fi
     \else
-      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xminadj\else\fi\box\extchunkb@x\vskip\sp@ceafter}%
+      \dimen1=-\sp@ceafter
+      \relax
+      \message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
+      \@LOOP\ifdim\dimen1 <0.1\onel@neunit
+        \advance\dimen1 by \onel@neunit
+      \@REPEAT
+      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\fi\box\extchunkb@x\kern\dimen1\vskip\sp@ceafter}%
     \fi
     \let\sp@ceafter\empty
     \let\fstb@drtop=\relax

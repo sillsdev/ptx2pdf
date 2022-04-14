@@ -954,10 +954,13 @@
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
+    \edef\tmp{\the\prevdepth}%
+    \vskip -\prevdepth
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
-      \unvbox\picb@@x
-      \penalty10
+    \unvbox\picb@@x
+    \penalty10
+    \vskip\tmp
    }%
    \def\temp{}%
    \ifnum\c@tskip>1 \count255=\c@tskip

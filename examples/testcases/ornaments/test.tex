@@ -141,6 +141,8 @@
 %\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
 %\boxorntrue
 %\nonstopmode
+\def\info{\dimen1=\prevdepth\message{bls:\the\baselineskip ld:\the\lastdepth, pd:\the\dimen1}}
+
 \def\testornamentsv{
   \SwitchOrnamentsFamily{vectorian}
 \xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.7\hsize\relax}
