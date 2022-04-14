@@ -608,7 +608,7 @@
     \ifx\sb@rheightspec\empty
       \edef\sb@rheightspec{to \ht\extb@x}%
     \fi
-    \setbox\extb@x\vbox\edef\sb@rheightspec{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rchunkheight{\unvbox\extb@x}}%
+    \setbox\extb@x\vbox\sb@rheightspec{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \ifx\h@scol\tr@e
@@ -737,7 +737,7 @@
         \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}%
         \penalty10000
         %\gridp@ctrue\gridb@x\extchunkb@x\gridp@cfalse% make sure we align to the page grid
-        \unvbox\sb@rheightspec\extchunkb@x\vskip\the\dimen0
+        \unvbox\extchunkb@x\vskip\the\dimen0
         \penalty10000
         \pdfsavepos
         \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
