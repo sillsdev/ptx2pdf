@@ -142,10 +142,13 @@
 %\boxorntrue
 %\nonstopmode
 \def\info{\dimen1=\prevdepth\message{bls:\the\baselineskip ld:\the\lastdepth, pd:\the\dimen1}}
-
+\def\ornamentlinewidth{0.1}
 \def\testornamentsv{
+  \def\ornamentlinecol{0 0 0}
+  \def\ornamentfillcol{0.9 0.4 0.4}
   \SwitchOrnamentsFamily{vectorian}
 \xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.7\hsize\relax}
+\def\ornamentlinewidth{0.1}
 \lineskip 1em
 \count255=-3
 \ornscaletrue

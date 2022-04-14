@@ -798,8 +798,9 @@
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut
-          \penalty 3
+          \unskip\unskip
           \d@figureCut\extchunkb@x
+          %\showlists
           %\ifhmode |+\fi
         \fi
         \ifvoid\extchunkb@x\else
@@ -813,7 +814,7 @@
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
   \ifvoid\sid@barnotes\else
-    \unvbox\sid@barnotes
+    \vadjust{\unvbox\sid@barnotes}%
   \fi
   \let\fb@hpadding\os@vedhpadding
   \let\fb@vpadding\os@vedvpadding

@@ -74,8 +74,7 @@ This esb should be in a cut-out, a line below 'possimus'. It
 has a pale blue background, an orange border just inside the edge
 of the background, and a pdf image as a
 'watermark' which, because it has no inherent
-colour\f + \cat class\cat* \fk Inherent colour\fk* \ft Sadly, colour-unspecified PDFs are quite hard to do with most drawing packages. This one was created from LaTeX. (This note from a sidebar has a category)\f*, we can pick the colour of in
-the style sheet.
+colour\f + \cat class\cat* \fk Inherent colour\fk* \ft Sadly, colour-unspecified PDFs are quite hard to do with most drawing packages. This one was created from LaTeX. (This note from a sidebar has a category)\f*, we can pick the colour of in the style sheet.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.

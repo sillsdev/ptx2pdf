@@ -560,7 +560,7 @@
 \def\ins@rtpic#1#2#3#4#5#6#7{%
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread=#1
+ \openin\t@stread=#1%
    \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
@@ -1029,7 +1029,7 @@
 
 \def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
   \mkstr@t
-  \dimen0=\ht#1
+  \dimen0=\ht#1%
   \ifx\w@tsit\gr@phic 
    \edef\dr@pthingid{droppic\the\im@gecount}%
   \else
