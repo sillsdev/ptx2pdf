@@ -106,7 +106,7 @@ sidebar then there are four possible behaviours:
 * Default: `t`
 Only relevant where there is both a background image *and* a background colour, this defines 
 the order they are put on the page.  Should a background image come below or above the colour. Line art PDFs with
-a tranpsarent background may display better above the colour layer, as the colour 
+a transparent background may display better above the colour layer, as the colour 
 layer will not then wash them out, but .JPGs are probably better below, as .JPG images do not have transparency.
 
 ```\BgImageAlpha`` value(0-1)
@@ -137,6 +137,13 @@ If a coloured background is used, this is how much that box should be larger tha
 Measurement is interpreted as being in points (72.27pt = 1 inch), and should not have a unit attached.
 Horizontal and Vertical padding can be controlled separately.
 
+The (global) TeX boolean control `\BoxLikeBordertrue` (new default) and
+`\BoxLikeBorderfalse` (old default) determine how sidebars with coloured
+backgrounds but no borders are treated. If `\BoxLikeBordertrue` is set, then
+the presence of non-zero box-padding will do things like move side-aligned text
+away from the page margin. If it is false, then the presence of absense of a small 
+amount of box padding will highlight not normally affect the
+layout. (Though it may shift following text a line lower)
 
 ## Border-related Parameters
 

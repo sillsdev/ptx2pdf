@@ -110,7 +110,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \p
 \v 13  There needs to be a par break between p type sidebars, or the boxing ends up putting box in box
 \esb\cat top\cat*
-\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning. What happens if its longer.
 \esbe
 \esb\cat pl\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
