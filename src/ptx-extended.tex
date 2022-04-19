@@ -625,7 +625,7 @@
     \ifx\sb@rheightspec\empty
       \edef\sb@rheightspec{to \the\ht\extb@x}%
     \fi
-    \setbox\extb@x\vbox\sb@rheightspec{\vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
+    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt \vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \ifx\h@scol\tr@e
