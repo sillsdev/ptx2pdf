@@ -37,6 +37,8 @@
 \newbox\sid@barnotes % Box in which notes are placed in a sidebar
 \newtoks\old@bx %store old definition of \everyhbox
 \def\c@tegory{}
+\let\DebugBorderCat\undefined %  Set this to showbox the specified category just after the border is added
+
 \def\S@tCat#1{\trace{sc}{Started Category #1}%
   \edef\c@tegory{#1}%
   \s@tc@tpr@fix%
@@ -720,16 +722,16 @@
         \advance\dimen1 by \onel@neunit
       \@REPEAT
       \ifsb@rfillpage
-        \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
+       \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
         \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
       \fi
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \x@\setbox\extchunkb@x\vbox{\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
-      %\edef\t@st{pl}\trace{e}{\meaning\t@st // \meaning\c@tegory}\ifx\c@tegory\t@st
-      %  \showboxdepth=99\showboxbreadth=99
-      %  \showbox\extchunkb@x
-      %\fi
+      \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
+      %Little bit of test code to trace what's up with a single box class
+      \ifx\c@tegory\DebugBorderCat \bgroup\def\@im{\the\interactionmode}\interactionmode=2 \showboxdepth=99\showboxbreadth=99\showbox\extchunkb@x
+         \interactionmode=\@im \egroup 
+      \fi
     \else
       \dimen1=-\sp@ceafter
       \relax

@@ -64,8 +64,8 @@
   \iftemp
     \get@ttribute{#1}%
     \trace{A}{Special '#1':'\attr@b'}%
-    \tracingmacros=1
-    \tracingassigns=1
+    %\tracingmacros=1
+    %\tracingassigns=1
     \let\exptmp\relax\let\tmp\relax
     \setbox0\hbox{%
         \begingroup% Ensure there are no nesting errors
@@ -80,8 +80,8 @@
         %\trace{A}{<<<}%
         \endgroup
       }%
-    \tracingassigns=0
-    \tracingmacros=0
+    %\tracingassigns=0
+    %\tracingmacros=0
   \fi
 }
 \def\Spec@lAttribName#1#2{attr-spec-#1-#2}

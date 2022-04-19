@@ -1619,9 +1619,9 @@
 \def\upd@tep@rtial{%routine called to add stuff to the partial page.
   \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty. pf:\ifpagefull true\else false\fi}%
-  \ifnum\diglotDbgupdtPtl=\TRACEcount
+  \ifnum\iglotDbgupdtPtl=\TRACEcount
     \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
-    \global\tracingmacros=1\global\tracingassigns=1
+    \global\tracingmacros=1\global\tracingassigns=1  % Conditional on diglotDbgupdtPtl=\TRACEcount
   \else 
     \restore@trace@updatepartial
   \fi
@@ -2327,7 +2327,7 @@
     \let\n@xt@col=\e@ch@col
   \fi
   \ifnum\TRACEcount=\diglotDbgeachcol
-    \tracingmacros=1\tracingassigns=1
+    \tracingmacros=1\tracingassigns=1 %Conditional on TRACEcount=\diglotDbgeachcol
   \fi
   \trace{De}{continuing (\ect@st)}\relax
   \x@\n@xt@col \ect@st \E
