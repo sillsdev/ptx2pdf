@@ -5,24 +5,20 @@
 \nopagenums
 \rem BACK COVER
 \esb \cat backcover\cat*
-\ip ~
 \vfill \rem vfill is infinintely expandable space
 \ip
 \esb \cat ISBNbox\cat*
 \pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
 \esbe
 \pc 500 copies, Klingon-Esperanto
-\par
 \esbe
 \rem FRONT COVER
 \esb \cat frontcover\cat*
 \esb \cat TitleBox\cat*
-\leavevmode
 \mt3 The 
 \mt1 Test-case Bible
 \esbe
-\vfill
-\ip ~
+\vfill \rem vfill is infinintely expandable space
 \esb \cat footbox\cat*
 \pc \sc Printed\sc* 2022
 \esbe
