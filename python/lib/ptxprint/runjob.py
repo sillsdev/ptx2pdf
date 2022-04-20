@@ -602,7 +602,7 @@ class RunJob:
         else:
             pdffile = outpath + ".pdf"
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
-        oldversions = int(self.printer.get("s_keepVersions")) or 1
+        oldversions = int(self.printer.get('s_keepVersions', '1'))
         if oldversions > 0:
             for c in range(oldversions, 0, -1):
                 opdffile = pdffile[:-4] + "_{}.pdf".format(c)
