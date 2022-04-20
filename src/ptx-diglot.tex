@@ -1619,7 +1619,7 @@
 \def\upd@tep@rtial{%routine called to add stuff to the partial page.
   \traceNum{d}{upd@tep@rtial \the\outputpenalty (\diglotDbgupdtPtl)}%
   \trace{D}{plp:\the\partialLpenalty, prp:\the\partialRpenalty, cp:\the\chunkpenalty lcp:\the\lastchunkpenalty, lbp:\the\Lboxpenalty, rbp:\the\Rboxpenalty. pf:\ifpagefull true\else false\fi}%
-  \ifnum\iglotDbgupdtPtl=\TRACEcount
+  \ifnum\diglotDbgupdtPtl=\TRACEcount
     \xdef\restore@trace@updatepartial{\global\tracingmacros=\the\tracingmacros \global\tracingassigns=\the\tracingassigns}%
     \global\tracingmacros=1\global\tracingassigns=1  % Conditional on diglotDbgupdtPtl=\TRACEcount
   \else 
