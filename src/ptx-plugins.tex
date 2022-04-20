@@ -76,11 +76,14 @@
 }
 
 \ifcsname pluginlist\endcsname
-  \def\d@#1\E{\plugin@check #1\E}%
-  \ifx\pluginlist\plugins@ll
-    \x@\cstackdown\kn@wnplugins,\E 
-  \else
-    \x@\cstackdown\pluginlist,\E 
+  \x@\uppercase\x@{\x@\edef\x@\tmp\x@{\pluginlist}}% Python might fill with 'None'. There is no such plugin so don't try to input None.tex
+  \ifx\tmp\fill@none\else
+    \def\d@#1\E{\plugin@check #1\E}%
+    \ifx\pluginlist\plugins@ll
+      \x@\cstackdown\kn@wnplugins,\E 
+    \else
+      \x@\cstackdown\pluginlist,\E 
+    \fi
   \fi
 \else
  \lowercase{\message{n.b. You can load optional plugins with (some of) |def|pluginlist{\kn@wnplugins} or |def|pluginlist{all}}}
