@@ -256,14 +256,35 @@
   \ifcsname localornament@\pdf@ornamentNum @code\endcsname
     \csname localornament@\pdf@ornamentNum @code\endcsname
   \else
-    \m@kedigitsother
+    {\m@kedigitsother
       \catcode`\%=5
+      \catcode`\{=1 
+      \catcode`\}=2
       \input \OrnamentsFamily\pdf@ornamentNum.pgf%
-    \m@kedigitsletters
+    \m@kedigitsletters}%
   \fi
 }
 
-\x@\xdef\csname orn@adj@84@Y\endcsname{2.5}
+\def\OrnamentTweakY#1#2#3{%
+  \x@\xdef\csname orn@adj@#2@#1@Y\endcsname{#3}%
+}
+\def\OrnamentTweakX#1#2#3{%
+  \x@\xdef\csname orn@adj@#2@#1@X\endcsname{#3}%
+}
+
+\OrnamentTweakY{vectorian}{84}{2.5}
+\OrnamentTweakX{pgfhan}{76}{-15.5}
+\OrnamentTweakX{pgfhan}{77}{-15.5}
+\OrnamentTweakX{pgfhan}{74}{-8}
+\OrnamentTweakY{pgfhan}{74}{-8}
+\OrnamentTweakX{pgfhan}{75}{-8}
+\OrnamentTweakY{pgfhan}{75}{-8}
+\OrnamentTweakY{pgfhan}{67}{-8}
+\OrnamentTweakX{pgfhan}{67}{-8}
+\OrnamentTweakY{pgfhan}{65}{-64}
+\OrnamentTweakY{pgfhan}{64}{-24}
+\OrnamentTweakX{pgfhan}{64}{-8}
+
 \def\calc@ornamentdim{%
     \dimen0=\dimexpr \pdf@xunit*\numexpr \pdf@aa*\@pgfornamentX\relax + \pdf@yunit*\numexpr\pdf@ba*\@pgfornamentY\relax\relax
     \dimen1=\dimexpr \pdf@xunit*\numexpr \pdf@ab*\@pgfornamentX\relax + \pdf@yunit * \numexpr\pdf@bb*\@pgfornamentY\relax\relax
@@ -271,6 +292,7 @@
 \def\ornamentstretch{1}
 \newif\ifboxorn % Set to true to surroud all ornaments with boxes.
 \boxornfalse
+\def\boxornRGB{0.5 1.0 1.0}
 \def\orn@do@ornament{\bgroup%
     \ifpdf@ornament@stretch
       \pdf@xunit=\ornamentstretch\pdf@xunit
@@ -322,10 +344,17 @@
     \ht0=\dimen1%\@pgfornamentY\pdf@yunit
     \dimen7=\dimen3 % dimen7=vadjust. Start by adjusting to crop-box
     %Manual adjustments?
-    \ifcsname orn@adj@\pdf@ornamentNum @Y\endcsname
-      \x@\let\x@\tmp\csname orn@adj@\pdf@ornamentNum @Y\endcsname
+    \dimen8=0pt 
+    \ifcsname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @Y\endcsname
+      \x@\let\x@\tmp\csname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @Y\endcsname
       \dimen6=\dimexpr \tmp\pdf@xunit* \pdf@ab+ \tmp\pdf@yunit * \pdf@bb\relax
       \advance\dimen7 by -\dimen6
+    \fi
+    \ifcsname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @X\endcsname
+      \x@\let\x@\tmp\csname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @X\endcsname
+      \message{Adjusting by \tmp}%
+      \dimen6=\dimexpr \tmp\pdf@xunit* \pdf@aa+ \tmp\pdf@yunit * \pdf@ba\relax
+      \advance\dimen8 by -\dimen6
     \fi
     %Is cut box < reported size? Center cutbox. UNHELPFUL AND BUGGY 
     %\dimen6=\dimexpr \dimen5 - \dimen3\relax % Height of cut-box
@@ -337,23 +366,30 @@
     %\fi
     \ifboxorn
       \setbox0=\hbox{%
-      \raise\dimen1\hbox{\vrule height 0.02pt width\dimen0}%
-      \kern-\dimen0
-      \kern -0.02pt \vrule height \dimen1 width 0.02pt
-      \vrule height 0.02pt width\dimen0 
-      \vrule height \dimen1 width 0.02pt \kern -0.02pt
-      \kern-\dimen0
-      \ifdim\dimen7=0pt
-	\box0
-      \else
-        \lower \dimen7\box0
-      \fi%
+        \special{color push rgb \boxornRGB}%
+        \raise\dimen1\hbox{\vrule height 0.02pt width\dimen0}%
+        \kern-\dimen0
+        \kern -0.02pt \vrule height \dimen1 width 0.02pt depth 0pt
+        \vrule height 0.02pt width\dimen0  depth 0pt
+        \vrule height \dimen1 width 0.02pt depth 0pt \kern -0.02pt 
+        \kern-\dimen0
+        \ifdim\dimen8=0pt \else\kern -\dimen8 \message{kerning by \the\dimen8}\fi%
+        \ifdim\dimen7=0pt
+	  \box0
+        \else
+          \lower \dimen7\box0
+        \fi%
+        \ifdim\dimen8=0pt \else\kern \dimen8\fi
+        \special{color pop}%
       }%
       \ht0=\dimen1
       \dimen7=0pt
+      \dimen8=0pt
+      %\showbox0
     \fi
     \advance\dimen7  by \ornYalign\dimen1
     %\dimen7=-\ornYalign\dimen1
+    \ifdim\dimen8=0pt \else\kern -\dimen8 \message{kerning by \the\dimen8}\fi
     \ifdim\dimen7=0pt
       \box0
     \else
@@ -363,6 +399,7 @@
         \box0
       \fi
     \fi%
+    \ifdim\dimen8=0pt \else\kern \dimen8\fi
 \egroup}
 \def\doOrnament#1{%
   \begingroup
