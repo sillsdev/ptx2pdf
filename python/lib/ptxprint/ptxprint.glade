@@ -26829,22 +26829,67 @@ section headings distinct from the scripture text.</property>
                                 <property name="can-focus">False</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
+                                  <object class="GtkBox" id="gr_EasterEggs">
                                     <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes">This panel is empty
-(got any ideas?)</property>
-                                    <property name="justify">center</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#777776767b7b"/>
-                                    </attributes>
+                                    <property name="no-show-all">True</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="label" translatable="yes">Happy
+Easter!</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="scale" value="1.5"/>
+                                          <attribute name="foreground" value="#ffff00000000"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkImage" id="img_RGBeasterEggs">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="pixbuf">..\..\..\RGBeasterEggs.jpg</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="margin-left">6</property>
+                                        <property name="label" translatable="yes">Christ
+is
+Risen!</property>
+                                        <property name="justify">center</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="scale" value="1.5"/>
+                                          <attribute name="foreground" value="#05f91befffff"/>
+                                        </attributes>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkCheckButton" id="c_waiting4ideas">
-                                <property name="label" translatable="yes">Like!</property>
+                              <object class="GtkCheckButton" id="c_rgbMode">
+                                <property name="label" translatable="yes">RGB Mode</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -26857,8 +26902,9 @@ the words of Jesus in a distinct color, or to make
 section headings distinct from the scripture text.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                <signal name="clicked" handler="rgbEasterEggsClicked" swapped="no"/>
                               </object>
                             </child>
                           </object>

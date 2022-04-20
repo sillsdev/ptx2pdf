@@ -282,3 +282,15 @@ increased, then this can be done by adding the following line.
 ```tex
 \sethook{start}{zcf}{\hskip 0.1em}
 ```
+
+## Move the qr word up to the end of previous line (if space permits)
+
+Used in poetry and/or song books to allow a short qr word to
+move up to the previous word as long as there is adequate space 
+(defined here as 0.3em) between the end of the last word, and the
+qr word, like 'Selah'.
+
+```tex
+\sethook{start}{qr}{\unskip\nobreak\hfill\penalty50\hskip0.3em\hbox{}\nobreak\hfill\hbox\bgroup}
+\sethook{end}{qr}{\egroup}
+```

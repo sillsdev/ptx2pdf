@@ -265,7 +265,7 @@ class Usfm:
         return reduce(_g, chaps, [])
 
     def getsubbook(self, refrange, removes={}):
-        refrange.reify()
+        # refrange.reify()
         d = self.doc[0]
         res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
         for c in d:
