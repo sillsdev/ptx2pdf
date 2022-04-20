@@ -186,6 +186,7 @@ class RunJob:
         self.docreatediff = True
         # self.onlydiffs = True
         # self.diffPdf = None
+        self.rerunReasons = []
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
