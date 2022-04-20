@@ -12,7 +12,7 @@ test2.pdf: test2.tex usfmTex-ext.tex usfmTex-settings.tex test2.usfm $(DIR)/*.te
 
 bisect:
 	mkdir ../bisect || rm -fr ../bisect/*
-	cp *.tex *.usfm *.sty Makefile ../bisect
+	cp *.tex *.usfm *.jpg inner_include.pdf *.sty Makefile ../bisect
 
 auto:
 	echo Source code in $(DIR)
