@@ -2,20 +2,47 @@
 
 block_cipher = None
 import sys, os
-# from glob import glob
+from glob import glob
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
+
+#if 'Analysis' not in dir():
+#    def printme(*a, **kw):
+#        print(a, kw)
+#    for a in ('Analysis', 'PYZ', 'EXE', 'COLLECT'):
+#        setattr(__builtins__, a, printme)
+
+def anyver(p, path=".", ext=".dll"):
+    s = os.path.join(path, p) + "*{}".format(ext)
+    allfiles = glob.glob(s)
+    best = None
+    for a in allfiles:
+        ver = a[len(p):-(len(ext))]
+        try:
+            intver = int(ver)
+        except ValueError:
+            intver = ver
+        if best is None or intver < best:
+            best = intver
+    if best:
+        res = p + str(intver)
+    else:
+        res = None
+    return res
+
+mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
     binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\{}.typelib'.format(x),
                                             'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
-              + [('C:\\msys64\\mingw64\\bin\\gspawn-win64-helper.exe', 'ptxprint')] \
-			  + [('C:\\msys64\\mingw64\\bin\\{}.dll'.format(x), '.') for x in
-					('libpoppler-117', 'libpoppler-glib-8', 'libpoppler-cpp-0', 'libcurl-4',
-					'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
-					'libpsl-5', 'libssh2-1', 'libnspr4', 'libplds4', 'libunistring-2')] 
+              + [(f'{mingwb}gspawn-win64-helper.exe', 'ptxprint')] \
+			  + [('{}\\{}.dll'.format(mingwb, x), '.') for x in
+					(anyver('libpoppler-117', mingwb), 'libpoppler-glib-8', 'libpoppler-cpp-0',
+                     anyver('libcurl-4', mingwb),
+					 'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
+					 'libpsl-5', 'libssh2-1', 'libplds4', 'libunistring-2') if x is not None] 
 # 			  + [(x,'.') for x in glob('C:\\msys64\\mingw64\\bin\\*.dll')]
 else:
     binaries = []
