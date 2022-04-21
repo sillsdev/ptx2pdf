@@ -193,6 +193,7 @@
 
 \addtoeveryparhooks{\checkfort@c}
 
+\let\tocf@@t=\empty
 \def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
 \def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\gentoche@dfoot\global\keeptriggertrue \toch@ad #2 \tocf@@t \endt@ble}}
 \def\addt@tmptok#1#2{\x@\tmpt@ks\x@{\the\tmpt@ks \csname #1\endcsname #2}}%
