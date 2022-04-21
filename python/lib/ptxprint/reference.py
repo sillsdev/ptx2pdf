@@ -672,6 +672,6 @@ if __name__ == "__main__":
         else:
             res = RefList.fromStr(" ".join(sys.argv[1:]))
         tag = res.astag()
-        print("{}: {}".format(res, tag))
+        print("{}: {} {}".format(res, tag, repr(res)))
     else:
         tests()

@@ -77,7 +77,7 @@ ModelMap = {
     "project/interlinear":      ("c_interlinear", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", None),
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
-    "project/plugins":          ("t_plugins", None),
+    "project/plugins":          ("t_plugins", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", None),
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
