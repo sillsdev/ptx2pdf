@@ -4522,6 +4522,7 @@ If you don't know what this means, or just want to get rid of
 black boxes at the end of lines in the PDF then uncheck it. </property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
+                <property name="margin-start">6</property>
                 <property name="draw-indicator">True</property>
               </object>
               <packing>
@@ -11315,6 +11316,7 @@ lays out the vertical lines left to right.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11352,6 +11354,7 @@ In most cases leave this setting as "Default".</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11369,6 +11372,7 @@ which can be set individually.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">2</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11430,16 +11434,21 @@ gr = Graphite</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">The setting for changing
+the script for digits has
+has moved to the Font
+selection dialog.</property>
+                                    <property name="label" translatable="yes">Digit Script
+Settings?</property>
+                                    <property name="justify">center</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -26327,6 +26336,7 @@ after the scripture text.</property>
                       <object class="GtkFrame">
                         <property name="width-request">675</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin-start">6</property>
@@ -26675,6 +26685,7 @@ Spine:</property>
                           <object class="GtkFrame">
                             <property name="width-request">330</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
@@ -26863,6 +26874,7 @@ section headings distinct from the scripture text.</property>
                       <object class="GtkFrame">
                         <property name="width-request">675</property>
                         <property name="visible">True</property>
+                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin-start">6</property>
@@ -27443,6 +27455,7 @@ PDFs to be Kept:</property>
                               <object class="GtkCheckButton" id="c_inclSettingsInPDF">
                                 <property name="label" translatable="yes">Include Config Settings Within PDF</property>
                                 <property name="visible">True</property>
+                                <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">All the configuration settings (including
