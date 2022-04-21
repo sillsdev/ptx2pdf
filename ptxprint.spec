@@ -17,7 +17,6 @@ def anyver(p, path=".", ext=".dll"):
     s = os.path.join(path, p) + "*{}".format(ext)
     allfiles = glob(s)
     best = None
-    print(f"{p=}, {allfiles}")
     for a in allfiles:
         ver = a[len(p):-(len(ext))]
         try:
@@ -30,6 +29,7 @@ def anyver(p, path=".", ext=".dll"):
         res = p + str(intver)
     else:
         res = None
+    print(f"{p=}, {allfiles}: {res=}")
     return res
 
 mingwb = r'C:\msys64\mingw64\bin'

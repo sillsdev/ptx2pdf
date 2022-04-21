@@ -766,6 +766,7 @@
 \def\MakeChapterLabel#1#2{#1\ #2}
 \gdef\reference{}%
 
+\newif\ifrotateVerse \rotateVersefalse
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
@@ -782,7 +783,7 @@
   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
   %\ if not cancelling first verse, output verse number
   \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\else
-   \ifrotate
+   \ifrotateVerse
     \setbox0=\hbox{\printverse}\dimen0=\wd0%
     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
     \setbox0=\hbox{\lower\dimen2\hbox to \dimen1{\kern\ht0\special{x:gsave}\special{x:rotate 90}%
