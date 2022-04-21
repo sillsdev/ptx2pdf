@@ -15,7 +15,7 @@ print("Platform:", sys.platform)
 
 def anyver(p, path=".", ext=".dll"):
     s = os.path.join(path, p) + "*{}".format(ext)
-    allfiles = glob.glob(s)
+    allfiles = glob(s)
     best = None
     for a in allfiles:
         ver = a[len(p):-(len(ext))]
