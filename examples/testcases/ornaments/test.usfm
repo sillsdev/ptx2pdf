@@ -4,7 +4,7 @@
 \c 1
 \s This is demonstration file 
 \p 
-\v 1 \bd See below for a complete(?) catalogue of ornaments! \bd*
+\v 1 \bd See below\bd* for a complete(?) catalogue of ornaments! 
 
 \p And that was a p \nd break.
 \qt-s | foo \*
@@ -39,7 +39,7 @@ another P class break.
 \esb \cat foo\cat*
 \p This esb (category foo) has a bit more text, and is set top-right. 
 \m Category foo has an end hook and the p style paragraphs in foo are centred too, hopefully.
-\p But they still have an indent which looks a bit odd. Foo category esbs have an ornamented border by no background colour, etc.
+\p But they still have an indent which looks a bit odd. Foo category esbs have an ornamented border but no background colour, etc.
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium
 doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 veritatis et quasi architecto beatae vitae dicta sunt explicabo.
@@ -49,6 +49,7 @@ doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore
 \esbe
 
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
+\zrule |cat="ornaments2"\*
 \v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
 \p

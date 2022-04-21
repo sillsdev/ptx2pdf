@@ -232,13 +232,16 @@ scaled, then its centre will used). Other choices can be imposed using parameter
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
 #### Page Borders
-In .tex file:
+In the style sheet: 
 ```
-\def\TextBorderStyle{ornaments}
+\Marker textborder
+\TextProperties publishable
+\BorderStyle vectorian1
 ```
-In the style sheet: ```\Marker textborder```
-or ```\Marker id:MAT|textborder ```
- borders are not put on title sections or on negative page numbers.
+For a given book, the marker can be prefixed as normal e.g.: ```\Marker id:MAT|textborder ``` will work.
+borders are not put on title sections or on negative page numbers.
+Setting the `nonpublishable` property will disable text borders.
+
 
 ## Using the pgfhan ornaments througout the document
 The pgfhan ornament set may be selected by adding this line to

@@ -79,28 +79,38 @@
 
 %\def\TextBorderStyle{}
 \def\doTextB@rder#1{% Put border around box #1
-  \ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
-    \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
-      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
-      \bgroup 
-        \def\sb@rmarker{textborder}%
-        \S@tCat{\id@@@}%
-        \get@border@style@params
-        %\let\b@drtop\tr@e\let\b@drbottom\tr@e
-        %\let\b@drleft\tr@e\let\b@drright\tr@e
-        %\hasb@rdertrue
-        \ifx\b@drstyle\relax
-          \let\b@drstyle\TextBorderStyle
+  \testm@rkerexists{textborder}%
+  \iftemp
+    \t@stpublishability{textborder}%
+    \ifn@npublishable\else
+    %\ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
+      \ifnum\pageno>0\edef\t@st{\botmark}%
+        \ifx\t@st\t@tle\ifnum\BodyColumns=\IntroColumns \else \tempfalse\fi\fi
+        \ifm@rksonpage\else\tempfalse\fi
+        \ifx\t@st\empty\tempfalse\fi
+        \iftemp
+          \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
+          \bgroup 
+            \def\sb@rmarker{textborder}%
+            \S@tCat{\id@@@}%
+            \get@border@style@params
+            %\let\b@drtop\tr@e\let\b@drbottom\tr@e
+            %\let\b@drleft\tr@e\let\b@drright\tr@e
+            %\hasb@rdertrue
+            \ifx\b@drstyle\relax
+              %\let\b@drstyle\TextBorderStyle
+            \fi
+            \prepb@rderdims
+            \prepb@rderbox{#1}%
+            \ifhasb@rder
+              \csname mkb@rder@\b@drstyle\endcsname
+              \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+            \fi
+          \egroup
         \fi
-        \prepb@rderdims
-        \prepb@rderbox{#1}%
-        \ifhasb@rder
-          \csname mkb@rder@\b@drstyle\endcsname
-          \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
-        \fi
-      \egroup
-    \fi\fi
-  \fi\fi\fi
+      \fi
+    \fi
+  \fi
 }
 
 \let\mkb@rder@plain\mkb@rder
@@ -189,7 +199,8 @@
   \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
   \trace{eb}{Params finished}%
 }
-\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderhpadding,bordervpadding,boxhpadding,boxvpadding}
+\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderhpadding,bordervpadding,boxhpadding,boxvpadding,raise,verticalalign}
+%raise and verticalalign are not used by borders, but is by zrules
 
 
 \def\dob@rder{%

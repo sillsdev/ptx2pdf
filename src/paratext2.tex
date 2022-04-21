@@ -303,6 +303,7 @@
 \newtoks\endn@teclasses
 \newtoks\plac@ndnotes
 \newif\if@ndnotesfound
+\newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
 \plac@ndnotes{\ifhmode\endgraf\fi\endn@terule} % Pre-fill the toklist
 \def\ch@ckendnotes#1{\x@\ifvoid\csname endn@te-#1\endcsname\else\global\@ndnotesfoundtrue\fi}
 \def\zplaceallnotes{\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
@@ -791,8 +792,10 @@
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
       \dimen9=\ht\partial
-      \ifvoid\partial\else \vbox{%
-         % \doTextB@rder{\partial}%2
+      \ifvoid\partial\else \vbox{%      
+          \ifpartialfr@med\else
+            \doTextB@rder{\partial}%2HERE
+          \fi
           \hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
@@ -808,7 +811,7 @@
         \fi\fi
         \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
         \vbox to\dimen3{%
-          \ifdim\ht\colA>14\FontSizeUnit
+          \ifdim\ht\colA>1\onel@neunit
             \doTextB@rder{\colA}%3
           \fi
           \box\colA\kern0pt \vfil}%
@@ -833,8 +836,11 @@
     \fin@lverybottom
     \global\holdinginserts=1
     \ifrerunsavepartialpaged\trace{o}{onecoltrial: rerunsavepartialpage}%
+      \global\holdinginserts=0
       \global\output={\savepartialpage}\global\rerunsavepartialpagedfalse\unvbox255% leave flag set to allow caller to trigger extra \eject   %(+)
-    \else\global\output={\onecol}\unvbox255\fi
+    \else
+      \global\holdinginserts=1
+      \global\output={\onecol}\unvbox255\fi
 %-c_onecoltrial_pagefit
 %+c_onecoltrial_fail
   \else % the contents of the "galley" didn't fit into the actual page,
@@ -1733,6 +1739,7 @@
       \doTextB@rder{\colA}%
       \box\colA
       }%
+    \global\partialfr@medtrue
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
@@ -1873,6 +1880,7 @@
       \p@geendcontent
       \ifnoinkinmargin\box14\fi
     }%
+    \global\partialfr@medfalse
     \global\setbox255=\box\voidb@x                                          %(+)
     \plainoutput\trace{p}{plainoutput twocoltrial}%
     \notst@dynotesfalse\clearn@tes
