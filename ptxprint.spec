@@ -17,6 +17,7 @@ def anyver(p, path=".", ext=".dll"):
     s = os.path.join(path, p) + "*{}".format(ext)
     allfiles = glob(s)
     best = None
+    print(f"{p=}, {allfiles}")
     for a in allfiles:
         ver = a[len(p):-(len(ext))]
         try:
