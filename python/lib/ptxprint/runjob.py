@@ -298,6 +298,8 @@ class RunJob:
             print(f"{self.printer.docreatediff=}")
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
+                if basename == _("Previous PDF (_1)"):
+                    basename = None
                 diffcolor = self.printer.get("col_diffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 print(f"{basename=} {pdfname=}")
