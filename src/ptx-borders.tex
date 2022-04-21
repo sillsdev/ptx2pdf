@@ -1,0 +1,340 @@
+%:skip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2022 by SIL International
+% written by David Gardner
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Border processing
+\newbox\b@rderbox
+\newif\ifhorizb@rder
+\newif\ifhasb@rder
+\newif\ifearlybgimage
+\def\borderstylelist{plain, double}
+
+\let\b@drcol\relax
+
+%Stylesheet 
+\def\BorderWidth        #1\relax{\initc@t\setsbp@ram{borderwidth}{#1}}
+\def\BorderColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bordercolour}{\rgb@out}}
+\def\BorderStyle        #1\relax{\initc@t\ifcsname mkb@rder@#1\endcsname\setsbp@ram{borderstyle}{#1}\else\BorderRef #1\relax\fi}
+\def\BorderStyleExtra   #1\relax{\initc@t\setsbp@ram{borderstyleextra}{#1}}
+\def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}}
+\def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordervpadding}{#1}}
+\def\BorderPadding #1\relax{\initc@t\setsbp@ram{borderhpadding}{#1}\setsbp@ram{bordervpadding}{#1}}
+\let\BorderColor=\BorderColour%for Americans
+\def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
+\def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
+\let\BorderFillColor\BorderFillColour
+\def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}} % linewidth for double border (or ornament)
+\def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\m@rker}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
+\def\SetBorder #1\relax{\Marker bdr-#1\relax}
+
+\def\mkb@rder{%Put a simple border around a box
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drwidth pt  * \b@drvsides\relax
+  \dimen1=0pt
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width\bc@l
+    \ifx\b@drtop\tr@e\trace{eb}{Drawing Border:top \b@rderbox@width}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi%
+    \hbox to \b@rderbox@width{%
+      \ifx\b@drleft\tr@e\trace{eb}{Drawing Border:left \the\dimen0+\the\dimen1}%
+        \vrule width \b@drwidth pt  height \dimen0 depth \dimen1 
+      \fi
+    \hss
+      \ifx\b@drright\tr@e\trace{eb}{Drawing Border:right \the\dimen0+\the\dimen1}%
+        \vrule width \b@drwidth pt  height \dimen0 depth \dimen1
+      \fi
+    }\vss
+    \ifx\b@drbottom\tr@e\trace{eb}{Drawing Border:bottom}\hbox{\vrule height\b@drwidth pt  width \b@rderbox@width}\fi
+\endbc@l}%
+}
+
+%\def\TextBorderStyle{}
+\def\doTextB@rder#1{% Put border around box #1
+  \ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
+    \ifnum\pageno>0\edef\t@st{\topmark}\ifx\t@st\t@tle\else
+      \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
+      \bgroup 
+        \def\sb@rmarker{textborder}%
+        \S@tCat{\id@@@}%
+        \get@border@style@params
+        %\let\b@drtop\tr@e\let\b@drbottom\tr@e
+        %\let\b@drleft\tr@e\let\b@drright\tr@e
+        %\hasb@rdertrue
+        \ifx\b@drstyle\relax
+          \let\b@drstyle\TextBorderStyle
+        \fi
+        \prepb@rderdims
+        \prepb@rderbox{#1}%
+        \ifhasb@rder
+          \csname mkb@rder@\b@drstyle\endcsname
+          \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+        \fi
+      \egroup
+    \fi\fi
+  \fi\fi\fi
+}
+
+\let\mkb@rder@plain\mkb@rder
+\def\mkb@rder@double{%
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
+  \ifx\b@drlinewidth\relax
+    \edef\b@drlinewidth{\strip@pt{\dimexpr \b@drwidth pt /3\relax}}% Use pt for division.
+    \let\b@drfillwidth\b@drlinewidth
+  \else
+    \edef\b@drfillwidth{\strip@pt{\dimexpr \b@drwidth pt  - 2\dimexpr \b@drlinewidth pt  \relax\relax}}%
+    %\edef\b@drwidth{\strip@pt{\dimexpr \b@drlinewidth pt \relax}}%
+  \fi
+  \ifdim \b@drfillwidth pt<0pt \let\b@drfillcolour\fill@none\fi
+  \temptrue
+  \ifx\b@drfillcolour\relax\tempfalse
+  \else\ifx\b@drfillcolour\fill@none\tempfalse\fi
+  \fi
+  \iftemp 
+    \def\fc@l{\special{color push rgb \b@drfillcolour}}\def\endfc@l{\special{color pop}}%
+  \else \def\fc@l{}\def\endfc@l{}%
+  \fi
+  \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Inner vertical
+  \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth pt  * \b@drvsides\relax %Fill vertical
+  \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Outer vertical
+  \dimen3=\b@rderbox@width\advance\dimen3 by \dimexpr -\b@drlinewidth pt  * \b@drhsides\relax % Fill width
+  \dimen4=\dimen3\advance\dimen4 by \dimexpr -\b@drfillwidth pt  * \b@drhsides\relax %Inner horiz length
+  \trace{eb}{Borders: \b@rderbox@width - \b@drlinewidth pt   =\the\dimen3, \b@rderbox@height - }%
+  \dimen5=\dimexpr \b@drfillwidth pt  + \b@drlinewidth pt \relax
+  \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \lineskiplimit=0pt \hsize=\b@rderbox@width
+    \ifx\b@drtop\tr@e
+      \hbox to \b@rderbox@width{\bc@l\vrule height \b@drlinewidth pt  width \b@rderbox@width \endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth pt \else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth pt \fi
+          \fc@l\vrule height \b@drfillwidth pt  width\dimen3\endfc@l
+          \ifx\b@drright\tr@e\kern\b@drlinewidth pt \fi}%
+      \fi
+      \hbox{\ifx\b@drleft\tr@e\kern\dimen5\fi
+        \bc@l
+        \vrule height\b@drlinewidth pt  width\dimen4\endbc@l}%
+      \kern-\dimen5
+    \fi
+    \hbox to \b@rderbox@width{%   
+      \ifx\b@drleft\tr@e
+        \bc@l\vrule width \b@drlinewidth pt  height \dimen0 \endbc@l
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth pt \else\raise\b@drfillwidth pt \hbox{\fc@l \vrule width \b@drfillwidth pt  height \dimen1 \endfc@l}\fi%
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth pt  height \dimen2 \endbc@l}%
+      \fi
+    \hss
+      \ifx\b@drright\tr@e
+        \raise\dimen5\hbox{\bc@l\vrule width \b@drlinewidth pt  height \dimen2 \endbc@l}%
+        \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth pt \else\raise\b@drfillwidth pt \hbox{\fc@l \vrule width \b@drfillwidth pt  height \dimen1 \endfc@l}\fi%
+        \bc@l \vrule width \b@drlinewidth pt  height \dimen0 \endbc@l
+      \fi
+    }%
+    \vss
+    \ifx\b@drbottom\tr@e
+      \kern -\dimen5
+      \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\dimen5\fi\bc@l\vrule height\b@drlinewidth pt  width\dimen4\endbc@l}%
+      \ifx\b@drfillcolour\fill@none\kern\b@drfillwidth pt \else
+        \hbox to \b@rderbox@width{\ifx\b@drleft\tr@e\kern\b@drlinewidth pt \fi\fc@l\vrule height \b@drfillwidth pt  width\dimen3\endfc@l}%
+      \fi
+      \hbox{\bc@l\vrule height \b@drlinewidth pt  width \b@rderbox@width \endbc@l}%
+    \fi
+  }%
+}
+
+\def\get@border@style@params{%Read the border-related parameters
+  \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \getsbp@ram{bordertop}\let\b@drtop\cp@ram
+  \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
+  \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
+  %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
+  \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
+  \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
+  \trace{eb}{Params finished}%
+}
+\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderhpadding,bordervpadding,boxhpadding,boxvpadding}
+
+
+\def\dob@rder{%
+  \ifx\b@drstyle\relax
+    \ifx\b@drfillcolour\relax
+      \ifx\b@drlinewidth\relax
+        \edef\b@drstyle{plain}%
+      \else
+        \trace{eb}{Border line width defined and style not specified, assume double border}%
+        \edef\b@drstyle{double}%
+      \fi
+    \else
+      \trace{eb}{Border fill defined to '\b@drfillcolour', and style not specified, assume double border}%
+      \edef\b@drstyle{double}%
+    \fi
+  \fi
+  \ifcsname mkb@rder@\b@drstyle\endcsname 
+    \trace{eb}{making box for \b@drstyle}%
+    \csname mkb@rder@\b@drstyle\endcsname
+  \else
+    \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+  \fi 
+}
+
+\def\prepb@rderdims{% Prepare b@rderbox
+  \hasb@rderfalse\horizb@rderfalse
+  \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
+  \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
+  \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
+  \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
+  \ifhasb@rder
+    %Where does is the outer-edge of the  border or box,  relative to the contents?
+    \edef\b@dr@top@edge{\the\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding + \b@drwidth pt  +\fi\fi  \fb@vpadding\relax}%
+    \edef\b@dr@bot@edge{\the\dimexpr\ifx\b@drbottom\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding + \b@drwidth pt +\fi\fi  \fb@vpadding\relax}%
+    %Where does the border go relative to the contents? (Subtliy different to 
+    \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}% Distance to back-skip to insert border
+    \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@vpadding  \ifx\b@drbottom\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}%
+    \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
+    \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
+    \edef\b@xintadj{\the\dimexpr \b@dr@top@edge - \b@dr@top@pad\relax}%
+    \trace{eb}{BotGap:\b@dr@bot@edge, TopGap:\b@dr@top@edge}%
+  \else
+    \edef\b@drvsides{0}%
+    \edef\b@drhsides{0}%
+    \edef\b@dr@top@edge{\fb@vpadding}%
+    \edef\b@dr@bot@edge{\fb@vpadding}%
+    \xdef\b@dr@left@pad{\fb@hpadding}%
+    \xdef\b@dr@right@pad{\fb@hpadding}%
+    \xdef\b@dr@top@pad{\fb@vpadding}%
+    \xdef\b@dr@bot@pad{\fb@vpadding}%
+    \xdef\b@xintadj{0pt}%
+  \fi
+}
+
+\def\prepb@rderbox#1{% Prepare b@rderbox
+  \ifhasb@rder
+    \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
+    \dp\b@rderbox=\dp#1\relax
+    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@hpadding*2 + \b@drwidth pt  *\b@drhsides+ \border@hpadding * \b@drhsides\relax}%% Final width of border artwork
+    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@vpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drvsides + \border@vpadding *\b@drvsides\relax}% Final height of border artwork 
+    \edef\b@xadj{\ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drtop\tr@e\the\dimexpr \fb@vpadding -\b@drwidth pt -\border@vpadding\relax\else 0pt \fi\else 0pt \fi}% b@xadj puts the top edge of the border or box  at the top of an insert.
+    \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@vpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@vpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
+    %\edef\b@xextadj{\ifdim\border@vpadding> -\b@drwidth pt  \ifx\b@drtop\tr@e 3pt \else 0pt \fi\else 0pt \fi}%b@xextadj puts some space at the top of a box that will be gridded. This protects it from descenders
+    \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@vpadding +\b@drwidth pt  \fi \relax}% 
+    %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
+    %\xdef\b@xintadj{10pt}%
+  \else
+    \setbox\b@rderbox\box\voidb@x
+    \edef\b@xextadj{0pt}%
+    \edef\b@xextadj{0pt}%
+    %\edef\b@xadj{\the\dimexpr -\fb@vpadding\relax}%
+  \fi
+  \trace{eb}{b@rderbox: \the\ht\b@rderbox+\the\dp\b@rderbox x\the\wd\b@rderbox}%
+}
+\def\c@pyp@rams#1\E{% If the style has no parameter, copy the parent's one in
+  \getp@r@m{#1}{\m@rker}%
+  \ifx\p@ram\relax
+    \getp@r@m{#1}{bdr-\p@rent}%
+    \ifx\relax\p@ram
+      \trace{ebi}{Parent has no #1 }%
+    \else
+      \trace{ebi}{Inheriting #1 (\p@ram) from parent}%
+      %\tracingassigns=1
+      \setp@ram{#1}{\m@rker}{\p@ram}%
+      %\tracingassigns=0
+    \fi
+  \else
+    \trace{ebi}{Keeping own version of #1 (\p@ram)}%
+  \fi
+}
+\def\tryc@pyb@rders#1\E{%
+  \def\m@rker{#1}%
+  \getp@r@m{borderref}{\m@rker}%
+  \message{Trying to process \m@rker <-\p@ram}%
+  \ifx\p@ram\relax\else
+    \ifx\p@ram\empty\else
+      \let\p@rent\p@ram
+      \testm@rkerexists{bdr-\p@rent}%
+      \iftemp
+        \getp@r@m{borderref}{bdr-\p@rent}%
+        \message{Has parent got a parent? "\p@ram"}%
+        \temptrue
+        \ifx\p@ram\empty
+          \tempfalse
+        \else
+          \ifx\p@ram\relax
+            \tempfalse
+          \fi
+        \fi
+        \iftemp
+          \message{Postponing \m@rker, \p@rent has not been done het}%
+          \xdef\postp@nelist{\ifx\empty\postp@nelist\else\postp@nelist,\fi\m@rker}%
+        \else
+          \message{Processing \m@rker, inheriting borders from \p@rent}%
+          \let\id@\d@
+          \let\d@\c@pyp@rams
+          \x@\cstackdown\b@rderparameters,\E
+          \setp@ram{borderref}{\m@rker}{}%
+          \let\d@\id@
+        \fi
+      \else
+        \message{! Parent style "\p@rent" referenced for borders by "\m@rker"  does not exist!}%
+      \fi
+    \fi
+  \fi
+  \message{END.}%
+}
+\def\dep@ndlist{}
+\def\inheritb@rders{%
+  \ifx\empty\dep@ndlist
+    \let\n@xt\relax
+  \else
+    \let\postp@nelist\empty
+    \trace{ebi}{Dependency list:\dep@ndlist}%
+    \let\d@\tryc@pyb@rders
+    \x@\cstackdown\dep@ndlist,\E
+    \trace{ebi}{Postponed:\postp@nelist}%
+    \ifx\postp@nelist\empty
+      \let\n@xt\relax
+    \else
+      \let\n@xt\inheritb@rders
+    \fi
+  \fi
+}
+  
+
