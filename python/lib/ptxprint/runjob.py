@@ -183,7 +183,7 @@ class RunJob:
         self.noview = False
         self.nothreads = False
         # self.oldversions = 1
-        self.docreatediff = True
+        self.docreatediff = False
         # self.onlydiffs = True
         # self.diffPdf = None
         self.rerunReasons = []
@@ -303,13 +303,13 @@ class RunJob:
                 print(f"{basename=} {pdfname=}")
                 if len(basename):
                     diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
-                    self.printer.docreatediff = False
                     print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":
                             os.startfile(diffname)
                         elif sys.platform == "linux":
                             subprocess.call(('xdg-open', diffname))
+                self.printer.docreatediff = False
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))

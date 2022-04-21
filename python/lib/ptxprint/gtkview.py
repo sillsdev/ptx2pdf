@@ -692,7 +692,6 @@ class GtkViewModel(ViewModel):
         # self.noInternetClicked(None)
         self.onUILevelChanged(None)
         self.checkUpdates(False)
-        self.builder.get_object("gr_EasterEggs").set_visible(False)
         try:
             Gtk.main()
         except Exception as e:
@@ -3949,7 +3948,3 @@ class GtkViewModel(ViewModel):
         self.noUpdate = True
         self.set("s_paperWeight", wght)
         self.noUpdate = False
-    
-    def rgbEasterEggsClicked(self, btn):
-        self.builder.get_object("gr_EasterEggs").set_visible(self.get("c_rgbMode"))
-        
