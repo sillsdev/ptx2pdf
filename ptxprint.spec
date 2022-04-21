@@ -23,7 +23,7 @@ def anyver(p, path=".", ext=".dll"):
         try:
             intver = int(ver)
         except ValueError:
-            intver = ver
+            continue
         if best is None or intver < best:
             best = intver
     if best:
