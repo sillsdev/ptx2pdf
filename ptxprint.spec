@@ -37,7 +37,7 @@ if sys.platform in ("win32", "cygwin"):
                                             'gi_typelibs') for x in
                     ('Gtk-3.0', 'GIRepository-2.0', 'Pango-1.0', 'GdkPixbuf-2.0', 
                      'GObject-2.0', 'fontconfig-2.0', 'win32-1.0', 'GtkSource-3.0', 'Poppler-0.18')] \
-              + [(f'{mingwb}gspawn-win64-helper.exe', 'ptxprint')] \
+              + [(f'{mingwb}\\gspawn-win64-helper.exe', 'ptxprint')] \
 			  + [('{}\\{}.dll'.format(mingwb, x), '.') for x in
 					(anyver('libpoppler-117', mingwb), 'libpoppler-glib-8', 'libpoppler-cpp-0',
                      anyver('libcurl-4', mingwb),
