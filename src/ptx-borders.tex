@@ -81,6 +81,7 @@
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
+    \trace{et}{textborder style exists}%
     \t@stpublishability{textborder}%
     \ifn@npublishable\else
     %\ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
@@ -97,13 +98,10 @@
             %\let\b@drtop\tr@e\let\b@drbottom\tr@e
             %\let\b@drleft\tr@e\let\b@drright\tr@e
             %\hasb@rdertrue
-            \ifx\b@drstyle\relax
-              %\let\b@drstyle\TextBorderStyle
-            \fi
             \prepb@rderdims
             \prepb@rderbox{#1}%
             \ifhasb@rder
-              \csname mkb@rder@\b@drstyle\endcsname
+              \dob@rder
               \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
             \fi
           \egroup

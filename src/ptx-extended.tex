@@ -79,6 +79,7 @@
 %\setsbp@ram{borderhpadding}{0} %pt
 %\setsbp@ram{bordervpadding}{0} %pt
 \def\m@rker{textborder}
+\setsbp@ram{properties}{nonpublishable}
 \setsbp@ram{borderlinewidth}{0.05}
 \setsbp@ram{borderwidth}{8}
 \setsbp@ram{borderhpadding}{2}
@@ -424,10 +425,11 @@
  \kill@PossParamCache
  \sb@rchunkh@ight=\maxdimen
  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
+   \trace{e}{break:\cp@ram}%
    \ifx\cp@ram\tr@e
      \sb@rchunkh@ight=0.2\textheight
    \else
-     \sb@rchunkh@ight=\cp@ram\textheight
+     \sb@rchunkh@ight=\cp@ram\textheight\relax
    \fi
    \floatingpenalty=500\insertpenalties=0
  \fi\fi
@@ -561,6 +563,7 @@
     \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
   \fi  
+  \earlybgimagefalse
   \ifx\bgf@gsp@c\relax
     \let\t@mpfigspec\relax
   \else
@@ -625,7 +628,7 @@
     \ifx\sb@rheightspec\empty
       \edef\sb@rheightspec{to \the\ht\extb@x}%
     \fi
-    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt \vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}} \vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
+    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt \vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}}\vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
     \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
   \fi
   \ifx\h@scol\tr@e
