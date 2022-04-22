@@ -939,9 +939,10 @@
 \def\g@nbox#1{%For some reason, this prefers to be in its own macro.
   \x@\newb@x\csname #1\endcsname
 }
-\x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
+%\x@\def\csname d@code-t\endcsname{\edef\tmp{cat:\tmp}}
 %\x@\def\csname d@code-T\endcsname{\edef\tmp{cat:\tmp}}
-\x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not altering the stystak
+\x@\def\csname d@code-T\endcsname{\let\tmp\h@phen} % a paragraph-catergory does not alter the stystak
+\x@\def\csname d@code-t\endcsname{\let\tmp\h@phen} % a non-paragraph-catergory does not alter the stystak either.
 
 \def\dbghrule{\vbox to 0pt{\vrule width 0.5\hsize height 0.1pt \vss}}
 \def\Override{\m@kedigitsother}

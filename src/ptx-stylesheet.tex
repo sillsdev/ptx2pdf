@@ -216,10 +216,10 @@
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
 
-%returns \@@ut and \c@t@ut.  For further expansions, (\@@ut,) should be used, \c@t@ut has cat:foo|* before the final entries.
-\def\fullstack@xpand#1|#2\E{%Parameters: complexity|style stack
-  \trace{sk}{fullstack@xpand}%
-  \edef\exp@stystak{#2}%
+%returns \@@ut 
+\def\fullstack@xpand#1|#2|#3\E{%Parameters: complexity|depth|style stack
+  \trace{sk}{fullstack@xpand (#2)}%
+  \edef\exp@stystak{#3}%
   \ifx\exp@stystak\empty\else
     \x@\stystacksplit\exp@stystak+\E% Cut off the head entry of the stylestack
     \ifdiglot
@@ -235,29 +235,33 @@
     \let\mini@stack\empty
     \let\mini@stackB\empty
     \ifx\tmpstyst@kbody\empty
-      \xdef\@lso{\p@ssParams}%
-      \let\c@talso\@lso
+      \edef\@xtra{\p@ssParams}%
       \ifx\c@tprefix\empty\else % Prefix anything that ought to go before the bottom level here.
+        \edef\@lso{\c@tprefix}%
+        \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
+        \let\@ut\empty
+        \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+        \trace{sko}{now: \@xtra}%
         \trace{sko}{type of \tmpstyst@kfirst\space is '\csname stylet@pe-\tmpstyst@kfirst\endcsname'}%
         \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
-          \xdef\c@talso{\c@tprefix*,\p@ssParams}%
+          \edef\@xtra{\@ut,\c@tprefix*,\p@ssParams}%
+        \else
+          \edef\@xtra{\@ut,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
         \fi
       \fi
-      \trace{sko}{no body...appending \@lso(\c@talso) (onto: \@@ut) }%
+      \trace{sko}{no body...appending \@xtra (onto: \@@ut) }%
       %\let\@ut\empty
       %\let\d@\cs@ppend
       %\x@\cstackdown \p@ssParams,\E 
       %\trace{sk}{:\@ut ->(\@@ut)}%
       \ifx\@@ut\empty
-        \global\let\@@ut\@lso
-        \global\let\c@t@ut\c@talso
+        \global\let\@@ut\@xtra
       \else
-       \xdef\c@t@ut{\@@ut,\c@talso}%
-       \xdef\@@ut{\@@ut,\@lso}%
+       \xdef\@@ut{\@@ut,\@xtra}%
       \fi
-      \trace{sko}{fullstack@xpand #1|#2 : \@@ut. No more}%
+      \trace{sko}{fullstack@xpand #1|#2|#3 : \@@ut. No more}%
     \else
-      \count255=#1% Limit the options
+      \count255=#1% Limit for the options
       \def\@ut{}%
       \x@\stystack@pts\tmpstyst@kbody+\E%
       \let\@in\@ut
@@ -273,9 +277,17 @@
         \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
         \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
       \x@\cstackdown \@in,\E 
+      \ifx\c@tprefix\empty\else %prefix catetgories
+        \edef\@lso{\c@tprefix}%
+        \trace{sko}{1.#2: \@lso / \@@ut: expanding list: \p@ssParams}%
+        \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \@@ut,\p@ssParams,\E 
+        \edef\@@ut{\@ut,\@@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \fi
       \xdef\@@ut{\@@ut,\p@ssParams}%
-      \trace{sko}{fullstack@xpand #1|#2 : \@@ut. Continue (\tmpstyst@kbody)}%
-      \x@\fullstack@xpand\x@#1\x@|\tmpstyst@kbody\E %Recurse
+      \trace{sko}{fullstack@xpand #1|#2|#3 : \@@ut. Continue (\tmpstyst@kbody)}%
+      \edef\tmpa{#1|\the\numexpr #2+1\relax|\tmpstyst@kbody}% Fully expand arguments
+      \trace{sko}{args:\tmpa}%
+      \x@\fullstack@xpand\tmpa\E %Recurse
     \fi
   \fi
 }
@@ -295,11 +307,21 @@
   \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
   \ifx\tmp\this@stystak
     \trace{sk}{No stack}%
-    \edef\c@t@ut{\c@tprefix*,\p@ssParams}%
+    \ifx\c@tprefix\empty\else
+      \edef\@lso{\c@tprefix}%
+      \trace{sko}{1.- \@lso / - :  expanding list: \p@ssParams}%
+      \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
+      \x@\ifx\csname stylet@pe-\tmpstyst@kfirst\endcsname\ss@Para
+        \edef\p@ssParams{\@ut,\c@tprefix*,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \else
+        \edef\p@ssParams{\@ut,\p@ssParams}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
+      \fi
+      \trace{sko}{now: \p@ssParams}%
+    \fi
   \else % Assuming there's is a real stack to expand...
     \let\@@ut\empty
     \let\@ut\empty
-    \x@\fullstack@xpand\x@\StackComplexity\x@|\this@stystak\E%
+    \x@\fullstack@xpand\x@\StackComplexity\x@|\x@ 0\x@|\this@stystak\E%
     \let\p@ssParams\@@ut
   \fi
   \trace{sk}{1. Checking list: \p@ssParams}%
@@ -308,12 +330,6 @@
      %\exp@ndmspr@fix{\let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E \edef\p@ssParams{\@ut,\p@ssParams}}%
   \fi
   \let\tmpd@=\d@
-  \ifx\c@tprefix\empty\else
-    \trace{sk}{1b. Checking list (\mspr@fix,\tmp=\m@rker?): \p@ssParams}%
-    \edef\@lso{\c@tprefix}%
-    \let\@ut=\empty \let\d@=\cspr@pend\x@\cstackdown \p@ssParams,\E 
-    \edef\p@ssParams{\@ut,\c@t@ut}%  c@tout has cat:foo|* wildcard before final marker, if that's a parstyle. Note there's no L/R version of *!
-  \fi
   \ifx\empty\periph@@@\else
     \edef\@lso{periph:\periph@@@|}%
     \trace{sk}{1c. Checking list (\@lso): \p@ssParams}%
@@ -1809,6 +1825,7 @@
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}% 
   \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
+  \trace{sk}{docat: Pushing '#1' onto \mcstack}%
   \mcpush{\stylet@pe}{#1}%
   \op@ninghooks{start}{cat}%
   \let\styst@k=\empty
