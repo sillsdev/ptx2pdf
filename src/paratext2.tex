@@ -1044,6 +1044,7 @@
         \keepn@testrue\c@lcavailht\keepn@tesfalse
         \setbox255\copy\s@vedpage
         \setbox\colA=\vsplit255 to \availht
+        \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
       \fi
     \fi
   \fi

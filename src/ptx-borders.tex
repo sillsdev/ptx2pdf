@@ -81,9 +81,11 @@
   \ifdim \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax>0pt
     \temptrue
   \fi
+ \fi
 }
 
 \def\s@ttextb@rderdims{%
+  \trace{et}{s@ttextb@rderdims}%
   \testm@rkerexists{textborder}%
   \iftemp
     \t@stpublishability{textborder}%
@@ -92,28 +94,32 @@
     \fi
   \fi
   \iftemp\bgroup
-      \trace{et}{Setting textborder pre/post dimensions
       \def\sb@rmarker{textborder}%
       \@get@Vborder@style@params
       \ch@ckhasb@rder
       \@prepVb@rderdims
       \ifhasb@rder
         \getsbp@ram{spacebefore}%
-        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}
+        \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}
         \getsbp@ram{spaceafter}%
         \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%
       \fi
+      \trace{et}{Set textborder pre/post dimensions to \pretextb@rderskip / \posttextb@rderskip}%
     \egroup
   \else
     \xdef\pretextb@rderskip{0pt}%
     \xdef\posttextb@rderskip{0pt}%
   \fi
 }
-  
+\addtoidhooks{\s@ttextb@rderdims}% 
 %\def\TextBorderStyle{}
+%\addtoidhooks{%
+%  \xdef\posttextb@rderskip{20pt}%
+%  \xdef\pretextb@rderskip{20pt}%
+%  }
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
   \iftemp
@@ -138,7 +144,8 @@
             \prepb@rderbox{#1}%
             \ifhasb@rder
               \dob@rder
-              \vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+              %\vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}%
+              \global\setbox#1\vbox to \ht#1{\baselineskip=0pt\kern\pretextb@rderskip\vbox to 0pt{\vskip-\b@dr@top@pad\hbox to 0pt{\hskip-\b@dr@left@pad\box\b@rderbox\hss}\vss}\box#1\vskip\posttextb@rderskip}%
             \fi
           \egroup
         \fi
