@@ -77,6 +77,42 @@
 \endbc@l}%
 }
 
+\def\ch@ckiftextborderadj{\tempfalse\ifm@rksonpage
+  \ifdim \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax>0pt
+    \temptrue
+  \fi
+}
+
+\def\s@ttextb@rderdims{%
+  \testm@rkerexists{textborder}%
+  \iftemp
+    \t@stpublishability{textborder}%
+    \ifn@npublishable\else
+      \temptrue
+    \fi
+  \fi
+  \iftemp\bgroup
+      \trace{et}{Setting textborder pre/post dimensions
+      \def\sb@rmarker{textborder}%
+      \@get@Vborder@style@params
+      \ch@ckhasb@rder
+      \@prepVb@rderdims
+      \ifhasb@rder
+        \getsbp@ram{spacebefore}%
+        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}
+        \getsbp@ram{spaceafter}%
+        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}
+      \else
+        \xdef\pretextb@rderskip{0pt}%
+        \xdef\posttextb@rderskip{0pt}%
+      \fi
+    \egroup
+  \else
+    \xdef\pretextb@rderskip{0pt}%
+    \xdef\posttextb@rderskip{0pt}%
+  \fi
+}
+  
 %\def\TextBorderStyle{}
 \def\doTextB@rder#1{% Put border around box #1
   \testm@rkerexists{textborder}%
@@ -179,17 +215,21 @@
   }%
 }
 
-\def\get@border@style@params{%Read the border-related parameters
-  \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+\def\@get@Vborder@style@params{%Read the minimal set of border-related parameters for vertical spacing
+  \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
   \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\edef\border@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\xdef\fb@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+} 
+\def\get@border@style@params{%Read the border-related parameters
+  \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
+  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\edef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\xdef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \@get@Vborder@style@params
   \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
   \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
   %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
@@ -223,21 +263,33 @@
   \fi 
 }
 
-\def\prepb@rderdims{% Prepare b@rderbox
+\def\@prepVb@rderdims{% Minimal set of vertical border dimensions
+  \ifhasb@rder
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}% Distance to back-skip to insert border
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@vpadding  \ifx\b@drbottom\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}%
+  \else
+    \xdef\b@dr@top@pad{0pt}%
+    \xdef\b@dr@bot@pad{0pt}%
+  \fi
+}
+  
+\def\ch@ckhasb@rder{%
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
   \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
+}
+\def\prepb@rderdims{% Prepare all b@rderbox dimensions
+  \ch@ckhasb@rder
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
     \edef\b@dr@top@edge{\the\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding + \b@drwidth pt  +\fi\fi  \fb@vpadding\relax}%
     \edef\b@dr@bot@edge{\the\dimexpr\ifx\b@drbottom\tr@e \ifdim  \border@vpadding > -\b@drwidth pt  \border@vpadding + \b@drwidth pt +\fi\fi  \fb@vpadding\relax}%
     %Where does the border go relative to the contents? (Subtliy different to 
+    \@prepVb@rderdims
     \xdef\b@dr@left@pad{\the\dimexpr \fb@hpadding  \ifx\b@drleft\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@vpadding  \ifx\b@drtop\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}% Distance to back-skip to insert border
     \xdef\b@dr@right@pad{\the\dimexpr \fb@hpadding  \ifx\b@drright\tr@e +\border@hpadding + \b@drwidth pt  \fi\relax}%
-    \xdef\b@dr@bot@pad{\the\dimexpr \fb@vpadding  \ifx\b@drbottom\tr@e +\border@vpadding + \b@drwidth pt  \fi\relax}%
     \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@xintadj{\the\dimexpr \b@dr@top@edge - \b@dr@top@pad\relax}%

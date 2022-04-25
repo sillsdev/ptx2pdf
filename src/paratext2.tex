@@ -68,6 +68,10 @@
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
 \newtoks\@nithooks
 
+%: `\addtoidhooks` is for stuff we do at an id or a periph
+\def\addtoidhooks#1{\x@\global\x@\@idhooks\x@{\the\@idhooks #1}}
+\newtoks\@idhooks
+
 %: `\addtoeveryparhooks` is for the start of every paragraph
 \def\addtoeveryparhooks#1{\x@\global\x@\@veryparhooks\x@{\the\@veryparhooks #1}}
 \newtoks\@veryparhooks
@@ -304,6 +308,8 @@
 \newtoks\plac@ndnotes
 \newif\if@ndnotesfound
 \newif\ifpartialfr@med \partialfr@medfalse %Is there a textborder on partial
+\def\pretextb@rderskip{0pt}
+\def\posttextb@rderskip{0pt}
 \plac@ndnotes{\ifhmode\endgraf\fi\endn@terule} % Pre-fill the toklist
 \def\ch@ckendnotes#1{\x@\ifvoid\csname endn@te-#1\endcsname\else\global\@ndnotesfoundtrue\fi}
 \def\zplaceallnotes{\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
@@ -1029,7 +1035,18 @@
   \setbox\colA=\vsplit255 to \availht
   \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
   \edef\t@mp{\splitbotmark}%
-  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \ifx\t@mp\empty\else
+    \ifm@rksonpage\else
+      \edef\prev@avh{\the\availht}%
+      \global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}%
+      \ifdim\dimexpr\pretextb@rderskip + \posttextb@rderskip\relax=0pt \else
+        \trace{eb}{Bother. Need to remeasure and resplit the page because of the new-found border}%
+        \keepn@testrue\c@lcavailht\keepn@tesfalse
+        \setbox255\copy\s@vedpage
+        \setbox\colA=\vsplit255 to \availht
+      \fi
+    \fi
+  \fi
   \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
   \dimen3=\ht\colA\advance\dimen3 by \dp\colA
   \if\XrefNotes\relax\else
@@ -1573,6 +1590,11 @@
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
+  \ch@ckiftextborderadj
+  \iftemp
+    \advance\availht -\pretextb@rderskip  % Space reserved for text border.
+    \advance\availht -\posttextb@rderskip 
+  \fi
   \f@rstnotetrue
   \ifColNotes\onlyst@dynotestrue\else\onlyst@dynotesfalse\fi
   \m@kenotebox\advance\availht by -\ht2\global\setbox\n@tesbox\box2
@@ -1982,15 +2004,15 @@
 \def\savepartialpagedbounce{
   % This output routine gets the partial galley (input text) before a 2->1 column transition
   % so that it can be re-run with holdinginserts=0, so footnotes etc can be seen.
+  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
+   \edef\t@mp{\splitbotmark}%
+   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \s@ttrialheight
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \vsize=2\availht
   \advance\vsize by \baselineskip
   \global\output={\savepartialpaged}%
   \global\setbox\galley=\copy255 \global\setbox\galley=\vbox{\unvbox\galley}%
-  \bgroup\setbox0=\copy255 \setbox1=\vsplit0 to \maxdimen\egroup
-   \edef\t@mp{\splitbotmark}%
-   \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
   \trace{o}{sppb hIns=\the\holdinginserts, pt:\the\ht\partial, g:\the\ht255, \the\ht\galley, op:\the\outputpenalty}%
   \global\holdinginserts=0
   \unvbox255\eject

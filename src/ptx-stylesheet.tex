@@ -1159,6 +1159,7 @@
 \def\@@id#1#2#3#4\end{\gdef\id@@@{#1#2#3}% get first 3 chars of the \id
   \global\let\ch@pter\z@ro\global\let\v@rse\@neletter
   \settrig@refcv\docvhook
+  \the\@idhooks
   \ifdiglot\def\col@do##1{%
      \x@\global\x@\let\csname @ch@pter##1\endcsname\ch@pter
      \x@\global\x@\let\csname @ch@ptert@xt##1\endcsname\ch@pter
@@ -1509,6 +1510,7 @@
     \fi
   \fi
   \global\let\periph@@@\attr@b
+  \the\@idhooks
   \tempfalse
   \ifStorePeriph
     \ifcsname storeperiph-\attr@b\endcsname \temptrue\fi
