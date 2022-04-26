@@ -81,7 +81,7 @@
   \fi
 }
 
-\def\check@orn@dot#1.#2.#3\E{%
+\def\check@orn@dot#1.#2.#3\E{%If the caller has given us X.Y, obey that 
   \edef\d@t@tmp{#2}\ifx\d@t@tmp\empty
     \pdf@xunit=\csname orn@scale@#1@x\endcsname
     \pdf@yunit=\csname orn@scale@#1@y\endcsname
@@ -459,7 +459,7 @@
 %#3 Scale/mult
 %#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calulated size.
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
-% number in formal N.N, then a pre-set scale [which must have been set by setscale] will be applied 
+% number in formal N.N, then a pre-set scale [which must have been set by setornscale] will be applied 
 \newif\iflocalornament
 \newif\ifstringornament
 \def\@@ornsetnum #1#2\E{%
@@ -1044,6 +1044,7 @@
 \def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
+\def\OrnamentScaleRef #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
 
 
 

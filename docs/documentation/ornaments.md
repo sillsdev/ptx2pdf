@@ -139,14 +139,48 @@ The code determines the natural length of objects using the same variable, and
 then determines the values of the variables that give the best result (minimum 
 stretch or shrink required).
 
-#### Scaling
+#### Scaling and alignment
+If a numerical value is to be supplied, it must include a decimal point.
+Normally all items are set as if the value of 1.0 had been supplied. 
 The value of 1.0 means that for a horizontal border piece the element will 
 match the border-width. A value of `>1.0` means that the element will 
 appear larger than the requested border size, and a value `<1.0` means that the 
-element will be smaller. For *rules* the scaled ornaments aline along 
-the centre-line of the rule; for border objects the alingment edge  is away 
+element will be smaller. For *rules* the scaled ornaments align along 
+the centre-line of the rule by default; for border objects the alingment edge  is away 
 from the centre, thus the corner pieces (which must be inculded in the top and bottom 
 patterns (and are often set with a scaling of 1.5-2.5), extend into the edges.
+
+The reason that a numerical value must contain a decimal point is that there is an 
+alternative method of specifying the scaling where a certain ornament is used to
+specify the scale (when it's set to the natural size for the border), and that
+scale can be applied to other ornaments. Multiple scales can be named, and
+there is no requirement that the resulting scale should have an aspect ration of 1. 
+Once defined for a border, it can then be applied to any or all ornaments in a
+pattern.
+
+Assuming: 
+the border width is set to 5pt,  item 32 has a natural size of  30 x 10 units  and  item 33 has a natural size of  20x5 units (and is rotated):
+* In the first example below the scale is named `a`, the resulting scaling will
+be 0.5pt / natural unit in both dimensions (and if applied to ornament 32, it will have a size of 15pt x 5pt). 
+* In the second example, the scale is named 'corner', and the scale will be
+0.16666pt/unit in x direction and 0.5pt/unit in the y.
+* In the third example,  3 scales are defined. Scale 'a' as above; scale 'b' is the equivalent for another ornament, and the scale named 'c', for a corner piece where scale 'a' meets scale 'b', which uses 0.5 pt/unit in the natural y dimension, and 1pt/unit in x. The scaling should thus allow 'connections' on the corner piece to correctly while items 32 and 33 obey the specified width of the border.
+
+```
+\OrnamentScaleRef a:y|32
+\OrnamentScaleRef corner:xy|32
+\OrnamentScaleRef a:y|32,b:y|33,c:X|33:y|32
+```
+As with normal style-sheet entries, only one `\OrnamentScaleRef` is in force at any time and a second will overwrite it.
+
+##### Parsing rules
+```
+ settings:= setting  -or-  setting,settings
+ setting:= name:key|ornament -or- name:key|ornament:key|ornament
+ key:= x -or- X -or- y -or- Y -or- xy -or- XY
+```
+Lower case keys indicates no rotation. X indicates that the horizontal scale should use the vertical dimension of the ornament.
+
 
 ##### Worked example
 Let us suppose that an ornamental rule border should be made of 4 ornaments,

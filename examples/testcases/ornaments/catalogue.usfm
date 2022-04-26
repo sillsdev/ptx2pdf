@@ -1,0 +1,57 @@
+\id CAT
+\mt Catalogue of ornaments
+\s1 About this document
+\p This document exists to show the reader what ornaments exist in the libraries. It does \bd not\bd* 
+indicate that any of them are suitable for a specific audience.  For this
+document, ornaments are shown preceded by their number, surrounded by a pale
+blue box, and with a short horizontal line marking the baseline. The box
+represents how big TeX has been told they are. It is known that there are some
+boxing errors. The worst of these have been corrected, but a mechanism exists
+(e.g. \"\OrnamentTweakX{pgfhan}{77}{-15.5}" to refine others).
+
+\s1 The Default Ornaments (vectorian)
+\p
+\zrule|cat="underline" width="0.92" \*
+\p A \em lot\em* of these ornaments are not suitable for
+scripture where images of plants and animals are not permitted... 
+\p
+\testornamentsv
+\hfill\endgraf
+
+\s1 \zrule|cat="hanoverline" width="0.6"\*
+\s1 Pgfhan Ornaments
+\zrule|cat="hanunderline" width="0.6"\*
+\p
+\p
+\p \testornamentsh
+\p 
+\singlecolumn
+
+\pc
+\demoborder Vectorian1|a5
+\s Page catalogue.
+\p What follows is a catalogue of some pre-defined borders (e.g. for use on front
+covers or surrounding side-bars). Note that some of the borders will include,
+exclude or scale certain elements based on the actual size to which they are to
+fill and so these smaller examples only be a rough guide.  For text-borders,
+some tweaking of the BoxPadding and BorderPadding parameters may be appropriate.
+
+\p Vectorian1, Vectorian2, and Vectorian3 are primarily cover styles.
+\E
+\demoborder Vectorian1|a4 \E\par
+
+\demoborder Vectorian2|a5 \E
+\demoborder Vectorian3|a5 \E
+\par
+
+\pb
+\p
+\demoborder Han1|a5 \E
+\demoborder Han2|a5 \E
+\demoborder Han3|a5 
+\s Scaling issues
+\pc
+This border made from a pair of double lines is a bit of a pain to align, and still isn't perfect. 
+\pc
+\vfill
+\E

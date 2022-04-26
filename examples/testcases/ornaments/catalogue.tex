@@ -1,8 +1,8 @@
 \def\pluginlist{ornaments}
 \input "paratext2.tex"
 \catcode`\@=11
-\def\OrnamentsFamily{pgfhan}
-
+\def\v@rbatim#1"{#1\egroup}
+\def\"{\bgroup\tt\catcode`\\=11 \v@rbatim}
 \pluginjustwarntrue
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
@@ -66,8 +66,8 @@
 \def\SideMarginFactor{0.67}
 
 % PAGELAYOUT
+\PaperWidth=288mm
 \PaperHeight=210mm
-\PaperWidth=148mm
 
 % TEXTELEMENTS
 \expandafter\ifx\csname quotekernamount\endcsname\relax\else
@@ -90,31 +90,51 @@
 % COLUMNS
 \BodyColumns=2
 \def\ColumnGutterFactor{15}
+\x@\def\csname scalefrm@a5\endcsname{0.707}
+\x@\def\csname scalefrm@a4\endcsname{0.5}
+\def\scale@borderwidth{1}
+\def\scale@borderhpadding{1}
+\def\scale@bordervpadding{1}
+\def\scale@boxhpadding{1}
+\def\scale@boxvpadding{1}
 
+\def\modcat #1|#2 {\def\d@##1\E{%
+  \getp@r@m{##1}{bdr-#1}\ifx\p@ram\relax\else
+    \message{Copying ##1 from #1 to testpage}%
+    \ifcsname scale@##1\endcsname
+      \dimen1=\p@ram pt 
+      \setp@ram{##1}{cat:testpage|\sb@rmarker}{\strip@pt{\dimexpr \csname scalefrm@#2\endcsname\dimen1\relax}}%
+    \else
+      \setp@ram{##1}{cat:testpage|\sb@rmarker}{\p@ram}%
+    \fi}\x@\cstackdown\b@rderparameters,\E
+}
 
+\def\demoborder #1|#2 #3\E{\boxornfalse\bgroup\PaperHeight=14.8cm\PaperWidth=10.5cm \modcat #1|#2 \esb\cat testpage\cat* 
+  \vfill \pc #1 on #2 \pc #3 \vfill \esbe\leavevmode \hbox{\box\wholepagepic} \egroup }
+
+\tracingstats=1
 \catcode`\@=12
-\stylesheet{standardborders.sty}
 \stylesheet{usfm_sb.sty}
 \stylesheet{ptx2pdf.sty}
+\stylesheet{standardborders.sty}
 \stylesheet{default-custom.sty}
 \tracing{sc}
 %\tracing{sC}
-%\stylesheet{test.sty}
-\tracing{C}
+\stylesheet{test.sty}
+\stylesheet{catalogue.sty}
+%\tracing{C}
 \tracing{e}
 \tracing{A}
 \tracing{m}
 \tracing{eb}
-\tracing{s}
+%\tracing{s}
 %\tracing{sP}
 \tracing{g}
 \tracing{h}
 \tracing{V}
-\BodyColumns=2
 %\tracingmacros=1
-%\tracingassigns=1
-\categorysheet{mycatshan.sty}
-\def\doLines{\doGridLines}
+\categorysheet{mycats.sty}
+%\def\doLines{\doGridLines}
 %\unbalancedfalse
 \unbalancedtrue
 %\dimen\toprightins=13cm
@@ -143,24 +163,30 @@
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 %\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
-%\boxorntrue
+\boxorntrue
 %\nonstopmode
-\def\info{\dimen1=\prevdepth\message{bls:\the\baselineskip ld:\the\lastdepth, pd:\the\dimen1}}
-\def\ornamentlinewidth{0.1}
 \def\testornamentsv{
-  \def\ornamentlinecol{0 0 0}
-  \def\ornamentfillcol{0.9 0.4 0.4}
-  \SwitchOrnamentsFamily{vectorian}
-\xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.7\hsize\relax}
-\def\ornamentlinewidth{0.1}
+  \SwitchOrnamentsFamily{vectorian}%
+\xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.9\hsize\relax}
 \lineskip 1em
 \count255=-3
 \ornscaletrue
-\def\max{197}
+\def\max{196}
 \ornloop
 }
+\def\bigorn#1#2{\expandafter\def\csname orn@big#1#2\endcsname{1}}
+\bigorn{49}{pgfhan}
+\bigorn{50}{pgfhan}
+\bigorn{51}{pgfhan}
+\bigorn{52}{pgfhan}
+\bigorn{53}{pgfhan}
+\bigorn{54}{pgfhan}
+\SetupOrnament{0.1}{0.0 0.5 0.0}{0.9 0.8 0.0}
 \def\typeout#1{}
+\def\SwitchToHan{\message{switchtohan}\SwitchOrnamentsFamily{pgfhan}}
 \def\testornamentsh{
+  \xdef\ornamentheight{20pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.8\hsize\relax}
+  \SetupOrnament{0.1}{1.0 0.0 0.0}{0.9 0.8 0.0}
   \SwitchOrnamentsFamily{pgfhan}
   \catcode`\#=6 \catcode`\%=14
   %\includeifpresent{\pgfOrnamentsObject}
@@ -168,18 +194,33 @@
   \ornscaletrue
   \def\max{79}
   \ornloop
+  \hfil\par
+  \xdef\ornamentheight{45pt}\xdef\ornamentwidth{}\xdef\ornamentmaxwidth{\the\dimexpr 0.9\hsize\relax}
+  \the\bigorns
+  \par
 }
-\def\ornloop{\loop\ifnum\count255<\max \relax
-  \the\count255
-  \vrule height 0.5pt width 1em
-    \ifcsname orn@skip\the\count255\endcsname (skipped)\else
-    \doOrnament{\the\count255}\fi
-  \vrule height 0.5pt width 1em \hfil\penalty0\hfil
+\newtoks\bigorns
+\def\oneOrn#1{#1\penalty10000
+    \vrule height 0.5pt width 0.5em depth 0pt\penalty10000
+      \doOrnament{#1}\penalty10000%
+    \vrule height 0.5pt width 0.5em depth 0pt
+    \hfil\penalty0}
+
+\def\ornloop{{\lineskiplimit=0pt\loop\ifnum\count255<\max \relax
+  \ifcsname orn@skip\the\count255\endcsname\else
+    \ifcsname orn@big\the\count255\OrnamentsFamily\endcsname
+      \expandafter\toks0\expandafter{\expandafter\oneOrn\expandafter{\the\count255}}%
+      \expandafter\expandafter\expandafter\global\expandafter\expandafter\expandafter\bigorns\expandafter\expandafter\expandafter{\expandafter\the\expandafter\bigorns\the\toks0}%
+    \else
+      \oneOrn{\the\count255}%
+    \fi\fi
   \advance\count255 by 1
-  \repeat
-\par
-}
+  \repeat\hfill\endgraf
+}}
+
+
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
-\ptxfile{test.usfm}
+\ptxfile{catalogue.usfm}
+
 \bye
