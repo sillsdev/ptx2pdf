@@ -438,6 +438,7 @@
     \docr@pmarks
     \putthumbtab
     \ifrotate\special{x:grestore}\fi
+    \specialfooter
   }%
   \let\pr@tect=\relax
 }
@@ -728,6 +729,7 @@
 \m@rksonpagefalse
 \newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
+\def\specialfooter{}
 \def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody}}}%\makefootline}}}
 \def\emptyoutput{\pl@inoutput{\vbox{}}}
 \def\pl@inoutput#1{%

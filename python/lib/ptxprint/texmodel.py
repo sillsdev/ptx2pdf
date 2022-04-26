@@ -336,6 +336,7 @@ ModelMap = {
 
     "notes/iffootnoterule":     ("c_footnoterule", lambda w,v: "%" if v else ""),
     "notes/ifxrefrule":         ("c_xrefrule", lambda w,v: "%" if v else ""),
+    "notes/ifstudynoterule":    ("c_studynoterule", lambda w,v: "%" if v else ""),
 
     "notes/abovenotespace":     ("s_fnAboveSpace", None),
     "notes/belownoterulespace": ("s_fnBelowSpace", None),

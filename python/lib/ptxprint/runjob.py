@@ -583,7 +583,7 @@ class RunJob:
         texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
             if a not in texinputs:
-                texinputs.append(a)
+                texinputs.append(a+"//")
         # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         miscfonts = getfontcache().fontpaths[:]
         if sys.platform != "win32":

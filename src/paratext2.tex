@@ -1473,7 +1473,7 @@
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
       \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
     \fi\fi
-    \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage}%
+    \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
   \else
     \ifColNotes\ifrebalance
@@ -1970,15 +1970,18 @@
   \fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
   \hbox to \columnshift{}}
+
+
 \newif\ifColumnGutterRule
+\newdimen\StudyColumnGutterRuleSkip
 \def\makestudycolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
   \trace{o}{makestudycolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
-            ColumnGutterRuleSkip=\the\ColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
+            ColumnGutterRuleSkip=\the\StudyColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
 % #5: line sides bit 0=left, 1=right (0=centre line, no XrefNotes)
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
-    \vskip\ColumnGutterRuleSkip
+    \vskip\StudyColumnGutterRuleSkip
     \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
