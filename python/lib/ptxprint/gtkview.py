@@ -1092,7 +1092,7 @@ class GtkViewModel(ViewModel):
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
-            self._copyConfig(self.configId, newconfigId)
+            self.applyConfig(self.configId, newconfigId)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
