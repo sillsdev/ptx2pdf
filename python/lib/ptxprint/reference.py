@@ -560,7 +560,12 @@ class RefList(list):
     def simplify(self):
         res = []
         lastref = Reference(None, 0, 0)
-        for r in self:
+        for i,r in enumerate(self):
+            if r.first == r.last and r.first.verse == 0:
+                if isinstance(r, RefRange):
+                    r.last = Reference(r.first.book, r.first.chap, 200)
+                else:
+                    r = self[i] = RefRange(r.first, Reference(r.first.book, r.first.chap, 200))
             t, u = (r.first, r.last)
             if t.book == lastref.book and t.chap == lastref.chap \
                     and t.subverse is None and t.verse == lastref.verse + 1:

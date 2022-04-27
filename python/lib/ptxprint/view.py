@@ -213,7 +213,7 @@ class ViewModel:
         return [fname]
         
     def _bookrefsBooks(self, bl, local):
-        res = []
+        res = RefList()
         if not local:
             self.bookrefs = bl
         for r in bl:
@@ -243,7 +243,7 @@ class ViewModel:
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
-            res = []
+            res = RefList()
             self.bookrefs = RefList()
             for b in bl:
                 bname = self.getBookFilename(b.first.book, self.prjid)
@@ -252,6 +252,7 @@ class ViewModel:
                         self.switchFRTsettings()
                     else:
                         res.append(b)
+            res.simplify()
             return self._bookrefsBooks(res, local)
         else:
             # return self.booklist
