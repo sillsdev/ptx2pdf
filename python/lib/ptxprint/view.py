@@ -25,8 +25,8 @@ import json
 from shutil import copyfile, copytree, move
 from difflib import Differ
 
-VersionStr = "2.1.16"
-GitVersionStr = "2.1.15-58-g9246e810"
+VersionStr = "2.1.17"
+GitVersionStr = "2.1.16-10-gda4e92b9"
 ConfigVersion = "2.08"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
