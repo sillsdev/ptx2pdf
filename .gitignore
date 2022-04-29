@@ -7,6 +7,8 @@
 *-draft.txt
 *.notepages
 *.precommit
+*.picpages
+*.fontusage
 NestedStyles*.sty
 __pycache__/
 temp/
