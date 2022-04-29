@@ -282,6 +282,8 @@ def get_ptsettings():
 
 def get_gitver(gitdir=None, version=None):
     if gitdir is None:
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return version
         gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
         if not os.path.exists(gitdir):
             return version
