@@ -1,7 +1,18 @@
-PTXprint 2.1.16 Release Notes 
-21 April 2022
+PTXprint 2.1.17 Release Notes 
+27 April 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.1.17 (27 Apr 2022)
+
+  * Fix outputting whole chapters in references list (e.g. PSA 23; 100)
+  
+  * Handle study column gutter and note rule
+  
+  * Border improvements (Additional border styles, Styles for ornamental zrules,
+    text border spacing logic)
+  
+  * Added locale files for all 14 localization languages
 
 Bug fixes and improvements in 2.1.16 (21 Apr 2022)
 
@@ -128,7 +139,7 @@ Bug fixes and improvements in 2.1.10 (23 Mar 2022)
   
 Bug fixes and improvements in 2.1.9 (19 Mar 2022)
 
-  * Added syllable based hphenation for 5 Indic scripts: mlym taml telu knda orya
+  * Added syllable based hyphenation for 5 Indic scripts: mlym taml telu knda orya
   
   * Ensure Archive contains all files in config
   

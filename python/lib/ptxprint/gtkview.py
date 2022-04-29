@@ -1092,7 +1092,7 @@ class GtkViewModel(ViewModel):
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
-            self._copyConfig(self.configId, newconfigId)
+            self.applyConfig(self.configId, newconfigId)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
@@ -1117,12 +1117,19 @@ class GtkViewModel(ViewModel):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
         if cfg == 'Default':
-            # self.doError(_("Can't delete 'Default' configuration!"), secondary=_("Folder: ") + delCfgPath)
             self.resetToInitValues()
             self.onFontChanged(None)
-            # Right now this 'reset' (only) re-initializes the UI settings.
-            # Note that we may later provide a dialog with options about what to delete.
-            # e.g. the entire "Default" settings including piclists, adjlists, etc.
+            # Right now this 'reset' (only) re-initializes the UI settings, and removed the ptxprint.sty file
+            # We could provide a dialog with options about what else to delete (piclists, adjlists, etc.)
+            sec = _("And the ptxprint.sty stylesheet has been deleted.")
+            try:
+                print("Reset Default config; Deleting: ", os.path.join(delCfgPath, "ptxprint.sty"))
+                os.remove(os.path.join(delCfgPath, "ptxprint.sty"))
+            except OSError:
+                sec = _("But the ptxprint.sty stylesheet could not be deleted.")
+            self.triggervcs = True
+            self.updateFonts()
+            self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
             return
         else:
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):

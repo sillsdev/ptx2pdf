@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "PTXprint"
-#define MyAppVersion "2.1.16"
+#define MyAppVersion "2.1.17"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
@@ -45,9 +45,19 @@ Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "python\scripts\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
+Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\hi\*"; DestDir: "{app}\share\locale\hi\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\hu\*"; DestDir: "{app}\share\locale\hu\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\id\*"; DestDir: "{app}\share\locale\id\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\ko\*"; DestDir: "{app}\share\locale\ko\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\my\*"; DestDir: "{app}\share\locale\my\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\pt\*"; DestDir: "{app}\share\locale\pt\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"

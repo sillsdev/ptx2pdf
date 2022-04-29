@@ -229,6 +229,7 @@
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{properties}\let\b@drprop\cp@ram
 } 
 \def\get@border@style@params{%Read the border-related parameters
   \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
@@ -242,6 +243,7 @@
   %\ifx\b@drfillcolour\relax\let\b@drfillcolour\fill@none\fi
   \getsbp@ram{borderstyle}\let\b@drstyle\cp@ram
   \getsbp@ram{bordercolour}\let\b@drcol\cp@ram
+  \getsbp@ram{properties}\let\b@drprop\cp@ram
   \trace{eb}{Params finished}%
 }
 \def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderhpadding,bordervpadding,boxhpadding,boxvpadding,raise,verticalalign}
@@ -286,6 +288,7 @@
   \ifx\b@drright\tr@e\hasb@rdertrue\trace{eb}{Border: right}\fi
   \ifx\b@drtop\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Top}\fi
   \ifx\b@drbottom\tr@e\hasb@rdertrue\horizb@rdertrue\trace{eb}{Border: Bottom}\fi
+  \ifx\b@drprop\N@nPublish@ble\hasb@rderfalse\trace{eb}{Border: nonpublishable}\else\trace{eb}{Border property: \b@drprop}\fi
 }
 \def\prepb@rderdims{% Prepare all b@rderbox dimensions
   \ch@ckhasb@rder

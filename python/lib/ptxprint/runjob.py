@@ -223,7 +223,7 @@ class RunJob:
                     jobs.append((RefList((r, )), True))
                     lastbook = r.first.book
                 else:
-                    jobs[-1].append(r)
+                    jobs[-1][0].append(r)
 
         reasons = info.prePrintChecks()
         if len(reasons):

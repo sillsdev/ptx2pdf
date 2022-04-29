@@ -329,14 +329,14 @@ THE SOFTWARE.
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_letterShrink">
-    <property name="upper">100</property>
-    <property name="value">1</property>
+    <property name="upper">10</property>
+    <property name="value">1.5</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_letterStretch">
-    <property name="upper">100</property>
-    <property name="value">5</property>
+    <property name="upper">10</property>
+    <property name="value">2</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
   </object>
@@ -1673,7 +1673,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.1.16</property>
+    <property name="version">Version 2.1.17</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -8848,6 +8848,8 @@ if need be.
 A list of references can also be entered manually
 for ranges of scripture to be printed. For example:
   JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
   EXO 20:12-17 MAT 5:3-11
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
@@ -11316,7 +11318,6 @@ lays out the vertical lines left to right.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11431,23 +11432,29 @@ gr = Graphite</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">3</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The setting for changing
-the script for digits has
-has moved to the Font
-selection dialog.</property>
+                                    <property name="tooltip-text" translatable="yes">To change the script for digits (numbers)
+you must be in Full View mode to ensure
+the setting is visible, and then use the Font
+selection tool. The option to use another
+script for digits appears at the end of the
+Font Selection dialog. </property>
                                     <property name="label" translatable="yes">Digit Script
 Settings?</property>
                                     <property name="justify">center</property>
+                                    <attributes>
+                                      <attribute name="foreground" value="#616135358383"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                               </object>
@@ -11610,9 +11617,9 @@ space width. TeX's default value is 150%.</property>
                                         <property name="width-chars">3</property>
                                         <property name="text">1.0</property>
                                         <property name="adjustment">a_letterShrink</property>
-                                        <property name="climb-rate">0.20</property>
+                                        <property name="climb-rate">0.10</property>
                                         <property name="digits">1</property>
-                                        <property name="value">1</property>
+                                        <property name="value">1.5</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -11628,9 +11635,9 @@ space width. TeX's default value is 150%.</property>
                                         <property name="width-chars">3</property>
                                         <property name="text">5.0</property>
                                         <property name="adjustment">a_letterStretch</property>
-                                        <property name="climb-rate">0.20</property>
+                                        <property name="climb-rate">0.10</property>
                                         <property name="digits">1</property>
-                                        <property name="value">5</property>
+                                        <property name="value">2</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>

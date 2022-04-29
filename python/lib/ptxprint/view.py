@@ -25,8 +25,8 @@ import json
 from shutil import copyfile, copytree, move
 from difflib import Differ
 
-VersionStr = "2.1.16"
-GitVersionStr = "2.1.15-58-g9246e810"
+VersionStr = "2.1.17"
+GitVersionStr = "2.1.16-10-gda4e92b9"
 ConfigVersion = "2.08"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -213,7 +213,7 @@ class ViewModel:
         return [fname]
         
     def _bookrefsBooks(self, bl, local):
-        res = []
+        res = RefList()
         if not local:
             self.bookrefs = bl
         for r in bl:
@@ -243,7 +243,7 @@ class ViewModel:
                     return self._bookrefsBooks(res, local)
             return []
         elif scope == "multiple":
-            res = []
+            res = RefList()
             self.bookrefs = RefList()
             for b in bl:
                 bname = self.getBookFilename(b.first.book, self.prjid)
@@ -252,6 +252,7 @@ class ViewModel:
                         self.switchFRTsettings()
                     else:
                         res.append(b)
+            res.simplify()
             return self._bookrefsBooks(res, local)
         else:
             # return self.booklist
