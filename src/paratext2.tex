@@ -1591,11 +1591,13 @@
   \decr{\availht}{\topins}% and by the space needed for spanning pictures
   \decr{\availht}{\bottomins}%
   \decr{\availht}{\verybottomins}%
+  \trace{i}{availht before textborderadj = \the\availht}%
   \ch@ckiftextborderadj
   \iftemp
     \advance\availht -\pretextb@rderskip  % Space reserved for text border.
     \advance\availht -\posttextb@rderskip 
   \fi
+  \trace{i}{availht after textborderadj = \the\availht, pre=\pretextb@rderskip, post=\posttextb@rderskip}%
   \f@rstnotetrue
   \ifColNotes\onlyst@dynotestrue\else\onlyst@dynotesfalse\fi
   \m@kenotebox\advance\availht by -\ht2\global\setbox\n@tesbox\box2
