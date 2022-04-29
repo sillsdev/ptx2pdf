@@ -287,7 +287,10 @@ def get_gitver(gitdir=None, version=None):
             return version
     with open(os.path.join(gitdir, 'HEAD')) as inf:
         l = inf.readline()
-        ref = l[l.index(":")+1:].strip()
+        try:
+            ref = l[l.index(":")+1:].strip()
+        except ValueError:
+            return version
     with open(os.path.join(gitdir, *ref.split("/"))) as inf:
         res = inf.readline().strip()[:8]
     if version is not None:
