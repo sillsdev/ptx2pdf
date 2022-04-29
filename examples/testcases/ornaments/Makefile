@@ -13,6 +13,8 @@ calctest.pdf: calctest.tex  calctest.usfm $(DIR)/*.tex *.sty
 test2.pdf: test2.tex  test2.usfm $(DIR)/*.tex *.sty
 fontish.pdf: fontish.tex fontish.usfm  $(DIR)/*.tex *.sty $(DIR)/*.sty
 catalogue.pdf: catalogue.tex catalogue.usfm  $(DIR)/*.tex *.sty $(DIR)/*.sty
+	extra_mem_bot=50000000 TEXINPUTS="$(TPATH)" xetex $<
+	extra_mem_bot=50000000 TEXINPUTS="$(TPATH)" xetex $<
 
 installcat: catalogue.pdf
 	cp catalogue.pdf ../../../docs/documentation/OrnamentsCatalogue.pdf

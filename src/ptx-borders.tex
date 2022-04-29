@@ -51,7 +51,7 @@
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
 \let\BorderFillColor\BorderFillColour
 \def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}} % linewidth for double border (or ornament)
-\def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\m@rker}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
+\def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\c@tprefix\m@rker}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
 \def\SetBorder #1\relax{\Marker bdr-#1\relax}
 
 \def\mkb@rder{%Put a simple border around a box
@@ -266,7 +266,7 @@
     \trace{eb}{making box for \b@drstyle}%
     \csname mkb@rder@\b@drstyle\endcsname
   \else
-    \message{Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
+    \message{! Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
   \fi 
 }
 
@@ -353,14 +353,14 @@
 \def\tryc@pyb@rders#1\E{%
   \def\m@rker{#1}%
   \getp@r@m{borderref}{\m@rker}%
-  \message{Trying to process \m@rker <-\p@ram}%
+  \trace{ebi}{Trying to process \m@rker <-\p@ram}%
   \ifx\p@ram\relax\else
     \ifx\p@ram\empty\else
       \let\p@rent\p@ram
       \testm@rkerexists{bdr-\p@rent}%
       \iftemp
         \getp@r@m{borderref}{bdr-\p@rent}%
-        \message{Has parent got a parent? "\p@ram"}%
+        \trace{ebi}{Has parent got a parent? "\p@ram"}%
         \temptrue
         \ifx\p@ram\empty
           \tempfalse
@@ -370,10 +370,10 @@
           \fi
         \fi
         \iftemp
-          \message{Postponing \m@rker, \p@rent has not been done het}%
+          \trace{ebi}{Postponing \m@rker, \p@rent has not been done yet}%
           \xdef\postp@nelist{\ifx\empty\postp@nelist\else\postp@nelist,\fi\m@rker}%
         \else
-          \message{Processing \m@rker, inheriting borders from \p@rent}%
+          \trace{ebi}{Processing \m@rker, inheriting borders from \p@rent}%
           \let\id@\d@
           \let\d@\c@pyp@rams
           \x@\cstackdown\b@rderparameters,\E
@@ -385,7 +385,7 @@
       \fi
     \fi
   \fi
-  \message{END.}%
+  \trace{ebi}{END.}%
 }
 \def\dep@ndlist{}
 \def\inheritb@rders{%

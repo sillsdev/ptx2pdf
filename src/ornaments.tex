@@ -45,6 +45,7 @@
 \def\strip@pt#1{\x@\x@\x@\@strip@pt\x@\the\x@ #1\@pt\E}
 {\catcode`P=12 \catcode`T=12 \lowercase{\gdef\@strip@pt#1PT#2\E{#1} \xdef\@pt{PT}}} 
 \def\ornYalign{0}%
+\def\ornXalign{0}%
 \let\x@\expandafter
 \x@\let\csname orn@skip176\endcsname\relax
 \let\ornamentmaxwidth\empty
@@ -81,6 +82,7 @@
   \fi
 }
 
+
 \def\check@orn@dot#1.#2.#3\E{%If the caller has given us X.Y, obey that 
   \edef\d@t@tmp{#2}\ifx\d@t@tmp\empty
     \pdf@xunit=\csname orn@scale@#1@x\endcsname
@@ -92,6 +94,7 @@
   \fi
 }
 
+% Manual setting of ornament scale based on a single ornament and 1 or 2 dimensions
 \def\setornscale#1#2#3#4{\bgroup
   \get@ornamentDim{#2}%
   \ifx\dimen1=0pt
@@ -103,6 +106,75 @@
   \x@\xdef\csname orn@scale@#1@x\endcsname{\the\pdf@xunit}%
   \x@\xdef\csname orn@scale@#1@y\endcsname{\the\pdf@yunit}%
 \egroup}
+
+\def\p@rsescaleref #1,#2\E{% set ornament scale(s) based on 1 or 2 ornaments and current border width.
+  \trace{eb}{p@rsescaleref #1,#2}%
+  \def\tmp{#1}\ifx\tmp\empty
+    \let\psn@xt\cstackrelax
+  \else
+    \@p@rsescaleref #1::\E
+    \let\psn@xt\p@rsescaleref
+  \fi
+  \psn@xt #2,\E
+}
+
+\def\sc@letype@XY{%
+  \ift@mp\else\message{Warning: Using xy or XY as part of a 2 part \escapechar OrnamentScaleRef makes no sense (given: \sc@ledbg)}%
+  \fi
+  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentX\relax}%
+  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentY\relax}%
+}
+\def\sc@letype@X{%
+  \x@\edef\csname \sc@lename x\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentX\relax}%
+  \ift@mp
+    \x@\let\csname \sc@lename y\x@\endcsname\csname \sc@lename x\endcsname
+  \fi
+}
+\def\sc@letype@Y{%
+  \x@\edef\csname \sc@lename y\endcsname{\the\dimexpr \b@drwidth\FontSizeUnit/ \@pgfornamentY\relax}%
+  \ift@mp
+    \x@\let\csname \sc@lename x\x@\endcsname\csname \sc@lename y\endcsname
+  \fi
+}
+  
+\def\sc@letype #1|#2|#3\E{%
+  \trace{eb}{sc@letype  #1|#2|#3}%
+  \edef\tmp{#2}%
+  \edef\t@mptyp{#1}%
+  \uppercase{\edef\t@mptypU{#1}}%
+  \ifx\tmp\empty \errmessage{Invalid syntax parsing \string\OrnamentScaleRef (given: \sc@ledbg)}%
+  \else
+    \get@ornamentDim{#2}% Swap X and Y dimens of the ornament
+    \ifx\t@mptyp\t@mptypU
+      \let\tmp\@pgfornamentX
+      \let\@pgfornamentX\@pgfornamentY
+      \let\@pgfornamentY\tmp
+    \fi
+    \ifcsname sc@letype@\t@mptypU\endcsname 
+      \csname sc@letype@\t@mptypU\endcsname
+    \else
+      \errmessage{Invalid key found when parsing \escapechar OrnamentScaleRef : '\t@mptyp' (given: \sc@ledbg)}%
+    \fi
+  \fi
+} 
+
+\def\@p@rsescaleref #1:#2:#3:#4\E{%
+  \trace{eb}{@p@rsescaleref #1:#2:#3}%
+  \traceifset{p@rsescaleref}%
+  \def\tmp{#3}%
+  \edef\sc@ledbg{#1:#2:#3}%
+  \edef\sc@lename{orn@scale@#1@}%
+  \ifx\empty\tmp
+    \t@mptrue
+    \sc@letype #2||\E
+  \else
+    \t@mpfalse
+    \sc@letype #3||\E
+    \sc@letype #2||\E
+  \fi
+  \traceifcheck{p@rsescaleref}%
+}
+  
 
 \def\setornamenttransform#1{%
   \x@\let\x@\ornament@xform\csname ornament@xform@#1\endcsname
@@ -344,12 +416,14 @@
     \ht0=\dimen1%\@pgfornamentY\pdf@yunit
     \dimen7=\dimen3 % dimen7=vadjust. Start by adjusting to crop-box
     %Manual adjustments?
-    \dimen8=0pt 
+    \dimen8=0pt  % dimen8 = hadjust.
+    \dimen6=0pt % Temp variable
     \ifcsname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @Y\endcsname
       \x@\let\x@\tmp\csname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @Y\endcsname
       \dimen6=\dimexpr \tmp\pdf@xunit* \pdf@ab+ \tmp\pdf@yunit * \pdf@bb\relax
       \advance\dimen7 by -\dimen6
     \fi
+    \dimen6=0pt % Temp variable
     \ifcsname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @X\endcsname
       \x@\let\x@\tmp\csname orn@adj@\pdf@ornamentNum @\OrnamentsFamily @X\endcsname
       \message{Adjusting by \tmp}%
@@ -377,7 +451,11 @@
         \ifdim\dimen7=0pt
 	  \box0
         \else
-          \lower \dimen7\box0
+          \ifdim\dimen7<0pt
+            \raise -\dimen7
+          \else 
+            \lower \dimen7
+          \fi\box0
         \fi%
         \ifdim\dimen8=0pt \else\kern \dimen8\fi
         \special{color pop}%
@@ -387,9 +465,18 @@
       \dimen8=0pt
       %\showbox0
     \fi
-    \advance\dimen7  by \ornYalign\dimen1
+    \advance\dimen8 by \dimexpr\ornXalign\dimen0\relax
+    \advance\dimen7 by \dimexpr\ornYalign\dimen1\relax
+    \trace{eb}{\pdf@aa, \ornYalign *\the\dimen0 -> (\the\dimen8,\the\dimen7) }%
+    \ifx\@djYalign\empty \else
+      \ifnum \pdf@aa=0  
+        \advance\dimen8  by \dimexpr \@djYalign\dimen0\relax
+      \else
+        \advance\dimen7  by \dimexpr \@djYalign\dimen1\relax
+      \fi
+    \fi
     %\dimen7=-\ornYalign\dimen1
-    \ifdim\dimen8=0pt \else\kern -\dimen8 \message{kerning by \the\dimen8}\fi
+    \ifdim\dimen8=0pt \else\hbox\bgroup\leavevmode \kern -\dimen8 \message{kerning by \the\dimen8}\fi
     \ifdim\dimen7=0pt
       \box0
     \else
@@ -399,12 +486,12 @@
         \box0
       \fi
     \fi%
-    \ifdim\dimen8=0pt \else\kern \dimen8\fi
+    \ifdim\dimen8=0pt \else\kern \dimen8\egroup\dimen8=0pt\fi
 \egroup}
 \def\doOrnament#1{%
   \begingroup
     \orn@setup
-    \x@\ornament@parse#1||||\E
+    \x@\ornament@parse#1|||||\E
     \setorn@scale
     \orn@do@ornament
   \endgroup
@@ -456,21 +543,23 @@
 }
 %#1 ornament
 %#2 orientation
-%#3 Scale/mult
+%#3 Stretch/mult
 %#4 Size {=|[a-z]|N.NN}  If a number (1.0 is valid, 2. is not) then the item's size will be this much times the normal calulated size.
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
 % number in formal N.N, then a pre-set scale [which must have been set by setornscale] will be applied 
+% #5 offset (-)0.NN  Ajdusts ornYalign. ornYalign takes values: 0.5=align to centre, 1=align to top, 0=align to bottom. Units are size of object.
 \newif\iflocalornament
 \newif\ifstringornament
 \def\@@ornsetnum #1#2\E{%
  %\trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
 }
-\def\ornament@parse#1|#2|#3|#4|#5\E{%#5 is scrap
-  \trace{orn}{ornament@parse:#1:#2:#3}%
+\def\ornament@parse#1|#2|#3|#4|#5|#6\E{%#6 is scrap
+  \trace{orn}{ornament@parse:#1:#2:#3:#4}%
   \localornamentfalse
   \stringornamentfalse
   \string@check#1""\E
+  \def\@djYalign{#5}%
   \ifstringornament
     \get@ornamentDim{\pdf@ornamentNum}%
   \else
@@ -566,9 +655,9 @@
   \x@\edef\csname mult@repeat@max@\orn@repeat@class\endcsname{#3}%
 }
 
-\newif\ifornscale
-\def\orn@an@ornament#1,#2\E{%Without changing the scale, output several ornaments
-  \x@\ornament@parse#1||||\E%
+\newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
+\def\orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
+  \x@\ornament@parse#1|||||\E%
   \ifornscale
     \setorn@scale
   \fi
@@ -768,7 +857,7 @@
 \def\add@mult@class#1{\x@\mult@classes\x@{\the\mult@classes\D@{#1}}}
 \newif\iftemp
 \def\orn@meas@ornament#1,#2\E{%
-  \x@\ornament@parse#1||||\E %Set relevant transform matrix and various bools
+  \x@\ornament@parse#1|||||\E %Set relevant transform matrix and various bools
   \ifornscale
     \setorn@scale
   \fi
@@ -907,7 +996,7 @@
     \ifx\ornamentorientation\empty
       \def\ornamentorientation{u}% Up is up
     \fi
-    \x@\ornament@parse#1||||\E
+    \x@\ornament@parse#1|||||\E
     \setorn@scale
     \doOrnament{#1}%
 }
@@ -954,6 +1043,7 @@
   \def\ornamentheight{#3}%
   \def\ornamentwidth{}%
   \def\ornYalign{1}%
+  \def\ornXalign{0}%
   \orn@SetStretch{#1}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to #1{\Ornaments{\patternT}}%
   \def\ornYalign{0}%
   \orn@SetStretch{#1}{x}{=}{\patternB}\setbox\orn@bdr@bot\hbox to #1{\Ornaments{\patternB}}%
@@ -964,11 +1054,8 @@
   \trace{orn}{Box side is \the\dimen1}%
   \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternL}}%
   %\showbox\orn@bdr@left
-  \ifx\patternL\patternR
-    \setbox\orn@bdr@right\copy\orn@bdr@left
-  \else
-    \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
-  \fi
+  \def\ornXalign{1}%
+  \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \baselineskip=0pt \Ornaments{\patternR}}%
   %\showboxdepth=9
   %\showboxdepth=10
   %\showbox\orn@bdr@right
@@ -978,6 +1065,7 @@
   \trace{orn}{OrnamentBorder}%
   \def\ornamentheight{#1}%
   \def\ornamentwidth{}%
+  \def\ornXalign{0}%
   \def\ornYalign{1}%
   \ifx\b@drtop\tr@e
     \orn@SetStretch{\b@rderbox@width}{x}{}{\patternT}\setbox\orn@bdr@top\hbox to \b@rderbox@width{\Ornaments{\patternT}}%
@@ -1015,6 +1103,7 @@
   %\showbox\orn@bdr@left
   \ifx\b@drright\tr@e
     \ifvoid\orn@bdr@right
+      \def\ornXalign{1}%
       \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
       \def\border@r@pad{\border@hpadding}%
     \fi
@@ -1026,7 +1115,7 @@
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
-    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
+    \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\FontSizeUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
   %\showbox#1
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
@@ -1044,7 +1133,7 @@
 \def\BorderPatternBot #1\relax{\initc@t\setsbp@ram{borderpatternbot}{#1}}
 \def\BorderPatternLeft #1\relax{\initc@t\setsbp@ram{borderpatternleft}{#1}}
 \def\BorderPatternRight #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
-\def\OrnamentScaleRef #1\relax{\initc@t\setsbp@ram{borderpatternright}{#1}}
+\def\OrnamentScaleRef #1\relax{\initc@t\setsbp@ram{ornamentscaleref}{#1}}
 
 
 
@@ -1085,13 +1174,16 @@
   \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
+  \tracingassigns=1
+  \getsbp@ram{ornamentscaleref}\ifx\cp@ram\relax\else\x@\p@rsescaleref \cp@ram,\E\fi
+  \tracingassigns=0
   \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
   \trace{orn}{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
   %\showbox#1\copy #1 
 }
-\edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot}
+\edef\b@rderparameters{\b@rderparameters,borderstyleextra,borderpatterntop,borderpatternleft,borderpatternright,borderpatternbot,ornamentscaleref}
 
 \x@\def\csname drawzrule-ornaments\endcsname{%
   \getp@ram{borderpatterntop}{zrule}{\styst@k}%

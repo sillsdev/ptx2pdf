@@ -94,6 +94,7 @@ Each ornament that builds part of the border is specified by four parameters. Th
  2. Rotation/mirroring
  3. Stretch or repeat instructions.
  4. Scaling.
+ 5. Alignment tweak
 
 Trailing vertical bars may be ommitted. Thus if there is no rotation,
 stretching, repetition or scaling, an ornament may be specified by just its
@@ -139,7 +140,8 @@ The code determines the natural length of objects using the same variable, and
 then determines the values of the variables that give the best result (minimum 
 stretch or shrink required).
 
-#### Scaling and alignment
+#### Scaling 
+A numerical scaling factor or a named scale factor. 
 If a numerical value is to be supplied, it must include a decimal point.
 Normally all items are set as if the value of 1.0 had been supplied. 
 The value of 1.0 means that for a horizontal border piece the element will 
@@ -150,6 +152,7 @@ the centre-line of the rule by default; for border objects the alingment edge  i
 from the centre, thus the corner pieces (which must be inculded in the top and bottom 
 patterns (and are often set with a scaling of 1.5-2.5), extend into the edges.
 
+##### Named scaling factors
 The reason that a numerical value must contain a decimal point is that there is an 
 alternative method of specifying the scaling where a certain ornament is used to
 specify the scale (when it's set to the natural size for the border), and that
@@ -173,16 +176,18 @@ be 0.5pt / natural unit in both dimensions (and if applied to ornament 32, it wi
 ```
 As with normal style-sheet entries, only one `\OrnamentScaleRef` is in force at any time and a second will overwrite it.
 
-##### Parsing rules
-```
- settings:= setting  -or-  setting,settings
- setting:= name:key|ornament -or- name:key|ornament:key|ornament
- key:= x -or- X -or- y -or- Y -or- xy -or- XY
-```
-Lower case keys indicates no rotation. X indicates that the horizontal scale should use the vertical dimension of the ornament.
 
+#### Alignment tweaks
+For some ornaments, even with a carefully adjusted scale factor or the use of `\OrnamentScaleRef`, it not impossible 
+to get a satisfying join between the border ornaments. An unsightly step is present where. e.g. a magnified border and 
+an edge element. This is most noticable with the pgfhan family.  Alternatively,
+perhaps it is desired to mix a mid-border element such Vectorian element 45, which ends with lines at the bottom corners, 
+with a plain border of horizontal lines which would normally be placed centrally.
+For this the 'Alignment tweak' parameter can be supplied. It is a numerical
+value which multiplies the the height / width of the border element (depending
+if the border element is being used horizontally or vertically).
 
-##### Worked example
+#### Worked example
 Let us suppose that an ornamental rule border should be made of 4 ornaments,
 (1,2,3,4), having natural lengths of 10pt, 13pt, 11pt and 15pt respectively.
 Further, it has been decided that the rule should be symmetrical, and elements
@@ -265,12 +270,21 @@ Normally ornaments for rules are aligned centrally (i.e. if an element is
 scaled, then its centre will used). Other choices can be imposed using parameter. 
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
+##### Parsing grammar
+```
+ settings:= setting  -or-  setting,settings
+ setting:= name:key2|ornament -or- name:key1|ornament:key1|ornament
+ key2:= xy -or- XY -or- key1 
+ key1:= x -or- X -or- y -or- Y 
+```
+Lower case keys indicates no rotation. X indicates that the horizontal scale factor should use the vertical dimension of the ornament.
+
 #### Page Borders
 In the style sheet: 
 ```
 \Marker textborder
 \TextProperties publishable
-\BorderStyle vectorian1
+\BorderStyle Vectorian1out
 ```
 For a given book, the marker can be prefixed as normal e.g.: ```\Marker id:MAT|textborder ``` will work.
 borders are not put on title sections or on negative page numbers.

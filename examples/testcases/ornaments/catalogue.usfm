@@ -24,34 +24,78 @@ scripture where images of plants and animals are not permitted...
 \p
 \p
 \p \testornamentsh
-\p 
-\singlecolumn
+\singlecolumnvert
+\pb
 
-\pc
+\p
 \demoborder Vectorian1|a5
 \s Page catalogue.
-\p What follows is a catalogue of some pre-defined borders (e.g. for use on front
-covers or surrounding side-bars). Note that some of the borders will include,
-exclude or scale certain elements based on the actual size to which they are to
-fill and so these smaller examples only be a rough guide.  For text-borders,
-some tweaking of the BoxPadding and BorderPadding parameters may be appropriate.
+\p This 'page' and those that follow is a catalogue of some
+pre-defined borders (e.g. for use on front covers or surrounding
+side-bars). They are displayed here as 'covers' - filling the whole 
+of a 'page'. Note that some of the borders will include, exclude or
+scale certain elements based on the actual size to which they are to
+fill / surround, to minimise the required stretch/shrink. Thus there
+may be unexpected changes from adjustments of the padding
+etc.  
 
-\p Vectorian1, Vectorian2, and Vectorian3 are primarily cover styles.
+For designs where the ornaments are within the colour fill area, is text-borders, some tweaking of the BoxPadding and BorderPadding
+parameters may be appropriate.
+
 \E
-\demoborder Vectorian1|a4 \E\par
+\demoborder Vectorian1|a4 
+\b
+\p Vectorian1 uses the very ornate and quite floral ornament71, 
+probably to excess. Notice how on with the default settings on A4 paper, one less ornament 72 is being used than when the same border was used on A5.\E
 
-\demoborder Vectorian2|a5 \E
-\demoborder Vectorian3|a5 \E
-\par
+\demoborder Vectorian2|a5 
+\b
+\p Vectorian2 is still uses the quite 'leafy' ornament 70, but does
+not have the overly detailed element 71 that Vectorian 1 does.\E
+\demoborder Vectorian3|a5 
+\b
+\p Vectorian3 also uses ornament70, but uses different corner and
+edge-fill parts.\E
+\demoborder Vectorian4|a5 
+\b
+\p Vectorian4 uses spacing as fill, without ornament 70.\E
+\demoborder Vectorian4|a4 \E
 
+\demoborder v88|a5 
+\b
+\p The vXX  family are simpler.\E
+\demoborder v88r|a5 \E
+\demoborder v88c|a5 \E
+\demoborder v88out|a5 \E
+\demoborder v86c|a5 \E
+\demoborder v86out|a5 \E
 \pb
-\p
-\demoborder Han1|a5 \E
+\demoborder v85|a5 \E
+\demoborder v85r|a5 \E
+\demoborder v85out|a5 \E
+\demoborder Han1|a5 
+\b\p Han1 uses solid-filled border elements, in contrast to the 'just lines' used in Han2.\E
 \demoborder Han2|a5 \E
 \demoborder Han3|a5 
 \s Scaling issues
 \pc
-This border made from a pair of double lines is a bit of a pain to align, and still isn't perfect. 
+This border, made from a pair ornaments intended to align perfectly.
+Nevertheless, with the corners needing to be significantly larger than
+the edges, this was very difficult to achieve just using a scaling number.  The \" \bksl OrnamentScaleRef "  line in the
+\"standardborders.sty" file provides a perfectly matching scaling of
+different elements, but the final result still isn't perfect without
+some further manual adjustment using a new 'alignment tweak' parameter.
+This is presumably because the size of the ornament is always an
+integer number of the natural units, but the vectors themselves 
+include half- and quarter-values.
 \pc
 \vfill
 \E
+\pb
+\demoborder Han4|a5  \E
+
+\demoborder Han5|a5  \E
+
+\esb\cat fullpage\cat*
+\p Test
+\esbe

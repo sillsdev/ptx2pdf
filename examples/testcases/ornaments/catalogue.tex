@@ -8,6 +8,7 @@
 %\input "ptx-extended.tex"
 %\input "ptxplus-marginalverses.tex"
 \showboxdepth=99\showboxbreadth=99
+\tracingstats=1
 \OmitVerseNumberOnetrue
 \def\ChapterVerseSeparator{\kern.1em:\kern.1em}
 \def\AfterVerseSpaceFactor{2}
@@ -66,7 +67,7 @@
 \def\SideMarginFactor{0.67}
 
 % PAGELAYOUT
-\PaperWidth=288mm
+\PaperWidth=297mm
 \PaperHeight=210mm
 
 % TEXTELEMENTS
@@ -90,8 +91,23 @@
 % COLUMNS
 \BodyColumns=2
 \def\ColumnGutterFactor{15}
-\x@\def\csname scalefrm@a5\endcsname{0.707}
-\x@\def\csname scalefrm@a4\endcsname{0.5}
+\iftrue
+  \def\paperY{21cm}
+  \def\paperX{29.69cm}
+  \dimen1=10cm % Sample height
+  \dimen2=29.69cm % orig height
+  \edef\SampleY{\the\dimen1}
+  \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
+\else
+  \def\paperX{21cm}
+  \def\paperY{29.69cm}
+  \dimen1=10cm % Sample height
+  \dimen2=29.69cm % orig height
+  \edef\SampleY{\the\dimen1}
+  \edef\SampleX{\the\dimexpr 0.707\dimen1\relax}
+\fi
+\x@\edef\csname scalefrm@a5\endcsname{\strip@pt{\dimexpr (32\dimen1/\dimexpr 0.707\dimen2/2048\relax)\relax}}
+\x@\edef\csname scalefrm@a4\endcsname{\strip@pt{\dimexpr (32\dimen1/\dimexpr \dimen2/2048\relax)\relax}}
 \def\scale@borderwidth{1}
 \def\scale@borderhpadding{1}
 \def\scale@bordervpadding{1}
@@ -100,17 +116,31 @@
 
 \def\modcat #1|#2 {\def\d@##1\E{%
   \getp@r@m{##1}{bdr-#1}\ifx\p@ram\relax\else
-    \message{Copying ##1 from #1 to testpage}%
+    %\message{Copying ##1 from #1 to testpage}%
     \ifcsname scale@##1\endcsname
       \dimen1=\p@ram pt 
       \setp@ram{##1}{cat:testpage|\sb@rmarker}{\strip@pt{\dimexpr \csname scalefrm@#2\endcsname\dimen1\relax}}%
     \else
       \setp@ram{##1}{cat:testpage|\sb@rmarker}{\p@ram}%
-    \fi}\x@\cstackdown\b@rderparameters,\E
+    \fi\fi}\x@\cstackdown\b@rderparameters,\E
 }
-
-\def\demoborder #1|#2 #3\E{\boxornfalse\bgroup\PaperHeight=14.8cm\PaperWidth=10.5cm \modcat #1|#2 \esb\cat testpage\cat* 
-  \vfill \pc #1 on #2 \pc #3 \vfill \esbe\leavevmode \hbox{\box\wholepagepic} \egroup }
+\edef\bksl{\char"5C}
+\def\demoborder #1|#2 #3\E{%
+  \boxornfalse
+  \leavevmode
+  \traceifset{demob}%
+  \bgroup\PaperHeight=\SampleY \PaperWidth=\SampleX 
+    \widowpenalty=10
+    \clubpenalty=10
+    \modcat #1|#2 
+    \esb\cat testpage\cat* 
+    \vfill \pc #1 on #2 \pc #3 \vfill 
+    \esbe\leavevmode 
+    \hbox{\box\wholepagepic} %
+  \egroup 
+  \traceifcheck{demob}%
+  \lineskip=10pt
+}
 
 \tracingstats=1
 \catcode`\@=12
@@ -127,11 +157,13 @@
 \tracing{A}
 \tracing{m}
 \tracing{eb}
+\tracing{ebi}
 %\tracing{s}
 %\tracing{sP}
 \tracing{g}
 \tracing{h}
 \tracing{V}
+\tracing{I}
 %\tracingmacros=1
 \categorysheet{mycats.sty}
 %\def\doLines{\doGridLines}
@@ -218,6 +250,14 @@
   \repeat\hfill\endgraf
 }}
 
+\def\singlecolumnvert{\pb
+   \global\PaperWidth=\paperX
+   \global\pdfpagewidth=\paperX 
+   \global\PaperHeight=\paperY
+   \global\pdfpageheight=\paperY
+   \global\MarginUnit=0.5cm
+   \singlecolumn
+   \csname s@tupsizes\endcsname}
 
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
