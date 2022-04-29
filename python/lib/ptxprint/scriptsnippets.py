@@ -140,6 +140,27 @@ class taml(ScriptSnippet):
             res = cls.indicSyls()
         return res
             
+class sinh(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrsinhSyllable", _("Syllable line breaking"))
+    ]
+
+    @classmethod
+    def regexes(cls, model):
+        res = []
+        if model["scripts/sinh/syllables"]:
+            # cls.hyphenChar = '\u200B' # invisible
+            cls.hyphenChar = '\u00AD'   # visible
+            cls.wordChars = r'\u0d81-\u0df3'
+            cls.cons = r'\u0d9a-\u0dc6'
+            cls.indVowels = r'\u0d85-\u0d96'
+            cls.matras = r'\u0dcf-\u0df3'
+            cls.viramas = r'\u0dca'
+            cls.cmodifiers = r'\u0324'
+            cls.vmodifiers = r'\u0d82'
+            res = cls.indicSyls()
+        return res
+            
 class telu(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrteluSyllable", _("Syllable line breaking"))

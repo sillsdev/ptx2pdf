@@ -402,6 +402,7 @@ ModelMap = {
     "scripts/arab/lrcolon":     ("c_scrarabrefs", None),
     "scripts/mlym/syllables":   ("c_scrmlymSyllable", None),
     "scripts/taml/syllables":   ("c_scrtamlSyllable", None),
+    "scripts/sinh/syllables":   ("c_scrsinhSyllable", None),
     "scripts/telu/syllables":   ("c_scrteluSyllable", None),
     "scripts/knda/syllables":   ("c_scrkndaSyllable", None),
     "scripts/orya/syllables":   ("c_scroryaSyllable", None),
