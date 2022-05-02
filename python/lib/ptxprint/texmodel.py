@@ -942,7 +942,7 @@ class TexModel:
                         for a,b in c:
                             res.append(r"\def\@ctive{}{{\leavevmode{{\do@xtrafont {}{}}}}}".format(a, '^'*len(b), b))
                             res.append(r"\DefineActiveChar{{{}{}}}{{\@ctive{}}}".format( '^'*len(b), b, a))
-                        res.append(r"\@ctivate")
+                        res.append(r"\activ@tecustomch@rs")
                         res.append(r"\catcode`\@=12")
                     else:
                         res.append(r"% No special/missing characters specified for fallback font")

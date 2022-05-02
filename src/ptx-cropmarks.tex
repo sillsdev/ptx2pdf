@@ -396,7 +396,9 @@
   %\fi
   \ifx\doLines\empty\else
     \x@\ifvoid\csname gp@box\g@tterside\endcsname
+      \ifrotate\XeTeXupwardsmode=0\fi
       \global\x@\setbox\csname gp@box\g@tterside\endcsname\vbox{\doLines}%
+      \ifrotate\XeTeXupwardsmode=1\fi
     \fi
   \fi
   \dimen0=0\ifCropMarks .5\fi in
@@ -470,12 +472,13 @@
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
       \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
+      \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
         \kern\dimen0
         \moveright\dimen0\copy\topcr@p
         \kern\PaperHeight
         \moveright\dimen0\copy\bottomcr@p
-        \moveright\dimen0\vbox to 0pt{\kern12pt\hsize\PaperWidth \everypar={}
+        \moveright\dimen0\vbox to 0pt{\kern12pt\hsize\ifrotate\PaperHeight\else\PaperWidth\fi \everypar={}
           \lineskiplimit=0pt \baselineskip=10pt \linepenalty=200
           \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
           \noindent \beginL\idf@nt
@@ -483,6 +486,7 @@
           \vss}
         \vss
       }
+      %\ifrotate\XeTeXupwardsmode=1\fi
     \fi}
 %-c_docropmarks
 
@@ -602,7 +606,8 @@
 
 \def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
-    \hsize=\pdfpagewidth\vsize=\pdfpageheight
+    \ifrotate\hsize=\pdfpageheight\vsize=\pdfpagewidth\else
+    \hsize=\pdfpagewidth\vsize=\pdfpageheight\fi
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
     \s@tfont{h}{h}\mkstr@t
@@ -611,19 +616,20 @@
     \def\gp@type{GridPaper}%
     \def\th@sgprule{Minor}%
     \count255=500
-    \dimen3=\pdfpagewidth
-    \dimen2=\pdfpageheight
+    \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
+    \dimen2=\ifrotate\pdfpagewidth\else\pdfpageheight\fi
     \advance\dimen2 by -\bottomm@rgin
     \dimen1=\onel@neunit
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
     \dimen6=\GraphPaperXoffset
     \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\kern\dimen0\gp@hrule}
     \setbox0=\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}
     \edef\GraphPaperXoffset{0pt}
-    \dimen3=\pdfpagewidth
+    \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \advance\dimen0 by \ht\str@tbox
     \advance\dimen0 by -\topm@rgin
     \dimen0=-\dimen0
@@ -638,7 +644,8 @@
     \advance\dimen2 by -\FooterPosition\MarginUnit
     \def\th@sgprule{Minor}
     \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
     \edef\GraphPaperXoffset{\the\dimen6}

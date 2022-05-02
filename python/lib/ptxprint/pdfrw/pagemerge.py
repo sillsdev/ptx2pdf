@@ -246,5 +246,5 @@ class PageMerge(list):
         ''' Return the smallest box that encloses every object
             in the list.
         '''
-        a, b, c, d = zip(*(xobj.box for xobj in self))
+        a, b, c, d = zip(*(xobj.BBox for xobj in self))
         return PdfArray((min(a), min(b), max(c), max(d)))
