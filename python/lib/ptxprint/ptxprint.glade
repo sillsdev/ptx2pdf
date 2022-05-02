@@ -3046,7 +3046,7 @@ source target setting will "win").</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">Enter a password of 
-upto 16 characters to
+up to 16 characters to
 lock/unlock this
 saved configuration.</property>
                     <property name="label" translatable="yes">Enter Password:</property>
@@ -3067,7 +3067,7 @@ saved configuration.</property>
                     <property name="has-default">True</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Enter a password of 
-upto 16 characters to
+up to 16 characters to
 lock/unlock this
 saved configuration.</property>
                     <property name="max-length">16</property>
@@ -27422,7 +27422,7 @@ should be trimmed after binding.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="tooltip-text" translatable="yes">By default, PTXprint only keeps
-one previous PDF. But upto 9 
+one previous PDF. But up to 20 
 previous versions can be kept.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -27441,8 +27441,8 @@ previous versions can be kept.</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">By keeping previous versions of the
 PDF, it is possible to compare the
-final output of the PDFs. Upto 9 
-previous versions can be saved.
+final output of the PDFs. Up to 20 
+previous versions can be kept.
 
 If you need to keep a PDF around
 longer, then manually rename it
