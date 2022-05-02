@@ -22,7 +22,19 @@ Subsequent modifications to a style should be done using the alternative format:
 The position for this class of side-bars.  Any image position may be specified. 
 `B` indicates that this box goes below any notes on the page (b normally comes above notes).
 
-Note that `h` and `p` sidebars, if they have  no background colour or images,
+As with images, `h`, `p`, `F` and `P` can all be further specified with a
+horizontal position (`l`, `r` or `c` for left, right, centre respectively), and 
+for `F` and `P` they can have a vertical position relative to the pages. The vertical positions 
+that are shared with images are `t`, `b`, `c` for top, bottom, centre respectively. An additional 
+'vertical position' that can be specified is 'f', for 'fill'. This calculates the space needed 
+for borders and padding, and then tells TeX to expand the text contents to fill the page. This is 
+very useful for cover-pages, etc., where the TeX command `\vfill` can be used provide stretch.
+
+E.g.: `\Postion Fcf` will stretch the box vertically to occupy the entire paper, whereas `Position Fcc` will 
+center the box on the page taking up as little space as possible.
+
+Note that `h` and `p` sidebars, if they have  no background colour or images, and are not positioned 
+horizontally
 may be permitted to break across pages.
  
 ```\Scale  value(0-1)```
