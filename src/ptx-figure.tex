@@ -369,6 +369,7 @@
 
 \newif\ifDoCaptions
 \DoCaptionstrue
+\newif\iffigh@scaption\figh@scaptionfalse
 
 \def\d@caption{% 
   \ifDoCaptions
@@ -583,10 +584,12 @@
   \fi
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
   \rotimagefalse
+  \figh@scaptionfalse
   \edef\hs@ze{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
+  % Set all parameters to empty
   \loop
     \morep@ramstrue
     \s@tp@ramid% Sets morep@ramsfalse if off the end.
@@ -627,10 +630,25 @@
 	   \def\loc@ption{t}% if size is SPAN default to top
 	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
+  \ifDoCaptions
+    \t@mpfalse
+    \x@\ifx\csname figparam-caption\endcsname\empty
+      \ifdiglot
+        \def\col@do##1{\ifcsname figparam-caption##1\endcsname \x@\ifx\csname figparam-caption##1\endcsname\empty\else\figh@scaptiontrue\fi}%
+        \x@\each@col\diglot@list\E
+      \fi
+    \else
+      \figh@scaptiontrue
+    \fi
+  \fi 
   % set width to column width or span width and other default parameters
   \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift
   \p@cheight=\textheight
-  \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
+  \iffigh@scaption
+    \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
+  \else
+    \advance\p@cheight by -2\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
+  \fi
   \picUsesInstrue \picNarrowfalse                                               %(1)
   \gdef\pic@lign{c}% How does the picture align within the box?
   \gdef\picV@lign{c}% How does the picture align vertically on the page (Page/Full only)
@@ -645,7 +663,9 @@
         \global\let\picl@c=\loc@Page
         \picUsesInsfalse
         \p@cheight=\textheight % without text
-        \advance\p@cheight by -2\baselineskip
+        \iffigh@scaption
+          \advance\p@cheight by -2\baselineskip
+        \fi
       \else\ifx\size@ption\size@FULL
           \global\let\picl@c=\loc@Full
           \picUsesInsfalse
