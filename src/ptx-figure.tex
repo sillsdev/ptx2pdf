@@ -634,7 +634,7 @@
     \t@mpfalse
     \x@\ifx\csname figparam-caption\endcsname\empty
       \ifdiglot
-        \def\col@do##1{\ifcsname figparam-caption##1\endcsname \x@\ifx\csname figparam-caption##1\endcsname\empty\else\figh@scaptiontrue\fi}%
+        \def\col@do##1{\ifcsname figparam-caption##1\endcsname \x@\ifx\csname figparam-caption##1\endcsname\empty\else\figh@scaptiontrue\fi\fi}%
         \x@\each@col\diglot@list\E
       \fi
     \else
@@ -974,13 +974,14 @@
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
-    \edef\tmp{\the\prevdepth}%
+    \edef\eotpprevdepth{\the\prevdepth}%
     \vskip -\prevdepth
     \penalty10 % Allow the page to break
     %\gridp@cfalse% Not true. Not a floating image.
     \unvbox\picb@@x
     \penalty10
-    \vskip\tmp
+    %\trace{g}{skip is \eotpprevdepth}%
+    \vskip\eotpprevdepth\relax
    }%
    \def\temp{}%
    \ifnum\c@tskip>1 \count255=\c@tskip

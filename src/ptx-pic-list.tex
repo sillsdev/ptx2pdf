@@ -146,21 +146,27 @@
 }
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
-  \x@\let\x@\t@st\csname \p@cid\endcsname
-  \ifx\t@st\relax
-    \let\r@pe@t\relax
-    \trace{P}{No piclist entry found for \p@cid}%
+  \ifcsname\p@cid\endcsname 
+    \traceifset{ch@ckN@xtPicid}%
+    \x@\let\x@\t@st\csname \p@cid\endcsname
+    \ifx\t@st\relax
+      \let\cnpicr@pe@t\relax
+      \trace{P}{No piclist entry found for \p@cid}%
+    \else
+      \global\advance\p@clistused by 1
+      \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
+      \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
+      \x@\global\x@\let\csname\p@cid\endcsname\undefined% Undefine pics on use
+      \let\p@cspec\t@st
+      \x@\d@figure\x@{\p@cspec}%
+      \advance\p@clistsuff by 1
+      \let\cnpicr@pe@t\ch@ckN@xtPicid
+    \fi
+    \traceifcheck{ch@ckN@xtPicid}%
   \else
-    \global\advance\p@clistused by 1
-    \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
-    \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
-    \x@\global\x@\let\csname\p@cid\endcsname\relax% Undefine pics on use
-    \let\p@cspec\t@st
-    \x@\d@figure\x@{\p@cspec}%
-    \advance\p@clistsuff by 1
-    \let\r@pe@t\ch@ckN@xtPicid
+    \let\cnpicr@pe@t\relax
   \fi
-  \r@pe@t
+  \cnpicr@pe@t
 }
 
 \def\ch@ckpiclist{%
