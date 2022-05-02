@@ -283,8 +283,8 @@ stylesheet parameters `\SpaceBefore` and `\SpaceAfter` will alter the
 default value for all figures inserted via the `\fig` mechanism (including figures 
 from piclists). Sidebars similarly have these stylesheet parameters.
 
-### x-xetex Attribute - Rotation control
-
+### x-xetex Attribute - Rotation control and PDF page selection 
+#### Rotation
 To allow further transforming of images when inserting into the publication,
 ptxprint and the ptx macros support an optional 7th column in a USFM2 `\fig`
 element, which corresponds to the `x-xetex` USFM3 attribute. It consists of a
@@ -300,6 +300,9 @@ otherwise it is passed on to the ```\XeTeXpicFile``` or ```\XeTeXpdfFile```
 For example, in the piclist entry from the previous section, the image is rotated anticlockwise by 3 degrees.
 
 As yet, there is no mechanism to rotate the caption with the picture.
+
+#### PDF page selection
+The `x-xetex` attribute can also be used to select which page of a multipage PDF file is chosen to provide an image. It can be combined with rotation  E.g.  `x-xetex="rotate=binding page=2"`  would select the second page of the PDF and rotate it so the image 'up' is at the binding.
 
 ### media Attribute
 
