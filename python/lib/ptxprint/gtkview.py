@@ -3955,3 +3955,19 @@ class GtkViewModel(ViewModel):
         self.noUpdate = True
         self.set("s_paperWeight", wght)
         self.noUpdate = False
+    
+    def onLetterSpacingClicked(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        self.noUpdate = True
+        if self.get("c_hyphenate"):
+            self.set("c_hyphenate", False)
+        self.noUpdate = False
+
+    def onHyphenateClicked(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        self.noUpdate = True
+        if self.get("c_letterSpacing"):
+            self.set("c_letterSpacing", False)
+        self.noUpdate = False

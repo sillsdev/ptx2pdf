@@ -3241,14 +3241,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3259,27 +3259,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3296,7 +3296,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -11540,6 +11540,7 @@ These two settings are mutually exclusive.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onLetterSpacingClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11826,6 +11827,7 @@ hyphenation list in Paratext.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -18701,8 +18703,6 @@ from and independent of the Anchor Ref setting.
                                                   <object class="GtkEntry" id="t_plAltText">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
-                                                    <property name="margin-top">3</property>
-                                                    <property name="margin-bottom">3</property>
                                                     <property name="hexpand">True</property>
                                                   </object>
                                                   <packing>
@@ -19215,7 +19215,7 @@ be set here.</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">4</property>
-                                                    <property name="top-attach">4</property>
+                                                    <property name="top-attach">5</property>
                                                     <property name="width">2</property>
                                                   </packing>
                                                 </child>
@@ -19232,7 +19232,7 @@ be set here.</property>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">6</property>
-                                                    <property name="top-attach">4</property>
+                                                    <property name="top-attach">5</property>
                                                     <property name="width">2</property>
                                                   </packing>
                                                 </child>
@@ -19310,10 +19310,52 @@ changes specified in the PrintDraftChanges.txt file.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <placeholder/>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
+can be applied for rotation and/or PDF page
+selection. For example:
+rotated 90     - anti-clockwise
+rotate=edge     - top to outside edge
+rotate=binding    - top to binding edge
+page=2     - select page 2 of multipage PDF
+
+Mulitple parameters should be space-separated:
+rotate=binding page=2</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="label" translatable="yes">Extra:</property>
+                                                    <property name="justify">right</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">4</property>
+                                                    <property name="top-attach">4</property>
+                                                  </packing>
                                                 </child>
                                                 <child>
-                                                  <placeholder/>
+                                                  <object class="GtkEntry" id="t_picXetex">
+                                                    <property name="width-request">115</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
+can be applied for rotation and/or PDF page
+selection. For example:
+rotated 90     - anti-clockwise
+rotate=edge     - top to outside edge
+rotate=binding    - top to binding edge
+page=2     - select page 2 of multipage PDF
+
+Mulitple parameters should be space-separated:
+rotate=binding page=2</property>
+                                                    <property name="width-chars">0</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">5</property>
+                                                    <property name="top-attach">4</property>
+                                                    <property name="width">3</property>
+                                                  </packing>
                                                 </child>
                                               </object>
                                             </child>
