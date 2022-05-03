@@ -92,6 +92,12 @@ If the command `\ParallelNoteNumbering{f}` is given, then `\f` footnotes will
 have two parallel counts, so that left and right texts will be numbered (or picked from the callers list) 
 separately. The default keeps a single count, so each footnote/cross-reference is numbered  distinctly. This setting is ignored if merged footnotes are active, to avoid confusion.
 
+The writers of hooks or control files that reset note numbering at chapters,
+sections etc,  might want to use one of these options as appropriate:
+- `\resetautonum{f}` Reset numbering for note `f`, in the present column
+- `\resetSpecAutonum{fL}` Reset numbering for note `f`, column `L`
+- `\resetAllAutonum{f}` Reset numbering for note `f` in all columns
+ 
 ###True/false options
 
 - ```\diglottrue```

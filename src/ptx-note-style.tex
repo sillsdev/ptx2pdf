@@ -183,18 +183,22 @@
 %-cnote_endnote
 
 %+cnote_autonum
-\def\inc@utonum#1{\count255=0\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname % increment note counter for class #1
- \advance\count255 by 1 \x@\xdef\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname{\number\count255}}
+\def\inc@utonum#1{\set@utonum{#1}\count255=0\csname \@utonum\endcsname\relax % increment note counter for class #1
+ \advance\count255 by 1 \x@\xdef\csname \@utonum\endcsname{\number\count255}}
 
 %% overridden by ptx-callers.tex
 \ifx\gen@utonum\undefined
  \def\gen@utonum#1{%
-  \count255=0\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname
+  \set@utonum{#1}%
+  \count255=0\csname \@utonum \endcsname
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
 
-\def\resetautonum#1{\x@\xdef\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname{0}}
+\def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % reset the current note counter (f)
+\def\resetSpecAutonum#1{\x@\xdef\csname autonum #1\endcsname{0}} % reset the exact note counter f / fL / R
+\def\resetAllAutonum#1{\def\col@do##1{\ifcsname autonum#1##1\endcsname\resetSpecAutonum{#1##1}\fi}%
+   \x@\each@col\diglot@list\E} %reset all note counters.
 %-cnote_autonum
 
 %+cnote_declare
