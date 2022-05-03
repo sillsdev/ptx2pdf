@@ -151,8 +151,17 @@
 % (an explicit list of \AutoCallers will still override this)
 % \NumericCallers{f}
 
+\def\ParallelNoteNumbering#1{\x@\let\csname parallelcounts#1\endcsname\tru@}
+\def\DistinctNoteNumbering#1{\x@\let\csname parallelcounts#1\endcsname\empty}
+
+\def\p@rallelcounts#1{\ifdiglotSepNotes\ifcsname parallelcounts#1\endcsname
+    \x@\ifx\csname parallelcounts#1\endcsname\tru@
+      \c@rrdstat
+    \fi
+  \fi\fi}
+
 %% override the autonumber macro from ptx-note-style.tex:
-\def\gen@utonum#1{\count255=0\csname autonum #1\endcsname
+\def\gen@utonum#1{\count255=0\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname
   \edef\n@mber{\the\count255}%
   \expandafter\def\expandafter\them@rk
     \expandafter{\expandafter\getcaller\expandafter{\n@mber}{#1}}}

@@ -183,18 +183,18 @@
 %-cnote_endnote
 
 %+cnote_autonum
-\def\inc@utonum#1{\count255=0\csname autonum #1\endcsname % increment note counter for class #1
- \advance\count255 by 1 \x@\xdef\csname autonum #1\endcsname{\number\count255}}
+\def\inc@utonum#1{\count255=0\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname % increment note counter for class #1
+ \advance\count255 by 1 \x@\xdef\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname{\number\count255}}
 
 %% overridden by ptx-callers.tex
 \ifx\gen@utonum\undefined
  \def\gen@utonum#1{%
-  \count255=0\csname autonum #1\endcsname
+  \count255=0\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
 
-\def\resetautonum#1{\x@\xdef\csname autonum #1\endcsname{0}}
+\def\resetautonum#1{\x@\xdef\csname autonum #1\ifdiglot\p@rallelcounts{#1}\fi\endcsname{0}}
 %-cnote_autonum
 
 %+cnote_declare

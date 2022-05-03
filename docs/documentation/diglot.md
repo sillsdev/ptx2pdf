@@ -79,17 +79,24 @@ and the right column will use:
 ### Extra columns
 `\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers. So far there is no python code to cope with polyglots.
 
+### Footnote control
+- ```\diglotSepNotestrue```
+If the footnotes from the 2 languages should be split (true) or merged together (false) (default: ```\diglotSepNotestrue```). Merging footnotes is almost certainly not a wise choice if both texts have footnotes, but if only one side has notes then it probably makes a lot of sense. The exact order of the footnotes is probably complicated and may even be unpredictable.
+
+- ```\diglotBalNotesfalse```
+If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
+
+- `\DistinctNoteNumbering{f}` (default)
+- `\ParallelNoteNumbering{f}`
+If the command `\ParallelNoteNumbering{f}` is given, then `\f` footnotes will
+have two parallel counts, so that left and right texts will be numbered (or picked from the callers list) 
+separately. The default keeps a single count, so each footnote/cross-reference is numbered  distinctly. This setting is ignored if merged footnotes are active, to avoid confusion.
 
 ###True/false options
 
 - ```\diglottrue```
 If there is diglot material this **must be set true** (i.e. ```\diglottrue```), **before** the style sheet is loaded (default: ```\diglotfalse```).
 
-- ```\diglotSepNotestrue```
-If the footnotes from the 2 languages should be split (true) or merged together (false) (default: ```\diglotSepNotestrue```). Merging footnotes is almost certainly not a wise choice if both texts have footnotes, but if only one side has notes then it probably makes a lot of sense. The exact order of the footnotes is probably complicated and may even be unpredictable.
-
-- ```\diglotBalNotesfalse```
-If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
 
 
 
