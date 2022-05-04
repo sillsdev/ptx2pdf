@@ -324,11 +324,13 @@ _horiz = {
     "-":        "-"
 }
 
-_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
+_allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", 
+            "mirror", "caption2", "desc", "x-xetex", "copy", "media", ]
 
 _selcols = {
     "settings":  ["anchor", "caption",         "desc"],
-    "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media"],
+    "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", 
+                  "mirror", "caption2", "desc", "x-xetex", "copy", "media"],
     "checklist": ["anchor", "caption", "file", "desc"]
 } 
 
@@ -3956,18 +3958,18 @@ class GtkViewModel(ViewModel):
         self.set("s_paperWeight", wght)
         self.noUpdate = False
     
-    def onLetterSpacingClicked(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        self.noUpdate = True
-        if self.get("c_hyphenate"):
-            self.set("c_hyphenate", False)
-        self.noUpdate = False
+    # def onLetterSpacingClicked(self, btn):
+        # if self.loadingConfig or self.noUpdate:
+            # return
+        # self.noUpdate = True
+        # if self.get("c_hyphenate"):
+            # self.set("c_hyphenate", False)
+        # self.noUpdate = False
 
-    def onHyphenateClicked(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        self.noUpdate = True
-        if self.get("c_letterSpacing"):
-            self.set("c_letterSpacing", False)
-        self.noUpdate = False
+    # def onHyphenateClicked(self, btn):
+        # if self.loadingConfig or self.noUpdate:
+            # return
+        # self.noUpdate = True
+        # if self.get("c_letterSpacing"):
+            # self.set("c_letterSpacing", False)
+        # self.noUpdate = False

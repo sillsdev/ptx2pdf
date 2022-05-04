@@ -17,6 +17,7 @@ _form_structure = {
     'pgpos':    'fcb_plPgPos',
     'ref':      't_plRef',
     'alt':      't_plAltText',
+    'x-xetex':  't_picXetex',
     'copy':     't_plCopyright',
     'mirror':   'fcb_plMirror',
     'hpos':     'fcb_plHoriz',
@@ -26,9 +27,10 @@ _form_structure = {
     'medW':     'c_plMediaW'
 }
 
-_singlefields = ("anchor", "caption", "src", "ref", "alt")
+_singlefields = ("anchor", "caption", "src", "ref", "alt", "x-xetex")
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", 
+                  "ref", "alt", "x-xetex", "copy", "mirror", "captionR",
                   "disabled", "cleardest", "key", "media"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 

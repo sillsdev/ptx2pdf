@@ -3320,13 +3320,15 @@ settings for a similar project.</property>
       <column type="gchararray"/>
       <!-- column-name Ref -->
       <column type="gchararray"/>
+      <!-- column-name Caption2 -->
+      <column type="gchararray"/>
       <!-- column-name AltText -->
+      <column type="gchararray"/>
+      <!-- column-name Extra -->
       <column type="gchararray"/>
       <!-- column-name Copyright -->
       <column type="gchararray"/>
       <!-- column-name Mirror -->
-      <column type="gchararray"/>
-      <!-- column-name Caption2 -->
       <column type="gchararray"/>
       <!-- column-name disabled -->
       <column type="gboolean"/>
@@ -11529,10 +11531,14 @@ grow paragrahs when balancing pages.</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">Enabling letter spacing allows the spaces between
 characters to be adjusted (usually by a very small
-percentage). This can help alleviate space problems.
+percentage). This might help alleviate space problems.
 Values are in percentage of the text point size and 
-get used everywhere. Only use this if really needed!
-In many situations it can make the text look very ugly.
+get used everywhere. 
+
+Warning: Only use this if really needed!
+In some cases, enabling this setting will prevent
+hyphenation from working at all. In other cases it 
+can make the text look very ugly.
 
 Note that if this option is disabled, then it is due to
 the Interlinear option being set on the Advanced page.
@@ -11540,7 +11546,6 @@ These two settings are mutually exclusive.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onLetterSpacingClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11827,7 +11832,6 @@ hyphenation list in Paratext.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -17626,6 +17630,21 @@ headers and footers.</property>
                                       </object>
                                     </child>
                                     <child>
+                                      <object class="GtkTreeViewColumn" id="col_caption2">
+                                        <property name="resizable">True</property>
+                                        <property name="spacing">2</property>
+                                        <property name="sizing">fixed</property>
+                                        <property name="fixed-width">250</property>
+                                        <property name="title" translatable="yes">Sec.Caption</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cr_caption2"/>
+                                          <attributes>
+                                            <attribute name="text">10</attribute>
+                                          </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
                                       <object class="GtkTreeViewColumn" id="col_desc">
                                         <property name="resizable">True</property>
                                         <property name="spacing">2</property>
@@ -17637,6 +17656,18 @@ headers and footers.</property>
                                           <attributes>
                                             <attribute name="text">7</attribute>
                                           </attributes>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkTreeViewColumn" id="col_x-xetex">
+                                        <property name="resizable">True</property>
+                                        <property name="spacing">2</property>
+                                        <property name="sizing">fixed</property>
+                                        <property name="fixed-width">40</property>
+                                        <property name="title" translatable="yes">Extra</property>
+                                        <child>
+                                          <object class="GtkCellRendererText" id="cr_x-xetex"/>
                                         </child>
                                       </object>
                                     </child>
@@ -17666,21 +17697,6 @@ headers and footers.</property>
                                           <object class="GtkCellRendererText" id="cr_media"/>
                                           <attributes>
                                             <attribute name="text">14</attribute>
-                                          </attributes>
-                                        </child>
-                                      </object>
-                                    </child>
-                                    <child>
-                                      <object class="GtkTreeViewColumn" id="col_caption2">
-                                        <property name="resizable">True</property>
-                                        <property name="spacing">2</property>
-                                        <property name="sizing">fixed</property>
-                                        <property name="fixed-width">250</property>
-                                        <property name="title" translatable="yes">Sec.Caption</property>
-                                        <child>
-                                          <object class="GtkCellRendererText" id="cr_caption2"/>
-                                          <attributes>
-                                            <attribute name="text">10</attribute>
                                           </attributes>
                                         </child>
                                       </object>
@@ -19312,7 +19328,6 @@ changes specified in the PrintDraftChanges.txt file.</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
 can be applied for rotation and/or PDF page
@@ -19337,7 +19352,6 @@ rotate=binding page=2</property>
                                                   <object class="GtkEntry" id="t_picXetex">
                                                     <property name="width-request">115</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
 can be applied for rotation and/or PDF page
