@@ -321,6 +321,40 @@ class PicInfo(dict):
                         pic[d[0]] = d[1]
         self.rmdups()
 
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
+        m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt)
+        if len(m):
+            # print("usfm2:", lastv, m)
+            for f in m:     # usfm 2
+                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                r = "{}{} {}{}{}".format(bk, suffix, *a)
+                pic = {'anchor': r, 'caption':f[5].strip()}
+                key = self.newkey(suffix)
+                self[key] = pic
+                for i, v in enumerate(f):
+                    pic[posparms[i]] = v
+                self._fixPicinfo(pic)
+        m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt)
+        if len(m):
+            # print("usfm3:", lastv, m)
+            for i, f in enumerate(m):     # usfm 3
+                # lastv = f[0] or lastv
+                if "|" in f[1]:
+                    break
+                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                r = "{}{} {}{}{}".format(bk, suffix, *a)
+                pic = {'caption':f[0].strip(), 'anchor': r}
+                key = self.newkey(suffix)
+                self[key] = pic
+                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
+                for l in labelParams:
+                    k,v = l.split("=")
+                    pic[k.strip()] = v.strip('"')
+                if 'media' not in pic:
+                    default, limit = parent.picMedia(pic.get('src', ''))
+                    pic['media'] = 'paw' if default is None else default
+
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in TexModel._peripheralBooks
         with universalopen(fname) as inf:
@@ -328,50 +362,13 @@ class PicInfo(dict):
             blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
             for c, t in zip(blocks[0::2], blocks[1::2]):
                 if isperiph:
-                    m = re.findall(r"(?ms)\\fig(.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
-                    if len(m):
-                        for i, f in enumerate(m):
-                            r = "{}{} p{:03d}".format(bk, suffix, i+1)
-                            pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                    continue
-                for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
-                    lastv = v[0]
-                    s = v[1]
-                    key = None
-                    m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                                   r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
-                    if len(m):
-                        # print("usfm2:", lastv, m)
-                        for f in m:     # usfm 2
-                            r = "{}{} {}.{}".format(bk, suffix, c, lastv)
-                            pic = {'anchor': r, 'caption':f[5].strip()}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                            for i, v in enumerate(f):
-                                pic[posparms[i]] = v
-                            self._fixPicinfo(pic)
-                    m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', s)
-                    if len(m):
-                        # print("usfm3:", lastv, m)
-                        for i, f in enumerate(m):     # usfm 3
-                            # lastv = f[0] or lastv
-                            if "|" in f[1]:
-                                break
-                            a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                            r = "{}{} {}{}{}".format(bk, suffix, *a)
-                            pic = {'caption':f[0].strip(), 'anchor': r}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
-                            for l in labelParams:
-                                k,v = l.split("=")
-                                pic[k.strip()] = v.strip('"')
-                            if 'media' not in pic:
-                                default, limit = parent.picMedia(pic.get('src', ''))
-                                pic['media'] = 'paw' if default is None else default
-                                    
+                    self._readpics(dat, bk, suffix, c, None, isperiph, parent)
+                else:
+                    for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                        lastv = v[0]
+                        s = v[1]
+                        key = None
+                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent)
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None):
         ''' Generate a picinfo file, with given date.
