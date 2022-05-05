@@ -11529,10 +11529,14 @@ grow paragrahs when balancing pages.</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">Enabling letter spacing allows the spaces between
 characters to be adjusted (usually by a very small
-percentage). This can help alleviate space problems.
+percentage). This might help alleviate space problems.
 Values are in percentage of the text point size and 
-get used everywhere. Only use this if really needed!
-In many situations it can make the text look very ugly.
+get used everywhere. 
+
+Warning: Only use this if really needed!
+In some cases, enabling this setting will prevent
+hyphenation from working at all. In other cases it 
+can make the text look very ugly.
 
 Note that if this option is disabled, then it is due to
 the Interlinear option being set on the Advanced page.
@@ -11540,7 +11544,6 @@ These two settings are mutually exclusive.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onLetterSpacingClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11827,7 +11830,6 @@ hyphenation list in Paratext.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onHyphenateClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
