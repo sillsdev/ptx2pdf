@@ -808,6 +808,7 @@
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
           \lastdepth=0pt
+          \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern-1sp \kern 1sp}% Add a marker
           \d@figurePar\extchunkb@x
         \fi
         \ifx\picl@c\loc@Page

@@ -154,7 +154,7 @@
 \def\gr@db@@x#1{%
   \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
-      \ifhmode\endgraf\fi % Not sure why, but sometiems we get here in hmode
+      \ifhmode\endgraf\lastdepth=\prevdepth\fi % Not sure why, but sometiems we get here in hmode
       \prevdepth=0pt
       % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
       \setbox0=\vbox{\box#1}%
@@ -204,10 +204,10 @@
      \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group.
    \fi
    \endgraf
+   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
-   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
    \cutoutcarryover 
  \fi
  \do@ndofthispar

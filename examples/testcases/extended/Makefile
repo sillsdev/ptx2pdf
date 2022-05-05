@@ -14,9 +14,9 @@ bisect:
 	mkdir ../bisect || rm -fr ../bisect/*
 	cp *.tex *.usfm *.jpg inner_include.pdf *.sty Makefile ../bisect
 
-auto:
+auto: test.pdf
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
-auto2:
+auto2: test2.pdf
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test2.pdf ; done < /dev/null

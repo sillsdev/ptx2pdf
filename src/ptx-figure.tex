@@ -954,7 +954,7 @@
   \else\vadjust pre{\picc@ntents}\fi
 }
 
-
+\newif\ifearlyeotpskip
 \def\d@figurePar#1{%
   \trace{g}{\w@tsit is post-paragraph, \the\hsize/\the\p@cinswid \ifpicNarrow , narrow\fi}%
   \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
@@ -965,23 +965,33 @@
     %\fi
     %\showbox\picb@@x
   \fi
+  \earlyeotpskipfalse
+  \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
+      \gridp@ctrue% TRUE. Out of band like a floating image.
+      \prevdepth=0pt
       \headingtopspace=0pt
       \gridb@x#1
       \lastdepth=0pt
+      %\kern 0pt
+      \ifearlyeotpskip\kern -1sp\kern 1sp\fi
     }%
   \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \edef\eotpprevdepth{\the\prevdepth}%
-    \vskip -\prevdepth
+    \prevdepth=0pt \lastdepth=0pt  % prevdepth accounted for...
+    \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
+    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\global\earlyeotpskiptrue\fi}%
+    \trace{g}{Box flagged for early skip? \ifearlyeotpskip true\else false\fi}%
+    \ifearlyeotpskip \vskip-\eotpprevdepth\relax\fi
     \penalty10 % Allow the page to break
-    %\gridp@cfalse% Not true. Not a floating image.
-    \unvbox\picb@@x
+    \edef\b@xdepth{\the\dp\picb@@x}%
+    \unvbox0
+    \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\fi
     \penalty10
-    %\trace{g}{skip is \eotpprevdepth}%
-    \vskip\eotpprevdepth\relax
+    \ifearlyeotpskip\else \vskip-\eotpprevdepth\relax\fi
    }%
    \def\temp{}%
    \ifnum\c@tskip>1 \count255=\c@tskip
