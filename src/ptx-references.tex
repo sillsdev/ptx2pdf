@@ -210,7 +210,6 @@
 \newtoks\noVevenfoot
 
 \def\defineheads{
-  \ifnum\BodyColumns=2
     \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
     \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
     \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
@@ -222,19 +221,6 @@
     \noVevenfoot={\hbox to \columnshift{}\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\hbox to \columnshift{}\llap{\RFnoVevenright}}
     \titleevenfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleevencenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
     \titleoddfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleoddcenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
-  \else
-    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
-    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
-    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
-    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
-    \oddfoot={\hbox to \columnshift{}\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\hbox to \columnshift{}\llap{\RFoddright}}
-    \evenfoot={\hbox to \columnshift{}\rlap{\RFevenleft}\hfil\RFevencenter\hfil\hbox to \columnshift{}\llap{\RFevenright}}
-    \noVoddfoot={\hbox to \columnshift{}\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RFnoVoddright}}
-    \noVevenfoot={\hbox to \columnshift{}\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\hbox to \columnshift{}\llap{\RFnoVevenright}}
-    \titleevenfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleevencenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
-    \titleoddfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleoddcenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
-  \fi
 }
 
 % \footline is similar except it doesn't have to place a border graphic

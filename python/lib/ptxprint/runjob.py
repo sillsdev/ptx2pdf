@@ -722,13 +722,14 @@ class RunJob:
                     print("Timed out!")
                     self.res = runner.returncode
             if self.ispdfxa != "Screen":
+                opath = outfname.replace(".tex", ".prepress.pdf")
                 try:
-                    fixpdffile(outpath + ".prepress.pdf", pdffile,
+                    fixpdffile(opath, pdffile,
                             colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
-                            parlocs = outpath + ".parlocs")
+                            parlocs = outfname.replace(".tex", ".parlocs"))
                 except PdfError:
                     self.res = 1
-                os.remove(outpath + ".prepress.pdf")
+                os.remove(opath)
         print("Done")
 
     def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
