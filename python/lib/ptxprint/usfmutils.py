@@ -553,7 +553,10 @@ class Usfm:
                             ell.append(sfm.Text("...\n", parent=ell))
                         p.parent.insert(i, ell)
                 for p in predels:
-                    p.parent.remove(p)
+                    try:
+                        p.parent.remove(p)
+                    except ValueError:
+                        pass
                 predels = [ell] if ell is not None else []
                 st = el.meta.get("styletype", "") 
                 if (st is None or st.lower() == "paragraph") and len(el) == len(predels):

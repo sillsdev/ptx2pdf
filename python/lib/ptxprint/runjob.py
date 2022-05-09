@@ -278,10 +278,11 @@ class RunJob:
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
+        return self.res
 
     def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
-        logger.debug(f"done_job: {outfname}, {pdfname}")
+        logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
@@ -302,7 +303,7 @@ class RunJob:
                 diffcolor = self.printer.get("col_diffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 # import pdb; pdb.set_trace()
-                print(f"{basename=} {pdfname=}")
+                logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if len(basename):
                     diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
                     # print(f"{diffname=}")
@@ -605,7 +606,7 @@ class RunJob:
         else:
             pdffile = outpath + ".pdf"
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
-        oldversions = int(self.printer.get('s_keepVersions', '1'))
+        oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
             for c in range(oldversions, 0, -1):
                 opdffile = pdffile[:-4] + "_{}.pdf".format(c)
@@ -741,6 +742,7 @@ class RunJob:
             color = (240, 0, 0)
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
         if not os.path.exists(othername):
+            self.res = 2
             return None
         try:
             ingen = self.pdfimages(pdfname)

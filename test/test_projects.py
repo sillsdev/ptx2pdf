@@ -60,13 +60,11 @@ def check_output(*a, **kw):
     print("Capturing", a, kw)
     return subprocess.check_output(*a, **kw)
 
-def make_paths(projectsdir, project, config, xdv=False):
+def make_paths(projectsdir, project, config):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
                 "--nofontcache",
                 "-p", projectsdir, "-f", os.path.join(testsdir, "fonts")]
-    if xdv:
-        ptxcmd += ["-T"]
     if config is not None:
         ptxcmd += ['-c', config]
     ptxcmd += ["-P", project]
@@ -97,46 +95,27 @@ def make_paths(projectsdir, project, config, xdv=False):
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
-XdvInfo = namedtuple("XdvInfo", ["projectsdir", "project", "config", "stddir", "filename", "pdfpath", "xdvpath", "testsdir"])
+PdfInfo = namedtuple("PdfInfo", ["projectsdir", "project", "config", "stddir", "pdfpath", "stdpath", "result"])
 
 @pytest.fixture(scope="class")
-def xdv(request, projectsdir, project, config, starttime):
-    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, xdv=True)
+def pdf(request, projectsdir, project, config, starttime):
+    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config)
     pdftpath = os.path.join(projectsdir, project, "local", "ptxprint")
     os.makedirs(os.path.join(pdftpath, config), exist_ok=True)
-    pdfpath = os.path.join(pdftpath, "ptxprint-"+filename+".pdf")
-    xdvpath = os.path.join(pdftpath, config, "ptxprint-"+filename+".xdv")
-    lockfile = xdvpath.replace(".xdv", ".lock")
-    with FileLock(lockfile):
-        try:
-            t = os.path.getmtime(xdvpath)
-        except FileNotFoundError:
-            t = 0
-        if t < starttime:
-           assert call(ptxcmd) == 0
-    request.cls.xdv = XdvInfo(projectsdir, project, config, stddir, filename, pdfpath, xdvpath, testsdir)
+    pdffile = "ptxprint-{}.pdf".format(filename)
+    pdfpath = os.path.join(pdftpath, pdffile)
+    stdpath = os.path.join(stddir, pdffile)
+    ptxcmd.insert(-1, '-F')
+    ptxcmd.insert(-1, stdpath)
+    res = call(ptxcmd)
+    assert res != 1
+    request.cls.pdf = PdfInfo(projectsdir, project, config, stddir, pdfpath, stdpath, res)
 
-@pytest.mark.usefixtures("xdv")
-class TestXetex: #(unittest.TestCase):
-    def test_pdf(self):
-        xdvcmd = " ".join([quote(w2u(pt_bindir, True)+"xdvipdfmx"),"-q", "-E", "-o", quote(w2u(self.xdv.pdfpath, False)) + " " + quote(w2u(self.xdv.xdvpath, False))])
-        assert call(xdvcmd, shell=True) == 0
+@pytest.mark.usefixtures("pdf")
+class TestXetex:
+    def test_pdf(self, updatedata, pypy):
+        if self.pdf.result == 2:
+            pytest.xfail("missing base pdf")
+        elif os.path.exists(self.pdf.stdpath):
+            pytest.xfail("pdfs are inconsistent")
 
-    def test_xdv(self, updatedata, pypy):
-        xdvcmd = [os.path.join(self.xdv.testsdir, "..", "python", "scripts", "xdvcompare")]
-        if pypy is not None:
-            xdvcmd.insert(0, pypy)
-        elif sys.platform == "win32":
-            xdvcmd.insert(0, "python")
-
-        fromfile = self.xdv.xdvpath
-        tofile = os.path.join(self.xdv.stddir, self.xdv.filename+".xdv")
-        if updatedata or (not os.path.exists(tofile) and os.path.exists(fromfile)):
-            if not os.path.exists(self.xdv.stddir):
-                os.makedirs(self.xdv.stddir)
-            shutil.copy(fromfile, tofile)
-            # pytest.xfail("No regression xdv. Copying...")
-            return
-        xdvcmd += [fromfile, tofile]
-        if call(xdvcmd) != 0:
-            pytest.xfail("xdvs are inconsistent")
