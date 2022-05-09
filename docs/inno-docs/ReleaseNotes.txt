@@ -1,8 +1,27 @@
 PTXprint 2.1.20 Release Notes 
-5 May 2022
+9 May 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.21 (9 May 2022)
+  
+  * Refactored tests to use pdf differencing (Standards to follow)
+  
+  * Added -F --diff arg for cmd-line driven diffs (helps bulk testing)
+  
+  * Added -Z --zip arg to unZip and run directly from a .zip archive
+  
+  * Fixed multiple issues in copy config to other projects
+    (and make sure base settings are created for future merges)
+  
+  * Fixed gridding after p images/sidebars (once and for all?)
+  
+  * Fixed prepress pdf filenames
+  
+  * Removed SSL from setup.py (causing issues in Jammy #676)
+  
+  * Remove ZWSP from nonbodymarkers
+  
 Bug fixes and improvements in 2.1.20 (5 May 2022)
 
   * Refactored fig reading to support periphs better #648 #648 #640
