@@ -1092,7 +1092,7 @@ class GtkViewModel(ViewModel):
             return
         newconfigId = self.configName() # self.get("ecb_savedConfig")
         if newconfigId != self.configId:
-            self.applyConfig(self.configId, newconfigId)
+            self.applyConfig(self.configId, newconfigId, nobase=True)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
@@ -2346,12 +2346,15 @@ class GtkViewModel(ViewModel):
                 except AttributeError:
                     pass
             for p in projlist:
-                if self.get("r_copyConfig") == "noReplace":
-                    self.applyConfig(cfg, cfg, newprj=p)
-                elif self.get("r_copyConfig") == "merge":
-                    self.applyConfig(cfg, cfg, action=1, newprj=p)
-                elif self.get("r_copyConfig") == "overwrite":
-                    self.applyConfig(cfg, cfg, action=0, newprj=p)
+                try:
+                    if self.get("r_copyConfig") == "noReplace":
+                        self.applyConfig(cfg, cfg, newprj=p)
+                    elif self.get("r_copyConfig") == "merge":
+                        self.applyConfig(cfg, cfg, action=1, newprj=p)
+                    elif self.get("r_copyConfig") == "overwrite":
+                        self.applyConfig(cfg, cfg, action=0, newprj=p)
+                except FileNotFoundError as e:
+                    self.doError(_("File not found"), str(e))
         dialog.set_keep_above(False)
         dialog.hide()
         

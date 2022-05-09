@@ -391,7 +391,7 @@ class ViewModel:
     def setConfigId(self, configid, saveCurrConfig=False, force=False, loadConfig=True):
         return self.updateProjectSettings(self.prjid, saveCurrConfig=saveCurrConfig, configName=configid, forceConfig=force, readConfig=loadConfig)
 
-    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None):
+    def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
         if action is None:
@@ -416,15 +416,20 @@ class ViewModel:
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, a[2] if len(a) > 2 else f)
             mergep = os.path.join(newp, 'base', a[2] if len(a) > 2 else f)
+            os.makedirs(mergep, exist_ok=True)
             if os.path.exists(srcp):
-                a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj)
+                a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
         return True
 
-    def _copyfile(self, srcp, destp, mergep, moving=False, **kw):
+    def _copyfile(self, srcp, destp, mergep, moving=False, nobase=False, **kw):
         if moving:
             move(srcp, destp)
+            if not nobase:
+                move(srcp, mergep)
         else:
             copyfile(srcp, destp)
+            if not nobase:
+                copyfile(srcp, mergep)
 
     def _copydir(self, srcp, destp, mergep, moving=False, oldcfg="", newcfg="", **kw):
         if moving:
