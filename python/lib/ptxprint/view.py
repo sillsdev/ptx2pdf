@@ -416,7 +416,7 @@ class ViewModel:
             srcp = os.path.join(oldp, f)
             destp = os.path.join(newp, a[2] if len(a) > 2 else f)
             mergep = os.path.join(newp, 'base', a[2] if len(a) > 2 else f)
-            os.makedirs(mergep, exist_ok=True)
+            os.makedirs(os.path.dirname(mergep), exist_ok=True)
             if os.path.exists(srcp):
                 a[action](srcp, destp, mergep, moving=moving, oldcfg=oldcfg, newcfg=newcfg, newprj=newprj, nobase=nobase)
         return True
@@ -482,8 +482,8 @@ class ViewModel:
     def _mergetxt(self, srcp, destp, mergep, **kw):
         lines = []
         for a in (srcp, destp, mergep):
-            with open(a, encoding="utf-8"):
-                lines.append(list(a.readlines()))
+            with open(a, encoding="utf-8") as inf:
+                lines.append(list(inf.readlines()))
         this = [x for x in Differ().compare(lines[2], lines[0]) if x[0] != "?"]
         other = [x for x in Differ().compare(lines[2], lines[1]) if x[0] != "?"]
         ti = 0
@@ -505,8 +505,8 @@ class ViewModel:
                 oi += 1
         res.extend([x[2:] for x in this[ti:]])
         res.extend([x[2:] for x in other[oi:]])
-        with open(destp, "w", encoding="utf-8"):
-            destp.write("".join(res))
+        with open(destp, "w", encoding="utf-8") as outf:
+            outf.write("".join(res))
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
