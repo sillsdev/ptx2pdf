@@ -275,7 +275,7 @@ class Text(collections.UserString):
                     self.parent)
 
 
-class _put_back_iter(collections.Iterator):
+class _put_back_iter(collections.abc.Iterator):
     '''
     >>> i=_put_back_iter([1,2,3])
     >>> next(i)
@@ -357,7 +357,7 @@ class Tag(NamedTuple):
         return self.name[-1] == '*'
 
 
-class parser(collections.Iterable):
+class parser(collections.abc.Iterable):
     '''
     SFM parser, and base class for more complex parsers such as USFM and the
     stylesheet parser.  This can be used to parse unstructured SFM files as a
