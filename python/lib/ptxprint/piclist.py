@@ -326,7 +326,7 @@ class PicInfo(dict):
                        r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt)
         if len(m):
             # print("usfm2:", lastv, m)
-            for f in m:     # usfm 2
+            for i, f in enumerate(m):     # usfm 2
                 a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                 r = "{}{} {}{}{}".format(bk, suffix, *a)
                 pic = {'anchor': r, 'caption':f[5].strip()}

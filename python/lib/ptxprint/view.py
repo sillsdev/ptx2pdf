@@ -471,7 +471,7 @@ class ViewModel:
         mergese.load(self.getStyleSheets(newcfg, prjid=newprj, subdir="base"))
         destse.merge(mergese, srcse)
         with open(destp, "w", encoding="utf-8") as outfh:
-            destse.output_difffile(outfh, inArchive=True)
+            destse.output_diffile(outfh, inArchive=True)
         copyfile(srcp, mergep)
 
     def _mergetxt(self, srcp, destp, mergep, **kw):
