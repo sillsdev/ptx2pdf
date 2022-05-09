@@ -231,6 +231,8 @@ if args.pid:
 
 if args.zip:
     # Unzip to args.paratext+args.pid
+    if len(args.paratext) and len(args.pid):
+        rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
     zf = ZipFile(args.zip)
     zf.extractall(args.paratext)
     zf.close()
@@ -263,6 +265,7 @@ if args.print or args.action is not None:
         if args.diff and os.path.exists(args.diff):
             mainw.set("btn_selectDiffPDF", os.path.abspath(args.diff))
             mainw.set("c_onlyDiffs", True)
+            mainw.docreatediff = True
         mainw.savePics()
         mainw.saveStyles()
         job = doit(mainw, nothreads=True)
@@ -300,6 +303,3 @@ else:
                 goround = True
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)
-
-if args.zip:
-    rmtree(os.path.join(args.paratext,args.pid))

@@ -301,7 +301,8 @@ class RunJob:
                     basename = None
                 diffcolor = self.printer.get("col_diffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
-                # print(f"{basename=} {pdfname=}")
+                # import pdb; pdb.set_trace()
+                print(f"{basename=} {pdfname=}")
                 if len(basename):
                     diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
                     # print(f"{diffname=}")
@@ -733,6 +734,7 @@ class RunJob:
         print("Done")
 
     def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
+        # import pdb; pdb.set_trace()
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
