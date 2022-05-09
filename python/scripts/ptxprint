@@ -66,6 +66,7 @@ parser.add_argument('-T','--testing',action='store_true',help="Run in testing, o
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-A','--action',help="Run view method instead of print")
+parser.add_argument('-F','--diff',help='Create difference PDF against PDF file'),
 parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help="Capture interaction events to file. Not to be used yet")
@@ -250,6 +251,9 @@ if args.print or args.action is not None:
         if args.define is not None:
             for k, v in args.define.items():
                 mainw.set(k, v)
+        if args.diff and os.path.exists(args.diff):
+            mainw.set("btn_selectDiffPDF", os.path.abspath(args.diff))
+            mainw.set("c_onlyDiffs", True)
         mainw.savePics()
         mainw.saveStyles()
         job = doit(mainw, nothreads=True)
