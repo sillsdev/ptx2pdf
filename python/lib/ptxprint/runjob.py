@@ -304,7 +304,7 @@ class RunJob:
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
-                if len(basename):
+                if basename is None or len(basename):
                     diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):

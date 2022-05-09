@@ -3,6 +3,8 @@
 import argparse, sys, os, configparser
 import appdirs
 import site, logging
+from shutil import rmtree
+from zipfile import ZipFile
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
     site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
@@ -218,6 +220,16 @@ if args.fontpath is not None:
         if os.path.exists(p):
             cachepath(p, nofclist=args.nofontcache)
 
+if args.zip:
+    # Unzip to args.paratext+args.pid
+    # import pdb; pdb.set_trace()
+    print(f"{args.paratext=} {args.pid=}")
+    if len(args.paratext) and len(args.pid):
+        rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
+    zf = ZipFile(args.zip)
+    zf.extractall(args.paratext)
+    zf.close()
+
 if args.pid:
     pdir = os.path.join(args.paratext, args.pid)
     if not os.path.exists(pdir):
@@ -226,13 +238,6 @@ if args.pid:
         pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
         if not os.path.exists(pdir):
             args.config = None
-if args.zip:
-    # Unzip to args.paratext+args.pid
-    if len(args.paratext) and len(args.pid):
-        rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
-    zf = ZipFile(args.zip)
-    zf.extractall(args.paratext)
-    zf.close()
 
 if args.print or args.action is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
@@ -260,9 +265,11 @@ if args.print or args.action is not None:
             for k, v in args.define.items():
                 mainw.set(k, v)
         if args.diff:
-            mainw.set("btn_selectDiffPDF", os.path.abspath(args.diff))
+            mainw.set("btn_selectDiffPDF", None if args.diff.lower() == 'last' else os.path.abspath(args.diff))
             mainw.set("c_onlyDiffs", True)
             mainw.docreatediff = True
+            if args.diff.lower() == 'last':
+                mainw.set("s_keepVersions", "1")
         mainw.savePics()
         mainw.saveStyles()
         job = doit(mainw, nothreads=True)
