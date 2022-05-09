@@ -56,6 +56,7 @@ parser.add_argument('-p','--paratext',help="Path to Paratext Projects directory"
 parser.add_argument('-d','--directory',help="Directory to store temporary files in")
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Space separated bookid list to set')
+parser.add_argument('-Z','--zip',help='Unzip into project directory and delete at end')
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
@@ -225,6 +226,13 @@ if args.pid:
         pdir = os.path.join(pdir, "shared", "ptxprint", args.config, "ptxprint.cfg")
         if not os.path.exists(pdir):
             args.config = None
+if args.zip:
+    # Unzip to args.paratext+args.pid
+    if len(args.paratext) and len(args.pid):
+        rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
+    zf = ZipFile(args.zip)
+    zf.extractall(args.paratext)
+    zf.close()
 
 if args.print or args.action is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
