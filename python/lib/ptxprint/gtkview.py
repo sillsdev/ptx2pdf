@@ -3901,7 +3901,7 @@ class GtkViewModel(ViewModel):
                 except OSError:
                     notDeleted += [path2del]
         if len(notDeleted):
-            self.printer.doError(_("Warning: Could not completely delete\nsome temporary folder(s):"),
+            self.doError(_("Warning: Could not completely delete\nsome temporary folder(s):"),
                     secondary="\n".join(set(notDeleted)))
 
     def btn_RemoveSBimage(self, btn):
