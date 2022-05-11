@@ -752,7 +752,8 @@ class GtkViewModel(ViewModel):
     def resetToInitValues(self):
         self.rtl = False
         super().resetToInitValues()
-        self.picinfos.clear(self)
+        if self.picinfos is not None:
+            self.picinfos.clear(self)
         for k, v in self.initValues.items():
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)

@@ -1168,7 +1168,9 @@ class TexModel:
                 (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
         else:
-            doc = self._makeUSFM(dat.splitlines(True), bk).getsubbook(chaprange)
+            doc = self._makeUSFM(dat.splitlines(True), bk)
+            if doc is not None:
+                doc = doc.getsubbook(chaprange)
 
         if self.interlinear is not None:
             if doc is None:

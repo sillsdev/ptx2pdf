@@ -1091,6 +1091,15 @@
         \s@veallnotes{1}% save the state after notes are used.
       \fi
     }%
+    \ifdim\ht\partial>0.5\baselineskip
+      \dimen1=\ht\partial %\advance\dimen1\dp\partial
+      \dimen0=\baselineskip
+      \m@d\advance\dimen1 by -\ht\partial\ifdim\dimen1 < -0.01pt
+        \dimen1=\ht\partial \advance\dimen1\dimen0
+        \trace{o}{Adjusting single partial ht from \the\ht\partial to \the\dimen1 with baselineskip=\the\baselineskip}%
+        \global\ht\partial=\dimen1
+      \fi
+    \fi
     \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \resetvsize
     \ifdim\ht\colA>\baselineskip\plainoutput\fin@lverybottom\trace{p}{plainoutput of finalverybottom from savepartialpage}\s@tpage
