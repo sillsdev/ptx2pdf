@@ -95,7 +95,7 @@ def make_paths(projectsdir, project, config):
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
-PdfInfo = namedtuple("PdfInfo", ["projectsdir", "project", "config", "stddir", "pdfpath", "stdpath", "result"])
+PdfInfo = namedtuple("PdfInfo", ["projectsdir", "project", "config", "stddir", "pdfpath", "stdpath", "diffpath", "result"])
 
 @pytest.fixture(scope="class")
 def pdf(request, projectsdir, project, config, starttime):
@@ -105,17 +105,28 @@ def pdf(request, projectsdir, project, config, starttime):
     pdffile = "ptxprint-{}.pdf".format(filename)
     pdfpath = os.path.join(pdftpath, pdffile)
     stdpath = os.path.join(stddir, pdffile)
+    diffpath = pdfpath.replace(".pdf", "_diff.pdf")
+    try:
+        os.remove(diffpath)
+    except FileNotFoundError:
+        pass
     ptxcmd.insert(-1, '-F')
     ptxcmd.insert(-1, stdpath)
     res = call(ptxcmd)
     assert res != 1
-    request.cls.pdf = PdfInfo(projectsdir, project, config, stddir, pdfpath, stdpath, res)
+    request.cls.pdf = PdfInfo(projectsdir, project, config, stddir, pdfpath, stdpath, diffpath, res)
 
 @pytest.mark.usefixtures("pdf")
 class TestXetex:
     def test_pdf(self, updatedata, pypy):
         if self.pdf.result == 2:
-            pytest.xfail("missing base pdf")
-        elif os.path.exists(self.pdf.stdpath):
-            pytest.xfail("pdfs are inconsistent")
+            msg = "missing base pdf"
+        elif os.path.exists(self.pdf.diffpath):
+            msg = "pdfs are inconsistent"
+        else:
+            return
+        if updatedata:
+            shutil.copy(self.pdf.pdfpath, self.pdf.stdpath)
+        pytest.xfail(msg)
+
 

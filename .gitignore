@@ -28,7 +28,8 @@ tmpPics/
 tmpPicLists/
 /src_*/
 /test/projects/*.sfm
-/test/**/*.pdf
+/test/projects/*/local/ptxprint/*.pdf
+/test/**/*.xdv
 /examples/**/*.pdf
 *.zip
 /cygwin/
