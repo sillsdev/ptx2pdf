@@ -41,6 +41,7 @@
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=0 \dimen\bottomrightins=\maxdimen
 \newcount\tmpcountB
+\newbox\c@ptionbox
 \def\colinsert@name#1{colinsert@#1}
 \let\colinsert@tL\topleftins
 \let\colinsert@bL\bottomleftins
@@ -365,14 +366,26 @@
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
-}    
+}
 
 \newif\ifDoCaptions
 \DoCaptionstrue
 \newif\iffigh@scaption\figh@scaptionfalse
 
 \def\d@caption{% 
+  %\ifhmode\endgraf\fi
+  \unvbox\c@ptionbox
+}
+
+\def\setc@ptionbox{%
+ \setbox\c@ptionbox\vbox{%
   \ifDoCaptions
+    \ifCaptionFirst\else \prevdepth=0pt\fi %Interline glue above a low caption
+    \ifpicNarrow
+      \hsize=\sizem@ltiple\p@cwidth
+    \else
+      \hsize=\p@cinswid
+    \fi
     \xdef\r@f{\csname figparam-ref\endcsname}% get reference
     \d@c@ption{}%Normal monoglot caption.
     \ifdiglot 
@@ -381,8 +394,9 @@
         \x@\each@col\diglot@list\E
       \egroup
     \fi
-    \vskip.5\baselineskip
+    \vskip.5\onel@neunit
   \fi
+ }%
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
@@ -644,11 +658,7 @@
   % set width to column width or span width and other default parameters
   \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift
   \p@cheight=\textheight
-  \iffigh@scaption
-    \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
-  \else
-    \advance\p@cheight by -2\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
-  \fi
+  \advance\p@cheight by -2\onel@neunit % there should be text on the page too - allow for caption+space+2 lines of text!
   \picUsesInstrue \picNarrowfalse                                               %(1)
   \gdef\pic@lign{c}% How does the picture align within the box?
   \gdef\picV@lign{c}% How does the picture align vertically on the page (Page/Full only)
@@ -663,9 +673,6 @@
         \global\let\picl@c=\loc@Page
         \picUsesInsfalse
         \p@cheight=\textheight % without text
-        \iffigh@scaption
-          \advance\p@cheight by -2\baselineskip
-        \fi
       \else\ifx\size@ption\size@FULL
           \global\let\picl@c=\loc@Full
           \picUsesInsfalse
@@ -743,6 +750,10 @@
     \fi
   \fi
   \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot
+  \iffigh@scaption
+    \setc@ptionbox
+    \advance\p@cheight by -\ht\c@ptionbox
+  \fi
   \ifdim\p@cinswid<\p@cwidth
     \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%
   \fi
@@ -753,7 +764,7 @@
   \setf@gval{\sp@cebefore}{spacebefore}{0}%
   \setf@gval{\sp@ceafter}{spaceafter}{0}%
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
-  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
+  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}% 
   \setbox0=\vbox{%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
