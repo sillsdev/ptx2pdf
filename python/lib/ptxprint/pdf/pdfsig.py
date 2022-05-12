@@ -57,17 +57,6 @@ def mapnamepages(names, pagemap):
             if v[0].pid in pagemap:
                 v[0] = pagemap[v[0].pid]
 
-pagesizes = {
-    'a4': (595, 842),
-    'a4b': (635, 882),
-    'ltr': (612, 792),
-    'lgl': (612, 1008),
-    'a3': (842, 1191),
-    'a3b': (862, 1211),
-    'a2': (1191, 1684),
-    'a2b': (1211, 1704)
-}
-
 @dataclass
 class PL:
     x: int
@@ -97,7 +86,8 @@ layouts = {
 }
 
 class Signature:
-    def __init__(self, srcsize, tgtsize, pages, sigsheets, fold):
+    def __init__(self, srcsize, tgtsize, pages, sigsheets, fold, hascrops=False):
+        self.hascrops = hascrops
         self.src = Size(*srcsize)
         self.tgt = Size(*tgtsize)
         self.mbox = PdfArray([0, 0, self.tgt.w, self.tgt.h])
@@ -175,7 +165,7 @@ class Signature:
         if scale > 36:
             scale = 36
         x, y = applycm(cm, p)
-        w = 1. / scale
+        w = 0.1 / scale         # make them .1pt thick
         s = scale if (n & 2) != 0 else -scale
         xs = s if (n & 1) != 0 else 0.
         ys = 0. if (n & 1) != 0 else s
@@ -188,7 +178,7 @@ class Signature:
         cm = self.cm(signum)
         pnum = layouts[self.pages][signum].page
         p = p2 if pnum == 1 else p1
-        if True:
+        if self.hascrops:
             uncompress(page.Contents)
             s = page.Contents[0].stream
             page.Contents[0].stream = s + "\n".join(self.crops)
@@ -203,20 +193,74 @@ class Signature:
         pobj = p[-1]
         pobj.Matrix = cm
 
+def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, hascrops, outfname=None):
+    if isinstance(trailer, str):
+        trailer = PdfReader(trailer)
+    writer = PdfWriter(outfname)
+    pages = trailer.pages
+    mbox = [float(x) for x in pages[0].MediaBox]
+    width = mbox[2] - mbox[0]
+    height = mbox[3] - mbox[1]
+    sig = Signature([width, height], [outwidth, outheight], num, sigsheets, foldmargin, hascrops)
+    merges = []
+    for i, p in enumerate(pages):
+        p.pid = i
+        sign, sigi, sigp = sig.pagenum(i, len(pages))
+        if sigi & 1 == 0:
+            sigi += 1
+        while sigi >= len(merges):
+            m = PageMerge()
+            merges.append(m)
+            m.subpages = []
+            m.crops = []
+        p1, p2 = merges[sigi-1:sigi+1]
+        sig.appendpage(i, p, p1, p2, len(pages))
+    pagemap = {}
+    for m in merges:
+        m.mbox = sig.mbox
+        p = m.render()
+        p.Rotate = sig.rotate * 90
+        #p.Contents.stream += "\n".join(m.crops)
+        writer.addpage(p)
+        for oldp in m.subpages:
+            pagemap[oldp] = p
+    if trailer.Root.Names is not None:
+        mapnamepages(trailer.Root.Names.Dests, pagemap)
+    trailer.Root.Pages=IndirectPdfDict(Type=PdfName.Pages,
+                                  Count=PdfObject(len(writer.pagearray)),
+                                  Kids = writer.pagearray)
+    writer.trailer = trailer
+    if outfname is not None:
+        writer.write()
+    return writer
+
+
 if __name__ == "__main__":
     import argparse
+
+    pagesizes = {
+        'a4': (595, 842),
+        'a4b': (635, 882),
+        'ltr': (612, 792),
+        'lgl': (612, 1008),
+        'a3': (842, 1191),
+        'a3b': (862, 1211),
+        'a2': (1191, 1684),
+        'a2b': (1211, 1704)
+    }
 
     parser = argparse.ArgumentParser()
     parser.add_argument('infile',nargs='?',help='Input PDF file')
     parser.add_argument('-o','--outfile',help='Output PDF file (required if input PDF file)')
     parser.add_argument('-n','--num',type=int,help="Number of pages per side")
     parser.add_argument('-s','--size',help='Paper size: name or widthxheight')
-    parser.add_argument('-H','--height',type=float,help="Source page height")
-    parser.add_argument('-W','--width',type=float,help="Source page width")
-    parser.add_argument('--outheight',type=float,help="Target page height")
-    parser.add_argument('--outwidth',type=float,help="Target page width")
+    parser.add_argument('--outheight',type=float,help="Target page height (in pts)")
+    parser.add_argument('--outwidth',type=float,help="Target page width (in pts)")
     parser.add_argument('-S','--sigsheets',type=int,default=1,help='Number of sheets per signature')
     parser.add_argument('-f','--fold',type=float,default=0.,help='Minimum fold cut margin')
+    parser.add_argument('-c','--crops',action="store_true",help="Add cropmarks")
+    parser.add_argument('-H','--height',type=float,help="Source page height")
+    parser.add_argument('-W','--width',type=float,help="Source page width")
     args = parser.parse_args()
 
     if args.size is not None:
@@ -237,41 +281,5 @@ if __name__ == "__main__":
     elif not args.outfile:
         print("Must specify an output file if processing an input file")
     else:
-        trailer = PdfReader(args.infile)
-        writer = PdfWriter(args.outfile)
-        pages = trailer.pages
-        if not args.width:
-            mbox = [float(x) for x in pages[0].MediaBox]
-            args.width = mbox[2] - mbox[0]
-            args.height = mbox[3] - mbox[1]
-        sig = Signature([args.width, args.height], [args.outwidth, args.outheight],
-                    args.num, args.sigsheets, args.fold)
-        merges = []
-        for i, p in enumerate(pages):
-            p.pid = i
-            sign, sigi, sigp = sig.pagenum(i, len(pages))
-            if sigi & 1 == 0:
-                sigi += 1
-            while sigi >= len(merges):
-                m = PageMerge()
-                merges.append(m)
-                m.subpages = []
-                m.crops = []
-            p1, p2 = merges[sigi-1:sigi+1]
-            sig.appendpage(i, p, p1, p2, len(pages))
-        pagemap = {}
-        for m in merges:
-            m.mbox = sig.mbox
-            p = m.render()
-            p.Rotate = sig.rotate * 90
-            #p.Contents.stream += "\n".join(m.crops)
-            writer.addpage(p)
-            for oldp in m.subpages:
-                pagemap[oldp] = p
-        if trailer.Root.Names is not None:
-            mapnamepages(trailer.Root.Names.Dests, pagemap)
-        trailer.Root.Pages=IndirectPdfDict(Type=PdfName.Pages,
-                                      Count=PdfObject(len(writer.pagearray)),
-                                      Kids = writer.pagearray)
-        writer.trailer = trailer
-        writer.write()
+        make_signatures(args.infile, args.outwidth, args.outheight, args.num,
+                        args.sigsheets, args.fold, args.crops, outfname=args.outfile)
