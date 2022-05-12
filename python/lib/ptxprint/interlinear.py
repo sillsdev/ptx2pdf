@@ -2,6 +2,7 @@ from xml.etree import ElementTree as et
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint import sfm
 from hashlib import md5
+from ptxprint.reference import Reference
 import re, os
 
 _refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
@@ -98,7 +99,7 @@ class Interlinear:
                         if m:
                             vrange = list(range(int(m.group(1)), int(m.group(2))+1))
                         else:
-                            vrange = [int(curref[1])]
+                            vrange = [int(curref[1]), 0]
                         lexemes = []
                     elif e.tag == "VerseData":
                         if e.get('Hash', "") != "":
@@ -108,5 +109,5 @@ class Interlinear:
                         else:
                             for v in vrange:
                                 notdones.add((curref[0], v))
-        self.fails.extend(["{} {}:{}".format(bkid, a[0], a[1]) for a in notdones if a not in dones])
+        self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
 

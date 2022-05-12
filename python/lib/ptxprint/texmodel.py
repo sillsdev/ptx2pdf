@@ -1180,7 +1180,10 @@ class TexModel:
                 doc.calc_PToffsets()
                 self.interlinear.convertBk(bk, doc, linelengths)
                 if len(self.interlinear.fails):
-                    printer.doError("The following references need to be reapproved: " + " ".join(self.interlinear.fails),
+                    refs = RefList(self.interlinear.fails)
+                    refs.sort()
+                    refs.simplify()
+                    printer.doError("The following references need to be reapproved: " + str(refs),
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):

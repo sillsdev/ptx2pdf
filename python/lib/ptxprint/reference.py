@@ -43,7 +43,7 @@ def readvrs(fname):
 class RefSeparators(dict):
     _defaults = {
         "books": "; ",      # separator between references in different books
-        "chaps": ";",       # separator between references in different chapters
+        "chaps": "; ",       # separator between references in different chapters
         "verses": ",",      # separator between references in the same chapter
         "cv": ":",          # separator between chapter and verse
         "bkc": " ",         # separator between book and chapter
