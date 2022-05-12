@@ -604,8 +604,16 @@ class GtkViewModel(ViewModel):
             if not os.path.isdir(p):
                 continue
             try:
-                if os.path.exists(os.path.join(p, 'Settings.xml')) \
-                        or os.path.exists(os.path.join(p, 'ptxSettings.xml')) \
+                if os.path.exists(os.path.join(p, 'Settings.xml')):
+                    with open(os.path.join(p, 'Settings.xml')) as inf:
+                        for l in inf.readlines():
+                            if '<TranslationInfo>' in l:
+                                if 'ConsultantNotes:' not in l and 'StudyBibleAdditions:' not in l:
+                                    allprojects.append(d)
+                                break
+                        else:
+                            allprojects.append(d)
+                elif os.path.exists(os.path.join(p, 'ptxSettings.xml')) \
                         or any(x.lower().endswith("sfm") for x in os.listdir(p)):
                     allprojects.append(d)
             except OSError:

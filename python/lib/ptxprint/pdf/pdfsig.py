@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Tuple, Union
 from ptxprint.pdfrw.objects import PdfObject, PdfDict, PdfArray, PdfName, IndirectPdfDict
 from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
+from ptxprint.pdfrw.uncompress import uncompress
 
 k = 0.5522847498  # cp multiplier for 90 degree arc
 
@@ -12,16 +13,17 @@ def applycm(cm, p):
     return [cm[0] * p[0] + cm[2] * p[1] + cm[4],
             cm[1] * p[0] + cm[3] * p[1] + cm[5]]
 
-def pdfqarc(p0, p3, move=True):
-    pc = [0.5 * (p0[0] + p3[0]), 0.5 * (p0[1] + p3[1])]
+def pdfqarc(p0, p3, pc, move=True):
     p1 = [p0[0] + (pc[0] - p0[0]) * k, p0[1] + (pc[1] - p0[1]) * k]
-    p3 = [p3[0] - (p3[0] - pc[0]) * k, p3[1] - (p3[1] - pc[1]) * k]
-    res = "{0[0]:.2f} {0[1]:.2f} m ".format(p0) else ""
+    p2 = [p3[0] - (p3[0] - pc[0]) * k, p3[1] - (p3[1] - pc[1]) * k]
+    res = "{0[0]:.2f} {0[1]:.2f} m ".format(p0) if move else ""
     res += "{0[0]:.2f} {0[1]:.2f} {1[0]:.2f} {1[1]:.2f} {2[0]:.2f} {2[1]:.2f} c".format(p1, p2, p3)
     return res
 
-cropstr = " ".join(pdfqarc([-0.7, 0], [0, 0.7]), pdfqarc([0, 0.7], [0.7, 0], False), pdfqarc([0.7, 0], [0, -0.7], False),
-                   "S", "-1 0 m", "1 0 l", "S", "0 1 m", "0 -1 l", "S")
+cropstr = " ".join([pdfqarc([-0.7, 0], [0, 0.7], [-0.7, 0.7]),
+                    pdfqarc([0, 0.7], [0.7, 0], [0.7, 0.7], False),
+                    pdfqarc([0.7, 0], [0, -0.7], [0.7, -0.7], False),
+                   "S", "-1 0 m", "1 0 l", "S", "0 1 m", "0 -1 l", "S"])
 
 def mergedict(base, new):
     if base == new or new is None:
@@ -57,10 +59,13 @@ def mapnamepages(names, pagemap):
 
 pagesizes = {
     'a4': (595, 842),
+    'a4b': (635, 882),
     'ltr': (612, 792),
     'lgl': (612, 1008),
     'a3': (842, 1191),
-    'a2': (1190, 1684)
+    'a3b': (862, 1211),
+    'a2': (1191, 1684),
+    'a2b': (1211, 1704)
 }
 
 @dataclass
@@ -105,7 +110,7 @@ class Signature:
             self.numx = self.numy // 2
             self.cell = Size(self.tgt.h / self.numy, self.tgt.w / self.numx)
             self.margin = Size(self.cell.w - self.src.w,
-                               0.5 * (self.cell.h - self.src.h))
+                               0.5 * (self.cell.h - self.src.h))        # outer cut margin
         else:
             self.numx = self.numy = int(math.sqrt(self.pages / 2))
             mult = 1. / self.numx
@@ -163,28 +168,40 @@ class Signature:
         return (sigid, sigid * 2 + layouts[self.pages][sigindex].page, sigindex)
 
     def docropmark(self, cm, p, n):
+        scale = min(self.margin.w, self.margin.h)   # 3mm outside margin for printing
+        #print(f"{scale=} {n=} {self.margin=}")
+        if scale < 0:
+            return
+        if scale > 36:
+            scale = 36
         x, y = applycm(cm, p)
-        n -= 1
-        if cm[0] == -1:
-            n += 2
-        elif cm[1] == -1:
-            n -= 1
-        elif cm[1] == 1:
-            n += 1
-        n = (n % 4) + 1
-        self.crops.append([x, y, n])
+        w = 1. / scale
+        s = scale if (n & 2) != 0 else -scale
+        xs = s if (n & 1) != 0 else 0.
+        ys = 0. if (n & 1) != 0 else s
+        ccm = [xs, ys, -ys, xs, p[0], p[1]]
+        cstr = " q {:.2f} w ".format(w) + ("{:.2f} " * 6).format(*ccm) + " cm " + cropstr + " Q"
+        self.crops.append(cstr)
 
-    def appendpage(self, i, page, p1, p2, maxpages, crops=False):
+    def appendpage(self, i, page, p1, p2, maxpages):
         sigid, sigsheet, signum = self.pagenum(i, maxpages)
         cm = self.cm(signum)
         pnum = layouts[self.pages][signum].page
         p = p2 if pnum == 1 else p1
+        if True:
+            uncompress(page.Contents)
+            s = page.Contents[0].stream
+            page.Contents[0].stream = s + "\n".join(self.crops)
+            scale = min(self.margin.w, self.margin.h)
+            if scale > 0:
+                if scale > 36:
+                    scale = 36
+            bb = page.MediaBox
+            page.MediaBox = PdfArray([float(bb[0]) - scale, float(bb[1]) - scale, float(bb[2]) + scale, float(bb[3]) + scale])
         p.add(page)
         p.subpages.append(getattr(page, 'pid', 0))
         pobj = p[-1]
         pobj.Matrix = cm
-        if crops:
-            pass
 
 if __name__ == "__main__":
     import argparse
@@ -239,6 +256,7 @@ if __name__ == "__main__":
                 m = PageMerge()
                 merges.append(m)
                 m.subpages = []
+                m.crops = []
             p1, p2 = merges[sigi-1:sigi+1]
             sig.appendpage(i, p, p1, p2, len(pages))
         pagemap = {}
@@ -246,6 +264,7 @@ if __name__ == "__main__":
             m.mbox = sig.mbox
             p = m.render()
             p.Rotate = sig.rotate * 90
+            #p.Contents.stream += "\n".join(m.crops)
             writer.addpage(p)
             for oldp in m.subpages:
                 pagemap[oldp] = p
