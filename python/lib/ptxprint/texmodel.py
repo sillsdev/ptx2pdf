@@ -1463,7 +1463,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r'\\fig[\s|][^\\]+?\\fig\*', flags=regex.M), ""))
 
         if not self.asBool("document/sectionheads"): # Drop ALL Section Headings (which also drops the Parallel passage refs now)
-            self.localChanges.append((None, regex.compile(r"\\[sr] .+", flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\[sr]\d? .+", flags=regex.M), ""))
 
         if not self.asBool("document/parallelrefs"): # Drop ALL Parallel Passage References
             self.localChanges.append((None, regex.compile(r"\\r .+", flags=regex.M), ""))
