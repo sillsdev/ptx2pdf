@@ -53,10 +53,10 @@ class Interlinear:
                     vend = (e.pos.line, e.pos.col + 3 + len(e.args[0]))
                 adj += getattr(e, 'adjust', 0)
                 continue
-            if e.parent.name == "fig":
+            if e.parent is not None and e.parent.name == "fig":
                 continue
             thisadj = adj - getattr(e.parent, 'adjust', 0)
-            ispara = e.parent.meta['StyleType'] != 'Character'
+            ispara = e.parent is None or e.parent.meta['StyleType'] != 'Character'
             thismrk = mrk[1:] if ispara else mrk
             lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
             lend = lstart + len(e)

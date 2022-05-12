@@ -295,7 +295,11 @@ class Usfm:
         return iterfn(i, e)
 
     def iterVerse(self, chap, verse):
+        if chap >= len(self.chapters):
+            return
         start = self.chapters[chap]
+        if start is None:
+            return
         it = self.iter(start)
         for e in it:
             if not isinstance(e, sfm.Element):

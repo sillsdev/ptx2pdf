@@ -6,9 +6,22 @@ from typing import Tuple, Union
 from ptxprint.pdfrw.objects import PdfObject, PdfDict, PdfArray, PdfName, IndirectPdfDict
 from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
 
+k = 0.5522847498  # cp multiplier for 90 degree arc
+
 def applycm(cm, p):
     return [cm[0] * p[0] + cm[2] * p[1] + cm[4],
             cm[1] * p[0] + cm[3] * p[1] + cm[5]]
+
+def pdfqarc(p0, p3, move=True):
+    pc = [0.5 * (p0[0] + p3[0]), 0.5 * (p0[1] + p3[1])]
+    p1 = [p0[0] + (pc[0] - p0[0]) * k, p0[1] + (pc[1] - p0[1]) * k]
+    p3 = [p3[0] - (p3[0] - pc[0]) * k, p3[1] - (p3[1] - pc[1]) * k]
+    res = "{0[0]:.2f} {0[1]:.2f} m ".format(p0) else ""
+    res += "{0[0]:.2f} {0[1]:.2f} {1[0]:.2f} {1[1]:.2f} {2[0]:.2f} {2[1]:.2f} c".format(p1, p2, p3)
+    return res
+
+cropstr = " ".join(pdfqarc([-0.7, 0], [0, 0.7]), pdfqarc([0, 0.7], [0.7, 0], False), pdfqarc([0.7, 0], [0, -0.7], False),
+                   "S", "-1 0 m", "1 0 l", "S", "0 1 m", "0 -1 l", "S")
 
 def mergedict(base, new):
     if base == new or new is None:
@@ -52,7 +65,6 @@ pagesizes = {
 
 @dataclass
 class PL:
-    crops: int
     x: int
     y: int
     page: int = 0
@@ -67,15 +79,15 @@ class Size:
         self.w, self.h = self.h, self.w
 
 layouts = {
-    4:  (PL(3, 0, 1), PL(12, 0, 0, 1), PL(3, 0, 1, 1), PL(12, 0, 0)),                     # 4 1           # 2 3
+    4:  (PL(0, 1), PL(0, 0, 1), PL(0, 1, 1), PL(0, 0)),                     # 4 1           # 2 3
 
-    8:  (PL(3, 1, 0), PL(12, 0, 0, 1), PL(12, 0, 1, 1, 1), PL(3, 1, 1, 0, 1),             # 5 4           # 3 6
-         PL(12, 0, 1, 0, 1), PL(3, 1, 1, 1, 1), PL(3, 1, 0, 1), PL(12, 0, 0)),            # 8 1           # 2 7
+    8:  (PL(1, 0), PL(0, 0, 1), PL(0, 1, 1, 1), PL(1, 1, 0, 1),             # 5 4           # 3 6
+         PL(0, 1, 0, 1), PL(1, 1, 1, 1), PL(1, 0, 1), PL(0, 0)),            # 8 1           # 2 7
 
-    16: (PL(3, 1, 3), PL(12, 1, 0, 1), PL(3, 1, 3, 1), PL(12, 1, 0),                      # 5 12  9 8     # 7 10 11 6
-         PL(3, 0, 0, 0, 1), PL(12, 0, 3, 1, 1), PL(3, 0, 0, 1, 1), PL(12, 0, 3, 0, 1),    # 4 13 16 1     # 2 15 14 3
-         PL(3, 0, 2, 0, 1), PL(12, 0, 1, 1, 1), PL(3, 0, 2, 1, 1), PL(12, 0, 1, 0, 1),
-         PL(3, 1, 1), PL(12, 1, 2, 1), PL(3, 1, 1, 1), PL(12, 1, 2))
+    16: (PL(1, 3), PL(1, 0, 1), PL(1, 3, 1), PL(1, 0),                      # 5 12  9 8     # 7 10 11 6
+         PL(0, 0, 0, 1), PL(0, 3, 1, 1), PL(0, 0, 1, 1), PL(0, 3, 0, 1),    # 4 13 16 1     # 2 15 14 3
+         PL(0, 2, 0, 1), PL(0, 1, 1, 1), PL(0, 2, 1, 1), PL(0, 1, 0, 1),
+         PL(1, 1), PL(1, 2, 1), PL(1, 1, 1), PL(1, 2))
 
 }
 
