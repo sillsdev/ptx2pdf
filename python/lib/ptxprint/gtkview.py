@@ -605,7 +605,7 @@ class GtkViewModel(ViewModel):
                 continue
             try:
                 if os.path.exists(os.path.join(p, 'Settings.xml')):
-                    with open(os.path.join(p, 'Settings.xml')) as inf:
+                    with open(os.path.join(p, 'Settings.xml'), encoding="utf-8") as inf:
                         for l in inf.readlines():
                             if '<TranslationInfo>' in l:
                                 if 'ConsultantNotes:' not in l and 'StudyBibleAdditions:' not in l:
