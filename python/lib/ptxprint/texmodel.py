@@ -868,9 +868,9 @@ class TexModel:
 
     def _getinsert(self, bk):
         res = []
-        bki = bookCodes.get(bk, 200)
+        bki = bookcodes.get(bk, 200)
         for b, i in self._bookinserts:
-            r = [bookCodes[s] for s in b.split("-")]
+            r = [bookcodes[s] for s in b.split("-")]
             if i not in self.inserts and r[0] <= bki <= r[1]:
                 self.inserts[i] = bk
                 t = self._doperiph(i)
