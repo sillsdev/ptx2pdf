@@ -337,6 +337,8 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
+        elif self.res == 3:
+            pass
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
@@ -732,7 +734,8 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            self.procpdf(outfname, pdffile, info)
+            if not self.procpdf(outfname, pdffile, info):
+                self.res = 3
         print("Done")
 
     def procpdfFile(self, outfname, pdffile, info):
@@ -764,8 +767,13 @@ class RunJob:
                     paper.append(0.)
             sigsheets = int(info['finishing/sheetsinsigntr'])
             foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
-            outpdf = make_signatures(outpdf or opath, paper[0], paper[1], nums,
+            try:
+                outpdf = make_signatures(outpdf or opath, paper[0], paper[1], nums,
                                      sigsheets, foldmargin, info['paper/cropmarks'])
+            except OverflowError as e:
+                info.printer.doError(_("Try adjusting the output paper size to accountf for the number of pages you want"),
+                                     title=_("Paper Size Error"), secondary=str(e), threaded=True)
+                return False
         if info['finishing/inclsettings']:
             zio = cStringIO()
             z = info.printer.createSettingsZip(zio)
@@ -790,6 +798,7 @@ class RunJob:
             outpdf.do_compress = compress
             outpdf.write()
             os.remove(opath)
+        return True
 
     def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
         # import pdb; pdb.set_trace()
