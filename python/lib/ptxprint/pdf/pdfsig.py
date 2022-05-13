@@ -108,7 +108,7 @@ class Signature:
             self.margin = Size((self.cell.w - self.src.w),
                                0.5 * (self.cell.h - self.src.h))
         if (self.pages > 8 and self.margin.w < self.fold) or (self.pages > 4 and self.margin.h < self.fold):
-            raise OverflowError(f"Margin {self.margin} less than folding margin {self.fold}")
+            raise OverflowError("Margin {:.2f} less than folding margin {:.2f}".format(self.margin, self.fold))
 
     def cm(self, i):
         self.crops = []
@@ -159,8 +159,8 @@ class Signature:
         scale = min(self.margin.w, self.margin.h)   # 3mm outside margin for printing
         if scale < 0:
             return
-        if scale > 36:
-            scale = 36
+        if scale > 18:
+            scale = 18
         x, y = applycm(cm, p)
         w = 0.1 / scale         # make them .1pt thick
         s = scale if (n & 2) != 0 else -scale
@@ -182,8 +182,8 @@ class Signature:
             page.Contents[0].stream = s + "\n".join(self.crops)
             scale = min(self.margin.w, self.margin.h)
             if scale > 0:
-                if scale > 36:
-                    scale = 36
+                if scale > 18:
+                    scale = 18
             bb = page.MediaBox
             page.MediaBox = PdfArray([float(bb[0]) - scale, float(bb[1]) - scale, float(bb[2]) + scale, float(bb[3]) + scale])
         p.add(page)

@@ -771,7 +771,7 @@ class RunJob:
                 outpdf = make_signatures(outpdf or opath, paper[0], paper[1], nums,
                                      sigsheets, foldmargin, info['paper/cropmarks'])
             except OverflowError as e:
-                info.printer.doError(_("Try adjusting the output paper size to accountf for the number of pages you want"),
+                info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                      title=_("Paper Size Error"), secondary=str(e), threaded=True)
                 return False
         if info['finishing/inclsettings']:
