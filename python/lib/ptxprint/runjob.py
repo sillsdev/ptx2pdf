@@ -742,7 +742,7 @@ class RunJob:
         opath = outfname.replace(".tex", ".prepress.pdf")
         if self.ispdfxa != "Screen":
             return opath
-        elif int(info['finishing/pgsperspread']) > 1:
+        elif info['finishing/pgsperspread'] is not None and int(info['finishing/pgsperspread']) > 1:
             return opath
         elif info['finishing/inclsettings']:
             return opath
@@ -755,7 +755,7 @@ class RunJob:
             outpdf = fixpdffile(opath, None,
                             colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
                             parlocs = outfname.replace(".tex", ".parlocs"))
-        nums = int(info['finishing/pgsperspread'])
+        nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
         if nums > 1:
             psize = info['finishing/sheetsize'].split(",")
             paper = []
