@@ -12,7 +12,7 @@ from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
-from ptxprint.pdfrw import PdfReader
+from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError
 from ptxprint.pdfrw.objects import PdfDict, PdfString
 from ptxprint.toc import TOC, generateTex
@@ -733,15 +733,6 @@ class RunJob:
                     print("Timed out!")
                     self.res = runner.returncode
             self.procpdf(outfname, pdffile, info)
-            if self.ispdfxa != "Screen":
-                opath = outfname.replace(".tex", ".prepress.pdf")
-                try:
-                    fixpdffile(opath, pdffile,
-                            colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
-                            parlocs = outfname.replace(".tex", ".parlocs"))
-                except PdfError:
-                    self.res = 1
-                os.remove(opath)
         print("Done")
 
     def procpdfFile(self, outfname, pdffile, info):
@@ -780,7 +771,7 @@ class RunJob:
             z = info.printer.createSettingsZip(zio)
             z.close()
             if outpdf is None:
-                outpdf = PdfReader(opath)
+                outpdf = PdfWriter(None, trailer=PdfReader(opath))
             if outpdf.trailer.Root.PieceInfo is None:
                 p = PdfDict()
                 outpdf.trailer.Root.PieceInfo = p
@@ -798,6 +789,7 @@ class RunJob:
             outpdf.compress = True
             outpdf.do_compress = compress
             outpdf.write()
+            os.remove(opath)
 
     def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
         # import pdb; pdb.set_trace()

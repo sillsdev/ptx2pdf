@@ -27066,7 +27066,7 @@ total of 4 pages on a single sheet.</property>
                                     <property name="has-entry">True</property>
                                     <property name="entry-text-column">0</property>
                                     <property name="id-column">1</property>
-                                    <property name="active-id">0</property>
+                                    <property name="active-id">1</property>
                                     <child internal-child="entry">
                                       <object class="GtkEntry">
                                         <property name="visible">True</property>
