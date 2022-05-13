@@ -1546,6 +1546,19 @@ set stack_size=32768""".format(self.configName())
             batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\..\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
 
+    def createSettingsZip(self, outf):
+        res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
+        sdir = self.configPath(self.configName())
+        for d in (None, 'AdjLists'):
+            ind = sdir if d is None else os.path.join(sdir, d)
+            if not os.path.exists(ind):
+                continue
+            for f in os.listdir(ind):
+                fpath = os.path.realpath(os.path.join(ind, f))
+                if os.path.isfile(fpath):
+                    res.write(fpath, f if d is None else os.path.join(d, f))
+        return res
+
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}

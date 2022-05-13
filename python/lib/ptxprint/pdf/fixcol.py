@@ -319,7 +319,10 @@ def pagebbox(infile, pagenum=0):
     return cropbox
 
 def fixpdffile(infile, outfile, colour="rgb", **kw):
-    trailer = PdfReader(infile)
+    if isinstance(infile, str):
+        trailer = PdfReader(infile)
+    else:
+        trailer = infile
 
     fixhighlights(trailer, parlocs=kw.get('parlocs', None))
     if colour == "cmyk":
@@ -331,5 +334,6 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
     if meta is not None:
         meta.Filter = []
     w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True, do_compress=compress)
-    w.write()
+    if outfile is not None:
+        w.write()
 

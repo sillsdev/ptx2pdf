@@ -97,7 +97,7 @@ ModelMap = {
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
-    "paper/ifcropmarks":        ("c_cropmarks", lambda w,v :"true" if v else "false"),  
+    "paper/cropmarks":          ("c_cropmarks", None),  
     "paper/ifgrid":             ("c_grid", lambda w,v :"" if v else "%"),
     "paper/ifverticalrule":     ("c_verticalrule", lambda w,v :"true" if v else "false"),
     "paper/margins":            ("s_margins", lambda w,v: round(float(v)) if v else "12"),
@@ -277,6 +277,7 @@ ModelMap = {
     "finishing/sheetsize":      ("ecb_sheetSize", None),
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", None),
     "finishing/foldcutmargin":  ("s_foldCutMargin", None),
+    "finishing/inclsettings":   ("c_inclSettingsInPDF", None),
     
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
@@ -666,6 +667,10 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
+        if self.dict.get('paper/cropmarks', False) and int(self.dict.get('finishing/pgsperspread', 1)) < 1:
+            self.dict['paper/ifcropmarks'] = "true"
+        else:
+            self.dict['paper/ifcropmarks'] = "false"
         if self.dict.get('document/tocleaders', None) is None:
             self.dict['document/tocleaders'] = 0
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'

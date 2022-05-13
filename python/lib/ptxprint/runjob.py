@@ -10,8 +10,11 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback
-from ptxprint.pdf.fixcol import fixpdffile
+from ptxprint.pdf.fixcol import fixpdffile, compress
+from ptxprint.pdf.pdfsig import make_signatures
+from ptxprint.pdfrw import PdfReader
 from ptxprint.pdfrw.errors import PdfError
+from ptxprint.pdfrw.objects import PdfDict, PdfString
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
@@ -72,6 +75,12 @@ _errmsghelp = {
 _pdfmodes = {
     'rgb': ("Screen", "Digital"),
     'cmyk': ("CMYK", "PDF/X-1A", "PDF/A-1")
+}
+
+_unitpts = {
+    'mm': 2.845275591,
+    'in': 72.27,
+    'pt': 1
 }
 
 def base(fpath):
@@ -706,7 +715,7 @@ class RunJob:
 
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            tmppdf = pdffile if self.ispdfxa == "Screen" else outfname.replace(".tex", ".prepress.pdf")
+            tmppdf = self.procpdfFile(outfname, pdffile, info)
             cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
@@ -723,6 +732,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
+            self.procpdf(outfname, pdffile, info)
             if self.ispdfxa != "Screen":
                 opath = outfname.replace(".tex", ".prepress.pdf")
                 try:
@@ -733,6 +743,61 @@ class RunJob:
                     self.res = 1
                 os.remove(opath)
         print("Done")
+
+    def procpdfFile(self, outfname, pdffile, info):
+        opath = outfname.replace(".tex", ".prepress.pdf")
+        if self.ispdfxa != "Screen":
+            return opath
+        elif int(info['finishing/pgsperspread']) > 1:
+            return opath
+        elif info['finishing/inclsettings']:
+            return opath
+        return pdffile
+
+    def procpdf(self, outfname, pdffile, info):
+        opath = outfname.replace(".tex", ".prepress.pdf")
+        outpdf = None
+        if self.ispdfxa != "Screen":
+            outpdf = fixpdffile(opath, None,
+                            colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
+                            parlocs = outfname.replace(".tex", ".parlocs"))
+        nums = int(info['finishing/pgsperspread'])
+        if nums > 1:
+            psize = info['finishing/sheetsize'].split(",")
+            paper = []
+            for p in psize:
+                m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
+                if m:
+                    paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
+                else:
+                    paper.append(0.)
+            sigsheets = int(info['finishing/sheetsinsigntr'])
+            foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
+            outpdf = make_signatures(outpdf or opath, paper[0], paper[1], nums,
+                                     sigsheets, foldmargin, info['paper/cropmarks'])
+        if info['finishing/inclsettings']:
+            zio = cStringIO()
+            z = info.printer.createSettingsZip(zio)
+            z.close()
+            if outpdf is None:
+                outpdf = PdfReader(opath)
+            if outpdf.trailer.Root.PieceInfo is None:
+                p = PdfDict()
+                outpdf.trailer.Root.PieceInfo = p
+            else:
+                p = output.trailer.Root.PieceInfo
+            pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
+            dat = "<" + "".join("{:2X}".format(c) for c in zio.getvalue()) + ">"
+            pdict.Private = PdfString.from_bytes(zio.getvalue())
+            #pdict.Private.Binary = True
+            p.ptxprint = pdict
+            zio.close()
+
+        if outpdf is not None:
+            outpdf.fname = pdffile
+            outpdf.compress = True
+            outpdf.do_compress = compress
+            outpdf.write()
 
     def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
         # import pdb; pdb.set_trace()

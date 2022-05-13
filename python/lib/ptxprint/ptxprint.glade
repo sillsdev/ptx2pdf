@@ -26931,7 +26931,6 @@ section headings distinct from the scripture text.</property>
                       <object class="GtkFrame">
                         <property name="width-request">675</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin-start">6</property>
@@ -27512,7 +27511,6 @@ PDFs to be Kept:</property>
                               <object class="GtkCheckButton" id="c_inclSettingsInPDF">
                                 <property name="label" translatable="yes">Include Config Settings Within PDF</property>
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
                                 <property name="tooltip-text" translatable="yes">All the configuration settings (including
@@ -27528,6 +27526,7 @@ share config settings with other users.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="margin-left">12</property>
+                                <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>

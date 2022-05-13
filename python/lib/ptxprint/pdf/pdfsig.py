@@ -125,8 +125,6 @@ class Signature:
         else:
             res[4] = xcell * self.cell.w
             res[5] = ycell * self.cell.h
-        #scale = 1. # 1. / math.sqrt(self.pages / 2)
-        #res = [x * scale for x in res]
 
         bindleft = i & 1 == 0
         if bindleft:
@@ -148,18 +146,17 @@ class Signature:
             ppsig = ((maxpages + self.pages - 1) // self.pages) * self.pages
         else:
             ppsig = self.pages * self.sigsheets
-        n = i if i < maxpages // 2 else maxpages - i - 1
+        toppages = ((maxpages + ppsig - 1) // ppsig) * ppsig
+        n = i if i < toppages // 2 else toppages - i - 1
         sigid = n // (ppsig // 2)
-        sigindex = n % (ppsig // 2)
-        if i >= maxpages // 2:
-            sigindex = ppsig - sigindex - 1
-        # n = sigindex if i < maxpages // 2 else ppsig - sigindex - 1
-        print(i, maxpages, ppsig, sigindex, sigid)
-        return (sigid, sigid * 2 + layouts[self.pages][sigindex].page, sigindex)
+        sheetnum = (n % (ppsig // 2)) // (self.pages // 2)
+        sigindex = n % (self.pages // 2)
+        if n != i:
+            sigindex = self.pages // 2 - sigindex + 1
+        return (sigid, sigid * ppsig * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page, sigindex)
 
     def docropmark(self, cm, p, n):
         scale = min(self.margin.w, self.margin.h)   # 3mm outside margin for printing
-        #print(f"{scale=} {n=} {self.margin=}")
         if scale < 0:
             return
         if scale > 36:
@@ -175,6 +172,7 @@ class Signature:
 
     def appendpage(self, i, page, p1, p2, maxpages):
         sigid, sigsheet, signum = self.pagenum(i, maxpages)
+        # print(f"{i=} {sigid=} {sigsheet=} {signum=}")
         cm = self.cm(signum)
         pnum = layouts[self.pages][signum].page
         p = p2 if pnum == 1 else p1
@@ -220,7 +218,6 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
         m.mbox = sig.mbox
         p = m.render()
         p.Rotate = sig.rotate * 90
-        #p.Contents.stream += "\n".join(m.crops)
         writer.addpage(p)
         for oldp in m.subpages:
             pagemap[oldp] = p
