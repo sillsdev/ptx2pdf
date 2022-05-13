@@ -152,7 +152,7 @@ class Signature:
         sheetnum = (n % (ppsig // 2)) // (self.pages // 2)
         sigindex = n % (self.pages // 2)
         if n != i:
-            sigindex = self.pages // 2 - sigindex + 1
+            sigindex = self.pages - sigindex - 1
         return (sigid, sigid * ppsig * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page, sigindex)
 
     def docropmark(self, cm, p, n):
