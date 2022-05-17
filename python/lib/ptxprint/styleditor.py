@@ -151,7 +151,7 @@ _fieldmap = {
     'Bold':             (fromBool, toBool),
     'Italic':           (fromBool, toBool),
     'Superscript':      (fromBool, toBool),
-    'SmallCaps':        (fromBool, toBool),
+    'Smallcaps':        (fromBool, toBool),
     'FirstLineIndent':  (fromFloat, toFloat),
     'LeftMargin':       (fromFloat, toFloat),
     'RightMargin':      (fromFloat, toFloat),
