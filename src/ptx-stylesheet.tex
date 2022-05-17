@@ -919,7 +919,7 @@
   \ifdiglot 
     \trace{d}{Calculating drop: \c@rrdstat}%
     \should@xist{c\c@rrdstat}%
-    \s@tbaseline{p\c@rrdstat}{p\c@rrdstat}%
+    \s@tbaseline@{p}{\c@rrdstat}%
   \else
     \s@tbaseline{p}{p}%
   \fi
@@ -1954,9 +1954,9 @@
                                                            % of 14 will be applied here and set text will
                                                            % hold to the grid.
  \getp@r@m{baseline}{p#1}\ifx\p@ram\relax
-   \s@tbaseline{p#1}{p#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
+   \s@tbaseline@{p}{#1}\setp@ram{baseline}{p#1}{\the\baselineskip}%
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%
-   \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip}%
+   \MSG{Baselineskip for p#1 was undefined, now set to \the\baselineskip (\the\onel@neunit)}%
  \else
    \MSG{Baselineskip for p#1 was \p@ram (orig: \the\origb@selineskip). now defined as \the\baselineskip}%
    \x@\xdef\csname b@selineskip#1\endcsname{\the\baselineskip}%

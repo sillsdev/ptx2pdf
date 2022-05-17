@@ -165,7 +165,8 @@
   \ifdiglot\MSG{Side-specific #1#2 not defined, global #1 will be used}\fi\fi}% Helper function
 \def\restoreLR@rig#1{\x@\let\csname #1\x@\endcsname\csname #1\@rig\endcsname}
 
-\def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname}
+\def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname \x@\global\csname #1\sfx\endcsname=-1sp 
+}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 \def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
