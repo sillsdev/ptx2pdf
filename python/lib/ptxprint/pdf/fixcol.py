@@ -175,7 +175,7 @@ class PageDuoToneStateWrite(PdfStreamParser):
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
         else:
             spot = 0
-            black = 1 - hsv[2]
+            black = hsv[2]
             newops = ["{:.2f}".format(black), tocase("g")]
         return newops
 
@@ -282,7 +282,7 @@ def fixpdfspot(trailer, hue, hrange, **kw):
 dup {0:.6f} mul 3 1 roll
 dup {1:.6f} mul 3 1 roll
 dup {2:.6f} mul 3 1 roll
-drop }}""".format(*spotcmyk)
+pop }}""".format(*spotcmyk)
     spotdict = PdfArray([PdfName('Separation'), PdfName(name),
                          PdfName('DeviceCMYK'), PdfDict(
                             C0 = PdfArray([0., 0., 0., 0.]),
