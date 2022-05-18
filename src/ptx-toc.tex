@@ -178,10 +178,10 @@
     \trace{t}{Refactor for last column \the\count252}
     \deftocalign{\the\count252}{r}
     \d@ftoc{tc\the\count252 :fill}{}
+    \let\tmpl=\empty\let\tmpr=\empty
     \ifcsname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname
       \x@\let\x@\tmpl\csname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname\else
       \let\tmpl=\empty\fi
-    \let\tmpl=\empty
     \ifcsname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname
       \x@\let\x@\tmpr\csname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname\else
       \let\tmpr=\empty\fi

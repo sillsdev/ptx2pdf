@@ -44,7 +44,7 @@ class TOC:
                 elif mode == 1:
                     m = re.match(r"\\doTOCline\{(.*)\}\{(.*)\}\{(.*)\}\{(.*)\}\{(.*)\}", l)
                     if m:
-                        self.tocentries.append(m.groups())
+                        self.tocentries.append(list(m.groups()))
                         if m.group(1)[3:] != "":
                             self.sides.add(m.group(1)[3:])
                     elif l.startswith("}"):
@@ -55,16 +55,17 @@ class TOC:
         res = {}
         for s in list(self.sides) + [""]:
             tocentries = [t for t in self.tocentries if s == "" or t[0][3:] == s]
-            res['main' + s] = sortToC(tocentries, False)  # sort in page order
+            res['main' + s] = sortToC(self.fillEmpties(tocentries[:]), False)  # sort in page order
             for k, r in bkranges.items():
                 ttoc = []
                 for e in tocentries:
                     try:
                         if e[0][:3] in r[0]:
-                            ttoc.append(e)
+                            ttoc.append(e[:])
                     except ValueError:
                         pass
-                res[k+s] = sortToC(ttoc, r[1])
+                        
+                res[k+s] = sortToC(self.fillEmpties(ttoc), r[1])
             for i in range(3):
                 ttoc = []
                 k = "sort"+chr(97+i)+s
@@ -75,7 +76,19 @@ class TOC:
                     return int(txt) if txt.isdigit() else get_sortkey(txt, variable=SHIFTTRIM, ducet=ducet)
                 def naturalkey(txt):
                     return [makekey(c) for c in reversed(re.split('(\d+)', txt))]
-                for e in sorted(tocentries, key=lambda x:naturalkey(x[i+1])):
+                for e in sorted(self.fillEmpties(tocentries[:]), key=lambda x:naturalkey(x[i+1])):
                     ttoc.append(e)
         return res
 
+    def fillEmpties(self, ttoc):
+        if len(ttoc):
+            tcols = [False] * len(ttoc[0])
+            for t in ttoc:
+                for i, e in enumerate(t):
+                    if len(e):
+                        tcols[i] = True
+            for t in ttoc:
+                for i, e in enumerate(t):
+                    if not len(e) and tcols[i]:
+                        t[i] = "\\kern-3pt"
+        return ttoc

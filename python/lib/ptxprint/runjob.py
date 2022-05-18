@@ -9,7 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.utils import _, universalopen, print_traceback
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
 from ptxprint.pdfrw import PdfReader, PdfWriter
@@ -751,10 +751,22 @@ class RunJob:
     def procpdf(self, outfname, pdffile, info):
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
-        if self.ispdfxa != "Screen":
+        colour = None
+        params = {}
+        if info['finishing/ifspot']:
+            colour = "spot"
+            params = {'color': coltoonemax(info['finishing/spotcolor']),
+                      'range': float(info['finishing/spottolerance']) / 100.}
+        elif self.ispdfxa == "Screen":
+            pass
+        elif self.ispdfxa in _pdfmodes['rgb']:
+            colour = "rgbx4"
+        else:
+            colour = "cmyk"
+        if colour is not None:
             outpdf = fixpdffile(opath, None,
-                            colour="rgbx4" if self.ispdfxa in _pdfmodes['rgb'] else "cmyk",
-                            parlocs = outfname.replace(".tex", ".parlocs"))
+                            colour=colour,
+                            parlocs = outfname.replace(".tex", ".parlocs"), **params)
         nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
         if nums > 1:
             psize = info['finishing/sheetsize'].split(",")

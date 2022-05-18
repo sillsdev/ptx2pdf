@@ -7,6 +7,8 @@ from ptxprint.pdfrw.py23_diffs import zlib, convert_load, convert_store
 from PIL.ImageCms import applyTransform, buildTransform
 from PIL import Image
 from ptxprint.utils import pycodedir
+from colorsys import rgb_to_hsv, hsv_to_rgb
+from math import isclose
 
 import re, os
 
@@ -18,7 +20,7 @@ def parsestrtok(s):
         return s
     return PdfObject(s)
 
-def rgb2cmyk(r, g, b):
+def rgb_to_cmyk(r, g, b):
     k = 1 - max(r, g, b)
     if k < 1.0:
         c = (1 - r - k) / (1 - k)
@@ -28,8 +30,14 @@ def rgb2cmyk(r, g, b):
         c, m, y = (0, 0, 0)
     return [c, m, y, k]
 
-class PdfStreamParser:
+def cmyk_to_rgb(c, m, y, k):
+    r = (1 - c) * (1 - k)
+    g = (1 - m) * (1 - k)
+    b = (1 - y) * (1 - k)
+    return [r, g, b]
 
+
+class PdfStreamParser:
     def parsepage(self, page, trailer, **kw):
         instrm = page.Contents
         if not isinstance(instrm, PdfArray):
@@ -131,7 +139,7 @@ class PageCMYKState(PdfStreamParser):
 
     def rgb2cmyk(self, r, g, b):
         if self.profile is None:
-            return rgb2cmyk(r, g, b)
+            return rgb_to_cmyk(r, g, b)
         im = Image.new("RGB", (1, 1), (r*255, g*255, b*255))
         newim = applyTransform(im, self.profile)
         return newim.getpixel(0, 0)
@@ -149,6 +157,45 @@ class PageRGBState(PdfStreamParser):
             operands = operands * 3
         return extras + operands + [newop]
 
+class PageDuoToneStateWrite(PdfStreamParser):
+    opmap = {'RG': 'rg'}
+
+    def __init__(self, spothsv, hrange):
+        super().__init__()
+        self.spothsv = spothsv
+        self.hrange = hrange
+
+    def rg(self, op, operands, **kw):
+        rgb = [float(x) for x in operands[-3:]]
+        hsv = rgb_to_hsv(*rgb)
+        tocase = (lambda s: s.lower()) if op.lower() == op else (lambda s:s)
+        if isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange):
+            spot = self.spothsv[1] / hsv[1]
+            black = (1 - hsv[2]) - (1 - self.spothsv[2])
+            newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
+        else:
+            spot = 0
+            black = hsv[2]
+            newops = ["{:.2f}".format(black), tocase("g")]
+        return newops
+
+class PageDuoToneStateRead(PdfStreamParser):
+    opmap = {'RG': 'rg'}
+
+    def __init__(self, hue, hrange):
+        super().__init__()
+        self.hue = hue
+        self.hrange = hrange
+        self.sats = [1., 0.]
+        self.values = [1., 0.]
+
+    def rg(self, op, operands, **kw):
+        rgb = [float(x) for x in operands[-3:]]
+        hsv = rgb_to_hsv(*rgb)
+        if isclose(hsv[0], self.hue, abs_tol=self.hrange):
+            self.sats = [min(self.sats[0], hsv[1]), max(self.sats[1], hsv[1])]
+            self.values = [min(self.values[0], hsv[2]), max(self.values[1], hsv[2])]
+        return operands + [op]
 
 def compress(mylist):
     flate = PdfName.FlateDecode
@@ -178,7 +225,7 @@ def fixpdfcmyk(trailer, threshold=1., **kw):
             for a in annots:
                 col = a.C
                 if len(col) == 3:
-                    newc = rgb2cmyk(*map(float, col))
+                    newc = rgb_to_cmyk(*map(float, col))
                     a.C = PdfArray(list(map(PdfObject, newc)))
 
 def fixpdfrgb(trailer, **kw):
@@ -220,6 +267,46 @@ def fixpdfrgb(trailer, **kw):
             for k, v in xobjs.items():
                 if v.ColorSpace == "/DeviceRGB":
                     v.ColorSpace = iccclr
+
+def fixpdfspot(trailer, hue, hrange, **kw):
+    rparser = PageDuoToneStateRead(hue, hrange)
+    for pagenum, page in enumerate(trailer.pages, 1):
+        rparser.parsepage(page, trailer, **kw)
+    spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
+    # convert this to closest pantone code
+    spotrgb = hsv_to_rgb(*spothsv)
+    spotcmyk = rgb_to_cmyk(*spotrgb)
+    name = 'hsv{:02X}{:02X}{:02X}'.format(*[int(x * 255) for x in spothsv])
+    resrange = [0., 1., 0., 1., 0., 1., 0., 1.]
+    prgm = """{{ exch dup 1.0 cvr exch sub 2 index {3:.6f} mul mul add 2 1 roll
+dup {0:.6f} mul 3 1 roll
+dup {1:.6f} mul 3 1 roll
+dup {2:.6f} mul 3 1 roll
+pop }}""".format(*spotcmyk)
+    spotdict = PdfArray([PdfName('Separation'), PdfName(name),
+                         PdfName('DeviceCMYK'), PdfDict(
+                            C0 = PdfArray([0., 0., 0., 0.]),
+                            C1 = PdfArray(spotcmyk),
+                            Domain = PdfArray([0, 1]),
+                            FunctionType = 2,
+                            N = 1.,
+                            Range = PdfArray(resrange))])
+    spotdict.indirect = True
+    deviceDict = PdfArray([PdfName('DeviceN'), PdfArray([PdfName('Black'), PdfName(name)]),
+                           PdfName('DeviceCMYK'), PdfDict(indirect=True, stream=prgm,
+                                                          Domain = PdfArray([0., 1., 0., 1.]),
+                                                          FunctionType = 4,
+                                                          Range = PdfArray(resrange)),
+                           PdfDict(Colorants=PdfDict({PdfName(name): spotdict}), SubType=PdfName('DeviceN'))])
+    deviceDict.indirect = True
+    wparser = PageDuoToneStateWrite(spothsv, hrange)
+    for pagenum, page in enumerate(trailer.pages, 1):
+        if page.Resources is None:
+            page.Resources = PdfDict()
+        if page.Resources.ColorSpace is None:
+            page.Resources.ColorSpace = PdfDict()
+        page.Resources.ColorSpace.update({PdfName('CS0'): spotdict, PdfName('CS1'): deviceDict})
+        wparser.parsepage(page, trailer)
 
 def fixhighlights(trailer, parlocs=None):
     annotlocs = {}
@@ -329,6 +416,9 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
         fixpdfcmyk(trailer, threshold=kw.get('threshold', 1.), **kw)
     elif colour == "rgbx4":
         fixpdfrgb(trailer, **kw)
+    elif colour == "spot":
+        hue = rgb_to_hsv(*kw['color'])
+        fixpdfspot(trailer, hue[0], kw['range'], **kw)
 
     meta = trailer.Root.Metadata
     if meta is not None:
@@ -336,4 +426,5 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
     w = PdfWriter(outfile, trailer=trailer, version='1.4', compress=True, do_compress=compress)
     if outfile is not None:
         w.write()
+    return w
 

@@ -148,29 +148,29 @@ def toFileName(self, v, mrk=None, model=None):
     return v
 
 _fieldmap = {
-    'Bold':             (fromBool, toBool),
-    'Italic':           (fromBool, toBool),
-    'Superscript':      (fromBool, toBool),
-    'Smallcaps':        (fromBool, toBool),
-    'FirstLineIndent':  (fromFloat, toFloat),
-    'LeftMargin':       (fromFloat, toFloat),
-    'RightMargin':      (fromFloat, toFloat),
-    'LineSpacing':      (fromFloat, toFloat),
-    'Raise':            (asFloatPts, toFloatPts),
-    'BaseLine':         (asFloatPts, toFloatPts),
-    'CallerRaise':      (asFloatPts, toFloatPts),
-    'NoteCallerRaise':  (asFloatPts, toFloatPts),
-    'FontSize':         (from12, to12),
-    'SpaceBefore':      (from12, to12),
-    'SpaceAfter':       (from12, to12),
-    'FontName':         (fromFont, toFont),
-    'TextProperties':   (fromSet, toSet),
-    'OccursUnder':      (fromSet, toSet),
-    'BorderColor':      (fromOneMax, toOneMax),
-    'BgImageColor':     (fromOneMax, toOneMax),
-    'BgColor':          (fromOneMax, toOneMax),
-    'BgImage':          (fromFileName, toFileName),
-    'FgImage':          (fromFileName, toFileName)
+    'bold':             (fromBool, toBool),
+    'italic':           (fromBool, toBool),
+    'superscript':      (fromBool, toBool),
+    'smallcaps':        (fromBool, toBool),
+    'firstlineindent':  (fromFloat, toFloat),
+    'leftmargin':       (fromFloat, toFloat),
+    'rightmargin':      (fromFloat, toFloat),
+    'linespacing':      (fromFloat, toFloat),
+    'raise':            (asFloatPts, toFloatPts),
+    'baseline':         (asFloatPts, toFloatPts),
+    'callerraise':      (asFloatPts, toFloatPts),
+    'notecallerraise':  (asFloatPts, toFloatPts),
+    'fontsize':         (from12, to12),
+    'spacebefore':      (from12, to12),
+    'spaceafter':       (from12, to12),
+    'fontname':         (fromFont, toFont),
+    'textproperties':   (fromSet, toSet),
+    'occursunder':      (fromSet, toSet),
+    'bordercolor':      (fromOneMax, toOneMax),
+    'bgimagecolor':     (fromOneMax, toOneMax),
+    'bgcolor':          (fromOneMax, toOneMax),
+    'bgimage':          (fromFileName, toFileName),
+    'fgimage':          (fromFileName, toFileName)
 }
 
 class StyleEditor:
@@ -219,8 +219,8 @@ class StyleEditor:
         res = self.sheet.get(mrk, {}).get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet.get(mrk, {}).get(key, default)
-        if key in _fieldmap and res is not None:
-            res = _fieldmap[key][0](self, res, mrk=mrk, model=self.model)
+        if key.lower() in _fieldmap and res is not None:
+            res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
@@ -229,8 +229,8 @@ class StyleEditor:
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if val is not None and key in _fieldmap:
-            newval = _fieldmap[key][1](self, val, mrk=mrk, model=self.model)
+        if val is not None and key.lower() in _fieldmap:
+            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model)
             if newval is None and val is not None:
                 return      # Probably a font which has edited the object for us
             else:

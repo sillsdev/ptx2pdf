@@ -26745,9 +26745,7 @@ Spine:</property>
                         <child>
                           <object class="GtkFrame">
                             <property name="width-request">330</property>
-                            <property name="sensitive">False</property>
                             <property name="can-focus">False</property>
-                            <property name="no-show-all">True</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">6</property>
