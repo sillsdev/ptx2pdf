@@ -278,6 +278,9 @@ ModelMap = {
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", None),
     "finishing/foldcutmargin":  ("s_foldCutMargin", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", None),
+    "finishing/ifspot":         ("c_spotColor", None),
+    "finishing/spotcolor":      ("col_spotColor", None),
+    "finishing/spottolerance":  ("s_spotColorTolerance", None),
     
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
