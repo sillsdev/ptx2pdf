@@ -58,5 +58,7 @@ autogal:
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians.pdf ; done </dev/null
 autogal2:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians2.pdf ; done </dev/null
+autogal3:	
+	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians3.pdf ; done </dev/null
 autojhn:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make John.pdf ; done </dev/null

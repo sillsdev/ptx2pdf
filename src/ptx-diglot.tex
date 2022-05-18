@@ -312,17 +312,10 @@
    \ifunprintable\else 
      \decr{\availht}{\topins}%pictures
      % Reduce by the height of whichever top picture takes the most space.
-     \setbox1\copy\topleftins\setbox1\vbox{\unvbox1}%
-     \setbox2\copy\toprightins\setbox2\vbox{\unvbox2}%
-     \trace{D}{inserts: \the\ht1=\the\ht\topleftins? \the\ht2=\the\ht\toprightins?}%
-     \ifdim\ht1>\ht\topleftins
-       \trace{D}{Box was shrunk: \the\ht1 > \the\ht\topleftins}%
-       \ht\topleftins=\ht1
-     \fi
-     \ifdim\ht2>\ht\toprightins
-       \trace{D}{Box was shrunk: \the\ht2 > \the\ht\toprightins}%
-       \ht\toprightins=\ht2
-     \fi
+     \let\col@do=\max@Tinsdim
+     \dimen1=0pt
+     \x@\each@col\diglot@list\E%
+     \trace{D}{inserts: \the\dimen1}%
      \ifdim\ht\topleftins>\ht\toprightins %
        \decr{\availht}{\topleftins}%
      \else%
@@ -336,6 +329,12 @@
      \fi%
      \decr{\availht}{\bottomins}%
      \decr{\availht}{\verybottomins}%
+   \fi
+   \ch@ckiftextborderadj
+   \iftemp
+     \trace{Dh}{Border: \pretextb@rderskip, \posttextb@rderskip}%
+     \advance\availht -\pretextb@rderskip  % Space reserved for text border.
+     \advance\availht -\posttextb@rderskip 
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
    \trace{D}{final:\the\availht}%
@@ -802,6 +801,23 @@
     %{\setbox0\vbox{\pagediscards}\showbox0}%
     \showbox255
   \fi
+  \ifm@rksonpage\else
+    \tempfalse{
+    \ifvoid\trialbox %This is the 1st box
+      \setbox0\copy255
+    \else
+      \setbox0\copy\trialbox
+    \fi
+    \setbox1=\vsplit 0 to \maxdimen \edef\tmp{\splitbotmark}%
+    \ifx\empty\tmp\else
+      \ifx\tmp\t@tle\else
+        \global\temptrue
+      \fi
+    \fi
+    }\iftemp
+      \m@rksonpagetrue %here are marks in this trial column. Don't set it globally as it might not stick.
+    \fi
+  \fi
   \dglt@calc@vailht
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
@@ -835,7 +851,7 @@
     \fi
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
-  }
+  }%
   \setbox255=\vbox{\vskip\@djustskip\penalty10000\unvbox255}%
   \ifdiglotDebugFollowContents
     \showbox255
@@ -1980,8 +1996,9 @@
          \trace{i}{Using topins \the\ht\topins x\the\wd\topins}%
          \unvbox\topins \vskip\skip\topins \fi%
     %
-     \box\topchunk
+     \box\topchunk % Top left/right insert
      \lastd@pth=\dp\partial\relax%
+     \doTextB@rder{\partial}%
      \unvbox\partial%
       %
      \box\botchunk
@@ -2079,7 +2096,12 @@
     %\trace{D}{ht1:\the\ht1  dp0:\the\dp1}%
   \egroup
   \edef\t@mp{\splitbotmark}%
-  \ifx\t@mp\empty\else\global\m@rksonpagetrue\trace{H}{Found mark \splitbotmark}\fi
+  \ifx\t@mp\empty\else
+    \trace{H}{Found mark \splitbotmark}
+    %\ifm@rksonpage\else \fi
+    \global\m@rksonpagetrue
+%
+  \fi
   \makevtop{255}%
   \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \trace{D}{dp:\the\dp255}%
@@ -2256,6 +2278,19 @@
   \fi
 }
 
+\def\max@Tinsdim#1{%Save the height & depth of top insert in \v@lpfx#1ht
+  \x@\let\x@\tmpins\csname \colinsert@name{\loc@T#1}\endcsname
+  \setbox2\vbox{\unvcopy\tmpins}%
+  \ifdim\ht2>\ht\tmpins
+     \trace{D}{Insert \loc@T#1 was shrunk: \the\ht2 > \the\ht\tmpins}%
+     \ht\tmpins=\ht2
+  \fi
+  \dimen0=\ht2\advance \dimen0 by \dp2 
+  \ifdim\dimen1<\dimen0
+    \edef\m@x@at@col{#1}%
+    \dimen1=\dimen0
+  \fi
+} 
 
 \def\max@boxsz#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifvoid\t@st \else
@@ -2378,8 +2413,12 @@
 
 \def\@after@add@n@xtpartial@simplecols{%
   \trace{d}{@after@add@n@xtpartial@simplecols}%
+    \let\ifoldm@rksonpage\ifm@rksonpage
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
+    \ifm@rksonpage \ifoldm@rksonpage\else
+      \dglt@calc@vailht
+    \fi\fi
     % Column height (depth) calcs:
     \tempfalse
     \trace{Df}{Checking for empty boxes}%

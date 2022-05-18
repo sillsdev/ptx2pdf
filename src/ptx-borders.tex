@@ -77,7 +77,8 @@
 \endbc@l}%
 }
 
-\def\ch@ckiftextborderadj{\tempfalse\ifm@rksonpage
+\def\ch@ckiftextborderadj{\trace{eb}{ch@chiftextborder: \ifm@rksonpage marks\fi}%
+  \tempfalse\ifm@rksonpage
   \ifdim \dimexpr \pretextb@rderskip + \posttextb@rderskip\relax>0pt
     \temptrue
   \fi
