@@ -372,7 +372,7 @@ _dlgtriggers = {
     "dlg_multiBookSelect": "btn_chooseBooks"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
@@ -731,7 +731,7 @@ class GtkViewModel(ViewModel):
 
     def monitor(self):
         if self.pendingerror is not None:
-            _doError(*self.pendingerror)
+            _doError(*self.pendingerror[:-1], **self.pendingerror[-1])
             self.pendingerror = None
         return True
 
@@ -979,11 +979,11 @@ class GtkViewModel(ViewModel):
         s = "".join(traceback.format_exception(tp, value, tb))
         self.doError(s, copy2clip=True)
 
-    def doError(self, txt, secondary=None, title=None, threaded=False, copy2clip=False, show=True):
+    def doError(self, txt, threaded=False, **kw):
         if threaded:
-            self.pendingerror=(txt, secondary, title, copy2clip, show)
+            self.pendingerror=(txt, kw)
         else:
-            _doError(txt, secondary, title, copy2clip, show)
+            _doError(txt, **kw)
 
     def doStatus(self, txt=""):
         self.set("l_statusLine", txt)

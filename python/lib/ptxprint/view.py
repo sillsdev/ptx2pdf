@@ -27,7 +27,7 @@ from difflib import Differ
 
 VersionStr = "2.1.22"
 GitVersionStr = "2.1.21-20-g2abc6a54"
-ConfigVersion = "2.08"
+ConfigVersion = "2.09"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -46,7 +46,7 @@ FontModelMap = {
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
-def doError(txt, secondary=None, title=None, copy2clip=False, show=True):
+def doError(txt, secondary=None, **kw):
     print(txt)
     logger.error(txt)
     if secondary is not None:
@@ -136,7 +136,7 @@ class ViewModel:
         self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
         self.set("_xmpdate", t.strftime("%Y-%m-%dT%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"))
 
-    def doError(self, txt, secondary=None, title=None, show=True, copy2clip=False):
+    def doError(self, txt, secondary=None, **kw):
         print(txt)
         if secondary is not None:
             print(secondary)
@@ -904,6 +904,10 @@ class ViewModel:
             if config.get("snippets", "pdfoutput", fallback="None") == "None":
                 self._configset(config, "snippets/pdfoutput", "Screen")
         # print(f"{forcerewrite} {v} {ConfigVersion} {cfgname} {self.configPath(cfgname)}")
+
+        if v < 2.09:
+            if config.get("finish", "pgsperspread", fallback="None") == "None":
+                self._configset(config, "finishing/pgsperspread", "1")
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
