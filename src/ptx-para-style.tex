@@ -100,7 +100,7 @@
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
   \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
-  \gridb@x\he@dingbox\unvbox\he@dingnotes
+  \ifdim\ht\he@dingbox>0pt \gridb@x\he@dingbox\fi\unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
  \fi
@@ -1036,8 +1036,11 @@
     \box\ch@pterbox\special{x:grestore}\hss}}%
   \ht\ch@pterbox=\wd\ch@pterbox\wd\ch@pterbox=\dimen1
  \else
-  \getp@ram{raise}{c}{\styst@k}%
-  \dimen0\baselineskip\ifx\p@ram\relax\else\advance\dimen0 by -\p@ram\fi
+  %\getp@ram{raise}{c}{\styst@k}%
+  \getp@ram{raise}{c}{c+\styst@k}%
+  \dimen0\baselineskip
+  \trace{c}{Lowering by \the\dimen0 + \p@ram}%
+  \ifx\p@ram\relax\else\advance\dimen0 by -\p@ram\fi
   \setbox\ch@pterbox=\hbox{\lower\dimen0\box\ch@pterbox
     \box\ch@pternote\kern\AfterChapterSpaceFactor\FontSizeUnit}%
  \fi
