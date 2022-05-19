@@ -368,6 +368,10 @@ _signals = {
 _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesRefs", "tb_HeadFoot", "tb_Pictures",
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
+_dlgtriggers = {
+    "dlg_multiBookSelect": "btn_chooseBooks"
+}
+
 def _doError(text, secondary="", title=None, copy2clip=False, show=True):
     logger.error(text)
     if secondary:
@@ -649,7 +653,7 @@ class GtkViewModel(ViewModel):
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold} 
-            .inactivewidget { background-color: peachpuff} """
+            .highlighted { background-color: peachpuff} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -726,6 +730,25 @@ class GtkViewModel(ViewModel):
             _doError(*self.pendingerror)
             self.pendingerror = None
         return True
+
+    def highlightwidget(self, wid):
+        w = self.builder.get_object(wid)
+        if w is None:
+            return
+        parent = w.parent
+        while parent is not None:
+            name = Gtk.Buildable.get_name(w)
+            if name.startswith("tb_"):
+                w.get_style_context().add_class("highlighted")
+                mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+                self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                break
+            elif name in _dlgtriggers:
+                w.get_style_context().add_class("highlighted")
+                trg = self.builder.get_object(_dlgtriggers[name])
+                trg.emit("clicked")
+                break
+            parent = parent.parent
 
     def onMainConfigure(self, w, ev, *a):
         if self.picListView is not None:
@@ -3807,7 +3830,12 @@ class GtkViewModel(ViewModel):
         # Experimenting with the View/Edit button to see what 
         # we can do to lock controls etc. (e.g. hold Ctrl to toggle state)
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
-            widget.get_style_context().add_class("inactivewidget")
+            sc = widget.get_style_context()
+            if sc.has_class("highlighted"):
+                sc.remove_class("highlighted")
+            else:
+                sc.add_class("highlighted")
+            return True
             # wname = Gtk.Buildable.get_name(widget)
             # if wname.startswith("c_"):
                 # self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
