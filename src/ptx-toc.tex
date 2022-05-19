@@ -164,31 +164,26 @@
     \ifcsname tocalign\the\count252\endcsname
       \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
     \else
-      \edef\t@mpd{tc\the\count252}%
+      \edef\t@mpd{tc\the\count252}
     \fi
-    \trace{t}{\t@mpd \space \t@mpc}%
+    \trace{t}{\t@mpd \space \t@mpc}
     \csname \t@mpd\endcsname \t@mpc
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
     \global\advance\count252 by 1
   \fi
-  \edef\t@mpd{tc\ifRTL\else r\fi\the\count252}%
+  \edef\t@mpd{tc\ifRTL\else r\fi\the\count252}
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
-  \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}%
+  \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\count252}
     \deftocalign{\the\count252}{r}
     \d@ftoc{tc\the\count252 :fill}{}
-    \let\tmpl=\empty\let\tmpr=\empty
-    \ifcsname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname
-      \x@\let\x@\tmpl\csname cat:toc|leaders-tc\ifRTL\else r\fi\the\count252\endcsname\else
-      \let\tmpl=\empty\fi
-    \ifcsname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname
-      \x@\let\x@\tmpr\csname cat:toc|leaders-tc\ifRTL r\fi\the\count252\endcsname\else
-      \let\tmpr=\empty\fi
-    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\tmpr}
-    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\tmpl}
+    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{}
+    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\l@drs}
+    \ifRTL\d@ftoc{tc\the\count252 :leftmargin}{0}
+    \else\d@ftoc{tc\the\count252 :rightmargin}{0}\fi
   \fi
-  \gdef\tablecategory{}%
+  \gdef\tablecategory{}
 }
 
 \addtoeveryparhooks{\checkfort@c}
@@ -243,10 +238,10 @@
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
     \d@ftoc{tc\the\count252 :leftmargin}{\rm@}
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi
     \ifx\the@lign\cell@r \else
-      \d@ftoc{leaders-tcr\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi
     \d@ftoc{tc\the\count252 :fill}{\l@drs}
     \advance\count252 by 1

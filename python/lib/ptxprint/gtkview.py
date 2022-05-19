@@ -461,6 +461,8 @@ class GtkViewModel(ViewModel):
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
         self.allControls = []
+        modelbtns = set([v[0] for v in ModelMap.values() if v[0] is not None and v[0].startswith("btn_")])
+        self.btnControls = set()
         for node in tree.iter():
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
@@ -483,6 +485,8 @@ class GtkViewModel(ViewModel):
                 if pre in ("bl", "btn", "bx", "c", "col", "ecb", "ex", "fcb", "fr", "gr", 
                            "l", "lb", "r", "s", "scr", "t", "tb", "textv", "tv", "rule", "img"):
                     self.allControls.append(nid)
+                    if pre == "btn" and nid not in modelbtns:
+                        self.btnControls.add(nid)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -761,10 +765,11 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self, addtooltips=False):
         self.initValues = {}
-        for k, v in ModelMap.items():
+        allentries = list(ModelMap.items()) + [("", [v]) for v in self.btnControls]
+        for k, v in allentries:
             if v[0] is None:
                 continue
-            if addtooltips:
+            if addtooltips and not k.endswith("_"):
                 w = self.builder.get_object(v[0])
                 if w is not None:
                     try:
@@ -776,7 +781,7 @@ class GtkViewModel(ViewModel):
                     else:
                         t = v[0]
                     w.set_tooltip_text(t)
-            if not v[0].startswith("r_"):
+            if k and not v[0].startswith("r_"):
                 self.initValues[v[0]] = self.get(v[0], skipmissing=True)
         for r, a in self.radios.items():
             for v in a:

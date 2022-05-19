@@ -173,6 +173,7 @@ class PageDuoToneStateWrite(PdfStreamParser):
             spot = self.spothsv[1] / hsv[1]
             black = (1 - hsv[2]) - (1 - self.spothsv[2])
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
+            self.usesColour = True
         else:
             spot = 0
             black = hsv[2]
@@ -301,12 +302,14 @@ pop }}""".format(*spotcmyk)
     deviceDict.indirect = True
     wparser = PageDuoToneStateWrite(spothsv, hrange)
     for pagenum, page in enumerate(trailer.pages, 1):
-        if page.Resources is None:
-            page.Resources = PdfDict()
-        if page.Resources.ColorSpace is None:
-            page.Resources.ColorSpace = PdfDict()
-        page.Resources.ColorSpace.update({PdfName('CS0'): spotdict, PdfName('CS1'): deviceDict})
+        wparser.usesColour = False
         wparser.parsepage(page, trailer)
+        if wparser.usesColour:
+            if page.Resources is None:
+                page.Resources = PdfDict()
+            if page.Resources.ColorSpace is None:
+                page.Resources.ColorSpace = PdfDict()
+            page.Resources.ColorSpace.update({PdfName('CS0'): spotdict, PdfName('CS1'): deviceDict})
 
 def fixhighlights(trailer, parlocs=None):
     annotlocs = {}

@@ -252,6 +252,7 @@ ModelMap = {
     "document/diglotsecconfig": ("ecb_diglotSecConfig", None),
     "document/diglotmergemode": ("c_diglotMerge", lambda w,v: "simple" if v else "doc"),
     "document/diglotadjcenter": ("c_diglotAdjCenter", None),
+    "document/diglotheaders":   ("c_diglotHeaders", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", lambda w,v: "true" if v else "false"),
     "document/diglotjoinvrule": ("c_diglotJoinVrule", lambda w,v: "true" if v else "false"),
 

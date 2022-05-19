@@ -333,8 +333,9 @@
   \ifhbox0 {\advance\@row by 1 \wr@pboxes}\fi
   \setbox0=\vbox{\parfillskip=0pt\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
+    \leftskip=0pt\rightskip=0pt
     \ifRTL\beginR\fi
-    \edef\tc@ll{tc\the\tablec@l}%
+    \edef\tc@ll{tc\the\@col}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
@@ -343,12 +344,17 @@
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
     \ifx\the@lign\cell@r
-      \ifRTL\let\n@xt=\rightskip\else\let\n@xt=\leftskip\fi
+      \ifRTL\let\n@xt=\rightskip\else
+        \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+        \let\n@xt=\leftskip
+      \fi
       %\let\n@xt=\leftskip
     \else\ifx\the@lign\cell@c
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
-      \ifRTL\let\n@xt=\leftskip\else\let\n@xt=\rightskip\fi
+      \ifRTL \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+        \let\n@xt=\leftskip
+      \else\let\n@xt=\rightskip\fi
       %\let\n@xt=\rightskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
