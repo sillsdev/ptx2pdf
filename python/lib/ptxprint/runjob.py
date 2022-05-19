@@ -300,11 +300,6 @@ class RunJob:
         if pdfname is not None:
             print(pdfname)
         if self.res == 0:
-            if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
-                if sys.platform == "win32":
-                    os.startfile(pdfname)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', pdfname))
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
@@ -314,7 +309,7 @@ class RunJob:
                 # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, diffcolor, onlydiffs)
+                    diffname = self.createDiff(pdfname, info, basename, diffcolor, onlydiffs)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":
@@ -322,6 +317,11 @@ class RunJob:
                         elif sys.platform == "linux":
                             subprocess.call(('xdg-open', diffname))
                 self.printer.docreatediff = False
+            elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
+                if sys.platform == "win32":
+                    os.startfile(pdfname)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', pdfname))
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -812,7 +812,7 @@ class RunJob:
             os.remove(opath)
         return True
 
-    def createDiff(self, pdfname, basename=None, color=None, onlydiffs=True, maxdiff=False):
+    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False):
         # import pdb; pdb.set_trace()
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
@@ -837,6 +837,10 @@ class RunJob:
             if not dmask.getbbox():
                 if onlydiffs:
                     continue
+            elif dmask.size != iimg.size:
+                info.printer.doError(_("Page sizes differ between output and base. Cannot create a difference."),
+                    threaded=True, title=_("Difference Error"))
+                return
             else:
                 hasdiffs = True
             if maxdiff:
