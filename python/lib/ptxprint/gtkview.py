@@ -1031,7 +1031,7 @@ class GtkViewModel(ViewModel):
             cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
-        pdfnames = self.baseTeXPDFnames()
+        pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
             exists = os.path.exists(pdfname)

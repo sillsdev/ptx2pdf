@@ -1,8 +1,32 @@
 PTXprint 2.1.22 Release Notes
-14 May 2022
+19 May 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.23 (19 May 2022)
+  
+  * Added ability to select a spot color (for 2-color printing)
+
+  * Fixed Table of Contents leaders (again!)
+
+  * Added stage 1 of Find Help (work in progress...)
+  
+  * TeX: Added textborder on whole diglot page (UI to follow)
+  
+  * TeX: Set baseline correctly for di/polyglots
+  
+  * Fixed smallcaps typo in style editor
+  
+  * Fixed PermissionError issue with _diff.pdf being un-deleteable
+  
+  * Fixed marker name auto update in Add/Edit Style dialog
+  
+  * Fixed runaway headingbox
+  
+  * Fixed control over drop chapter number sizes (automatic if <= 1.5)
+
+  * Fixed crashing on diff if page sizes differ
+  
 Bug fixes and improvements in 2.1.22 (14 May 2022)
   
   * Added ability to create 4, 8, 16 page signatures on finishing tab

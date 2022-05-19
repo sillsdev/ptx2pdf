@@ -851,11 +851,16 @@ class RunJob:
             nimg = enhanceb.enhance(1.5)
             nimg.paste(translucent, (0, 0), dmask)
             results.append(nimg)
-        if os.path.exists(outname):
-            os.remove(outname)
         if hasdiffs and len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
             return outname
+        elif os.path.exists(outname):
+            try:
+                os.remove(outname)
+            except PermissionError:
+                info.printer.doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),
+                                     title=_("{} could not be deleted").format(outname), secondary=str(e), threaded=True)
+                pass
 
     def pdfimages(self, infile):
         import gi

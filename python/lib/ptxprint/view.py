@@ -194,7 +194,7 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
-    def baseTeXPDFnames(self, bks=None):
+    def baseTeXPDFnames(self, bks=None, diff=False):
         if bks is None:
             bks = self.getBooks(files=True)
         cfgname = self.configName()
@@ -210,7 +210,11 @@ class ViewModel:
             fname = "ptxprint{}-{}{}".format(cfgname, os.path.splitext(os.path.basename(bks[0]))[0], self.prjid)
         else:
             fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
-        return [fname]
+            
+        if diff:
+            return [fname, fname+"_diff"]
+        else:
+            return [fname]
         
     def _bookrefsBooks(self, bl, local):
         res = RefList()
@@ -1128,11 +1132,10 @@ class ViewModel:
                     l = re.sub(r"=", "-", l)
                     # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
                     # (so there's nothing to filter them out, because they don't seem to exist!)
+                    # Also need to strip out words with punctuation chars (eg. Burmese \u104C .. \u104F)
                     if "-" in l:
-                        if "\u200C" in l or "\u200D" in l or "'" in l: # Temporary workaround until we can figure out how
-                            z += 1                                     # to allow ZWNJ and ZWJ to be included as letters.
-                        elif re.search(r'\d', l):
-                            pass
+                        if regex.search(r'[^\p{L}\p{M}\-]', l):
+                            z += 1
                         else:
                             if l[0] != "-":
                                 hyphenatedWords.append(l)
@@ -1159,8 +1162,8 @@ class ViewModel:
                 m1 = _("Hyphenation List Generated")
                 m2a = _("{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.").format(c)
                 if z > 0:
-                    m2c = _("\n\nNote for Indic languages that {} words containing ZWJ").format(z) + \
-                            _("\nand ZWNJ characters have been left off the hyphenation list.")
+                    m2c = _("\n\nNote: {} words containing non-Letters and non-Marks").format(z) + \
+                            _("\n(ZWJ, ZWNJ, etc.) have not been included in the hyphenation list.")
                 if len(nohyphendata) > 0:
                     m2d = _("\n\n{} words were at least 10 characters long but had no hyphenation marked").format(len(nohyphendata))
                 m2 = m2a + m2b + m2c + m2d
