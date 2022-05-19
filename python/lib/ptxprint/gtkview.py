@@ -731,16 +731,21 @@ class GtkViewModel(ViewModel):
             self.pendingerror = None
         return True
 
+    def onFindClicked(self, btn):
+        wid = self.get("t_find")
+        self.highlightwidget(wid)
+
     def highlightwidget(self, wid):
         w = self.builder.get_object(wid)
         if w is None:
             return
-        parent = w.parent
+        parent = w.get_parent()
         while parent is not None:
-            name = Gtk.Buildable.get_name(w)
+            name = Gtk.Buildable.get_name(parent)
+            print(name)
             if name.startswith("tb_"):
                 w.get_style_context().add_class("highlighted")
-                mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+                mpgnum = self.notebooks['Main'].index(name)
                 self.builder.get_object("nbk_Main").set_current_page(mpgnum)
                 break
             elif name in _dlgtriggers:
@@ -748,7 +753,7 @@ class GtkViewModel(ViewModel):
                 trg = self.builder.get_object(_dlgtriggers[name])
                 trg.emit("clicked")
                 break
-            parent = parent.parent
+            parent = parent.get_parent()
 
     def onMainConfigure(self, w, ev, *a):
         if self.picListView is not None:
@@ -3330,7 +3335,7 @@ class GtkViewModel(ViewModel):
     def onStyleEdit(self, btn):
         self.styleEditor.mkrDialog()
 
-    def editMarkerChanged(self, mkrw):
+    def onEditMarkerChanged(self, mkrw):
         m = mkrw.get_text()
         t = self.get("t_styName")
         self.set("t_styName", re.sub(r"^.*?-", m+" -", t))
