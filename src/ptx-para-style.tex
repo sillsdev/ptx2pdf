@@ -609,8 +609,8 @@
 }
 
 \def\pdfb@@km@rk{\trace{V}{pdfbookmark: \book \space after \prevb@ok}%
- \global\dr@ppednumberfalse
  \ifx\book\prevb@ok\else
+  \global\dr@ppednumberfalse
   \ifDropActions\else\bgroup\liter@lspecials
     \ifx\book\relax \let\t@mp=\id@@@ \else \let\t@mp=\book\fi
     \ifrefbookmarks\let\t@mp=\id@@@\fi
