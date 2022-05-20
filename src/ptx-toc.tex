@@ -146,6 +146,7 @@
     \trace{t}{\t@mpd \space \t@mpa}%
     \csname \t@mpd\endcsname \t@mpa
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpb\empty\else
@@ -158,6 +159,7 @@
     \trace{t}{\t@mpd \space \t@mpb}%
     \csname \t@mpd\endcsname \t@mpb
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
     \global\advance\count252 by 1
   \fi
   \ifx\t@mpc\empty\else
@@ -169,6 +171,7 @@
     \trace{t}{\t@mpd \space \t@mpc}
     \csname \t@mpd\endcsname \t@mpc
     \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
     \global\advance\count252 by 1
   \fi
   \edef\t@mpd{tc\ifRTL\else r\fi\the\count252}
@@ -178,6 +181,7 @@
     \trace{t}{Refactor for last column \the\count252}
     \deftocalign{\the\count252}{r}
     \d@ftoc{tc\the\count252 :fill}{}
+    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
     \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{}
     \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\l@drs}
     \ifRTL\d@ftoc{tc\the\count252 :leftmargin}{0}
@@ -190,6 +194,7 @@
 
 \let\tocf@@t=\empty
 \def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
+\def\d@fiftoc#1#2{\should@xist{cat:toc|#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
 \def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\gentoche@dfoot\global\keeptriggertrue \toch@ad #2 \tocf@@t \endt@ble}}
 \def\addt@tmptok#1#2{\x@\tmpt@ks\x@{\the\tmpt@ks \csname #1\endcsname #2}}%
 \def\gentoche@dfoot{\let\toch@ad\empty\let\tocf@@t\empty
@@ -236,7 +241,7 @@
       \def\the@lign{}
     \fi
     \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \d@ftoc{tc\the\count252 :leftmargin}{\rm@}
+    \ifnum\count252>1 \d@ftoc{tc\the\count252 :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
       \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi

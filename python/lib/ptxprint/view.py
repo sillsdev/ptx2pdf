@@ -1444,7 +1444,7 @@ class ViewModel:
             return
         self._archiveAdd(zf, self.getBooks(files=True))
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True))
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True), parent=self.prjid)
             pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
             ipf = os.path.join(self.settings_dir, pf)
             if os.path.exists(ipf):
@@ -1466,17 +1466,6 @@ class ViewModel:
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
                 outfname = os.path.relpath(pf, self.settings_dir)
-#                if pf.endswith(".pdf") and "local/ptxprint" not in pf:
-#                    try:
-#                        trailer = PdfReader(pf)
-#                        trailer.read_all()
-#                        outf = BytesIO()
-#                        PdfWriter(outf, trailer=trailer).write()
-#                        outf.close()
-#                        zf.writestr(outfname, outf.getval())
-#                    except ptxprint.pdfrw.errors:
-#                        pass
-#                else:
                 zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
@@ -1489,12 +1478,14 @@ class ViewModel:
             self.doError(_("Warning: The print job failed, and so the archive is incomplete"))
         self.finished()
         
-    def _archiveAdd(self, zf, books):
+    def _archiveAdd(self, zf, books, parent=None):
         prjid = self.prjid
         cfgid = self.configName()
         entries, cfgchanges, tmpfiles = self._getArchiveFiles(books, prjid=prjid, cfgid=cfgid)
         for k, v in entries.items():
             if os.path.exists(k):
+                if parent is not None and 'shared/fonts' in v:
+                    zf.write(k, arcname=parent + "/" + v)
                 zf.write(k, arcname=prjid + "/" + v)
         tmpcfg = {}
         for k,v in cfgchanges.items():
