@@ -73,18 +73,17 @@ class PDFImage:
         res[PdfName("Type")] = PdfName("XObject")
         res[PdfName("ColorSpace")] = self.colorspace
         res[PdfName("BitsPerComponent")] = self.bits
-        if self.spotb is None:
+        if self.spotc is None:
+            if self.spotb is not None:
+                self.img = Image.fromarray((self.spotb * 255).astype(np.uint8), "L")
             stream = io.BytesIO()
             self.img.save(stream, 'JPEG')
             res.stream = stream.getvalue().decode("Latin-1")
             res[PdfName("Filter")] = PdfName("DCTDecode")
         else:
             spotb = (self.spotb * 255).astype(np.uint8).tobytes()
-            if self.spotc is not None:
-                spotc = (self.spotc * 255).astype(np.uint8).tobytes()
-                res.stream = b"".join("".join(*z) for z in zip(spotb, spotc))
-            else:
-                res.stream = spotb
+            spotc = (self.spotc * 255).astype(np.uint8).tobytes()
+            res.stream = b"".join("".join(*z) for z in zip(spotb, spotc))
             res.Binary = True
             #self.compressor([res])
         return res
@@ -101,7 +100,6 @@ class PDFImage:
     def duotone(self, hsv, hrange, spotcspace=None, blackcspace=None):
         hsvimg = rgb_vecto_hsv(np.asarray(self.img) / 255.)
         # calculate as if all in the hsv colour range
-        spotv = hsvimg[:,:,1] / hsv[1]
         spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
         # replace out of range colours with grey
         m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
@@ -112,6 +110,7 @@ class PDFImage:
             return False
         else:
             spotb[m] = hsvimg[m, 2]  # black volume
+            spotv = hsvimg[:,:,1] / hsv[1]
             spotv[m] = 0.
             self.spotc = spotv
             self.spotb = spotb
