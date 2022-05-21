@@ -314,7 +314,7 @@ pop }}""".format(*spotcmyk)
                             N = 1.,
                             Range = PdfArray(resrange))])
     spotdict.indirect = True
-    deviceDict = PdfArray([PdfName('DeviceN'), PdfArray([PdfName('DeviceGray'), PdfName(name)]),
+    deviceDict = PdfArray([PdfName('DeviceN'), PdfArray([PdfName('Black'), PdfName(name)]),
                            PdfName('DeviceCMYK'), PdfDict(indirect=True, stream=prgm,
                                                           Domain = PdfArray([0., 1., 0., 1.]),
                                                           FunctionType = 4,

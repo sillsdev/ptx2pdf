@@ -28,6 +28,15 @@ def rgb_vecto_hsv(img):
     out[minc == maxc,:2] = 0
     return out
 
+def cmyk_vecto_rgb(img):
+    out = np.zeros((img.shape[0], img.shape[1], 3))
+    k = 1. - img[...,3]
+    out[...,0] = (1. - img[...,0]) * k
+    out[...,1] = (1. - img[...,1]) * k
+    out[...,2] = (1. - img[...,2]) * k
+    return out
+
+
 def DCTDecode(dat):
     return Image.open(io.BytesIO(dat.encode("Latin-1")))
 
@@ -89,16 +98,22 @@ class PDFImage:
         return res
 
     def analyse(self, hue, hrange):
-        hsv = rgb_vecto_hsv(np.asarray(self.img) / 255.)
+        img = np.asarray(self.img) / 255.
+        if img.shape[-1] == 4:
+            img = cmyk_vecto_rgb(img)
+        hsv = rgb_vecto_hsv(img)
         incolor = hsv[np.isclose(hsv[:,:,0], hue, atol=hrange)]
         if not len(incolor):
             return None
-        maxs = incolor[:,:,1].max()
-        maxv = incolor[:,:,2].max()
+        maxs = hsv[:,:,1].max()
+        maxv = hsv[:,:,2].max()
         return (maxs, maxv)
 
     def duotone(self, hsv, hrange, spotcspace=None, blackcspace=None):
-        hsvimg = rgb_vecto_hsv(np.asarray(self.img) / 255.)
+        img = np.asarray(self.img) / 255.
+        if img.shape[-1] == 4:
+            img = cmyk_vecto_rgb(img)
+        hsvimg = rgb_vecto_hsv(img)
         # calculate as if all in the hsv colour range
         spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
         # replace out of range colours with grey
