@@ -67,15 +67,17 @@ a = Analysis(['python/scripts/ptxprint'],
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
-                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')],
-#                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')],
+                      + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
+                      + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')],
+#                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'eng.vrs',
                              'strongs.xml', 'strongs_info.xml', 'tsk.xml')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
-                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'), ('src/usfm_sb.sty', 'ptx2pdf')],
+                      + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
+                         ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
