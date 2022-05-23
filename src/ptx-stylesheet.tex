@@ -1948,6 +1948,11 @@
  \global\le@dingunit=\LineSpacingFactor\FontSizeUnit
  \onel@neunit=\LineSpaceBase\le@dingunit
  \verticalsp@ceunit=\VerticalSpaceFactor\le@dingunit
+ \if \relax#1\relax\else
+    \global\csname le@dingunit#1\endcsname=\le@dingunit
+    \global\csname onel@neunit#1\endcsname=\onel@neunit
+    \global\csname verticalsp@ceunit#1\endcsname=\verticalsp@ceunit
+ \fi
  \trace{F}{le@dingunit(\the\le@dingunit)=\LineSpacingFactor * \the\FontSizeUnit, onel@neunit(\the\onel@neunit)=\LineSpaceBase * \the\le@dingunit}
  \ifdim\baselineskip < 1pt \baselineskip=\onel@neunit\fi % If the baselineskip has been specifically
                                                            % set it will remain. Otherwise, the default
