@@ -671,7 +671,7 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
-        if self.dict.get('paper/cropmarks', False) and int(self.dict.get('finishing/pgsperspread', 1)) < 1:
+        if self.dict.get('paper/cropmarks', False) and int(self.dict.get('finishing/pgsperspread', 1)) < 2:
             self.dict['paper/ifcropmarks'] = "true"
         else:
             self.dict['paper/ifcropmarks'] = "false"

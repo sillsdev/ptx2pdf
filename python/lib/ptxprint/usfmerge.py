@@ -291,7 +291,9 @@ def appendpairs(pairs, pchunks, schunks):
         sc = None
     pairs.append([pc, sc])
 
-def alignChunks(pchunks, schunks, pkeys, skeys):
+def alignChunks(primary, secondary):
+    pchunks, pkeys = primary
+    schunks, skeys = secondary
     pairs = []
     diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
@@ -329,24 +331,46 @@ def alignChunks(pchunks, schunks, pkeys, skeys):
                         appendpair(pairs, 0, sum(pgg[sg:aeg], []))
     return pairs
 
-def alignSimple(pchunks, schunks, pkeys, skeys):
-    pairs = []
-    diff = difflib.SequenceMatcher(None, pkeys, skeys)
-    for op in diff.get_opcodes():
-        (action, ab, ae, bb, be) = op
-        if debugPrint:
-            print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
-        if action == "equal":
-            pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
-        if action in ("delete", "replace"):
-            for c in pchunks[ab:ae]:
-                pairs[-1][0].extend(c)
-                pairs[-1][0].type = c.type
-        if action in ("insert", "replace"):
-            for c in schunks[bb:be]:
-                pairs[-1][1].extend(c)
-                pairs[-1][1].type = c.type
-    return pairs
+def alignSimple(primary, *others):
+    import pdb; pdb.set_trace()
+    pchunks, pkeys = primary
+    numkeys = len(pkeys)
+    runs = [[[x, x]] for x in range(numkeys)]
+    runindices = list(range(numkeys))
+    for ochunks, okeys in others:
+        runs = [x + [None] for x in runs]
+        diff = difflib.SequenceMatcher(None, pkeys, okeys)
+        for op in diff.get_opcodes():
+            (action, ab, ae, bb, be) = op
+            if debugPrint:
+                print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+            if action == "equal":
+                for i in range(ae-ab):
+                    ri = runindices[ab+i]
+                    if runs[ri][-1] is None:
+                        runs[ri][-1] = [bb+i, bb+i]
+                    else:
+                        runs[ri][-1][1] = bb+i
+            if action in ("delete", "replace"):
+                ai = runindices[ab]
+                for c in range(ab, ae):
+                    ri = runindices[c]
+                    if ri > ai:
+                        for j in len(runs[0]):
+                            runs[ai][j][1] = runs[ri][j][1]
+                    for j in range(c, numkeys):
+                        runindices[j] -= 1
+                    runs = runs[:ri] + runs[ri+1:]
+            if action in ("insert", "replace"):
+                ai = runindices[ab]
+                runs[ai][-1] = [bb, be-1]
+    results = []
+    for r in runs:
+        res = [Chunk(*pchunks[r[0][0]:r[0][1]+1], mode=pchunks[r[0][1]].type)]
+        for i, (ochunks, okeys) in enumerate(others):
+            res.append(Chunk(*ochunks[r[i][0]:r[i][1]+1], mode=ochunks[r[i][1]].type))
+        results.append(res)
+    return results
 
 def appendsheet(fname, sheet):
     if os.path.exists(fname):
@@ -409,7 +433,7 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
     mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
     secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
     f = modes[mode]
-    pairs = f(pcoll.acc, scoll.acc, mainkeys, secondkeys)
+    pairs = f((pcoll.acc, mainkeys), (scoll.acc, secondkeys))
     #pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
 
     if outfile is not None:

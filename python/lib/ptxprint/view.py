@@ -908,6 +908,8 @@ class ViewModel:
         if v < 2.09:
             if config.get("finish", "pgsperspread", fallback="None") == "None":
                 self._configset(config, "finishing/pgsperspread", "1")
+            if config.get("paper", "cropmarks", fallback="None") == "None":
+                self._configset(config, "paper/cropmarks", config.getboolean("paper", "ifcropmarks", fallback=False))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
