@@ -6,6 +6,7 @@ from glob import glob
 print("sys.executable: ", sys.executable)
 print("sys.path: ", sys.path)
 print("Platform:", sys.platform)
+from subprocess import call
 
 #if 'Analysis' not in dir():
 #    def printme(*a, **kw):
@@ -32,6 +33,8 @@ def anyver(p, path=".", ext=".dll"):
         res = None
     print(f"{p=}, {allfiles}: {res=}")
     return res
+
+call(["pacman", "-S", "mingw-w64-x86_64-python-numpy"])
 
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
