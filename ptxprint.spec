@@ -34,7 +34,7 @@ def anyver(p, path=".", ext=".dll"):
     print(f"{p=}, {allfiles}: {res=}")
     return res
 
-call(["C:/msys64/mingw64/bin/pacman.exe", "-S", "mingw-w64-x86_64-python-numpy"])
+call([r"C:\msys64\mingw64\bin\pacman.exe", "-S", "mingw-w64-x86_64-python-numpy"])
 
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
