@@ -1,7 +1,21 @@
-PTXprint 2.1.23 Release Notes
-19 May 2022
+PTXprint 2.1.24 Release Notes
+23 May 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.1.24 (23 May 2022)
+  
+  * Added ability to select a spot color (for 2-color printing)
+  
+  * Added ornaments to the distribution (UI to follow)
+
+  * Fixed wrapping TOC entries & toc-tc1 now has hanging indent
+
+  * Psalm chapters 100-150 overwrite parts of second line #682
+  
+  * Fixed spot colour generation for CMYK docs
+  
+  * Fixed "^^5e" bug
 
 Bug fixes and improvements in 2.1.23 (19 May 2022)
   
