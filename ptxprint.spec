@@ -34,7 +34,8 @@ def anyver(p, path=".", ext=".dll"):
     print(f"{p=}, {allfiles}: {res=}")
     return res
 
-#call([r"C:\msys64\usr\bin\pacman.exe", "-S", "mingw-w64-x86_64-python-numpy"])
+# Run this every time until a sysadmin adds it to the agent
+call([r"C:\msys64\usr\bin\pacman.exe", "-S", "mingw-w64-x86_64-python-numpy"])
 
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):

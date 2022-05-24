@@ -800,7 +800,6 @@ class RunJob:
             pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
             dat = "<" + "".join("{:2X}".format(c) for c in zio.getvalue()) + ">"
             pdict.Private = PdfString.from_bytes(zio.getvalue())
-            #pdict.Private.Binary = True
             p.ptxprint = pdict
             zio.close()
 
@@ -813,7 +812,6 @@ class RunJob:
         return True
 
     def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False):
-        # import pdb; pdb.set_trace()
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
@@ -880,10 +878,13 @@ class RunJob:
             ctx.set_source_rgba(1., 1., 1., 1.)
             ctx.rectangle(0, 0, w, h)
             ctx.fill()
-            page.render(ctx)
-            imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
-            b, g, r, a = imgr.split()
-            img = Image.merge('RGB', (r, g, b))
+            try:
+                page.render(ctx)
+                imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
+                b, g, r, a = imgr.split()
+                img = Image.merge('RGB', (r, g, b))
+            except MemoryError:
+                return
             yield img
 
     def checkForMissingDecorations(self, info):
