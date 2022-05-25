@@ -67,8 +67,8 @@ class Chunk(list):
 
     def __str__(self):
         #return "".join(repr(x) for x in self)
-        return "".join(sfm.generate(x) for x in self)
-        #return sfm.generate(self)
+        #return "".join(sfm.generate(x) for x in self)
+        return sfm.generate(self)
 
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl', 'nb'))
@@ -366,9 +366,9 @@ def alignSimple(primary, *others):
                 runs[ai][-1] = [bb, be-1]
     results = []
     for r in runs:
-        res = [Chunk(*pchunks[r[0][0]:r[0][1]+1], mode=pchunks[r[0][1]].type)]
+        res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type)]
         for i, (ochunks, okeys) in enumerate(others, 1):
-            res.append(Chunk(*ochunks[r[i][0]:r[i][1]+1], mode=ochunks[r[i][1]].type))
+            res.append(Chunk(*sum(ochunks[r[i][0]:r[i][1]+1], []), mode=ochunks[r[i][1]].type))
         results.append(res)
     return results
 
