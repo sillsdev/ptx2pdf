@@ -434,7 +434,23 @@
 		\ifx\p@ram\tru@ \let\typef@ce=\it@lic \fi
 	  \fi
   \else
-    \edef\typef@ce{"\p@ram"}% use font name from the stylesheet
+    \edef\fontn@me{\p@ram}% use font name from the stylesheet
+    \getp@ram{bold}{#1}{#2}%
+    \ifx\p@ram\tru@
+      \getp@ram{italic}{#1}{#2}%
+      \ifx\p@ram\tru@
+        \edef\typef@ce{"\fontn@me\BoldItalicSuffix"}%
+      \else
+        \edef\typef@ce{"\fontn@me\BoldSuffix"}%
+      \fi
+    \else
+      \getp@ram{italic}{#1}{#2}%
+      \ifx\p@ram\tru@
+        \edef\typef@ce{"\fontn@me\ItalicSuffix"}%
+      \else
+        \edef\typef@ce{"\fontn@me"}%
+      \fi
+    \fi
   \fi
   \getp@ram{fontfeatures}{#1}{#2}%
   \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce"\p@ram"}\fi
@@ -495,6 +511,9 @@
 }
 \def\SuperscriptFactor{0.75}
 \def\SmallCapsSuffix{/ICU:+smcp}
+\def\BoldSuffix{/B}
+\def\ItalicSuffix{/I}
+\def\BoldItalicSuffix{/BI}
 %-cchar_extrafont
 
 \endinput
