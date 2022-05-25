@@ -744,7 +744,17 @@ FontRef = None
 class FontRef:
     def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None, lang=None):
         self.name = name
-        self.style = style
+        bits = style.split(" ")
+        for a in ("Bold", "Italic"):
+            if a in bits:
+                i = bits.index(a)
+                setattr(self, f"is{a}", True)
+                bits.remove(a)
+            else:
+                setattr(self, f"is{a}", False)
+        if "Regular" in bits:
+            bits.remove("Regular")
+        self.style = " ".join(bits)
         self.isGraphite = isGraphite
         self.isCtxtSpace = isCtxtSpace
         self.feats = feats.copy() if feats is not None else {}
@@ -826,6 +836,8 @@ class FontRef:
 
     def copy(self, cls=None):
         res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
+        res.isItalic = self.isItalic
+        res.isBold = self.isBold
         return res
 
     def updateFeats(self, featstring, keep=False):
@@ -869,6 +881,8 @@ class FontRef:
 
     def fromStyle(self, bold=False, italic=False):
         newstyle = []
+        self.isBold = bold
+        self.isItalic = italic
         if bold:
             newstyle.append("Bold")
         if italic:
@@ -968,8 +982,8 @@ class FontRef:
                 if a in style:
                     del style[a]
             for a in ("Bold", "Italic"):
-                x = a in (regular.style or ())
-                y = a in (self.style or ())
+                x = getattr(regular, "is"+a, False)
+                y = getattr(self, "is"+a, False)
                 if x and not y:
                     style[a] = "-"
                 elif y and not x:
@@ -1000,7 +1014,10 @@ class FontRef:
             else:
                 style.pop("ztexFontGrSpace", None)
             for a in ("Bold", "Italic"):
-                del style[a]
+                if getattr(self, "is"+a, False):
+                    style[a] = ""
+                else:
+                    del style[a]
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)
@@ -1016,10 +1033,17 @@ class FontRef:
             featstr = "|".join("{}={}".format(k, v) for k, v in self.feats.items())
         else:
             featstr = ""
-        res = [self.name, self.style or "", ("true" if self.isGraphite else "false"), ("true" if self.isCtxtSpace else "false"), featstr]
+        res = [self.name, self._getstyle(), ("true" if self.isGraphite else "false"), ("true" if self.isCtxtSpace else "false"), featstr]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return "|".join(res)
+
+    def _getstyle(self):
+        bits = self.style.split(" ")
+        for a in ("Italic", "Bold"):
+            if getattr(self, "is"+a, False):
+                bits.append(a)
+        return " ".join(bits)
 
     def asFeatStr(self):
         res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant", "mapping", "extend")]
@@ -1037,7 +1061,7 @@ class FontRef:
 
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
-        res = "{}{} {}".format(self.name, fb, self.style)
+        res = "{}{} {}".format(self.name, fb, self._getstyle())
         return res + (" "+size if size is not None else "")
 
     

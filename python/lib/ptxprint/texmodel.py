@@ -1113,6 +1113,7 @@ class TexModel:
                 return res
             return proc
         for c in changes:
+            #import pdb; pdb.set_trace()
             logger.debug("Change: {}".format(c))
             if c[0] is None:
                 dat = c[1].sub(wrap(c[2]), dat)
@@ -1333,9 +1334,9 @@ class TexModel:
                         if r.chap == 0:
                             atcontexts.append((r.book, None))
                         elif r.verse == 0:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)).*?($|\\[cv] )".format(r.chap), flags=regex.S)))
+                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}\D).*?(?=$|\\[cv]\s)".format(r.chap), flags=regex.S)))
                         else:
-                            atcontexts.append((r.book, regex.compile(r"(?<=\\c {}(?=\D)(?:.(?!\\c))*?)\\v {}[ -].*?($|\\[cv] )".format(r.chap, r.verse), flags=regex.S)))
+                            atcontexts.append((r.book, regex.compile(r"\\c {}\D(?:[^\\]|\\(?!c\s))*?\K\\v {}\D.*?(?=$|\\[cv]\s)".format(r.chap, r.verse), flags=regex.S|regex.V1)))
                     l = l[m.end():].strip()
                 else:
                     atcontexts = [None]

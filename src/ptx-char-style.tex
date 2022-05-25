@@ -453,7 +453,7 @@
     \fi
   \fi
   \getp@ram{fontfeatures}{#1}{#2}%
-  \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce"\p@ram"}\fi
+  \ifx\p@ram\relax\else\edef\typef@ce{\typef@ce\p@ram}\fi
   \getp@ram{smallcaps}{#1}{#2}%                                           %(1)
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%

@@ -170,7 +170,7 @@ class PageDuoToneStateWrite(PdfStreamParser):
         rgb = [float(x) for x in operands[-3:]]
         hsv = rgb_to_hsv(*rgb)
         tocase = (lambda s: s.lower()) if op.lower() == op else (lambda s:s)
-        if isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange):
+        if isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange) and hsv[1] > 0.01:
             spot = self.spothsv[1] / hsv[1]
             black = (1 - hsv[2]) - (1 - self.spothsv[2])
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
