@@ -56,16 +56,18 @@ class PDFImage:
             uncompress([self.colorspace[1]])
             self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream.encode("Latin-1")))
             compress([self.colorspace[1]])
-        self.height = xobj['/Height']
-        self.width = xobj['/Width']
-        self.filt = xobj['/Filter']
-        self.bits = xobj['/BitsPerComponent']
+        self.height = int(xobj['/Height'])
+        self.width = int(xobj['/Width'])
+        self.filt = str(xobj['/Filter'])
+        self.bits = int(xobj['/BitsPerComponent'])
         if self.filt in ("/DCTDecode", "/JPXDecode"):
             self.img = DCTDecode(xobj.stream)
         elif self.filt == "/FlateDecode":
             uncompress([xobj])
             if self.colorspace[0] == "/Indexed":
                 cs, base, hival, lookup = self.colorspace
+            else:
+                cs = self.colorspace
             mode = img_modes[cs]
             self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream.encode("Latin-1"))
             if cs == "/Indexed":

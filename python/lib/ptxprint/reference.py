@@ -469,6 +469,8 @@ class RefList(list):
                         start = None
                     bookinfo = m.groups()
                     curr.book = context.getBook(bookinfo[-1])
+                    currmark = nextmark
+                    nextmark = ""
                     mode = "b"
                     b = b[m.end():]
                     continue
@@ -675,7 +677,7 @@ if __name__ == "__main__":
         if len(sys.argv) == 2 and 2 < len(sys.argv[1]) < 5:
             res = Reference.fromtag(sys.argv[1])
         else:
-            res = RefList.fromStr(" ".join(sys.argv[1:]))
+            res = RefList.fromStr(" ".join(sys.argv[1:]), marks=("\u203A", "+"))
         tag = res.astag()
         print("{}: {} {}".format(res, tag, repr(res)))
     else:

@@ -199,7 +199,7 @@
    \makecutouts
    \cl@singhooks{end}{\m@rker}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
-   \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness, ls=\the\leftskip, rs=\the\rightskip par after \m@rker (\styst@k)}%
+   \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip par after \m@rker (\styst@k)}%
    \ifdoingt@ble\else
      \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
        %\s@tsideskips{\m@rker}% 
