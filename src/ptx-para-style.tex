@@ -199,9 +199,13 @@
    \makecutouts
    \cl@singhooks{end}{\m@rker}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
-   \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness}%
+   \trace{j}{baselineskip = \the\baselineskip, looseness = \the\looseness, ls=\the\leftskip, rs=\the\rightskip par after \m@rker (\styst@k)}%
    \ifdoingt@ble\else
-     \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group.
+     \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
+       %\s@tsideskips{\m@rker}% 
+     \else
+       \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
+     \fi
    \fi
    \endgraf
    \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
@@ -349,8 +353,13 @@
  \fi
 }
 
-\def\s@tsideskips#1{%
-   \getp@ram{glue}{#1}{\styst@k}%
+\def\s@tsideskips#1{% REMINDER: sideskips cannot be set globally, or a sidebar might change main-paragraph formatting.
+   \ifx\styst@k\empty
+      \edef\tmpstyst@k{#1}%
+   \else
+      \let\tmpstyst@k\styst@k
+   \fi
+   \getp@ram{glue}{#1}{\tmpstyst@k}%
    \ifx\p@ram\relax
      \def\gl@e{0.25\hsize}%
    \else
@@ -358,7 +367,7 @@
    \fi
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \beginR \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
-   \getp@ram{justification}{#1}{\styst@k}%
+   \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
    \else\ifx\p@ram\l@ft
@@ -366,10 +375,11 @@
    \else\ifx\p@ram\r@ght
     \ifRTL\rightskip\else\leftskip\fi=0pt plus \gl@e \ifRTL\else\parfillskip=0pt \fi
    \fi\fi\fi
-   \getp@ram{leftmargin}{#1}{\styst@k}%
+   \getp@ram{leftmargin}{#1}{\tmpstyst@k}%
    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-   \getp@ram{rightmargin}{#1}{\styst@k}%
+   \getp@ram{rightmargin}{#1}{\tmpstyst@k}%
    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+   \trace{j}{s@tsideskips #1 (\styst@k). \the\leftskip/\the\rightskip}%
 }
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
