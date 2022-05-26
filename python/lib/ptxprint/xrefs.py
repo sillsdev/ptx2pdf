@@ -21,7 +21,7 @@ def usfmmark(ref, txt):
     return (ref.mark or "") + txt
 
 class BaseXrefs:
-    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
     addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
     dotsep = RefSeparators(cv=".", onechap=True)
 

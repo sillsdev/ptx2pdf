@@ -97,6 +97,10 @@ def setFontButton(btn, value):
             styles.append("(bold)")
         if "slant" in value.feats:
             styles.append("(italic)")
+        if value.isBold:
+            styles.append("Bold")
+        if value.isItalic:
+            styles.append("Italic")
         style = " ".join(styles)
     btn.set_label("{}\n{}".format(value.name, style))
 

@@ -2130,7 +2130,7 @@ class GtkViewModel(ViewModel):
         name = ls.get_value(row, 0) or fallback
         style = self.get("fcb_fontFaces")
         if style.lower() == "regular":
-            style = None
+            style = ""
         return (name, style)
 
     def getFontNameFace(self, btnid, noStyles=False, noFeats=False):

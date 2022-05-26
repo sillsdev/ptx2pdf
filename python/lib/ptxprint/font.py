@@ -227,7 +227,6 @@ def initFontCache(nofclist=False):
     if fontcache is None:
         fontcache = TTFontCache(nofclist=nofclist)
     return fontcache
-    # print(sorted(fontcache.cache.items()))
 
 def cachepath(p, nofclist=False):
     global fontcache
@@ -515,7 +514,6 @@ class TTFont:
                 self.filename = None
         else:
             self.dict = {}
-        # print([name, self.family, self.style, self.filename])
         k = "{}|{}".format(self.family, self.style)
         if k not in TTFont.cache:
             TTFont.cache[k] = self
@@ -881,8 +879,6 @@ class FontRef:
 
     def fromStyle(self, bold=False, italic=False):
         newstyle = []
-        self.isBold = bold
-        self.isItalic = italic
         if bold:
             newstyle.append("Bold")
         if italic:
@@ -891,7 +887,6 @@ class FontRef:
             newstyle.append("Regular")
         s = " ".join(newstyle)
         f = fontcache.get(self.name, s)
-        # print(f"fromStyle: {self}, {s}, {f}")
         if f is not None:
             return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
         res = self.copy()
@@ -918,7 +913,6 @@ class FontRef:
                     del res.feats['slant']
                 return res
         f = fontcache.get(self.name)
-        # print(f"restyling: {self.name}")
         if f is None:
             return None
         res.style = None
@@ -957,12 +951,14 @@ class FontRef:
             name = self.name + (" "+self.style if s is None else "")
         else:
             name = self.name
-        if not s and not len(self.feats) and not self.isGraphite:
-            return (name, [], [])
 
         sfeats = [] if s is None else [s]
         if self.isGraphite:
             sfeats.append("/GR")
+        if self.isBold:
+            sfeats.append("/B")
+        if self.isItalic:
+            sfeats.append("/I")
         feats = []
         for k, v in self.feats.items():
             if k in ('embolden', 'slant', 'mapping', 'extend', 'color', 'letterspace'):
@@ -992,7 +988,6 @@ class FontRef:
                     del style[a]
         # All other non-main fonts use /B, etc.
         else:
-            # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
             style['FontName'] = self.name
             if len(feats) or len(sfeats):
