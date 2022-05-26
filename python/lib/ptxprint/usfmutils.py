@@ -160,9 +160,9 @@ class Usfm:
         def isHeading(e):
             if not isinstance(e, sfm.Element):
                 return False
-            if getattr(e, "meta", {}).get('StyleType', '').lower() != 'paragraph':
+            if (getattr(e, "meta", {}).get('StyleType', '') or "").lower() != 'paragraph':
                 return False
-            if getattr(e, "meta", {}).get('TextType', '').lower() == 'section':
+            if (getattr(e, "meta", {}).get('TextType', '') or "").lower() == 'section':
                 return True
             return False
 
@@ -524,7 +524,7 @@ class Usfm:
                                         p.parent.remove(p)
                             lastv = None
                             predels = []
-                        else:
+                        elif c is not None:
                             predels.append(c)
                     elif isinstance(c, sfm.Element) and c.name == "v":
                         if lastv is not None:
