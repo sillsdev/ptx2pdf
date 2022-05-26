@@ -1,8 +1,26 @@
 PTXprint 2.1.25 Release Notes
-25 May 2022
+26 May 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.1.26 (26 May 2022)
+  
+  * Make Bold and Italic work with FontName
+  
+  * Fixed fonts: italic bold fonts in styles
+  
+  * Fixed duotone
+  
+  * Fixed 'at' changes (which were skipping some verses)
+  
+  * Fixed alternate diglot losing info
+  
+  * Fixed printing multiple refs of the same book in odd orders
+  
+  * Fix oddity with indentation
+  
+  * Fix more pdf image stuff and parsing strongs.xml
+  
 Bug fixes and improvements in 2.1.25 (25 May 2022)
   
   * Fixed missing lib (numpy) issue
