@@ -562,6 +562,7 @@ class TexModel:
         self.frontperiphs = None
         self.xrefs = None
         self.inserts = {}
+        self.usedfiles = {}
         libpath = pycodedir()
         self.dict = {"/ptxpath": str(path).replace("\\","/"),
                      "/ptxprintlibpath": libpath.replace("\\","/"),
@@ -1158,10 +1159,13 @@ class TexModel:
         if self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir)
         outfname = os.path.basename(infpath)
+        outindex = self.usedfiles.setdefault(outfname, 0)
+        outextra = str(outindex) if outindex > 0 else ""
+        self.usedfiles[outfname] = outindex + 1
         # outfname = fname
         doti = outfname.rfind(".")
         if doti > 0:
-            outfname = outfname[:doti] + draft + outfname[doti:]
+            outfname = outfname[:doti] + draft + outextra + outfname[doti:]
         os.makedirs(outdir, exist_ok=True)
         outfpath = os.path.join(outdir, outfname)
         codepage = self.ptsettings.get('Encoding', 65001)
@@ -1173,6 +1177,7 @@ class TexModel:
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
                                  Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
 
+        logger.debug(f"Converting {bk} {chaprange=}")
         if chaprange is None or not isbk or not len(chaprange) or \
             (chaprange[0].first.chap < 2 and len(chaprange) == 1 and \
                 (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
