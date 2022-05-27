@@ -1204,7 +1204,8 @@ class TexModel:
         elif bk.lower().startswith("xx"):
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
-            doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
+            if doc is not None:
+                doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
         if self.changes is not None and len(self.changes):
             if doc is not None:

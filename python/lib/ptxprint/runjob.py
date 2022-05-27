@@ -634,7 +634,7 @@ class RunJob:
             self.busy = True
             logger.debug("sharedjob: Starting thread to run xetex")
             self.thread.start()
-            self.wait()
+            info.printer.waitThread(self.thread)
         self.done_job(outfname, pdffile, info)
         return genfiles
 

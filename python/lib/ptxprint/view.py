@@ -145,6 +145,9 @@ class ViewModel:
         if txt:
             print("Status: ", txt)
 
+    def waitThread(self, thread):
+        thread.wait()
+
     def setPrintBtnStatus(self, idnty, txt=""):
         self.doStatus(txt)
         

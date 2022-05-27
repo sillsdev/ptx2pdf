@@ -987,6 +987,10 @@ class GtkViewModel(ViewModel):
 
     def doStatus(self, txt=""):
         self.set("l_statusLine", txt)
+
+    def waitThread(self, thread):
+        while thread.is_alive():
+            Gtk.main_iteration_do(False)
         
     def setPrintBtnStatus(self, idnty, txt=""):
         if not txt:
