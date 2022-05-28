@@ -1543,7 +1543,7 @@ class TexModel:
         # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
 
         # Convert hyphens from minus to hyphen
-        self.localChanges.append((None, regex.compile(r"(?<!\\(?:f|x|ef)\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
+        self.localChanges.append((None, regex.compile(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book

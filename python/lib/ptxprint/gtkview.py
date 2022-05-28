@@ -463,30 +463,40 @@ class GtkViewModel(ViewModel):
         self.allControls = []
         modelbtns = set([v[0] for v in ModelMap.values() if v[0] is not None and v[0].startswith("btn_")])
         self.btnControls = set()
+        self.finddata = {}
+        self.widgetnames = {}
+        nid = None
         for node in tree.iter():
             if 'translatable' in node.attrib:
                 node.text = _(node.text)
                 del node.attrib['translatable']
-            nid = node.get('id')
+            if node.tag == "property" and nid is not None:
+                n = node.get('name')
+                if n in ("name", "tooltip-text", "label"):
+                    self.finddata[node.text] = (nid, 1 if  n == "tooltip-text" else 4)
+                if n == 'name':
+                    self.widgetnames[nid] = node.text
             if node.get('name') in ('pixbuf', 'icon', 'logo'):
                 node.text = os.path.join(pycodedir(), node.text)
-            if nid is None:
-                pass
-            elif nid == 'txbf_colophon':
-                node.set('class', 'GtkSourceBuffer')
-            elif nid == 'textv_colophon':
-                node.set('class', 'GtkSourceView')
-            elif nid.startswith("r_"):
-                m = re.match(r"^r_(.+)?_(.+)$", nid)
-                if m:
-                    self.radios.setdefault(m.group(1), set()).add(m.group(2))
-            if nid is not None:
-                pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
-                if pre in ("bl", "btn", "bx", "c", "col", "ecb", "ex", "fcb", "fr", "gr", 
-                           "l", "lb", "r", "s", "scr", "t", "tb", "textv", "tv", "rule", "img"):
-                    self.allControls.append(nid)
-                    if pre == "btn" and nid not in modelbtns:
-                        self.btnControls.add(nid)
+            if node.tag == "object":
+                nid = node.get('id')
+                if nid is None:
+                    pass
+                elif nid == 'txbf_colophon':
+                    node.set('class', 'GtkSourceBuffer')
+                elif nid == 'textv_colophon':
+                    node.set('class', 'GtkSourceView')
+                elif nid.startswith("r_"):
+                    m = re.match(r"^r_(.+)?_(.+)$", nid)
+                    if m:
+                        self.radios.setdefault(m.group(1), set()).add(m.group(2))
+                if nid is not None:
+                    pre, name = nid.split("_", 1) if "_" in nid else ("", nid)
+                    if pre in ("bl", "btn", "bx", "c", "col", "ecb", "ex", "fcb", "fr", "gr", 
+                               "l", "lb", "r", "s", "scr", "t", "tb", "textv", "tv", "rule", "img"):
+                        self.allControls.append(nid)
+                        if pre == "btn" and nid not in modelbtns:
+                            self.btnControls.add(nid)
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
         self.builder = Gtk.Builder.new_from_string(xml_text, -1)
         #    self.builder.set_translation_domain(APP)
@@ -494,6 +504,7 @@ class GtkViewModel(ViewModel):
         self.builder.connect_signals(self)
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
+        self.searchWidget = None
         self.config_dir = None
         self.initialised = False
         self.booklistKeypressed = False
@@ -657,7 +668,8 @@ class GtkViewModel(ViewModel):
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold} 
-            .highlighted { background-color: peachpuff} """
+            .highlighted { background-color: peachpuff}
+            entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
@@ -735,27 +747,92 @@ class GtkViewModel(ViewModel):
             self.pendingerror = None
         return True
 
-    def onFindClicked(self, btn):
-        wid = self.get("t_find")
-        self.highlightwidget(wid)
+    def onFindActivate(self, entry):
+        self.onFindClicked(entry, Gtk.EntryIconPosition.PRIMARY, None)
 
-    def highlightwidget(self, wid):
+    def onFindKey(self, entry, ev):
+        print(ev)
+        if ev.keyval == Gdk.KEY_Escape:
+            self.onFindClicked(entry, Gtk.EntryIconPosition.SECONDARY, ev)
+        else:
+            return False
+
+    def onFindClicked(self, entry, which, event):
+        txt = self.get("t_find")
+        if which == Gtk.EntryIconPosition.PRIMARY:
+            scores = {}
+            for k, v in self.finddata.items():
+                p = -1
+                count = 0
+                while True:
+                    p = k.find(txt, p+1)
+                    if p > -1:
+                        count += 1
+                    else:
+                        break
+                if count > 0:
+                    s = scores.setdefault(v[0], 0)
+                    scores[v[0]] = s + count * v[1]
+            choices = []
+            for k in sorted(scores.keys(), key=lambda x:-scores[x]):
+                n = self.widgetnames.get(k, k)
+                choices.append((k, n))
+            self._makeFindPopup(entry, choices)
+        else:
+            if self.searchWidget is not None:
+                self.highlightwidget(self.searchWidget, highlight=False)
+                self.searchWidget = None
+            self.set("t_find", "")
+
+    def _makeFindPopup(self, entry, choices):
+        self.popover = Gtk.Popover()
+        self.popover.set_position(Gtk.PositionType.TOP)
+        self.popover.set_relative_to(entry)
+        self.popover.set_size_request(300, 100)
+        scr = Gtk.ScrolledWindow()
+        ls = Gtk.ListStore(str, str)
+        for w, v in choices:
+            ls.append([w, v])
+        tv = Gtk.TreeView(model=ls)
+        tv.set_headers_visible(False)
+        tv.set_activate_on_single_click(True)
+        tv.connect('row-activated', self._onFindRowActivated)
+        cr = Gtk.CellRendererText()
+        col = Gtk.TreeViewColumn(cell_renderer=cr, text=1)
+        tv.append_column(col)
+        scr.add(tv)
+        self.popover.add(scr)
+        self.popover.show_all()
+
+    def _onFindRowActivated(self, tv, tp, tc):
+        selection = tv.get_selection()
+        model, i = selection.get_selected()
+        self.searchWidget = model[i][0]
+        self.highlightwidget(self.searchWidget, highlight=True)
+        self.popover.destroy()
+
+    def highlightwidget(self, wid, highlight=True):
         w = self.builder.get_object(wid)
         if w is None:
             return
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
-            print(name)
             if name.startswith("tb_"):
-                w.get_style_context().add_class("highlighted")
-                mpgnum = self.notebooks['Main'].index(name)
-                self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                if highlight:
+                    w.get_style_context().add_class("highlighted")
+                    mpgnum = self.notebooks['Main'].index(name)
+                    self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                else:
+                    w.get_style_context().remove_class("highlighted")
                 break
             elif name in _dlgtriggers:
-                w.get_style_context().add_class("highlighted")
-                trg = self.builder.get_object(_dlgtriggers[name])
-                trg.emit("clicked")
+                if highlight:
+                    w.get_style_context().add_class("highlighted")
+                    trg = self.builder.get_object(_dlgtriggers[name])
+                    trg.emit("clicked")
+                else:
+                    w.get_style_context().remove_class("highlighted")
                 break
             parent = parent.get_parent()
 
@@ -3145,11 +3222,11 @@ class GtkViewModel(ViewModel):
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
 
     def _incrementProgress(self, val=None):
-        wid = self.builder.get_object("pr_runs")
+        wid = self.builder.get_object("t_find")
         if val is None:
-            val = wid.get_fraction()
+            val = wid.get_progress_fraction()
             val = 0.20 if val < 0.1 else (1. + val) * 0.5
-        wid.set_fraction(val)
+        wid.set_progress_fraction(val)
 
     def incrementProgress(self):
         GLib.idle_add(self._incrementProgress)
