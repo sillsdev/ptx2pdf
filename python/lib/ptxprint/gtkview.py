@@ -467,7 +467,7 @@ class GtkViewModel(ViewModel):
         self.widgetnames = {}
         nid = None
         for node in tree.iter():
-            if 'translatable' in node.attrib:
+            if 'translatable' in node.attrib or node.get('name', '') == 'name':
                 node.text = _(node.text)
                 del node.attrib['translatable']
             if node.tag == "property" and nid is not None:

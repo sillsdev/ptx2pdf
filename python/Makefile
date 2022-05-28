@@ -14,8 +14,9 @@ all : locales/ptxprint.pot download ${MO_FILES}
 mos : ${MO_FILES}
 	@- echo done ${LANGUAGES}
 
-locales/ptxprint.pot : lib/ptxprint/*.py lib/ptxprint/*.glade crowdin.yml
-	xgettext -k_ --from-code=utf-8 -o $@ lib/ptxprint/*.py lib/ptxprint/*.glade
+locales/ptxprint.pot : lib/ptxprint/*.py lib/ptxprint/ptxprint.glade crowdin.yml
+	perl -CSD -pe 's/(name="name")/\1 translatable="yes"/o' lib/ptxprint/ptxprint.glade > temp.glade
+	xgettext -k_ --from-code=utf-8 -o $@ lib/ptxprint/*.py temp.glade
 	$(CROWDIN) upload
 
 define LANGRULES=
