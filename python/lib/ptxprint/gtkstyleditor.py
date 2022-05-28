@@ -447,7 +447,7 @@ class StyleEditorView(StyleEditor):
             return a == b
 
     def _setFieldVal(self, k, v, oldval, val):
-        logger.debug(f"Set style field {k} to {val} from {oldval} in context {v}")
+        logger.log(9, f"Set style field {k} to {val} from {oldval} in context {v}")
         w = self.builder.get_object(v[0])
         if w is None:
             print("Can't find widget {}".format(v[0]))

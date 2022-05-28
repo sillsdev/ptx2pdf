@@ -452,6 +452,7 @@ def getsign(b, v, a):
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
+        logger.debug("Starting init in gtkview")
         self._setup_css()
         self.radios = {}
         GLib.set_prgname("ptxprint")
@@ -502,6 +503,7 @@ class GtkViewModel(ViewModel):
         #    self.builder.set_translation_domain(APP)
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
+        logger.debug("Glade loaded in gtkview")
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
         self.searchWidget = None
@@ -611,6 +613,7 @@ class GtkViewModel(ViewModel):
                     # print("Can't do that for:", w)
                     # pass
 
+        logger.debug("Static controls initialized")
         projects = self.builder.get_object("ls_projects")
         digprojects = self.builder.get_object("ls_digprojects")
         strngsfbprojects = self.builder.get_object("ls_strongsfallbackprojects")
@@ -649,6 +652,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=args.identify)
         self.updateFont2BaselineRatio()
+        logger.debug("Project list loaded")
 
             # .mainnb {background-color: #d3d3d3;}
             # .mainnb panel {background-color: #d3d3d3;}
@@ -720,6 +724,7 @@ class GtkViewModel(ViewModel):
         # self.noInternetClicked(None)
         self.onUILevelChanged(None)
         self.checkUpdates(False)
+        logger.debug("Starting UI")
         try:
             Gtk.main()
         except Exception as e:
@@ -2694,6 +2699,7 @@ class GtkViewModel(ViewModel):
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
         self.onBodyHeightChanged(None)
+        logger.debug(f"Changed project to {prjid} {configName=}")
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configKeypressed:

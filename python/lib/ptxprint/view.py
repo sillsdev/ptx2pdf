@@ -21,9 +21,11 @@ from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
 from io import StringIO
 from shutil import rmtree
 import datetime, time
-import json
+import json, logging
 from shutil import copyfile, copytree, move
 from difflib import Differ
+
+logger = logging.getLogger(__name__)
 
 VersionStr = "2.1.26"
 GitVersionStr = "2.1.25-12-gc93b1191"
@@ -517,6 +519,7 @@ class ViewModel:
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
+        logger.debug(f"Changing project to {prjid} {configName=}")
         currprj = self.prjid
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
