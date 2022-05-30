@@ -280,7 +280,6 @@ ModelMap = {
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", None),
     "finishing/foldcutmargin":  ("s_foldCutMargin", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", None),
-    "finishing/ifspot":         ("c_spotColor", None),
     "finishing/spotcolor":      ("col_spotColor", None),
     "finishing/spottolerance":  ("s_spotColorTolerance", None),
     
@@ -433,7 +432,6 @@ ModelMap = {
     "strongsndx/twocols":       ("c_strongs2cols", None),
     "strongsndx/openineditor":  ("c_strongsOpenIndex", None),
     
-    "color/usespotcolor":       ("c_spotColor", None),
     "color/spotcolhue":         ("col_SpotColor", None),
     "color/spotcolrange":       ("s_spotColorTolerance", None),
 }

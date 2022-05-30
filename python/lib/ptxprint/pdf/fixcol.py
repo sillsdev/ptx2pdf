@@ -324,6 +324,10 @@ pop }}""".format(*spotcmyk)
                                                               Range = PdfArray(resrange)),
                                PdfDict(Colorants=PdfDict({PdfName(name): spotdict}), SubType=PdfName('DeviceN'))])
         deviceDict.indirect = True
+    else:
+        spothsv = 0
+        hrange = 0
+        name = "None"
     wparser = PageDuoToneStateWrite(hashue, spothsv, hrange)
     for pagenum, page in enumerate(trailer.pages, 1):
         wparser.usesColour = False
