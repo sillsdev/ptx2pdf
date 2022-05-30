@@ -178,7 +178,7 @@ class PageDuoToneStateWrite(PdfStreamParser):
         else:
             spot = 0
             black = hsv[2]
-            newops = ["{:.2f}".format(black), tocase("g")]
+            newops = ["{:.2f}".format(black), tocase("G")]
         return newops
 
 class PageDuoToneStateRead(PdfStreamParser):

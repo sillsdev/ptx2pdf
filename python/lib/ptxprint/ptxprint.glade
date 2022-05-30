@@ -5008,24 +5008,28 @@ the text. This may be useful for precise measuring.</property>
     </columns>
     <data>
       <row>
-        <col id="0" translatable="yes">Screen (PDF)</col>
+        <col id="0" translatable="yes">Screen (Quickest)</col>
         <col id="1" translatable="yes">Screen</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Digital (PDF/X-4)</col>
+        <col id="0" translatable="yes">Digital-RGB</col>
         <col id="1">Digital</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Print (PDF/X-1a:2003)</col>
-        <col id="1">PDF/X-1A</col>
+        <col id="0" translatable="yes">Digital-CMYK (Transparency)</col>
+        <col id="1" translatable="yes">Transparent</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Transparency (Digital+CMYK)</col>
-        <col id="1" translatable="yes">CMYK</col>
+        <col id="0" translatable="yes">Print-CMYK</col>
+        <col id="1">CMYK</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Archive (Print+Unicode Text)</col>
-        <col id="1">PDF/A-1</col>
+        <col id="0" translatable="yes">Print-Gray</col>
+        <col id="1" translatable="yes">Gray</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Print-Spot</col>
+        <col id="1" translatable="yes">Spot</col>
       </row>
     </data>
   </object>
@@ -8543,6 +8547,7 @@ and helps to place the marker in the tree listing all markers.</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="ecb_book">
+                                <property name="name">Single book chooser</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
@@ -8602,6 +8607,7 @@ Chapter:</property>
                             <child>
                               <object class="GtkButton" id="btn_chooseBooks">
                                 <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="name">Multiple books chooser button</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -8619,6 +8625,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_module">
                                 <property name="label" translatable="yes">Bible Module:</property>
+                                <property name="name">Bible module selector</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -8639,6 +8646,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_multiple">
                                 <property name="label" translatable="yes">Multiple Books:</property>
+                                <property name="name">Multiple books selector</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -8700,6 +8708,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkButton" id="btn_chooseBibleModule">
                                 <property name="label" translatable="yes">Ch_oose...</property>
+                                <property name="name">Bible module chooser button</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -8729,6 +8738,7 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_chapfrom">
+                                <property name="name">From chapter</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="max-length">3</property>
@@ -8748,6 +8758,7 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_chapto">
+                                <property name="name">To chapter</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="margin-end">6</property>
@@ -8788,6 +8799,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkButton" id="btn_DBLbundle">
                                 <property name="label" translatable="yes">Choose...</property>
+                                <property name="name">DBL bundle chooser button</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -8838,6 +8850,7 @@ for ranges of scripture to be printed. For example:
                                 <signal name="changed" handler="onBookListChanged" swapped="no"/>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
+                                    <property name="name">Multiple books editable list entry</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">After selecting one or more books to be
@@ -26740,198 +26753,6 @@ Spine:</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">start</property>
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="width-request">330</property>
-                            <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="label-xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="left-padding">12</property>
-                                <child>
-                                  <!-- n-columns=4 n-rows=1 -->
-                                  <object class="GtkGrid" id="gr_spotColor">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">4</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="row-spacing">3</property>
-                                    <property name="column-spacing">6</property>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
-then select the closest hue
-which will get converted 
-to the closest matching 
-Pantone color code.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Color Hue:</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkColorButton" id="col_spotColor">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">If a spot color is needed 
-then select the closest hue
-which will get converted 
-to the closest matching 
-Pantone color code.</property>
-                                        <property name="halign">start</property>
-                                        <property name="title" translatable="yes">Spot Color Hue</property>
-                                        <property name="rgba">rgb(28,113,216)</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_spotColorTolerance">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
-to 0%. If text in similar colors are also to be
-set to this Spot Color, then select an acceptable
-tolerance range (suggested default is 15%).
-
-Note that this will include similar colors either 
-side (e.g. -15% to +15%) of the selected hue.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">start</property>
-                                        <property name="width-chars">2</property>
-                                        <property name="text">0.50</property>
-                                        <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_spotColorTolerance</property>
-                                        <property name="climb-rate">1</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update-policy">if-valid</property>
-                                        <property name="value">15</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
-to 0%. If text in similar colors are also to be
-set to this Spot Color, then select an acceptable
-tolerance range (suggested default is 15%).
-
-Note that this will include similar colors either 
-side (e.g. -15% to +15%) of the selected hue.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-start">6</property>
-                                        <property name="label" translatable="yes">Tolerance (%):</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkCheckButton" id="c_spotColor">
-                                <property name="label" translatable="yes">Spot Color</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">A Spot Color enables two-tone printing and
-could be useful as a cost-effective alternative
-to full-color (CMYK) printing.
-
-For example, you may use a spot color to mark
-the words of Jesus in a distinct color, or to make
-section headings distinct from the scripture text.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkFrame">
-                            <property name="width-request">333</property>
-                            <property name="sensitive">False</property>
-                            <property name="can-focus">False</property>
-                            <property name="no-show-all">True</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="label-xalign">0.039999999105930328</property>
-                            <child>
-                              <object class="GtkAlignment">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="left-padding">12</property>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                              </object>
-                            </child>
-                            <child type="label">
-                              <object class="GtkCheckButton" id="c_rgbMode">
-                                <property name="label" translatable="yes">RGB Mode</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">1</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkFrame">
                         <property name="width-request">675</property>
                         <property name="visible">True</property>
@@ -27183,7 +27004,7 @@ options allow plenty of scope.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
@@ -27371,7 +27192,7 @@ runs.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">3</property>
+                        <property name="position">2</property>
                       </packing>
                     </child>
                     <child>
@@ -27386,7 +27207,7 @@ runs.</property>
                         <property name="margin-bottom">10</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=5 n-rows=2 -->
+                          <!-- n-columns=7 n-rows=2 -->
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -27407,12 +27228,11 @@ runs.</property>
 for the output format to optimize
 the PDF for its intended purpose.
 
-Digital (smallest size, for local printing)
-Print (for professional printers)
-Transparency (if CMYK is required)
-Archive (largest size, for keeping long-term)
+Screen (fastest, no post processing)
+Digital (smallest size, for local printing, PDF/X-4)
+Print (for professional printers, PDF/X-1a:2003)
 
-Note: All comply with archive standard PDF/A-1b.</property>
+Note: Digital and Print comply with archive standard PDF/A-1b.</property>
                                 <property name="halign">start</property>
                                 <property name="model">ls_outputFormat</property>
                                 <property name="wrap-width">1</property>
@@ -27426,6 +27246,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -27534,19 +27355,115 @@ share config settings with other users.</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">1</property>
+                                <property name="left-attach">0</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_printArchive">
+                                <property name="label" translatable="yes">Archive (PDF/A-1a)</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Check this option to include the Unicode
+text in the PDF which is a good practice
+for final print and long-term archiving.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="draw-indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">1</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkColorButton" id="col_spotColor">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                                <property name="halign">start</property>
+                                <property name="title" translatable="yes">Spot Color Hue</property>
+                                <property name="rgba">rgb(28,113,216)</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">6</property>
+                                <property name="top-attach">0</property>
+                              </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">If a spot color is needed 
+then select the closest hue
+which will get converted 
+to the closest matching 
+Pantone color code.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Color Hue:</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">5</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
+to 0%. If text in similar colors are also to be
+set to this Spot Color, then select an acceptable
+tolerance range (suggested default is 15%).
+
+Note that this will include similar colors either 
+side (e.g. -15% to +15%) of the selected hue.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">6</property>
+                                <property name="margin-start">6</property>
+                                <property name="label" translatable="yes">Tolerance (%):</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSpinButton" id="s_spotColorTolerance">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
+to 0%. If text in similar colors are also to be
+set to this Spot Color, then select an acceptable
+tolerance range (suggested default is 15%).
+
+Note that this will include similar colors either 
+side (e.g. -15% to +15%) of the selected hue.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">start</property>
+                                <property name="width-chars">2</property>
+                                <property name="text">15</property>
+                                <property name="input-purpose">number</property>
+                                <property name="adjustment">a_spotColorTolerance</property>
+                                <property name="climb-rate">1</property>
+                                <property name="numeric">True</property>
+                                <property name="update-policy">if-valid</property>
+                                <property name="value">15</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">5</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -27561,11 +27478,8 @@ share config settings with other users.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">4</property>
+                        <property name="position">3</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
