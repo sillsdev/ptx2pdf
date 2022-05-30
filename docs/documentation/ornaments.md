@@ -46,6 +46,11 @@ auto-generates an ornament number).
 
 If font-based elements are used, then only the (fill) colour can be specified.
 
+#### Border elements from graphic files
+The most recent addition (May 2022) implements graphics files as an image type.
+The graphic can be rotated and almost certainly stretched too, but  cannot be
+recoloured.
+
 ### This does not implement pgf!
 While using the images from the above packages, the  ornament-including code is
 in no way intended to be a version of the large and complex pgf-drawing
@@ -332,6 +337,7 @@ These ornaments have been defined in addition to the ornaments provided by the L
  - (-2)	A simple horizontal line across the middle of a rectangular space 1 high and 2 wide.
  - (-3)	A simple horizontal line across the middle of a rectangular space 1 high and 5 wide.
 
+
 ### Font-based ornaments
 The following defines two new font-based ornaments. An ornament thus defined
 will be drawn using the fill colour, and will have no separate stroke or
@@ -364,6 +370,15 @@ And the stylesheet can include the string-pattern, enclosed in straight double-q
 
 Behind the scenes, this checks for previous use of the string, and if it has not
 been used, calls `\StringOrnament` using the `\StringOrnamentFont`.
+
+### Graphic-file  ornaments 
+Adding the code below defines the file `CornerPieceTL.png`, in the `shared`
+directory,  to be ornament number 401. Note that vector images are much more
+suitable for border elements than bitmaps, and that there is no way to re-colour 
+such elements.
+```
+\GraphicOrnament{401}{../../../shared/CornerPieceTL.png}
+```
 
 ### Defining additional ornaments
 Ornament -1, for example, is defined as follows:

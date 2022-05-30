@@ -1174,9 +1174,9 @@
   \getsbp@ram{borderpatternbot}\ifx\cp@ram\relax\edef\patternB{\DefaultOrnament|u|-}\else\let\patternB\cp@ram\fi
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
-  \tracingassigns=1
+  %\tracingassigns=1
   \getsbp@ram{ornamentscaleref}\ifx\cp@ram\relax\else\x@\p@rsescaleref \cp@ram,\E\fi
-  \tracingassigns=0
+  %\tracingassigns=0
   \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
@@ -1240,6 +1240,29 @@
     \SwitchOrnamentsFamily{\oldOrnamentsFamily}%
   \fi
 }
+
+\def\r@und#1.#2\E{\ifdim .#2 pt < .5pt  #1\else\the\numexpr #1+1\relax\fi}
+\def\GraphicOrnament#1#2{% Convert an image #2 into local ornament #1
+  \bgroup
+    \let\picfilecomm@nd=\XeTeXpicfile
+    \expandafter\ch@ckpdf#2..\endf@lename
+    \setbox0\hbox{\picfilecomm@nd "#2" }%
+    \edef\tmp{\strip@pt{\wd0}}%
+    \x@\xdef\csname localornament@#1@X\endcsname{\x@\r@und\tmp\E}%
+    \edef\tmp{\strip@pt{\ht0}}%
+    \x@\xdef\csname localornament@#1@Y\endcsname{\x@\r@und\tmp\E}%
+    \ifx\picfilecomm@nd\XeTeXpicfile
+      \x@\gdef\csname localornament@#1@code\endcsname{%
+        \message{"#2" \the\dimen0 * \the\dimen1}%
+        \def\@@x{\ifdim\dimen0 < 0pt \the\dimexpr-\dimen0\relax \else \the\dimen0\fi}%
+        \def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
+        \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
+    \else
+      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXPDFfile "#2" width \dimen0 height \dimen1 }}%
+    \fi
+  \egroup
+}
+
 \def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}
 \plugin@endif
