@@ -3240,14 +3240,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3258,27 +3258,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3295,7 +3295,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -9543,6 +9543,7 @@ be useful for a journaling layout.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_linespacing">
+                                        <property name="name">Base line spacing</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Base Line spacing in points (pts).
@@ -9588,6 +9589,7 @@ space between lines of text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_pagesize">
+                                        <property name="name">Page size</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
@@ -9642,6 +9644,7 @@ Size (pt):</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_fontsize">
+                                        <property name="name">Base font size</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Set the point size of the main body text.</property>
@@ -9708,6 +9711,7 @@ Indent (inches):</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_indentUnit">
+                                        <property name="name">Base paragraph indent</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">The amount by which paragraphs
@@ -9742,6 +9746,7 @@ most number of lines that will fit on a page.
 An exact count is difficult due to ascent
 and descent values of the main body font.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="margin-start">3</property>
                                         <property name="label" translatable="yes">99.9</property>
                                         <attributes>
@@ -9762,6 +9767,7 @@ most number of lines that will fit on a page.
 An exact count is difficult due to ascent
 and descent values of the main body font.</property>
                                         <property name="halign">end</property>
+                                        <property name="valign">center</property>
                                         <property name="label" translatable="yes">Max Lines on Page:</property>
                                       </object>
                                       <packing>
@@ -9772,6 +9778,7 @@ and descent values of the main body font.</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="btn_adjust_spacing">
+                                        <property name="name">Tweak line spacing (auto adjust)</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -9806,6 +9813,7 @@ button to adjust either the Top or Bottom Margin.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_mirrorpages">
                                         <property name="label" translatable="yes">Mirror Pages</property>
+                                        <property name="name">Mirror page layout</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -9824,6 +9832,7 @@ If you always want the Primary text on the left and
 Secondary text on the right regardless of whether
 it is an odd or even page, then turn off this option.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -9854,6 +9863,7 @@ can be customized.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_grid">
                                         <property name="label" translatable="yes">Marks &amp; Guides</property>
+                                        <property name="name">Enable marks and guides</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -9884,6 +9894,7 @@ additional whitespace (for notes etc.)
 on the OUTER edge of each page as
 commonly seen in a journaling layout.</property>
                                         <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -9959,6 +9970,7 @@ changes when the spacing changes.</property>
                                 <property name="column-spacing">4</property>
                                 <child>
                                   <object class="GtkSpinButton" id="s_colgutterfactor">
+                                    <property name="name">Gutter width for two column layout</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This is the space between 
@@ -9985,6 +9997,7 @@ the text of the two columns
                                 <child>
                                   <object class="GtkCheckButton" id="c_verticalrule">
                                     <property name="label" translatable="yes">Vertical Rule in Gutter</property>
+                                    <property name="name">Enable vertical rule in gutter</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -10025,9 +10038,13 @@ Width (mm):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_colgutteroffset">
+                                    <property name="name">Adjust top of vertical rule</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">This setting can raise (if -ve) or lower (if +ve) the starting point of the vertical rule between columns. (Value is pts).</property>
+                                    <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.
+(Value is pts).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
@@ -10052,7 +10069,8 @@ Width (mm):</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
 lowers (using a positive value) the starting 
-point of the vertical rule between columns.</property>
+point of the vertical rule between columns.
+(Value is pts).</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Adjust
 Top (pt):</property>
@@ -10065,8 +10083,21 @@ Top (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_bottomRag">
+                                    <property name="name">Allow unbalanced lines (bottom rag)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+PTXprint will balance the number of
+lines used in each column. Sometimes
+this results in large empty spaces at the
+end of a page.
+
+Increasing this number (recommended
+range 1-4) will allow up to that many
+unbalanced lines on the page. Note that
+you can still stretch/shrink paragraphs
+using AdjLists to refine the output by
+manually balancing pages.</property>
                                     <property name="halign">start</property>
                                     <property name="adjustment">a_bottomRag</property>
                                   </object>
@@ -10077,6 +10108,7 @@ Top (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_bottomRag">
+                                    <property name="name">Maximum unbalanced lines</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
@@ -10118,6 +10150,7 @@ Lines (max):</property>
                             <child type="label">
                               <object class="GtkCheckButton" id="c_doublecolumn">
                                 <property name="label" translatable="yes">Two Column Layout</property>
+                                <property name="name">One or two column layout</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -10542,6 +10575,7 @@ above the base line of the first line of the body text.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_adjust_top">
+                                    <property name="name">Tweak top margin (auto adjust)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -10574,6 +10608,7 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_adjust_bottom">
+                                    <property name="name">Tweak bottom margin (auto adjust)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -11990,6 +12025,7 @@ for characters missing in primary font.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_bookIntro">
                                     <property name="label" translatable="yes">Book Introductions (\i..)</property>
+                                    <property name="name">Enable book introductions (\i..)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12009,6 +12045,7 @@ appear at the beginning of each book.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_introOutline">
                                     <property name="label" translatable="yes">Introductory Outlines (\io..)</property>
+                                    <property name="name">Enable introductory outlines (\io..)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12028,6 +12065,7 @@ appear at the beginning of each book.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_prettyIntroOutline">
                                     <property name="label" translatable="yes">Right-align \ior With Tabbed Leaders</property>
+                                    <property name="name">Enable Right-aligned outlines with leaders</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12044,10 +12082,13 @@ appear at the beginning of each book.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_ch1pagebreak">
                                     <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
+                                    <property name="name">Start new page after introduction</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Use this option to automatically make a page break after a book's introduction section. The break will come right before the \c 1 marker.</property>
+                                    <property name="tooltip-text" translatable="yes">Use this option to automatically make a page 
+break after a book's introduction section. 
+The break will come right before the \c 1 marker.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
@@ -12060,6 +12101,7 @@ appear at the beginning of each book.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_startOnHalfPage">
                                     <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
+                                    <property name="name">Flow one book into the next book</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12081,6 +12123,7 @@ on the Advanced tab.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_filterGlossary">
                                     <property name="label" translatable="yes">Filter Glossary to Only Include Entries Used in the Text</property>
+                                    <property name="name">Filter glossary</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12158,6 +12201,7 @@ selected books/chapters will show in the glossary.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
                                     <property name="label" translatable="yes">Chapter numbers</property>
+                                    <property name="name">Show chapter numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12181,6 +12225,7 @@ Number in Single Chapter Books".</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitverseone">
                                     <property name="label" translatable="yes">Hide First Verse Number</property>
+                                    <property name="name">Hide verse 1</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12202,6 +12247,7 @@ number 1, then uncheck this option.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_verseNumbers">
                                     <property name="label" translatable="yes">Verse Numbers</property>
+                                    <property name="name">Show verse numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12221,7 +12267,8 @@ more like an ordinary book.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_glueredupwords">
-                                    <property name="label" translatable="yes">Keep Repeated Words Together </property>
+                                    <property name="label" translatable="yes">Keep Repeated Words Together</property>
+                                    <property name="name">Keep repeated words together</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12247,6 +12294,7 @@ typesetting issues. Use with care!</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_firstParaIndent">
                                     <property name="label" translatable="yes">Indent First Paragraph</property>
+                                    <property name="name">Indent first paragraph after section heading</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12265,6 +12313,7 @@ a \m(argin) paragraph with no indentation.</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_glossaryMarkupStyle">
+                                    <property name="name">Markup for glossary words in text</property>
                                     <property name="width-request">180</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -12290,6 +12339,7 @@ styling to \w then select the last option.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_marginalverses">
                                     <property name="label" translatable="yes">Marginal Verses ... Col Width (pts):</property>
+                                    <property name="name">Show verse numbers in the margin</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12313,6 +12363,7 @@ column to fit the verse numbers.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_hangpoetry">
                                     <property name="label" translatable="yes">Hanging Poetry Verse Numbers</property>
+                                    <property name="name">Use hanging verse number for poetry</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12335,6 +12386,7 @@ Verse Bridges (3-4) also stack vertically.</property>
                                     <property name="spacing">7</property>
                                     <child>
                                       <object class="GtkSpinButton" id="s_columnShift">
+                                        <property name="name">Column width for marginal verses</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">This is the amount of space to the left
@@ -12363,6 +12415,7 @@ marginal verse numbers. (pts)</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_glossaryMarkupStyle">
+                                        <property name="name">Markup for glossary words</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">Glossary words are marked up with
@@ -12393,6 +12446,7 @@ Markup Style:</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_preventwidows">
                                     <property name="label" translatable="yes">Prevent Verse Widow Words </property>
+                                    <property name="name">Prevent verse widow words</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12412,6 +12466,7 @@ a line.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_preventorphans">
                                     <property name="label" translatable="yes">Prevent Orphan Words</property>
+                                    <property name="name">Prevent orphan words at end of paragraph</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12430,6 +12485,7 @@ occuring on a line on their own.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_justify">
                                     <property name="label" translatable="yes">Justify Paragraphs</property>
+                                    <property name="name">Justify paragraphs</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12455,6 +12511,7 @@ in a style is subject to this setting.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_sectionHeads">
                                         <property name="label" translatable="yes">Section Headings</property>
+                                        <property name="name">Enable section headings</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -12507,6 +12564,7 @@ uncheck the Parallel Passage Refs.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_parallelRefs">
                                         <property name="label" translatable="yes">Parallel Passage Refs </property>
+                                        <property name="name">Enable parallel passage references</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -12557,6 +12615,7 @@ occur below Section Headings.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_hideEmptyVerses">
                                         <property name="label" translatable="yes">Hide Empty Verses</property>
+                                        <property name="name">Show or hide empty verses</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -12578,6 +12637,7 @@ has been translated so far.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_elipsizeMissingVerses">
                                         <property name="label" translatable="yes">Show '...'</property>
+                                        <property name="name">Show elipsis in place of missing verses</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -12608,6 +12668,7 @@ parts of the text have been skipped.</property>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_mainBodyText">
                             <property name="label" translatable="yes">Include Scripture Text</property>
+                            <property name="name">Show or hide scripture text</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -12661,6 +12722,7 @@ be unchecked (to omit the main text).</property>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
                                     <property name="label" translatable="yes">Use Special Features
 for These Books:</property>
+                                    <property name="name">Enable special features for some books</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12682,6 +12744,7 @@ these settings will overrirde what has been set in the text.</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_clBookList">
+                                    <property name="name">List of books with special features enabled</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Add the 3-letter book codes for any books that
@@ -12700,6 +12763,7 @@ setting will be applied to ALL books</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_clHeading">
+                                    <property name="name">Chapter label (for special feature books)</property>
                                     <property name="width-request">150</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -12745,6 +12809,7 @@ Label:</property>
                                   <object class="GtkCheckButton" id="c_differentColLayout">
                                     <property name="label" translatable="yes">Use Different Column
 Layout for These Books:</property>
+                                    <property name="name">Enable 1 or 2 column layout for certain books</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12776,6 +12841,7 @@ be set in single-column layout.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_showNonScriptureChapters">
                                     <property name="label" translatable="yes">Non-Scripture Books</property>
+                                    <property name="name">Show chapters in non-scripture books</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12798,6 +12864,7 @@ numbers then check this option.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_show1chBookNum">
                                     <property name="label" translatable="yes">Single Chapter Books</property>
+                                    <property name="name">Show chapters in single chapter books</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12817,6 +12884,7 @@ of books that only have a single chapter (OBA, PHM,
                                 <child>
                                   <object class="GtkCheckButton" id="c_optimizePoetryLayout">
                                     <property name="label" translatable="yes">Optimize Layout for Poetry Books</property>
+                                    <property name="name">Optimize Layout for Poetry Books</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -12839,6 +12907,7 @@ lines to occur, which is a negative side-effect.</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_differentColBookList">
+                                    <property name="name">List of books with different column settings</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Some books (e.g. Introduction, Glossary, Psalms, and 
@@ -12880,6 +12949,7 @@ be set in single-column layout.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useSectIntros">
                                     <property name="label" translatable="yes">Use Peripheral Introductory Sections</property>
+                                    <property name="name">Use peripheral introductory sections</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -28295,8 +28365,18 @@ be displayed (in red) just to the left.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_find">
+                <property name="name">Find help</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
+                <property name="tooltip-text" translatable="yes">Type in a word to search for
+a setting that you can't locate.
+A short list of relevant topics
+will appear above. Select one
+to jump directly to the setting
+which should be highlighted.</property>
+                <property name="margin-start">6</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="primary-icon-name">edit-find-symbolic</property>
                 <property name="secondary-icon-name">edit-clear-symbolic</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
