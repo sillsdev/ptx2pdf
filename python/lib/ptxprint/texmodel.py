@@ -267,6 +267,7 @@ ModelMap = {
     "document/diffcolor":       ("col_diffColor", None),
     "document/diffpdf":         ("btn_selectDiffPDF", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
+    "document/printarchive":    ("c_printArchive", None),
 
     "document/keepversions":    ("s_keepVersions", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", None),

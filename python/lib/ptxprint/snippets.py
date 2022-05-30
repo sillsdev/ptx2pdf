@@ -167,7 +167,7 @@ class PDFx1aOutput(Snippet):
         extras = {'_gtspdfx': '', '_gtspdfaid': ''}
         pdftype = model['snippets/pdfoutput'] or "Screen"
         libpath = pycodedir()
-        if pdftype in ("Screen", "CMYK"):
+        if pdftype in ("Screen", "Transparent", "Digital" ):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
         else:
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
@@ -179,7 +179,7 @@ class PDFx1aOutput(Snippet):
             extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['document/ifrtl'] == "true" else ""
-        if model['snippets/pdfoutput'] == "PDF/A-1":
+        if model['document/printarchive']:
             res += "\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
     

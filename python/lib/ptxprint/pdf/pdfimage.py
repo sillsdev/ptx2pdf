@@ -111,16 +111,17 @@ class PDFImage:
         maxv = hsv[:,:,2].max()
         return (maxs, maxv)
 
-    def duotone(self, hsv, hrange, spotcspace=None, blackcspace=None):
+    def duotone(self, hashue, hsv, hrange, spotcspace=None, blackcspace=None):
         img = np.asarray(self.img) / 255.
         if img.shape[-1] == 4:
             img = cmyk_vecto_rgb(img)
         hsvimg = rgb_vecto_hsv(img)
-        # calculate as if all in the hsv colour range
-        spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
-        # replace out of range colours with grey
-        m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
-        if np.all(m):
+        if hashue:
+            # calculate as if all in the hsv colour range
+            spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
+            # replace out of range colours with grey
+            m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
+        if not hashue or np.all(m):
             self.spotb = hsvimg[...,2]
             self.spotc = None
             self.colorspace = blackcspace

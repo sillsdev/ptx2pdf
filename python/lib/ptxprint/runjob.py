@@ -18,6 +18,7 @@ from ptxprint.pdfrw.objects import PdfDict, PdfString
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
+import numpy as np
 from datetime import datetime
 import logging
 
@@ -74,7 +75,7 @@ _errmsghelp = {
 
 _pdfmodes = {
     'rgb': ("Screen", "Digital"),
-    'cmyk': ("CMYK", "PDF/X-1A", "PDF/A-1")
+    'cmyk': ("CMYK", "Transparency")
 }
 
 _unitpts = {
@@ -762,7 +763,7 @@ class RunJob:
         elif self.ispdfxa in _pdfmodes['rgb']:
             colour = "rgbx4"
         else:
-            colour = "cmyk"
+            colour = self.ispdfxa.lower()
         if colour is not None:
             outpdf = fixpdffile(opath, None,
                             colour=colour,
@@ -910,6 +911,7 @@ class RunJob:
                     secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
+        logger.debug("Gathering illustrations")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
@@ -950,6 +952,7 @@ class RunJob:
             self.printer.set("l_missingPictureCount", "(0 Missing)")
             self.printer.set("l_missingPictureString", "")
         self.printer.incrementProgress()
+        logger.debug("Illustrations gathered")
         return res
 
     def getBorder(self, box, start, end, fn):
@@ -1007,14 +1010,32 @@ class RunJob:
         else:
             newimage = im
         if fmt == "CMYK":
-            self.cmytocmyk(newimage)
+            newimage = self.cmytocmyk(newimage)
         newimage.save(outfile)
         return True
 
     def cmytocmyk(self, im):
-        for y in range(im.height):
-            for x in range(im.width):
-                im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
+        #for y in range(im.height):
+        #    for x in range(im.width):
+        #        im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
+        #return im
+        #import pdb; pdb.set_trace()
+        img = np.asarray(im).copy()
+        if img.shape[-1] == 3:
+            z = np.zeros((img.shape[0], img.shape[1], 1), dtype=np.uint8)
+            img.concatenate((img, z), axis=3)
+            return im
+        dk = img.min(axis=2, where = [True, True, True, False], initial=255)
+        dko = 255 - dk
+        newk = img[:,:,3] + dk
+        bigmask = newk[:,:] > 255
+        dk[bigmask] = dko[bigmask]
+        newk[bigmask] = 255
+        img[:,:,3] = newk
+        for i in range(3):
+            img[:,:,i] -= dk 
+        res = Image.fromarray(img.astype(np.uint8), 'CMYK')
+        return res
 
     @staticmethod
     def _cmytocmyk(c, m, y, k):
@@ -1043,11 +1064,11 @@ class RunJob:
         if cropme or self.ispdfxa != "Screen" or (ratio is not None and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            try:
-                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
-            except: # MH: Which exception should I try to catch?
-                print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
-                return os.path.basename(tgtpath)
+            #try:
+            self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
+            #except: # MH: Which exception should I try to catch?
+            #    print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
+            #    return os.path.basename(tgtpath)
         else:
             try:
                 copyfile(srcpath, tgtpath)

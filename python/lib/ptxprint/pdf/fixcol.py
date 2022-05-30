@@ -161,16 +161,17 @@ class PageRGBState(PdfStreamParser):
 class PageDuoToneStateWrite(PdfStreamParser):
     opmap = {'RG': 'rg'}
 
-    def __init__(self, spothsv, hrange):
+    def __init__(self, hashue, spothsv, hrange):
         super().__init__()
+        self.hashue = hashue
         self.spothsv = spothsv
         self.hrange = hrange
 
     def rg(self, op, operands, **kw):
         rgb = [float(x) for x in operands[-3:]]
-        hsv = rgb_to_hsv(*rgb)
         tocase = (lambda s: s.lower()) if op.lower() == op else (lambda s:s)
-        if isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange) and hsv[1] > 0.01:
+        hsv = rgb_to_hsv(*rgb)
+        if self.hashue and isclose(hsv[0], self.spothsv[0], abs_tol=self.hrange) and hsv[1] > 0.01:
             spot = self.spothsv[1] / hsv[1]
             black = (1 - hsv[2]) - (1 - self.spothsv[2])
             newops = ["/CS1", tocase("CS"), "{:.2f}".format(black), "{:.2f}".format(spot), tocase("SCN")]
@@ -276,7 +277,7 @@ def fixpdfrgb(trailer, **kw):
                 if v.ColorSpace == "/DeviceRGB":
                     v.ColorSpace = iccclr
 
-def fixpdfspot(trailer, hue, hrange, **kw):
+def fixpdfspot(trailer, hashue, hue, hrange, **kw):
     rparser = PageDuoToneStateRead(hue, hrange)
     for pagenum, page in enumerate(trailer.pages, 1):
         rparser.parsepage(page, trailer, **kw)
@@ -292,36 +293,38 @@ def fixpdfspot(trailer, hue, hrange, **kw):
                 continue
             img = PDFImage(v, compressor=compress)
             page.xobjs[k] = img
-            rparser.add_analysis(img.analyse(hue, hrange))
-                
-    spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
-    # convert this to closest pantone code
-    spotrgb = hsv_to_rgb(*spothsv)
-    spotcmyk = rgb_to_cmyk(*spotrgb)
-    name = 'hsv{:02X}{:02X}{:02X}'.format(*[int(x * 255) for x in spothsv])
-    resrange = [0., 1., 0., 1., 0., 1., 0., 1.]
-    prgm = """{{ exch dup 1.0 cvr exch sub 2 index {3:.6f} mul mul add 2 1 roll
+            if hashue:
+                rparser.add_analysis(img.analyse(hue, hrange))
+
+    if hashue:
+        spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
+        # convert this to closest pantone code
+        spotrgb = hsv_to_rgb(*spothsv)
+        spotcmyk = rgb_to_cmyk(*spotrgb)
+        name = 'hsv{:02X}{:02X}{:02X}'.format(*[int(x * 255) for x in spothsv])
+        resrange = [0., 1., 0., 1., 0., 1., 0., 1.]
+        prgm = """{{ exch dup 1.0 cvr exch sub 2 index {3:.6f} mul mul add 2 1 roll
 dup {0:.6f} mul 3 1 roll
 dup {1:.6f} mul 3 1 roll
 dup {2:.6f} mul 3 1 roll
 pop }}""".format(*spotcmyk)
-    spotdict = PdfArray([PdfName('Separation'), PdfName(name),
-                         PdfName('DeviceCMYK'), PdfDict(
-                            C0 = PdfArray([0., 0., 0., 0.]),
-                            C1 = PdfArray(spotcmyk),
-                            Domain = PdfArray([0, 1]),
-                            FunctionType = 2,
-                            N = 1.,
-                            Range = PdfArray(resrange))])
-    spotdict.indirect = True
-    deviceDict = PdfArray([PdfName('DeviceN'), PdfArray([PdfName('Black'), PdfName(name)]),
-                           PdfName('DeviceCMYK'), PdfDict(indirect=True, stream=prgm,
-                                                          Domain = PdfArray([0., 1., 0., 1.]),
-                                                          FunctionType = 4,
-                                                          Range = PdfArray(resrange)),
-                           PdfDict(Colorants=PdfDict({PdfName(name): spotdict}), SubType=PdfName('DeviceN'))])
-    deviceDict.indirect = True
-    wparser = PageDuoToneStateWrite(spothsv, hrange)
+        spotdict = PdfArray([PdfName('Separation'), PdfName(name),
+                             PdfName('DeviceCMYK'), PdfDict(
+                                C0 = PdfArray([0., 0., 0., 0.]),
+                                C1 = PdfArray(spotcmyk),
+                                Domain = PdfArray([0, 1]),
+                                FunctionType = 2,
+                                N = 1.,
+                                Range = PdfArray(resrange))])
+        spotdict.indirect = True
+        deviceDict = PdfArray([PdfName('DeviceN'), PdfArray([PdfName('Black'), PdfName(name)]),
+                               PdfName('DeviceCMYK'), PdfDict(indirect=True, stream=prgm,
+                                                              Domain = PdfArray([0., 1., 0., 1.]),
+                                                              FunctionType = 4,
+                                                              Range = PdfArray(resrange)),
+                               PdfDict(Colorants=PdfDict({PdfName(name): spotdict}), SubType=PdfName('DeviceN'))])
+        deviceDict.indirect = True
+    wparser = PageDuoToneStateWrite(hashue, spothsv, hrange)
     for pagenum, page in enumerate(trailer.pages, 1):
         wparser.usesColour = False
         wparser.parsepage(page, trailer)
@@ -330,8 +333,8 @@ pop }}""".format(*spotcmyk)
             x = r.XObject
             if x is not None and hasattr(page, 'xobjs'):
                 for k, v in page.xobjs.items():
-                    # import pdb; pdb.set_trace()
-                    wparser.usesColour |= v.duotone(spothsv, hrange, spotcspace=PdfName(name), blackcspace=PdfName("DeviceGray"))
+                    wparser.usesColour |= v.duotone(hashue, spothsv, hrange,
+                                    spotcspace=PdfName(name), blackcspace=PdfName("DeviceGray"))
                     x[k] = v.asXobj()
         if wparser.usesColour:
             if page.Resources is None:
@@ -450,7 +453,9 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
         fixpdfrgb(trailer, **kw)
     elif colour == "spot":
         hue = rgb_to_hsv(*kw['color'])
-        fixpdfspot(trailer, hue[0], kw['range'], **kw)
+        fixpdfspot(trailer, True, hue[0], kw['range'], **kw)
+    elif colour == "gray":
+        fixpdfspot(trailer, False, 0, 0, **kw)
 
     meta = trailer.Root.Metadata
     if meta is not None:

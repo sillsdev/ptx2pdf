@@ -291,7 +291,7 @@ class StyleEditor:
     def _str_val(self, v, key=""):
         if isinstance(v, (set, list)):
             if key.lower() == "textproperties":
-                res = " ".join(x.lower().title() if x else "" for x in sorted(v))
+                res = " ".join(x.lower() if x else "" for x in sorted(v))
             else:
                 res = " ".join(self._str_val(x, key) for x in sorted(v))
         elif isinstance(v, float):
