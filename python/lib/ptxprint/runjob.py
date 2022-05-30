@@ -754,7 +754,7 @@ class RunJob:
         outpdf = None
         colour = None
         params = {}
-        if self.ispdfxa == "spot":
+        if self.ispdfxa == "Spot":
             colour = "spot"
             params = {'color': coltoonemax(info['finishing/spotcolor']),
                       'range': float(info['finishing/spottolerance']) / 100.}

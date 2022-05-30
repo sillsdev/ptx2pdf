@@ -432,7 +432,6 @@ ModelMap = {
     "strongsndx/twocols":       ("c_strongs2cols", None),
     "strongsndx/openineditor":  ("c_strongsOpenIndex", None),
     
-    "color/spotcolhue":         ("col_SpotColor", None),
     "color/spotcolrange":       ("s_spotColorTolerance", None),
 }
 
