@@ -215,7 +215,8 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-
+\def\SHOWSTUFF{\message{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle}}
+                
 %returns \@@ut 
 \def\fullstack@xpand#1|#2|#3\E{%Parameters: complexity|depth|style stack
   \trace{sk}{fullstack@xpand (#2)}%

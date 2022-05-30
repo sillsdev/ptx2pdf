@@ -163,6 +163,7 @@
    \op@ninghooks{before}{\newch@rstyle}\relax% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
    \bgroup % start a group to encapsulate the style's formatting changes
+    \skipch@rstylefalse
     \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes

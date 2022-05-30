@@ -991,9 +991,12 @@
   \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
+    \trace{s}{eotp: \eotpn@me. st@k:\styst@k, cref:\c@rref}%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
-    \edef\eotpprevdepth{\the\prevdepth}%
-    \prevdepth=0pt \lastdepth=0pt  % prevdepth accounted for...
+    \ifhmode\edef\eotpprevdepth{0pt}\else\edef\eotpprevdepth{\the\prevdepth}%
+      \prevdepth=0pt 
+    \fi%
+    \lastdepth=0pt  % prevdepth accounted for...
     \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
     \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\global\earlyeotpskiptrue\fi}%
     \trace{g}{Box flagged for early skip? \ifearlyeotpskip true\else false\fi}%
