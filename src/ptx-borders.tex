@@ -304,7 +304,7 @@
     \edef\b@drhsides{\the\numexpr \ifx\b@drleft\tr@e 1 +\fi \ifx\b@drright\tr@e 1+\fi 0\relax}%
     \edef\b@drvsides{\the\numexpr \ifx\b@drtop\tr@e 1 +\fi \ifx\b@drbottom\tr@e 1+\fi 0\relax}%
     \edef\b@xintadj{\the\dimexpr \b@dr@top@edge - \b@dr@top@pad\relax}%
-    \trace{eb}{BotGap:\b@dr@bot@edge, TopGap:\b@dr@top@edge}%
+    \trace{eb}{BotGap:\b@dr@bot@edge, TopGap:\b@dr@top@edge, hsides:\b@drhsides, vsides:\b@drvsides}%
   \else
     \edef\b@drvsides{0}%
     \edef\b@drhsides{0}%

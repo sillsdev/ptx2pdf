@@ -804,6 +804,8 @@
     \fi
     \x@\orn@meas@ornament#4,\E%Measure the (horizontal) dimensions
     \dimen1=\dimexpr \fill@target - \fill@fixed - \fill@stretch \relax
+    \trace{orn}{Remaining:\the\dimen1 (\the\fill@target - \the\fill@mult - \the\fill@stretch - \the\fill@fixed)}% 
+    \dimen0=0.5\fill@stretch %
     %Set limits for stretch (dimen2) / shrink (dimen0)
     \ifdim\dimen2=0pt
       \dimen2=1em
@@ -1062,7 +1064,7 @@
   \vbox to #2{\baselineskip=0pt \lineskip=0pt \hsize=#1\box\orn@bdr@top\hbox to #1{\box\orn@bdr@left\hfill\box\orn@bdr@right}\box\orn@bdr@bot}%
 }
 \def\OrnamentBorder#1{%
-  \trace{orn}{OrnamentBorder}%
+  \trace{orn}{OrnamentBorder \b@rderbox@width * \b@rderbox@height}%
   \def\ornamentheight{#1}%
   \def\ornamentwidth{}%
   \def\ornXalign{0}%
@@ -1226,6 +1228,7 @@
       \def\ornYalign{.5}%
     \fi
   \fi
+  \def\ornXalign{0}%
   \endgraf
   \edef\rule@adjust{\the\dimexpr \rule@adjust + \ornYalign \dimexpr\rule@thk\relax\relax}%
   \bgroup 

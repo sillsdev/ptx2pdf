@@ -24,6 +24,63 @@ scripture where images of plants and animals are not permitted...
 \p
 \p
 \p \testornamentsh
+\pb
+\s Predefined zrules at 0.5 width and 0.9
+\p Notice how some of the rules contain optional elements, and other distort.  
+\p
+\boxornfalse
+VectorianRule1
+\zrule|cat="VectorianRule1" width="0.5"\*
+VectorianRule2
+\zrule|cat="VectorianRule2" width="0.5"\*
+VectorianRule3
+\zrule|cat="VectorianRule3" width="0.5"\*
+VectorianRule4
+\zrule|cat="VectorianRule4" width="0.5"\*
+VectorianRule3m
+\zrule|cat="VectorianRule3m" width="0.5"\*
+VectorianRule3b
+\zrule|cat="VectorianRule3b" width="0.5"\*
+VectorianRule85
+\zrule|cat="VectorianRule85" width="0.5"\*
+VectorianRule85v
+\zrule|cat="VectorianRule85v" width="0.5"\*
+VectorianRule85s
+\zrule|cat="VectorianRule85s" width="0.5"\*
+VectorianRule86
+\zrule|cat="VectorianRule86" width="0.5"\*
+VectorianRule87
+\zrule|cat="VectorianRule87" width="0.5"\*
+VectorianRule88
+\zrule|cat="VectorianRule88" width="0.5"\*
+VectorianRule89
+\zrule|cat="VectorianRule89" width="0.5"\*
+VectorianRule1
+\zrule|cat="VectorianRule1" width="0.7"\*
+VectorianRule2
+\zrule|cat="VectorianRule2" width="0.7"\*
+VectorianRule3
+\zrule|cat="VectorianRule3" width="0.7"\*
+VectorianRule4
+\zrule|cat="VectorianRule4" width="0.7"\*
+VectorianRule3m
+\zrule|cat="VectorianRule3m" width="0.7"\*
+VectorianRule3b
+\zrule|cat="VectorianRule3b" width="0.7"\*
+VectorianRule85
+\zrule|cat="VectorianRule85" width="0.7"\*
+VectorianRule85v
+\zrule|cat="VectorianRule85v" width="0.7"\*
+VectorianRule85s
+\zrule|cat="VectorianRule85s" width="0.7"\*
+VectorianRule86
+\zrule|cat="VectorianRule86" width="0.7"\*
+VectorianRule87
+\zrule|cat="VectorianRule87" width="0.7"\*
+VectorianRule88
+\zrule|cat="VectorianRule88" width="0.7"\*
+VectorianRule89
+\zrule|cat="VectorianRule89" width="0.7"\*
 \singlecolumnvert
 \pb
 
@@ -99,3 +156,5 @@ include half- and quarter-values.
 \esb\cat fullpage\cat*
 \p Test
 \esbe
+
+
