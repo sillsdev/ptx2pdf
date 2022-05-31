@@ -3,7 +3,7 @@
 from PIL import Image, ImageCms
 from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.pdfrw.compress import compress
-from ptxprint.pdfrw.objects import PdfDict, PdfName
+from ptxprint.pdfrw.objects import PdfDict, PdfName, PdfArray
 import numpy as np
 import io
 
@@ -40,9 +40,10 @@ def cmyk_vecto_rgb(img):
 def DCTDecode(dat):
     return Image.open(io.BytesIO(dat.encode("Latin-1")))
 
-img_modes = {'/DeviceRGB':  'RGB',  '/DefaultRGB':  'RGB',
-             '/DeviceCMYK': 'CMYK', '/DefaultCMYK': 'CMYK',
+img_modes = {'/DeviceRGB':  'RGB',  '/DefaultRGB':  'RGB',  '/CalRGB':  'RGB',
+             '/DeviceCMYK': 'CMYK', '/DefaultCMYK': 'CMYK', '/CalCMYK': 'CMYK',
              '/DeviceGray': 'L',    '/DefaultGray': 'L',
+             '/LAB': 'LAB',
              '/Indexed':    'P'}
 
 class PDFImage:
@@ -52,7 +53,8 @@ class PDFImage:
         self.spotc = None
         self.compressor = compressor or compress
         self.colorspace = xobj['/ColorSpace'] if '/ColorSpace' in xobj else None
-        if self.colorspace[0] == "/ICCBased":
+        self.cs = self.colorspace[0] if isinstance(self.colorspace, PdfArray) else self.colorspace
+        if self.cs == "/ICCBased":
             uncompress([self.colorspace[1]])
             self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream.encode("Latin-1")))
             compress([self.colorspace[1]])
@@ -64,13 +66,11 @@ class PDFImage:
             self.img = DCTDecode(xobj.stream)
         elif self.filt == "/FlateDecode":
             uncompress([xobj])
-            if self.colorspace[0] == "/Indexed":
+            if self.cs == "/Indexed":
                 cs, base, hival, lookup = self.colorspace
-            else:
-                cs = self.colorspace
-            mode = img_modes[cs]
+            mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
             self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream.encode("Latin-1"))
-            if cs == "/Indexed":
+            if self.cs == "/Indexed":
                 img.putpalette(lookup)
         elif self.filt == "/CCITTFaxDecode":
             print("No CCITTFaxDecode support yet")

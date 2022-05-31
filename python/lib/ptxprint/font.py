@@ -1034,6 +1034,8 @@ class FontRef:
         return "|".join(res)
 
     def _getstyle(self):
+        if self.style is None:
+            return ""
         bits = self.style.split(" ")
         for a in ("Italic", "Bold"):
             if getattr(self, "is"+a, False):
