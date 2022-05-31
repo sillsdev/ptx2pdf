@@ -71,7 +71,6 @@ class PDFImage:
             mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
             self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream.encode("Latin-1"))
             if self.cs == "/Indexed":
-                import pdb; pdb.set_trace()
                 img.putpalette(lookup)
         elif self.filt == "/CCITTFaxDecode":
             print("No CCITTFaxDecode support yet")
