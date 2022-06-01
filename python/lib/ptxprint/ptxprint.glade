@@ -3240,14 +3240,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3258,27 +3258,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3295,7 +3295,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -8607,7 +8607,7 @@ Chapter:</property>
                             <child>
                               <object class="GtkButton" id="btn_chooseBooks">
                                 <property name="label" translatable="yes">Ch_oose...</property>
-                                <property name="name">Multiple books chooser button</property>
+                                <property name="name">Multiple books chooser</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -8667,6 +8667,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_single">
                                 <property name="label" translatable="yes">Single Book:</property>
+                                <property name="name">Single book selector</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -8779,6 +8780,7 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_project">
+                                <property name="name">Select the Paratext project</property>
                                 <property name="width-request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -8962,6 +8964,7 @@ configuration to retrieve those settings.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_saveConfig">
                                         <property name="label">gtk-save</property>
+                                        <property name="name">Save configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -8988,6 +8991,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                                     <child>
                                       <object class="GtkButton" id="btn_deleteConfig">
                                         <property name="label">gtk-delete</property>
+                                        <property name="name">Delete configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -9033,6 +9037,7 @@ saved/shared configuration named above.</property>
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="t_configNotes">
+                                        <property name="name">(Optional) Notes about configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Optional: Provide a description about the
@@ -9081,6 +9086,7 @@ the password that was set.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_lockunlock">
                                         <property name="label" translatable="yes">Lock</property>
+                                        <property name="name">Lock configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -9112,6 +9118,7 @@ locked.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_reloadConfig">
                                         <property name="label">↺</property>
+                                        <property name="name">Reload saved configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -9129,6 +9136,7 @@ reload the saved Config.</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="btn_copyToTargetProj">
+                                        <property name="name">Copy configuration to other projects </property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -9152,6 +9160,7 @@ settings for a similar project.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_savedConfig">
+                                        <property name="name">Name of saved configuration</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">Select a previously-saved
@@ -9286,6 +9295,7 @@ the Notes field below.</property>
                             </child>
                             <child>
                               <object class="GtkEntry" id="t_copyrightStatement">
+                                <property name="name">Copyright details</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="tooltip-text" translatable="yes">It is important to include a copyright statement on every publication. By default this will be set according to the Paratext project settings, but you can edit it here if needed. 
@@ -9311,6 +9321,7 @@ but :// used in URLs will still be preserved</property>
                             <child>
                               <object class="GtkButton" id="btn_resetCopyright">
                                 <property name="label">↺</property>
+                                <property name="name">Reload copyright from Paratext project</property>
                                 <property name="width-request">-1</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -9343,6 +9354,7 @@ Paratext project settings.</property>
                             </child>
                             <child>
                               <object class="GtkComboBoxText" id="ecb_licenseText">
+                                <property name="name">License details</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">Select a standard License Text or type your own customized License.</property>
@@ -9475,6 +9487,7 @@ Configuration settings.</property>
                                       <object class="GtkCheckButton" id="c_pagegutter">
                                         <property name="label" translatable="yes">Binding
 Gutter (mm):</property>
+                                        <property name="name">Use binding gutter</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -9498,6 +9511,7 @@ be useful for a journaling layout.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_pagegutter">
+                                        <property name="name">Binding gutter amount</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">This is the amount of space to be
@@ -9589,7 +9603,7 @@ space between lines of text.</property>
                                     </child>
                                     <child>
                                       <object class="GtkComboBoxText" id="ecb_pagesize">
-                                        <property name="name">Page size</property>
+                                        <property name="name">Page size setting</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
@@ -9886,6 +9900,7 @@ or turn on the Crop marks for the printer.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_outerGutter">
                                         <property name="label" translatable="yes">Outer Gutter</property>
+                                        <property name="name">Place gutter on outer edge of page</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -9907,6 +9922,7 @@ commonly seen in a journaling layout.</property>
                                       <object class="GtkCheckButton" id="c_lockFontSize2Baseline">
                                         <property name="label" translatable="yes">Lock
 Ratio</property>
+                                        <property name="name">Lock ratio of font size to line spacing</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -10272,6 +10288,7 @@ to Top of Text (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_headerposition">
+                                    <property name="name">Header spacing</property>
                                     <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -10352,6 +10369,7 @@ End of Page (mm):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_footerposition">
+                                    <property name="name">Footer position</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This setting can be used to increase/decrease the 
@@ -10394,6 +10412,7 @@ space between the end of the text and the footer line.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_bottommargin">
+                                    <property name="name">Bottom margin</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
@@ -10450,6 +10469,7 @@ Width (mm):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_margins">
+                                    <property name="name">Side margin width</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
@@ -10508,6 +10528,7 @@ and Top of Text (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
+                                    <property name="name">Horizontal rule spacing to text</property>
                                     <property name="height-request">35</property>
                                     <property name="can-focus">True</property>
                                     <property name="no-show-all">True</property>
@@ -10541,6 +10562,7 @@ above the base line of the first line of the body text.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_topmargin">
+                                    <property name="name">Top margin</property>
                                     <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -10759,6 +10781,7 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_rhrule">
                                     <property name="label" translatable="yes">Horizontal Rule</property>
+                                    <property name="name">Header horizontal rule (line)</property>
                                     <property name="height-request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -28220,6 +28243,7 @@ from XeTeX processing.</property>
             <property name="valign">end</property>
             <child>
               <object class="GtkComboBox" id="fcb_uiLevel">
+                <property name="name">Mini, Basic or Advanced View option</property>
                 <property name="width-request">100</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -28249,6 +28273,7 @@ depending on the level set here.</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_interfaceLang">
+                <property name="name">User interface language</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="tooltip-text" translatable="yes">Several PTXprint interface languages are 
@@ -28330,6 +28355,7 @@ Click to visit download page on the website.</property>
             </child>
             <child>
               <object class="GtkCheckButton" id="c_quickRun">
+                <property name="name">Quick run (to speed up process)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
@@ -28374,7 +28400,8 @@ A short list of relevant topics
 will appear above. Select one
 to jump directly to the setting
 which should be highlighted.</property>
-                <property name="margin-start">6</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="primary-icon-name">edit-find-symbolic</property>
@@ -28404,6 +28431,8 @@ Otherwise, use the 'Return' button to get
 back to the primary project in order to 
 print a diglot with both texts.</property>
                 <property name="halign">start</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="resize-mode">immediate</property>
@@ -28425,7 +28454,7 @@ print a diglot with both texts.</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Close the PTXprint tool without re-creating the PDF.</property>
                 <property name="halign">end</property>
-                <property name="margin-start">6</property>
+                <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
