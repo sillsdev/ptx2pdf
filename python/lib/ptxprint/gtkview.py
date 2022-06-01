@@ -472,7 +472,7 @@ class GtkViewModel(ViewModel):
                 del node.attrib['translatable']
             elif node.get('name', '') == 'name':
                 node.text = _(node.text)
-            if node.tag == "property" and nid is not None and not nid.startswith("lb_"):
+            if node.tag == "property" and nid is not None and not nid.startswith("lb_") and not nid.startswith("l_"):
                 n = node.get('name')
                 if n in ("name", "tooltip-text", "label"):
                     self.finddata[node.text] = (nid, 1 if  n == "tooltip-text" else 4)
@@ -797,11 +797,17 @@ class GtkViewModel(ViewModel):
         self.popover = Gtk.Popover()
         self.popover.set_position(Gtk.PositionType.TOP)
         self.popover.set_relative_to(entry)
-        self.popover.set_size_request(300, 100)
+        # Set the size of the pop-up help list
+        popupHeight = min(300, len(choices)*33+1)
+        self.popover.set_size_request(300, popupHeight)
         scr = Gtk.ScrolledWindow()
         ls = Gtk.ListStore(str, str)
-        for w, v in choices:
-            ls.append([w, v])
+        if len(choices):
+            for w, v in choices:
+                ls.append([w, v])
+                print([w,v])
+        else:
+            ls.append(["t_find", _("No matches found - try another search term")])
         tv = Gtk.TreeView(model=ls)
         tv.set_headers_visible(False)
         tv.set_activate_on_single_click(True)
