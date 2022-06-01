@@ -472,7 +472,7 @@ class GtkViewModel(ViewModel):
                 del node.attrib['translatable']
             elif node.get('name', '') == 'name':
                 node.text = _(node.text)
-            if node.tag == "property" and nid is not None:
+            if node.tag == "property" and nid is not None and not nid.startswith("lb_"):
                 n = node.get('name')
                 if n in ("name", "tooltip-text", "label"):
                     self.finddata[node.text] = (nid, 1 if  n == "tooltip-text" else 4)
@@ -766,6 +766,9 @@ class GtkViewModel(ViewModel):
     def onFindClicked(self, entry, which, event):
         txt = self.get("t_find")
         if which == Gtk.EntryIconPosition.PRIMARY:
+            if self.builder.get_object(txt) is not None:
+                self.highlightwidget(txt)
+                return
             scores = {}
             for k, v in self.finddata.items():
                 p = -1
@@ -813,14 +816,15 @@ class GtkViewModel(ViewModel):
     def _onFindRowActivated(self, tv, tp, tc):
         selection = tv.get_selection()
         model, i = selection.get_selected()
-        self.searchWidget = model[i][0]
-        self.highlightwidget(self.searchWidget, highlight=True)
+        self.highlightwidget(model[i][0], highlight=True)
         self.popover.destroy()
 
     def highlightwidget(self, wid, highlight=True):
         w = self.builder.get_object(wid)
         if w is None:
             return
+        if highlight:
+            self.searchWidget = wid
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)

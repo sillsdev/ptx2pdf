@@ -7,6 +7,33 @@ from ptxprint.pdfrw.objects import PdfDict, PdfName, PdfArray
 import numpy as np
 import io
 
+def getdef(v):
+    def dget(d, k):
+        return dict.get(d, k, v)
+    return dget
+
+# https://en.wikipedia.org/wiki/SRGB#The_sRGB_transfer_function_.28.22gamma.22.29
+_xyz2rgb = np.matrix([[3.2404542, -1.5371385, -0.4985314], [-0.969266, 1.8760108, 0.041556], [0.0556434, -0.2040259, 1.0572252]])
+
+def calgray_vecto_rgb(img, parms):
+    wp = [float(x) for x in parms['/WhitePoint']]
+    bp = [float(x) for x in parms.get('/BlackPoint', getdef([0, 0, 0]))]
+    gamma = float(parms.get('/Gamma', 1.0))
+    xyz = (img.repeat(2, axis=2) ** gamma) * wp
+    res = xyz @ _xyz2rgb
+    return res
+
+def calrgb_vecto_rgb(img, parms):
+    wp = [float(x) for x in parms['/WhitePoint']]
+    bp = [float(x) for x in parms.get('/BlackPoint', getdef([0, 0, 0]))]
+    gamma = [float(x) for x in parms.get('/Gamma', getdef([1, 1, 1]))]
+    matrix = [float(x) for x in parms.get('/Matrix', getdef([1, 0, 0, 0, 1, 0, 0, 0, 1]))]
+    matnp = np.matrix([matrix[:3], matrix[3:6], matrix[6::]])
+    val = img ** gamma
+    xyz = np.einsum("ijl,kl->ijl", val, matnp)
+    res = np.einsum("ijl,kl->ijl", xyz, _xyz2rgb)
+    return res
+    
 # Thanks to Divakar: https://stackoverflow.com/questions/38055065/efficient-way-to-convert-image-stored-as-numpy-array-into-hsv
 def rgb_vecto_hsv(img):
     """Input is ndarray.shape(y, x, 3)"""
@@ -42,7 +69,7 @@ def DCTDecode(dat):
 
 img_modes = {'/DeviceRGB':  'RGB',  '/DefaultRGB':  'RGB',  '/CalRGB':  'RGB',
              '/DeviceCMYK': 'CMYK', '/DefaultCMYK': 'CMYK', '/CalCMYK': 'CMYK',
-             '/DeviceGray': 'L',    '/DefaultGray': 'L',
+             '/DeviceGray': 'L',    '/DefaultGray': 'L',    '/CalGray': 'L',
              '/LAB': 'LAB',
              '/Indexed':    'P'}
 
@@ -69,8 +96,16 @@ class PDFImage:
             if self.cs == "/Indexed":
                 cs, base, hival, lookup = self.colorspace
             mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
+            if mode == "L" and self.bits == 1:
+                mode = "1"
             self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream.encode("Latin-1"))
-            if self.cs == "/Indexed":
+            if self.cs == "/CalRGB":
+                self.img = calrgb_vecto_rgb(np.asarray(self.img), self.colorspace[1])
+                self.colorspace = "/DeviceRGB"
+            elif self.cs == "/CalGray":
+                self.img = calgray_vecto_rgb(np.asarray(self.img), self.colorspace[1])
+                self.colorspace = "/DeviceRGB"
+            elif self.cs == "/Indexed":
                 img.putpalette(lookup)
         elif self.filt == "/CCITTFaxDecode":
             print("No CCITTFaxDecode support yet")
