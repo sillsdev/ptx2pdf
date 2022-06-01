@@ -37,6 +37,8 @@ def calrgb_vecto_rgb(img, parms):
 # Thanks to Divakar: https://stackoverflow.com/questions/38055065/efficient-way-to-convert-image-stored-as-numpy-array-into-hsv
 def rgb_vecto_hsv(img):
     """Input is ndarray.shape(y, x, 3)"""
+    if len(img.shape) == 2:
+        img = np.dstack((img, img, img))
     maxc = img.max(-1)
     minc = img.min(-1)
 
