@@ -475,7 +475,7 @@ class GtkViewModel(ViewModel):
             if node.tag == "property" and nid is not None and not nid.startswith("lb_") and not nid.startswith("l_"):
                 n = node.get('name')
                 if n in ("name", "tooltip-text", "label"):
-                    self.finddata[node.text] = (nid, 1 if  n == "tooltip-text" else 4)
+                    self.finddata[node.text.lower()] = (nid, 1 if  n == "tooltip-text" else 4)
                 if n == 'name':
                     self.widgetnames[nid] = node.text
             if node.get('name') in ('pixbuf', 'icon', 'logo'):
@@ -672,8 +672,9 @@ class GtkViewModel(ViewModel):
             .viewernb {background-color: #d3d3d3}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
-            .changed {font-weight: bold} 
-            .highlighted { background-color: peachpuff}
+            .changed {font-weight: bold}
+            button.highlighted { background-color: peachpuff; background: peachpuff}
+            .highlighted {background-color: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -764,7 +765,7 @@ class GtkViewModel(ViewModel):
             return False
 
     def onFindClicked(self, entry, which, event):
-        txt = self.get("t_find")
+        txt = self.get("t_find").lower()
         if which == Gtk.EntryIconPosition.PRIMARY:
             if self.builder.get_object(txt) is not None:
                 self.highlightwidget(txt)
@@ -798,7 +799,7 @@ class GtkViewModel(ViewModel):
         self.popover.set_position(Gtk.PositionType.TOP)
         self.popover.set_relative_to(entry)
         # Set the size of the pop-up help list
-        popupHeight = min(300, len(choices)*33+1)
+        popupHeight = min(300, min(7,len(choices))*33+1)
         self.popover.set_size_request(300, popupHeight)
         scr = Gtk.ScrolledWindow()
         ls = Gtk.ListStore(str, str)
@@ -834,7 +835,7 @@ class GtkViewModel(ViewModel):
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
-            if name.startswith("tb_"):
+            if name.startswith("tb_") and name in self.notebooks['Main']:
                 if highlight:
                     w.get_style_context().add_class("highlighted")
                     mpgnum = self.notebooks['Main'].index(name)
@@ -842,6 +843,8 @@ class GtkViewModel(ViewModel):
                 else:
                     w.get_style_context().remove_class("highlighted")
                 break
+            elif name.startswith("ex_"):
+                parent.set_expanded(True)
             elif name in _dlgtriggers:
                 if highlight:
                     w.get_style_context().add_class("highlighted")
