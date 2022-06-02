@@ -507,7 +507,7 @@ class GtkViewModel(ViewModel):
         logger.debug("Glade loaded in gtkview")
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
-        self.searchWidget = None
+        self.searchWidget = []
         self.config_dir = None
         self.initialised = False
         self.booklistKeypressed = False
@@ -789,9 +789,9 @@ class GtkViewModel(ViewModel):
                 choices.append((k, n))
             self._makeFindPopup(entry, choices)
         else:
-            if self.searchWidget is not None:
-                self.highlightwidget(self.searchWidget, highlight=False)
-                self.searchWidget = None
+            for wid in self.searchWidget:
+                self.highlightwidget(wid, highlight=False)
+            self.searchWidget = []
             self.set("t_find", "")
 
     def _makeFindPopup(self, entry, choices):
@@ -799,14 +799,13 @@ class GtkViewModel(ViewModel):
         self.popover.set_position(Gtk.PositionType.TOP)
         self.popover.set_relative_to(entry)
         # Set the size of the pop-up help list
-        popupHeight = min(300, min(7,len(choices))*33+1)
+        popupHeight = min(300, min(7,len(choices))*30)
         self.popover.set_size_request(300, popupHeight)
         scr = Gtk.ScrolledWindow()
         ls = Gtk.ListStore(str, str)
         if len(choices):
             for w, v in choices:
                 ls.append([w, v])
-                print([w,v])
         else:
             ls.append(["t_find", _("No matches found - try another search term")])
         tv = Gtk.TreeView(model=ls)
@@ -831,7 +830,7 @@ class GtkViewModel(ViewModel):
         if w is None:
             return
         if highlight:
-            self.searchWidget = wid
+            self.searchWidget.append(wid)
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
