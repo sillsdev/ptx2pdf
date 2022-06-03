@@ -289,7 +289,7 @@ class Xrefs:
 components = [
     ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*", "lemma"),
     ("c_strongsTranslit", r"\wl {translit}\wl*", "translit"),
-    ("c_strongsRenderings", r"{_defn};", "_defn"),
+    ("c_strongsRenderings", r"\k {_defn}\k*;", "_defn"),
     ("c_strongsDefn", r"{trans};", "trans"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
 ]

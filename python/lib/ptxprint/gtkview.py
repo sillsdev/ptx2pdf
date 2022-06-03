@@ -673,8 +673,9 @@ class GtkViewModel(ViewModel):
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
-            button.highlighted { background-color: peachpuff; background: peachpuff}
-            .highlighted {background-color: peachpuff}
+            /* button.highlighted { background-color: peachpuff; background: peachpuff} */
+            .highlighted {background-color: peachpuff; background: peachpuff}
+            combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
