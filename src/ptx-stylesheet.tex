@@ -1970,7 +1970,7 @@
 }
 \def\onecolwidth#1{%
   \dimen9=\textwidth
-  \advance \dimen9 by -\columnshift
+  \ifb@dy\iftob@dy\else\advance \dimen9 by -\columnshift\fi\fi
   \ifx\XrefNotes\empty\relax\else\ifx\ch@pter\empty\else\ifnum\BodyColumns=1
     \advance \dimen9 by -\XrefNotesWidth
     \advance \dimen9 by -\XrefNotesMargin

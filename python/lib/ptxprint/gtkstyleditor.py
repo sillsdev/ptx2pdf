@@ -133,8 +133,8 @@ usfmpgname = {
 }
 
 def triefit(k, base, start):
-    if start == len(k) and start > 1:
-        return
+#    if start == len(k) and start > 1:
+#        return
     for i in range(start, len(k)):
         if k[:i] in base:
             triefit(k, base[k[:i]], i+1)
