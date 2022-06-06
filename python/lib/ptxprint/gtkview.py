@@ -786,8 +786,9 @@ class GtkViewModel(ViewModel):
                     scores[v[0]] = s + count * v[1]
             choices = []
             for k in sorted(scores.keys(), key=lambda x:-scores[x]):
-                n = self.widgetnames.get(k, k)
-                choices.append((k, n))
+                n = self.widgetnames.get(k, None)
+                if n is not None:
+                    choices.append((k, n))
             self._makeFindPopup(entry, choices)
         else:
             for wid in self.searchWidget:
