@@ -103,7 +103,7 @@ class UsfmCollection:
             for bk in list(self.booknames.bookStrs.keys()):
                 tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
-                if bkfile is None:
+                if bkfile is None or not len(bkfile):
                     continue
                 bkfile = os.path.join(self.basedir, bkfile)
                 if not os.path.exists(bkfile):
