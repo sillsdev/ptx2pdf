@@ -3240,14 +3240,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3258,27 +3258,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3295,7 +3295,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -8780,7 +8780,7 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkComboBox" id="fcb_project">
-                                <property name="name">Select the Paratext project</property>
+                                <property name="name">Paratext project code</property>
                                 <property name="width-request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -9369,6 +9369,7 @@ Paratext project settings.</property>
                                 </items>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
+                                    <property name="name">License details</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Select one of these licenses, or type a different license.
@@ -9877,7 +9878,7 @@ can be customized.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_grid">
                                         <property name="label" translatable="yes">Marks &amp; Guides</property>
-                                        <property name="name">Enable marks and guides</property>
+                                        <property name="name">Marks &amp; Guides</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -10013,7 +10014,7 @@ the text of the two columns
                                 <child>
                                   <object class="GtkCheckButton" id="c_verticalrule">
                                     <property name="label" translatable="yes">Vertical Rule in Gutter</property>
-                                    <property name="name">Enable vertical rule in gutter</property>
+                                    <property name="name">Vertical Rule in Gutter</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -10781,7 +10782,7 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_rhrule">
                                     <property name="label" translatable="yes">Horizontal Rule</property>
-                                    <property name="name">Header horizontal rule (line)</property>
+                                    <property name="name">Horizontal Rule</property>
                                     <property name="height-request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -10996,6 +10997,7 @@ Margins, Columns and Rules (lines).</property>
                                   <object class="GtkButton" id="btn_findMissingChars">
                                     <property name="label" translatable="yes">Find Missing
 Characters:</property>
+                                    <property name="name">Find Missing Characters button</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -11043,6 +11045,7 @@ Missing Characters:</property>
                                 <child>
                                   <object class="GtkButton" id="bl_fontExtraR">
                                     <property name="label" translatable="yes">Select Font...</property>
+                                    <property name="name">Select font to display missing characters</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -11058,6 +11061,7 @@ which are not in the Regular font.</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_missingChars">
+                                    <property name="name">Missing Characters</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">First use the button (on the left) to find
@@ -11094,6 +11098,7 @@ to enter hard-to-type characters.</property>
                             <child type="label">
                               <object class="GtkCheckButton" id="c_useFallbackFont">
                                 <property name="label" translatable="yes">Use Fallback Font</property>
+                                <property name="name">Use Fallback Font</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -11191,6 +11196,7 @@ to ensure that they are displayed properly.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_fontR">
                                         <property name="label" translatable="yes">Select Font...</property>
+                                        <property name="name">Select Regular font</property>
                                         <property name="width-request">160</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11209,6 +11215,7 @@ font features and, if needed, Graphite rendering.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_fontB">
                                         <property name="label" translatable="yes">Select Font...</property>
+                                        <property name="name">Select Bold font</property>
                                         <property name="width-request">160</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11226,6 +11233,7 @@ locate the bold style and will fake the style.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_fontI">
                                         <property name="label" translatable="yes">Select Font...</property>
+                                        <property name="name">Select Italic font</property>
                                         <property name="width-request">160</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11243,6 +11251,7 @@ locate the italic style and will fake the style.</property>
                                     <child>
                                       <object class="GtkButton" id="bl_fontBI">
                                         <property name="label" translatable="yes">Select Font...</property>
+                                        <property name="name">Select Bold Italic font</property>
                                         <property name="width-request">160</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11260,6 +11269,7 @@ locate the style and will fake the bold-italic style.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_refreshFonts">
                                         <property name="label" translatable="yes">↺</property>
+                                        <property name="name">Refresh Font List button</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -11285,6 +11295,7 @@ And remember to Refresh the Font List again.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_colorfonts">
                                         <property name="label" translatable="yes">Enable Colored Text (as Specified in Stylesheet)</property>
+                                        <property name="name">Enable Colored Text (as Specified in Stylesheet)</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -11372,6 +11383,7 @@ Direction:</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_textDirection">
+                                    <property name="name">Text direction (Right-to-left RTL etc)</property>
                                     <property name="width-request">140</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -11407,6 +11419,7 @@ Script:</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_script">
+                                    <property name="name">Text script</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">PTXprint provides additional typesetting 
@@ -11432,6 +11445,7 @@ In most cases leave this setting as "Default".</property>
                                 <child>
                                   <object class="GtkButton" id="btn_scrsettings">
                                     <property name="label" translatable="yes">Additional Script Settings...</property>
+                                    <property name="name">Additional Script Settings...</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -11464,6 +11478,7 @@ Scripts:</property>
                                   <object class="GtkCheckButton" id="c_linebreakon">
                                     <property name="label" translatable="yes">Specify Line
 Break Locale:</property>
+                                    <property name="name">Enable Line Break Locale</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -11485,6 +11500,7 @@ rules which can be enabled by using the gr locale.</property>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_linebreaklocale">
+                                    <property name="name">Set Line Break Locale</property>
                                     <property name="width-request">65</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -11573,6 +11589,7 @@ Settings?</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_spacing">
                                         <property name="label" translatable="yes">Between Words</property>
+                                        <property name="name">Spacing Between Words</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -11595,6 +11612,7 @@ grow paragrahs when balancing pages.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_letterSpacing">
                                         <property name="label" translatable="yes">Between Letters</property>
+                                        <property name="name">Spacing Between Letters</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -11624,6 +11642,7 @@ These two settings are mutually exclusive.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_minSpace">
+                                        <property name="name">Spacing Between Words (Min/Shrink)</property>
                                         <property name="width-request">115</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11655,6 +11674,7 @@ space width. TeX's default value is 66%.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_maxSpace">
+                                        <property name="name">Spacing Between Words (Max/Stretch)</property>
                                         <property name="width-request">115</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -11686,6 +11706,7 @@ space width. TeX's default value is 150%.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_letterShrink">
+                                        <property name="name">Spacing Between Letters (Min/Shrink)</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Values are in percentage of the text point size.</property>
@@ -11703,6 +11724,7 @@ space width. TeX's default value is 150%.</property>
                                     </child>
                                     <child>
                                       <object class="GtkSpinButton" id="s_letterStretch">
+                                        <property name="name">Spacing Between Letters (Max/Stretch)</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Values are in percentage of the text point size.
@@ -11783,6 +11805,7 @@ can grow to when necessary.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_editParaAdjList">
                                         <property name="label" translatable="yes">Edit Adjust List...</property>
+                                        <property name="name">Adjust Layout by Shrinking or Expanding Paragraphs</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -11891,6 +11914,7 @@ or Expanding Paragraphs:</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_hyphenate">
                                         <property name="label" translatable="yes">Hyphenate</property>
+                                        <property name="name">Hyphenate</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -11910,6 +11934,7 @@ hyphenation list in Paratext.</property>
                                     <child>
                                       <object class="GtkButton" id="btn_generateHyphenationList">
                                         <property name="label" translatable="yes">Create Hyphenation List</property>
+                                        <property name="name">Create Hyphenation List</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -11932,6 +11957,7 @@ TeX hyphen list for this language.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_omitHyphen">
                                         <property name="label" translatable="yes">Omit '-'Hyphen</property>
+                                        <property name="name">Omit hyphen from hyphenated words</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -13087,6 +13113,7 @@ Also settings for special books.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_addColon">
                                     <property name="label" translatable="yes">Add a Colon ':' After \fq and \xq</property>
+                                    <property name="name">Add colon after quotes text in notes</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -13107,6 +13134,7 @@ elements visually distinct.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_keepBookWithRefs">
                                     <property name="label" translatable="yes">Keep Book Names and Refs Together</property>
+                                    <property name="name">Keep Book Names and Refs Together</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -13131,6 +13159,7 @@ cross-references imported from external lists.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_glossaryFootnotes">
                                     <property name="label" translatable="yes">Show All Glossary Entries as Footnotes</property>
+                                    <property name="name">Show All Glossary Entries as Footnotes</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -13182,6 +13211,7 @@ Separating Notes:</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_notespacingmin">
+                                    <property name="name">Minimum Horizontal Space Separating Notes</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This spacing is set in points (pts). Changing this will 
@@ -13209,6 +13239,7 @@ between notes that have been run together.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_notespacingmax">
+                                    <property name="name">Maximum Horizontal Space Separating Notes</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This spacing is set in points (pts). Changing this will 
@@ -13268,6 +13299,7 @@ between notes that have been run together.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_internote">
+                                    <property name="name">Vertical Space Between Footnoes and xRefs</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">When Footnotes and Cross-references are not blended
@@ -13357,6 +13389,7 @@ Footnotes and xRefs (pt):</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_fnomitcaller">
                                             <property name="label" translatable="yes">Show Callers in Notes Area</property>
+                                            <property name="name">Show Callers in Notes Area</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13376,6 +13409,7 @@ quickly find the footnote from the text.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_fnpageresetcallers">
                                             <property name="label" translatable="yes">Reset Callers on Page</property>
+                                            <property name="name">Reset Callers on Page</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13406,6 +13440,7 @@ Print a second time before it applies.</property>
                                               <object class="GtkCheckButton" id="c_fnautocallers">
                                                 <property name="label" translatable="yes">Show Callers 
 in the Text: </property>
+                                                <property name="name">Show Callers in the Text</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
@@ -13492,6 +13527,7 @@ showing, then a default set will appear.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_fnOverride">
                                             <property name="label" translatable="yes">Override Footnote-Specific -/+ Settings in Text</property>
+                                            <property name="name">Override Footnote Settings in Text</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13515,6 +13551,7 @@ has been specified within the text itself.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_fneachnewline">
                                             <property name="label" translatable="yes">Start Each Footnote on a New Line</property>
+                                            <property name="name">Start Each Footnote on a New Line</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13554,6 +13591,7 @@ line then set this option.</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_fnpos_endnote">
                                             <property name="label" translatable="yes">End Notes</property>
+                                            <property name="name">Footnote placement: End notes</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13576,6 +13614,7 @@ and place them all at the end of the book.</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_fnpos_column">
                                             <property name="label" translatable="yes">End of Column</property>
+                                            <property name="name">Footnote placement: End of column</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -13621,6 +13660,7 @@ usually placed at the end of each page.
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="l_fnPos">
+                                            <property name="name">Footnote placement: End of page</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
@@ -13708,6 +13748,7 @@ Text From Notes:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_fnAboveSpace">
+                                                    <property name="name">Space Above Footnote Rule</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">The vertical space between the main
@@ -13735,6 +13776,7 @@ solve the problem.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_fnBelowSpace">
+                                                    <property name="name">Space Below Footnote Rule</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">This is the vertical space/gap (pts) between
@@ -13773,6 +13815,7 @@ the rule and the footnotes.</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_footnoterule">
                                                     <property name="label" translatable="yes">Show Footnote Rule</property>
+                                                    <property name="name">Show Footnote Rule</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
@@ -13805,6 +13848,7 @@ the body text from the footnote area.</property>
                                                         <property name="column-spacing">8</property>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_fnIndent">
+                                                            <property name="name">Footnote Rule: Indent</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="tooltip-text" translatable="yes">This is the amount to indent the rule.</property>
@@ -13824,6 +13868,7 @@ the body text from the footnote area.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_fnLength">
+                                                            <property name="name">Footnote Rule: Length</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="tooltip-text" translatable="yes">The length of the rule as a percentage
@@ -13845,6 +13890,7 @@ of the column/page width.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkSpinButton" id="s_fnThick">
+                                                            <property name="name">Footnote Rule: Line Thickness</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="tooltip-text" translatable="yes">The thickness of the rule.</property>
@@ -13866,6 +13912,7 @@ of the column/page width.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkComboBox" id="fcb_fnHorizPosn">
+                                                            <property name="name">Footnote Rule: Horizontal position</property>
                                                             <property name="width-request">100</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">False</property>
@@ -14019,6 +14066,7 @@ and Parameters:</property>
                                     <child type="label">
                                       <object class="GtkCheckButton" id="c_includeFootnotes">
                                         <property name="label" translatable="yes">Include Footnotes</property>
+                                        <property name="name">Include Footnotes</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
