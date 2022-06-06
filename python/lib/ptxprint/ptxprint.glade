@@ -22462,6 +22462,7 @@ the marker you need.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSearchEntry" id="t_styleSearch">
+                                    <property name="name">Find style</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">If you are not sure which category
@@ -22692,6 +22693,7 @@ properties for this style.</property>
                                 </child>
                                 <child>
                                   <object class="GtkExpander" id="ex_styChar">
+                                    <property name="name">Styles: Select font</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <child>
@@ -22720,6 +22722,7 @@ properties for this style.</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_styFontSize">
+                                            <property name="name">Styles: Font size factor</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -22744,6 +22747,7 @@ properties for this style.</property>
                                           <object class="GtkCheckButton" id="c_styFontScale">
                                             <property name="label" translatable="yes">Scale Relative
 to Parent</property>
+                                            <property name="name">Styles: Scale relative to parent</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -22761,6 +22765,7 @@ to Parent</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_styFaceBold">
                                             <property name="label" translatable="yes">Bold</property>
+                                            <property name="name">Styles: Bold</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -22776,6 +22781,7 @@ to Parent</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_styFaceItalic">
                                             <property name="label" translatable="yes">Italic</property>
+                                            <property name="name">Styles: Italic</property>
                                             <property name="width-request">60</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -22792,6 +22798,7 @@ to Parent</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_styFaceSuperscript">
                                             <property name="label" translatable="yes">Superscript   / </property>
+                                            <property name="name">Styles: Superscript</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -22812,6 +22819,7 @@ to Parent</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_stySmallCap">
                                             <property name="label" translatable="yes">SmallCaps</property>
+                                            <property name="name">Styles: Smallcaps</property>
                                             <property name="width-request">90</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -22828,6 +22836,7 @@ to Parent</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_styRaise">
+                                            <property name="name">Styles: Raise</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="tooltip-text" translatable="yes">How much to raise the text (in pts).</property>
@@ -22851,6 +22860,7 @@ to Parent</property>
                                         </child>
                                         <child>
                                           <object class="GtkColorButton" id="col_styColor">
+                                            <property name="name">Styles: Color</property>
                                             <property name="width-request">40</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
@@ -23006,6 +23016,7 @@ line for this font are provided for reference. </property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_styFaceUnderline">
                                             <property name="label" translatable="yes">Underline</property>
+                                            <property name="name">Styles: Underline</property>
                                             <property name="visible">True</property>
                                             <property name="sensitive">False</property>
                                             <property name="can-focus">True</property>
@@ -23071,6 +23082,7 @@ Email: ptxprint_support@sil.org</property>
                                         <property name="column-spacing">6</property>
                                         <child>
                                           <object class="GtkComboBox" id="fcb_styJustification">
+                                            <property name="name">Styles: Paragraph alignment</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="can-default">True</property>
@@ -23116,6 +23128,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_styLeftMargin">
+                                            <property name="name">Styles: Left indent</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -23137,6 +23150,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_styRightMargin">
+                                            <property name="name">Styles: Right indent</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -23158,6 +23172,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_styLineSpacing">
+                                            <property name="name">Styles: Line spacing</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -23181,6 +23196,7 @@ Email: ptxprint_support@sil.org</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_styAbsoluteLineSpacing">
                                             <property name="label" translatable="yes">Use Absolute Spacing (in pts)</property>
+                                            <property name="name">Styles: Use absolute line spacing</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -23197,6 +23213,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_stySpaceBefore">
+                                            <property name="name">Styles: Space before</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -23218,6 +23235,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkSpinButton" id="s_stySpaceAfter">
+                                            <property name="name">Styles: Space after</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="halign">start</property>
@@ -23239,6 +23257,7 @@ Email: ptxprint_support@sil.org</property>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
+                                            <property name="name">Styles: First line indent</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="hexpand">True</property>
@@ -23484,6 +23503,7 @@ Factor:</property>
                                                 <property name="column-spacing">6</property>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_styCallerRaise">
+                                                    <property name="name">Note settings: Caller raise</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
@@ -23505,6 +23525,7 @@ Factor:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_styNoteCallerRaise">
+                                                    <property name="name">Note settings: Note caller style</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
@@ -23654,6 +23675,7 @@ Into Style:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_styCallerStyle">
+                                                    <property name="name">Note settings: Caller style</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
@@ -23666,6 +23688,7 @@ Into Style:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_styNoteCallerStyle">
+                                                    <property name="name">Note settings: Note caller style</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
@@ -23678,6 +23701,7 @@ Into Style:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkEntry" id="t_NoteBlendInto">
+                                                    <property name="name">Note settings: Note blend into style</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="halign">start</property>
@@ -23766,6 +23790,7 @@ Position:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkComboBox" id="fcb_stytcVpos">
+                                                    <property name="name">Table settings: Vertical position of \tc markers</property>
                                                     <property name="width-request">150</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
@@ -23838,6 +23863,7 @@ Position:</property>
                                                 <property name="column-spacing">5</property>
                                                 <child>
                                                   <object class="GtkColorButton" id="col_sb_backColor">
+                                                    <property name="name">Sidebar settings: Color</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
@@ -23854,6 +23880,7 @@ Position:</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_sbAlpha">
+                                                    <property name="name">Sidebar settings: Alpha (transparency)</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">The transparency or alpha value
@@ -23878,6 +23905,7 @@ of the background colour:
                                                 </child>
                                                 <child>
                                                   <object class="GtkSpinButton" id="s_sbWidth">
+                                                    <property name="name">Sidebar settings: Width</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">Sidebar width as a percentage (%)
@@ -23901,6 +23929,7 @@ of the column/page width.</property>
                                                 <child>
                                                   <object class="GtkButton" id="btn_sbBorders">
                                                     <property name="label" translatable="yes">Borders...</property>
+                                                    <property name="name">Sidebar settings: Borders</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
@@ -23918,6 +23947,7 @@ for this category of sidebar.</property>
                                                 <child>
                                                   <object class="GtkButton" id="btn_sbFGIDia">
                                                     <property name="label" translatable="yes">FG ...</property>
+                                                    <property name="name">Sidebar settings: Foreground image settings</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
@@ -23934,6 +23964,7 @@ for this category of sidebar.</property>
                                                 <child>
                                                   <object class="GtkButton" id="btn_sbBGIDia">
                                                     <property name="label" translatable="yes">BG ...</property>
+                                                    <property name="name">Sidebar settings: Background image settings</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">True</property>
@@ -23949,6 +23980,7 @@ for this category of sidebar.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkComboBox" id="fcb_sbPgPos">
+                                                    <property name="name">Sidebar settings: Position</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="can-default">True</property>
@@ -24208,6 +24240,7 @@ usfm_sb.sty is the underlying Paratext stylesheet (which should never be edited)
                             <child type="label">
                               <object class="GtkCheckButton" id="c_styTextProperties">
                                 <property name="label" translatable="yes">Hide/Exclude Contents of Marker</property>
+                                <property name="name">Styles: Hide (or exclude) from output</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -24307,6 +24340,7 @@ edit the USFM stylesheet files.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
                                             <property name="label" translatable="yes">Apply Customized Settings (ptxprint-mods.tex)</property>
+                                            <property name="name">Apply customized TeX settings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24332,6 +24366,7 @@ all the PTXprint settings. </property>
                                               <object class="GtkCheckButton" id="c_processScript">
                                                 <property name="label" translatable="yes">Process Text With 
 Custom Script at:</property>
+                                                <property name="name">Process text with custom script</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
@@ -24408,6 +24443,7 @@ which are all specified below.</property>
                                             <child>
                                               <object class="GtkButton" id="btn_selectScript">
                                                 <property name="label" translatable="yes">Select...</property>
+                                                <property name="name">Select custom script</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
@@ -24432,6 +24468,7 @@ which are all specified below.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usePrintDraftChanges">
                                             <property name="label" translatable="yes">Apply Changes.txt (and PrintDraftChanges.txt)</property>
+                                            <property name="name">Enable apply changes</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24460,6 +24497,7 @@ which apply to all configurations, and gets
                                         <child>
                                           <object class="GtkButton" id="btn_editChangesFile">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit changes files</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24476,6 +24514,7 @@ which apply to all configurations, and gets
                                         <child>
                                           <object class="GtkButton" id="btn_editModsTeX">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit customized TeX settings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24492,6 +24531,7 @@ which apply to all configurations, and gets
                                         <child>
                                           <object class="GtkButton" id="btn_editModsSty">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit stylesheet overrides</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24508,6 +24548,7 @@ which apply to all configurations, and gets
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsSty">
                                             <property name="label" translatable="yes">Apply Stylesheet Overrides (ptxprint-mods.sty)</property>
+                                            <property name="name">Apply stylesheet overrides</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24531,6 +24572,7 @@ wish for these to be used by PTXprint.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useCustomSty">
                                             <property name="label" translatable="yes">Apply Customized Styles (custom.sty)</property>
+                                            <property name="name">Apply custom styles</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24554,6 +24596,7 @@ for these to be used by PTXprint.</property>
                                         <child>
                                           <object class="GtkButton" id="btn_editCustomSty">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit custom styles</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24570,6 +24613,7 @@ for these to be used by PTXprint.</property>
                                         <child>
                                           <object class="GtkButton" id="btn_editScript">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit custom script</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24587,6 +24631,7 @@ for these to be used by PTXprint.</property>
                                         <child>
                                           <object class="GtkButton" id="btn_editModsPreTex">
                                             <property name="label" translatable="yes">Edit...</property>
+                                            <property name="name">Edit initial TeX settings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
@@ -24601,6 +24646,7 @@ for these to be used by PTXprint.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usePreModsTex">
                                             <property name="label" translatable="yes">Apply Initial Settings (ptxprint-premods.tex)</property>
+                                            <property name="name">Apply initial TeX settings</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24664,6 +24710,7 @@ other settings are applied. This file is rarely used.</property>
                                 <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkSpinButton" id="s_cutouterpadding">
+                                    <property name="name">Space beside cutouts or sidebars</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the default gap (pt) between the body 
@@ -24700,6 +24747,7 @@ Cutout/Sidebar:</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_afterVerseSpace">
+                                    <property name="name">Space after verse numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the gap between the verse 
@@ -24760,6 +24808,7 @@ Space Factor:</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_afterChapterSpace">
+                                    <property name="name">Space after chapter numbers</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the gap between the chapter 
@@ -24786,6 +24835,7 @@ body text size as specified in layout.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_underlineThickness">
+                                    <property name="name">Underline thickness</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the thickness 
@@ -24810,6 +24860,7 @@ body text size as specified in layout.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_underlinePosition">
+                                    <property name="name">Underline vertical position (raise or lower)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the vertical position
@@ -24884,6 +24935,7 @@ Factor:</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_pageFullFactor">
+                                    <property name="name">Start new page threshold (page full factor)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This setting is related to how full
@@ -24962,6 +25014,7 @@ next book to start on a new page.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_sensitive">
                                     <property name="label" translatable="yes">Sensitive Project</property>
+                                    <property name="name">Sensitive project</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -24984,6 +25037,7 @@ the meta-data will not contain any sensitive data.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_canonicalise">
                                     <property name="label" translatable="yes">Auto-Correct USFM</property>
+                                    <property name="name">Auto-correct common USFM syntax errors</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -25013,6 +25067,7 @@ to print.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_interlinear">
                                         <property name="label" translatable="yes">Interlinear  &amp;  Code:</property>
+                                        <property name="name">Interlinear settings</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25065,6 +25120,7 @@ the code would be "en".</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_ruby">
                                         <property name="label" translatable="yes">Ruby Text Above</property>
+                                        <property name="name">Place Ruby text above words </property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25142,6 +25198,7 @@ glosses for interlinear/ruby text.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useEngLinks">
                                     <property name="label" translatable="yes">Only Use English Links</property>
+                                    <property name="name">Only use English links (do not G-translate)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -25168,6 +25225,7 @@ or you simply prefer to read the original page in English.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_noInternet">
                                     <property name="label" translatable="yes">Disable ALL Internet Use</property>
+                                    <property name="name">Disable internet use</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -25213,6 +25271,7 @@ e.g. polyglot-simplepages, ornaments</property>
                                     </child>
                                     <child>
                                       <object class="GtkEntry" id="t_plugins">
+                                        <property name="name">List of plugins</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Some advanced features load extra code
@@ -25276,6 +25335,7 @@ e.g. polyglot-simplepages, ornaments</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatLineSpacing">
                                         <property name="label" translatable="yes">Legacy 1/14 LineSpacing</property>
+                                        <property name="name">Enable legacy 1/14 line spacing</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25292,6 +25352,7 @@ e.g. polyglot-simplepages, ornaments</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_tracing">
                                         <property name="label" translatable="yes">Debug Tracing</property>
+                                        <property name="name">Enable debug tracing</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25311,6 +25372,7 @@ troubleshooting use only.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatGlyphMetrics">
                                         <property name="label" translatable="yes">Use glyph metrics</property>
+                                        <property name="name">Use glyph metrics</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25329,6 +25391,7 @@ Font metrics gives more consistent results.</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatFtrInMargin">
                                         <property name="label" translatable="yes">Bottom Footer in Margin</property>
+                                        <property name="name">Place the footer within the margin</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -25422,6 +25485,7 @@ interlinear (&amp; ruby text) output.</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
                             <property name="label">gtk-save</property>
+                            <property name="name">Save current object in view</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25447,6 +25511,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                         <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
+                            <property name="name">Refresh current object in view from file</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25481,6 +25546,7 @@ Focus:</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="ecb_examineBook">
+                            <property name="name">Book in focus for editor (or viewer)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Choose any book (including
@@ -25513,6 +25579,7 @@ in the list to be printed.)</property>
                         <child>
                           <object class="GtkButton" id="btn_Generate">
                             <property name="label" translatable="yes">Generate</property>
+                            <property name="name">Generate ... (context sensitive)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25536,6 +25603,7 @@ list for each of the books listed for printing.</property>
                         <child>
                           <object class="GtkButton" id="btn_viewEdit">
                             <property name="label" translatable="yes">View/Edit...</property>
+                            <property name="name">View (or edit) file in external editor</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25570,6 +25638,7 @@ to the text or markers need to be made in Paratext.</property>
                         <child>
                           <object class="GtkButton" id="btn_editZvars">
                             <property name="label" translatable="yes">Edit Variables...</property>
+                            <property name="name">Edit peripheral variables</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25589,6 +25658,7 @@ this button to show that tab.</property>
                         <child>
                           <object class="GtkButton" id="btn_removeZeros">
                             <property name="label" translatable="yes">Remove +0's</property>
+                            <property name="name">Remove redundant lines from AdjList</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25882,6 +25952,7 @@ output and tweak adjust lists.</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclFrontMatter">
                             <property name="label" translatable="yes">Import Front Matter PDF(s)</property>
+                            <property name="name">Enable import of front matter PDF(s)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -25906,6 +25977,7 @@ cover using the online Canva.com tool (link provided).</property>
                         <child>
                           <object class="GtkButton" id="btn_selectFrontPDFs">
                             <property name="label" translatable="yes">Select...</property>
+                            <property name="name">Select front matter PDF(s) to import</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25968,6 +26040,7 @@ cover using the online Canva.com tool (link provided).</property>
                         <child>
                           <object class="GtkCheckButton" id="c_autoToC">
                             <property name="label" translatable="yes">Table of Contents       Title:</property>
+                            <property name="name">Enable table of contents</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -25997,6 +26070,7 @@ final run.</property>
                         </child>
                         <child>
                           <object class="GtkEntry" id="t_tocTitle">
+                            <property name="name">Table of contents title</property>
                             <property name="width-request">200</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
@@ -26022,6 +26096,7 @@ automatically prepended to the output PDF.</property>
                             <property name="column-spacing">10</property>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc1">
+                                <property name="name">Table of contents to use \toc1</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -26078,6 +26153,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc2">
+                                <property name="name">Table of contents to use \toc2</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -26097,6 +26173,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc3">
+                                <property name="name">Table of contents to use \toc3</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -26166,6 +26243,7 @@ of Contents</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_leaderStyle">
+                            <property name="name">Style of leaders for table of contents</property>
                             <property name="width-request">100</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -26201,6 +26279,7 @@ the style of leader you wish to apply.</property>
                         <child>
                           <object class="GtkCheckButton" id="c_frontmatter">
                             <property name="label" translatable="yes">Front Matter</property>
+                            <property name="name">Enable (local) front matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26219,6 +26298,7 @@ the style of leader you wish to apply.</property>
                           <object class="GtkButton" id="btn_editFrontMatter">
                             <property name="label" translatable="yes">View/Edit
 Front Matter</property>
+                            <property name="name">View (or edit) front matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -26236,6 +26316,7 @@ Front Matter</property>
                           <object class="GtkCheckButton" id="c_periphPageBreak">
                             <property name="label" translatable="yes">Force Page Break 
 at each Periph</property>
+                            <property name="name">Front matter: Force page break at each periph section</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26258,6 +26339,7 @@ on a new page.</property>
                           <object class="GtkCheckButton" id="c_periphSuppressPage">
                             <property name="label" translatable="yes">Suppress Blank Page
 Before Scripture Text</property>
+                            <property name="name">Front matter: Suppress blank page at start of scripture text</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26307,6 +26389,7 @@ after any front matter material).</property>
                             <child>
                               <object class="GtkButton" id="btn_rescanFRTvars">
                                 <property name="label">↺</property>
+                                <property name="name">Rescan peripheral variables</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -26410,6 +26493,7 @@ table of variable names and values.</property>
                             <child>
                               <object class="GtkButton" id="b_delzvar">
                                 <property name="label" translatable="yes">Del</property>
+                                <property name="name">Delete a peripheral variable</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -26426,6 +26510,7 @@ selected variable(s).</property>
                             <child>
                               <object class="GtkButton" id="b_addzvar">
                                 <property name="label" translatable="yes">Add</property>
+                                <property name="name">Add a peripheral variable</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -26547,6 +26632,7 @@ in order to get accurate Image Copyright Attribution.</property>
                                     <property name="vexpand">True</property>
                                     <child>
                                       <object class="GtkTextView" id="textv_colophon">
+                                        <property name="name">Colophon text entry</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Note: There are several shortcuts you can use:
@@ -26597,6 +26683,7 @@ Illustration credits tag.</property>
                               <object class="GtkCheckButton" id="c_standAloneColophon">
                                 <property name="label" translatable="yes">Force Page Break 
 Before Colophon</property>
+                                <property name="name">Force page break before colophon</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -26621,6 +26708,7 @@ on its own page - regardless of this setting. </property>
                         <child type="label">
                           <object class="GtkCheckButton" id="c_colophon">
                             <property name="label" translatable="yes">Colophon at End of Publication</property>
+                            <property name="name">Enable colophon at end of publication</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26663,6 +26751,7 @@ on subsequent runs.</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclBackMatter">
                             <property name="label" translatable="yes">Import Back Matter PDF(s)</property>
+                            <property name="name">Enable import of back matter PDF(s)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26683,6 +26772,7 @@ file is selected, then these will appear in alphabetical order.</property>
                         <child>
                           <object class="GtkButton" id="btn_selectBackPDFs">
                             <property name="label" translatable="yes">Select...</property>
+                            <property name="name">Select back matter PDF(s) to import</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -26791,6 +26881,7 @@ paper is around 70-80 GSM.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_paperWeight">
+                                    <property name="name">Publication paper weight (GSM)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Weight of the paper being
@@ -26814,6 +26905,7 @@ paper is around 70-80 GSM.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_paperThickness">
+                                    <property name="name">Publication paper thickness (microns)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">To be more precise in the calculation
@@ -26878,6 +26970,7 @@ the cover around the binding.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_spineThickness">
+                                    <property name="name">Spine thickness</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The width of the spine (mm) will
@@ -26907,6 +27000,7 @@ the cover around the binding.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_designCover">
                                     <property name="label" translatable="yes">Cover Design...</property>
+                                    <property name="name">Select cover design</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
@@ -26922,6 +27016,7 @@ the cover around the binding.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_designSpine">
                                     <property name="label" translatable="yes">Spine Design...</property>
+                                    <property name="name">Select spine design</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
@@ -26968,6 +27063,7 @@ and descent values of the main body font.</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_rotateSpineText">
+                                    <property name="name">Rotate spine</property>
                                     <property name="width-request">88</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -27173,6 +27269,7 @@ using separate signatures.</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBoxText" id="ecb_sheetSize">
+                                    <property name="name">Pagination: Physical paper size</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">If the required size is not displayed, then 
@@ -27209,6 +27306,7 @@ For example: 203mm, 330mm (Foolscap)</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBox" id="fcb_pagesPerSpread">
+                                    <property name="name">Pagination: Pages per spread (booklet printing)</property>
                                     <property name="width-request">88</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -27244,6 +27342,7 @@ total of 4 pages on a single sheet.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_scaleToFit">
                                     <property name="label" translatable="yes">Scale to fit</property>
+                                    <property name="name">Pagination: Scale to fit</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
@@ -27282,6 +27381,7 @@ Cut Margin (mm):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_sheetsPerSignature">
+                                    <property name="name">Pagination: Sheets per signature (pages per form)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">A signature is a collection of pages folded
@@ -27304,6 +27404,7 @@ using separate signatures.</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_foldCutMargin">
+                                    <property name="name">Pagination: Minimum fold cut margin</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The width of the area to be cut
@@ -27373,6 +27474,7 @@ options allow plenty of scope.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_selectDiffPDF">
                                     <property name="label" translatable="yes">Select...</property>
+                                    <property name="name">Compare PDFs: Select previous PDF to compare with</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -27411,6 +27513,7 @@ default to _1).</property>
                                   <object class="GtkCheckButton" id="c_onlyDiffs">
                                     <property name="label" translatable="yes">Only Show Pages
 With Differences</property>
+                                    <property name="name">Compare PDFs: Only show pages with differences</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -27456,6 +27559,7 @@ a Previous PDF:</property>
                                 <child>
                                   <object class="GtkButton" id="btn_createDiff">
                                     <property name="label" translatable="yes">Create "Diff" PDF</property>
+                                    <property name="name">Compare PDFs: Create 'diff' PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -27475,6 +27579,7 @@ in the default PDF viewer.</property>
                                 </child>
                                 <child>
                                   <object class="GtkColorButton" id="col_diffColor">
+                                    <property name="name">Compare PDFs: </property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
@@ -27555,6 +27660,7 @@ runs.</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkComboBox" id="fcb_outputFormat">
+                                <property name="name">PDF output format</property>
                                 <property name="width-request">150</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -27611,6 +27717,7 @@ Note: All comply with archive standard PDF/A-1b.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_cropmarks">
                                 <property name="label" translatable="yes">Crop Marks</property>
+                                <property name="name">Enable crop marks</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -27628,6 +27735,7 @@ should be trimmed after binding.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_keepVersions">
+                                <property name="name">Number of previous PDFs to be kept</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="tooltip-text" translatable="yes">By default, PTXprint only keeps
@@ -27670,6 +27778,7 @@ PDFs to be Kept:</property>
                             <child>
                               <object class="GtkCheckButton" id="c_inclSettingsInPDF">
                                 <property name="label" translatable="yes">Include Config Settings Within PDF</property>
+                                <property name="name">Include config settings within PDF</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -27698,6 +27807,7 @@ share config settings with other users.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_printArchive">
                                 <property name="label" translatable="yes">Archive (PDF/A-1a)</property>
+                                <property name="name">Include unicode text within PDF (to help with archiving)</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -27715,6 +27825,7 @@ for final print and long-term archiving.</property>
                             </child>
                             <child>
                               <object class="GtkColorButton" id="col_spotColor">
+                                <property name="name">Spot color hue</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -27774,6 +27885,7 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_spotColorTolerance">
+                                <property name="name">Spot color tolerance</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
@@ -28240,6 +28352,7 @@ all the required files and then send it to them:</property>
                                 <child>
                                   <object class="GtkButton" id="btn_createZipArchiveXtra">
                                     <property name="label" translatable="yes">Create Archive...</property>
+                                    <property name="name">Create archive...</property>
                                     <property name="width-request">140</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -28298,9 +28411,11 @@ general users and common solutions.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_about">
                                     <property name="label">gtk-about</property>
+                                    <property name="name">About PTXprint</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Discover more about PTXprint.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
@@ -28317,6 +28432,7 @@ general users and common solutions.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_deleteTempFiles">
                                     <property name="label">gtk-delete</property>
+                                    <property name="name">Delete temporary files and folders</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
