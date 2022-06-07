@@ -368,7 +368,19 @@ _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesR
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 _dlgtriggers = {
-    "dlg_multiBookSelect": "btn_chooseBooks"
+    "dlg_multiBookSelect": "onChooseBooksClicked",
+    "dlg_about": "onAboutClicked",
+    "dlg_password": "onLockUnlockSavedConfig",
+    "dlg_generatePL": "onGeneratePicListClicked",
+    "dlg_generateFRT": "onGenerateClicked",
+    "dlg_fontChooser": "getFontNameFace",
+    "dlg_features": "onFontFeaturesClicked",
+    "dlg_multProjSelector": "onChooseTargetProjectsClicked",
+    "dlg_gridsGuides": "adjustGuideGrid",
+    "dlg_DBLbundle": "onDBLbundleClicked",
+    "dlg_overlayCredit": "onOverlayCreditClicked",
+    "dlg_strongsGenerate": "onGenerateStrongsClicked",
+    "dlg_borders": "onSBborderClicked"
 }
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
@@ -856,8 +868,7 @@ class GtkViewModel(ViewModel):
             elif name in _dlgtriggers:
                 if highlight:
                     w.get_style_context().add_class("highlighted")
-                    trg = self.builder.get_object(_dlgtriggers[name])
-                    trg.emit("clicked")
+                    getattr(self, _dlgtriggers[name])(None)
                 else:
                     w.get_style_context().remove_class("highlighted")
                 break
@@ -2242,8 +2253,8 @@ class GtkViewModel(ViewModel):
         return (name, style)
 
     def getFontNameFace(self, btnid, noStyles=False, noFeats=False):
-        btn = self.builder.get_object(btnid)
-        f = self.get(btnid)
+        btn = self.builder.get_object(btnid) if btnid is not None else None
+        f = self.get(btnid) if btnid is not None else None
         lb = self.builder.get_object("tv_fontFamily")
         ls = lb.get_model()
         fc = initFontCache()
@@ -2316,7 +2327,8 @@ class GtkViewModel(ViewModel):
             f = FontRef.fromDialog(name, style, self.get("c_fontGraphite"), 
                                    self.get("c_fontCtxtSpaces"), self.get("t_fontFeatures"),
                                    bi, self.get("s_fontExtend"), self.get("fcb_fontdigits"))
-            self.set(btnid, f)
+            if btnid is not None:
+                self.set(btnid, f)
             res = True
         else:
             res = False
