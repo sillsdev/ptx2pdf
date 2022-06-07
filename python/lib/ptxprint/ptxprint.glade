@@ -8843,8 +8843,12 @@ if need be.
 A list of references can also be entered manually
 for ranges of scripture to be printed. For example:
   JHN 2:1-12
+  MRK 1-5
+  PSA 23; 100; 117
   EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+
+Shortcut: Ctrl-B</property>
                                 <property name="margin-end">6</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
@@ -8866,11 +8870,14 @@ for ranges of scripture to be printed. For example:
   MRK 1-5
   PSA 23; 100; 117
   EXO 20:12-17 MAT 5:3-11
-  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO</property>
+  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
+
+Shortcut: Ctrl-B</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                     <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
                                   </object>
                                 </child>
+                                <accelerator key="b" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
@@ -24501,10 +24508,17 @@ which apply to all configurations, and gets
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+show the Changes.txt file in
+one tab, and PrintDraftChanges.txt
+in the next tab to the right.
+
+Shortcut: Shift-Ctrl-C</property>
                                             <property name="margin-end">6</property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <signal name="clicked" handler="onEditChangesFile" swapped="no"/>
+                                            <accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -24518,10 +24532,15 @@ which apply to all configurations, and gets
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+show the ptxprint-mods.tex file.
+
+Shortcut: Shift-Ctrl-T</property>
                                             <property name="margin-end">6</property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <signal name="clicked" handler="onEditModsTeX" swapped="no"/>
+                                            <accelerator key="t" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -24535,10 +24554,15 @@ which apply to all configurations, and gets
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+show the ptxprint-mods.sty file.
+
+Shortcut: Shift-Ctrl-S</property>
                                             <property name="margin-end">6</property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <signal name="clicked" handler="onEditModsSty" swapped="no"/>
+                                            <accelerator key="s" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -24600,10 +24624,15 @@ for these to be used by PTXprint.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+show the custom.sty file.
+
+Shortcut: Shift-Ctrl-M</property>
                                             <property name="margin-end">6</property>
                                             <property name="margin-top">4</property>
                                             <property name="margin-bottom">4</property>
                                             <signal name="clicked" handler="onEditCustomSty" swapped="no"/>
+                                            <accelerator key="m" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -24635,8 +24664,13 @@ for these to be used by PTXprint.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+show the ptxprint-premods.tex file.
+
+Shortcut: Shift-Ctrl-P</property>
                                             <property name="margin-end">6</property>
                                             <signal name="clicked" handler="onEditPreModsTeX" swapped="no"/>
+                                            <accelerator key="p" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -25517,7 +25551,9 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Discard away any changes that have 
 been made and restore the contents
-of this file as it was when last saved.</property>
+of this file as it was when last saved.
+
+Shortcut: F5</property>
                             <property name="double-buffered">False</property>
                             <property name="halign">center</property>
                             <property name="margin-top">5</property>
@@ -25525,6 +25561,7 @@ of this file as it was when last saved.</property>
                             <property name="use-stock">True</property>
                             <property name="always-show-image">True</property>
                             <signal name="clicked" handler="onRefreshViewerTextClicked" swapped="no"/>
+                            <accelerator key="F5" signal="activate"/>
                           </object>
                           <packing>
                             <property name="left-attach">4</property>
@@ -25551,7 +25588,9 @@ Focus:</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Choose any book (including
 those which are not currently
-in the list to be printed.)</property>
+in the list to be printed.)
+
+Shortcut: Ctrl+B</property>
                             <property name="halign">end</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
@@ -25570,6 +25609,7 @@ in the list to be printed.)</property>
                                 <property name="width-chars">6</property>
                               </object>
                             </child>
+                            <accelerator key="b" signal="move-active" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -25589,11 +25629,14 @@ Front Matter, AdjList(s) and Final SFM.
 If you only want to (re-)generate an Adj List for 
 a single book, then just select that book on the 
 Basic tab. Otherwise it will (re-)generate a Pic/Adj
-list for each of the books listed for printing.</property>
+list for each of the books listed for printing.
+
+Shortcut: Ctrl-G</property>
                             <property name="halign">start</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
+                            <accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -25623,12 +25666,15 @@ with a text editor (such as Notepad or NP++).
 
 Note that any changes to the Final SFM text get
 overwritten each time you hit Print. So any changes
-to the text or markers need to be made in Paratext.</property>
+to the text or markers need to be made in Paratext.
+
+Shortcut: Ctrl-E</property>
                             <property name="halign">end</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <signal name="button-release-event" handler="button_release_callback" swapped="no"/>
                             <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
+                            <accelerator key="e" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
                             <property name="left-attach">7</property>
@@ -27567,10 +27613,13 @@ a Previous PDF:</property>
 showing the differences between
 the current PDF and the selected 
 previous version. It should open
-in the default PDF viewer.</property>
+in the default PDF viewer.
+
+Shortcut: Ctrl-D</property>
                                     <property name="halign">end</property>
                                     <property name="margin-start">21</property>
                                     <signal name="clicked" handler="onCreateDiffclicked" swapped="no"/>
+                                    <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
@@ -27982,6 +28031,8 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Current Project Path:</property>
                                     <property name="justify">right</property>
                                     <property name="ellipsize">middle</property>
@@ -27998,6 +28049,8 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">end</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Configuration Settings:</property>
                                     <property name="justify">right</property>
                                   </object>
@@ -28020,8 +28073,8 @@ in this location are TEMPORARY and
 can be deleted. None of these files are
 included in Paratext's Send/Recv data.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Output PDF Location (which
-also includes temporary files):</property>
+                                    <property name="label" translatable="yes">Output PDF Location (includes
+folders with temporary files):</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28204,58 +28257,6 @@ to the PTX2PDF Macros:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton" id="lb_prjdir">
-                                    <property name="label" translatable="yes">prjdir</property>
-                                    <property name="name">Click to open folder</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to Open folder</property>
-                                    <signal name="clicked" handler="onOpenFolderPrjDirClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton" id="lb_settings_dir">
-                                    <property name="label" translatable="yes">settings_dir</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to Open folder</property>
-                                    <signal name="clicked" handler="onOpenFolderConfClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton" id="lb_working_dir">
-                                    <property name="label" translatable="yes">working_dir</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to Open folder</property>
-                                    <signal name="clicked" handler="onOpenFolderOutputClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLinkButton" id="lb_faq">
                                     <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
                                     <property name="visible">True</property>
@@ -28290,24 +28291,6 @@ general users and common solutions.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLinkButton" id="lb_ptxprintdir">
-                                    <property name="label" translatable="yes">prjdir</property>
-                                    <property name="name">Click to open folder</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to Open folder</property>
-                                    <signal name="clicked" handler="onPTXprintDocsDirClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">3</property>
-                                    <property name="width">4</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_ptxprintdir">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -28316,6 +28299,8 @@ general users and common solutions.</property>
 * AboutPTXprint.txt
 * MIT License.txt</property>
                                     <property name="halign">end</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">PTXprint Docs Path:</property>
                                     <property name="justify">right</property>
                                   </object>
@@ -28452,6 +28437,86 @@ by deleting unneeded files.</property>
                                   <packing>
                                     <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_working_dir">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
+                                    <property name="use-markup">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="max-width-chars">48</property>
+                                    <property name="track-visited-links">False</property>
+                                    <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_prjdir">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
+                                    <property name="use-markup">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="max-width-chars">48</property>
+                                    <property name="track-visited-links">False</property>
+                                    <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_settings_dir">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
+                                    <property name="use-markup">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="max-width-chars">70</property>
+                                    <property name="track-visited-links">False</property>
+                                    <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="lb_ptxprintdir">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
+                                    <property name="use-markup">True</property>
+                                    <property name="ellipsize">start</property>
+                                    <property name="max-width-chars">48</property>
+                                    <property name="track-visited-links">False</property>
+                                    <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28717,7 +28782,7 @@ Click to visit download page on the website.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Quick Run
+                <property name="tooltip-text" translatable="yes">Quick Run - (Ctrl-Q)
 
 Ordinarily, PTXprint reruns the typesetting
 process (multiple times) in order to ensure
@@ -28740,6 +28805,7 @@ be displayed (in red) just to the left.</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="draw-indicator">True</property>
+                <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -28752,12 +28818,13 @@ be displayed (in red) just to the left.</property>
                 <property name="name">Find help</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="tooltip-text" translatable="yes">Type in a word to search for
-a setting that you can't locate.
-A short list of relevant topics
-will appear above. Select one
-to jump directly to the setting
-which should be highlighted.</property>
+                <property name="tooltip-text" translatable="yes">Type in a word to search for a setting 
+that you can't locate. A short list of 
+relevant topics will appear above. 
+Select a topic to jump to the appropriate 
+setting which will be highlighted.
+
+Shortcut: F1  or  Ctrl-F  (to Find help)</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
@@ -28767,6 +28834,8 @@ which should be highlighted.</property>
                 <property name="placeholder-text" translatable="yes">Search for settings</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
+                <accelerator key="F1" signal="grab-focus"/>
+                <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -28821,6 +28890,7 @@ print a diglot with both texts.</property>
                 <property name="use-stock">True</property>
                 <property name="always-show-image">True</property>
                 <signal name="clicked" handler="onCancel" swapped="no"/>
+                <accelerator key="w" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>

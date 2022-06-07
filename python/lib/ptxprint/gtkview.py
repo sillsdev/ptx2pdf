@@ -102,7 +102,7 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Vai", "Wancho", "Warang-Citi", "Western-Cham"]
 
 _ui_minimal = """
-bx_statusBar fcb_uiLevel
+bx_statusBar fcb_uiLevel t_find
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
@@ -1257,7 +1257,8 @@ class GtkViewModel(ViewModel):
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
-            self.set("lb_settings_dir", self.configPath(self.configName()))
+            stngdir = self.configPath(cfgname=self.configName())
+            self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
@@ -2692,11 +2693,18 @@ class GtkViewModel(ViewModel):
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
-            self.builder.get_object("lb_ptxprintdir").set_label(pycodedir())
-            self.builder.get_object("lb_prjdir").set_label(os.path.join(self.settings_dir, self.prjid))
-            self.builder.get_object("lb_settings_dir").set_label(self.configPath(cfgname=self.configName()) or "")
-            outputfolder =  self.working_dir.strip(self.configName()) or "" if self.working_dir is not None else ""
-            self.builder.get_object("lb_working_dir").set_label(outputfolder)
+            self.set("lb_ptxprintdir", '<a href="{}">{}</a>'.format(pycodedir(), pycodedir()))
+
+            projdir = os.path.join(self.settings_dir, self.prjid)
+            self.set("lb_prjdir", '<a href="{}">{}</a>'.format(projdir, projdir))
+
+            stngdir = self.configPath(cfgname=self.configName()) or ""
+            self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
+
+            outdir =  self.working_dir.rstrip(self.configName()) or "" if self.working_dir is not None else ""
+            print(self.configName())
+            print(outdir)
+            self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):
         if prjid == self.prjid and configName == self.configId:
@@ -3239,17 +3247,9 @@ class GtkViewModel(ViewModel):
         elif response == Gtk.ResponseType.NO:
             return(False)
 
-    def onPTXprintDocsDirClicked(self, btn):
-        self.openFolder(os.path.join(pycodedir(),''))
-        
-    def onOpenFolderPrjDirClicked(self, btn):
-        self.openFolder(os.path.join(self.settings_dir, self.prjid))
-        
-    def onOpenFolderConfClicked(self, btn):
-        self.openFolder(self.configPath(cfgname=self.configName()))
-        
-    def onOpenFolderOutputClicked(self, btn):
-        outputfolder =  self.working_dir.strip(self.configName()) or ""
+    def onOpenFolderClicked(self, btn, foo):
+        p = re.search(r'(?<=href=\")[^<>]+(?=\")',btn.get_label())
+        outputfolder =  p[0]
         self.openFolder(outputfolder)
 
     def openFolder(self, fldrpath):
