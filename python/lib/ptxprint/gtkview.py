@@ -836,14 +836,21 @@ class GtkViewModel(ViewModel):
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
-            if name.startswith("tb_") and name in self.notebooks['Main']:
+            if name.startswith("tb_"):
                 if highlight:
                     w.get_style_context().add_class("highlighted")
-                    mpgnum = self.notebooks['Main'].index(name)
-                    self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                    keepgoing = True
+                    for k, v in self.notebooks.items():
+                        if name in v:
+                            pgnum = v.index(name)
+                            t = self.builder.get_object('nbk_{}'.format(k)).set_current_page(pgnum)
+                            keepgoing = k != 'Main'
+                            break
+                    if not keepgoing:
+                        break
                 else:
                     w.get_style_context().remove_class("highlighted")
-                break
+                    break
             elif name.startswith("ex_"):
                 parent.set_expanded(True)
             elif name in _dlgtriggers:
