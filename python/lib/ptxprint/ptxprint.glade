@@ -3240,14 +3240,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3258,27 +3258,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3295,7 +3295,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -10061,7 +10061,7 @@ Width (mm):</property>
                                     <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
 lowers (using a positive value) the starting 
 point of the vertical rule between columns.
-(Value is pts).</property>
+(Value in pts).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
@@ -10087,7 +10087,7 @@ point of the vertical rule between columns.
                                     <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
 lowers (using a positive value) the starting 
 point of the vertical rule between columns.
-(Value is pts).</property>
+(Value in pts).</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Adjust
 Top (pt):</property>
@@ -10529,7 +10529,7 @@ and Top of Text (pt):</property>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
-                                    <property name="name">Horizontal rule spacing to text</property>
+                                    <property name="name">Space between horizontal rule and main text area</property>
                                     <property name="height-request">35</property>
                                     <property name="can-focus">True</property>
                                     <property name="no-show-all">True</property>
@@ -12274,7 +12274,7 @@ Number in Single Chapter Books".</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_omitverseone">
                                     <property name="label" translatable="yes">Hide First Verse Number</property>
-                                    <property name="name">Hide verse 1</property>
+                                    <property name="name">Hide first verse number</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -13113,7 +13113,7 @@ Also settings for special books.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_addColon">
                                     <property name="label" translatable="yes">Add a Colon ':' After \fq and \xq</property>
-                                    <property name="name">Add colon after quotes text in notes</property>
+                                    <property name="name">Add colon after quoted text in notes</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
@@ -14983,7 +14983,7 @@ this option for a more compact list.</property>
                                               <object class="GtkCheckButton">
                                                 <property name="label" translatable="yes">Include Proper Nouns
 (c_strongsInclNames)</property>
-                                                <property name="name">Include proper names in Stong's index</property>
+                                                <property name="name">Include proper names in Strong's index</property>
                                                 <property name="sensitive">False</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
@@ -21639,7 +21639,7 @@ formatting of the thumb tabs.</property>
                             <child>
                               <object class="GtkButton" id="btn_resetTabGroups">
                                 <property name="label">↺</property>
-                                <property name="name">Thumb tabs: Reload defaults for grouped by books</property>
+                                <property name="name">Thumb tabs: Reload default book groups</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
@@ -25485,7 +25485,7 @@ interlinear (&amp; ruby text) output.</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
                             <property name="label">gtk-save</property>
-                            <property name="name">Save current object in view</property>
+                            <property name="name">Save current file in view</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25511,7 +25511,7 @@ Shortcut key: &lt;Ctrl-S&gt;</property>
                         <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
-                            <property name="name">Refresh current object in view from file</property>
+                            <property name="name">Reload current file in view from saved version</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -26096,7 +26096,7 @@ automatically prepended to the output PDF.</property>
                             <property name="column-spacing">10</property>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc1">
-                                <property name="name">Table of contents to use \toc1</property>
+                                <property name="name">Table of contents: Use \toc1</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -26153,7 +26153,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc2">
-                                <property name="name">Table of contents to use \toc2</property>
+                                <property name="name">Table of contents: Use \toc2</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -26173,7 +26173,7 @@ generated Table of Contents.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_usetoc3">
-                                <property name="name">Table of contents to use \toc3</property>
+                                <property name="name">Table of contents: Use \toc3</property>
                                 <property name="width-request">25</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -28764,6 +28764,7 @@ which should be highlighted.</property>
                 <property name="margin-bottom">3</property>
                 <property name="primary-icon-name">edit-find-symbolic</property>
                 <property name="secondary-icon-name">edit-clear-symbolic</property>
+                <property name="placeholder-text" translatable="yes">Search for settings</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
               </object>

@@ -1007,7 +1007,7 @@ class GtkViewModel(ViewModel):
         if w is None:
             res = super().get(wid, default=default)
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
-                print(_("Can't get {} in the model. Returning {}").format(wid, res))
+                print("Can't get {} in the model. Returning {}".format(wid, res))
             return res
         if wid.startswith("r_"):
             bits = wid.split("_")[1:]
