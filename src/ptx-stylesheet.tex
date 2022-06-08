@@ -512,6 +512,7 @@
 
 \def\r@setparam{=[]}
 
+\def\st@rtswithsl@sh#1#2\E{\if#1/\temptrue\else\tempfalse\fi}
 \x@\def\csname getthep@ram-fontfeatures\endcsname#1{%
   \trace{sa}{getthep@ram-fontfeatures}%
   \let\d@gettheparam=\d@
@@ -544,7 +545,7 @@
     \x@\fe@turemaths\r@s[] \E
     % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
     \let\r@s\empty % MUST start with empy list!
-    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\else:\fi\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
     \let\p@ram\r@s

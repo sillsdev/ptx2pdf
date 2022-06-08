@@ -771,7 +771,6 @@ class GtkViewModel(ViewModel):
         self.onFindClicked(entry, Gtk.EntryIconPosition.PRIMARY, None)
 
     def onFindKey(self, entry, ev):
-        print(ev)
         if ev.keyval == Gdk.KEY_Escape:
             self.onFindClicked(entry, Gtk.EntryIconPosition.SECONDARY, ev)
         else:
@@ -1783,8 +1782,6 @@ class GtkViewModel(ViewModel):
                     r = refKey(k)
                     if k[:3] != bk or r[0] >= 100: # May need to take these lines out!
                         continue                   # May need to take these lines out!
-                    if self.args.extras & 2 != 0:
-                        print(k, r, v)
                     vals = []
                     first = True
                     s = ""
@@ -2141,7 +2138,6 @@ class GtkViewModel(ViewModel):
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:]
-        print("mkr=", mkr)
         if mkr == "toc3" and self.get("c_thumbIsZthumb"):
             self.set("c_styTextProperties", False)
             mkr = "zthumbtab"
@@ -2403,12 +2399,12 @@ class GtkViewModel(ViewModel):
         def onLangChanged(fcb):
             newlang = self.get("fcb_featsLangs")
             newdefaults = langfeats.get(newlang, self.currdefaults)
-            print("New defaults for lang {}: {}".format(newlang, newdefaults))
+            logger.debug("New defaults for lang {}: {}".format(newlang, newdefaults))
             for i, (k, v) in enumerate(sorted(feats.items())):
                 if newdefaults.get(k, 0) == self.currdefaults.get(k, 0):
                     continue
                 obj = featbox.get_child_at(1, i)
-                print("Changing feature {} in lang {}".format(k, newlang))
+                logger.debug("Changing feature {} in lang {}".format(k, newlang))
                 if isinstance(obj, Gtk.CheckButton):
                     if (1 if obj.get_active() else 0) == self.currdefaults.get(k, 0):
                         obj.set_active(newdefaults.get(k, 0) == 1)
@@ -2636,7 +2632,6 @@ class GtkViewModel(ViewModel):
             return h
         c = self.get("col_styColor")
         col = coltohex(c)
-        print(f"onStyColorSet {c=} {col=}")
         self.set("l_styColorValue", col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
@@ -2702,8 +2697,6 @@ class GtkViewModel(ViewModel):
             self.set("lb_settings_dir", '<a href="{}">{}</a>'.format(stngdir, stngdir))
 
             outdir =  self.working_dir.rstrip(self.configName()) or "" if self.working_dir is not None else ""
-            print(self.configName())
-            print(outdir)
             self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):

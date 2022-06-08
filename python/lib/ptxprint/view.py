@@ -1590,5 +1590,4 @@ set stack_size=32768""".format(self.configName())
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        print(outfile)
         generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, self._getPtSettings(), self)
