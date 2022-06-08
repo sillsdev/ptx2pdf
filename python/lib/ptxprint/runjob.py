@@ -354,6 +354,8 @@ class RunJob:
         self.busy = False
         logger.debug("done_job: Finishing thread")
         unlockme()
+        if not self.noview and not self.args.print:
+            self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []

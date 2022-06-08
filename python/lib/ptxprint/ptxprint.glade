@@ -3266,14 +3266,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3284,27 +3284,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3321,7 +3321,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -7053,6 +7053,7 @@ maintains its proportions.</property>
                 <property name="receives-default">True</property>
                 <property name="use-stock">True</property>
                 <property name="always-show-image">True</property>
+                <accelerator key="w" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -7070,6 +7071,7 @@ maintains its proportions.</property>
 will be appended to the list of books to be printed.
 
 Warning: This will overwrite the existing book/file.</property>
+                <accelerator key="Return" signal="activate" modifiers="GDK_MOD1_MASK"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -8215,6 +8217,7 @@ unbalanced lines on the page.</property>
                 <property name="receives-default">True</property>
                 <property name="use-stock">True</property>
                 <property name="always-show-image">True</property>
+                <accelerator key="w" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -8230,6 +8233,7 @@ unbalanced lines on the page.</property>
                 <property name="receives-default">True</property>
                 <property name="use-stock">True</property>
                 <property name="always-show-image">True</property>
+                <accelerator key="Return" signal="activate" modifiers="GDK_MOD1_MASK"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -9076,7 +9080,7 @@ Configuration Name provided.
 Note that these settings are also automatically
 updated (saved) when you click Print.
 
-Shortcut key: &lt;Ctrl-S&gt;</property>
+Shortcut: Ctrl-S</property>
                                         <property name="halign">center</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
@@ -25622,7 +25626,7 @@ interlinear (&amp; ruby text) output.</property>
 save them before moving to a different
 tab (otherwise your changes will be lost.)
 
-Shortcut key: &lt;Ctrl-S&gt;</property>
+Shortcut: Ctrl-S</property>
                             <property name="double-buffered">False</property>
                             <property name="halign">center</property>
                             <property name="margin-top">5</property>
@@ -25685,7 +25689,7 @@ Focus:</property>
 those which are not currently
 in the list to be printed.)
 
-Shortcut: Ctrl+B</property>
+Shortcut: Ctrl-B</property>
                             <property name="halign">end</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
@@ -27988,7 +27992,7 @@ Pantone color code.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_spotColor">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">If a spot color is needed 
@@ -28006,7 +28010,7 @@ Pantone color code.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_spotColorTolerance">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
@@ -28934,8 +28938,8 @@ Shortcut: F1  or  Ctrl-F  (to Find help)</property>
                 <property name="placeholder-text" translatable="yes">Search for settings</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
-                <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
                 <accelerator key="F1" signal="grab-focus"/>
+                <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -29015,7 +29019,7 @@ settings for a project associated to a
 Diglot project, and will need to return to
 the primary project before you can print.
 
-Shortcut key: &lt;Ctrl-P&gt;</property>
+Shortcut: Ctrl-P</property>
                 <property name="halign">start</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">6</property>

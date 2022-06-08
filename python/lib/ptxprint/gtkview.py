@@ -1181,6 +1181,7 @@ class GtkViewModel(ViewModel):
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
+        self.builder.get_object("t_find").set_placeholder_text("Processing...")
         try:
             self.callback(self)
         except Exception as e:
@@ -1188,17 +1189,25 @@ class GtkViewModel(ViewModel):
             s += "\n{}: {}".format(type(e), str(e))
             self.doError(s, copy2clip=True)
             unlockme()
+            self.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
     def onCancel(self, btn):
         self.onDestroy(btn)
 
     def warnSlowRun(self, btn):
         ofmt = self.get("fcb_outputFormat")
-        if self.get("c_includeillustrations") and ofmt != "None":
+        if self.get("c_includeillustrations") and ofmt != "Screen":
             self.set("l_statusLine", \
-                   _("Note: It may take a while for pictures to convert to CMYK for selected PDF Output Format ({}).".format(ofmt)))
+                   _("Note: It may take a while for pictures to convert for selected PDF Output Format ({}).".format(ofmt)))
         else:
             self.set("l_statusLine", "")
+        spotColorStatus = ofmt == "Spot"
+        for w in ["l_spotColor", "col_spotColor", "l_spotColorTolerance", "s_spotColorTolerance"]:
+            self.builder.get_object(w).set_sensitive(spotColorStatus)
+            
+    def enableDisableSpotColor(self, btn):
+        ofmt = self.get("fcb_outputFormat")
+        print(f"{ofmt=}")
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
