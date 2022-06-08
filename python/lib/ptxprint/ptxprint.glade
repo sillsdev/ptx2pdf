@@ -582,6 +582,7 @@ THE SOFTWARE.
                     <property name="column-spacing">1</property>
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_lhs">
+                        <property name="name">Borders dialog: Show LEFT border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -597,6 +598,7 @@ THE SOFTWARE.
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_rhs">
                         <property name="label" translatable="yes">Right</property>
+                        <property name="name">Borders dialog: Show RIGHT border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -613,6 +615,7 @@ THE SOFTWARE.
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_top">
                         <property name="label" translatable="yes">Top</property>
+                        <property name="name">Borders dialog: Show TOP border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -633,6 +636,7 @@ THE SOFTWARE.
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_bot">
                         <property name="label" translatable="yes">Bottom</property>
+                        <property name="name">Borders dialog: Show BOTTOM border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -674,6 +678,7 @@ THE SOFTWARE.
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_out">
                         <property name="label" translatable="yes">Outer</property>
+                        <property name="name">Borders dialog: Show OUTER border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -701,6 +706,7 @@ THE SOFTWARE.
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="c_sbBorder_inn">
+                        <property name="name">Borders dialog: Show INNER border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -742,6 +748,7 @@ THE SOFTWARE.
                 </child>
                 <child>
                   <object class="GtkSpinButton" id="s_sbBorderWidth">
+                    <property name="name">Borders dialog: Border thickness</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">The thickness of the rule.</property>
@@ -782,6 +789,7 @@ THE SOFTWARE.
                 </child>
                 <child>
                   <object class="GtkColorButton" id="col_sbBorderColor">
+                    <property name="name">Borders dialog: Border color</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -902,6 +910,7 @@ text contained within the sidebar.</property>
                     </child>
                     <child>
                       <object class="GtkSpinButton" id="s_sbHpaddingBdr">
+                        <property name="name">Borders dialog: Horizontal border padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">The horizontal space between the (inside) edge 
@@ -923,6 +932,7 @@ of the border and the edge of the border.</property>
                     </child>
                     <child>
                       <object class="GtkSpinButton" id="s_sbVpaddingBdr">
+                        <property name="name">Borders dialog: Vertical border padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">The vertical space between the (inside) edge 
@@ -980,6 +990,7 @@ and the edge of the text in the sidebar.</property>
                     </child>
                     <child>
                       <object class="GtkSpinButton" id="s_sbHpaddingBox">
+                        <property name="name">Borders dialog: Horizontal box padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">The horizontal space (pts) between the 
@@ -1004,6 +1015,7 @@ contained within the sidebar.</property>
                     </child>
                     <child>
                       <object class="GtkSpinButton" id="s_sbVpaddingBox">
+                        <property name="name">Borders dialog: Vertical box padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">The vertical space (pts) between the 
@@ -1423,6 +1435,7 @@ can access the required files.</property>
                 <child>
                   <object class="GtkButton" id="btn_locateDBLbundle">
                     <property name="label" translatable="yes">Locate...</property>
+                    <property name="name">Locate DBL bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -1481,6 +1494,7 @@ to DBL Project:</property>
                 </child>
                 <child>
                   <object class="GtkEntry" id="t_DBLprojName">
+                    <property name="name">Assign a name to a DBL bundle</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">PTXprint will create a NEW Paratext project
@@ -1811,6 +1825,7 @@ Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
                       <object class="GtkRadioButton" id="r_generateFRT_basic">
                         <property name="label" translatable="yes">BASIC: Front matter contains just a few
 essentials with publication information</property>
+                        <property name="name">Generate front matter: BASIC (just the essentials)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -1834,6 +1849,7 @@ information followed by a table of contents.</property>
                       <object class="GtkRadioButton" id="r_generateFRT_advanced">
                         <property name="label" translatable="yes">ADVANCED: template contains several sections
 (some of which require editing before use)</property>
+                        <property name="name">Generate front matter: ADVANCED (requires editing)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -1870,6 +1886,7 @@ For example:
                     <child>
                       <object class="GtkCheckButton" id="c_includeCoverSections">
                         <property name="label" translatable="yes">Include sections for a separate cover page</property>
+                        <property name="name">Generate front matter: Include sections for cover page</property>
                         <property name="visible">True</property>
                         <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
@@ -1942,6 +1959,7 @@ If in doubt, click Cancel.</property>
                       <object class="GtkRadioButton" id="r_generateFRT_paratext">
                         <property name="label" translatable="yes">PARATEXT: Make a copy of the Project's FRT book 
 (which may be edited to make use of \zvar|variables\*)</property>
+                        <property name="name">Generate front matter: PARATEXT (make a local copy)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2103,6 +2121,7 @@ here until you regenerate this (local) Front Matter.</property>
                     <child>
                       <object class="GtkRadioButton" id="r_generate_selected">
                         <property name="label" translatable="yes">Append Pictures to PicList From These Books:</property>
+                        <property name="name">Generate PicList: Append to existing list</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2125,6 +2144,7 @@ book(s) listed below.</property>
                     <child>
                       <object class="GtkRadioButton" id="r_generate_all">
                         <property name="label" translatable="yes">Include Pictures From ALL Books</property>
+                        <property name="name">Generate PicList: Replace existing list</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2167,6 +2187,7 @@ If in doubt, then click Cancel.</property>
                     <child>
                       <object class="GtkCheckButton" id="c_randomPicPosn">
                         <property name="label" translatable="yes">Randomly Position Pictures on Page</property>
+                        <property name="name">Generate PicList: Randomly position pictures on page</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2862,6 +2883,7 @@ Exists in Target Project(s):</property>
                     <child>
                       <object class="GtkRadioButton" id="r_copyConfig_noReplace">
                         <property name="label" translatable="yes">Do NOT Replace Existing Config</property>
+                        <property name="name">Copy Config: Do NOT Replace Existing Config</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2887,6 +2909,7 @@ projects for the first time.</property>
                     <child>
                       <object class="GtkRadioButton" id="r_copyConfig_merge">
                         <property name="label" translatable="yes">Merge Configurations From Both</property>
+                        <property name="name">Copy Config: MERGE Configurations From Both</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -2912,6 +2935,7 @@ retained if there is a clash of settings).</property>
                     <child>
                       <object class="GtkRadioButton" id="r_copyConfig_overwrite">
                         <property name="label" translatable="yes">Overwrite With Recent Changes</property>
+                        <property name="name">Copy Config: OVERWRITE With Recent Changes</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -3058,6 +3082,7 @@ saved configuration.</property>
                 </child>
                 <child>
                   <object class="GtkEntry" id="t_password">
+                    <property name="name">Enter password for config</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="has-focus">True</property>
@@ -3179,6 +3204,7 @@ Pantone color code.</property>
                     </child>
                     <child>
                       <object class="GtkEntry" id="t_ISBN">
+                        <property name="name">Enter ISBN number for barcode</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="halign">start</property>
@@ -3923,6 +3949,7 @@ in the Windows system.</property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_fontFaces">
+                    <property name="name">Font Selection Dialog: Typeface</property>
                     <property name="width-request">90</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -3942,6 +3969,7 @@ in the Windows system.</property>
                 </child>
                 <child>
                   <object class="GtkSearchEntry" id="t_fontSearch">
+                    <property name="name">Font Selection Dialog: Find a font</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="has-focus">True</property>
@@ -4012,6 +4040,7 @@ in the Windows system.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_fontBold">
+                                <property name="name">Font Selection Dialog: Fake bold setting</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
@@ -4033,6 +4062,7 @@ in the Windows system.</property>
                             </child>
                             <child>
                               <object class="GtkSpinButton" id="s_fontItalic">
+                                <property name="name">Font Selection Dialog: Fake italic setting</property>
                                 <property name="visible">True</property>
                                 <property name="sensitive">False</property>
                                 <property name="can-focus">True</property>
@@ -4078,6 +4108,7 @@ in the Windows system.</property>
                     <child type="label">
                       <object class="GtkCheckButton" id="c_fontFake">
                         <property name="label" translatable="yes">Fake Bold/Italic</property>
+                        <property name="name">Font Selection Dialog: Fake bold or italic typeface</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -4132,6 +4163,7 @@ more horizontal space, or less (shrink text).
                     </child>
                     <child>
                       <object class="GtkSpinButton" id="s_fontExtend">
+                        <property name="name">Font Selection Dialog: Stretch (or shrink) font setting</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">The shapes of the characters can be stretched
@@ -4177,6 +4209,7 @@ more horizontal space, or less (shrink text).
                 <property name="column-spacing">6</property>
                 <child>
                   <object class="GtkEntry" id="t_fontFeatures">
+                    <property name="name">Font Selection Dialog: Selected font features</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">You can enable/disable any font features 
@@ -4193,6 +4226,7 @@ litr=1, dig0=1, dig1=1, dig4=1</property>
                 <child>
                   <object class="GtkCheckButton" id="c_fontCtxtSpaces">
                     <property name="label" translatable="yes">Contextual Spaces</property>
+                    <property name="name">Font Selection Dialog: Use contextual spaces</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -4210,6 +4244,7 @@ spaces depending on the text around them.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_fontGraphite">
                     <property name="label" translatable="yes">Graphite Rendering</property>
+                    <property name="name">Font Selection Dialog: Use Graphite rendering</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -4229,6 +4264,7 @@ technology, then enable this.</property>
                 <child>
                   <object class="GtkButton" id="c_fontFeatures">
                     <property name="label" translatable="yes">Select Features...</property>
+                    <property name="name">Font Selection Dialog: Select font features</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -4242,6 +4278,7 @@ technology, then enable this.</property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_fontdigits">
+                    <property name="name">Font Selection Dialog: Digit (number) script mapping</property>
                     <property name="width-request">140</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -4493,6 +4530,7 @@ are using supports these digits too.)</property>
             <child>
               <object class="GtkCheckButton" id="c_gridLines">
                 <property name="label" translatable="yes">Guides (Rules and Baselines)</property>
+                <property name="name">Marks &amp; Guides dialog: Show rules and baselines</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
@@ -4513,6 +4551,7 @@ as the baselines of the body text.</property>
             <child>
               <object class="GtkCheckButton" id="c_showHboxErrorBars">
                 <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
+                <property name="name">Marks &amp; Guides dialog: Show error bars for overfull lines</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
@@ -4559,6 +4598,7 @@ black boxes at the end of lines in the PDF then uncheck it. </property>
                 <child>
                   <object class="GtkCheckButton" id="c_applyWatermark">
                     <property name="label" translatable="yes">Apply Watermark PDF</property>
+                    <property name="name">Marks &amp; Guides dialog: Apply watermark</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -4578,6 +4618,7 @@ the publication being printed.</property>
                 <child>
                   <object class="GtkButton" id="btn_selectWatermarkPDF">
                     <property name="label" translatable="yes">Select...</property>
+                    <property name="name">Marks &amp; Guides dialog: Select watermark to apply</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -4681,6 +4722,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         </child>
                         <child>
                           <object class="GtkColorButton" id="col_gridMajor">
+                            <property name="name">Grid: Major line color</property>
                             <property name="width-request">30</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
@@ -4699,6 +4741,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         </child>
                         <child>
                           <object class="GtkColorButton" id="col_gridMinor">
+                            <property name="name">Grid: Minor line color</property>
                             <property name="width-request">30</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
@@ -4729,6 +4772,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         </child>
                         <child>
                           <object class="GtkSpinButton" id="s_gridMajorThick">
+                            <property name="name">Grid: Major line thickness</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="tooltip-text" translatable="yes">Specify the thickness
@@ -4747,6 +4791,7 @@ of the major lines.</property>
                         </child>
                         <child>
                           <object class="GtkSpinButton" id="s_gridMinorThick">
+                            <property name="name">Grid: Minor line thickness</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="tooltip-text" translatable="yes">Specify the line thickness
@@ -4765,6 +4810,7 @@ of the minor divisions.</property>
                         </child>
                         <child>
                           <object class="GtkSpinButton" id="s_gridMinorDivisions">
+                            <property name="name">Grid: Number of minor divisions</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
@@ -4798,6 +4844,7 @@ corner of the page, or margins.</property>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_resetGrid">
+                            <property name="name">Grid: Reload default values</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -4815,6 +4862,7 @@ red and light green lines (0.2pt thickness).</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_gridUnits">
+                            <property name="name">Grid: Select major units</property>
                             <property name="width-request">130</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -4836,6 +4884,7 @@ Inches as the major units.</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_gridOffset">
+                            <property name="name">Grid: Starting position (page or margin)</property>
                             <property name="width-request">130</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -4872,6 +4921,7 @@ of the Page, or at the top-left Margin.</property>
                 <child type="label">
                   <object class="GtkCheckButton" id="c_gridGraph">
                     <property name="label" translatable="yes">Grid (Graph Paper)</property>
+                    <property name="name">Marks &amp; Guides dialog: Show grid (graph paper)</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -5249,6 +5299,7 @@ Position:</property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_plCreditVpos">
+                    <property name="name">Image credit dialog: Vertical position of text</property>
                     <property name="width-request">88</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -5289,6 +5340,7 @@ Position:</property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_plCreditHpos">
+                    <property name="name">Image credit dialog: Horizontal position of text</property>
                     <property name="width-request">88</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -5327,6 +5379,7 @@ Position:</property>
                 </child>
                 <child>
                   <object class="GtkComboBoxText" id="ecb_plCreditBoxStyle">
+                    <property name="name">Image credit dialog: Background color</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">Specify the kind of box (Light/Dark background)
@@ -5372,6 +5425,7 @@ parameters at once: font, size and color. </property>
                 </child>
                 <child>
                   <object class="GtkComboBox" id="fcb_plCreditRotate">
+                    <property name="name">Image credit dialog: Rotation of text</property>
                     <property name="width-request">88</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -5418,6 +5472,7 @@ on the image. Note that there are shortcuts:
                 </child>
                 <child>
                   <object class="GtkEntry" id="t_plCreditText">
+                    <property name="name">Image credit dialog: Credit (copyright) text</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Type the text for the Credit to be overlaid
@@ -5450,6 +5505,7 @@ on the image. Note that there are shortcuts:
                 <child>
                   <object class="GtkCheckButton" id="c_plCreditApply2all">
                     <property name="label" translatable="yes">Apply to ALL images in this series</property>
+                    <property name="name">Image credit dialog: Apply to all images in series</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -5495,6 +5551,7 @@ which already have Credit Overlay settings.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_plCreditOverwrite">
                     <property name="label" translatable="yes">Overwite any existing settings</property>
+                    <property name="name">Image credit dialog: Overwrite existing values</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -6082,6 +6139,7 @@ information, position and other parameters.</property>
             <child>
               <object class="GtkButton" id="button1">
                 <property name="label" translatable="yes">Remove Image</property>
+                <property name="name">Sidebar FG/BG: Remove image</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
@@ -6179,6 +6237,7 @@ information, position and other parameters.</property>
                 <child>
                   <object class="GtkButton" id="btn_sbSelectFile">
                     <property name="label" translatable="yes">Select...</property>
+                    <property name="name">Sidebar FG/BG: Select an image</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
@@ -6223,6 +6282,7 @@ information, position and other parameters.</property>
                 </child>
                 <child>
                   <object class="GtkSpinButton" id="s_sbi_scaleWidth">
+                    <property name="name">Sidebar FG/BG: Scale of image</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Specify how much the image 
@@ -6241,6 +6301,7 @@ should be scaled horizontally.</property>
                 </child>
                 <child>
                   <object class="GtkSpinButton" id="s_sbi_scaleHeight">
+                    <property name="name">Sidebar FG/BG: Height of image</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Specify how much the image 
@@ -6313,6 +6374,7 @@ should be scaled vertically.</property>
                         <property name="column-spacing">10</property>
                         <child>
                           <object class="GtkComboBox" id="fcb_sbi_posn_beside">
+                            <property name="name">Sidebar foreground image: Beside text options</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
@@ -6343,6 +6405,7 @@ After Paragraph: After where it comes in the text</property>
                         <child>
                           <object class="GtkRadioButton" id="r_sbiPosn_above">
                             <property name="label" translatable="yes">Above or Below Text:</property>
+                            <property name="name">Sidebar foreground image: Above or below text</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -6360,6 +6423,7 @@ After Paragraph: After where it comes in the text</property>
                         <child>
                           <object class="GtkRadioButton" id="r_sbiPosn_beside">
                             <property name="label" translatable="yes">Beside Text:</property>
+                            <property name="name">Sidebar foreground image: Beside text</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -6377,6 +6441,7 @@ After Paragraph: After where it comes in the text</property>
                         <child>
                           <object class="GtkRadioButton" id="r_sbiPosn_cutout">
                             <property name="label" translatable="yes">Cutout Within Text:</property>
+                            <property name="name">Sidebar foreground image: Cutout within sidebar</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -6393,6 +6458,7 @@ After Paragraph: After where it comes in the text</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_sbi_posn_above">
+                            <property name="name">Sidebar foreground image: Above or below options</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
@@ -6422,6 +6488,7 @@ After Paragraph: After where it comes in the text</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_sbi_posn_cutout">
+                            <property name="name">Sidebar foreground image: Cutout position options</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
@@ -6446,6 +6513,7 @@ After Paragraph: After where it comes in the text</property>
                         </child>
                         <child>
                           <object class="GtkSpinButton" id="s_sbiCutoutLines">
+                            <property name="name">Sidebar foreground image: Adjust cutout position</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="tooltip-text" translatable="yes">Specify the number of minor divisions there should
@@ -6524,6 +6592,7 @@ and 3, 4, 6, or 12 for inches.</property>
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkSpinButton" id="s_sbiAlpha">
+                            <property name="name">Sidebar background image: Transparency (alpha)</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="tooltip-text" translatable="yes">Transparency or alpha value of the background 
@@ -6575,6 +6644,7 @@ that might produce unexpected results.</property>
                         </child>
                         <child>
                           <object class="GtkColorButton" id="col_sbiBgColor">
+                            <property name="name">Sidebar background image: Color</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -6611,7 +6681,7 @@ to show through, even if the image is above
 the background layer, so on a green background
 black will become a darker shade of green, not grey.</property>
                             <property name="halign">end</property>
-                            <property name="label" translatable="yes">Background Image Alpha:</property>
+                            <property name="label" translatable="yes">Background Image Transparency:</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -6641,6 +6711,7 @@ Order:</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_sbiLayerOrder">
+                            <property name="name">Sidebar background image: Order of layers</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
@@ -6691,6 +6762,7 @@ Oversized:</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_sbiOversize">
+                            <property name="name">Sidebar background image: Oversize management</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="can-default">True</property>
@@ -6738,6 +6810,7 @@ being too large for a given sidebar.</property>
                   <object class="GtkCheckButton" id="c_sbi_lockRatio">
                     <property name="label" translatable="yes">Maintain 
 Aspect Ratio</property>
+                    <property name="name">Sidebar FG/BG: Maintain aspect ratio</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7053,6 +7126,7 @@ at the end of the publication. Set appropriate options here to create an Index f
                 <child>
                   <object class="GtkCheckButton" id="c_strongsHeb">
                     <property name="label" translatable="yes">Hebrew Words (from the OT)</property>
+                    <property name="name">Strong's index: Include section for Hebrew words</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7069,6 +7143,7 @@ at the end of the publication. Set appropriate options here to create an Index f
                 <child>
                   <object class="GtkCheckButton" id="c_strongsGrk">
                     <property name="label" translatable="yes">Greek Words (from the NT)</property>
+                    <property name="name">Strong's index: Include section for Greek words</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7159,6 +7234,7 @@ in the Strong's index when it is generated.</property>
                   <object class="GtkCheckButton" id="c_strongsNdx">
                     <property name="label" translatable="yes">Reverse Index (alphabetical 
 listing with numbers)</property>
+                    <property name="name">Strong's index: Include section for reverse index</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7177,6 +7253,7 @@ language to find out the Strong's number.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsSrcLg">
                     <property name="label" translatable="yes">Hebrew or Greek Word</property>
+                    <property name="name">Strong's index entry: Include Hebrew and/or Greek</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7195,6 +7272,7 @@ displayed in the index if useful to readers.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsTranslit">
                     <property name="label" translatable="yes">Transliteration (Latin Script)</property>
+                    <property name="name">Strong's index entry: Include transliteration of source languages</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7213,6 +7291,7 @@ transliterated (romanized) source language words.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsRenderings">
                     <property name="label" translatable="yes">Term Rendering(s)</property>
+                    <property name="name">Strong's index entry: Include receptor term renderings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7269,6 +7348,7 @@ from a Fallback Project:</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_strongsMajorLg">
+                            <property name="name">Strong's index: Use major language gloss (if no rendering found) </property>
                             <property name="width-request">110</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -7310,6 +7390,7 @@ the gloss in a major language.</property>
                         </child>
                         <child>
                           <object class="GtkComboBox" id="fcb_strongsFallbackProj">
+                            <property name="name">Strong's index: Use fallback project (if no rendering found)</property>
                             <property name="width-request">140</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -7365,6 +7446,7 @@ c) Use the Biblical Term's definition (in English)</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsKeyVref">
                     <property name="label" translatable="yes">Key Verse Reference</property>
+                    <property name="name">Strong's index entry: Include key verse reference</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7384,6 +7466,7 @@ the list of cross-references related to the term.</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsDefn">
                     <property name="label" translatable="yes">Definition</property>
+                    <property name="name">Strong's index entry: Include definitions</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7489,6 +7572,7 @@ to the term rendering(s).</property>
                 <child>
                   <object class="GtkCheckButton" id="c_strongsNoComments">
                     <property name="label" translatable="yes">Remove (Comments) from Renderings</property>
+                    <property name="name">Strong's index entry: Remove comments from renderings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -7532,6 +7616,7 @@ to be displayed, select an appropriate option.</property>
                     </child>
                     <child>
                       <object class="GtkComboBox" id="fcb_strongswildcards">
+                        <property name="name">Strong's index entry: How to handle wildcard* character</property>
                         <property name="width-request">145</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -7672,6 +7757,7 @@ whatever is in that book without prior warning.</property>
                     </child>
                     <child>
                       <object class="GtkComboBox" id="fcb_strongsNdxBookId">
+                        <property name="name">Strong's index: Extra book code to be used</property>
                         <property name="width-request">80</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -7732,6 +7818,7 @@ whatever is in that book without prior warning.</property>
                     <child>
                       <object class="GtkCheckButton" id="c_strongs2cols">
                         <property name="label" translatable="yes">Two Column Layout</property>
+                        <property name="name">Strong's index: Use 2-column layout</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -7755,6 +7842,7 @@ a one column layout, uncheck this option.</property>
                       <object class="GtkCheckButton" id="c_strongsOpenIndex">
                         <property name="label" translatable="yes">Open Index
 File in Editor</property>
+                        <property name="name">Strong's index: Open index file after creating it</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
@@ -7804,6 +7892,7 @@ unbalanced lines on the page.</property>
                 </child>
                 <child>
                   <object class="GtkSpinButton" id="s_strongRag">
+                    <property name="name">Strong's index: Allow unbalanced lines</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="halign">start</property>
@@ -8186,6 +8275,7 @@ use Title. NoteText makes this a kind of footnote, like \x.</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_styTextType">
+                <property name="name">Add/Edit marker dialog: Text type</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
@@ -8236,6 +8326,7 @@ Paragraph markers close other paragraphs and character styles, etc.</property>
             </child>
             <child>
               <object class="GtkComboBox" id="fcb_styStyleType">
+                <property name="name">Add/Edit marker dialog: Style type</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
@@ -8298,6 +8389,7 @@ describe the purpose of the style.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_styMarker">
+                <property name="name">Add/Edit marker dialog: Marker (code)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
@@ -8330,6 +8422,7 @@ in your data for this marker.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_styOccursUnder">
+                <property name="name">Add/Edit marker dialog: Markers it can occur under</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">[Required] List markers that this marker may occur under. 
@@ -8361,6 +8454,7 @@ in your data for this marker.</property>
                     <property name="margin-bottom">4</property>
                     <child>
                       <object class="GtkTextView" id="textv_styDesc">
+                        <property name="name">Add/Edit marker dialog: Marker description</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">You can say what you like here to
@@ -8396,7 +8490,7 @@ and helps to place the marker in the tree listing all markers.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_styName">
-                <property name="name">t_styName</property>
+                <property name="name">Add/Edit marker dialog: Marker name (short description)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="tooltip-text" translatable="yes">Consists of: Marker..Endmarker - Group - short description 
@@ -8425,6 +8519,7 @@ and helps to place the marker in the tree listing all markers.</property>
             </child>
             <child>
               <object class="GtkEntry" id="t_styEndMarker">
+                <property name="name">Add/Edit marker dialog: End Marker (code)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="halign">start</property>
@@ -28111,6 +28206,7 @@ PDF Viewer:</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_pdfViewer">
                                     <property name="label" translatable="yes">Visit SumatraPDF Download Page</property>
+                                    <property name="name">Link to SumatraPDF home page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28151,7 +28247,7 @@ Annoyances or Other Issues:</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_reportBugs">
                                     <property name="label" translatable="yes">Report an Issue via GitHub</property>
-                                    <property name="name">Report an Issue with PTXprint</property>
+                                    <property name="name">Link to report an issue with PTXprint</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28170,6 +28266,7 @@ Annoyances or Other Issues:</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_homePage">
                                     <property name="label" translatable="yes">Visit PTXprint's Home Page to Download Latest Version</property>
+                                    <property name="name">Link to PTXprint home page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28240,7 +28337,7 @@ to the PTX2PDF Macros:</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_techFAQ">
                                     <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
-                                    <property name="name">Refer to deeper technical help</property>
+                                    <property name="name">Link to deeper technical help</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28259,6 +28356,7 @@ to the PTX2PDF Macros:</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_faq">
                                     <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
+                                    <property name="name">Link to PTXprint's FAQ page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28362,6 +28460,7 @@ ptxprint_support@sil.org</property>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_community">
                                     <property name="label" translatable="yes">Get help from other PTXprint users</property>
+                                    <property name="name">Link to PTXprint user community site</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28723,6 +28822,7 @@ chosen language.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_download_update">
+                <property name="name">Check for updates...</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
                 <property name="no-show-all">True</property>
@@ -28834,8 +28934,8 @@ Shortcut: F1  or  Ctrl-F  (to Find help)</property>
                 <property name="placeholder-text" translatable="yes">Search for settings</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
-                <accelerator key="F1" signal="grab-focus"/>
                 <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
+                <accelerator key="F1" signal="grab-focus"/>
               </object>
               <packing>
                 <property name="expand">False</property>
