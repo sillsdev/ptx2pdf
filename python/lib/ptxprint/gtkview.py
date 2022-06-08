@@ -1181,7 +1181,7 @@ class GtkViewModel(ViewModel):
         self.onSaveConfig(None)
 
         self._incrementProgress(val=0.)
-        self.builder.get_object("t_find").set_placeholder_text("Processing...")
+        self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
         try:
             self.callback(self)
         except Exception as e:
