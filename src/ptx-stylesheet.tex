@@ -544,7 +544,7 @@
     \x@\fe@turemaths\r@s[] \E
     % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
     \let\r@s\empty % MUST start with empy list!
-    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty:\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\edef\r@s{\ifx\r@s\empty\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
     \let\p@ram\r@s
@@ -632,13 +632,13 @@
   \edef\f@atureset{\f@atureset,\@ffname}% Duplicate values don't matter, as we'll unset values as the list is generated.
 }
 
-
 \def\decodeff@ature#1#2=#3=#4\E{% [+foo] or [foo] adds '+foo' [-foo] removes '+foo',   [foo=bar] adds foo=bar
   \edef\t@st{#3}\ifx\t@st\empty
     \if#1+\edef\@ffname{@@ffname-#2}\edef\@ffvalue{+#2}%
     \else
       \if#1-\edef\@ffname{@@ffname-#2}\edef\@ffvalue{}%
-      \else\edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{+#1#2}%
+      \else\if#1/\edef\@ffname{@@ffname/#2}\def\@ffvalue{#1#2}%
+        \else\edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{+#1#2}\fi
       \fi
     \fi
   \else

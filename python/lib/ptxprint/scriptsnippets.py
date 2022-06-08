@@ -111,7 +111,7 @@ class arab(ScriptSnippet):
 
     @classmethod
     def getrefseps(cls, model):
-        return cls.refseparators[1 if model["scripts/arab/lrcolon"] else 0]
+        return cls.refseparators[1 if model.get("c_scrarabrefs") else 0]
 
 class mlym(ScriptSnippet):
     dialogstruct = [

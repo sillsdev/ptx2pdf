@@ -43,7 +43,7 @@ def readvrs(fname):
 class RefSeparators(dict):
     _defaults = {
         "books": "; ",      # separator between references in different books
-        "chaps": "; ",       # separator between references in different chapters
+        "chaps": "; ",      # separator between references in different chapters
         "verses": ",",      # separator between references in the same chapter
         "cv": ":",          # separator between chapter and verse
         "bkc": " ",         # separator between book and chapter
@@ -51,12 +51,12 @@ class RefSeparators(dict):
         "mark": lambda r, s: (r.mark or "") + s,
         "bksp": " ",
         "range": "-",
+        "sep": "\u200B"
     }
     def __init__(self, **kw):
         self.update(kw)
         for k, v in self._defaults.items():
-            if k not in self:
-                self[k] = v
+            self[k] = kw.get(k, v)
 
 class Reference:
 

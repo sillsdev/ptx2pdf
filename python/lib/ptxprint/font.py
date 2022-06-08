@@ -757,6 +757,7 @@ class FontRef:
         self.isCtxtSpace = isCtxtSpace
         self.feats = feats.copy() if feats is not None else {}
         self.lang = lang
+        logger.debug(repr(self) + " Created")
 
     def __repr__(self):
         return str(type(self)) + self.asConfig()

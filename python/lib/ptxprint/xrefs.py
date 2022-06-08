@@ -25,15 +25,19 @@ class BaseXrefs:
     addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
     dotsep = RefSeparators(cv=".", onechap=True)
 
-    def __init__(self, scriptsep):
+    def __init__(self, scriptsep, rtl=False):
         if scriptsep is not None:
             self.addsep = RefSeparators(**scriptsep)
-            self.addsep.update(dict(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0"))
+            self.addsep.update(dict(books="; ", chaps=";\u200B", verses=",\u200B", bkc="\u00A0", mark=usfmmark, bksp="\u00A0"))
+        if rtl:
+            self.addsep.update(dict(books="\u061B ", chaps="\u061B\u200B"))
+        logger.debug(self.addsep)
+        self.rtl = rtl
 
 
 class XrefFileXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, separators=None, listsize=0):
-        super().__init__(separators)
+    def __init__(self, xrfile, filters, separators=None, listsize=0, rtl=False):
+        super().__init__(separators, rtl)
         self.filters = filters
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
@@ -102,8 +106,9 @@ class RefGroup(list):
     pass
 
 class XMLXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None, context=None, shownums=True):
-        super().__init__(separators)
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
+                 context=None, shownums=True, rtl=False):
+        super().__init__(separators, rtl=rtl)
         self.filters = filters
         self.context = context or BaseBooks
         self.shownums = shownums
@@ -170,7 +175,7 @@ class XMLXrefs(BaseXrefs):
             else:
                 if len(e[2]):
                     a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
-        return " ".join(a)
+        return r"\space ".join(a)
 
     def _updatedat(newdat, dat):
         for k, v in dat.items():
@@ -221,7 +226,9 @@ class XMLXrefs(BaseXrefs):
                             "book":         k.first.book,
                             "dotref":       k.str(context=NoBook, addsep=self.dotsep),
                             "colnobook":    k.str(context=NoBook),
-                            "refs":         res
+                            "refs":         res,
+                            "brtl":         r"\beginR" if self.rtl else "",
+                            "ertl":         r"\endR" if self.rtl else ""
                         }
                         outf.write(self.template.format(**info))
 
@@ -237,16 +244,17 @@ class Xrefs:
             parent.ptsettings.bookStrs = usfms.booknames.bookStrs
             parent.ptsettings.bookNames = usfms.booknames.bookNames
             parent.hasLocalBookNames = True
-        logger.debug(f"Source: {source}")
+        rtl = parent['document/ifrtl'] == 'true'
+        logger.debug(f"Source: {source}, {rtl=}")
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
         if source == "strongs":
-            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums)
+            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl)
         elif xrfile is None:
-            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), filters, separators=seps, listsize=listsize)
+            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"), filters, separators=seps, listsize=listsize, rtl=rtl)
         elif xrfile.endswith(".xml"):
-            self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings)
+            self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings, rtl=rtl)
         else:
-            self.xrefs = XrefFileXrefs(xrfile, filters, separators=seps)
+            self.xrefs = XrefFileXrefs(xrfile, filters, separators=seps, rtl=rtl)
         gc.collect()
 
     def _getVerseRanges(self, sfm, bk):

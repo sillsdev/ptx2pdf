@@ -197,7 +197,7 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
-    \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
+    \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt% plus 1fil%\lineskip=10pt
     \xspaceskip=0pt
     \getp@ram{justification}{#2}{#2}%
     \ifx\p@ram\c@nter
@@ -603,7 +603,7 @@
   \s@tbaseline{#2}{#2}%
   % Enable justification according to marker.
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline now \the\baselineskip}%
-  \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt plus 1fil%\lineskip=10pt
+  \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt% plus 1fil%\lineskip=10pt
   \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
@@ -656,11 +656,11 @@
   \setbox0=\hbox{}\trace{o}{current height=\the\dimen0}%
   \ifdim\dimen0>#1\loop
     \setbox1=\vbox{\unvbox1\unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \ifdim\ht3>0pt \setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
+    \ifdim\ht3>0pt \setbox0=\hbox{\ifRTL\beginR\fi\unhbox3\unskip\unpenalty\space\unhbox0}\repeat
     \setbox1=\box\voidb@x
   \else\temptrue\loop
     \setbox1=\vbox{\unvbox1 \unskip\unpenalty\global\setbox3=\lastbox\unskip}%
-    \ifdim\ht3>0pt \setbox0=\hbox{\unhbox3\unskip\unpenalty\space\unhbox0}
+    \ifdim\ht3>0pt \setbox0=\hbox{\ifRTL\beginR\hskip-\leftskip\fi\unhbox3\unskip\unpenalty\unskip\unpenalty\space\unhbox0}%
     \else\ifvoid3\tempfalse\else\trace{o}{m@kexrefbox: Weird nonempty box3 \the\ht3+\the\dp3}\fi\fi
     \dimen1=\dimen0 \advance\dimen1 by \ht1 \advance\dimen1 by \dp1
     \advance\dimen1 by 0pt % This is redundant, but makes it work by I think separating the \fi\ifdim
@@ -678,7 +678,11 @@
   \everypar={}% don't do body text formatting
   \x@\let\x@\th@cl@ss\csname note-#3\endcsname % make \th@cl@ss be a synonym for the current note class
   \hsize=#2%\advance\hsize-\XrefNotesMargin\advance\hsize-\XrefNotesMargin
-  \if#4r\relax \leftskip=0pt plus 0.8\hsize\rightskip=0pt \parfillskip=0pt \else\leftskip=0pt \rightskip=0pt plus 0.8\hsize\fi
+  \if#4r\relax \leftskip=0pt plus 0.8\hsize
+    \rightskip=0pt \parfillskip=0pt \else
+    \leftskip=0pt \rightskip=0pt plus 0.8\hsize \parfillskip=0pt\fi
+  \ifRTL\skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0\fi
+  \trace{o}{Inside m@kexrefbox leftskip=\the\leftskip, rightskip=\the\rightskip}%
   % Empty the xref notes so that they don't crop up elsewhere
   \global\setbox\XrefB@x=\copy\th@cl@ss
   \unvbox\th@cl@ss \r@versevb@x{3}\unvbox3
@@ -689,14 +693,14 @@
     \dimen2=\ht0
     \ifdim\ht0>0pt
       \dimen1=\ht0
-      \setbox1=\vbox{\unhbox0}%
+      \setbox1=\vbox{\ifRTL\beginR\fi\unhbox0}%
       \dimen0=\ht\xr@fbox \advance\dimen0 by \ht1 \advance\dimen0 by \baselineskip
       \advance\dimen0 by -\dimen1 \advance\dimen0 by -\dp\xr@fbox
       \ifdim\dimen0>#1
         \trace{o}{Bottom of xref box aiming for \the #1 but currently \the\dimen0. Lastbox \the\ht1}%
         \tempfalse % we're done with the main loop
-        \setbox0=\hbox{}
-        \m@ke@te@mp{#1}
+        \setbox0=\hbox{}%
+        \m@ke@te@mp{#1}%
         \ifdim\ht0>0pt \hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
       \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen2\XrefSkip
@@ -706,7 +710,7 @@
   \iftemp\repeat
   %\ifdim\ht\xr@fbox=0pt \message{empty xref box}\setbox\xr@fbox=\vbox{\hbox to \hsize{\space}}\fi
 % completed the main box. Now capture the rest as a normal paragraphed note
-  \setbox1=\vbox{}
+  \setbox1=\vbox{}%
   \loop
     \setbox0\lastbox
     \ifdim\ht0>0pt \setbox1=\vbox{\unvbox1\box0}\repeat
@@ -2247,14 +2251,14 @@
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
 \def\NQUAD{\penalty\the\badspacepenalty\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
-\def\MQUAD{\penalty\the\badspacepenalty\hskip 1em}
+\def\MQUAD{\penalty\the\badspacepenalty\hskip 1em plus .2em minus .2em}
 \def\MSPACE{\hskip 1em}
 \def\NSPACE{\space}
 \def\THREEPEREMSPACE{\hskip .333em}
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
-\def\THINSPACE{\hskip .2em}
-\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp\intercharspace}
+\def\THINSPACE{\hskip .2em plus .1em minus .1em}
+\def\HAIRSPACE{\penalty\the\badspacepenalty\hskip 1sp plus 1sp minus 1sp\intercharspace}
 \def\HYPHEN{\-}
 \def\LINESEP{\break}
 \def\emdash{\char"2014\relax}
