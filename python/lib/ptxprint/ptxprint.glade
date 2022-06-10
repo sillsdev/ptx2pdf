@@ -3266,14 +3266,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3284,27 +3284,27 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3321,7 +3321,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -4966,10 +4966,6 @@ the text. This may be useful for precise measuring.</property>
         <col id="1">ar_SA</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Burmese</col>
-        <col id="1">my</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Chinese</col>
         <col id="1">zh</col>
       </row>
@@ -4982,20 +4978,12 @@ the text. This may be useful for precise measuring.</property>
         <col id="1">fr</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Hindi</col>
-        <col id="1">hi</col>
-      </row>
-      <row>
         <col id="0" translatable="yes">Hungarian</col>
         <col id="1">hu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonesian</col>
         <col id="1">id</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Korean</col>
-        <col id="1">ko</col>
       </row>
       <row>
         <col id="0" translatable="yes">Portugese</col>
@@ -5012,10 +5000,6 @@ the text. This may be useful for precise measuring.</property>
       <row>
         <col id="0" translatable="yes">Spanish</col>
         <col id="1">es</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Thai</col>
-        <col id="1">th</col>
       </row>
     </data>
   </object>
@@ -22411,7 +22395,7 @@ fit within the graphic.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">This opton moves the Ayah
+                                            <property name="tooltip-text" translatable="yes">This option moves the Ayah
 to the end of the verse. </property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
@@ -24574,7 +24558,7 @@ which are all specified below.</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usePrintDraftChanges">
                                             <property name="label" translatable="yes">Apply Changes.txt (and PrintDraftChanges.txt)</property>
-                                            <property name="name">Enable apply changes</property>
+                                            <property name="name">Enable Changes.txt to be applied</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -24607,7 +24591,7 @@ which apply to all configurations, and gets
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the Changes.txt file in
 one tab, and PrintDraftChanges.txt
 in the next tab to the right.
@@ -24631,7 +24615,7 @@ Shortcut: Shift-Ctrl-C</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the ptxprint-mods.tex file.
 
 Shortcut: Shift-Ctrl-T</property>
@@ -24653,7 +24637,7 @@ Shortcut: Shift-Ctrl-T</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the ptxprint-mods.sty file.
 
 Shortcut: Shift-Ctrl-S</property>
@@ -24723,7 +24707,7 @@ for these to be used by PTXprint.</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the custom.sty file.
 
 Shortcut: Shift-Ctrl-M</property>
@@ -24763,7 +24747,7 @@ Shortcut: Shift-Ctrl-M</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Switch to the View/Edit tab to
+                                            <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
 show the ptxprint-premods.tex file.
 
 Shortcut: Shift-Ctrl-P</property>
@@ -25624,7 +25608,7 @@ interlinear (&amp; ruby text) output.</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">If you edit any of these files, you should
 save them before moving to a different
-tab (otherwise your changes will be lost.)
+tab (otherwise your changes will be lost).
 
 Shortcut: Ctrl-S</property>
                             <property name="double-buffered">False</property>
@@ -25648,7 +25632,7 @@ Shortcut: Ctrl-S</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Discard away any changes that have 
+                            <property name="tooltip-text" translatable="yes">Discard any changes that have 
 been made and restore the contents
 of this file as it was when last saved.
 
@@ -28549,7 +28533,7 @@ by deleting unneeded files.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
+                                    <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
                                     <property name="max-width-chars">48</property>
@@ -28569,7 +28553,7 @@ by deleting unneeded files.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
+                                    <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
                                     <property name="max-width-chars">48</property>
@@ -28589,7 +28573,7 @@ by deleting unneeded files.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
+                                    <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
                                     <property name="max-width-chars">70</property>
@@ -28609,7 +28593,7 @@ by deleting unneeded files.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
+                                    <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
                                     <property name="max-width-chars">48</property>
@@ -28928,7 +28912,7 @@ relevant topics will appear above.
 Select a topic to jump to the appropriate 
 setting which will be highlighted.
 
-Shortcut: F1  or  Ctrl-F  (to Find help)</property>
+Shortcut: Ctrl-F</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
@@ -28938,7 +28922,6 @@ Shortcut: F1  or  Ctrl-F  (to Find help)</property>
                 <property name="placeholder-text" translatable="yes">Search for settings</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
-                <accelerator key="F1" signal="grab-focus"/>
                 <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
               </object>
               <packing>
