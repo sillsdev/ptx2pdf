@@ -108,7 +108,7 @@ class Signature:
             self.margin = Size((self.cell.w - self.src.w),
                                0.5 * (self.cell.h - self.src.h))
         if (self.pages > 8 and self.margin.w < self.fold) or (self.pages > 4 and self.margin.h < self.fold):
-            raise OverflowError("Margin {:.2f} less than folding margin {:.2f}".format(self.margin, self.fold))
+            raise OverflowError("Margin ({0.w:.2f} pt x {0.h:.2f} pt) less than folding margin {1:.2f} pt".format(self.margin, self.fold))
 
     def cm(self, i):
         self.crops = []
