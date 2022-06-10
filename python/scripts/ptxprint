@@ -116,6 +116,7 @@ fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
+    #from ptxprint.restserver import startRestServer
 
 from ptxprint.view import ViewModel, VersionStr, doError
 from ptxprint.runjob import RunJob, isLocked
@@ -288,6 +289,7 @@ else:
         reset_gtk_direction()
         goround = False
         mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
+        #restserver = startRestServer(model=mainw)
         if args.pid:
             mainw.setPrjid(args.pid)
             mainw.setConfigId(args.config or "Default")
@@ -306,5 +308,6 @@ else:
                 args.pid = mainw.prjid
                 args.config = mainw.configId
                 goround = True
+        #restserver.shutdown()
     with open(conffile, "w", encoding="utf-8") as outf:
         config.write(outf)

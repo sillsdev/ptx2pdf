@@ -779,33 +779,41 @@ class GtkViewModel(ViewModel):
     def onFindClicked(self, entry, which, event):
         txt = self.get("t_find").lower()
         if which == Gtk.EntryIconPosition.PRIMARY:
-            if self.builder.get_object(txt) is not None:
-                self.highlightwidget(txt)
-                return
-            scores = {}
-            for k, v in self.finddata.items():
-                p = -1
-                count = 0
-                while True:
-                    p = k.find(txt, p+1)
-                    if p > -1:
-                        count += 1
-                    else:
-                        break
-                if count > 0:
-                    s = scores.setdefault(v[0], 0)
-                    scores[v[0]] = s + count * v[1]
-            choices = []
-            for k in sorted(scores.keys(), key=lambda x:-scores[x]):
-                n = self.widgetnames.get(k, None)
-                if n is not None:
-                    choices.append((k, n))
-            self._makeFindPopup(entry, choices)
+            self.doFind(txt)
         else:
-            for wid in self.searchWidget:
-                self.highlightwidget(wid, highlight=False)
-            self.searchWidget = []
-            self.set("t_find", "")
+            self.doFind(None)
+
+    def doFind(self, txt):
+        # if txt is None:   # keep track of recent finds
+        for wid in self.searchWidget:
+            self.highlightwidget(wid, highlight=False)
+        self.searchWidget = []
+        self.set("t_find", txt or "")
+        if txt is None:
+            return
+        if self.builder.get_object(txt) is not None:
+            self.highlightwidget(txt)
+            return
+        scores = {}
+        for k, v in self.finddata.items():
+            p = -1
+            count = 0
+            while True:
+                p = k.find(txt, p+1)
+                if p > -1:
+                    count += 1
+                else:
+                    break
+            if count > 0:
+                s = scores.setdefault(v[0], 0)
+                scores[v[0]] = s + count * v[1]
+        choices = []
+        entry = self.builder.get_object("t_find")
+        for k in sorted(scores.keys(), key=lambda x:-scores[x]):
+            n = self.widgetnames.get(k, None)
+            if n is not None:
+                choices.append((k, n))
+        self._makeFindPopup(entry, choices)
 
     def _makeFindPopup(self, entry, choices):
         self.popover = Gtk.Popover()
