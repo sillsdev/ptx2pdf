@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-08 17:11+0700\n"
-"PO-Revision-Date: 2022-06-08 10:13\n"
+"POT-Creation-Date: 2022-06-11 19:46+0700\n"
+"PO-Revision-Date: 2022-06-11 12:46\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -83,27 +83,27 @@ msgstr "Paratext n'est pas installé sur ce système.\n"
 msgid "No project set"
 msgstr "Aucun projet défini"
 
-#: lib/ptxprint/gtkview.py:823
+#: lib/ptxprint/gtkview.py:831
 msgid "No matches found - try another search term"
 msgstr "Aucune correspondance trouvée - essayez un autre terme de recherche"
 
-#: lib/ptxprint/gtkview.py:1022
+#: lib/ptxprint/gtkview.py:1030
 msgid "Can't set {} in the model"
 msgstr "Impossible de définir {} dans le modèle"
 
-#: lib/ptxprint/gtkview.py:1123
+#: lib/ptxprint/gtkview.py:1131
 msgid "Font(s) not set"
 msgstr "Police(s) non définie(s)"
 
-#: lib/ptxprint/gtkview.py:1137
+#: lib/ptxprint/gtkview.py:1145
 msgid "Printing busy"
 msgstr "Impression occupée"
 
-#: lib/ptxprint/gtkview.py:1141 lib/ptxprint/runjob.py:243
+#: lib/ptxprint/gtkview.py:1149 lib/ptxprint/runjob.py:243
 msgid "No books to print"
 msgstr "Aucun livre à imprimer"
 
-#: lib/ptxprint/gtkview.py:1167
+#: lib/ptxprint/gtkview.py:1175
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -117,152 +117,153 @@ msgstr "                   >>> VEUILLEZ FERMER le PDF <<<                     \n
 " Voir 'Liens' dans l'onglet Visualiseur pour plus de détails.                            \n\n"
 "                        Voulez-vous essayer à nouveau ?"
 
-#: lib/ptxprint/gtkview.py:1172
+#: lib/ptxprint/gtkview.py:1180
 msgid "The old PDF file is open!"
 msgstr "L'ancien fichier PDF est ouvert !"
 
-#: lib/ptxprint/gtkview.py:1175
+#: lib/ptxprint/gtkview.py:1183
 msgid "Close the old PDF file before you try again."
 msgstr "Fermez l'ancien fichier PDF avant de réessayer."
 
-#: lib/ptxprint/gtkview.py:1201
-msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
+#: lib/ptxprint/gtkview.py:1192
+msgid "Processing..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1294
+#: lib/ptxprint/gtkview.py:1209
+msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
+msgstr "Note: Il peut prendre un certain temps pour convertir des photos pour le format de sortie PDF sélectionné ({})."
+
+#: lib/ptxprint/gtkview.py:1302
 msgid "And the ptxprint.sty stylesheet has been deleted."
 msgstr "Et la feuille de style ptxprint.sty a été supprimée."
 
-#: lib/ptxprint/gtkview.py:1299
+#: lib/ptxprint/gtkview.py:1307
 msgid "But the ptxprint.sty stylesheet could not be deleted."
 msgstr "Mais la feuille de style ptxprint.sty n'a pas pu être supprimée."
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1310
 msgid "The 'Default' config settings have been reset."
 msgstr "Les paramètres de configuration 'Défaut' ont été réinitialisés."
 
-#: lib/ptxprint/gtkview.py:1306
+#: lib/ptxprint/gtkview.py:1314
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Une erreur interne s'est produite, on tente de supprimer les répertoires"
 
-#: lib/ptxprint/gtkview.py:1306 lib/ptxprint/gtkview.py:1311
-#: lib/ptxprint/gtkview.py:1314 lib/ptxprint/gtkview.py:1320
+#: lib/ptxprint/gtkview.py:1314 lib/ptxprint/gtkview.py:1319
+#: lib/ptxprint/gtkview.py:1322 lib/ptxprint/gtkview.py:1328
 msgid "Folder: "
 msgstr "Dossier : "
 
-#: lib/ptxprint/gtkview.py:1311 lib/ptxprint/gtkview.py:1320
+#: lib/ptxprint/gtkview.py:1319 lib/ptxprint/gtkview.py:1328
 msgid "Cannot delete folder from disk!"
 msgstr "Impossible de supprimer le dossier du disque!"
 
-#: lib/ptxprint/gtkview.py:1314
+#: lib/ptxprint/gtkview.py:1322
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Le dossier de sortie non standard doit être supprimé manuellement"
 
-#: lib/ptxprint/gtkview.py:1409
+#: lib/ptxprint/gtkview.py:1417
 msgid "Fonts"
 msgstr "Polices"
 
-#: lib/ptxprint/gtkview.py:1409
+#: lib/ptxprint/gtkview.py:1417
 msgid "Scripts"
 msgstr "Systèmes d’écriture"
 
-#: lib/ptxprint/gtkview.py:1413 temp.glade:26967
+#: lib/ptxprint/gtkview.py:1421 temp.glade:26967
 msgid "Peripherals"
 msgstr "Périphériques"
 
-#: lib/ptxprint/gtkview.py:1416 temp.glade:20751
+#: lib/ptxprint/gtkview.py:1424 temp.glade:20751
 msgid "Pictures"
 msgstr "Images"
 
-#: lib/ptxprint/gtkview.py:1419 temp.glade:21304
+#: lib/ptxprint/gtkview.py:1427 temp.glade:21304
 msgid "Diglot"
 msgstr "Diglot"
 
-#: lib/ptxprint/gtkview.py:1422
+#: lib/ptxprint/gtkview.py:1430
 msgid "Notes+"
 msgstr "Remarques+"
 
-#: lib/ptxprint/gtkview.py:1422
+#: lib/ptxprint/gtkview.py:1430
 msgid "Refs"
 msgstr "Réfs"
 
-#: lib/ptxprint/gtkview.py:1423 temp.glade:15745
+#: lib/ptxprint/gtkview.py:1431 temp.glade:15745
 msgid "Cross-References"
 msgstr "Renvois"
 
-#: lib/ptxprint/gtkview.py:1427 lib/ptxprint/gtkview.py:1428
+#: lib/ptxprint/gtkview.py:1435 lib/ptxprint/gtkview.py:1436
 msgid "Tabs"
 msgstr "Onglets"
 
-#: lib/ptxprint/gtkview.py:1429 lib/ptxprint/gtkview.py:1430
+#: lib/ptxprint/gtkview.py:1437 lib/ptxprint/gtkview.py:1438
 msgid "Borders"
 msgstr "Bordures"
 
-#: lib/ptxprint/gtkview.py:1441 temp.glade:25589
+#: lib/ptxprint/gtkview.py:1449 temp.glade:25589
 msgid "Advanced"
 msgstr "Avancé"
 
-#: lib/ptxprint/gtkview.py:1576 temp.glade:9194
+#: lib/ptxprint/gtkview.py:1584 temp.glade:9194
 msgid "Lock"
 msgstr "Verrouiller"
 
-#: lib/ptxprint/gtkview.py:1579
+#: lib/ptxprint/gtkview.py:1587
 msgid "Unlock"
 msgstr "Déverrouiller"
 
-#: lib/ptxprint/gtkview.py:1718
+#: lib/ptxprint/gtkview.py:1726
 msgid "The Book in focus is not within scope"
 msgstr "Le Livre en question n'est pas dans le champ d'application"
 
-#: lib/ptxprint/gtkview.py:1719
+#: lib/ptxprint/gtkview.py:1727
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "Pour générer une AdjList, le livre doit être\n"
 "dans la liste des livres à imprimer."
 
-#: lib/ptxprint/gtkview.py:1742
+#: lib/ptxprint/gtkview.py:1750
 msgid "No Secondary Project Set"
 msgstr "Aucun projet secondaire défini"
 
-#: lib/ptxprint/gtkview.py:1742
+#: lib/ptxprint/gtkview.py:1750
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "Afin de générer une AdjList pour un Diglot, le projet \n"
 "secondaire doit être défini sur l'onglet Diglot."
 
-#: lib/ptxprint/gtkview.py:1758
+#: lib/ptxprint/gtkview.py:1766
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "Un ou plusieurs fichiers d'ajustement de paragraphe existent déjà!"
 
-#: lib/ptxprint/gtkview.py:1759
+#: lib/ptxprint/gtkview.py:1767
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Voulez-vous SUPPRIMER les fichiers listés ci-dessus ?"
 
-#: lib/ptxprint/gtkview.py:1868
+#: lib/ptxprint/gtkview.py:1876
 msgid " Click the Generate button (above) to start the process of creating Front Matter..."
 msgstr " Cliquez sur le bouton Générer (ci-dessus) pour lancer le processus de création des pages liminaires..."
 
-#: lib/ptxprint/gtkview.py:1903 lib/ptxprint/gtkview.py:1909
+#: lib/ptxprint/gtkview.py:1911 lib/ptxprint/gtkview.py:1917
 msgid "View Only..."
 msgstr "Voir seulement..."
 
-#: lib/ptxprint/gtkview.py:1915
+#: lib/ptxprint/gtkview.py:1923
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Utilisez l'onglet 'Avancé' pour sélectionner les paramètres que vous voulez voir ou modifier."
 
-#: lib/ptxprint/gtkview.py:1933
+#: lib/ptxprint/gtkview.py:1941
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
 "Click on View/Edit... button to see more."
-msgstr "\n\n"
-"-------------------------------------                                            \n"
-"[Le fichier a été tronqué pour l'affichage]                                            \n"
-"Cliquez sur le bouton Affichage/Éditer... pour en voir plus."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:1940
+#: lib/ptxprint/gtkview.py:1948
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -274,17 +275,17 @@ msgstr "\n"
 "   * le bouton 'Générer'                                                \n"
 "   * le bouton 'Imprimer' pour d'abord créer le fichier PDF"
 
-#: lib/ptxprint/gtkview.py:2525
+#: lib/ptxprint/gtkview.py:2533
 msgid "File not found"
 msgstr "Fichier non trouvé"
 
-#: lib/ptxprint/gtkview.py:2647
+#: lib/ptxprint/gtkview.py:2655
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "L'option \"Activer le texte en couleur\" est maintenant activée.\n"
 "Voir l'onglet Polices+Écriture pour plus de détails."
 
-#: lib/ptxprint/gtkview.py:2847
+#: lib/ptxprint/gtkview.py:2855
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -292,118 +293,118 @@ msgstr "\n"
 "Ce fichier n'existe pas encore !\n\n"
 "Éditez ici et cliquez sur 'Enregistrer' pour le créer."
 
-#: lib/ptxprint/gtkview.py:2889
+#: lib/ptxprint/gtkview.py:2897
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ceci est le fichier .tex spécifique pour le projet {} utilisé par PTXprint.\n"
 "% Nom de configuration enregistré : {}\n"
 
-#: lib/ptxprint/gtkview.py:2896
+#: lib/ptxprint/gtkview.py:2904
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ceci est le fichier de prétraitement .tex spécifique pour le projet {} utilisé par PTXprint.\n"
 "% Nom de configuration enregistré : {}\n"
 
-#: lib/ptxprint/gtkview.py:2960
+#: lib/ptxprint/gtkview.py:2968
 msgid "Select the location and name for the Archive file"
 msgstr "Sélectionnez l'emplacement et le nom du fichier d'archive"
 
-#: lib/ptxprint/gtkview.py:2997
+#: lib/ptxprint/gtkview.py:3005
 msgid "Select the folder containing image files"
 msgstr "Sélectionnez le dossier contenant des fichiers d’image"
 
-#: lib/ptxprint/gtkview.py:3046
+#: lib/ptxprint/gtkview.py:3054
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Sélectionnez un ou plusieurs fichiers PDF(s) pour les pages liminaires"
 
-#: lib/ptxprint/gtkview.py:3051
+#: lib/ptxprint/gtkview.py:3059
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Sélectionnez un ou plusieurs PDF(s) pour les annexes"
 
-#: lib/ptxprint/gtkview.py:3056
+#: lib/ptxprint/gtkview.py:3064
 msgid "Select Watermark PDF file"
 msgstr "Sélectionnez un fichier PDF pour le filigrane"
 
-#: lib/ptxprint/gtkview.py:3061
+#: lib/ptxprint/gtkview.py:3069
 msgid "Select Page Border PDF file"
 msgstr "Sélectionnez le fichier PDF de la bordure de la page"
 
-#: lib/ptxprint/gtkview.py:3066
+#: lib/ptxprint/gtkview.py:3074
 msgid "Select Section Header PDF file"
 msgstr "Sélectionnez le fichier PDF de l'en-tête de section"
 
-#: lib/ptxprint/gtkview.py:3071
+#: lib/ptxprint/gtkview.py:3079
 msgid "Select End of Book PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de fin de livre"
 
-#: lib/ptxprint/gtkview.py:3076
+#: lib/ptxprint/gtkview.py:3084
 msgid "Select Verse Decorator PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de numéro de verset"
 
-#: lib/ptxprint/gtkview.py:3081
+#: lib/ptxprint/gtkview.py:3089
 msgid "Select a PDF file to compare with"
 msgstr "Sélectionnez un fichier PDF à comparer avec"
 
-#: lib/ptxprint/gtkview.py:3085 lib/ptxprint/runjob.py:306 temp.glade:27648
+#: lib/ptxprint/gtkview.py:3093 lib/ptxprint/runjob.py:306 temp.glade:27648
 msgid "Previous PDF (_1)"
 msgstr "PDF précédent (_1)"
 
-#: lib/ptxprint/gtkview.py:3186
+#: lib/ptxprint/gtkview.py:3194
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Basculer vers l'autre\n"
 "projet Diglot"
 
-#: lib/ptxprint/gtkview.py:3188 temp.glade:19517 temp.glade:28952
+#: lib/ptxprint/gtkview.py:3196 temp.glade:19517 temp.glade:28952
 #: temp.glade:29007
 msgid "Print"
 msgstr "Imprimer"
 
-#: lib/ptxprint/gtkview.py:3194
+#: lib/ptxprint/gtkview.py:3202
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Enregistrer et revenir\n"
 "au projet Diglot"
 
-#: lib/ptxprint/gtkview.py:3196
+#: lib/ptxprint/gtkview.py:3204
 msgid "Return"
 msgstr "Retour"
 
-#: lib/ptxprint/gtkview.py:3235
+#: lib/ptxprint/gtkview.py:3243
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "PVI : La police régulière prend déjà en charge tous les caractères du texte."
 
-#: lib/ptxprint/gtkview.py:3236
+#: lib/ptxprint/gtkview.py:3244
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Une police de repli n'est pas nécessaire donc\n"
 "l'option 'Utiliser une police de repli' sera désactivée."
 
-#: lib/ptxprint/gtkview.py:3444
+#: lib/ptxprint/gtkview.py:3452
 msgid "Warning! SIL's Executive Limitations do not permit SIL to publish scripture."
 msgstr "Attention ! Les limitations exécutives de SIL ne lui permettent pas de publier les Écritures."
 
-#: lib/ptxprint/gtkview.py:3445
+#: lib/ptxprint/gtkview.py:3453
 msgid "The reference to SIL in the project's copyright line has been removed. Contact your entity's Publishing Coordinator for advice regarding protocols."
 msgstr "La référence à SIL dans la ligne de droit d'auteur du projet a été supprimée. Contactez le coordinateur des publications de votre entité pour obtenir des conseils concernant les protocoles."
 
-#: lib/ptxprint/gtkview.py:3493 lib/ptxprint/gtkview.py:4058
+#: lib/ptxprint/gtkview.py:3501 lib/ptxprint/gtkview.py:4066
 msgid "Choose Image"
 msgstr "Choisir une image"
 
-#: lib/ptxprint/gtkview.py:3622
+#: lib/ptxprint/gtkview.py:3630
 msgid "Unsupported Locale"
 msgstr "Locale non prise en charge"
 
-#: lib/ptxprint/gtkview.py:3623
+#: lib/ptxprint/gtkview.py:3631
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Cette locale n'est pas prise en charge sur votre système, vous devrez peut-être l'installer"
 
-#: lib/ptxprint/gtkview.py:3804
+#: lib/ptxprint/gtkview.py:3812
 msgid "Strong's Index generated in: {}"
 msgstr "Index Strongs généré en : {}"
 
-#: lib/ptxprint/gtkview.py:3820
+#: lib/ptxprint/gtkview.py:3828
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -411,35 +412,35 @@ msgstr "Pour info : cette option Interlinéaire n'est pas compatible avec\n"
 "'Ajustement de l'espacement entre les lettres' sur la page Polices+Écriture.\n"
 "Cette option donc vient d'être désactivée."
 
-#: lib/ptxprint/gtkview.py:3845
+#: lib/ptxprint/gtkview.py:3853
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Une version plus récente de PTXprint ({}) est disponible.\n"
 "Cliquez pour visiter la page de téléchargement sur le site web."
 
-#: lib/ptxprint/gtkview.py:3869
+#: lib/ptxprint/gtkview.py:3877
 msgid "Internet Access Disabled"
 msgstr "Accès Internet désactivé"
 
-#: lib/ptxprint/gtkview.py:3869
+#: lib/ptxprint/gtkview.py:3877
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Toutes les URLs Internet ont été désactivées \n"
 "en utilisant l'option de l'onglet Avancé"
 
-#: lib/ptxprint/gtkview.py:3905
+#: lib/ptxprint/gtkview.py:3913
 msgid "<Type Value Here>"
 msgstr "<Saisir la valeur ici>"
 
-#: lib/ptxprint/gtkview.py:3922
+#: lib/ptxprint/gtkview.py:3930
 msgid "Variable Name"
 msgstr "Nom de variable"
 
-#: lib/ptxprint/gtkview.py:3988
+#: lib/ptxprint/gtkview.py:3996
 msgid "Category Name"
 msgstr "Nom de catégorie"
 
-#: lib/ptxprint/gtkview.py:4073
+#: lib/ptxprint/gtkview.py:4081
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Attention : Impossible de supprimer complètement\n"
@@ -641,35 +642,35 @@ msgstr "positions du chapitre"
 msgid "Rerunning because the {} changed"
 msgstr "Relancé parce que le {} a changé"
 
-#: lib/ptxprint/runjob.py:789
+#: lib/ptxprint/runjob.py:790
 msgid "Try adjusting the output paper size to account for the number of pages you want"
 msgstr "Essayez de régler la taille du papier pour obtenir le nombre de pages que vous souhaitez"
 
-#: lib/ptxprint/runjob.py:790
+#: lib/ptxprint/runjob.py:791
 msgid "Paper Size Error"
 msgstr "Erreur de taille de papier"
 
-#: lib/ptxprint/runjob.py:842
+#: lib/ptxprint/runjob.py:843
 msgid "Page sizes differ between output and base. Cannot create a difference."
 msgstr "La taille des pages diffère entre la sortie et la base. Impossible de créer une différence."
 
-#: lib/ptxprint/runjob.py:843
+#: lib/ptxprint/runjob.py:844
 msgid "Difference Error"
 msgstr "Erreur de différence"
 
-#: lib/ptxprint/runjob.py:862
+#: lib/ptxprint/runjob.py:863
 msgid "No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."
 msgstr "Aucune modification n'a été détectée entre les deux PDF, mais le (vieux) PDF _diff semble être ouvert et ne peut donc pas être supprimé."
 
-#: lib/ptxprint/runjob.py:863
+#: lib/ptxprint/runjob.py:864
 msgid "{} could not be deleted"
 msgstr "{} n'a pas pu être supprimé"
 
-#: lib/ptxprint/runjob.py:912
+#: lib/ptxprint/runjob.py:913
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Attention : Impossible de localiser le(s) PDF(s) décoratif(s):"
 
-#: lib/ptxprint/runjob.py:1078
+#: lib/ptxprint/runjob.py:1079
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Erreur : Impossible de copier l'image {}\n"
@@ -859,7 +860,7 @@ msgstr "PTXprint : Paramètres de bordure de la barre latérale"
 
 #: temp.glade:585
 msgid "Borders dialog: Show LEFT border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure GAUCHE"
 
 #: temp.glade:600 temp.glade:3439 temp.glade:3749 temp.glade:5155
 #: temp.glade:5621 temp.glade:6038 temp.glade:6112 temp.glade:6890
@@ -869,7 +870,7 @@ msgstr "Droite"
 
 #: temp.glade:601
 msgid "Borders dialog: Show RIGHT border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure DROITE"
 
 #: temp.glade:617 temp.glade:5199 temp.glade:5673 temp.glade:5858
 #: temp.glade:5972 temp.glade:8056
@@ -878,7 +879,7 @@ msgstr "Haut"
 
 #: temp.glade:618
 msgid "Borders dialog: Show TOP border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure SUPÉRIEURE"
 
 #: temp.glade:638 temp.glade:5207 temp.glade:5677 temp.glade:5878
 #: temp.glade:5996 temp.glade:8064
@@ -887,7 +888,7 @@ msgstr "Bas"
 
 #: temp.glade:639
 msgid "Borders dialog: Show BOTTOM border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure INFÉRIEURE"
 
 #: temp.glade:671 temp.glade:3435 temp.glade:3745 temp.glade:5147
 #: temp.glade:5613 temp.glade:6030 temp.glade:6104 temp.glade:6886
@@ -903,7 +904,7 @@ msgstr "Extérieur"
 
 #: temp.glade:681
 msgid "Borders dialog: Show OUTER border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure EXTÉRIEURE"
 
 #: temp.glade:700 temp.glade:3443 temp.glade:3753 temp.glade:5159
 #: temp.glade:5625 temp.glade:6034 temp.glade:6108 temp.glade:6894
@@ -913,11 +914,11 @@ msgstr "Intérieur"
 
 #: temp.glade:709
 msgid "Borders dialog: Show INNER border"
-msgstr ""
+msgstr "Dialogue des bordures : Afficher la bordure INTÉRIEURE"
 
 #: temp.glade:751
 msgid "Borders dialog: Border thickness"
-msgstr ""
+msgstr "Dialogue des bordures : Épaisseur des bordures"
 
 #: temp.glade:754 temp.glade:14004 temp.glade:15576 temp.glade:16123
 msgid "The thickness of the rule."
@@ -929,7 +930,7 @@ msgstr "Épaisseur (pt)"
 
 #: temp.glade:792
 msgid "Borders dialog: Border color"
-msgstr ""
+msgstr "Dialogue des bordures : Couleur des bordures"
 
 #: temp.glade:796
 msgid "Sets the background color for this Sidebar."
@@ -973,7 +974,7 @@ msgstr "Vertical (pt)"
 
 #: temp.glade:913
 msgid "Borders dialog: Horizontal border padding "
-msgstr ""
+msgstr "Dialogue des bordures : Rembourrage des bordures horizontales "
 
 #: temp.glade:916
 msgid "The horizontal space between the (inside) edge \n"
@@ -983,7 +984,7 @@ msgstr "L'espace horizontal entre le bord intérieur et\n"
 
 #: temp.glade:935
 msgid "Borders dialog: Vertical border padding "
-msgstr ""
+msgstr "Dialogue des bordures : Rembourrage des bordures verticales "
 
 #: temp.glade:938
 msgid "The vertical space between the (inside) edge \n"
@@ -1023,7 +1024,7 @@ msgstr "Rembourrage de la boîte :"
 
 #: temp.glade:993
 msgid "Borders dialog: Horizontal box padding "
-msgstr ""
+msgstr "Dialogue des bordures : Rembourrage de la boîte horizontale "
 
 #: temp.glade:996
 msgid "The horizontal space (pts) between the \n"
@@ -1037,7 +1038,7 @@ msgstr "L'espace horizontal (pts) entre le bord\n"
 
 #: temp.glade:1018
 msgid "Borders dialog: Vertical box padding "
-msgstr ""
+msgstr "Dialogue des bordures : Rembourrage de la boîte verticale "
 
 #: temp.glade:1021
 msgid "The vertical space (pts) between the \n"
@@ -1073,7 +1074,7 @@ msgstr "Localiser..."
 
 #: temp.glade:1438
 msgid "Locate DBL bundle"
-msgstr ""
+msgstr "Localiser le paquet BBN"
 
 #: temp.glade:1442
 msgid "After downloading a DBL module\n"
@@ -1121,7 +1122,7 @@ msgstr "Étape 3.\n"
 
 #: temp.glade:1497
 msgid "Assign a name to a DBL bundle"
-msgstr ""
+msgstr "Assigner un nom au paquet BBN"
 
 #: temp.glade:1500
 msgid "PTXprint will create a NEW Paratext project\n"
@@ -1223,7 +1224,7 @@ msgstr "BASIQUE : Les pages liminaires ne contient que quelques\n"
 
 #: temp.glade:1828
 msgid "Generate front matter: BASIC (just the essentials)"
-msgstr ""
+msgstr "Générer la page de garde : BASIQUE (juste l'essentiel)"
 
 #: temp.glade:1832
 msgid "This option will create a simple verso page\n"
@@ -1241,7 +1242,7 @@ msgstr "AVANCÉ : le modèle contient plusieurs sections\n"
 
 #: temp.glade:1852
 msgid "Generate front matter: ADVANCED (requires editing)"
-msgstr ""
+msgstr "Générer la page de garde : AVANCÉ (nécessite une édition)"
 
 #: temp.glade:1856
 msgid "This option will create an extensive template\n"
@@ -1286,7 +1287,7 @@ msgstr "Inclure les sections pour une page de couverture séparée"
 
 #: temp.glade:1889
 msgid "Generate front matter: Include sections for cover page"
-msgstr ""
+msgstr "Générer la page de garde : Inclure les sections pour la page de couverture"
 
 #: temp.glade:1895
 msgid "(Not yet implemented)\n"
@@ -1322,7 +1323,7 @@ msgstr "PARATEXT : Faire une copie du livre FRT du projet \n"
 
 #: temp.glade:1962
 msgid "Generate front matter: PARATEXT (make a local copy)"
-msgstr ""
+msgstr "Générer la page de garde : PARATEXT (faire une copie locale)"
 
 #: temp.glade:1966
 msgid "This option will create a COPY of the Paratext project's\n"
@@ -1354,7 +1355,7 @@ msgstr "Ajouter des images à la liste de sélection à partir de ces livres :"
 
 #: temp.glade:2124
 msgid "Generate PicList: Append to existing list"
-msgstr ""
+msgstr "Générer une PicList : Ajouter à une liste existante"
 
 #: temp.glade:2128
 msgid "This option will ADD to any existing entries\n"
@@ -1370,7 +1371,7 @@ msgstr "Inclure les images de TOUS les livres"
 
 #: temp.glade:2147
 msgid "Generate PicList: Replace existing list"
-msgstr ""
+msgstr "Générer une PicList : Remplacer la liste existante"
 
 #: temp.glade:2151
 msgid "This option will REPLACE ALL entries\n"
@@ -1392,7 +1393,7 @@ msgstr "Positionner aléatoirement les images sur la page"
 
 #: temp.glade:2190
 msgid "Generate PicList: Randomly position pictures on page"
-msgstr ""
+msgstr "Générer une PicList : Positionner les images de façon aléatoire sur la page"
 
 #: temp.glade:2194
 msgid "By default all illustrations are place in the top-left\n"
@@ -1518,7 +1519,7 @@ msgstr "NE PAS Remplacer la configuration existante"
 
 #: temp.glade:2886
 msgid "Copy Config: Do NOT Replace Existing Config"
-msgstr ""
+msgstr "Copier la configuration : Ne PAS remplacer la configuration existante"
 
 #: temp.glade:2890
 msgid "Selecting this option will prevent\n"
@@ -1542,7 +1543,7 @@ msgstr "Fusionner les configurations des deux"
 
 #: temp.glade:2912
 msgid "Copy Config: MERGE Configurations From Both"
-msgstr ""
+msgstr "Copier la configuration : FUSIONNER les configurations des deux"
 
 #: temp.glade:2916
 msgid "Selecting this option will MERGE\n"
@@ -1570,7 +1571,7 @@ msgstr "Écraser avec les changements récents"
 
 #: temp.glade:2938
 msgid "Copy Config: OVERWRITE With Recent Changes"
-msgstr ""
+msgstr "Copier la configuration : ÉCRASER avec les changements récents"
 
 #: temp.glade:2942
 msgid "Selecting this option will REPLACE\n"
@@ -1611,7 +1612,7 @@ msgstr "Entrez le mot de passe :"
 
 #: temp.glade:3085
 msgid "Enter password for config"
-msgstr ""
+msgstr "Entrez le mot de passe pour la configuration"
 
 #: temp.glade:3191 temp.glade:27980 temp.glade:27998
 msgid "If a spot color is needed \n"
@@ -1631,7 +1632,7 @@ msgstr "ISBN"
 
 #: temp.glade:3207
 msgid "Enter ISBN number for barcode"
-msgstr ""
+msgstr "Entrez le numéro ISBN pour le code-barres"
 
 #: temp.glade:3215
 msgid "978-3-16-148410-0"
@@ -1788,11 +1789,11 @@ msgstr "Style :"
 
 #: temp.glade:3952
 msgid "Font Selection Dialog: Typeface"
-msgstr ""
+msgstr "Dialogue de sélection de police : Typographie"
 
 #: temp.glade:3972
 msgid "Font Selection Dialog: Find a font"
-msgstr ""
+msgstr "Dialogue de sélection de police : Trouver une police"
 
 #: temp.glade:4027 temp.glade:4047
 msgid "If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)"
@@ -1804,11 +1805,11 @@ msgstr "Plus gras"
 
 #: temp.glade:4043
 msgid "Font Selection Dialog: Fake bold setting"
-msgstr ""
+msgstr "Dialogue de sélection de police : Fausse mise en gras"
 
 #: temp.glade:4065
 msgid "Font Selection Dialog: Fake italic setting"
-msgstr ""
+msgstr "Dialogue de sélection de police : Fausse mise en italique"
 
 #: temp.glade:4069 temp.glade:4090
 msgid "If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)"
@@ -1824,7 +1825,7 @@ msgstr "Faux gras/italique"
 
 #: temp.glade:4111
 msgid "Font Selection Dialog: Fake bold or italic typeface"
-msgstr ""
+msgstr "Dialogue de sélection de police : Fausse mise en gras ou italique"
 
 #: temp.glade:4115
 msgid "If the font you are using doesn't\n"
@@ -1859,7 +1860,7 @@ msgstr "Etirement"
 
 #: temp.glade:4166
 msgid "Font Selection Dialog: Stretch (or shrink) font setting"
-msgstr ""
+msgstr "Dialogue de sélection de police : Réglage d'étirement (ou de rétrécie) de la police"
 
 #: temp.glade:4175 temp.glade:6291 temp.glade:6310
 msgid "1.00"
@@ -1867,7 +1868,7 @@ msgstr "1,00"
 
 #: temp.glade:4212
 msgid "Font Selection Dialog: Selected font features"
-msgstr ""
+msgstr "Dialogue de sélection de police : Caractéristiques de la police sélectionnée"
 
 #: temp.glade:4215
 msgid "You can enable/disable any font features \n"
@@ -1883,7 +1884,7 @@ msgstr "Espaces contextuelles"
 
 #: temp.glade:4229
 msgid "Font Selection Dialog: Use contextual spaces"
-msgstr ""
+msgstr "Dialogue de sélection de police : Utiliser des espaces contextuels"
 
 #: temp.glade:4233
 msgid "Set this option if the font changes the width of \n"
@@ -1897,7 +1898,7 @@ msgstr "Rendu Graphite"
 
 #: temp.glade:4247
 msgid "Font Selection Dialog: Use Graphite rendering"
-msgstr ""
+msgstr "Dialogue de sélection de police : Utiliser le rendu Graphite"
 
 #: temp.glade:4251
 msgid "If you require this font to use\n"
@@ -1913,11 +1914,11 @@ msgstr "Sélectionnez les caractéristiques..."
 
 #: temp.glade:4267
 msgid "Font Selection Dialog: Select font features"
-msgstr ""
+msgstr "Dialogue de sélection de police : Sélectionner les caractéristiques de la police"
 
 #: temp.glade:4281
 msgid "Font Selection Dialog: Digit (number) script mapping"
-msgstr ""
+msgstr "Dialogue de sélection de police : Écriture des chiffres (nombre)"
 
 #: temp.glade:4285
 msgid "All known unicode-encoded number/digit systems\n"
@@ -2014,7 +2015,7 @@ msgstr "Guides (règles et lignes de base)"
 
 #: temp.glade:4533
 msgid "Marks & Guides dialog: Show rules and baselines"
-msgstr ""
+msgstr "Dialogue de marques et guides : Afficher les règles et les lignes de base"
 
 #: temp.glade:4537
 msgid "Enabling this option will turn on various guides \n"
@@ -2030,7 +2031,7 @@ msgstr "Afficher les barres d'erreurs pour les lignes surremplies"
 
 #: temp.glade:4554
 msgid "Marks & Guides dialog: Show error bars for overfull lines"
-msgstr ""
+msgstr "Dialogue de marques et guides : Afficher les barres d'erreur pour les lignes surchargées"
 
 #: temp.glade:4558
 msgid "Enable this option to have TeX make overfull lines stand out.\n"
@@ -2050,7 +2051,7 @@ msgstr "Appliquer le filigrane PDF"
 
 #: temp.glade:4601
 msgid "Marks & Guides dialog: Apply watermark"
-msgstr ""
+msgstr "Dialogue de marques et guides : Appliquer le filigrane"
 
 #: temp.glade:4605
 msgid "A watermark can be applied to all pages of \n"
@@ -2070,7 +2071,7 @@ msgstr "Sélectionner..."
 
 #: temp.glade:4621
 msgid "Marks & Guides dialog: Select watermark to apply"
-msgstr ""
+msgstr "Dialogue de marques et guides : Sélectionner le filigrane à appliquer"
 
 #: temp.glade:4681
 msgid "Color"
@@ -2096,7 +2097,7 @@ msgstr "Divisions mineures :"
 
 #: temp.glade:4725
 msgid "Grid: Major line color"
-msgstr ""
+msgstr "Grille : Couleur de la ligne principale"
 
 #: temp.glade:4730 temp.glade:4749 temp.glade:21416
 msgid "Thumb Tabs usually use a dark color for the Tab with a light (or white) text."
@@ -2108,7 +2109,7 @@ msgstr "Couleur des lignes principales de la grille."
 
 #: temp.glade:4744
 msgid "Grid: Minor line color"
-msgstr ""
+msgstr "Grille : Couleur de la ligne mineure"
 
 #: temp.glade:4753
 msgid "Color of minor lines in grid."
@@ -2120,7 +2121,7 @@ msgstr "Unités majeures :"
 
 #: temp.glade:4775
 msgid "Grid: Major line thickness"
-msgstr ""
+msgstr "Grille : Épaisseur de la ligne principale"
 
 #: temp.glade:4778
 msgid "Specify the thickness\n"
@@ -2130,7 +2131,7 @@ msgstr "Spécifiez l'épaisseur\n"
 
 #: temp.glade:4794
 msgid "Grid: Minor line thickness"
-msgstr ""
+msgstr "Grille : Épaisseur de ligne mineure"
 
 #: temp.glade:4797
 msgid "Specify the line thickness\n"
@@ -2140,7 +2141,7 @@ msgstr "Spécifiez l'épaisseur du trait\n"
 
 #: temp.glade:4813
 msgid "Grid: Number of minor divisions"
-msgstr ""
+msgstr "Grille : Nombre de divisions mineures"
 
 #: temp.glade:4833
 msgid "Depending on what you are trying\n"
@@ -2158,7 +2159,7 @@ msgstr "Commencer la grille à :"
 
 #: temp.glade:4847
 msgid "Grid: Reload default values"
-msgstr ""
+msgstr "Grille : Recharger les valeurs par défaut"
 
 #: temp.glade:4851
 msgid "Clicking this button will refresh\n"
@@ -2172,7 +2173,7 @@ msgstr "Cliquer sur ce bouton pour actualiser\n"
 
 #: temp.glade:4865
 msgid "Grid: Select major units"
-msgstr ""
+msgstr "Grille : Sélectionner les unités principales"
 
 #: temp.glade:4870
 msgid "The grid can use Centimeters or \n"
@@ -2182,7 +2183,7 @@ msgstr "La grille peut utiliser centimètres ou\n"
 
 #: temp.glade:4887
 msgid "Grid: Starting position (page or margin)"
-msgstr ""
+msgstr "Grille : Position de départ (page ou marge)"
 
 #: temp.glade:4892
 msgid "The grid can start at the top-left corner\n"
@@ -2196,7 +2197,7 @@ msgstr "Grille (papier graphique)"
 
 #: temp.glade:4924
 msgid "Marks & Guides dialog: Show grid (graph paper)"
-msgstr ""
+msgstr "Dialogue de marques et guides : Afficher la grille (papier graphique)"
 
 #: temp.glade:4928
 msgid "If the standard Rules and Guides are inadequate\n"
@@ -2358,7 +2359,7 @@ msgstr "Position\n"
 
 #: temp.glade:5302
 msgid "Image credit dialog: Vertical position of text"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Position verticale du texte"
 
 #: temp.glade:5332 temp.glade:19343
 msgid "Horizontal\n"
@@ -2368,7 +2369,7 @@ msgstr "Position\n"
 
 #: temp.glade:5343
 msgid "Image credit dialog: Horizontal position of text"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Position horizontale du texte"
 
 #: temp.glade:5373
 msgid "Background Box:"
@@ -2376,7 +2377,7 @@ msgstr "Boîte d'arrière-plan :"
 
 #: temp.glade:5382
 msgid "Image credit dialog: Background color"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Couleur d'arrière-plan"
 
 #: temp.glade:5385
 msgid "Specify the kind of box (Light/Dark background)\n"
@@ -2394,7 +2395,7 @@ msgstr "Rotation :"
 
 #: temp.glade:5428
 msgid "Image credit dialog: Rotation of text"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Rotation du texte"
 
 #: temp.glade:5433 temp.glade:27216
 msgid "Sometimes the credit text needs\n"
@@ -2420,7 +2421,7 @@ msgstr "Texte de crédit de l'image :"
 
 #: temp.glade:5475
 msgid "Image credit dialog: Credit (copyright) text"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Texte de crédit (droits d'auteur)"
 
 #: temp.glade:5478
 msgid "Type the text for the Credit to be overlaid\n"
@@ -2444,7 +2445,7 @@ msgstr "Appliquer à TOUTES les images de cette série"
 
 #: temp.glade:5508
 msgid "Image credit dialog: Apply to all images in series"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Appliquer à toutes les images de la série"
 
 #: temp.glade:5512
 msgid "The same Credit Overlay text can be applied\n"
@@ -2472,7 +2473,7 @@ msgstr "Remplacer tous les paramètres existants"
 
 #: temp.glade:5554
 msgid "Image credit dialog: Overwrite existing values"
-msgstr ""
+msgstr "Dialogue de crédit d'image : Écraser les valeurs existantes"
 
 #: temp.glade:5558
 msgid "WARNING:\n"
@@ -2702,7 +2703,7 @@ msgstr "Supprimer l'image"
 
 #: temp.glade:6142
 msgid "Sidebar FG/BG: Remove image"
-msgstr ""
+msgstr "Barre latérale FG/BG : Supprimer l'image"
 
 #: temp.glade:6230
 msgid "Image:"
@@ -2710,7 +2711,7 @@ msgstr "Image :"
 
 #: temp.glade:6240
 msgid "Sidebar FG/BG: Select an image"
-msgstr ""
+msgstr "Barre latérale FG/BG : Sélectionner une image"
 
 #: temp.glade:6276 temp.glade:19192 temp.glade:21932 temp.glade:22383
 msgid "Scale:"
@@ -2718,7 +2719,7 @@ msgstr "Échelle :"
 
 #: temp.glade:6285
 msgid "Sidebar FG/BG: Scale of image"
-msgstr ""
+msgstr "Barre latérale FG/BG : Échelle de l'image"
 
 #: temp.glade:6288
 msgid "Specify how much the image \n"
@@ -2728,7 +2729,7 @@ msgstr "Indiquez l'échelle horizontale\n"
 
 #: temp.glade:6304
 msgid "Sidebar FG/BG: Height of image"
-msgstr ""
+msgstr "Barre latérale FG/BG : Hauteur de l'image"
 
 #: temp.glade:6307
 msgid "Specify how much the image \n"
@@ -2746,7 +2747,7 @@ msgstr "Hauteur"
 
 #: temp.glade:6377
 msgid "Sidebar foreground image: Beside text options"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Options à côté de texte"
 
 #: temp.glade:6381 temp.glade:6465 temp.glade:24093
 msgid "Top: Above everything except the header line\n"
@@ -2764,7 +2765,7 @@ msgstr "Au-dessus ou au-dessous du texte :"
 
 #: temp.glade:6408
 msgid "Sidebar foreground image: Above or below text"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Au-dessus ou au-dessous du texte"
 
 #: temp.glade:6425
 msgid "Beside Text:"
@@ -2772,7 +2773,7 @@ msgstr "À côté du texte :"
 
 #: temp.glade:6426
 msgid "Sidebar foreground image: Beside text"
-msgstr ""
+msgstr "Image de premier plan dans la barre latérale : A côté du texte"
 
 #: temp.glade:6443
 msgid "Cutout Within Text:"
@@ -2780,19 +2781,19 @@ msgstr "Découpage dans le texte:"
 
 #: temp.glade:6444
 msgid "Sidebar foreground image: Cutout within sidebar"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Découpe dans la barre latérale"
 
 #: temp.glade:6461
 msgid "Sidebar foreground image: Above or below options"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Options au-dessus ou au-dessous"
 
 #: temp.glade:6491
 msgid "Sidebar foreground image: Cutout position options"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Options de position de la découpe"
 
 #: temp.glade:6516
 msgid "Sidebar foreground image: Adjust cutout position"
-msgstr ""
+msgstr "Image de premier plan de la barre latérale : Ajuster la position de la découpe"
 
 #: temp.glade:6540
 msgid "Start N Lines Below Top"
@@ -2804,7 +2805,7 @@ msgstr "Position de l'image de premier plan dans la barre latérale"
 
 #: temp.glade:6595
 msgid "Sidebar background image: Transparency (alpha)"
-msgstr ""
+msgstr "Image d'arrière-plan de la barre latérale : Transparence (alpha)"
 
 #: temp.glade:6598 temp.glade:6675
 msgid "Transparency or alpha value of the background \n"
@@ -2848,11 +2849,11 @@ msgstr "Certaines (rares) images de ligne PDF ne définissent \n"
 
 #: temp.glade:6647
 msgid "Sidebar background image: Color"
-msgstr ""
+msgstr "Image d'arrière-plan de la barre latérale : Couleur"
 
 #: temp.glade:6684
 msgid "Background Image Transparency:"
-msgstr ""
+msgstr "Transparence de l'image d'arrière-plan :"
 
 #: temp.glade:6696 temp.glade:6718
 msgid "Only relevant where there is both a background image\n"
@@ -2878,7 +2879,7 @@ msgstr "Ordre de\n"
 
 #: temp.glade:6714
 msgid "Sidebar background image: Order of layers"
-msgstr ""
+msgstr "Image d'arrière-plan de la barre latérale : Ordre des couches"
 
 #: temp.glade:6749 temp.glade:6769
 msgid "Select what action should be taken if\n"
@@ -2900,7 +2901,7 @@ msgstr "Si l'image est\n"
 
 #: temp.glade:6765
 msgid "Sidebar background image: Oversize management"
-msgstr ""
+msgstr "Image d'arrière-plan de la barre latérale : Gestion des surtailles"
 
 #: temp.glade:6799
 msgid "Background Image Advanced Settings"
@@ -2914,7 +2915,7 @@ msgstr "Maintenir le\n"
 
 #: temp.glade:6813
 msgid "Sidebar FG/BG: Maintain aspect ratio"
-msgstr ""
+msgstr "Barre latérale FG/BG : Maintenir le ratio d'aspect"
 
 #: temp.glade:6817
 msgid "Scale the width and height\n"
@@ -2979,7 +2980,7 @@ msgstr "Mots hébreux (de l'AT)"
 
 #: temp.glade:7131
 msgid "Strong's index: Include section for Hebrew words"
-msgstr ""
+msgstr "Index Strong : Inclure une section pour les mots hébreux"
 
 #: temp.glade:7147
 msgid "Greek Words (from the NT)"
@@ -2987,7 +2988,7 @@ msgstr "Mots grecs (du NT)"
 
 #: temp.glade:7148
 msgid "Strong's index: Include section for Greek words"
-msgstr ""
+msgstr "Index de Strong : Inclure une section pour les mots grecs"
 
 #: temp.glade:7168
 msgid "Sections to Include:"
@@ -3016,7 +3017,7 @@ msgstr "Index inversé (liste alphabétique \n"
 
 #: temp.glade:7239
 msgid "Strong's index: Include section for reverse index"
-msgstr ""
+msgstr "Indice fort : Inclure une section pour l'index inversé"
 
 #: temp.glade:7243
 msgid "This (optional) section is intended for readers\n"
@@ -3032,7 +3033,7 @@ msgstr "Mot hébreu ou grec"
 
 #: temp.glade:7258
 msgid "Strong's index entry: Include Hebrew and/or Greek"
-msgstr ""
+msgstr "Entrée dans l'index de Strong : Inclure l'hébreu et/ou le grec"
 
 #: temp.glade:7262
 msgid "The word in the source language(s) can be\n"
@@ -3046,7 +3047,7 @@ msgstr "Translittération (écriture latine)"
 
 #: temp.glade:7277
 msgid "Strong's index entry: Include transliteration of source languages"
-msgstr ""
+msgstr "Entrée dans l'index de Strong : Inclure la translittération des langues sources"
 
 #: temp.glade:7281
 msgid "If the readers are unfamiliar with Greek and Hebrew\n"
@@ -3062,7 +3063,7 @@ msgstr "Équivalent(s) de terme"
 
 #: temp.glade:7296
 msgid "Strong's index entry: Include receptor term renderings"
-msgstr ""
+msgstr "Entrée de l'index de Strong : Inclure les équivalents de terme récepteur"
 
 #: temp.glade:7300
 msgid "Show the term renderings from \n"
@@ -3086,7 +3087,7 @@ msgstr "Utilisez l’équivalent des termes\n"
 
 #: temp.glade:7353
 msgid "Strong's index: Use major language gloss (if no rendering found) "
-msgstr ""
+msgstr "Index de Strong : Utiliser le glossaire de la langue principale (si aucun équivalent n'est trouvé) "
 
 #: temp.glade:7358
 msgid "If all else fails, you can display \n"
@@ -3106,7 +3107,7 @@ msgstr "Utiliser la glose d’une langue majoritaire :"
 
 #: temp.glade:7395
 msgid "Strong's index: Use fallback project (if no rendering found)"
-msgstr ""
+msgstr "Index Strong : Utiliser le projet de secours (si aucun équivalent trouvé)"
 
 #: temp.glade:7431
 msgid "If no local term rendering is found in the Project's\n"
@@ -3132,7 +3133,7 @@ msgstr "Référence du verset clé"
 
 #: temp.glade:7451
 msgid "Strong's index entry: Include key verse reference"
-msgstr ""
+msgstr "Entrée dans l'index de Strong : Inclut la référence clé du verset"
 
 #: temp.glade:7455
 msgid "The primary book, chapter and verse reference\n"
@@ -3148,7 +3149,7 @@ msgstr "Définition"
 
 #: temp.glade:7471
 msgid "Strong's index entry: Include definitions"
-msgstr ""
+msgstr "Entrée de l'index Strong : Inclure les définitions"
 
 #: temp.glade:7475
 msgid "Show the definition in addition\n"
@@ -3162,7 +3163,7 @@ msgstr "Supprimer (commentaires) des équivalents"
 
 #: temp.glade:7577
 msgid "Strong's index entry: Remove comments from renderings"
-msgstr ""
+msgstr "Entrée de l'index de Strong : Supprimer les commentaires des équivalents"
 
 #: temp.glade:7581
 msgid "Paratext allows for additional comments or\n"
@@ -3188,7 +3189,7 @@ msgstr "Traitement des jokers* :"
 
 #: temp.glade:7621
 msgid "Strong's index entry: How to handle wildcard* character"
-msgstr ""
+msgstr "Entrée de l'index de Strong : Comment traiter le caractère de remplacement*"
 
 #: temp.glade:7691 temp.glade:26593
 msgid "Name"
@@ -3219,7 +3220,7 @@ msgstr "Créer un index dans le livre :"
 
 #: temp.glade:7762
 msgid "Strong's index: Extra book code to be used"
-msgstr ""
+msgstr "Index de Strong : Utiliser le code du livre supplémentaire"
 
 #: temp.glade:7767
 msgid "Select the temporary book to be used for the \n"
@@ -3242,7 +3243,7 @@ msgstr "Mise en page en deux colonnes"
 
 #: temp.glade:7823
 msgid "Strong's index: Use 2-column layout"
-msgstr ""
+msgstr "Index de Strong : Utiliser la mise en page en 2 colonnes"
 
 #: temp.glade:7827
 msgid "Using a two column layout for the index\n"
@@ -3260,7 +3261,7 @@ msgstr "Ouvrir le fichier d'index\n"
 
 #: temp.glade:7847
 msgid "Strong's index: Open index file after creating it"
-msgstr ""
+msgstr "Index de Strong : Ouvrir le fichier d'index après l'avoir créé"
 
 #: temp.glade:7851
 msgid "Check this option to open\n"
@@ -3294,7 +3295,7 @@ msgstr "Lignes déséquilibrées (max) :"
 
 #: temp.glade:7897
 msgid "Strong's index: Allow unbalanced lines"
-msgstr ""
+msgstr "Index de Strong : Autoriser les lignes déséquilibrées"
 
 #: temp.glade:7903 temp.glade:15845 temp.glade:27040
 msgid "0"
@@ -3352,7 +3353,7 @@ msgstr "⚠️Type de texte :"
 
 #: temp.glade:8282
 msgid "Add/Edit marker dialog: Text type"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Type de texte"
 
 #: temp.glade:8286 temp.glade:8302
 msgid "[Required] This tells PTXprint how to layout data in this marker. \n"
@@ -3376,7 +3377,7 @@ msgstr "⚠️Type de style :"
 
 #: temp.glade:8333
 msgid "Add/Edit marker dialog: Style type"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Type de style"
 
 #: temp.glade:8367
 msgid "⚠️Marker:"
@@ -3390,7 +3391,7 @@ msgstr "Vous pouvez dire ce que vous voulez ici pour\n"
 
 #: temp.glade:8396
 msgid "Add/Edit marker dialog: Marker (code)"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Marqueur (code)"
 
 #: temp.glade:8414 temp.glade:8432
 msgid "[Required] List markers that this marker may occur under. \n"
@@ -3406,11 +3407,11 @@ msgstr "⚠️Se trouve sous :"
 
 #: temp.glade:8429
 msgid "Add/Edit marker dialog: Markers it can occur under"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Marqueurs sous lesquels il peut se produire"
 
 #: temp.glade:8461
 msgid "Add/Edit marker dialog: Marker description"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Description du marqueur"
 
 #: temp.glade:8483 temp.glade:8500
 msgid "Consists of: Marker..Endmarker - Group - short description \n"
@@ -3424,7 +3425,7 @@ msgstr "Nom :"
 
 #: temp.glade:8497
 msgid "Add/Edit marker dialog: Marker name (short description)"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Nom du marqueur (courte description)"
 
 #: temp.glade:8502
 msgid "xyz - Other - Brief description of marker"
@@ -3440,7 +3441,7 @@ msgstr "Marqueur de fin :"
 
 #: temp.glade:8526
 msgid "Add/Edit marker dialog: End Marker (code)"
-msgstr ""
+msgstr "Dialogue d'ajout/modification de marqueurs : Marqueur de fin (code)"
 
 #: temp.glade:8640
 msgid "Paratext Project:"
@@ -3563,7 +3564,19 @@ msgid "After selecting one or more books to be\n"
 "  EXO 20:12-17 MAT 5:3-11\n"
 "  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO\n\n"
 "Shortcut: Ctrl-B"
-msgstr ""
+msgstr "Après avoir sélectionné un ou plusieurs livres à\n"
+"imprimer, les codes des livres seront listés ici.\n"
+"Cette liste est modifiable, les livres peuvent donc\n"
+"être réordonnés si nécessaire.\n\n"
+"Une liste de références peut également être saisie\n"
+"manuellement pour les plages d'écritures à imprimer.\n"
+"Par exemple :\n"
+"  JHN 2:1-12\n"
+"  MRK 1-5\n"
+"  PSA 23; 100; 117\n"
+"  EXO 20:12-17 MAT 5:3-11\n"
+"  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO\n\n"
+"Raccourci: Ctrl-B"
 
 #: temp.glade:8958
 msgid "Multiple books editable list entry"
@@ -3601,7 +3614,11 @@ msgid "Save the current settings with the \n"
 "Note that these settings are also automatically\n"
 "updated (saved) when you click Print.\n\n"
 "Shortcut: Ctrl-S"
-msgstr ""
+msgstr "Enregistrez les paramètres actuels avec le \n"
+"Nom de configuration fourni.\n\n"
+"Notez que ces paramètres sont également automatiquement\n"
+"mis à jour (sauvegardé) lorsque vous cliquez sur Imprimer.\n\n"
+"Raccourci : Ctrl-S"
 
 #: temp.glade:9100
 msgid "Delete configuration"
@@ -11094,7 +11111,10 @@ msgid "Choose any book (including\n"
 "those which are not currently\n"
 "in the list to be printed.)\n\n"
 "Shortcut: Ctrl-B"
-msgstr ""
+msgstr "Choisissez n'importe quel livre\n"
+"(y compris ceux qui ne sont pas\n"
+"actuellement dans la liste à imprimer).\n\n"
+"Raccourci : Ctrl-B"
 
 #: temp.glade:25720
 msgid "Generate"
@@ -11112,7 +11132,13 @@ msgid "This button will (re-)generate content for \n"
 "Basic tab. Otherwise it will (re-)generate a Pic/Adj\n"
 "list for each of the books listed for printing.\n\n"
 "Shortcut: Ctrl-G"
-msgstr ""
+msgstr "Ce bouton va (re-)générer le contenu des pages\n"
+"liminaires, des AdjListe(s), et le fichier SFM final.\n\n"
+"Si vous voulez seulement (re-)générer une AdjListe pour un\n"
+"seul livre, il vous suffit de sélectionner ce livre dans l'onglet\n"
+"Basique. Sinon, il va (re-)générer des AdjListes pour chacun\n"
+"des livres listés pour l'impression.\n\n"
+"Raccourci : Ctrl-G"
 
 #: temp.glade:25747
 msgid "View/Edit..."
@@ -11138,7 +11164,21 @@ msgid "You may view (and in some cases edit) \n"
 "overwritten each time you hit Print. So any changes\n"
 "to the text or markers need to be made in Paratext.\n\n"
 "Shortcut: Ctrl-E"
-msgstr ""
+msgstr "Vous pouvez visualiser (et dans certains cas modifier) \n"
+"le fichier dans l'éditeur de texte de votre système.\n\n"
+"Avertissement : Si vous modifiez les paramètres dans un\n"
+"éditeur externe, prenez soin de les enregistrer (en externe)\n"
+"puis de cliquer sur le bouton d'actualisation (dans \n"
+"PTXprint) avant d'appuyer sur Imprimer. Sinon \n"
+"vous pourriez perdre les changements qui ont été faits.\n\n"
+"Si rien ne se passe lorsque vous cliquez ici, c'est\n"
+"probablement parce que vous n'avez pas associé le\n"
+"type de fichier (.sfm, .piclist, .adjlist, .tex, .log, .sty etc.)\n"
+"avec un éditeur de texte (tel que Notepad ou NP++).\n\n"
+"Notez que toute modification du texte SFM final est écrasée \n"
+"chaque fois que vous appuyez sur Imprimer. Ainsi, toute modification\n"
+"du texte ou des marqueurs doit être effectuée dans Paratext.\n\n"
+"Raccourci : Ctrl-E"
 
 #: temp.glade:25785
 msgid "Edit Variables..."
@@ -11993,7 +12033,11 @@ msgid "Click to print and generate a PDF\n"
 "previous version. It should open\n"
 "in the default PDF viewer.\n\n"
 "Shortcut: Ctrl-D"
-msgstr ""
+msgstr "Cliquez pour imprimer et générer un PDF\n"
+"montrant les différences entre le PDF actuel\n"
+"et la version précédente sélectionnée. Il devrait\n"
+"s'ouvrir dans le visualisateur de PDF par défaut.\n\n"
+"Raccourci : Ctrl-D"
 
 #: temp.glade:27730
 msgid "Compare PDFs: "
@@ -12236,7 +12280,8 @@ msgstr "Le fichier PDF créé est stocké dans ce dossier\n"
 #: temp.glade:28175
 msgid "Output PDF Location (includes\n"
 "folders with temporary files):"
-msgstr ""
+msgstr "Emplacement PDF de sortie (inclut des\n"
+"dossiers avec des fichiers temporaires) :"
 
 #: temp.glade:28189
 msgid "To use PTXprint effectively you need a good PDF viewer\n"
@@ -12268,7 +12313,7 @@ msgstr "Visitez la page de téléchargement de SumatraPDF"
 
 #: temp.glade:28213
 msgid "Link to SumatraPDF home page"
-msgstr ""
+msgstr "Lien vers la page d'accueil de SumatraPDF"
 
 #: temp.glade:28233
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
@@ -12299,7 +12344,7 @@ msgstr "Signaler un problème via GitHub"
 
 #: temp.glade:28254
 msgid "Link to report an issue with PTXprint"
-msgstr ""
+msgstr "Lien pour signaler un problème avec PTXprint"
 
 #: temp.glade:28272
 msgid "Visit PTXprint's Home Page to Download Latest Version"
@@ -12307,7 +12352,7 @@ msgstr "Visitez la page d'accueil de PTXprint pour télécharger la dernière ve
 
 #: temp.glade:28273
 msgid "Link to PTXprint home page"
-msgstr ""
+msgstr "Lien vers la page d'accueil de PTXprint"
 
 #: temp.glade:28293
 msgid "PTXprint does not have an auto-updating\n"
@@ -12347,7 +12392,7 @@ msgstr "Voir la FAQ Macros PTX2PDF"
 
 #: temp.glade:28344
 msgid "Link to deeper technical help"
-msgstr ""
+msgstr "Lien vers une aide technique plus approfondie"
 
 #: temp.glade:28362
 msgid "Answers to Frequently Asked Questions (FAQs)"
@@ -12355,7 +12400,7 @@ msgstr "Réponses aux Foire Aux Questions (FAQ)"
 
 #: temp.glade:28363
 msgid "Link to PTXprint's FAQ page"
-msgstr ""
+msgstr "Lien vers la page FAQ de PTXprint"
 
 #: temp.glade:28383 temp.glade:28487
 msgid "Frequently Asked Questions (FAQs) from\n"
@@ -12431,7 +12476,7 @@ msgstr "Obtenir de l'aide auprès d'autres utilisateurs de PTXprint"
 
 #: temp.glade:28467
 msgid "Link to PTXprint user community site"
-msgstr ""
+msgstr "Lien vers le site de la communauté des utilisateurs de PTXprint"
 
 #: temp.glade:28490
 msgid "PTXprint User Community:"
@@ -12464,19 +12509,19 @@ msgstr "Supprimer tous les fichiers et sous-dossiers\n"
 
 #: temp.glade:28552
 msgid "<a href=\"working dir\">working dir</a>"
-msgstr ""
+msgstr "<a href=\"working dir\">working dir</a>"
 
 #: temp.glade:28572
 msgid "<a href=\"prjdir\">prjdir</a>"
-msgstr ""
+msgstr "<a href=\"prjdir\">prjdir</a>"
 
 #: temp.glade:28592
 msgid "<a href=\"settings dir\">settings dir</a>"
-msgstr ""
+msgstr "<a href=\"settings dir\">settings dir</a>"
 
 #: temp.glade:28612
 msgid "<a href=\"docs dir\">docs dir</a>"
-msgstr ""
+msgstr "<a href=\"docs dir\">docs dir</a>"
 
 #: temp.glade:28660
 msgid "Helpful Links"
@@ -12534,7 +12579,7 @@ msgstr "Plusieurs langues d'interface PTXprint sont \n"
 
 #: temp.glade:28829
 msgid "Check for updates..."
-msgstr ""
+msgstr "Rechercher des mises à jour..."
 
 #: temp.glade:28833
 msgid "A newer version of PTXprint is available.\n"
@@ -12561,7 +12606,18 @@ msgid "Quick Run - (Ctrl-Q)\n\n"
 "If it detects that it needs to be re-run for\n"
 "a perfect result, a reminder message will\n"
 "be displayed (in red) just to the left."
-msgstr ""
+msgstr "Exécution rapide - (Ctrl-Q)\n\n"
+"Normalement, PTXprint lance le processus de composition\n"
+"plusieurs fois afin de s'assurer que tout est positionné avec\n"
+"précision, et les chiffres de la table des matières et la page\n"
+"des droits d'auteur sont juste.\n\n"
+"Cela donne un résultat final beaucoup plus soigné, mais\n"
+"évidemment prend plus de temps. Si vous préférez\n"
+"simplement voir un résultat rapide ou approximatif,\n"
+"cochez cette option pour n'exécuter qu'une seule fois.\n\n"
+"S'il détecte que le processus doit être relancé pour\n"
+"avoir un résultat parfait, un message de rappel sera\n"
+"affiché (en rouge) à gauche."
 
 #: temp.glade:28922
 msgid "Find help"
@@ -12578,7 +12634,7 @@ msgstr ""
 
 #: temp.glade:28938
 msgid "Search for settings"
-msgstr ""
+msgstr "Rechercher des paramètres"
 
 #: temp.glade:28956
 msgid "The current configuration displayed is\n"
@@ -12612,5 +12668,13 @@ msgid "Apply any changes specified, save the\n"
 "Diglot project, and will need to return to\n"
 "the primary project before you can print.\n\n"
 "Shortcut: Ctrl-P"
-msgstr ""
+msgstr "Appliquez toutes les modifications spécifiées, enregistrez\n"
+"la configuration actuelle (si elle n'est pas verrouillée) et\n"
+"produisez un PDF avec les paramètres spécifiés.\n\n"
+"Si ce bouton dit \"Retour\", cela signifie que vous\n"
+"êtes actuellement en train d'ajuster les\n"
+"paramètres d'un projet associé à un\n"
+"projet Diglot, et que vous devrez revenir au\n"
+"projet principal avant de pouvoir imprimer.\n\n"
+"Raccourci : Ctrl-P"
 
