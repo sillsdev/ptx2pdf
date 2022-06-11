@@ -412,6 +412,7 @@ class ViewModel:
         jobs = {'ptxprint.cfg': (self._copyfile, self._mergecfg),
                 'ptxprint.sty': (self._copyfile, self._mergesty),
                 'ptxprint-mods.sty': (self._copyfile, self._mergesty),
+                'ptxprint-premods.tex': (self._copyfile, self._mergetxt),
                 'ptxprint-mods.tex': (self._copyfile, self._mergetxt),
                 'changes.txt': (self._copyfile, self._mergetxt),
                 'FRTlocal.sfm': (self._copyfile, self._mergetxt),
