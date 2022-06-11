@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-06-08 17:11+0700\n"
-"PO-Revision-Date: 2022-06-08 10:14\n"
+"POT-Creation-Date: 2022-06-11 19:46+0700\n"
+"PO-Revision-Date: 2022-06-11 12:46\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -83,27 +83,27 @@ msgstr "Paratext belum dipasang di komputer ini.\n"
 msgid "No project set"
 msgstr "Tidak ada proyek yang dipilih"
 
-#: lib/ptxprint/gtkview.py:823
+#: lib/ptxprint/gtkview.py:831
 msgid "No matches found - try another search term"
 msgstr "Tidak ada yang cocok - coba cari yang lain"
 
-#: lib/ptxprint/gtkview.py:1022
+#: lib/ptxprint/gtkview.py:1030
 msgid "Can't set {} in the model"
 msgstr "Tidak bisa mengatur {} di model"
 
-#: lib/ptxprint/gtkview.py:1123
+#: lib/ptxprint/gtkview.py:1131
 msgid "Font(s) not set"
 msgstr "Font belum ditentukan"
 
-#: lib/ptxprint/gtkview.py:1137
+#: lib/ptxprint/gtkview.py:1145
 msgid "Printing busy"
 msgstr "Sarana cetak sibuk"
 
-#: lib/ptxprint/gtkview.py:1141 lib/ptxprint/runjob.py:243
+#: lib/ptxprint/gtkview.py:1149 lib/ptxprint/runjob.py:243
 msgid "No books to print"
 msgstr "Belum ada kitab siap dicetak"
 
-#: lib/ptxprint/gtkview.py:1167
+#: lib/ptxprint/gtkview.py:1175
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -117,152 +117,153 @@ msgstr "                   >>> TOLONG MENUTUPI FILE PDF-NYA <<<          \n\n"
 " Lihatlah pilihan PERTOLONGAN untuk informasi selanjutnya.                            \n\n"
 "                       Apakah mau coba lagi?"
 
-#: lib/ptxprint/gtkview.py:1172
+#: lib/ptxprint/gtkview.py:1180
 msgid "The old PDF file is open!"
 msgstr "File PDF yang lama masih terbuka!"
 
-#: lib/ptxprint/gtkview.py:1175
+#: lib/ptxprint/gtkview.py:1183
 msgid "Close the old PDF file before you try again."
 msgstr "Tutup file PDF lama sebelum Anda mencoba lagi."
 
-#: lib/ptxprint/gtkview.py:1201
-msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
+#: lib/ptxprint/gtkview.py:1192
+msgid "Processing..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1294
+#: lib/ptxprint/gtkview.py:1209
+msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
+msgstr "Catatan: Mungkin perlu beberapa saat agar gambar dikonversi untuk Format Output PDF yang dipilih ({})."
+
+#: lib/ptxprint/gtkview.py:1302
 msgid "And the ptxprint.sty stylesheet has been deleted."
 msgstr "Dan lembar gaya ptxprint.sty telah dihapus."
 
-#: lib/ptxprint/gtkview.py:1299
+#: lib/ptxprint/gtkview.py:1307
 msgid "But the ptxprint.sty stylesheet could not be deleted."
 msgstr "Tetapi lembar gaya ptxprint.sty tidak dapat dihapus."
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1310
 msgid "The 'Default' config settings have been reset."
 msgstr "Pengaturan konfigurasi 'Standar' telah diatur ulang."
 
-#: lib/ptxprint/gtkview.py:1306
+#: lib/ptxprint/gtkview.py:1314
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Kesalahan internal telah terjadi, berusaha menghapus hirarki folder"
 
-#: lib/ptxprint/gtkview.py:1306 lib/ptxprint/gtkview.py:1311
-#: lib/ptxprint/gtkview.py:1314 lib/ptxprint/gtkview.py:1320
+#: lib/ptxprint/gtkview.py:1314 lib/ptxprint/gtkview.py:1319
+#: lib/ptxprint/gtkview.py:1322 lib/ptxprint/gtkview.py:1328
 msgid "Folder: "
 msgstr "Folder: "
 
-#: lib/ptxprint/gtkview.py:1311 lib/ptxprint/gtkview.py:1320
+#: lib/ptxprint/gtkview.py:1319 lib/ptxprint/gtkview.py:1328
 msgid "Cannot delete folder from disk!"
 msgstr "Tidak dapat menghapus folder dari komputer!"
 
-#: lib/ptxprint/gtkview.py:1314
+#: lib/ptxprint/gtkview.py:1322
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Folder keluaran non-standar perlu dihapus secara manual"
 
-#: lib/ptxprint/gtkview.py:1409
+#: lib/ptxprint/gtkview.py:1417
 msgid "Fonts"
 msgstr "Font"
 
-#: lib/ptxprint/gtkview.py:1409
+#: lib/ptxprint/gtkview.py:1417
 msgid "Scripts"
 msgstr "Sistem Tulisan"
 
-#: lib/ptxprint/gtkview.py:1413 temp.glade:26967
+#: lib/ptxprint/gtkview.py:1421 temp.glade:26967
 msgid "Peripherals"
 msgstr "Sampingan"
 
-#: lib/ptxprint/gtkview.py:1416 temp.glade:20751
+#: lib/ptxprint/gtkview.py:1424 temp.glade:20751
 msgid "Pictures"
 msgstr "Gambar"
 
-#: lib/ptxprint/gtkview.py:1419 temp.glade:21304
+#: lib/ptxprint/gtkview.py:1427 temp.glade:21304
 msgid "Diglot"
 msgstr "Dua Bahasa"
 
-#: lib/ptxprint/gtkview.py:1422
+#: lib/ptxprint/gtkview.py:1430
 msgid "Notes+"
 msgstr "Catatan+"
 
-#: lib/ptxprint/gtkview.py:1422
+#: lib/ptxprint/gtkview.py:1430
 msgid "Refs"
 msgstr "Acuan"
 
-#: lib/ptxprint/gtkview.py:1423 temp.glade:15745
+#: lib/ptxprint/gtkview.py:1431 temp.glade:15745
 msgid "Cross-References"
 msgstr "Referensi Silang"
 
-#: lib/ptxprint/gtkview.py:1427 lib/ptxprint/gtkview.py:1428
+#: lib/ptxprint/gtkview.py:1435 lib/ptxprint/gtkview.py:1436
 msgid "Tabs"
 msgstr "Tab"
 
-#: lib/ptxprint/gtkview.py:1429 lib/ptxprint/gtkview.py:1430
+#: lib/ptxprint/gtkview.py:1437 lib/ptxprint/gtkview.py:1438
 msgid "Borders"
 msgstr "Bingkai"
 
-#: lib/ptxprint/gtkview.py:1441 temp.glade:25589
+#: lib/ptxprint/gtkview.py:1449 temp.glade:25589
 msgid "Advanced"
 msgstr "Lanjutan"
 
-#: lib/ptxprint/gtkview.py:1576 temp.glade:9194
+#: lib/ptxprint/gtkview.py:1584 temp.glade:9194
 msgid "Lock"
 msgstr "Kunci"
 
-#: lib/ptxprint/gtkview.py:1579
+#: lib/ptxprint/gtkview.py:1587
 msgid "Unlock"
 msgstr "Buka kunci"
 
-#: lib/ptxprint/gtkview.py:1718
+#: lib/ptxprint/gtkview.py:1726
 msgid "The Book in focus is not within scope"
 msgstr "Kitab yang diperlihatkan tidak ada dalam cakupan"
 
-#: lib/ptxprint/gtkview.py:1719
+#: lib/ptxprint/gtkview.py:1727
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "Untuk menghasilkan Daftar Penyesuaian, kitab \n"
 "harus ada dalam daftar kitab yang akan dicetak."
 
-#: lib/ptxprint/gtkview.py:1742
+#: lib/ptxprint/gtkview.py:1750
 msgid "No Secondary Project Set"
 msgstr "Proyek Sekunder Belum Ditentukan"
 
-#: lib/ptxprint/gtkview.py:1742
+#: lib/ptxprint/gtkview.py:1750
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "Untuk menghasilkan Daftar Penyesuaian untuk terbitan dua bahasa,\n"
 "Proyek Sekunder harus ditentukan di bagian Dua Bahasa."
 
-#: lib/ptxprint/gtkview.py:1758
+#: lib/ptxprint/gtkview.py:1766
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "File Mengatur Paragraf sudah ada!"
 
-#: lib/ptxprint/gtkview.py:1759
+#: lib/ptxprint/gtkview.py:1767
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Apakah Anda ingin MENGGANTI file-file yang terdaftar di atas?"
 
-#: lib/ptxprint/gtkview.py:1868
+#: lib/ptxprint/gtkview.py:1876
 msgid " Click the Generate button (above) to start the process of creating Front Matter..."
 msgstr " Klik tombol Hasilkan (di atas) untuk memulai proses pembuatan Bagian Depan Buku..."
 
-#: lib/ptxprint/gtkview.py:1903 lib/ptxprint/gtkview.py:1909
+#: lib/ptxprint/gtkview.py:1911 lib/ptxprint/gtkview.py:1917
 msgid "View Only..."
 msgstr "Hanya Melihat..."
 
-#: lib/ptxprint/gtkview.py:1915
+#: lib/ptxprint/gtkview.py:1923
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr " Gunakan bagian 'Lanjutan' untuk memilih pengaturan mana yang ingin Anda lihat atau robah."
 
-#: lib/ptxprint/gtkview.py:1933
+#: lib/ptxprint/gtkview.py:1941
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
 "Click on View/Edit... button to see more."
-msgstr "\n\n"
-"-------------------------------------                                            \n"
-"[Tampilan file telah dipendekkan]                                            \n"
-"Klik di tombol Lihat/Sunting... untuk melihat lebih banyak."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:1940
+#: lib/ptxprint/gtkview.py:1948
 msgid "\n"
 "This file doesn't exist yet.\n\n"
 "Try clicking...                                                \n"
@@ -274,17 +275,17 @@ msgstr "\n"
 "   * tombol 'Hasilkan'                                                \n"
 "   * tombol 'Print' untuk membuat PDF lebih dahulu"
 
-#: lib/ptxprint/gtkview.py:2525
+#: lib/ptxprint/gtkview.py:2533
 msgid "File not found"
 msgstr "File tidak ditemukan"
 
-#: lib/ptxprint/gtkview.py:2647
+#: lib/ptxprint/gtkview.py:2655
 msgid "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr "Teks berwarna sudah dapat digunakan.\n"
 "Lihat bagian Fon+Tulisan untuk melihat rincian."
 
-#: lib/ptxprint/gtkview.py:2847
+#: lib/ptxprint/gtkview.py:2855
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -292,118 +293,118 @@ msgstr "\n"
 "File ini belum ada!\n\n"
 "Untuk membuatnya, sunting di sini lalu klik 'Simpan'."
 
-#: lib/ptxprint/gtkview.py:2889
+#: lib/ptxprint/gtkview.py:2897
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ini adalah file .tex yang khusus untuk proyek {} yang digunakan PTXprint.\n"
 "% Nama konfigurasi tersimpan: {}\n"
 
-#: lib/ptxprint/gtkview.py:2896
+#: lib/ptxprint/gtkview.py:2904
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Ini adalah file .tex tahap awal yang khusus untuk proyek {} yang digunakan PTXprint.\n"
 "% Nama konfigurasi tersimpan: {}\n"
 
-#: lib/ptxprint/gtkview.py:2960
+#: lib/ptxprint/gtkview.py:2968
 msgid "Select the location and name for the Archive file"
 msgstr "Pilih tempat dan nama untuk file Arsip"
 
-#: lib/ptxprint/gtkview.py:2997
+#: lib/ptxprint/gtkview.py:3005
 msgid "Select the folder containing image files"
 msgstr "Pilih lokasi map file gambar-gambar"
 
-#: lib/ptxprint/gtkview.py:3046
+#: lib/ptxprint/gtkview.py:3054
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian DEPAN"
 
-#: lib/ptxprint/gtkview.py:3051
+#: lib/ptxprint/gtkview.py:3059
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian BELAKAN"
 
-#: lib/ptxprint/gtkview.py:3056
+#: lib/ptxprint/gtkview.py:3064
 msgid "Select Watermark PDF file"
 msgstr "Pilih file PDF sebagai gambar latar belakang"
 
-#: lib/ptxprint/gtkview.py:3061
+#: lib/ptxprint/gtkview.py:3069
 msgid "Select Page Border PDF file"
 msgstr "Pilih file PDF sebagai gambar Bingkai Halaman"
 
-#: lib/ptxprint/gtkview.py:3066
+#: lib/ptxprint/gtkview.py:3074
 msgid "Select Section Header PDF file"
 msgstr "Pilih file PDF sebagai gambar Judul Bagian"
 
-#: lib/ptxprint/gtkview.py:3071
+#: lib/ptxprint/gtkview.py:3079
 msgid "Select End of Book PDF file"
 msgstr "Pilih file PDF sebagai gambar Ujung Kitab"
 
-#: lib/ptxprint/gtkview.py:3076
+#: lib/ptxprint/gtkview.py:3084
 msgid "Select Verse Decorator PDF file"
 msgstr "Pilih file PDF sebagai gambar Hiasan Nomor Ayat"
 
-#: lib/ptxprint/gtkview.py:3081
+#: lib/ptxprint/gtkview.py:3089
 msgid "Select a PDF file to compare with"
 msgstr "Pilih file PDF untuk dibandingkan"
 
-#: lib/ptxprint/gtkview.py:3085 lib/ptxprint/runjob.py:306 temp.glade:27648
+#: lib/ptxprint/gtkview.py:3093 lib/ptxprint/runjob.py:306 temp.glade:27648
 msgid "Previous PDF (_1)"
 msgstr "PDF sebelumnya (_1)"
 
-#: lib/ptxprint/gtkview.py:3186
+#: lib/ptxprint/gtkview.py:3194
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Beralih ke Proyek Dua Bahasa\n"
 "yang Lain"
 
-#: lib/ptxprint/gtkview.py:3188 temp.glade:19517 temp.glade:28952
+#: lib/ptxprint/gtkview.py:3196 temp.glade:19517 temp.glade:28952
 #: temp.glade:29007
 msgid "Print"
 msgstr "Cetak"
 
-#: lib/ptxprint/gtkview.py:3194
+#: lib/ptxprint/gtkview.py:3202
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Simpan dan Kembali ke\n"
 "Proyek Dua Bahasa"
 
-#: lib/ptxprint/gtkview.py:3196
+#: lib/ptxprint/gtkview.py:3204
 msgid "Return"
 msgstr "Kembali"
 
-#: lib/ptxprint/gtkview.py:3235
+#: lib/ptxprint/gtkview.py:3243
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Fon Dasar digunakan dalam proyek ini bisa cetak semua huruf dan tanda baca dalam teksnya."
 
-#: lib/ptxprint/gtkview.py:3236
+#: lib/ptxprint/gtkview.py:3244
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Fon pengganti tidak wajib jadi pilihan\n"
 "'Pakai Fon Pengganti' akan dinonaktifkan."
 
-#: lib/ptxprint/gtkview.py:3444
+#: lib/ptxprint/gtkview.py:3452
 msgid "Warning! SIL's Executive Limitations do not permit SIL to publish scripture."
 msgstr "Peringatan! Keterbatasan Eksekutif SIL tidak mengizinkan SIL untuk menerbitkan kitab suci."
 
-#: lib/ptxprint/gtkview.py:3445
+#: lib/ptxprint/gtkview.py:3453
 msgid "The reference to SIL in the project's copyright line has been removed. Contact your entity's Publishing Coordinator for advice regarding protocols."
 msgstr "Penyebutan SIL dalam pernyataan hak cipta proyek telah dihapus. Hubungi Koordinator Penerbitan kelompok kerja Anda untuk mendapatkan saran terkait protokol."
 
-#: lib/ptxprint/gtkview.py:3493 lib/ptxprint/gtkview.py:4058
+#: lib/ptxprint/gtkview.py:3501 lib/ptxprint/gtkview.py:4066
 msgid "Choose Image"
 msgstr "Pilih Gambar"
 
-#: lib/ptxprint/gtkview.py:3622
+#: lib/ptxprint/gtkview.py:3630
 msgid "Unsupported Locale"
 msgstr "Tempat Tidak Didukung"
 
-#: lib/ptxprint/gtkview.py:3623
+#: lib/ptxprint/gtkview.py:3631
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Tempat ini tidak didukung di komputer Anda, mungkin Anda perlu memasangnya"
 
-#: lib/ptxprint/gtkview.py:3804
+#: lib/ptxprint/gtkview.py:3812
 msgid "Strong's Index generated in: {}"
 msgstr "Indeks Kamus Strong dihasilkan di: {}"
 
-#: lib/ptxprint/gtkview.py:3820
+#: lib/ptxprint/gtkview.py:3828
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -411,35 +412,35 @@ msgstr "Pilihan Interlinear ini tidak cocok dengan pilihan\n"
 "'Penyesuaian Spasi Antar Huruf' pada halaman Fon+Tulisan.\n"
 "Jadi pilihan itu telah dinonaktifkan."
 
-#: lib/ptxprint/gtkview.py:3845
+#: lib/ptxprint/gtkview.py:3853
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Versi PTXprint yang lebih baru ({}) tersedia. Klik untuk \n"
 "mengunjungi halaman unduhan di situs internet."
 
-#: lib/ptxprint/gtkview.py:3869
+#: lib/ptxprint/gtkview.py:3877
 msgid "Internet Access Disabled"
 msgstr "Akses Internet Dinonaktifkan"
 
-#: lib/ptxprint/gtkview.py:3869
+#: lib/ptxprint/gtkview.py:3877
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Semua alamat internet telah dinonaktifkan \n"
 "menggunakan pilihan di Tab Lanjutan"
 
-#: lib/ptxprint/gtkview.py:3905
+#: lib/ptxprint/gtkview.py:3913
 msgid "<Type Value Here>"
 msgstr "<Ketik Nilai Di Sini>"
 
-#: lib/ptxprint/gtkview.py:3922
+#: lib/ptxprint/gtkview.py:3930
 msgid "Variable Name"
 msgstr "Nama Variabel"
 
-#: lib/ptxprint/gtkview.py:3988
+#: lib/ptxprint/gtkview.py:3996
 msgid "Category Name"
 msgstr "Nama Kategori"
 
-#: lib/ptxprint/gtkview.py:4073
+#: lib/ptxprint/gtkview.py:4081
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Peringatan: Tidak dapat menghapus sepenuhnya\n"
@@ -642,35 +643,35 @@ msgstr "posisi pasal"
 msgid "Rerunning because the {} changed"
 msgstr "Dijalankan kembali karena {} berubah"
 
-#: lib/ptxprint/runjob.py:789
+#: lib/ptxprint/runjob.py:790
 msgid "Try adjusting the output paper size to account for the number of pages you want"
 msgstr "Coba sesuaikan ukuran kertas di buku yang dihasilkan untuk menghasilkan jumlah halaman yang Anda inginkan"
 
-#: lib/ptxprint/runjob.py:790
+#: lib/ptxprint/runjob.py:791
 msgid "Paper Size Error"
 msgstr "Kesalahan Ukuran Kertas"
 
-#: lib/ptxprint/runjob.py:842
-msgid "Page sizes differ between output and base. Cannot create a difference."
-msgstr ""
-
 #: lib/ptxprint/runjob.py:843
-msgid "Difference Error"
-msgstr ""
+msgid "Page sizes differ between output and base. Cannot create a difference."
+msgstr "Ukuran halaman berbeda di hasil dan versi sebelumnya, jadi tidak dapat menampilkan perbedaan."
 
-#: lib/ptxprint/runjob.py:862
+#: lib/ptxprint/runjob.py:844
+msgid "Difference Error"
+msgstr "Kesalahan Berkaitan Dengan Perbedaan"
+
+#: lib/ptxprint/runjob.py:863
 msgid "No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."
 msgstr "Tidak ada perubahan yang terdeteksi di antara kedua file PDF, tetapi file PDF \"_diff\" (yang lama) tampaknya terbuka sehingga tidak dapat dihapus."
 
-#: lib/ptxprint/runjob.py:863
+#: lib/ptxprint/runjob.py:864
 msgid "{} could not be deleted"
 msgstr "{} tidak dapat dihapus"
 
-#: lib/ptxprint/runjob.py:912
+#: lib/ptxprint/runjob.py:913
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Peringatan: Tidak dapat menemukan PDF yang menghiasi:"
 
-#: lib/ptxprint/runjob.py:1078
+#: lib/ptxprint/runjob.py:1079
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Kesalahan: Tidak dapat menyalin gambar {}\n"
@@ -858,7 +859,7 @@ msgstr "PTXprint: Pengaturan Perbatasan Bilah Sisi"
 
 #: temp.glade:585
 msgid "Borders dialog: Show LEFT border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas KIRI"
 
 #: temp.glade:600 temp.glade:3439 temp.glade:3749 temp.glade:5155
 #: temp.glade:5621 temp.glade:6038 temp.glade:6112 temp.glade:6890
@@ -868,7 +869,7 @@ msgstr "Kanan"
 
 #: temp.glade:601
 msgid "Borders dialog: Show RIGHT border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas KANAN"
 
 #: temp.glade:617 temp.glade:5199 temp.glade:5673 temp.glade:5858
 #: temp.glade:5972 temp.glade:8056
@@ -877,7 +878,7 @@ msgstr "Atas"
 
 #: temp.glade:618
 msgid "Borders dialog: Show TOP border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas ATAS"
 
 #: temp.glade:638 temp.glade:5207 temp.glade:5677 temp.glade:5878
 #: temp.glade:5996 temp.glade:8064
@@ -886,7 +887,7 @@ msgstr "Bawah"
 
 #: temp.glade:639
 msgid "Borders dialog: Show BOTTOM border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas BAWAH"
 
 #: temp.glade:671 temp.glade:3435 temp.glade:3745 temp.glade:5147
 #: temp.glade:5613 temp.glade:6030 temp.glade:6104 temp.glade:6886
@@ -902,7 +903,7 @@ msgstr "Luar"
 
 #: temp.glade:681
 msgid "Borders dialog: Show OUTER border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas LUAR"
 
 #: temp.glade:700 temp.glade:3443 temp.glade:3753 temp.glade:5159
 #: temp.glade:5625 temp.glade:6034 temp.glade:6108 temp.glade:6894
@@ -912,11 +913,11 @@ msgstr "Dalam"
 
 #: temp.glade:709
 msgid "Borders dialog: Show INNER border"
-msgstr ""
+msgstr "Bingkai: Tampilkan batas DALAM"
 
 #: temp.glade:751
 msgid "Borders dialog: Border thickness"
-msgstr ""
+msgstr "Bingkai: Tebalnya batas"
 
 #: temp.glade:754 temp.glade:14004 temp.glade:15576 temp.glade:16123
 msgid "The thickness of the rule."
@@ -928,7 +929,7 @@ msgstr "Tebal Garis (pt)"
 
 #: temp.glade:792
 msgid "Borders dialog: Border color"
-msgstr ""
+msgstr "Bingkai: Warna batas"
 
 #: temp.glade:796
 msgid "Sets the background color for this Sidebar."
@@ -972,7 +973,7 @@ msgstr "Vertikal (ukuran point)"
 
 #: temp.glade:913
 msgid "Borders dialog: Horizontal border padding "
-msgstr ""
+msgstr "Batas: Penambahan ruang horisontal di batas "
 
 #: temp.glade:916
 msgid "The horizontal space between the (inside) edge \n"
@@ -982,7 +983,7 @@ msgstr "Jarak horisontal antara tepi (dalam)\n"
 
 #: temp.glade:935
 msgid "Borders dialog: Vertical border padding "
-msgstr ""
+msgstr "Batas: Penambahan ruang vertikal di batas "
 
 #: temp.glade:938
 msgid "The vertical space between the (inside) edge \n"
@@ -997,11 +998,16 @@ msgid "The space between the (inside) edge of the border\n"
 "With sufficient Box Padding, the Border Padding\n"
 "can be negative, putting the border inside the \n"
 "background colour/image."
-msgstr ""
+msgstr "Ruang antara tepi (dalam) perbatasan dan tepi \n"
+"perbatasan. Jika tidak ada batas pada sisi tertentu, \n"
+"maka hanya Penambahan Ruang di Kotak yang berlaku.\n\n"
+"Penambahan Ruang di Kotak yang cukup, Penambahan \n"
+"Ruang di Batas bisa menjadi negatif, menempatkan \n"
+"batas di dalam warna/gambar latar belakang."
 
 #: temp.glade:968
 msgid "Border Padding:"
-msgstr ""
+msgstr "Penambahan Ruang di Batas:"
 
 #: temp.glade:979
 msgid "The space (pts) between the edge of \n"
@@ -1011,11 +1017,11 @@ msgstr ""
 
 #: temp.glade:984
 msgid "Box Padding:"
-msgstr ""
+msgstr "Penambahan Ruang di Kotak:"
 
 #: temp.glade:993
 msgid "Borders dialog: Horizontal box padding "
-msgstr ""
+msgstr "Batas: Penambahan ruang horisontal di kotak "
 
 #: temp.glade:996
 msgid "The horizontal space (pts) between the \n"
@@ -1026,7 +1032,7 @@ msgstr ""
 
 #: temp.glade:1018
 msgid "Borders dialog: Vertical box padding "
-msgstr ""
+msgstr "Batas: Penambahan ruang vertikal di kotak "
 
 #: temp.glade:1021
 msgid "The vertical space (pts) between the \n"
@@ -1037,7 +1043,7 @@ msgstr ""
 
 #: temp.glade:1052
 msgid "Padding"
-msgstr ""
+msgstr "Penambahan Ruang"
 
 #: temp.glade:1343
 msgid "PTXprint: Set up DBL bundle..."
@@ -1059,7 +1065,7 @@ msgstr "Menemukan..."
 
 #: temp.glade:1438
 msgid "Locate DBL bundle"
-msgstr ""
+msgstr "Temukan gabungan DBL"
 
 #: temp.glade:1442
 msgid "After downloading a DBL module\n"
@@ -1107,7 +1113,7 @@ msgstr "Langkah 3.\n"
 
 #: temp.glade:1497
 msgid "Assign a name to a DBL bundle"
-msgstr ""
+msgstr "Beri nama kepada gabungan DBL"
 
 #: temp.glade:1500
 msgid "PTXprint will create a NEW Paratext project\n"
@@ -1209,7 +1215,7 @@ msgstr "DASAR: Bagian depan buku hanya berisi beberapa\n"
 
 #: temp.glade:1828
 msgid "Generate front matter: BASIC (just the essentials)"
-msgstr ""
+msgstr "Hasilkan bagian depan buku: DASAR (yang wajib saja)"
 
 #: temp.glade:1832
 msgid "This option will create a simple verso page\n"
@@ -1227,7 +1233,7 @@ msgstr "LANJUTAN: format berisi beberapa bagian (beberapa \n"
 
 #: temp.glade:1852
 msgid "Generate front matter: ADVANCED (requires editing)"
-msgstr ""
+msgstr "Hasilkan bagian depan buku: LANJUTAN (perlu disunting)"
 
 #: temp.glade:1856
 msgid "This option will create an extensive template\n"
@@ -1273,7 +1279,7 @@ msgstr "Sertakan bagian untuk halaman sampul terpisah"
 
 #: temp.glade:1889
 msgid "Generate front matter: Include sections for cover page"
-msgstr ""
+msgstr "Hasilkan bagian depan buku: Sertakan bagian untuk halaman sampul"
 
 #: temp.glade:1895
 msgid "(Not yet implemented)\n"
@@ -1305,7 +1311,7 @@ msgstr "PARATEXT: Buat salinan buku FRT proyek ini (yang \n"
 
 #: temp.glade:1962
 msgid "Generate front matter: PARATEXT (make a local copy)"
-msgstr ""
+msgstr "Hasilkan bagian depan buku: PARATEXT (buat salinan di komputer ini)"
 
 #: temp.glade:1966
 msgid "This option will create a COPY of the Paratext project's\n"
@@ -1338,7 +1344,7 @@ msgstr "Tambah Gambar ke Daftar Gambar Dari Kitab Ini:"
 
 #: temp.glade:2124
 msgid "Generate PicList: Append to existing list"
-msgstr ""
+msgstr "Hasilkan Daftar Gambar: Tambahkan ke daftar yang sudah ada"
 
 #: temp.glade:2128
 msgid "This option will ADD to any existing entries\n"
@@ -1354,7 +1360,7 @@ msgstr "Sertakan Gambar Dari SEMUA Kitab"
 
 #: temp.glade:2147
 msgid "Generate PicList: Replace existing list"
-msgstr ""
+msgstr "Hasilkan Daftar Gambar: Ganti daftar yang sudah ada"
 
 #: temp.glade:2151
 msgid "This option will REPLACE ALL entries\n"
@@ -1376,7 +1382,7 @@ msgstr "Tempatkan Gambar di Halaman Secara Acak"
 
 #: temp.glade:2190
 msgid "Generate PicList: Randomly position pictures on page"
-msgstr ""
+msgstr "Hasilkan Daftar Gambar: Posisikan gambar secara acak di halaman"
 
 #: temp.glade:2194
 msgid "By default all illustrations are place in the top-left\n"
@@ -1501,7 +1507,7 @@ msgstr "JANGAN Ganti Konfigurasi yang Ada"
 
 #: temp.glade:2886
 msgid "Copy Config: Do NOT Replace Existing Config"
-msgstr ""
+msgstr "Salin Konfigurasi: JANGAN ganti konfigurasi yang sudah ada"
 
 #: temp.glade:2890
 msgid "Selecting this option will prevent\n"
@@ -1525,7 +1531,7 @@ msgstr "Gabungkan Konfigurasi Dari Keduanya"
 
 #: temp.glade:2912
 msgid "Copy Config: MERGE Configurations From Both"
-msgstr ""
+msgstr "Salin Konfigurasi: PADUKAN kedua konfigurasi"
 
 #: temp.glade:2916
 msgid "Selecting this option will MERGE\n"
@@ -1552,7 +1558,7 @@ msgstr "Timpa Dengan Perubahan Terbaru"
 
 #: temp.glade:2938
 msgid "Copy Config: OVERWRITE With Recent Changes"
-msgstr ""
+msgstr "Salin Konfigurasi: GANTI Dengan Perubahan Terbaru"
 
 #: temp.glade:2942
 msgid "Selecting this option will REPLACE\n"
@@ -1594,7 +1600,7 @@ msgstr "Masukkan kata sandi:"
 
 #: temp.glade:3085
 msgid "Enter password for config"
-msgstr ""
+msgstr "Masukkan kata sandi untuk konfigurasi"
 
 #: temp.glade:3191 temp.glade:27980 temp.glade:27998
 msgid "If a spot color is needed \n"
@@ -1613,7 +1619,7 @@ msgstr "ISBN"
 
 #: temp.glade:3207
 msgid "Enter ISBN number for barcode"
-msgstr ""
+msgstr "Masukkan nomor ISBN untuk kode batang"
 
 #: temp.glade:3215
 msgid "978-3-16-148410-0"
@@ -1768,11 +1774,11 @@ msgstr "Gaya Fon:"
 
 #: temp.glade:3952
 msgid "Font Selection Dialog: Typeface"
-msgstr ""
+msgstr "Pemilihan Font: Gaya Font"
 
 #: temp.glade:3972
 msgid "Font Selection Dialog: Find a font"
-msgstr ""
+msgstr "Pemilihan Font: Temukan Font"
 
 #: temp.glade:4027 temp.glade:4047
 msgid "If the required font doesn't have a BOLD typeface, you can use this setting to create the BOLD effect. (For example, setting Embolden to 1.6 would thicken the Regular typeface making it appear as bold.)"
@@ -1784,11 +1790,11 @@ msgstr "Membuat Tebal"
 
 #: temp.glade:4043
 msgid "Font Selection Dialog: Fake bold setting"
-msgstr ""
+msgstr "Pemilihan Font: Meniru huruf tebal"
 
 #: temp.glade:4065
 msgid "Font Selection Dialog: Fake italic setting"
-msgstr ""
+msgstr "Pemilihan Font: Meniru huruf miring"
 
 #: temp.glade:4069 temp.glade:4090
 msgid "If the required font does not have an ITALIC typeface, you can use this setting to create the ITALIC effect. (For example, setting Slant to 0.15 would slant the Regular typeface by 15% making it appear as italic.)"
@@ -1804,7 +1810,7 @@ msgstr "Huruf Tebal/Miring yang Buatan"
 
 #: temp.glade:4111
 msgid "Font Selection Dialog: Fake bold or italic typeface"
-msgstr ""
+msgstr "Pemilihan Font: Meniru huruf tebal atau miring"
 
 #: temp.glade:4115
 msgid "If the font you are using doesn't\n"
@@ -1840,7 +1846,7 @@ msgstr "Rentangkan"
 
 #: temp.glade:4166
 msgid "Font Selection Dialog: Stretch (or shrink) font setting"
-msgstr ""
+msgstr "Pemilihan Font: Rentangkan (atau kecilkan) font"
 
 #: temp.glade:4175 temp.glade:6291 temp.glade:6310
 msgid "1.00"
@@ -1848,7 +1854,7 @@ msgstr "1,00"
 
 #: temp.glade:4212
 msgid "Font Selection Dialog: Selected font features"
-msgstr ""
+msgstr "Pemilihan Font: Fitur font yang dipilih"
 
 #: temp.glade:4215
 msgid "You can enable/disable any font features \n"
@@ -1864,7 +1870,7 @@ msgstr "Spasi yang Lebarnya Dapat Berubah"
 
 #: temp.glade:4229
 msgid "Font Selection Dialog: Use contextual spaces"
-msgstr ""
+msgstr "Pemilihan Font: Gunakan spasi yang lebarnya dapat berubah"
 
 #: temp.glade:4233
 msgid "Set this option if the font changes the width of \n"
@@ -1878,7 +1884,7 @@ msgstr "Pelukisan Graphite"
 
 #: temp.glade:4247
 msgid "Font Selection Dialog: Use Graphite rendering"
-msgstr ""
+msgstr "Pemilihan Font: Gunakan pelukisan Graphite"
 
 #: temp.glade:4251
 msgid "If you require this font to use\n"
@@ -1894,11 +1900,11 @@ msgstr "Pilih Ciri..."
 
 #: temp.glade:4267
 msgid "Font Selection Dialog: Select font features"
-msgstr ""
+msgstr "Pemilihan Font: Pilih fitur font"
 
 #: temp.glade:4281
 msgid "Font Selection Dialog: Digit (number) script mapping"
-msgstr ""
+msgstr "Pemilihan Font: Penyesuaian angka dengan jenis tulisan"
 
 #: temp.glade:4285
 msgid "All known unicode-encoded number/digit systems\n"
@@ -1995,7 +2001,7 @@ msgstr "Penunjuk (Garis Pengukur dan Paduk)"
 
 #: temp.glade:4533
 msgid "Marks & Guides dialog: Show rules and baselines"
-msgstr ""
+msgstr "Penanda & Penunjuk: Tampilkan garis pengukur dan paduk"
 
 #: temp.glade:4537
 msgid "Enabling this option will turn on various guides \n"
@@ -2011,7 +2017,7 @@ msgstr "Tampilkan Tanda Kesalahan untuk Baris yang Terlalu Panjang"
 
 #: temp.glade:4554
 msgid "Marks & Guides dialog: Show error bars for overfull lines"
-msgstr ""
+msgstr "Penanda & Penunjuk: Tandai baris teks yang kelebihan huruf"
 
 #: temp.glade:4558
 msgid "Enable this option to have TeX make overfull lines stand out.\n"
@@ -2029,7 +2035,7 @@ msgstr "Terapkan PDF Cap Air"
 
 #: temp.glade:4601
 msgid "Marks & Guides dialog: Apply watermark"
-msgstr ""
+msgstr "Penanda & Penunjuk: Terapkan Cap Air"
 
 #: temp.glade:4605
 msgid "A watermark can be applied to all pages of \n"
@@ -2049,7 +2055,7 @@ msgstr "Pilih..."
 
 #: temp.glade:4621
 msgid "Marks & Guides dialog: Select watermark to apply"
-msgstr ""
+msgstr "Penanda & Penunjuk: Pilih cap air untuk diterapkan"
 
 #: temp.glade:4681
 msgid "Color"
@@ -2075,7 +2081,7 @@ msgstr "Bagian Kecil:"
 
 #: temp.glade:4725
 msgid "Grid: Major line color"
-msgstr ""
+msgstr "Kisi: Warna garis utama"
 
 #: temp.glade:4730 temp.glade:4749 temp.glade:21416
 msgid "Thumb Tabs usually use a dark color for the Tab with a light (or white) text."
@@ -2087,7 +2093,7 @@ msgstr "Warna garis-garis utama di kisi."
 
 #: temp.glade:4744
 msgid "Grid: Minor line color"
-msgstr ""
+msgstr "Kisi: Warna garis minor"
 
 #: temp.glade:4753
 msgid "Color of minor lines in grid."
@@ -2099,7 +2105,7 @@ msgstr "Bagian-bagian Utama:"
 
 #: temp.glade:4775
 msgid "Grid: Major line thickness"
-msgstr ""
+msgstr "Kisi: Tebal garis utama"
 
 #: temp.glade:4778
 msgid "Specify the thickness\n"
@@ -2109,7 +2115,7 @@ msgstr "Tentukan tebalnya \n"
 
 #: temp.glade:4794
 msgid "Grid: Minor line thickness"
-msgstr ""
+msgstr "Kisi: Tebal garis minor"
 
 #: temp.glade:4797
 msgid "Specify the line thickness\n"
@@ -2119,7 +2125,7 @@ msgstr "Tentukan tebalnya garis-garis \n"
 
 #: temp.glade:4813
 msgid "Grid: Number of minor divisions"
-msgstr ""
+msgstr "Kisi: Jumlah bagian kecil"
 
 #: temp.glade:4833
 msgid "Depending on what you are trying\n"
@@ -2137,7 +2143,7 @@ msgstr "Memulakan Kisi Di:"
 
 #: temp.glade:4847
 msgid "Grid: Reload default values"
-msgstr ""
+msgstr "Kisi: Muat ulang nilai standar"
 
 #: temp.glade:4851
 msgid "Clicking this button will refresh\n"
@@ -2151,7 +2157,7 @@ msgstr "Mengklik tombol ini akan membuat pengaturan \n"
 
 #: temp.glade:4865
 msgid "Grid: Select major units"
-msgstr ""
+msgstr "Kisi: Pilih satuan utama"
 
 #: temp.glade:4870
 msgid "The grid can use Centimeters or \n"
@@ -2161,7 +2167,7 @@ msgstr "Kisi dapat menggunakan Sentimeter \n"
 
 #: temp.glade:4887
 msgid "Grid: Starting position (page or margin)"
-msgstr ""
+msgstr "Kisi: Posisi awal (halaman atau garis tepi)"
 
 #: temp.glade:4892
 msgid "The grid can start at the top-left corner\n"
@@ -2175,7 +2181,7 @@ msgstr "Kisi"
 
 #: temp.glade:4924
 msgid "Marks & Guides dialog: Show grid (graph paper)"
-msgstr ""
+msgstr "Penanda & Penunjuk: Tampilkan kisi (kertas grafik)"
 
 #: temp.glade:4928
 msgid "If the standard Rules and Guides are inadequate\n"
@@ -2337,7 +2343,7 @@ msgstr "Posisi\n"
 
 #: temp.glade:5302
 msgid "Image credit dialog: Vertical position of text"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Posisi vertikal teks"
 
 #: temp.glade:5332 temp.glade:19343
 msgid "Horizontal\n"
@@ -2347,7 +2353,7 @@ msgstr "Posisi\n"
 
 #: temp.glade:5343
 msgid "Image credit dialog: Horizontal position of text"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Posisi horisontal teks"
 
 #: temp.glade:5373
 msgid "Background Box:"
@@ -2355,7 +2361,7 @@ msgstr "Kotak Latar:"
 
 #: temp.glade:5382
 msgid "Image credit dialog: Background color"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Warna latar belakang"
 
 #: temp.glade:5385
 msgid "Specify the kind of box (Light/Dark background)\n"
@@ -2373,7 +2379,7 @@ msgstr "Perputaran:"
 
 #: temp.glade:5428
 msgid "Image credit dialog: Rotation of text"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Perputaran teks"
 
 #: temp.glade:5433 temp.glade:27216
 msgid "Sometimes the credit text needs\n"
@@ -2399,7 +2405,7 @@ msgstr "Teks Penghargaan untuk Gambar:"
 
 #: temp.glade:5475
 msgid "Image credit dialog: Credit (copyright) text"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Pernyataan hak cipta"
 
 #: temp.glade:5478
 msgid "Type the text for the Credit to be overlaid\n"
@@ -2423,7 +2429,7 @@ msgstr "Gunakan untuk SEMUA gambar di seri ini"
 
 #: temp.glade:5508
 msgid "Image credit dialog: Apply to all images in series"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Terapkan ke semua gambar dalam seri ini"
 
 #: temp.glade:5512
 msgid "The same Credit Overlay text can be applied\n"
@@ -2451,7 +2457,7 @@ msgstr "Mengganti pengaturan yang sudah ada"
 
 #: temp.glade:5554
 msgid "Image credit dialog: Overwrite existing values"
-msgstr ""
+msgstr "Penghargaan untuk gambar: Ganti nilai yang ada"
 
 #: temp.glade:5558
 msgid "WARNING:\n"
@@ -2680,7 +2686,7 @@ msgstr "Hapus Gambar"
 
 #: temp.glade:6142
 msgid "Sidebar FG/BG: Remove image"
-msgstr ""
+msgstr "Latar bilah sisi: Hapus gambar"
 
 #: temp.glade:6230
 msgid "Image:"
@@ -2688,7 +2694,7 @@ msgstr "Gambar:"
 
 #: temp.glade:6240
 msgid "Sidebar FG/BG: Select an image"
-msgstr ""
+msgstr "Latar bilah sisi: Pilih gambar"
 
 #: temp.glade:6276 temp.glade:19192 temp.glade:21932 temp.glade:22383
 msgid "Scale:"
@@ -2696,7 +2702,7 @@ msgstr "Skala:"
 
 #: temp.glade:6285
 msgid "Sidebar FG/BG: Scale of image"
-msgstr ""
+msgstr "Latar bilah sisi: Skala gambar"
 
 #: temp.glade:6288
 msgid "Specify how much the image \n"
@@ -2706,7 +2712,7 @@ msgstr "Tentukan seberapa besar gambar harus \n"
 
 #: temp.glade:6304
 msgid "Sidebar FG/BG: Height of image"
-msgstr ""
+msgstr "Latar bilah sisi: Tinggi gambar"
 
 #: temp.glade:6307
 msgid "Specify how much the image \n"
@@ -2724,7 +2730,7 @@ msgstr "Tinggi"
 
 #: temp.glade:6377
 msgid "Sidebar foreground image: Beside text options"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Pilihan untuk di sebelah teks"
 
 #: temp.glade:6381 temp.glade:6465 temp.glade:24093
 msgid "Top: Above everything except the header line\n"
@@ -2742,7 +2748,7 @@ msgstr "Di atas atau Di Bawah Teks:"
 
 #: temp.glade:6408
 msgid "Sidebar foreground image: Above or below text"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: di atas/bawah teks"
 
 #: temp.glade:6425
 msgid "Beside Text:"
@@ -2750,7 +2756,7 @@ msgstr "Di Samping Teks:"
 
 #: temp.glade:6426
 msgid "Sidebar foreground image: Beside text"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Di sebelah teks"
 
 #: temp.glade:6443
 msgid "Cutout Within Text:"
@@ -2758,19 +2764,19 @@ msgstr "Disisipkan Dalam Area Teks:"
 
 #: temp.glade:6444
 msgid "Sidebar foreground image: Cutout within sidebar"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Gambar guntingan"
 
 #: temp.glade:6461
 msgid "Sidebar foreground image: Above or below options"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Pilihan untuk di atas/bawah"
 
 #: temp.glade:6491
 msgid "Sidebar foreground image: Cutout position options"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Pilihan untuk gambar guntingan"
 
 #: temp.glade:6516
 msgid "Sidebar foreground image: Adjust cutout position"
-msgstr ""
+msgstr "Gambar latar depan di bilah sisi: Sesuaikan posisi gambar guntingan"
 
 #: temp.glade:6540
 msgid "Start N Lines Below Top"
@@ -2782,7 +2788,7 @@ msgstr "Posisi Gambar Latar Depan Dalam Bilah Sisi"
 
 #: temp.glade:6595
 msgid "Sidebar background image: Transparency (alpha)"
-msgstr ""
+msgstr "Gambar latar belakang di bilah sisi: Transparansi (alfa)"
 
 #: temp.glade:6598 temp.glade:6675
 msgid "Transparency or alpha value of the background \n"
@@ -2826,11 +2832,11 @@ msgstr "Beberapa (tetapi jarang) gambar PDF seni garis tidak \n"
 
 #: temp.glade:6647
 msgid "Sidebar background image: Color"
-msgstr ""
+msgstr "Gambar latar belakang di bilah sisi: Warna"
 
 #: temp.glade:6684
 msgid "Background Image Transparency:"
-msgstr ""
+msgstr "Transparansi Gambar Latar Belakang:"
 
 #: temp.glade:6696 temp.glade:6718
 msgid "Only relevant where there is both a background image\n"
@@ -2857,7 +2863,7 @@ msgstr "Urutan\n"
 
 #: temp.glade:6714
 msgid "Sidebar background image: Order of layers"
-msgstr ""
+msgstr "Gambar latar belakang di bilah sisi: Urutan lapisan"
 
 #: temp.glade:6749 temp.glade:6769
 msgid "Select what action should be taken if\n"
@@ -2879,7 +2885,7 @@ msgstr "Jika Gambar \n"
 
 #: temp.glade:6765
 msgid "Sidebar background image: Oversize management"
-msgstr ""
+msgstr "Gambar latar belakang di bilah sisi: Pengendalian kebesaran"
 
 #: temp.glade:6799
 msgid "Background Image Advanced Settings"
@@ -2893,7 +2899,7 @@ msgstr "Pertahankan Rasio \n"
 
 #: temp.glade:6813
 msgid "Sidebar FG/BG: Maintain aspect ratio"
-msgstr ""
+msgstr "Latar bilah sisi: Pertahankan Rasio Horisontal/Vertikal"
 
 #: temp.glade:6817
 msgid "Scale the width and height\n"
@@ -2909,11 +2915,11 @@ msgstr "Gambar Depan/Latar Belakang di Bilah Sisi"
 
 #: temp.glade:6988
 msgid "Keep wildcard*"
-msgstr "Gunakan wildcard (*)"
+msgstr "Gunakan karakter pengganti (*)"
 
 #: temp.glade:6992
 msgid "Remove wildcard"
-msgstr "Hapus wildcard (*)"
+msgstr "Hapus karakter pengganti (*)"
 
 #: temp.glade:6996
 msgid "Change to hyphen-"
@@ -2956,7 +2962,7 @@ msgstr "Kata Ibrani (dari PL)"
 
 #: temp.glade:7131
 msgid "Strong's index: Include section for Hebrew words"
-msgstr ""
+msgstr "Indeks Strong: Sertakan bagian untuk kata-kata Ibrani"
 
 #: temp.glade:7147
 msgid "Greek Words (from the NT)"
@@ -2964,7 +2970,7 @@ msgstr "Kata Yunani (dari PB)"
 
 #: temp.glade:7148
 msgid "Strong's index: Include section for Greek words"
-msgstr ""
+msgstr "Indeks Strong: Sertakan bagian untuk kata-kata Yunani"
 
 #: temp.glade:7168
 msgid "Sections to Include:"
@@ -2993,7 +2999,7 @@ msgstr "Indeks Balik (daftar menurut \n"
 
 #: temp.glade:7239
 msgid "Strong's index: Include section for reverse index"
-msgstr ""
+msgstr "Indeks Strong: Sertakan bagian untuk daftar entri balik"
 
 #: temp.glade:7243
 msgid "This (optional) section is intended for readers\n"
@@ -3009,7 +3015,7 @@ msgstr "Kata Ibrani atau Yunani"
 
 #: temp.glade:7258
 msgid "Strong's index entry: Include Hebrew and/or Greek"
-msgstr ""
+msgstr "Entri Indeks Strong: Sertakan bahasa Ibrani dan/atau Yunani"
 
 #: temp.glade:7262
 msgid "The word in the source language(s) can be\n"
@@ -3023,7 +3029,7 @@ msgstr "Transliterasi (Abjad Latin)"
 
 #: temp.glade:7277
 msgid "Strong's index entry: Include transliteration of source languages"
-msgstr ""
+msgstr "Entri Indeks Strong: Sertakan transliterasi bahasa sumber"
 
 #: temp.glade:7281
 msgid "If the readers are unfamiliar with Greek and Hebrew\n"
@@ -3039,7 +3045,7 @@ msgstr "Padanan Istilah"
 
 #: temp.glade:7296
 msgid "Strong's index entry: Include receptor term renderings"
-msgstr ""
+msgstr "Entri Indeks Strong: Sertakan terjemahan dalam bahasa sasaran"
 
 #: temp.glade:7300
 msgid "Show the term renderings from \n"
@@ -3063,7 +3069,7 @@ msgstr "Gunakan Istilah Padanan\n"
 
 #: temp.glade:7353
 msgid "Strong's index: Use major language gloss (if no rendering found) "
-msgstr ""
+msgstr "Indeks Strong: Gunakan terjemahan dalam bahasa Indonesia (kalau terjemahan tidak ditemukan) "
 
 #: temp.glade:7358
 msgid "If all else fails, you can display \n"
@@ -3083,7 +3089,7 @@ msgstr "Gunakan Padanan dari Bahasa Nasional:"
 
 #: temp.glade:7395
 msgid "Strong's index: Use fallback project (if no rendering found)"
-msgstr ""
+msgstr "Indeks Strong: Gunakan proyek pengganti (kalau terjemahan tidak ditemukan)"
 
 #: temp.glade:7431
 msgid "If no local term rendering is found in the Project's\n"
@@ -3109,7 +3115,7 @@ msgstr "Referensi Ayat yang Berguna"
 
 #: temp.glade:7451
 msgid "Strong's index entry: Include key verse reference"
-msgstr ""
+msgstr "Entri Indeks Strong: Sertakan referensi ayat kunci"
 
 #: temp.glade:7455
 msgid "The primary book, chapter and verse reference\n"
@@ -3125,7 +3131,7 @@ msgstr "Definisi"
 
 #: temp.glade:7471
 msgid "Strong's index entry: Include definitions"
-msgstr ""
+msgstr "Entri Indeks Strong: Sertakan definisi"
 
 #: temp.glade:7475
 msgid "Show the definition in addition\n"
@@ -3139,7 +3145,7 @@ msgstr "Hapus Catatan dari Padanan"
 
 #: temp.glade:7577
 msgid "Strong's index entry: Remove comments from renderings"
-msgstr ""
+msgstr "Entri Indeks Strong: Hapus komentar dari terjemahan"
 
 #: temp.glade:7581
 msgid "Paratext allows for additional comments or\n"
@@ -3166,7 +3172,7 @@ msgstr "Karakter pengganti (*):"
 
 #: temp.glade:7621
 msgid "Strong's index entry: How to handle wildcard* character"
-msgstr ""
+msgstr "Entri Indeks Strong: Cara menangani karakter pengganti (*)"
 
 #: temp.glade:7691 temp.glade:26593
 msgid "Name"
@@ -3199,7 +3205,7 @@ msgstr "Buat Indeks di Buku:"
 
 #: temp.glade:7762
 msgid "Strong's index: Extra book code to be used"
-msgstr ""
+msgstr "Indeks Strong: Kode buku ekstra yang harus dipakai"
 
 #: temp.glade:7767
 msgid "Select the temporary book to be used for the \n"
@@ -3224,7 +3230,7 @@ msgstr "Tata Letak Dua Kolom"
 
 #: temp.glade:7823
 msgid "Strong's index: Use 2-column layout"
-msgstr ""
+msgstr "Indeks Strong: Gunakan tata letak 2 kolom"
 
 #: temp.glade:7827
 msgid "Using a two column layout for the index\n"
@@ -3242,7 +3248,7 @@ msgstr "Buka File Indeks \n"
 
 #: temp.glade:7847
 msgid "Strong's index: Open index file after creating it"
-msgstr ""
+msgstr "Indeks Strong: Buka file indeks setelah dibuat"
 
 #: temp.glade:7851
 msgid "Check this option to open\n"
@@ -3280,7 +3286,7 @@ msgstr "Baris Tidak Seimbang (maks.):"
 
 #: temp.glade:7897
 msgid "Strong's index: Allow unbalanced lines"
-msgstr ""
+msgstr "Indeks Strong: Izinkan baris-baris yang tidak seimbang"
 
 #: temp.glade:7903 temp.glade:15845 temp.glade:27040
 msgid "0"
@@ -3338,7 +3344,7 @@ msgstr "⚠️Jenis Teks:"
 
 #: temp.glade:8282
 msgid "Add/Edit marker dialog: Text type"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Jenis teks"
 
 #: temp.glade:8286 temp.glade:8302
 msgid "[Required] This tells PTXprint how to layout data in this marker. \n"
@@ -3362,7 +3368,7 @@ msgstr "⚠️Jenis Gaya:"
 
 #: temp.glade:8333
 msgid "Add/Edit marker dialog: Style type"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Jenis gaya"
 
 #: temp.glade:8367
 msgid "⚠️Marker:"
@@ -3376,7 +3382,7 @@ msgstr "Anda dapat mengatakan apa yang Anda suka di sini \n"
 
 #: temp.glade:8396
 msgid "Add/Edit marker dialog: Marker (code)"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Markah (kode)"
 
 #: temp.glade:8414 temp.glade:8432
 msgid "[Required] List markers that this marker may occur under. \n"
@@ -3392,11 +3398,11 @@ msgstr "⚠️Terdapat Di Bawah:"
 
 #: temp.glade:8429
 msgid "Add/Edit marker dialog: Markers it can occur under"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Terdapat di bawah markah yang mana"
 
 #: temp.glade:8461
 msgid "Add/Edit marker dialog: Marker description"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Deskripsi markah"
 
 #: temp.glade:8483 temp.glade:8500
 msgid "Consists of: Marker..Endmarker - Group - short description \n"
@@ -3410,7 +3416,7 @@ msgstr "Nama:"
 
 #: temp.glade:8497
 msgid "Add/Edit marker dialog: Marker name (short description)"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Nama markah (deskripsi singkat)"
 
 #: temp.glade:8502
 msgid "xyz - Other - Brief description of marker"
@@ -3426,7 +3432,7 @@ msgstr "Markah Akhir:"
 
 #: temp.glade:8526
 msgid "Add/Edit marker dialog: End Marker (code)"
-msgstr ""
+msgstr "Tambahkan/Sunting markah: Markah Akhir (kode)"
 
 #: temp.glade:8640
 msgid "Paratext Project:"
@@ -3549,7 +3555,18 @@ msgid "After selecting one or more books to be\n"
 "  EXO 20:12-17 MAT 5:3-11\n"
 "  GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO\n\n"
 "Shortcut: Ctrl-B"
-msgstr ""
+msgstr "Setelah memilih satu atau lebih buku untuk \n"
+"dicetak, kode buku akan dicantumkan di sini.\n"
+"Daftar ini dapat disunting, sehingga buku-buku \n"
+"dapat dipesan ulang jika perlu.\n\n"
+"Daftar referensi juga dapat dimasukkan secara manual \n"
+"untuk rentang ayat-ayat yang akan dicetak. Sebagai contoh:\n"
+"   JHN 2:1-12\n"
+"   MRK 1-5\n"
+"   PSA 23; 100; 117\n"
+"   EXO 20:12-17 MAT 5:3-11\n"
+"   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO\n\n"
+"Tombol pintas: Ctrl-B"
 
 #: temp.glade:8958
 msgid "Multiple books editable list entry"
@@ -3587,7 +3604,11 @@ msgid "Save the current settings with the \n"
 "Note that these settings are also automatically\n"
 "updated (saved) when you click Print.\n\n"
 "Shortcut: Ctrl-S"
-msgstr ""
+msgstr "Simpan pengaturan saat ini dengan\n"
+"Nama Konfigurasi yang disediakan.\n\n"
+"Perhatikan bahwa pengaturan ini juga secara otomatis\n"
+"diperbarui (disimpan) ketika Anda mengklik Cetak.\n\n"
+"Tombol pintas: Ctrl S"
 
 #: temp.glade:9100
 msgid "Delete configuration"
@@ -5422,7 +5443,7 @@ msgstr "Nomor Ayat Puisi di Tepi Halaman"
 
 #: temp.glade:12521
 msgid "Use hanging verse number for poetry"
-msgstr ""
+msgstr "Tempatkan nomor ayat di tepi halaman untuk puisi"
 
 #: temp.glade:12525
 msgid "Verse numbers for Poetry elements all\n"
@@ -7719,7 +7740,7 @@ msgstr "PTXprint akan menyimpan Daftar Gambar ketika \n"
 "melakukan banyak perubahan pada Daftar Gambar \n"
 "dan ingin memastikan perubahan Anda disimpan, \n"
 "klik tombol Simpan ini dari waktu ke waktu. Tombol \n"
-"pintasan: <Ctrl S>"
+"pintas: Ctrl S"
 
 #: temp.glade:18109
 msgid "Generate..."
@@ -8761,7 +8782,7 @@ msgstr "Pastikan tidak ada yang menyinggung atau tidak pantas dalam gambar ini. 
 
 #: temp.glade:19933
 msgid "Is this image acceptable in your culture?"
-msgstr ""
+msgstr "Apakah gambar ini wajar dalam budaya pembaca?"
 
 #: temp.glade:19944
 msgid "Sometimes mirroring (reversing) an image makes it\n"
@@ -9699,7 +9720,7 @@ msgstr "Gunakan karakter Akhir Ayah untuk \n"
 
 #: temp.glade:22270
 msgid "Verse Border Graphic"
-msgstr "Gambar Bingkai Ayat"
+msgstr "Corak Bingkai Nomor Ayat"
 
 #: temp.glade:22271
 msgid "Decorative verse numbers: Use verse border graphic"
@@ -9721,15 +9742,15 @@ msgstr "Klik untuk mengubah ciri-ciri markah \\v pada tab Gaya."
 
 #: temp.glade:22314
 msgid "Select verse border graphic"
-msgstr ""
+msgstr "Pilih corak bingkai untuk nomor ayat"
 
 #: temp.glade:22350
 msgid "Vertical shift in pts of the verse decorator image upwards relative to the text."
-msgstr ""
+msgstr "Pergeseran vertikal (dalam satuan point) gambar penghias nomor ayat ke atas relatif terhadap teks."
 
 #: temp.glade:22363
 msgid "Verse border graphic: Vertical shift"
-msgstr ""
+msgstr "Bingkai pada nomor ayat: Pergeseran vertikal"
 
 #: temp.glade:22380
 msgid "Scale verse decorator image. 1.0 is unity."
@@ -9737,7 +9758,7 @@ msgstr "Sesuaikan ukuran gambar penghias ayat. Angka 1,0 berarti tidak ada perub
 
 #: temp.glade:22392
 msgid "Verse border graphic: Scale"
-msgstr ""
+msgstr "Bingkai pada nomor ayat: Skala"
 
 #: temp.glade:22409
 msgid "Move Ayah"
@@ -9745,7 +9766,7 @@ msgstr "Pindahkan Ayat"
 
 #: temp.glade:22410
 msgid "Decorative verse numbers: Move Ayah to end of verse"
-msgstr ""
+msgstr "Nomor ayat yang dihiasi: Pindahkan simbol Ayah ke akhir ayat"
 
 #: temp.glade:22414
 msgid "This opton moves the Ayah\n"
@@ -10212,7 +10233,7 @@ msgstr "Pengaturan catatan: Gaya pemanggil"
 
 #: temp.glade:23810
 msgid "Note settings: Note blend into style"
-msgstr ""
+msgstr "Pengaturan catatan: Padukan referensi silang dengan catatan kaki"
 
 #: temp.glade:23833
 msgid "Note Settings"
@@ -10627,7 +10648,7 @@ msgstr "Pengolahan Teks & Lembar Gaya"
 
 #: temp.glade:24846
 msgid "Space beside cutouts or sidebars"
-msgstr ""
+msgstr "Ruang di sebelah gambar guntingan atau bilah sisi"
 
 #: temp.glade:24849 temp.glade:24870
 msgid "This sets the default gap (pt) between the body \n"
@@ -10942,7 +10963,7 @@ msgstr "Jarak Baris 1/14 (standar lama)"
 
 #: temp.glade:25471
 msgid "Enable legacy 1/14 line spacing"
-msgstr ""
+msgstr "Gunakan jarak antar baris model lama: 1/14"
 
 #: temp.glade:25475
 msgid "In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units."
@@ -10964,12 +10985,13 @@ msgstr "Fitur lanjutan ini hanya \n"
 
 #: temp.glade:25507 temp.glade:25508
 msgid "Use glyph metrics"
-msgstr ""
+msgstr "Gunakan ukuran glif"
 
 #: temp.glade:25512
 msgid "ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.\n"
 "Font metrics gives more consistent results."
-msgstr ""
+msgstr "Untuk menghitung tinggi dan dalam suatu baris teks, PTXprint dapat menggunakan ukuran glif yang sebenarnya dalam satu baris atau ukuran font.\n"
+"Ukuran font memberikan hasil yang lebih konsisten."
 
 #: temp.glade:25526
 msgid "Bottom Footer in Margin"
@@ -10977,7 +10999,7 @@ msgstr ""
 
 #: temp.glade:25527
 msgid "Place the footer within the margin"
-msgstr ""
+msgstr "Tempatkan suku halaman di dalam tepi halaman bawah"
 
 #: temp.glade:25531
 msgid "Normally the page number on an intro book\n"
@@ -11011,7 +11033,7 @@ msgstr "Tentukan lembar gaya, makro tex, \n"
 
 #: temp.glade:25621
 msgid "Save current file in view"
-msgstr ""
+msgstr "Simpan file yang saat ini ditampilkan"
 
 #: temp.glade:25625
 msgid "If you edit any of these files, you should\n"
@@ -11022,7 +11044,7 @@ msgstr ""
 
 #: temp.glade:25647
 msgid "Reload current file in view from saved version"
-msgstr ""
+msgstr "Muat ulang file yang saat ini ditampilkan dari versi yang disimpan"
 
 #: temp.glade:25651
 msgid "Discard away any changes that have \n"
@@ -11046,7 +11068,10 @@ msgid "Choose any book (including\n"
 "those which are not currently\n"
 "in the list to be printed.)\n\n"
 "Shortcut: Ctrl-B"
-msgstr ""
+msgstr "Pilih kitab apa saja (termasuk \n"
+"yang saat ini tidak ada dalam \n"
+"daftar yang akan dicetak.)\n\n"
+"Tombol pintas: Ctrl B"
 
 #: temp.glade:25720
 msgid "Generate"
@@ -11054,7 +11079,7 @@ msgstr "Hasilkan"
 
 #: temp.glade:25721
 msgid "Generate ... (context sensitive)"
-msgstr ""
+msgstr "Hasilkan..."
 
 #: temp.glade:25725
 msgid "This button will (re-)generate content for \n"
@@ -11064,7 +11089,15 @@ msgid "This button will (re-)generate content for \n"
 "Basic tab. Otherwise it will (re-)generate a Pic/Adj\n"
 "list for each of the books listed for printing.\n\n"
 "Shortcut: Ctrl-G"
-msgstr ""
+msgstr "Tombol ini akan menghasilkan (atau menghasilkan \n"
+"kembali) konten untuk Bagian Depan Buku, Daftar \n"
+"Penyesuaian, dan SFM Akhir.\n\n"
+"Jika Anda hanya ingin menghasilkan (kembali) Daftar \n"
+"Penyesuaian untuk satu kitab, pilih buku itu saja di\n"
+"tab Dasar. Kalau tidak, akan menghasilkan (kembali) \n"
+"daftar Gambar/Penyesuaian untuk setiap kitab yang \n"
+"terdaftar untuk dicetak.\n\n"
+"Tombol pintas: Ctrl G"
 
 #: temp.glade:25747
 msgid "View/Edit..."
@@ -11090,7 +11123,21 @@ msgid "You may view (and in some cases edit) \n"
 "overwritten each time you hit Print. So any changes\n"
 "to the text or markers need to be made in Paratext.\n\n"
 "Shortcut: Ctrl-E"
-msgstr ""
+msgstr "Anda dapat melihat (dan mungkin dapat menyunting) \n"
+"file di program penyunting teks pada komputer Anda.\n\n"
+"Peringatan: Jika Anda menyunting pengaturan dengan \n"
+"program lain, maka Anda harus menyimpannya (di luar \n"
+"PTXprint) dan kemudian klik tombol segarkan (di dalam \n"
+"PTXprint) sebelum Anda klik Print. Jika tidak, Anda bisa \n"
+"kehilangan perubahan yang telah dibuat.\n\n"
+"Jika tidak ada yang terjadi saat Anda mengklik di sini, \n"
+"mungkin karena Anda belum mengaitkan jenis file \n"
+"(.sfm, .piclist, .adjlist, .tex, .log, .sty, dll.) dengan \n"
+"penyunting teks (seperti Notepad atau NP++).\n\n"
+"Perhatikan bahwa setiap perubahan pada teks SFM yang \n"
+"dihasilkan akan ditimpa setiap kali Anda klik Print. Jadi setiap \n"
+"perubahan pada teks atau markah harus dilakukan di Paratext.\n\n"
+"Tombol pintas: Ctrl E"
 
 #: temp.glade:25785
 msgid "Edit Variables..."
@@ -11345,7 +11392,7 @@ msgstr "Penghubung baris merupakan serantaian titik \n"
 
 #: temp.glade:26427
 msgid "Enable (local) front matter"
-msgstr ""
+msgstr "Gunakan bahan depan buku yang Anda buat dalam PTXprint"
 
 #: temp.glade:26444
 msgid "View/Edit\n"
@@ -11396,7 +11443,7 @@ msgstr "Bagian utama kitab suci biasanya dimulai pada halaman ganjil (sisi kanan
 
 #: temp.glade:26537
 msgid "Rescan peripheral variables"
-msgstr ""
+msgstr "Cari ulang variabel sampingan"
 
 #: temp.glade:26541
 msgid "Clicking this button will rescan the\n"
@@ -11849,7 +11896,7 @@ msgstr "Tepi Pemotongan Minimum \n"
 
 #: temp.glade:27529
 msgid "Pagination: Sheets per signature (pages per form)"
-msgstr ""
+msgstr "Pengaturan Halaman: Lembar per signatur"
 
 #: temp.glade:27552
 msgid "Pagination: Minimum fold cut margin"
@@ -11935,7 +11982,12 @@ msgid "Click to print and generate a PDF\n"
 "previous version. It should open\n"
 "in the default PDF viewer.\n\n"
 "Shortcut: Ctrl-D"
-msgstr ""
+msgstr "Klik untuk menghasilkan file PDF \n"
+"yang menunjukkan perbedaan antara \n"
+"file PDF saat ini dan versi sebelumnya \n"
+"yang dipilih. File perbedaan akan \n"
+"dibuka di aplikasi penampil file PDF.\n\n"
+"Tombol pintas: Ctrl D"
 
 #: temp.glade:27730
 msgid "Compare PDFs: "
@@ -12178,7 +12230,8 @@ msgstr "File PDF yang dibuat disimpan dalam folder \n"
 #: temp.glade:28175
 msgid "Output PDF Location (includes\n"
 "folders with temporary files):"
-msgstr ""
+msgstr "Lokasi file PDF yang dihasilkan \n"
+"(termasuk folder dengan file sementara):"
 
 #: temp.glade:28189
 msgid "To use PTXprint effectively you need a good PDF viewer\n"
@@ -12209,7 +12262,7 @@ msgstr "Kunjungi situs unduh SumatraPDF"
 
 #: temp.glade:28213
 msgid "Link to SumatraPDF home page"
-msgstr ""
+msgstr "Tautan ke halaman beranda SumatraPDF"
 
 #: temp.glade:28233
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
@@ -12238,7 +12291,7 @@ msgstr "Melapor Masalah melalui GitHub"
 
 #: temp.glade:28254
 msgid "Link to report an issue with PTXprint"
-msgstr ""
+msgstr "Tautan untuk melaporkan masalah dengan PTXprint"
 
 #: temp.glade:28272
 msgid "Visit PTXprint's Home Page to Download Latest Version"
@@ -12246,7 +12299,7 @@ msgstr "Kunjungi Halaman Utama PTXprint untuk Mengunduh Versi Terbaru"
 
 #: temp.glade:28273
 msgid "Link to PTXprint home page"
-msgstr ""
+msgstr "Tautan ke halaman beranda PTXprint"
 
 #: temp.glade:28293
 msgid "PTXprint does not have an auto-updating\n"
@@ -12285,7 +12338,7 @@ msgstr "Lihat FAQ mengenai Makro PTX2PDF"
 
 #: temp.glade:28344
 msgid "Link to deeper technical help"
-msgstr ""
+msgstr "Tautan ke bantuan teknis yang lebih dalam"
 
 #: temp.glade:28362
 msgid "Answers to Frequently Asked Questions (FAQs)"
@@ -12293,7 +12346,7 @@ msgstr "Jawaban untuk Pertanyaan yang Sering Diajukan"
 
 #: temp.glade:28363
 msgid "Link to PTXprint's FAQ page"
-msgstr ""
+msgstr "Tautan ke halaman FAQ tentang PTXprint"
 
 #: temp.glade:28383 temp.glade:28487
 msgid "Frequently Asked Questions (FAQs) from\n"
@@ -12369,7 +12422,7 @@ msgstr "Dapatkan bantuan dari pengguna PTXprint lain"
 
 #: temp.glade:28467
 msgid "Link to PTXprint user community site"
-msgstr ""
+msgstr "Tautan ke situs komunitas pengguna PTXprint"
 
 #: temp.glade:28490
 msgid "PTXprint User Community:"
@@ -12473,7 +12526,7 @@ msgstr "Beberapa bahasa antarmuka PTXprint \n"
 
 #: temp.glade:28829
 msgid "Check for updates..."
-msgstr ""
+msgstr "Periksa untuk pembaruan program..."
 
 #: temp.glade:28833
 msgid "A newer version of PTXprint is available.\n"
@@ -12500,7 +12553,20 @@ msgid "Quick Run - (Ctrl-Q)\n\n"
 "If it detects that it needs to be re-run for\n"
 "a perfect result, a reminder message will\n"
 "be displayed (in red) just to the left."
-msgstr ""
+msgstr "Jalankan Cepat (Ctrl Q)\n\n"
+"Biasanya, PTXprint menjalankan ulang proses \n"
+"pengaturan huruf berulang-ulang untuk \n"
+"memastikan semuanya ditempatkan dengan \n"
+"tepat, dan angkanya di Daftar Isi & Halaman \n"
+"Hak Cipta Gambar akurat.\n"
+"  \n"
+"Ini memberikan hasil akhir yang jauh lebih rapi, tapi\n"
+"membutuhkan waktu lebih lama untuk berjalan. Jika \n"
+"Anda hanya ingin melihat hasil cepat/kasar, centanglah \n"
+"pilihan ini untuk hanya dijalankan SATU KALI SAJA.\n\n"
+"Jika proses itu perlu dijalankan kembali untuk\n"
+"hasil yang sempurna, sebuah pesan pengingat akan\n"
+"ditampilkan (berwarna merah) di sebelah kiri."
 
 #: temp.glade:28922
 msgid "Find help"
@@ -12517,7 +12583,7 @@ msgstr ""
 
 #: temp.glade:28938
 msgid "Search for settings"
-msgstr ""
+msgstr "Cari pengaturan"
 
 #: temp.glade:28956
 msgid "The current configuration displayed is\n"
@@ -12551,5 +12617,13 @@ msgid "Apply any changes specified, save the\n"
 "Diglot project, and will need to return to\n"
 "the primary project before you can print.\n\n"
 "Shortcut: Ctrl-P"
-msgstr ""
+msgstr "Terapkan perubahan yang ditentukan, simpan\n"
+"konfigurasi saat ini (jika tidak dikunci) dan\n"
+"menghasilkan PDF dengan pengaturan yang ditentukan.\n\n"
+"Jika tombol ini berlabel 'Kembali' berarti \n"
+"Anda sedang menyesuaikan pengaturan \n"
+"untuk proyek yang terkait dengan Proyek \n"
+"Dua Bahasa, dan Anda harus kembali ke\n"
+"proyek utama sebelum Anda dapat mencetak.\n\n"
+"Tombol pintas: Ctrl P"
 
