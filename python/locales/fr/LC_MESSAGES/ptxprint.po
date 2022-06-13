@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-11 19:46+0700\n"
-"PO-Revision-Date: 2022-06-11 12:46\n"
+"PO-Revision-Date: 2022-06-13 17:56\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -127,7 +127,7 @@ msgstr "Fermez l'ancien fichier PDF avant de réessayer."
 
 #: lib/ptxprint/gtkview.py:1192
 msgid "Processing..."
-msgstr ""
+msgstr "Traitement en cours..."
 
 #: lib/ptxprint/gtkview.py:1209
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
@@ -250,7 +250,7 @@ msgstr " Cliquez sur le bouton Générer (ci-dessus) pour lancer le processus de
 
 #: lib/ptxprint/gtkview.py:1911 lib/ptxprint/gtkview.py:1917
 msgid "View Only..."
-msgstr "Voir seulement..."
+msgstr "Affichage..."
 
 #: lib/ptxprint/gtkview.py:1923
 msgid " Use the 'Advanced' tab to select which settings you want to view or edit."
@@ -261,7 +261,10 @@ msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
 "Click on View/Edit... button to see more."
-msgstr ""
+msgstr "\n\n"
+"-------------------------------------                                            \n"
+"[Le fichier a été tronqué pour l'affichage]                                            \n"
+"Cliquez sur le bouton Affichage... pour en voir plus."
 
 #: lib/ptxprint/gtkview.py:1948
 msgid "\n"
@@ -9788,7 +9791,8 @@ msgstr "Numéros de verset décoratifs: Déplacer Ayah à la fin du verset"
 #: temp.glade:22414
 msgid "This opton moves the Ayah\n"
 "to the end of the verse. "
-msgstr ""
+msgstr "Cette option déplace l'Ayah\n"
+"à la fin du verset. "
 
 #: temp.glade:22446
 msgid "Verse Number Decorator"
@@ -10535,7 +10539,7 @@ msgstr "Appliquer Changes.txt (et PrintDraftChanges.txt)"
 
 #: temp.glade:24577
 msgid "Enable apply changes"
-msgstr ""
+msgstr "Activer l'application des changements"
 
 #: temp.glade:24581
 msgid "If there are changes that you wish to\n"
@@ -10572,7 +10576,11 @@ msgid "Switch to the View/Edit tab to\n"
 "one tab, and PrintDraftChanges.txt\n"
 "in the next tab to the right.\n\n"
 "Shortcut: Shift-Ctrl-C"
-msgstr ""
+msgstr "Basculer vers l'onglet Voir+Modifier pour\n"
+"afficher le fichier Changes.txt dans\n"
+"un onglet, et PrintDraftChanges.txt\n"
+"dans le prochain onglet à droite\n\n"
+"Raccourci : Maj-Ctrl-C"
 
 #: temp.glade:24630
 msgid "Edit customized TeX settings"
@@ -10582,7 +10590,9 @@ msgstr "Modifier les paramètres TeX personnalisés"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-mods.tex file.\n\n"
 "Shortcut: Shift-Ctrl-T"
-msgstr ""
+msgstr "Basculer vers l'onglet Voir+Modifier pour\n"
+"afficher le fichier ptxprint-mods.tex.\n\n"
+"Raccourci : Maj-Ctrl-T"
 
 #: temp.glade:24652
 msgid "Edit stylesheet overrides"
@@ -10592,7 +10602,9 @@ msgstr "Modifier les substitutions de la feuille de style"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-mods.sty file.\n\n"
 "Shortcut: Shift-Ctrl-S"
-msgstr ""
+msgstr "Basculer vers l'onglet Voir+Modifier pour\n"
+"afficher le fichier ptxprint-mods.sty.\n\n"
+"Raccourci : Maj-Ctrl-S"
 
 #: temp.glade:24673
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
@@ -10648,7 +10660,9 @@ msgstr "Modifier les styles personnalisés"
 msgid "Switch to the View/Edit tab to\n"
 "show the custom.sty file.\n\n"
 "Shortcut: Shift-Ctrl-M"
-msgstr ""
+msgstr "Basculer vers l'onglet Voir+Modifier pour\n"
+"afficher le fichier custom.sty.\n\n"
+"Raccourci : Maj-Ctrl-M"
 
 #: temp.glade:24744
 msgid "Edit custom script"
@@ -10666,7 +10680,9 @@ msgstr "Modifier les paramètres de départ de TeX"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-premods.tex file.\n\n"
 "Shortcut: Shift-Ctrl-P"
-msgstr ""
+msgstr "Basculer vers l'onglet Voir+Modifier pour\n"
+"afficher le fichier ptxprint-premods.tex.\n\n"
+"Raccourci : Maj-Ctrl-P"
 
 #: temp.glade:24781
 msgid "Apply Initial Settings (ptxprint-premods.tex)"
@@ -11083,7 +11099,10 @@ msgid "If you edit any of these files, you should\n"
 "save them before moving to a different\n"
 "tab (otherwise your changes will be lost.)\n\n"
 "Shortcut: Ctrl-S"
-msgstr ""
+msgstr "Si vous modifiez l'un de ces fichiers, vous devriez\n"
+"les enregistrer avant de passer à un autre onglet\n"
+"(sinon vos modifications seront perdues).\n\n"
+"Raccourci : Ctrl-S"
 
 #: temp.glade:25647
 msgid "Reload current file in view from saved version"
@@ -11094,7 +11113,10 @@ msgid "Discard away any changes that have \n"
 "been made and restore the contents\n"
 "of this file as it was when last saved.\n\n"
 "Shortcut: F5"
-msgstr ""
+msgstr "Abandonner toutes les modifications qui ont\n"
+"été apportées et restaurer le contenu de ce\n"
+"fichier tel qu'il était lors de la dernière sauvegarde.\n\n"
+"Raccourci : F5"
 
 #: temp.glade:25675
 msgid "Book in\n"
@@ -12630,7 +12652,12 @@ msgid "Type in a word to search for a setting \n"
 "Select a topic to jump to the appropriate \n"
 "setting which will be highlighted.\n\n"
 "Shortcut: F1  or  Ctrl-F  (to Find help)"
-msgstr ""
+msgstr "Tapez un mot pour rechercher un paramètre \n"
+"que vous ne pouvez pas localiser. Une courte liste de \n"
+"sujets pertinents apparaîtra au-dessus. \n"
+"Sélectionnez un sujet pour aller au paramètre \n"
+"approprié qui sera mis en surbrillance.\n\n"
+"Raccourci : F1 ou Ctrl-F (pour trouver de l'aide)"
 
 #: temp.glade:28938
 msgid "Search for settings"
