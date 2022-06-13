@@ -1,8 +1,16 @@
 PTXprint 2.1.27 Release Notes
-8 Jun 2022
+13 Jun 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2 (13 Jun 2022)
+  
+  * Fixed faulty signature creation #692 
+  
+  * Clear "peached" highlighting when searching for next setting
+  
+  * Ensure ptxprint-premods.tex gets copied to new configs
+  
 Bug fixes and improvements in 2.1.27 (8 Jun 2022)
   
   * Added Search for settings (to find settings based on key words)
@@ -879,7 +887,7 @@ Bug fixes and Improvements in 1.9.5 (19 Sep 2021)
   
   * Added ability to suppress, re-enable and reset page numbers (esp. for FRT matter)
       using codes: \nopagenums, \dopagenums, \resetpagenums N   (if N<0: i, ii, iii)
-	  
+  
   * Added support for Paratext's traditional manual line break (i.e. // = \u2028)
 
   * Added "A4 with crop marks" as an optimum paper size for local printing and binding
