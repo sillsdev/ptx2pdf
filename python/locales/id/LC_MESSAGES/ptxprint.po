@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-06-11 19:46+0700\n"
-"PO-Revision-Date: 2022-06-11 12:46\n"
+"PO-Revision-Date: 2022-06-13 17:56\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -127,7 +127,7 @@ msgstr "Tutup file PDF lama sebelum Anda mencoba lagi."
 
 #: lib/ptxprint/gtkview.py:1192
 msgid "Processing..."
-msgstr ""
+msgstr "Mengerjakan..."
 
 #: lib/ptxprint/gtkview.py:1209
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
@@ -261,7 +261,10 @@ msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
 "Click on View/Edit... button to see more."
-msgstr ""
+msgstr "\n\n"
+"-------------------------------------                                            \n"
+"[File telah dipotong untuk ditampilkan]                                            \n"
+"Klik tombol Lihat/Edit... untuk melihat lebih banyak."
 
 #: lib/ptxprint/gtkview.py:1948
 msgid "\n"
@@ -9771,7 +9774,8 @@ msgstr "Nomor ayat yang dihiasi: Pindahkan simbol Ayah ke akhir ayat"
 #: temp.glade:22414
 msgid "This opton moves the Ayah\n"
 "to the end of the verse. "
-msgstr ""
+msgstr "Pilihan ini memindahkan \n"
+"simbol Ayah ke akhir ayat. "
 
 #: temp.glade:22446
 msgid "Verse Number Decorator"
@@ -10502,7 +10506,7 @@ msgstr "Terapkan Changes.txt (dan PrintDraftChanges.txt)"
 
 #: temp.glade:24577
 msgid "Enable apply changes"
-msgstr ""
+msgstr "Terapkan perubahan"
 
 #: temp.glade:24581
 msgid "If there are changes that you wish to\n"
@@ -10531,7 +10535,11 @@ msgid "Switch to the View/Edit tab to\n"
 "one tab, and PrintDraftChanges.txt\n"
 "in the next tab to the right.\n\n"
 "Shortcut: Shift-Ctrl-C"
-msgstr ""
+msgstr "Beralih ke tab Lihat/Sunting untuk \n"
+"menampilkan file Changes.txt di satu \n"
+"tab, dan PrintDraftChanges.txt di tab \n"
+"berikutnya di sebelah kanan.\n\n"
+"Tombol pintas: Shift Ctrl C"
 
 #: temp.glade:24630
 msgid "Edit customized TeX settings"
@@ -10541,7 +10549,9 @@ msgstr "Sunting pengaturan TeX yang disesuaikan"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-mods.tex file.\n\n"
 "Shortcut: Shift-Ctrl-T"
-msgstr ""
+msgstr "Beralih ke tab View/Edit untuk \n"
+"menampilkan file ptxprint-mods.tex.\n\n"
+"Tombol pintas: Shift Ctrl T"
 
 #: temp.glade:24652
 msgid "Edit stylesheet overrides"
@@ -10551,7 +10561,9 @@ msgstr "Sunting penggantian lembar gaya"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-mods.sty file.\n\n"
 "Shortcut: Shift-Ctrl-S"
-msgstr ""
+msgstr "Beralih ke tab View/Edit untuk \n"
+"menampilkan file ptxprint-mods.sty.\n\n"
+"Tombol pintas: Shift Ctrl S"
 
 #: temp.glade:24673
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
@@ -10607,7 +10619,9 @@ msgstr "Sunting gaya yang disesuaikan"
 msgid "Switch to the View/Edit tab to\n"
 "show the custom.sty file.\n\n"
 "Shortcut: Shift-Ctrl-M"
-msgstr ""
+msgstr "Beralih ke tab View/Edit untuk \n"
+"menampilkan file custom.sty.\n\n"
+"Tombol pintas: Shift Ctrl M"
 
 #: temp.glade:24744
 msgid "Edit custom script"
@@ -10625,7 +10639,9 @@ msgstr "Sunting pengaturan awal TeX"
 msgid "Switch to the View/Edit tab to\n"
 "show the ptxprint-premods.tex file.\n\n"
 "Shortcut: Shift-Ctrl-P"
-msgstr ""
+msgstr "Beralih ke tab View/Edit untuk \n"
+"menampilkan file ptxprint-premods.tex.\n\n"
+"Tombol pintas: Shift Ctrl P"
 
 #: temp.glade:24781
 msgid "Apply Initial Settings (ptxprint-premods.tex)"
@@ -11040,7 +11056,10 @@ msgid "If you edit any of these files, you should\n"
 "save them before moving to a different\n"
 "tab (otherwise your changes will be lost.)\n\n"
 "Shortcut: Ctrl-S"
-msgstr ""
+msgstr "Jika Anda menyunting salah satu file ini, Anda \n"
+"harus menyimpannya sebelum pindah ke tab \n"
+"lain. (Jika tidak, perubahan Anda akan hilang.)\n\n"
+"Tombol pintas: Ctrl S"
 
 #: temp.glade:25647
 msgid "Reload current file in view from saved version"
@@ -11051,7 +11070,10 @@ msgid "Discard away any changes that have \n"
 "been made and restore the contents\n"
 "of this file as it was when last saved.\n\n"
 "Shortcut: F5"
-msgstr ""
+msgstr "Buang semua perubahan yang telah \n"
+"dibuat dan kembalikan isi file ini \n"
+"seperti saat terakhir disimpan.\n\n"
+"Tombol pintas: F5"
 
 #: temp.glade:25675
 msgid "Book in\n"
@@ -12579,7 +12601,12 @@ msgid "Type in a word to search for a setting \n"
 "Select a topic to jump to the appropriate \n"
 "setting which will be highlighted.\n\n"
 "Shortcut: F1  or  Ctrl-F  (to Find help)"
-msgstr ""
+msgstr "Ketikkan kata untuk mencari pengaturan \n"
+"yang tidak dapat Anda temukan. Daftar \n"
+"singkat topik yang relevan akan muncul di atas.\n"
+"Pilih topik untuk melompat ke pengaturan yang \n"
+"sesuai, yang akan disorot.\n\n"
+"Tombol pintas: F1 atau Ctrl F"
 
 #: temp.glade:28938
 msgid "Search for settings"
