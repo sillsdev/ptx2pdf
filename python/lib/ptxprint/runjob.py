@@ -384,9 +384,10 @@ class RunJob:
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
-        s = 40
+        l = len(self.loglines)
+        s = 40 if l > 40 else l
         e = 0
-        for i in range(1, 40):
+        for i in range(1, s):
             if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
                 e = i
             if self.loglines[-i].startswith("!"):
