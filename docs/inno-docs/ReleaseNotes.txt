@@ -1,8 +1,14 @@
 PTXprint 2.2.1 Release Notes
-14 Jun 2022
+21 Jun 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.2 (21 Jun 2022)
+  
+  * Use placeholders instead of text in special book list (stops unexpected column layouts).
+
+  * Fixed filtering & show glossary entries as footnotes for non-standard markup in GLO book.
+  
 Bug fixes and improvements in 2.2.1 (14 Jun 2022)
   
   * Updated Crowdin localization, and fixed spelling of Portuguese
