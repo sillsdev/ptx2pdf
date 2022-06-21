@@ -12891,8 +12891,8 @@ this "Chapter Label" setting should be applied to.
 
 Note: If this list of books is left empty, then this
 setting will be applied to ALL books</property>
-                                    <property name="text">PSA PRO</property>
                                     <property name="caps-lock-warning">False</property>
+                                    <property name="placeholder-text" translatable="yes">e.g. PSA PRO</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -13064,8 +13064,8 @@ would use double-column layout. Conversely, if
 the publication is set as double-column (on the 
 layout page) then any books listed here would
 be set in single-column layout.</property>
-                                    <property name="text">FRT INT PSA PRO BAK GLO</property>
                                     <property name="caps-lock-warning">False</property>
+                                    <property name="placeholder-text" translatable="yes">e.g. FRT INT PSA PRO BAK GLO</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
