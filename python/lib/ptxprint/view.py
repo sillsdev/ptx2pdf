@@ -1371,6 +1371,14 @@ class ViewModel:
                 fname = os.path.basename(f.filename)
                 res[f.filename] = "shared/fonts/"+fname
 
+        if prjid:
+            mdir = os.path.join(self.settings_dir, prjid, "shared", "fonts", "mappings")
+            if os.path.exists(mdir):
+                for f in os.listdir(mdir):
+                    if f == ".uuid":
+                        continue
+                    res[os.path.join(mdir, f)] = "shared/fonts/mappings/"+f
+
         # sidebar images
         mystyles = self.styleEditor.copy()
         for k, v in mystyles.sheet.items():

@@ -600,7 +600,6 @@ class RunJob:
         for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
             if a not in texinputs:
                 texinputs.append(a+"//")
-        # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
         miscfonts = getfontcache().fontpaths[:]
         if sys.platform != "win32":
             a = "/usr/share/ptx2pdf/texmacros"
@@ -611,7 +610,8 @@ class RunJob:
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
-        # print(f"{pathjoin(miscfonts)=}")
+        logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
+        logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, outfname[:-4])
