@@ -572,12 +572,7 @@ class GtkViewModel(ViewModel):
             scripts.append([v, k])
         self.set('fcb_script', 'Zyyy') # i.e. Set it to "Default"
 
-        digits = self.builder.get_object("ls_digits")
-        currdigits = {r[0]: r[1] for r in digits}
-        digits.clear()
-        for d in _alldigits: # .items():
-            v = currdigits.get(d, d.lower())
-            digits.append([d, v])
+        self._setup_digits()
         self.fcb_fontdigits.set_active_id(_alldigits[0])
 
         mrubl = self.builder.get_object("ecb_booklist")
@@ -671,6 +666,24 @@ class GtkViewModel(ViewModel):
             # .mainnb panel {background-color: #d3d3d3;}
             # .mainnb panel:active {border: 1px solid green;}
             # .mainnb label:active{background-color: darker(powderblue);}
+
+    def _setup_digits(self):
+        digits = self.builder.get_object("ls_digits")
+        currdigits = {r[0]: r[1] for r in digits}
+        digits.clear()
+        for d in _alldigits: # .items():
+            v = currdigits.get(d, d.lower())
+            digits.append([d, v])
+        if self.prjid is None:
+            return
+        cfgpath = os.path.join(self.settings_dir, self.prjid, 'shared', 'fonts', 'mappings')
+        if os.path.exists(cfgpath):
+            added = set()
+            for f in os.listdir(cfgpath):
+                fname = f[:f.rindex(".")]
+                if fname not in added:
+                    digits.append([fname, fname])
+                    added.add(fname)
 
     def _setup_css(self):
         css = """
@@ -2746,6 +2759,7 @@ class GtkViewModel(ViewModel):
                 obj.set_tooltip_text(None)
         self.updatePrjLinks()
         self.setEntryBoxFont()
+        self._setup_digits()
         self.updatePicList()
         self.updateDialogTitle()
         self.styleEditor.editMarker()

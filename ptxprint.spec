@@ -63,7 +63,7 @@ a = Analysis(['python/scripts/ptxprint'],
                              '5.8x8.7-Draft.pdf', 'A4-CopyrightWatermark.pdf', 'A5-CopyrightWatermark.pdf')]
                       + [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
-                             'picLocationPreviews.png', 'default_cmyk.icc', 'cross_references.txt',
+                             'picLocationPreviews.png', 'cross_references.txt',
                              'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
                              'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
                              'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
@@ -75,7 +75,7 @@ a = Analysis(['python/scripts/ptxprint'],
                       + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'eng.vrs',
+                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs',
                              'strongs.xml', 'strongs_info.xml', 'tsk.xml')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]

@@ -175,6 +175,9 @@ class PDFx1aOutput(Snippet):
         if pdftype in ("Screen", "Digital"):
             model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
             extras['_iccnumcols'] = "3"
+        if pdftype == "Gray":
+            model.dict['/iccfpath'] = os.path.join(libpath, "default_gray.icc").replace("\\","/")
+            extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"

@@ -742,7 +742,7 @@ FontRef = None
 class FontRef:
     def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None, lang=None):
         self.name = name
-        bits = style.split(" ")
+        bits = style.split(" ") if style is not None else []
         for a in ("Bold", "Italic"):
             if a in bits:
                 i = bits.index(a)
@@ -815,7 +815,7 @@ class FontRef:
         else:
             res.feats.pop('extend', None)
         if fontdigits and fontdigits.lower() != "default":
-            res.feats['mapping']='mappings/{}digits'.format(fontdigits.lower())
+            res.feats['mapping']='mappings/{}{}'.format(fontdigits.lower(), "digits" if fontdigits[0].upper() == fontdigits[0] else "")
         return res
 
     @classmethod
@@ -1055,6 +1055,8 @@ class FontRef:
             m = re.match("^mappings/(.*?)digits", v)
             if m:
                 return re.sub(r"(^|[\-])([a-z])", lambda n: n.group(1) + n.group(2).upper(), m.group(1))
+            elif m.startswith("mappings/"):
+                return m[9:]
         return "Default"
 
     def asPango(self, fallbacks, size=None):
