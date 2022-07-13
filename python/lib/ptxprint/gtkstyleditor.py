@@ -414,7 +414,7 @@ class StyleEditorView(StyleEditor):
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
                 self.builder.get_object("ex_styOther").set_expanded(True)
-        self.builder.get_object("ptxprint").resize(200, 200)
+        # self.builder.get_object("ptxprint").resize(200, 200)
 
         if not self.model.get("c_noInternet"):
             site = 'https://ubsicap.github.io/usfm'

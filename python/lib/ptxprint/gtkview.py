@@ -1776,6 +1776,8 @@ class GtkViewModel(ViewModel):
                     skipbooks.append(bk)
                     existingFilelist.append(re.split(r"\\|/",outfname)[-1])
         if len(existingFilelist):
+            if len(existingFilelist) > 13:
+                existingFilelist = existingFilelist[:6] + ["..."] + existingFilelist[-6:]
             q1 = _("One or more Paragraph Adjust file(s) already exist!")
             q2 = "\n".join(existingFilelist)+_("\n\nDo you want to OVERWRITE the above-listed file(s)?")
             if self.msgQuestion(q1, q2, default=False):
