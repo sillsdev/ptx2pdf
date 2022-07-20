@@ -84,6 +84,18 @@ be specified more like a .sty file, within TeX. Notice that each value is
 delimited by `\relax` and that the `\Marker` is necessary to know which style
 marker we are setting attributes one.
 
+## Tabbed indent for glossary or index
+
+When typesetting an indented list, such as a glossary or Strongs index, it looks
+neater if the main body starts at the same indent position as the rest of the 
+paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
+we can add a 'tab' after the Strongs number to make things line up neatly.
+
+```tex
+\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
+\sethook{end}{bd}{\hfil\egroup}
+```
+
 ## Auto lengthen poetry
 
 A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.

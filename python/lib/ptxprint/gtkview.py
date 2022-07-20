@@ -322,6 +322,8 @@ _horiz = {
     "Outer":    "o",
     "-":        "-"
 }
+_allpgids = ["scroll_FrontMatter", "scroll_AdjList", "scroll_FinalSFM", 
+             "scroll_TeXfile", "scroll_XeTeXlog", "scroll_Settings", "scroll_SettingsOld"]
 
 _allcols = ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media", ]
 
@@ -589,6 +591,7 @@ class GtkViewModel(ViewModel):
                 
         self.fileViews = []
         self.buf = []
+        self.uneditedText = {}
         self.cursors = []
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
@@ -597,10 +600,19 @@ class GtkViewModel(ViewModel):
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
+            view.set_indent(6)
+            view.set_top_margin(6)
+            view.set_bottom_margin(24)  
             view.set_show_line_numbers(True if i > 1 else False)
+            view.set_editable(False if i in [2,3,4] else True)
             view.pageid = "scroll_"+k
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
+            if not i in [2,3,4]: # Ignore the uneditable views
+                # Set up signals to pick up any edits in the TextView window
+                for evnt in ["key-press-event", "delete-from-cursor", "backspace", 
+                             "cut-clipboard", "paste-clipboard"]:
+                    view.connect(evnt, self.onViewEdited) 
             
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.set("txbf_colophon", _defaultColophon)
@@ -698,7 +710,6 @@ class GtkViewModel(ViewModel):
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
-            /* button.highlighted { background-color: peachpuff; background: peachpuff} */
             .highlighted {background-color: peachpuff; background: peachpuff}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
@@ -1425,6 +1436,7 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
 
     def colorTabs(self):
+        # col = "crimson"
         col = "#0000CD"
         fs = " color='"+col+"'" if self.get("c_colorfonts") else ""
         self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
@@ -1850,8 +1862,6 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def onViewerChangePage(self, nbk_Viewer, scrollObject, pgnum, forced=False):
-        allpgids = ("scroll_FrontMatter", "scroll_Settings", "scroll_AdjList", "scroll_FinalSFM", 
-                    "scroll_TeXfile", "scroll_XeTeXlog", "scroll_SettingsOld")
         if nbk_Viewer is None:
             nbk_Viewer = self.builder.get_object("nbk_Viewer")
         page = nbk_Viewer.get_nth_page(pgnum)
@@ -1865,7 +1875,6 @@ class GtkViewModel(ViewModel):
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_sensitive(False)
         self.builder.get_object("btn_removeZeros").set_sensitive(False)
-        pgid = Gtk.Buildable.get_name(page)
         self.noUpdate = True
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -1874,11 +1883,12 @@ class GtkViewModel(ViewModel):
         if bk == None or bk == "" and len(bks):
             bk = bks[0]
             self.builder.get_object("ecb_examineBook").set_active_id(bk)
+        pgid = Gtk.Buildable.get_name(page)
         for o in ("l_examineBook", "ecb_examineBook"):
             if self.get("r_book") == "module":
                 self.builder.get_object(o).set_sensitive(False)
             else:
-                self.builder.get_object(o).set_sensitive(pgid in allpgids[2:4])
+                self.builder.get_object(o).set_sensitive(pgid in _allpgids[1:3])
 
         fndict = {"scroll_FrontMatter" : ("", ""), "scroll_AdjList" : ("AdjLists", ".adj"),
                   "scroll_FinalSFM" : ("", ""), "scroll_TeXfile" : ("", ".tex"),
@@ -1888,7 +1898,8 @@ class GtkViewModel(ViewModel):
         if pgid == "scroll_FrontMatter":
             fpath = self.configFRT()
             if not os.path.exists(fpath):
-                self.fileViews[pgnum][0].set_text("\n" +_(" Click the Generate button (above) to start the process of creating Front Matter..."))
+                self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
+                self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 fpath = None
             if self.get("t_invisiblePassword") == "":
                 genBtn.set_sensitive(True)
@@ -1935,13 +1946,17 @@ class GtkViewModel(ViewModel):
             lname = "l_{1}".format(*pgid.split('_'))
             fpath = self.builder.get_object(lname).get_tooltip_text()
             if fpath == None:
-                self.fileViews[pgnum][0].set_text("\n"+_(" Use the 'Advanced' tab to select which settings you want to view or edit."))
+                self.uneditedText[pgnum] = _("Use the 'Advanced' tab to select which settings you want to view or edit.")
+                self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 self.builder.get_object(lname).set_text("Settings")
+                self.noUpdate = False
                 return
         else:
+            self.noUpdate = False
             return
 
         if fpath is None:
+            self.noUpdate = False
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         buf = self.fileViews[pgnum][0]
@@ -1957,13 +1972,17 @@ class GtkViewModel(ViewModel):
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")
             self.fileViews[pgnum][0].set_text(txt)
+            self.uneditedText[pgnum] = txt
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
             set_tooltip(None)
-            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet.\n\nTry clicking... \
-                                               \n   * the 'Generate' button \
-                                               \n   * the 'Print' button to create the PDF first"))
+            txt = _("This file doesn't exist yet.\n\nTry clicking... \
+                     \n   * the 'Generate' button \
+                     \n   * the 'Print' button to create the PDF first")
+            self.fileViews[pgnum][0].set_text(txt)
+            self.uneditedText[pgnum] = txt
         self.noUpdate = False
+        self.onViewEdited()
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -2007,6 +2026,8 @@ class GtkViewModel(ViewModel):
         openfile = open(fpath,"w", encoding="utf-8")
         openfile.write(text2save)
         openfile.close()
+        self.uneditedText[pg] = text2save
+        self.onViewEdited()
 
     def onOpenInSystemEditor(self, btn):
         pg = self.builder.get_object("nbk_Viewer").get_current_page()
@@ -2875,8 +2896,18 @@ class GtkViewModel(ViewModel):
 
     def onViewerLostFocus(self, widget, event):
         pgnum = self.notebooks['Viewer'].index(widget.pageid)
-        t = self.fileViews[pgnum][0].get_iter_at_mark(self.fileViews[pgnum][0].get_insert())
+        buf = self.fileViews[pgnum][0]
+        t = buf.get_iter_at_mark(self.fileViews[pgnum][0].get_insert())
         self.cursors[pgnum] = (t.get_line(), t.get_line_offset())
+        currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        label = self.builder.get_object(_allpgids[pgnum][5:])
+        tt = label.get_tooltip_text()
+        if tt is not None and not currentText == self.uneditedText[pgnum]:
+            if self.msgQuestion(_("Save changes?"), _("Do you wish to save the changes you made?") + \
+                                  "\n\n" + _("File: ") + tt):
+                self.onSaveEdits(None)
+            else:
+                self.onRefreshViewerTextClicked(None)
 
     def onViewerFocus(self, widget, event):
         pgnum = self.notebooks['Viewer'].index(widget.pageid)
@@ -2888,6 +2919,15 @@ class GtkViewModel(ViewModel):
         tbuf.move_mark(tmark, titer)
         tbuf.place_cursor(titer)
         GLib.idle_add(self.fileViews[pgnum][1].scroll_mark_onscreen, tmark)
+
+    def onViewEdited(self, *argv):
+        pg = self.builder.get_object("nbk_Viewer").get_current_page()
+        buf = self.fileViews[pg][0]
+        currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+        label = self.builder.get_object(_allpgids[pg][5:])
+        dirty = True if not currentText == self.uneditedText[pg] else False
+        txtcol = " color='crimson'" if dirty else ""
+        label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
     def _editProcFile(self, fname, loc, intro=""):
         fpath = self._locFile(fname, loc)

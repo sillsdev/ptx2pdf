@@ -4585,21 +4585,7 @@ black boxes at the end of lines in the PDF then uncheck it. </property>
               </packing>
             </child>
             <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="margin-start">12</property>
-                <property name="label" translatable="yes">Looking for Crop Marks? That option is now on the Finishing tab.</property>
-                <attributes>
-                  <attribute name="foreground" value="#616135358383"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
+              <placeholder/>
             </child>
             <child>
               <!-- n-columns=3 n-rows=1 -->
