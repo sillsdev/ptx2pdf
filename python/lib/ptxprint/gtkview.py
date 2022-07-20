@@ -600,7 +600,7 @@ class GtkViewModel(ViewModel):
             scroll = self.builder.get_object("scroll_" + k)
             scroll.add(view)
             self.fileViews.append((self.buf[i], view))
-            view.set_indent(6)
+            view.set_left_margin(8)
             view.set_top_margin(6)
             view.set_bottom_margin(24)  
             view.set_show_line_numbers(True if i > 1 else False)
@@ -610,8 +610,8 @@ class GtkViewModel(ViewModel):
             view.connect("focus-in-event", self.onViewerFocus)
             if not i in [2,3,4]: # Ignore the uneditable views
                 # Set up signals to pick up any edits in the TextView window
-                for evnt in ["key-press-event", "delete-from-cursor", "backspace", 
-                             "cut-clipboard", "paste-clipboard"]:
+                for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
+                             "backspace", "cut-clipboard", "paste-clipboard"]:
                     view.connect(evnt, self.onViewEdited) 
             
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
@@ -1960,8 +1960,8 @@ class GtkViewModel(ViewModel):
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         buf = self.fileViews[pgnum][0]
-        if not forced and buf.get_char_count():
-            return
+        # if not forced and buf.get_char_count():
+            # return
         logger.debug(f"Viewing({pgid[7:]} {bk} -> {fpath}")
         if os.path.exists(fpath):
             set_tooltip(fpath)
@@ -2222,37 +2222,6 @@ class GtkViewModel(ViewModel):
     def onIntroOutlineClicked(self, btn):
         if not self.sensiVisible("c_introOutline"):
             self.builder.get_object("c_prettyIntroOutline").set_active(False)
-
-    # def onDeleteTemporaryFilesClicked(self, btn):
-        # dir = self.working_dir
-        # warnings = []
-        # title = _("Remove Intermediate Files and Logs?")
-        # question = _("Are you sure you want to delete\nALL the temporary PTXprint files?")
-        # if self.msgQuestion(title, question):
-            # patterns = []
-            # for extn in ('delayed','parlocs','notepages', 'picpages', 'piclist', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
-                # patterns.append(r".+\.{}".format(extn))
-            # patterns.append(r".+\-draft\....".format(extn))
-            # patterns.append(r".+\.toc".format(extn))
-            # patterns.append(r"ptxprint\-.+\.tex".format(extn))
-            # for pattern in patterns:
-                # for f in os.listdir(dir):
-                    # if re.search(pattern, f):
-                        # try:
-                            # os.remove(os.path.join(dir, f))
-                        # except (OSError, PermissionError):
-                            # warnings += [f]
-            # for p in ["tmpPics", "tmpPicLists"]:
-                # path2del = os.path.join(dir, p)
-                # if len(path2del) > 30 and os.path.exists(path2del):
-                    # try:
-                        # rmtree(path2del)
-                    # except (OSError, PermissionError):
-                        # warnings += [path2del]
-            # if len(warnings):
-                # self.printer.doError(_("Warning: Could not delete some file(s) or folders(s):"),
-                        # secondary="\n".join(warnings))
-            # self.picinfos.clearDests()
 
     def onRefreshFontsclicked(self, btn):
         fc = fccache()
@@ -2925,8 +2894,7 @@ class GtkViewModel(ViewModel):
         buf = self.fileViews[pg][0]
         currentText = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
         label = self.builder.get_object(_allpgids[pg][5:])
-        dirty = True if not currentText == self.uneditedText[pg] else False
-        txtcol = " color='crimson'" if dirty else ""
+        txtcol = " color='crimson'" if not currentText == self.uneditedText[pg] else ""
         label.set_markup("<span{}>".format(txtcol)+label.get_text()+"</span>")
 
     def _editProcFile(self, fname, loc, intro=""):
