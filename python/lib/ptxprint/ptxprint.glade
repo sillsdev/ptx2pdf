@@ -10337,7 +10337,6 @@ the Full View mode.</property>
                                 <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_topmargin">
-                                    <property name="width-request">112</property>
                                     <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -10350,9 +10349,9 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Start of Page to 
+                                    <property name="label" translatable="yes">Start of Page to
 Top of Text (mm):</property>
-                                    <property name="justify">right</property>
+                                    <property name="xalign">1</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
                                     </attributes>
@@ -10364,7 +10363,6 @@ Top of Text (mm):</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_headerposition">
-                                    <property name="width-request">110</property>
                                     <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -10379,7 +10377,6 @@ above the base line of the first line of the body text.</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Bottom of Header
 to Top of Text (pt):</property>
-                                    <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#808000008080"/>
                                     </attributes>
@@ -10424,7 +10421,7 @@ above the base line of the first line of the body text.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_btmMrgn">
-                                    <property name="width-request">112</property>
+                                    <property name="width-request">95</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
@@ -10434,11 +10431,11 @@ The bottom of the main text area is calculated
 from the descender of the final line of text 
 (including any footnotes).</property>
                                     <property name="halign">end</property>
+                                    <property name="margin-start">25</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Bottom of Text to
 End of Page (mm):</property>
-                                    <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cccc00000000"/>
                                     </attributes>
@@ -10461,7 +10458,6 @@ pages use the footer for page numbers.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Top of Footer to
 End of Page (mm):</property>
-                                    <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#2b0a4be2f850"/>
                                     </attributes>
@@ -10557,11 +10553,12 @@ and right (or inner and outer) margins are set
 to be identical. If you require a greater inner
 margin, then use the Binding Gutter setting
 above.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
                                     <property name="label" translatable="yes">Side Margin
 Width (mm):</property>
+                                    <property name="xalign">0</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
@@ -10586,7 +10583,6 @@ above.</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">12.0</property>
-                                    <property name="xalign">1</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text" translatable="yes">0.0</property>
@@ -10606,7 +10602,6 @@ above.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_rhruleoffset">
-                                    <property name="width-request">112</property>
                                     <property name="height-request">35</property>
                                     <property name="can-focus">False</property>
                                     <property name="no-show-all">True</property>
@@ -10621,7 +10616,6 @@ above the base line of the first line of the body text.</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Space between Rule
 and Top of Text (pt):</property>
-                                    <property name="justify">right</property>
                                     <attributes>
                                       <attribute name="foreground" value="#22228b8b2222"/>
                                     </attributes>
@@ -10897,6 +10891,7 @@ line under the page header, before the
 main body text begins.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-start">12</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
@@ -10912,7 +10907,7 @@ main body text begins.</property>
                                     <property name="can-focus">False</property>
                                     <child>
                                       <object class="GtkLabel" id="l_margin2header2">
-                                        <property name="width-request">95</property>
+                                        <property name="width-request">80</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
@@ -10920,9 +10915,9 @@ to the top of the header area. Note that due to
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
                                         <property name="halign">end</property>
+                                        <property name="margin-start">24</property>
                                         <property name="label" translatable="yes">Start of Page to
 Top of Header:</property>
-                                        <property name="justify">right</property>
                                         <attributes>
                                           <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
@@ -10935,7 +10930,7 @@ Top of Header:</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_margin2header1">
-                                        <property name="width-request">56</property>
+                                        <property name="width-request">55</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
@@ -10944,7 +10939,7 @@ the ascent of the font, the header text actually
 starts a little bit below the top of the header area.</property>
                                         <property name="halign">end</property>
                                         <property name="label" translatable="yes">8.5mm</property>
-                                        <property name="justify">right</property>
+                                        <property name="justify">center</property>
                                         <attributes>
                                           <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
@@ -15877,6 +15872,7 @@ space between extended footnotes. Usually
 there is no space between them.</property>
                                                 <property name="halign">start</property>
                                                 <property name="text">3.5</property>
+                                                <property name="xalign">1</property>
                                                 <property name="input-purpose">number</property>
                                                 <property name="adjustment">a_ef_internote</property>
                                                 <property name="climb-rate">0.10</property>
@@ -18327,6 +18323,82 @@ settings will remain unchanged.</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="vexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">start</property>
+                                    <property name="margin-left">6</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-top">6</property>
+                                    <child>
+                                      <placeholder/>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_image_preview">
+                                        <property name="label" translatable="yes">Image</property>
+                                        <property name="name">Show preview of pictures</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Display the picture currently in focus.
+Note that this is dependent on the image
+being located in the specified folder(s).</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                        <property name="group">r_image_location</property>
+                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkRadioButton" id="r_image_location">
+                                        <property name="label" translatable="yes">Position</property>
+                                        <property name="name">Show position of picture on page</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Show the relative position of the picture
+on the page. When Inner/Outer is used,
+the position displayed represents the 
+odd/right-hand page of a spread.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                        <property name="group">r_image_preview</property>
+                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -18368,6 +18440,7 @@ parameters for individual pictures can be changed
 on the Details, Checklist and Credit Overlay tabs.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">start</property>
+                                        <property name="margin-start">6</property>
                                         <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">Global Picture Parameters for ALL Pictures in this Configuration</property>
                                         <attributes>
@@ -20608,72 +20681,18 @@ in this publication, as well as other contexts.</property>
                               <object class="GtkBox" id="tb_picPreview">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="hexpand">False</property>
+                                <property name="vexpand">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">start</property>
-                                    <property name="orientation">vertical</property>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_image_preview">
-                                        <property name="label" translatable="yes">Image Preview</property>
-                                        <property name="name">Show preview of pictures</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Display the picture currently in focus.
-Note that this is dependent on the image
-being located in the specified folder(s).</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_image_location</property>
-                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkRadioButton" id="r_image_location">
-                                        <property name="label" translatable="yes">Location on Page</property>
-                                        <property name="name">Show position of picture on page</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Show the relative position of the picture
-on the page. When Inner/Outer is used,
-the position displayed represents the 
-odd/right-hand page of a spread.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="draw-indicator">True</property>
-                                        <property name="group">r_image_preview</property>
-                                        <signal name="clicked" handler="onPicRadioChanged" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <object class="GtkFrame" id="fr_picPreview">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="hexpand">True</property>
-                                    <property name="vexpand">True</property>
+                                    <property name="hexpand">False</property>
+                                    <property name="vexpand">False</property>
                                     <property name="label-xalign">0</property>
                                     <property name="label-yalign">0</property>
                                     <property name="shadow-type">none</property>
