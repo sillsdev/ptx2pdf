@@ -105,7 +105,8 @@ _ui_minimal = """
 bx_statusBar fcb_uiLevel t_find
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
-fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book l_chapfrom s_chapfrom l_chapto s_chapto 
+fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
+l_chapfrom l_chapto t_chapfrom t_chapto 
 r_book_multiple btn_chooseBooks ecb_booklist 
 fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock t_password
 tb_Layout lb_Layout
@@ -138,6 +139,7 @@ btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_btmMrgn s_bottommargin
+c_rhrule l_rhruleoffset s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
@@ -159,8 +161,8 @@ rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update ", "lb_extXrefs", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
-                  "c_customOrder", "t_mbsBookList", )
+_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+                  "c_customOrder", "t_mbsBookList", ) # "lb_extXrefs", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -208,9 +210,9 @@ _sensitivities = {
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
     # "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
-    # "c_includeFootnotes" :     ["gr_footnotes"],
+    "c_includeFootnotes" :     ["gr_footnotes"],
     # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
-    "c_useXrefList" :          ["gr_extXrefs", "lb_extXrefs"],
+    "c_useXrefList" :          ["gr_extXrefs"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
@@ -302,8 +304,8 @@ _object_classes = {
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
-                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot", "btn_resetGrid",
-                    "btn_refreshCaptions", "btn_sb_rescanCats")
+                    "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", 
+                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats")
 }
 
 _pgpos = {
@@ -666,7 +668,8 @@ class GtkViewModel(ViewModel):
             digprojects.append([p])
             if os.path.exists(os.path.join(self.settings_dir, p, 'TermRenderings.xml')):
                 strngsfbprojects.append([p])
-        wide = int(len(allprojects)/16)+1
+        wide = int(len(allprojects)/16)+1 if len(allprojects) > 14 else 1
+        # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
@@ -701,7 +704,7 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
-            .fontbutton {font-size: smaller}
+            .fontbutton {font-size: 12px}
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}

@@ -306,3 +306,37 @@ qr word, like 'Selah'.
 \sethook{start}{qr}{\unskip\nobreak\hfill\penalty50\hskip0.3em\hbox{}\nobreak\hfill\hbox\bgroup}
 \sethook{end}{qr}{\egroup}
 ```
+
+## Process a file before/after PTXprint has processed it
+### Line by line
+
+When you need to call an external script to apply changes to the
+input file prior to, or even after PTXprint's internal changes.
+This handles the input file one line at a time which is fine 
+unless you are performing multi-line find/replace operations.
+
+```py
+import sys
+with open(sys.argv[2], "w", encoding="utf8") as outf:
+    with open(sys.argv[1], encoding="utf8") as inf:
+        for l in inf.readlines():
+            outf.write(l.replace("a", "A"))
+```
+
+## Process a file before/after PTXprint has processed it
+### Entire file at once, and using the 're' module
+
+When you need to call an external script to apply changes to the
+input file prior to, or even after PTXprint's internal changes.
+This handles the input file in one go using a couple of RegEx 
+substitutions that can also handle multiline changes (flags=re.M)
+
+```py
+import sys, re
+with open(sys.argv[2], "w", encoding="utf8") as outf:
+    with open(sys.argv[1], encoding="utf8") as inf:
+        t = inf.read()
+        t = re.sub(r"<<\n", "\u00AB", t)
+        t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
+        outf.write(t)
+```
