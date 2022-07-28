@@ -14162,6 +14162,7 @@ Footnotes and xRefs (pt):</property>
                               <object class="GtkLabel" id="lb_footnotes">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
                                 <property name="label" translatable="yes">Footnotes</property>
                               </object>
                               <packing>
@@ -15694,6 +15695,7 @@ and Parameters:</property>
                               <object class="GtkLabel" id="lb_xrefs">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
                                 <property name="label" translatable="yes">Cross-References</property>
                               </object>
                               <packing>
@@ -16637,6 +16639,7 @@ extended study notes and sidebars from being displayed. </property>
                               <object class="GtkLabel" id="lb_studynotes">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
                                 <property name="label" translatable="yes">Study Notes</property>
                               </object>
                               <packing>
@@ -16652,8 +16655,8 @@ extended study notes and sidebars from being displayed. </property>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -19840,6 +19843,7 @@ in Paratext before regenerating the PicList here.</property>
                                         <property name="vscrollbar-policy">always</property>
                                         <property name="shadow-type">in</property>
                                         <property name="min-content-height">256</property>
+                                        <property name="overlay-scrolling">False</property>
                                         <child>
                                           <object class="GtkViewport">
                                             <property name="visible">True</property>
@@ -28869,20 +28873,13 @@ Click to visit download page on the website.</property>
                 <property name="receives-default">False</property>
                 <property name="tooltip-text" translatable="yes">Quick Run - (Ctrl-Q)
 
-Ordinarily, PTXprint reruns the typesetting
-process (multiple times) in order to ensure
-everything is positioned precisely, and the
-Table of Contents &amp; Image Copyright page
-numbers are accurate.
-  
-This gives a much neater end result, but 
-obviously takes longer to run. If you would
-rather just see a quick/rough result, then
-check this option to only run ONCE.
+Enabling this option will give quicker 
+output, but it may be less refined.
 
-If it detects that it needs to be re-run for
-a perfect result, a reminder message will
-be displayed (in red) just to the left.</property>
+PTXprint needs to rerun the typesetting
+process in order to ensure the Table of 
+Contents &amp; other dynamicly updated
+details are accurate.</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="margin-start">3</property>
