@@ -8607,7 +8607,7 @@ and helps to place the marker in the tree listing all markers.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=6 n-rows=5 -->
+                          <!-- n-columns=6 n-rows=4 -->
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -8747,7 +8747,8 @@ to be printed from the project.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
-                                <property name="wrap">True</property>
+                                <property name="ellipsize">end</property>
+                                <property name="single-line-mode">True</property>
                                 <attributes>
                                   <attribute name="scale" value="0.90000000000000002"/>
                                 </attributes>
@@ -8828,6 +8829,7 @@ for ranges of scripture to be printed. For example:
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
 
 Shortcut: Ctrl-B</property>
+                                <property name="hexpand">True</property>
                                 <property name="active">0</property>
                                 <property name="has-entry">True</property>
                                 <property name="active-id">0</property>
@@ -8864,48 +8866,7 @@ Shortcut: Ctrl-B</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSpinButton" id="s_chapfrom">
-                                <property name="name">From chapter</property>
-                                <property name="can-focus">True</property>
-                                <property name="no-show-all">True</property>
-                                <property name="max-length">3</property>
-                                <property name="width-chars">2</property>
-                                <property name="text">1</property>
-                                <property name="progress-pulse-step">0</property>
-                                <property name="adjustment">a_chapfrom</property>
-                                <property name="climb-rate">1</property>
-                                <property name="numeric">True</property>
-                                <property name="value">1</property>
-                                <signal name="value-changed" handler="onChapChg" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkSpinButton" id="s_chapto">
-                                <property name="name">To chapter</property>
-                                <property name="can-focus">True</property>
-                                <property name="no-show-all">True</property>
-                                <property name="margin-end">6</property>
-                                <property name="max-length">3</property>
-                                <property name="width-chars">2</property>
-                                <property name="text" translatable="yes">1</property>
-                                <property name="progress-pulse-step">0</property>
-                                <property name="adjustment">a_chapto</property>
-                                <property name="climb-rate">1</property>
-                                <property name="numeric">True</property>
-                                <property name="value">1</property>
-                                <signal name="value-changed" handler="onChapChg" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <!-- n-columns=4 n-rows=1 -->
+                              <!-- n-columns=5 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -8934,7 +8895,8 @@ Shortcut: Ctrl-B</property>
                                     <property name="valign">center</property>
                                     <property name="max-length">3</property>
                                     <property name="width-chars">4</property>
-                                    <property name="xalign">0.40000000596046448</property>
+                                    <property name="max-width-chars">3</property>
+                                    <property name="xalign">0.34000000357627869</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
@@ -8942,6 +8904,8 @@ the entire book, enter the
 chapter number to start at.</property>
                                     <property name="placeholder-text" translatable="yes">1</property>
                                     <property name="input-purpose">digits</property>
+                                    <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                    <signal name="focus-out-event" handler="fromChapChange" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -8956,7 +8920,8 @@ chapter number to start at.</property>
                                     <property name="valign">center</property>
                                     <property name="max-length">3</property>
                                     <property name="width-chars">4</property>
-                                    <property name="xalign">0.40000000596046448</property>
+                                    <property name="max-width-chars">3</property>
+                                    <property name="xalign">0.34000000357627869</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="primary-icon-tooltip-text" translatable="yes">If you want to print less than 
@@ -8964,6 +8929,8 @@ the entire book, enter the
 chapter number to end with.</property>
                                     <property name="placeholder-text" translatable="yes">150</property>
                                     <property name="input-purpose">digits</property>
+                                    <signal name="changed" handler="filter_numbers" swapped="no"/>
+                                    <signal name="focus-out-event" handler="toChapChange" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
@@ -8983,6 +8950,24 @@ chapter number to end with.</property>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
@@ -9010,18 +8995,6 @@ be viewed or edited in Paratext.</property>
                                 <property name="left-attach">5</property>
                                 <property name="top-attach">0</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -9206,7 +9179,6 @@ the password that was set.</property>
                                         <property name="width-chars">16</property>
                                         <property name="caps-lock-warning">False</property>
                                         <property name="progress-pulse-step">0</property>
-                                        <property name="placeholder-text" translatable="yes">No Password Set</property>
                                         <property name="input-purpose">password</property>
                                         <signal name="changed" handler="onPasswordChanged" swapped="no"/>
                                       </object>
@@ -9266,7 +9238,7 @@ reload the saved Config.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">6</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -9287,7 +9259,7 @@ settings for a similar project.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">6</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -9516,9 +9488,6 @@ but :// used in URLs will still be preserved</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>

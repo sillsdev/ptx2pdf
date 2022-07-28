@@ -186,11 +186,11 @@ _showActiveTabs = {
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # Order is important, as the 1st object can be told to "grab_focus"
+    # "r_book": {
+        # "r_book_single":       ["ecb_book", "l_chapfrom", "t_chapfrom", "l_chapto", "t_chapto"],
+        # "r_book_multiple":     ["btn_chooseBooks", "ecb_booklist"],
+        # "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
 _sensitivities = {
-    "r_book": {
-        "r_book_single":       ["ecb_book", "l_chapfrom", "s_chapfrom", "l_chapto", "s_chapto"],
-        "r_book_multiple":     ["btn_chooseBooks", "ecb_booklist"],
-        "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
     "r_decorator": {
         "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
@@ -948,11 +948,10 @@ class GtkViewModel(ViewModel):
         for k, v in self.initValues.items():
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)
-        self._setChapRange("from", 1, 999, 1)
-        self._setChapRange("to", 1, 999, 1)
         self.colorTabs()
 
     def onUILevelChanged(self, btn):
+        pgId = self.builder.get_object("nbk_Main").get_current_page()
         ui = int(self.get("fcb_uiLevel"))
         self.userconfig.set('init', 'userinterface', str(ui))
                 
@@ -987,6 +986,7 @@ class GtkViewModel(ViewModel):
         self.onRotateTabsChanged()
         self.checkUpdates()
         self.mw.resize(200, 200)
+        self.builder.get_object("nbk_Main").set_current_page(pgId)
 
     def toggleUIdetails(self, w, state):
         if w in _ui_noToggleVisible:
@@ -1265,6 +1265,7 @@ class GtkViewModel(ViewModel):
         
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
+        self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
         self.booklistKeypressed = False
@@ -1279,6 +1280,8 @@ class GtkViewModel(ViewModel):
         if not self.booklistKeypressed and not len(bl):
             self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
+        else:
+            self.set("r_book", "multiple")
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -1625,8 +1628,9 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def onBookSelectorChange(self, btn):
-        status = self.sensiVisible("r_book_multiple")
-        if status and self.get("ecb_booklist") == "" and self.prjid is not None:
+        # status = self.sensiVisible("r_book_multiple")
+        # if status and self.get("ecb_booklist") == "" and self.prjid is not None:
+        if self.get("ecb_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
             self.updateDialogTitle()
@@ -1852,7 +1856,7 @@ class GtkViewModel(ViewModel):
                         outs += "% " + " ".join(vals)
                     outf.write(outs+"\n")
 
-    def onChangedMainTab(self, nbk_Main, scrollObject, pgnum):
+    def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
         if pgid == "tb_ViewerEditor": # Viewer tab
             self.onRefreshViewerTextClicked(None)
@@ -2599,14 +2603,48 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("c_thumbIsZthumb").set_sensitive(True)
         
-    def _setChapRange(self, fromTo, minimum, maximum, value):
-        initChap = int(float(self.get('s_chap'+fromTo)))
-        chap = self.builder.get_object('s_chap'+fromTo)
-        chap.set_range(minimum, maximum)
-        if value:
-            chap.set_value(value if value in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
+    def filter_numbers(self, wid):
+        w = Gtk.Buildable.get_name(wid)
+        tbx = self.builder.get_object(w)
+        text = tbx.get_text().strip().split('.')[0]
+        tbx.set_text(''.join([i for i in text if i in '0123456789']))
+        self.set("r_book", "single")
+            
+    def fromChapChange(self, x, y):
+        fr = self.get("t_chapfrom")
+        frCh = round(float(fr)) if fr != '' else 0 
+        self.set("t_chapfrom", str(frCh))
+        to = self.get("t_chapto")
+        toCh = round(float(to)) if to != '' else 999
+        if frCh < 1:
+            self.set("t_chapfrom", "1")
+        bk = self.get("ecb_book")
+        if bk is not None and bk != "" and self.get("r_book") != "module":
+            maxCh = int(chaps.get(str(bk), 999))
         else:
-            chap.set_value(initChap if initChap in range(minimum, maximum) else (minimum if fromTo == "from" else maximum))
+            self.set("t_chapfrom", "1")
+            maxCh = 999
+        if frCh > maxCh:
+            self.set("t_chapfrom", str(maxCh))
+            frCh = maxCh
+        if frCh > toCh:
+            self.set("t_chapto", str(frCh))
+        self.set("r_book", "single")
+
+    def toChapChange(self, x, y):
+        fr = self.get("t_chapfrom")
+        frCh = round(float(fr)) if fr != '' else 0 
+        to = self.get("t_chapto")
+        toCh = round(float(to)) if to != '' else 999
+        self.set("t_chapto", str(toCh))
+        bk = self.get("ecb_book")
+        if bk is not None and bk != "" and self.get("r_book") != "module":
+            maxCh = int(chaps.get(str(bk), 999))
+            if toCh > maxCh:
+                self.set("t_chapto", str(maxCh))
+            elif toCh < frCh:
+                self.set("t_chapfrom", str(toCh))
+        self.set("r_book", "single")
 
     def onBookChange(self, cb_book):
         bk = self.get("ecb_book")
@@ -2614,27 +2652,15 @@ class GtkViewModel(ViewModel):
             self.set("ecb_book", "")
             return
         if bk is not None and bk != "" and self.get("r_book") != "module":
-            chs = int(chaps.get(str(bk), 999))
-            if self.loadingConfig:
-                self.set("r_book", "single")
-                self._setChapRange("from", 1, chs, int(float(self.get("s_chapfrom"))))
-                self._setChapRange("to", 1, chs, int(float(self.get("s_chapto"))))
-            else:
-                self._setChapRange("from", 1, chs, 1)
-                self._setChapRange("to", 1, chs, chs)
+            if not self.loadingConfig:
+                # self.set("r_book", "single")
+            # else:
+                self.set("t_chapfrom", "1")
+                self.set("t_chapto", chaps.get(str(bk), 999))
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
-
-    def onChapChg(self, btn):
-        if self.loadingConfig:
-            return
-        bk = self.get("ecb_book")
-        if bk != "":
-            self.set("r_book", "single")
-            chs = int(chaps.get(str(bk), 999))
-            strt = int(float(self.get("s_chapfrom")))
-            self._setChapRange("to", strt, chs, 0)
+        self.set("r_book", "single")
 
     def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
         initSpace = int(float(self.get('s_notespacing'+fromTo)))
@@ -2747,8 +2773,8 @@ class GtkViewModel(ViewModel):
                     self.set("ecb_book", b)
                     self.set("r_book", "single")
                     break
-        status = self.get("r_book") == "multiple"
-        self.builder.get_object("ecb_booklist").set_sensitive(status)
+        # status = self.get("r_book") == "multiple"
+        # self.builder.get_object("ecb_booklist").set_sensitive(status)
         for i in self.notebooks['Viewer']:
             obj = self.builder.get_object("l_{1}".format(*i.split("_")))
             if obj is not None:
@@ -3022,11 +3048,14 @@ class GtkViewModel(ViewModel):
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
+            self.set("r_book", "module")
+
         else:
             self.builder.get_object("r_book_single").set_active(True)
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
+            self.set("r_book", "single")
         self.updateDialogTitle()
 
     def onSelectFigureFolderClicked(self, btn_selectFigureFolder):

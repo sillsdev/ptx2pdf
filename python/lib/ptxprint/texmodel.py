@@ -178,8 +178,8 @@ ModelMap = {
     "document/usetoc2":         ("c_usetoc2", lambda w,v: "true" if v else "false"),
     "document/usetoc3":         ("c_usetoc3", lambda w,v: "true" if v else "false"),
     "document/tocleaders":      ("fcb_leaderStyle", None),
-    "document/chapfrom":        ("s_chapfrom", lambda w,v: int(float(v)) if v else "1"),
-    "document/chapto":          ("s_chapto", lambda w,v: int(float(v)) if v else "999"),
+    "document/chapfrom":        ("t_chapfrom", lambda w,v: str(round(float(v))) if v else "1"),
+    "document/chapto":          ("t_chapto", lambda w,v: str(round(float(v))) if v else "999"),
     "document/colgutterfactor": ("s_colgutterfactor", lambda w,v: round(float(v or 4)*3)), # Hack to be fixed
     "document/ifrtl":           ("fcb_textDirection", lambda w,v:"true" if v == "rtl" else "false"),
     "document/toptobottom":     ("fcb_textDirection", lambda w,v: "" if v == "ttb" else "%"),

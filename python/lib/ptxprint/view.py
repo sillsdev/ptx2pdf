@@ -246,8 +246,8 @@ class ViewModel:
             if bk:
                 bname = self.getBookFilename(bk, self.prjid)
                 if bname is not None and os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
-                    fromchap = int(self.get("s_chapfrom"))
-                    tochap = int(self.get("s_chapto"))
+                    fromchap = round(float(self.get("t_chapfrom")))
+                    tochap = round(float(self.get("t_chapto")))
                     res = RefList((RefRange(Reference(bk, fromchap, 0), Reference(bk, tochap, 200)), ))
                     return self._bookrefsBooks(res, local)
             return []
