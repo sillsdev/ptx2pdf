@@ -1265,6 +1265,7 @@ class GtkViewModel(ViewModel):
         
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
+        print("onBkLstKeyPressed-m")
         self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
@@ -1278,10 +1279,12 @@ class GtkViewModel(ViewModel):
         self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
-            self.set("r_book", "single")
+            # print("doBookListChange-A-s")
+            # self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
-        else:
-            self.set("r_book", "multiple")
+        # else:
+            # print("doBookListChange-B-m")
+            # self.set("r_book", "multiple")
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -2498,6 +2501,7 @@ class GtkViewModel(ViewModel):
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             self.set("ecb_booklist", " ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
+            print("onChooseBooksClicked-m/s")
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
         self.updateExamineBook()
@@ -2608,6 +2612,7 @@ class GtkViewModel(ViewModel):
         tbx = self.builder.get_object(w)
         text = tbx.get_text().strip().split('.')[0]
         tbx.set_text(''.join([i for i in text if i in '0123456789']))
+        print("filter_numbers-s")
         self.set("r_book", "single")
             
     def fromChapChange(self, x, y):
@@ -2629,6 +2634,7 @@ class GtkViewModel(ViewModel):
             frCh = maxCh
         if frCh > toCh:
             self.set("t_chapto", str(frCh))
+        print("fromChapChange-s")
         self.set("r_book", "single")
 
     def toChapChange(self, x, y):
@@ -2644,6 +2650,7 @@ class GtkViewModel(ViewModel):
                 self.set("t_chapto", str(maxCh))
             elif toCh < frCh:
                 self.set("t_chapfrom", str(toCh))
+        print("toChapChange-s")
         self.set("r_book", "single")
 
     def onBookChange(self, cb_book):
@@ -2656,10 +2663,11 @@ class GtkViewModel(ViewModel):
                 # self.set("r_book", "single")
             # else:
                 self.set("t_chapfrom", "1")
-                self.set("t_chapto", chaps.get(str(bk), 999))
+                self.set("t_chapto", str(chaps.get(str(bk), 999)))
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
+        print("onBookChange-s")
         self.set("r_book", "single")
 
     def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
@@ -2771,6 +2779,7 @@ class GtkViewModel(ViewModel):
             for b in allbooks:
                 if b in books.keys():
                     self.set("ecb_book", b)
+                    print("updateProjectSettings-s")
                     self.set("r_book", "single")
                     break
         # status = self.get("r_book") == "multiple"
@@ -3048,6 +3057,7 @@ class GtkViewModel(ViewModel):
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
+            print("onSelectModuleClicked-A-mod")
             self.set("r_book", "module")
 
         else:
@@ -3055,6 +3065,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
+            print("onSelectModuleClicked-B-s")
             self.set("r_book", "single")
         self.updateDialogTitle()
 
