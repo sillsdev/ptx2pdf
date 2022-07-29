@@ -149,8 +149,8 @@ fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes gr_footnotes c_includeFootnotes c_fneachnewline
-tb_xrefs                  c_includeXrefs     c_xreachnewline
+tb_footnotes c_includeFootnotes c_fneachnewline
+tb_xrefs     c_includeXrefs     c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
@@ -163,7 +163,7 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
-                  "c_customOrder", "t_mbsBookList", ) # "lb_extXrefs", 
+                  "c_customOrder", "t_mbsBookList", "l_statusLine") # "lb_extXrefs", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -706,6 +706,7 @@ class GtkViewModel(ViewModel):
             .printbutton:active { background-color: chartreuse; background-image: None }
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .fontbutton {font-size: 12px}
+            .tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)}
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
@@ -849,7 +850,7 @@ class GtkViewModel(ViewModel):
         self.popover.set_relative_to(entry)
         # Set the size of the pop-up help list
         popupHeight = min(300, min(7,len(choices))*30)
-        self.popover.set_size_request(300, popupHeight)
+        self.popover.set_size_request(400, popupHeight)
         scr = Gtk.ScrolledWindow()
         ls = Gtk.ListStore(str, str)
         if len(choices):
@@ -1136,6 +1137,8 @@ class GtkViewModel(ViewModel):
             _doError(txt, **kw)
 
     def doStatus(self, txt=""):
+        sl = self.builder.get_object("l_statusLine")
+        sl.set_visible(True)
         self.set("l_statusLine", txt)
 
     def waitThread(self, thread):
@@ -1170,7 +1173,8 @@ class GtkViewModel(ViewModel):
             self.onDiglotSwitchClicked(self.builder.get_object("btn_diglotSwitch"))
             return
         if isLocked():
-            self.set("l_statusLine", _("Printing busy"))
+            self.doStatus(_("Printing busy"))
+            # self.set("l_statusLine", _("Printing busy"))
             return
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
@@ -3325,7 +3329,10 @@ class GtkViewModel(ViewModel):
         elif response == Gtk.ResponseType.NO:
             return(False)
 
-    def onOpenFolderClicked(self, btn, foo):
+    def onOpenFolderButtonClicked(self, btn):
+        self.onOpenFolderClicked(self.builder.get_object("lb_working_dir"))
+        
+    def onOpenFolderClicked(self, btn, *argv):
         p = re.search(r'(?<=href=\")[^<>]+(?=\")',btn.get_label())
         outputfolder =  p[0]
         self.openFolder(outputfolder)

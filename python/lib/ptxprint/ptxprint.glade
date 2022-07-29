@@ -3307,6 +3307,13 @@ can be set.</property>
     <property name="icon-name">software-update-available-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_folder">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">folder-symbolic</property>
+    <property name="use-fallback">True</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -8547,7 +8554,7 @@ and helps to place the marker in the tree listing all markers.</property>
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">2</property>
           </packing>
         </child>
         <child>
@@ -9521,7 +9528,6 @@ Configuration settings.</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-end">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="row-spacing">9</property>
                                     <property name="column-spacing">3</property>
@@ -10019,7 +10025,7 @@ can be customized.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-start">6</property>
-                                <property name="margin-end">12</property>
+                                <property name="margin-end">6</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">5</property>
                                 <property name="row-spacing">6</property>
@@ -11103,6 +11109,8 @@ Margins, Columns and Rules (lines).</property>
 Note that the font chooser dialog also has a
 number of other options for setting advanced
 font features and, if needed, Graphite rendering.</property>
+                                        <property name="xalign">0.5</property>
+                                        <property name="yalign">0.5</property>
                                         <signal name="clicked" handler="onFontRclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11121,6 +11129,7 @@ font features and, if needed, Graphite rendering.</property>
                                         <property name="tooltip-text" translatable="yes">If you see the style in parentheses (bold)
 this indicates that PTXprint could not
 locate the bold style and will fake the style.</property>
+                                        <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontBclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11139,6 +11148,7 @@ locate the bold style and will fake the style.</property>
                                         <property name="tooltip-text" translatable="yes">If you see the style in parentheses (italic)
 this indicates that PTXprint could not
 locate the italic style and will fake the style.</property>
+                                        <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontIclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11157,6 +11167,7 @@ locate the italic style and will fake the style.</property>
                                         <property name="tooltip-text" translatable="yes">If you see either of the styles in parentheses (bold)
 or (italic) this indicates that PTXprint could not
 locate the style and will fake the bold-italic style.</property>
+                                        <property name="xalign">0.5</property>
                                         <signal name="clicked" handler="onFontBIclicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -13138,16 +13149,19 @@ Also settings for special books.</property>
                           <object class="GtkNotebook" id="nbk_fnxr">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="halign">start</property>
                             <child>
                               <object class="GtkBox" id="tb_footnotes">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <!-- n-columns=4 n-rows=6 -->
-                                  <object class="GtkGrid" id="gr_footnotes">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">12</property>
@@ -13158,7 +13172,7 @@ Also settings for special books.</property>
                                       <object class="GtkCheckButton" id="c_fnomitcaller">
                                         <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                         <property name="name">Show footnote callers in notes area</property>
-                                        <property name="width-request">250</property>
+                                        <property name="width-request">240</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -13192,6 +13206,7 @@ effect straight away. You may need to hit
 Print a second time before it applies.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-end">6</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -13452,6 +13467,7 @@ usually placed at the end of each page.
                                       <object class="GtkExpander" id="ex_footnotes">
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
+                                        <property name="halign">start</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
                                         <child>
@@ -13854,10 +13870,9 @@ located on the Footnotes tab.</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel">
-                                        <property name="width-request">180</property>
+                                        <property name="width-request">162</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="margin-start">6</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
@@ -13879,7 +13894,7 @@ located on the Footnotes tab.</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
+                                    <property name="fill">False</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -13887,6 +13902,7 @@ located on the Footnotes tab.</property>
                                   <object class="GtkExpander" id="ex_miscFootnotes">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-start">11</property>
                                     <property name="margin-end">6</property>
                                     <child>
@@ -14176,13 +14192,13 @@ Footnotes and xRefs (pt):</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
+                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
                               <packing>
-                                <property name="tab-expand">True</property>
+                                <property name="tab-fill">False</property>
                               </packing>
                             </child>
                             <child type="tab">
@@ -14200,12 +14216,14 @@ Footnotes and xRefs (pt):</property>
                               <object class="GtkBox" id="tb_xrefs">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <!-- n-columns=4 n-rows=6 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">12</property>
@@ -14315,6 +14333,7 @@ line then set this option.</property>
                                       <packing>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">1</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14440,7 +14459,7 @@ showing, then a default set will appear.</property>
                                       <object class="GtkCheckButton" id="c_xromitcaller">
                                         <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                         <property name="name">Show cross-reference callers in notes area</property>
-                                        <property name="width-request">250</property>
+                                        <property name="width-request">240</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -14514,7 +14533,6 @@ underneath the footnotes (rather than combined
 along with the footnotes as a single paragraph).</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">6</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -14543,7 +14561,6 @@ one type of caller (rather than a sequence)
 which must be specified above.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">6</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -14559,7 +14576,7 @@ which must be specified above.</property>
                                       <object class="GtkRadioButton" id="r_xrpos_centre">
                                         <property name="label" translatable="yes">Column Cross-References</property>
                                         <property name="name">Placement of cross-references: Vertical column</property>
-                                        <property name="width-request">180</property>
+                                        <property name="width-request">162</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -14571,7 +14588,6 @@ The cross references will appear in a narrow vertical
 column similar to a study/reference Bible layout.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">6</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -14670,7 +14686,7 @@ located on the Cross-References tab.</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
+                                    <property name="fill">False</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -14678,6 +14694,7 @@ located on the Cross-References tab.</property>
                                   <object class="GtkExpander" id="ex_xrListSettings">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
@@ -15348,7 +15365,7 @@ the edge of the main text?</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
+                                    <property name="fill">False</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -15356,6 +15373,7 @@ the edge of the main text?</property>
                                   <object class="GtkExpander" id="ex_xrefs">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
@@ -15726,7 +15744,7 @@ and Parameters:</property>
                               </object>
                               <packing>
                                 <property name="position">1</property>
-                                <property name="tab-expand">True</property>
+                                <property name="tab-fill">False</property>
                               </packing>
                             </child>
                             <child type="tab">
@@ -15745,6 +15763,7 @@ and Parameters:</property>
                               <object class="GtkBox" id="tb_studynotes">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
@@ -16673,6 +16692,7 @@ extended study notes and sidebars from being displayed. </property>
                               </object>
                               <packing>
                                 <property name="position">2</property>
+                                <property name="tab-fill">False</property>
                               </packing>
                             </child>
                             <child type="tab">
@@ -16695,8 +16715,8 @@ extended study notes and sidebars from being displayed. </property>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">True</property>
-                            <property name="fill">True</property>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -28177,7 +28197,6 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Current Project Path:</property>
                                     <property name="justify">right</property>
-                                    <property name="ellipsize">middle</property>
                                     <property name="max-width-chars">18</property>
                                   </object>
                                   <packing>
@@ -28562,7 +28581,7 @@ general users and common solutions.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_deleteTempFiles">
-                                    <property name="label">gtk-delete</property>
+                                    <property name="label">Tidy Up</property>
                                     <property name="name">Delete temporary files and folders</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -28576,7 +28595,6 @@ by deleting unneeded files.</property>
                                     <property name="halign">end</property>
                                     <property name="margin-top">3</property>
                                     <property name="margin-bottom">3</property>
-                                    <property name="use-stock">True</property>
                                     <property name="always-show-image">True</property>
                                     <signal name="clicked" handler="onDeleteTempFolders" swapped="no"/>
                                   </object>
@@ -28588,7 +28606,7 @@ by deleting unneeded files.</property>
                                 <child>
                                   <object class="GtkLabel" id="lb_working_dir">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
+                                    <property name="can-focus">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
@@ -28802,6 +28820,30 @@ from XeTeX processing.</property>
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel" id="l_statusLine">
+            <property name="can-focus">False</property>
+            <property name="no-show-all">True</property>
+            <property name="valign">center</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">3</property>
+            <property name="hexpand">True</property>
+            <property name="label"> </property>
+            <property name="justify">center</property>
+            <property name="single-line-mode">True</property>
+            <property name="track-visited-links">False</property>
+            <attributes>
+              <attribute name="foreground" value="#a4a400000000"/>
+              <attribute name="background" value="#ffffd4e5c887"/>
+            </attributes>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -28891,6 +28933,28 @@ Click to visit download page on the website.</property>
               </packing>
             </child>
             <child>
+              <object class="GtkButton">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">The PDF file created is stored in this
+folder (but should automatically open
+in your system's PDF viewer anyway).</property>
+                <property name="margin-start">3</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <property name="image">icon_folder</property>
+                <property name="always-show-image">True</property>
+                <signal name="clicked" handler="onOpenFolderButtonClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">3</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkEntry" id="t_find">
                 <property name="name">Find help</property>
                 <property name="visible">True</property>
@@ -28912,29 +28976,6 @@ Shortcut: Ctrl-F</property>
                 <signal name="activate" handler="onFindActivate" swapped="no"/>
                 <signal name="icon-press" handler="onFindClicked" swapped="no"/>
                 <accelerator key="f" signal="grab-focus" modifiers="GDK_CONTROL_MASK"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">3</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="l_statusLine">
-                <property name="width-request">160</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="valign">center</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">2</property>
-                <property name="hexpand">False</property>
-                <property name="label"> </property>
-                <property name="justify">right</property>
-                <property name="wrap">True</property>
-                <attributes>
-                  <attribute name="foreground" value="#a4a400000000"/>
-                </attributes>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -28999,6 +29040,7 @@ specified.
 Use the larger 'Return' button to get
 back to the primary project in order to 
 print a diglot with both texts.</property>
+                <property name="opacity">0.80</property>
                 <property name="halign">start</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
@@ -29017,21 +29059,23 @@ print a diglot with both texts.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_saveConfig">
-                <property name="label">Save</property>
+                <property name="label">Save Config</property>
                 <property name="name">Save configuration</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Shortcut: Ctrl-S
+                <property name="tooltip-text" translatable="yes">Save current settings in 
+named Configuration
+(set on the Basic tab).
 
-Save the current settings under the 
-Configuration Name specified on
-the Basic tab.</property>
-                <property name="halign">start</property>
+Shortcut: Ctrl-S</property>
+                <property name="opacity">0.80</property>
+                <property name="halign">center</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
+                <property name="xalign">0.5</property>
                 <property name="always-show-image">True</property>
                 <signal name="clicked" handler="onSaveConfig" swapped="no"/>
                 <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
@@ -29050,16 +29094,10 @@ the Basic tab.</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Shortcut: Ctrl-P
+                <property name="tooltip-text" translatable="yes">Create the PDF as specified
+(automatically saves settings).
 
-Save current settings and
-create a PDF as specified.
-
-If this button is labelled 'Return' then it
-means you are currently adjusting the 
-settings for a project associated to a
-Diglot project, and will need to return to
-the primary project before you can print.</property>
+Shortcut: Ctrl-P</property>
                 <property name="halign">start</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
@@ -29082,8 +29120,11 @@ the primary project before you can print.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Close the PTXprint tool
-without saving settings.</property>
+                <property name="tooltip-text" translatable="yes">Close PTXprint
+without saving.
+
+Shortcut: Ctrl-W</property>
+                <property name="opacity">0.80</property>
                 <property name="halign">end</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">6</property>
