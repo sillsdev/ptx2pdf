@@ -210,9 +210,9 @@ _sensitivities = {
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
-    # "c_includeFootnotes" :     ["tb_footnotes", "lb_footnotes", "r_xrpos_below", "r_xrpos_blend"],
-    "c_includeFootnotes" :     ["gr_footnotes"],
-    # "c_includeXrefs" :         ["tb_xrefs", "lb_xrefs"],
+    "c_includeFootnotes" :     ["c_fneachnewline", "c_fnOverride", "c_fnautocallers", "t_fncallers", 
+                                "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers",
+                                "lb_style_f", "l_fnPos", "r_fnpos_normal", "r_fnpos_column", "r_fnpos_endnote"],
     "c_useXrefList" :          ["gr_extXrefs"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
@@ -1265,7 +1265,7 @@ class GtkViewModel(ViewModel):
         
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
-        print("onBkLstKeyPressed-m")
+        # print("onBkLstKeyPressed-m")
         self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
@@ -2501,7 +2501,7 @@ class GtkViewModel(ViewModel):
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             self.set("ecb_booklist", " ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
-            print("onChooseBooksClicked-m/s")
+            # print("onChooseBooksClicked-m/s")
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
         self.updateExamineBook()
@@ -2612,7 +2612,7 @@ class GtkViewModel(ViewModel):
         tbx = self.builder.get_object(w)
         text = tbx.get_text().strip().split('.')[0]
         tbx.set_text(''.join([i for i in text if i in '0123456789']))
-        print("filter_numbers-s")
+        # print("filter_numbers-s")
         self.set("r_book", "single")
             
     def fromChapChange(self, x, y):
@@ -2634,7 +2634,7 @@ class GtkViewModel(ViewModel):
             frCh = maxCh
         if frCh > toCh:
             self.set("t_chapto", str(frCh))
-        print("fromChapChange-s")
+        # print("fromChapChange-s")
         self.set("r_book", "single")
 
     def toChapChange(self, x, y):
@@ -2650,7 +2650,7 @@ class GtkViewModel(ViewModel):
                 self.set("t_chapto", str(maxCh))
             elif toCh < frCh:
                 self.set("t_chapfrom", str(toCh))
-        print("toChapChange-s")
+        # print("toChapChange-s")
         self.set("r_book", "single")
 
     def onBookChange(self, cb_book):
@@ -2667,7 +2667,7 @@ class GtkViewModel(ViewModel):
             self.updateExamineBook()
         self.updateDialogTitle()
         self.updatePicList()
-        print("onBookChange-s")
+        # print("onBookChange-s")
         self.set("r_book", "single")
 
     def _setNoteSpacingRange(self, fromTo, minimum, maximum, value):
@@ -2779,7 +2779,7 @@ class GtkViewModel(ViewModel):
             for b in allbooks:
                 if b in books.keys():
                     self.set("ecb_book", b)
-                    print("updateProjectSettings-s")
+                    # print("updateProjectSettings-s")
                     self.set("r_book", "single")
                     break
         # status = self.get("r_book") == "multiple"
@@ -3057,7 +3057,7 @@ class GtkViewModel(ViewModel):
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
-            print("onSelectModuleClicked-A-mod")
+            # print("onSelectModuleClicked-A-mod")
             self.set("r_book", "module")
 
         else:
@@ -3065,7 +3065,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
-            print("onSelectModuleClicked-B-s")
+            # print("onSelectModuleClicked-B-s")
             self.set("r_book", "single")
         self.updateDialogTitle()
 
