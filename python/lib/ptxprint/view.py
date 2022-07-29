@@ -173,6 +173,8 @@ class ViewModel:
         return self.dict.get(wid, default)
 
     def set(self, wid, value, skipmissing=False):
+        if wid == "l_statusLine":
+            self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         if wid.startswith("s_"):
             self.dict[wid] = f2s(float(value))
         else:

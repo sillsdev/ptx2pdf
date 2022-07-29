@@ -117,6 +117,7 @@ fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch
 tb_Help lb_Help
 fr_Help l_working_dir lb_working_dir btn_about
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
+l_statusLine btn_hideStatusLine
 """.split()
 
 _ui_enable4diglot2ndary = """
@@ -163,7 +164,7 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
-                  "c_customOrder", "t_mbsBookList", "l_statusLine") # "lb_extXrefs", 
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar") # "lb_extXrefs", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -1053,6 +1054,8 @@ class GtkViewModel(ViewModel):
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
     def set(self, wid, value, skipmissing=False):
+        if wid == "l_statusLine":
+            self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
         if w is None and not wid.startswith("r_"):
             if not skipmissing and not wid.startswith("_"):
@@ -1138,8 +1141,12 @@ class GtkViewModel(ViewModel):
 
     def doStatus(self, txt=""):
         sl = self.builder.get_object("l_statusLine")
-        sl.set_visible(True)
         self.set("l_statusLine", txt)
+        status = len(self.get("l_statusLine"))
+        sl = self.builder.get_object("bx_statusMsgBar").set_visible(status)
+        
+    def onHideStatusMsgClicked(self, btn):
+        sl = self.builder.get_object("bx_statusMsgBar").set_visible(False)
 
     def waitThread(self, thread):
         while thread.is_alive():
@@ -1174,13 +1181,13 @@ class GtkViewModel(ViewModel):
             return
         if isLocked():
             self.doStatus(_("Printing busy"))
-            # self.set("l_statusLine", _("Printing busy"))
             return
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
-            self.set("l_statusLine", _("No books to print"))
+            self.doStatus(_("No books to print"))
             return
         if self.checkFontsMissing():
+            self.doStatus(_("One of more fonts have not been set yet"))
             return
         # If the viewer/editor is open on an Editable tab, then "autosave" contents
         if Gtk.Buildable.get_name(self.builder.get_object("nbk_Main").get_nth_page(self.get("nbk_Main"))) == "tb_ViewerEditor":
@@ -1212,7 +1219,7 @@ class GtkViewModel(ViewModel):
                     if self.msgQuestion(_("The old PDF file is open!"), question):
                         continue
                     else:
-                        self.set("l_statusLine", _("Close the old PDF file before you try again."))
+                        self.doStatus(_("Close the old PDF file before you try again."))
                         self.finished()
                         return
                 fileLocked = False
@@ -1237,10 +1244,9 @@ class GtkViewModel(ViewModel):
     def warnSlowRun(self, btn):
         ofmt = self.get("fcb_outputFormat")
         if self.get("c_includeillustrations") and ofmt != "Screen":
-            self.set("l_statusLine", \
-                   _("Note: It may take a while for pictures to convert for selected PDF Output Format ({}).".format(ofmt)))
+            self.doStatus(_("Note: It may take a while for pictures to convert for selected PDF Output Format ({}).".format(ofmt)))
         else:
-            self.set("l_statusLine", "")
+            self.doStatus("")
         spotColorStatus = ofmt == "Spot"
         for w in ["l_spotColor", "col_spotColor", "l_spotColorTolerance", "s_spotColorTolerance"]:
             self.builder.get_object(w).set_sensitive(spotColorStatus)
@@ -1270,6 +1276,7 @@ class GtkViewModel(ViewModel):
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
         # print("onBkLstKeyPressed-m")
+        # (this needs constraining somehow 
         self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
@@ -1286,9 +1293,11 @@ class GtkViewModel(ViewModel):
             # print("doBookListChange-A-s")
             # self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
-        # else:
-            # print("doBookListChange-B-m")
-            # self.set("r_book", "multiple")
+        else:
+            # print("doBookListChange-B-m") 
+            # (this needs constraining somehow 
+            # as it is called on onBkLstFocusOutEvent)
+            self.set("r_book", "multiple")
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -2505,7 +2514,7 @@ class GtkViewModel(ViewModel):
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             self.set("ecb_booklist", " ".join(b for b in booklist))
         if self.get("r_book") in ("single", "multiple"):
-            # print("onChooseBooksClicked-m/s")
+            print("onChooseBooksClicked-m/s")
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
         self.updateExamineBook()
@@ -3884,7 +3893,7 @@ class GtkViewModel(ViewModel):
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
                 self.set('ecb_booklist', bls)
-            self.set("l_statusLine", _("Strong's Index generated in: {}").format(bkid))
+            self.doStatus(_("Strong's Index generated in: {}").format(bkid))
             if self.get("c_strongsOpenIndex"):
                 fpath = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
                 if os.path.exists(fpath):
