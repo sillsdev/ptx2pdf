@@ -992,9 +992,10 @@ class GtkViewModel(ViewModel):
 
     def toggleUIdetails(self, w, state):
         if w in _ui_noToggleVisible:
+            print(w)
             self.builder.get_object(w).set_sensitive(state)
         else:
-            # print(w)
+            print(w)
             self.builder.get_object(w).set_visible(state)
 
     def noInternetClicked(self, btn):

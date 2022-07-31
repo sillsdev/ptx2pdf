@@ -9250,6 +9250,21 @@ of the same Paratext project.</property>
                                       <item translatable="yes">Default</item>
                                     </items>
                                     <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
+                                    <child internal-child="entry">
+                                      <object class="GtkEntry" id="t_savedConfig">
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
+                                        <signal name="focus-out-event" handler="onCfgFocusOutEvent" swapped="no"/>
+                                        <signal name="key-press-event" handler="onConfigKeyPressed" swapped="no"/>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
