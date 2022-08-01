@@ -3312,13 +3312,13 @@ can be set.</property>
     <property name="can-focus">False</property>
     <property name="icon-name">folder-symbolic</property>
     <property name="use-fallback">True</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_locked">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-lock-screen-symbolic</property>
-    <property name="icon_size">3</property>
+    <property name="icon-size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
