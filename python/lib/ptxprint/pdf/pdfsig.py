@@ -142,18 +142,19 @@ class Signature:
         return res
 
     def pagenum(self, i, maxpages):
+        ''' returns (signum, output_pnum, output_pnum_within_sig) '''
         if self.sigsheets == 0:
             ppsig = ((maxpages + self.pages - 1) // self.pages) * self.pages
         else:
             ppsig = self.pages * self.sigsheets
-        toppages = ((maxpages + ppsig - 1) // ppsig) * ppsig
-        n = i if i < toppages // 2 else toppages - i - 1
-        sigid = n // (ppsig // 2)
-        sheetnum = (n % (ppsig // 2)) // (self.pages // 2)
-        sigindex = n % (self.pages // 2)
-        if n != i:
-            sigindex = self.pages - sigindex - 1
-        return (sigid, sigid * ppsig * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page, sigindex)
+        sigid = i // ppsig          # signature number
+        n = i - sigid * ppsig       # page number within signature
+        normnum = n if n < ppsig // 2 else ppsig - n - 1
+        sheetnum = normnum // (self.pages // 2)     # sheet number within signature
+        sigindex = n - sheetnum * 2 if n < ppsig // 2 else self.pages - (ppsig - n - sheetnum * 2)
+        opnum = sigid * self.sigsheets * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page
+        # print(f"pagenum({i}, {maxpages}) = ({sigid}, {opnum}, {sigindex}) [{sheetnum=}, {n=}, {normnum=}]")
+        return (sigid, opnum, sigindex)
 
     def docropmark(self, cm, p, n):
         scale = min(self.margin.w, self.margin.h)   # 3mm outside margin for printing
