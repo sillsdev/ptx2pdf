@@ -196,7 +196,7 @@
     \let\@ulsp@ce\space
   \fi
   \setbox\ulb@x\box\voidb@x
-  {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#1 \endgraf\@do@underline}%
+  {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf\@do@underline}%
   %\showbox#1
   %\showbox\ulb@x
   \ifdim \wd#1=0pt \else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
@@ -221,7 +221,7 @@
   \setbox\ulb@x\box\voidb@x
   \setbgc@l{#1}%
   \s@tb@kgroundlower
-  {\dimen1=\baselineskip\advance\dimen1-\b@ckgroundlower\dimen0=\b@ckgroundlower\everypar={}\setbox#2=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \unhbox#2 \endgraf\@do@background}%
+  {\dimen1=\baselineskip\advance\dimen1-\b@ckgroundlower\dimen0=\b@ckgroundlower\everypar={}\setbox#2=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#2 \endgraf\@do@background}%
   %\showbox#1
   %\showbox\ulb@x
   \ifdim \wd#2=0pt \else\setbox#2\hbox{\@@do@background{#2}}%
