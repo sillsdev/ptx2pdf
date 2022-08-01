@@ -712,6 +712,8 @@ class GtkViewModel(ViewModel):
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
             .mainnb tab {min-height: 0pt; margin: 0pt; padding-bottom: 6pt}
+            .mainnb tab:checked {background-color: lightsteelblue}
+            .mainnb tab:checked label {font-weight: bold}
             .viewernb {background-color: #d3d3d3}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
@@ -991,11 +993,10 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
 
     def toggleUIdetails(self, w, state):
+        # print(w)
         if w in _ui_noToggleVisible:
-            print(w)
             self.builder.get_object(w).set_sensitive(state)
         else:
-            print(w)
             self.builder.get_object(w).set_visible(state)
 
     def noInternetClicked(self, btn):

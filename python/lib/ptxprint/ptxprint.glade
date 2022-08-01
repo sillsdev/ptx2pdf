@@ -9728,6 +9728,7 @@ Spacing (pt):</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_indentUnit">
+                                        <property name="width-request">95</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The space by which paragraphs
@@ -9741,9 +9742,9 @@ from 1 to 2 columns, and vice versa. </property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">6</property>
-                                        <property name="label" translatable="yes">Base Paragraph 
+                                        <property name="label" translatable="yes">Base Paragraph
 Indent (inches):</property>
-                                        <property name="justify">right</property>
+                                        <property name="xalign">1</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
@@ -9998,10 +9999,11 @@ can be customized.</property>
                             <property name="hexpand">True</property>
                             <property name="label-xalign">0.15000000596046448</property>
                             <child>
-                              <!-- n-columns=3 n-rows=4 -->
+                              <!-- n-columns=2 n-rows=4 -->
                               <object class="GtkGrid" id="gr_doubleColumn">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">end</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">4</property>
@@ -10174,18 +10176,6 @@ Lines (max):</property>
                                     <property name="top-attach">1</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                             <child type="label">
@@ -10257,7 +10247,7 @@ the Full View mode.</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="row-spacing">5</property>
-                                <property name="column-spacing">6</property>
+                                <property name="column-spacing">3</property>
                                 <child>
                                   <object class="GtkLabel" id="l_topmargin">
                                     <property name="height-request">35</property>
@@ -10468,6 +10458,7 @@ from the descender of the final line of text
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_margins">
+                                    <property name="width-request">95</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
@@ -10476,12 +10467,12 @@ and right (or inner and outer) margins are set
 to be identical. If you require a greater inner
 margin, then use the Binding Gutter setting
 above.</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
                                     <property name="label" translatable="yes">Side Margin
 Width (mm):</property>
-                                    <property name="xalign">0</property>
+                                    <property name="xalign">1</property>
                                     <attributes>
                                       <attribute name="foreground" value="#cece5c5c0000"/>
                                     </attributes>
@@ -18476,7 +18467,7 @@ on the Details, Checklist and Credit Overlay tabs.</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="label-xalign">0.019999999552965164</property>
                                         <child>
-                                          <!-- n-columns=4 n-rows=5 -->
+                                          <!-- n-columns=5 n-rows=5 -->
                                           <object class="GtkGrid" id="gr_IllustrationOptions">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
@@ -18508,7 +18499,7 @@ share, but the image quality will be low.</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">3</property>
+                                                <property name="left-attach">4</property>
                                                 <property name="top-attach">0</property>
                                               </packing>
                                             </child>
@@ -18533,7 +18524,7 @@ without illustrations.</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
+                                                <property name="left-attach">3</property>
                                                 <property name="top-attach">1</property>
                                                 <property name="width">2</property>
                                               </packing>
@@ -18564,7 +18555,7 @@ the image quality will be as good as possible.</property>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
+                                                <property name="left-attach">3</property>
                                                 <property name="top-attach">0</property>
                                               </packing>
                                             </child>
@@ -18582,7 +18573,7 @@ all the required illustrations.</property>
                                                 <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">3</property>
+                                                <property name="left-attach">4</property>
                                                 <property name="top-attach">3</property>
                                               </packing>
                                             </child>
@@ -18630,7 +18621,7 @@ are all located in the same folder, then check the
                                                 <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
+                                                <property name="left-attach">3</property>
                                                 <property name="top-attach">3</property>
                                               </packing>
                                             </child>
@@ -18653,9 +18644,8 @@ or
                                                 <property name="justify">right</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">1</property>
+                                                <property name="left-attach">3</property>
                                                 <property name="top-attach">2</property>
-                                                <property name="width">2</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -18689,7 +18679,7 @@ NOTE: TIF files are converted internally to hi-res JPGs.</property>
                                                 <signal name="focus-out-event" handler="onPrefImageTypeFocusOut" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">3</property>
+                                                <property name="left-attach">4</property>
                                                 <property name="top-attach">2</property>
                                               </packing>
                                             </child>
@@ -18762,7 +18752,7 @@ images, not just those with lines.</property>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="lb_selectFigureFolder">
-                                                <property name="width-request">320</property>
+                                                <property name="width-request">350</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="opacity">0.80</property>
@@ -18771,11 +18761,12 @@ images, not just those with lines.</property>
                                                 <property name="ellipsize">middle</property>
                                                 <property name="single-line-mode">True</property>
                                                 <property name="max-width-chars">60</property>
+                                                <property name="xalign">0</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
                                                 <property name="top-attach">4</property>
-                                                <property name="width">3</property>
+                                                <property name="width">4</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -18893,6 +18884,17 @@ references without the captions.</property>
                                                 <property name="left-attach">0</property>
                                                 <property name="top-attach">2</property>
                                                 <property name="width">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSeparator">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">0</property>
+                                                <property name="height">4</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -21342,7 +21344,7 @@ a secondary project and configuration.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_tabs">
-                        <property name="width-request">670</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -21352,7 +21354,7 @@ a secondary project and configuration.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=10 n-rows=4 -->
+                          <!-- n-columns=11 n-rows=4 -->
                           <object class="GtkGrid" id="gr_thumbs">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -21426,7 +21428,7 @@ set by clicking the Edit Style link.</property>
                                 <property name="label" translatable="yes">Tab Color:</property>
                               </object>
                               <packing>
-                                <property name="left-attach">6</property>
+                                <property name="left-attach">7</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>
@@ -21444,7 +21446,7 @@ set by clicking the Edit Style link.</property>
                                 <signal name="color-set" handler="onThumbColorChange" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">7</property>
+                                <property name="left-attach">8</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>
@@ -21464,7 +21466,7 @@ set by clicking the Edit Style link.</property>
                                 <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">2</property>
+                                <property name="left-attach">3</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>
@@ -21533,7 +21535,7 @@ Tab Positions:</property>
                                 <property name="angle">270</property>
                               </object>
                               <packing>
-                                <property name="left-attach">6</property>
+                                <property name="left-attach">7</property>
                                 <property name="top-attach">0</property>
                                 <property name="height">2</property>
                               </packing>
@@ -21549,7 +21551,7 @@ Tab Positions:</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left-attach">5</property>
+                                <property name="left-attach">6</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">5</property>
                               </packing>
@@ -21588,7 +21590,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">3</property>
-                                <property name="width">4</property>
+                                <property name="width">5</property>
                               </packing>
                             </child>
                             <child>
@@ -21617,7 +21619,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">4</property>
                                 <property name="top-attach">0</property>
                                 <property name="width">3</property>
                               </packing>
@@ -21634,7 +21636,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="angle">90</property>
                               </object>
                               <packing>
-                                <property name="left-attach">9</property>
+                                <property name="left-attach">10</property>
                                 <property name="top-attach">0</property>
                                 <property name="height">2</property>
                               </packing>
@@ -21648,7 +21650,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="use-markup">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">8</property>
+                                <property name="left-attach">9</property>
                                 <property name="top-attach">0</property>
                                 <property name="height">2</property>
                               </packing>
@@ -21663,7 +21665,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left-attach">6</property>
+                                <property name="left-attach">7</property>
                                 <property name="top-attach">0</property>
                                 <property name="width">3</property>
                               </packing>
@@ -21677,7 +21679,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="orientation">vertical</property>
                               </object>
                               <packing>
-                                <property name="left-attach">7</property>
+                                <property name="left-attach">8</property>
                                 <property name="top-attach">0</property>
                                 <property name="height">3</property>
                               </packing>
@@ -21696,7 +21698,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">2</property>
+                                <property name="left-attach">3</property>
                                 <property name="top-attach">2</property>
                                 <property name="width">4</property>
                               </packing>
@@ -21728,7 +21730,7 @@ specifies that there should be no text in the thumbtab for that book.</property>
                                 <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">2</property>
+                                <property name="left-attach">3</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">2</property>
                               </packing>
@@ -21750,7 +21752,7 @@ formatting of the thumb tabs.</property>
                                 <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">4</property>
+                                <property name="left-attach">5</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">2</property>
                               </packing>
@@ -21764,7 +21766,7 @@ formatting of the thumb tabs.</property>
                                 <property name="label" translatable="yes">ColorVal</property>
                               </object>
                               <packing>
-                                <property name="left-attach">8</property>
+                                <property name="left-attach">9</property>
                                 <property name="top-attach">3</property>
                               </packing>
                             </child>
@@ -21781,21 +21783,8 @@ default values for the Grouped Tabs.</property>
                                 <signal name="clicked" handler="onResetTabGroupsClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">5</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="width-request">60</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="hexpand">True</property>
-                                <property name="label" translatable="yes"> </property>
-                              </object>
-                              <packing>
                                 <property name="left-attach">6</property>
-                                <property name="top-attach">2</property>
+                                <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
@@ -21809,8 +21798,37 @@ default values for the Grouped Tabs.</property>
                               <packing>
                                 <property name="left-attach">8</property>
                                 <property name="top-attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="width-request">60</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
+                                <property name="label" translatable="yes"> </property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">9</property>
+                                <property name="top-attach">2</property>
                                 <property name="width">2</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">20</property>
+                                <property name="margin-end">20</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">0</property>
+                                <property name="height">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -28810,7 +28828,7 @@ from XeTeX processing.</property>
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="margin-start">40</property>
+                <property name="margin-start">60</property>
                 <property name="margin-end">8</property>
                 <property name="margin-top">6</property>
                 <property name="margin-bottom">6</property>
@@ -28832,7 +28850,7 @@ from XeTeX processing.</property>
                 <property name="margin-end">6</property>
                 <property name="margin-top">3</property>
                 <property name="hexpand">False</property>
-                <property name="label"> This is where the status messages go when there is something to alert the user about.</property>
+                <property name="label"> This is where status messages go to alert the user.</property>
                 <property name="justify">center</property>
                 <property name="single-line-mode">True</property>
                 <property name="track-visited-links">False</property>
