@@ -20801,7 +20801,7 @@ to copyrights.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=5 n-rows=5 -->
+                          <!-- n-columns=5 n-rows=7 -->
                           <object class="GtkGrid" id="gr_diglot">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -20809,7 +20809,7 @@ to copyrights.</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">4</property>
-                            <property name="margin-bottom">4</property>
+                            <property name="margin-bottom">8</property>
                             <property name="hexpand">True</property>
                             <property name="row-spacing">8</property>
                             <property name="column-spacing">6</property>
@@ -20821,6 +20821,7 @@ to copyrights.</property>
                                 <property name="tooltip-text" translatable="yes">If you need the column widths to be different
 for the primary and secondary texts, then adjust
 the proportion here.</property>
+                                <property name="hexpand">True</property>
                                 <property name="adjustment">a_diglotPriFraction</property>
                                 <property name="lower-stepper-sensitivity">on</property>
                                 <property name="upper-stepper-sensitivity">on</property>
@@ -20937,8 +20938,7 @@ in the right-hand (or outer) column.</property>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotHeaders">
-                                <property name="label" translatable="yes">Use Default Header
-Settings for Diglot</property>
+                                <property name="label" translatable="yes">Use Default Header Settings for Diglot</property>
                                 <property name="name">Diglot: Use default header settings</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -20952,15 +20952,14 @@ and Page Number in (or near) the middle.</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">4</property>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">5</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotSwapSide">
-                                <property name="label" translatable="yes">Secondary on
-Left (or Inner)</property>
+                                <property name="label" translatable="yes">Secondary on Left (or Inner)</property>
                                 <property name="name">Diglot: Swap primary and secondary</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -20975,18 +20974,19 @@ on the left (or Inner) side, then check this option.
 This is quite likely required for RTL languages.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="margin-top">6</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onDiglotSwapSideClicked" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">0</property>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">4</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="c_diglotAdjCenter">
-                                <property name="label" translatable="yes">Adjust Center Header 
-Based on Column Widths</property>
+                                <property name="label" translatable="yes">Adjust Center Header Based on Column Widths</property>
                                 <property name="name">Diglot: Adjust center header horizontal position</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
@@ -21002,7 +21002,8 @@ different columns).</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">4</property>
+                                <property name="top-attach">6</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -21032,8 +21033,9 @@ a Diglot use Pictures from:</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Auto calculate primary percentage by trying to reduce the page count. This will run your print job up to 10 times or more, so choose a small book to run on. It will attempt to find the best balance of column widths near to the starting position of the slider.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="margin-end">6</property>
                                 <property name="image">icon_adjust_diglot</property>
                                 <property name="always-show-image">True</property>
                                 <signal name="clicked" handler="onDiglotAutoAdjust" swapped="no"/>
@@ -21056,7 +21058,8 @@ DBL bundle will get unpacked into your
 regular folder (e.g. My Paratext 9 Projects)
 but will only be used by PTXprint. It cannot
 be viewed or edited in Paratext.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
+                                <property name="margin-end">6</property>
                                 <signal name="clicked" handler="onDBLbundleClicked" swapped="no"/>
                               </object>
                               <packing>
@@ -21083,7 +21086,6 @@ paragraphs start in the same verse.</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">1</property>
-                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -21105,10 +21107,10 @@ paragraphs start in the same verse.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">12</property>
-                                        <property name="margin-top">4</property>
+                                        <property name="margin-top">6</property>
                                         <property name="margin-bottom">4</property>
                                         <property name="orientation">vertical</property>
-                                        <property name="spacing">2</property>
+                                        <property name="spacing">6</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_diglotNotesRule">
                                             <property name="label" translatable="yes">Vertical Rule in Notes Area</property>
@@ -21176,10 +21178,10 @@ leave this option checked ON.</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">3</property>
-                                <property name="width">3</property>
-                                <property name="height">2</property>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">4</property>
+                                <property name="width">2</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
@@ -21250,6 +21252,39 @@ option does not apply at all.</property>
                                 <property name="left-attach">1</property>
                                 <property name="top-attach">3</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkSeparator">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">center</property>
+                                <property name="margin-end">20</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">3</property>
+                                <property name="height">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="hexpand">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>
@@ -21435,12 +21470,12 @@ set by clicking the Edit Style link.</property>
                             <child>
                               <object class="GtkColorButton" id="col_thumbback">
                                 <property name="name">Thumb tabs: Tab color</property>
-                                <property name="width-request">30</property>
+                                <property name="width-request">34</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Thumb Tabs usually use a dark color for the Tab with a light (or white) text.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">center</property>
                                 <property name="title" translatable="yes">Thumb Tab Background Color</property>
                                 <property name="rgba">rgb(0,0,0)</property>
                                 <signal name="color-set" handler="onThumbColorChange" swapped="no"/>
@@ -21460,7 +21495,6 @@ set by clicking the Edit Style link.</property>
                                 <property name="tooltip-text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">15</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                 <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
@@ -21545,6 +21579,7 @@ Tab Positions:</property>
                                 <property name="can-focus">False</property>
                                 <property name="no-show-all">True</property>
                                 <property name="halign">end</property>
+                                <property name="valign">end</property>
                                 <property name="margin-start">6</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
                                 <property name="use-markup">True</property>
@@ -21660,6 +21695,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="can-focus">False</property>
                                 <property name="no-show-all">True</property>
                                 <property name="halign">start</property>
+                                <property name="valign">start</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
                                 <property name="use-markup">True</property>
                                 <property name="justify">right</property>
@@ -21674,8 +21710,6 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <object class="GtkSeparator">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="margin-start">14</property>
-                                <property name="margin-end">14</property>
                                 <property name="orientation">vertical</property>
                               </object>
                               <packing>
@@ -21694,7 +21728,6 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                 <property name="tooltip-text" translatable="yes">Normally books will follow sequentially and if the next tab would be off the bottom of the page, then it will be set to the top for a new cycle of tabs. Setting this starts a new cycle at the start of the New Testament (Matthew).</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">15</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -21725,7 +21758,6 @@ the thumbtab contents. If a book's header contains a \zthumbtab entry, then
 specifies that there should be no text in the thumbtab for that book.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">15</property>
                                 <property name="draw-indicator">True</property>
                                 <signal name="clicked" handler="onTabsClicked" swapped="no"/>
                               </object>
@@ -21768,6 +21800,7 @@ formatting of the thumb tabs.</property>
                               <packing>
                                 <property name="left-attach">9</property>
                                 <property name="top-attach">3</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -21819,16 +21852,13 @@ default values for the Grouped Tabs.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-start">20</property>
-                                <property name="margin-end">20</property>
+                                <property name="margin-end">15</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
                                 <property name="top-attach">0</property>
                                 <property name="height">3</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>

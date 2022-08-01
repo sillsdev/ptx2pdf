@@ -164,7 +164,9 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar") # "lb_extXrefs", 
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar",
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR")
+                  # "lb_extXrefs", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -677,6 +679,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=args.identify)
         self.updateFont2BaselineRatio()
+        self.tabsHorizVert()
         logger.debug("Project list loaded")
 
             # .mainnb {background-color: #d3d3d3;}
@@ -3397,6 +3400,9 @@ class GtkViewModel(ViewModel):
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
             self.onThumbColorChange()
+            self.tabsHorizVert()
+            
+    def tabsHorizVert(self):
         self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
         self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
