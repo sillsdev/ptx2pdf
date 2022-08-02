@@ -3267,14 +3267,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3285,40 +3285,40 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_folder">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">folder-symbolic</property>
     <property name="use-fallback">True</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_locked">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-lock-screen-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3335,7 +3335,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -27055,7 +27055,7 @@ main scripture pages.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="sensitive">False</property>
                         <property name="can-focus">False</property>
                         <property name="no-show-all">True</property>
@@ -27405,7 +27405,7 @@ Spine:</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -27666,7 +27666,7 @@ options allow plenty of scope.</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -27863,7 +27863,7 @@ runs.</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -28715,7 +28715,7 @@ by deleting unneeded files.</property>
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Helpful Links</property>
+                            <property name="label" translatable="yes">Links and Help</property>
                           </object>
                         </child>
                       </object>
@@ -28849,7 +28849,6 @@ from XeTeX processing.</property>
                 <property name="valign">center</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
-                <property name="margin-top">3</property>
                 <property name="hexpand">False</property>
                 <property name="label"> This is where status messages go to alert the user.</property>
                 <property name="justify">center</property>

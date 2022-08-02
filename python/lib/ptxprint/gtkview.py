@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, re, regex, gi, subprocess, traceback #, ssl
+import sys, os, re, regex, gi, subprocess, traceback, ssl
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
@@ -1004,7 +1004,7 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible",  "lb_omitPics", 
+        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2",]:
             self.builder.get_object(w).set_visible(not val)
@@ -1016,6 +1016,7 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
+        self.builder.get_object("lb_omitPics").set_visible(adv)
 
     def addCR(self, name, index):
         if "|" in name:
@@ -3282,7 +3283,7 @@ class GtkViewModel(ViewModel):
             self.otherDiglot = None
             btn.set_label(_("Switch to Other\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.changeLabel("b_print", _("Print"))
+            self.changeLabel("b_print", _("Print (Create PDF)"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
@@ -3290,7 +3291,7 @@ class GtkViewModel(ViewModel):
                 self.otherDiglot = (self.prjid, self.configName())
                 btn.set_label(_("Save & Return to\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(True)
-            self.changeLabel("b_print", _("Return"))
+            self.changeLabel("b_print", _("Return to Primary"))
         self.onSaveConfig(None)
         if oprjid is not None and oconfig is not None:
             self.set("fcb_project", oprjid)
@@ -3927,7 +3928,7 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
-        if True: # sys.platform != "win32":
+        if sys.platform != "win32":
             return
         version = None
         if self.noInt is None or self.noInt:
