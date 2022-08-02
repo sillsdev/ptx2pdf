@@ -10243,7 +10243,7 @@ the Full View mode.</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="margin-end">6</property>
+                                <property name="margin-end">3</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="row-spacing">5</property>
@@ -10313,6 +10313,7 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">1.00</property>
                                     <property name="xalign">1</property>
@@ -10389,6 +10390,7 @@ End of Page (mm):</property>
 space between the end of the text and the footer line.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">0.80</property>
                                     <property name="xalign">1</property>
@@ -10436,6 +10438,7 @@ from the descender of the final line of text
 (including any footnotes).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">1.20</property>
                                     <property name="xalign">1</property>
@@ -10554,6 +10557,7 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0</property>
                                     <property name="xalign">1</property>
@@ -10588,6 +10592,7 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">1.80</property>
                                     <property name="xalign">1</property>
@@ -10633,6 +10638,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="image">icon_adjust_top</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
@@ -10666,6 +10672,7 @@ then do NOT click this option. Instead, use the similar
 button to adjust either the Line Spacing or Top Margin.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-end">3</property>
                                     <property name="image">icon_adjust_bottom</property>
                                     <signal name="clicked" handler="onMagicAdjustClicked" swapped="no"/>
                                   </object>
@@ -10805,7 +10812,7 @@ line under the page header, before the
 main body text begins.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
+                                    <property name="margin-start">6</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
@@ -10894,18 +10901,6 @@ derived)</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
-                                    <property name="height-request">35</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes"> </property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
                                     <property name="height-request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -10917,16 +10912,10 @@ derived)</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="height-request">35</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes"> </property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -26206,23 +26195,7 @@ cover using the online Canva.com tool (link provided).</property>
                           <packing>
                             <property name="left-attach">2</property>
                             <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLinkButton" id="lb_canvaCoverMaker">
-                            <property name="label" translatable="yes">Create book cover...</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="focus-on-click">False</property>
-                            <property name="receives-default">True</property>
-                            <property name="halign">start</property>
-                            <property name="valign">end</property>
-                            <property name="relief">none</property>
-                            <property name="uri">https://www.canva.com/design/play?category=tACZChfZug8&amp;locale=en</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">0</property>
+                            <property name="width">2</property>
                           </packing>
                         </child>
                       </object>

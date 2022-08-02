@@ -1006,7 +1006,7 @@ class GtkViewModel(ViewModel):
         adv = (ui >= 6)
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
-                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2",]:
+                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -1016,7 +1016,8 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        self.builder.get_object("lb_omitPics").set_visible(adv)
+        self.builder.get_object("lb_omitPics").set_visible(not newval and adv)
+        self.checkUpdates()
 
     def addCR(self, name, index):
         if "|" in name:
@@ -3964,10 +3965,7 @@ class GtkViewModel(ViewModel):
             os.system("xdg-open \"\" {}".format(url))
 
     def onUpdateButtonClicked(self, btn):
-        if self.noInt is None or self.noInt:
-            self.deniedInternet()
-        else:
-            self.openURL("https://software.sil.org/ptxprint/download")
+        self.openURL("https://software.sil.org/ptxprint/download")
 
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
