@@ -115,7 +115,7 @@ fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule
 tb_Font lb_Font
 fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch 
 tb_Help lb_Help
-fr_Help l_working_dir lb_working_dir btn_about
+fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_hideStatusLine
 """.split()
@@ -157,16 +157,15 @@ fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrrigh
 fr_Footer l_ftrcenter ecb_ftrcenter
 tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
-rule_help l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra
+l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra btn_deleteTempFiles btn_about
 """.split()
 
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar",
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR")
-                  # "lb_extXrefs", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -189,10 +188,6 @@ _showActiveTabs = {
 
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # Order is important, as the 1st object can be told to "grab_focus"
-    # "r_book": {
-        # "r_book_single":       ["ecb_book", "l_chapfrom", "t_chapfrom", "l_chapto", "t_chapto"],
-        # "r_book_multiple":     ["btn_chooseBooks", "ecb_booklist"],
-        # "r_book_module":       ["btn_chooseBibleModule", "lb_bibleModule"]},
 _sensitivities = {
     "r_decorator": {
         "r_decorator_file":    ["btn_selectVerseDecorator", "lb_inclVerseDecorator", "lb_style_v",
@@ -376,19 +371,19 @@ _olst = ["fr_SavedConfigSettings", "tb_Layout", "tb_Font", "tb_Body", "tb_NotesR
          "tb_Advanced", "tb_Logging", "tb_TabsBorders", "tb_Diglot", "tb_StyleEditor", "tb_ViewerEditor", "tb_Help"]
 
 _dlgtriggers = {
-    "dlg_multiBookSelect": "onChooseBooksClicked",
-    "dlg_about": "onAboutClicked",
-    "dlg_password": "onLockUnlockSavedConfig",
-    "dlg_generatePL": "onGeneratePicListClicked",
-    "dlg_generateFRT": "onGenerateClicked",
-    "dlg_fontChooser": "getFontNameFace",
-    "dlg_features": "onFontFeaturesClicked",
+    "dlg_multiBookSelect":  "onChooseBooksClicked",
+    "dlg_about":            "onAboutClicked",
+    "dlg_password":         "onLockUnlockSavedConfig",
+    "dlg_generatePL":       "onGeneratePicListClicked",
+    "dlg_generateFRT":      "onGenerateClicked",
+    "dlg_fontChooser":      "getFontNameFace",
+    "dlg_features":         "onFontFeaturesClicked",
     "dlg_multProjSelector": "onChooseTargetProjectsClicked",
-    "dlg_gridsGuides": "adjustGuideGrid",
-    "dlg_DBLbundle": "onDBLbundleClicked",
-    "dlg_overlayCredit": "onOverlayCreditClicked",
-    "dlg_strongsGenerate": "onGenerateStrongsClicked",
-    "dlg_borders": "onSBborderClicked"
+    "dlg_gridsGuides":      "adjustGuideGrid",
+    "dlg_DBLbundle":        "onDBLbundleClicked",
+    "dlg_overlayCredit":    "onOverlayCreditClicked",
+    "dlg_strongsGenerate":  "onGenerateStrongsClicked",
+    "dlg_borders":          "onSBborderClicked"
 }
 
 def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
@@ -1009,14 +1004,14 @@ class GtkViewModel(ViewModel):
         else:
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
-        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible",  # "lb_omitPics", 
+        for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible",  "lb_omitPics", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
-                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker"]:
+                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "lb_canvaCoverMaker", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2",]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
         self.userconfig.set("init", "nointernet", "true" if newval else "false")
-        self.styleEditor.editMarker()
+        # self.styleEditor.editMarker()  # Not sure WHY this was here. MH: Any ideas?
         # Show Hide specific Help items
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
@@ -1270,7 +1265,7 @@ class GtkViewModel(ViewModel):
     def onBookScopeClicked(self, btn):
         self.bookrefs = None
 
-    def onBookListChanged(self, ecb_booklist): #, foo): # called on "focus-out-event"
+    def onBookListChanged(self, ecb_booklist): # called on "focus-out-event"
         if not self.initialised:
             return
         if self.booklistKeypressed:
@@ -1349,7 +1344,7 @@ class GtkViewModel(ViewModel):
         if cfg == 'Default':
             self.resetToInitValues()
             self.onFontChanged(None)
-            # Right now this 'reset' (only) re-initializes the UI settings, and removed the ptxprint.sty file
+            # Right now this 'reset' (only) re-initializes the UI settings, and removes the ptxprint.sty file
             # We could provide a dialog with options about what else to delete (piclists, adjlists, etc.)
             sec = _("And the ptxprint.sty stylesheet has been deleted.")
             try:
@@ -2155,7 +2150,15 @@ class GtkViewModel(ViewModel):
             self.picinfos.clear(self)
             self.picListView.clear()
         self.onPicRescan(btn)
-
+        self.picPreviewShowHide(btn.get_active())
+        
+    def picPreviewShowHide(self, show=True):
+        for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
+            self.builder.get_object(w).set_visible(show)
+        # if show and self.picListView is not None:
+            # self.mw.resize(830, 594)
+            # self.picListView.onResized()
+            
     def onUseCustomFolderclicked(self, btn):
         status = self.sensiVisible("c_useCustomFolder")
         if not status:

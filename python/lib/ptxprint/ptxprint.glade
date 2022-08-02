@@ -1570,7 +1570,7 @@ the name of an existing Project.</property>
 the Digital Bible Library website which you may
 download and use in a publication.</property>
                     <property name="halign">center</property>
-                    <property name="valign">center</property>
+                    <property name="valign">end</property>
                     <property name="relief">none</property>
                     <property name="uri">https://app.thedigitalbiblelibrary.org/entries/open_access_entries?type=text</property>
                   </object>
@@ -1632,7 +1632,7 @@ Online Repository</property>
 the Open.Bible website which you may
 download and use in a publication.</property>
                     <property name="halign">center</property>
-                    <property name="valign">center</property>
+                    <property name="valign">start</property>
                     <property name="relief">none</property>
                     <property name="uri">https://open.bible/resources/</property>
                   </object>
@@ -8071,7 +8071,7 @@ unbalanced lines on the page.</property>
         <col id="1">rtl</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Top-to-Bottom</col>
+        <col id="0" translatable="yes">Top-to-Bottom (and Left-to-Right)</col>
         <col id="1">ttb</col>
       </row>
     </data>
@@ -11191,6 +11191,7 @@ text will appear in black.</property>
                                         <property name="valign">start</property>
                                         <property name="margin-top">6</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="toggled" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
@@ -11328,6 +11329,7 @@ to enter hard-to-type characters.</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
                                     <property name="margin-bottom">3</property>
+                                    <property name="hexpand">False</property>
                                     <property name="width-chars">20</property>
                                   </object>
                                   <packing>
@@ -11829,14 +11831,11 @@ Direction:</property>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_textDirection">
                                         <property name="name">Text direction (Right-to-left RTL etc)</property>
-                                        <property name="width-request">140</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">Select the direction for the text to flow. 
 Note that the option for "Top to Bottom"
 lays out the vertical lines left to right.</property>
-                                        <property name="halign">start</property>
-                                        <property name="hexpand">False</property>
                                         <property name="model">ls_textDirection</property>
                                         <property name="active">0</property>
                                         <property name="id-column">1</property>
@@ -11846,6 +11845,7 @@ lays out the vertical lines left to right.</property>
                                       <packing>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">0</property>
+                                        <property name="width">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -11865,7 +11865,7 @@ Script:</property>
                                     <child>
                                       <object class="GtkComboBox" id="fcb_script">
                                         <property name="name">Text script</property>
-                                        <property name="width-request">200</property>
+                                        <property name="width-request">230</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">PTXprint provides additional typesetting 
@@ -11899,7 +11899,6 @@ In most cases leave this setting as "Default".</property>
                                         <property name="tooltip-text" translatable="yes">A small number of complex scripts (such as
 Burmese &amp; Indic) have additional options
 which can be set individually.</property>
-                                        <property name="halign">start</property>
                                         <signal name="clicked" handler="onScrSettingsClicked" swapped="no"/>
                                       </object>
                                       <packing>
@@ -11937,6 +11936,7 @@ Note that Graphite fonts can also have line breaking
 rules which can be enabled by using the gr locale.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
+                                        <property name="xalign">1</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                                       </object>
@@ -11948,7 +11948,7 @@ rules which can be enabled by using the gr locale.</property>
                                     <child>
                                       <object class="GtkEntry" id="t_linebreaklocale">
                                         <property name="name">Set Line Break Locale</property>
-                                        <property name="width-request">65</property>
+                                        <property name="width-request">50</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">ja = Japanese
@@ -11966,28 +11966,6 @@ gr = Graphite</property>
                                       <packing>
                                         <property name="left-attach">2</property>
                                         <property name="top-attach">3</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel">
-                                        <property name="can-focus">False</property>
-                                        <property name="no-show-all">True</property>
-                                        <property name="tooltip-text" translatable="yes">To change the script for digits (numbers)
-you must be in Full View mode to ensure
-the setting is visible, and then use the Font
-selection tool. The option to use another
-script for digits appears at the end of the
-Font Selection dialog. </property>
-                                        <property name="label" translatable="yes">Digit Script
-Settings?</property>
-                                        <property name="justify">center</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#616135358383"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -18337,7 +18315,7 @@ settings will remain unchanged.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkBox" id="bx_showImage">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">center</property>
@@ -18345,9 +18323,6 @@ settings will remain unchanged.</property>
                                     <property name="margin-left">6</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-top">6</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
                                     <child>
                                       <object class="GtkRadioButton" id="r_image_preview">
                                         <property name="label" translatable="yes">Image</property>
@@ -18367,7 +18342,7 @@ being located in the specified folder(s).</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">1</property>
+                                        <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -18390,7 +18365,7 @@ odd/right-hand page of a spread.</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">False</property>
-                                        <property name="position">2</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -18419,7 +18394,7 @@ odd/right-hand page of a spread.</property>
                             <property name="can-focus">False</property>
                             <child>
                               <object class="GtkNotebook" id="nbk_PicList">
-                                <property name="width-request">615</property>
+                                <property name="width-request">606</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="halign">start</property>
@@ -18431,39 +18406,20 @@ odd/right-hand page of a spread.</property>
                                   <object class="GtkBox" id="tb_settings">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="valign">start</property>
+                                    <property name="vexpand">True</property>
                                     <property name="orientation">vertical</property>
-                                    <child>
-                                      <object class="GtkLabel" id="l_globalPicSettings">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The Settings tab affects all the pictures. Specific
-parameters for individual pictures can be changed
-on the Details, Checklist and Credit Overlay tabs.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">start</property>
-                                        <property name="margin-start">6</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="label" translatable="yes">Global Picture Parameters for ALL Pictures in this Configuration</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#68689797c9c9"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
+                                    <property name="baseline-position">top</property>
                                     <child>
                                       <object class="GtkFrame" id="fr_inclPictures">
-                                        <property name="width-request">560</property>
+                                        <property name="width-request">550</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="double-buffered">False</property>
                                         <property name="valign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
-                                        <property name="margin-top">6</property>
+                                        <property name="margin-top">12</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="label-xalign">0.019999999552965164</property>
                                         <child>
@@ -18473,7 +18429,7 @@ on the Details, Checklist and Credit Overlay tabs.</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
                                             <property name="valign">start</property>
-                                            <property name="margin-start">4</property>
+                                            <property name="margin-start">6</property>
                                             <property name="margin-end">4</property>
                                             <property name="row-spacing">3</property>
                                             <property name="column-spacing">12</property>
@@ -18563,6 +18519,7 @@ the image quality will be as good as possible.</property>
                                               <object class="GtkButton" id="btn_selectFigureFolder">
                                                 <property name="label" translatable="yes">Select Folder...</property>
                                                 <property name="name">Select the folder which contains pictures</property>
+                                                <property name="width-request">130</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
@@ -18593,6 +18550,7 @@ they will be listed as a tooltip along with the number
 missing (right).</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="xalign">0</property>
                                                 <property name="active">True</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
@@ -18651,6 +18609,7 @@ or
                                             <child>
                                               <object class="GtkEntry" id="t_imageTypeOrder">
                                                 <property name="name">Pictures: Preferred image types</property>
+                                                <property name="width-request">130</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="tooltip-text" translatable="yes">If multiple versions of an image are located
@@ -18702,8 +18661,9 @@ specified directly (and NOT look in any other folders)
 then select this option. This should speed up searches
 for images, but may result in some images not being
 found at all.</property>
-                                                <property name="halign">end</property>
+                                                <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                               </object>
@@ -18743,6 +18703,7 @@ images, not just those with lines.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin-top">10</property>
+                                                <property name="xalign">0</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
@@ -18799,6 +18760,7 @@ any illustrations that do not have the 'p'
 attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="active">True</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
@@ -18849,6 +18811,7 @@ captions from being displayed below
 the picture, then check this option.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
+                                                    <property name="xalign">0</property>
                                                     <property name="draw-indicator">True</property>
                                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
@@ -18871,6 +18834,7 @@ it is not possible to just have the
 references without the captions.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
+                                                    <property name="margin-start">25</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
                                                   <packing>
@@ -18887,9 +18851,10 @@ references without the captions.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkSeparator">
+                                              <object class="GtkSeparator" id="rule_pictures">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
+                                                <property name="halign">center</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">2</property>
@@ -18917,6 +18882,7 @@ magic code within the Colophon (see
 the Header+Footer tab for details).
 </property>
                                             <property name="valign">center</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                             <signal name="clicked" handler="onUseIllustrationsClicked" swapped="no"/>
@@ -18926,8 +18892,8 @@ the Header+Footer tab for details).
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
-                                        <property name="fill">False</property>
-                                        <property name="position">1</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -18956,7 +18922,7 @@ the Header+Footer tab for details).
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Overview of the Pictures used in the publication.</property>
-                                    <property name="label" translatable="yes">Settings</property>
+                                    <property name="label" translatable="yes">Global Options</property>
                                   </object>
                                   <packing>
                                     <property name="tab-fill">False</property>
@@ -20698,9 +20664,6 @@ in this publication, as well as other contexts.</property>
                                 <property name="vexpand">False</property>
                                 <property name="orientation">vertical</property>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
                                   <object class="GtkFrame" id="fr_picPreview">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -20811,7 +20774,7 @@ to copyrights.</property>
                             <property name="margin-top">4</property>
                             <property name="margin-bottom">8</property>
                             <property name="hexpand">True</property>
-                            <property name="row-spacing">8</property>
+                            <property name="row-spacing">10</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkScale" id="s_diglotPriFraction">
@@ -20843,9 +20806,10 @@ the proportion here.</property>
                                 <property name="tooltip-text" translatable="yes">If you need the column widths to be different
 for the primary and secondary texts, then adjust
 the proportion here.</property>
+                                <property name="halign">end</property>
                                 <property name="label" translatable="yes">Percentage of Page Width to 
 be Used by Primary (Left) Text</property>
-                                <property name="justify">right</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -20875,7 +20839,7 @@ in the right-hand (or outer) column.</property>
                                 <property name="halign">end</property>
                                 <property name="label" translatable="yes">Use Saved Configuration
 (from Secondary Project):</property>
-                                <property name="justify">right</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -20894,6 +20858,7 @@ configuration to retrieve those settings.
 (Leaving this blank will use the default
 settings for the project)</property>
                                 <property name="halign">start</property>
+                                <property name="margin-top">6</property>
                                 <property name="active">0</property>
                                 <property name="active-id">0</property>
                                 <items>
@@ -21017,9 +20982,10 @@ include in the publication.
 
 Note that this control remains
 inactive until Diglot is enabled.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="label" translatable="yes">When Creating a PicList for 
 a Diglot use Pictures from:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -21079,13 +21045,15 @@ merging (or aligning) texts which
 have less structure in common.
 It only tries to align at places where 
 paragraphs start in the same verse.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="margin-end">6</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">6</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -21095,6 +21063,7 @@ paragraphs start in the same verse.</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
                                 <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
                                 <property name="margin-bottom">3</property>
                                 <property name="label-xalign">0.10000000149011612</property>
                                 <child>
@@ -21107,8 +21076,7 @@ paragraphs start in the same verse.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">12</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-top">8</property>
                                         <property name="orientation">vertical</property>
                                         <property name="spacing">6</property>
                                         <child>
@@ -21179,7 +21147,7 @@ leave this option checked ON.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
-                                <property name="top-attach">4</property>
+                                <property name="top-attach">3</property>
                                 <property name="width">2</property>
                                 <property name="height">3</property>
                               </packing>
@@ -21276,9 +21244,6 @@ option does not apply at all.</property>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">0</property>
                               </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
                             </child>
                             <child>
                               <placeholder/>
@@ -21580,15 +21545,14 @@ Tab Positions:</property>
                                 <property name="no-show-all">True</property>
                                 <property name="halign">end</property>
                                 <property name="valign">end</property>
-                                <property name="margin-start">6</property>
                                 <property name="label" translatable="yes">&lt;span background="black" foreground="white" font-weight="bold"&gt;  Horizontal  &lt;/span&gt;</property>
                                 <property name="use-markup">True</property>
                                 <property name="justify">right</property>
                               </object>
                               <packing>
-                                <property name="left-attach">6</property>
+                                <property name="left-attach">5</property>
                                 <property name="top-attach">1</property>
-                                <property name="width">5</property>
+                                <property name="width">6</property>
                               </packing>
                             </child>
                             <child>
@@ -21678,10 +21642,10 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width-request">43</property>
+                                <property name="width-request">27</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="hexpand">True</property>
+                                <property name="hexpand">False</property>
                                 <property name="use-markup">True</property>
                               </object>
                               <packing>
@@ -21710,6 +21674,8 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <object class="GtkSeparator">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="margin-start">13</property>
+                                <property name="margin-end">15</property>
                                 <property name="orientation">vertical</property>
                               </object>
                               <packing>
@@ -21835,10 +21801,10 @@ default values for the Grouped Tabs.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width-request">60</property>
+                                <property name="width-request">48</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="hexpand">True</property>
+                                <property name="halign">start</property>
                                 <property name="label" translatable="yes"> </property>
                               </object>
                               <packing>
@@ -26185,8 +26151,9 @@ output and tweak adjust lists.</property>
                         <property name="column-spacing">12</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclFrontMatter">
-                            <property name="label" translatable="yes">Import Front Matter PDF(s)</property>
+                            <property name="label" translatable="yes">Front Matter PDF(s)</property>
                             <property name="name">Enable import of front matter PDF(s)</property>
+                            <property name="width-request">143</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26200,6 +26167,7 @@ cover using the online Canva.com tool (link provided).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="margin-start">6</property>
+                            <property name="xalign">0</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
@@ -26273,8 +26241,9 @@ cover using the online Canva.com tool (link provided).</property>
                         <property name="spacing">2</property>
                         <child>
                           <object class="GtkCheckButton" id="c_autoToC">
-                            <property name="label" translatable="yes">Table of Contents       Title:</property>
+                            <property name="label" translatable="yes">Table of Contents   Title:</property>
                             <property name="name">Enable table of contents</property>
+                            <property name="width-request">153</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26292,6 +26261,7 @@ be worth leaving this option OFF until the
 final run.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
+                            <property name="xalign">0</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleFocusClicked" swapped="no"/>
                             <signal name="clicked" handler="onTocClicked" swapped="no"/>
@@ -26509,16 +26479,18 @@ the style of leader you wish to apply.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="margin-start">12</property>
-                        <property name="spacing">18</property>
+                        <property name="spacing">6</property>
                         <child>
                           <object class="GtkCheckButton" id="c_frontmatter">
-                            <property name="label" translatable="yes">Front Matter</property>
+                            <property name="label" translatable="yes">Local Front Matter</property>
                             <property name="name">Enable (local) front matter</property>
+                            <property name="width-request">149</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
+                            <property name="xalign">0</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
@@ -26530,8 +26502,7 @@ the style of leader you wish to apply.</property>
                         </child>
                         <child>
                           <object class="GtkButton" id="btn_editFrontMatter">
-                            <property name="label" translatable="yes">View/Edit
-Front Matter</property>
+                            <property name="label" translatable="yes">Edit...</property>
                             <property name="name">View (or edit) front matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
@@ -26560,6 +26531,7 @@ on a new page.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="margin-left">6</property>
+                            <property name="margin-start">133</property>
                             <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                           </object>
@@ -26583,9 +26555,11 @@ automatically insert a pagebreak if needed to make
 this happen. If you wish to override this behavior,
 then check this option (to NOT insert a blank page
 after any front matter material).</property>
-                            <property name="halign">start</property>
+                            <property name="halign">end</property>
                             <property name="valign">center</property>
                             <property name="margin-left">6</property>
+                            <property name="margin-start">45</property>
+                            <property name="margin-end">6</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
@@ -26605,7 +26579,8 @@ after any front matter material).</property>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-top">6</property>
+                        <property name="valign">start</property>
+                        <property name="margin-top">3</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.029999999329447746</property>
                         <child>
@@ -26613,11 +26588,11 @@ after any front matter material).</property>
                           <object class="GtkGrid" id="gr_frontmatter">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="valign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
-                            <property name="vexpand">True</property>
                             <property name="row-spacing">6</property>
                             <property name="column-spacing">6</property>
                             <child>
@@ -26631,6 +26606,7 @@ after any front matter material).</property>
 Front Matter for any \zvar|variables\*
 and add any that are missing to this
 table of variable names and values.</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="rescanFRTvarsClicked" swapped="no"/>
                               </object>
@@ -26728,11 +26704,13 @@ table of variable names and values.</property>
                               <object class="GtkButton" id="b_delzvar">
                                 <property name="label" translatable="yes">Del</property>
                                 <property name="name">Delete a peripheral variable</property>
+                                <property name="width-request">60</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Delete the currently
 selected variable(s).</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="onzvarDel" swapped="no"/>
                               </object>
@@ -26745,10 +26723,12 @@ selected variable(s).</property>
                               <object class="GtkButton" id="b_addzvar">
                                 <property name="label" translatable="yes">Add</property>
                                 <property name="name">Add a peripheral variable</property>
+                                <property name="width-request">60</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Add a new variable.</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <signal name="clicked" handler="onzvarAdd" swapped="no"/>
                               </object>
@@ -26759,6 +26739,7 @@ selected variable(s).</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
+                                <property name="width-request">153</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                               </object>
@@ -26790,15 +26771,15 @@ as they might vary from one publication to another.</property>
                         </child>
                       </object>
                       <packing>
-                        <property name="expand">True</property>
-                        <property name="fill">True</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="bx_colophon">
                         <property name="width-request">675</property>
-                        <property name="height-request">140</property>
+                        <property name="height-request">145</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="valign">start</property>
@@ -26918,6 +26899,7 @@ Illustration credits tag.</property>
                                 <property name="label" translatable="yes">Force Page Break 
 Before Colophon</property>
                                 <property name="name">Force page break before colophon</property>
+                                <property name="width-request">122</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
@@ -26929,7 +26911,8 @@ bottom of a new page at the end of the publication.
 In Diglot publications, the colophon always appears
 on its own page - regardless of this setting. </property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">6</property>
+                                <property name="margin-start">37</property>
+                                <property name="xalign">0</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
@@ -26968,7 +26951,7 @@ on subsequent runs.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">4</property>
                       </packing>
                     </child>
@@ -26984,8 +26967,9 @@ on subsequent runs.</property>
                         <property name="column-spacing">12</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclBackMatter">
-                            <property name="label" translatable="yes">Import Back Matter PDF(s)</property>
+                            <property name="label" translatable="yes">Back Matter PDF(s)</property>
                             <property name="name">Enable import of back matter PDF(s)</property>
+                            <property name="width-request">143</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -26995,6 +26979,7 @@ file is selected, then these will appear in alphabetical order.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="margin-start">6</property>
+                            <property name="xalign">0</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
@@ -27037,7 +27022,7 @@ file is selected, then these will appear in alphabetical order.</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">False</property>
+                        <property name="fill">True</property>
                         <property name="position">5</property>
                       </packing>
                     </child>
@@ -27050,8 +27035,9 @@ file is selected, then these will appear in alphabetical order.</property>
                   <object class="GtkLabel" id="lb_Peripherals">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Define what comes before and
-after the scripture text.</property>
+                    <property name="tooltip-text" translatable="yes">Define what material should be
+placed before and/or after the
+main scripture pages.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Peripherals</property>
                   </object>
@@ -27484,6 +27470,7 @@ A4-sized sheet of paper.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
+                                    <property name="width-request">110</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">A signature is a collection of pages folded
@@ -27772,6 +27759,7 @@ out what might have changed.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel">
+                                    <property name="width-request">110</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Select a particular PDF file to be compared 
@@ -27784,6 +27772,7 @@ default to _1).</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Compare With 
 a Previous PDF:</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -27889,12 +27878,12 @@ runs.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
-                            <property name="margin-start">12</property>
+                            <property name="margin-start">6</property>
                             <property name="margin-end">12</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <property name="row-spacing">6</property>
-                            <property name="column-spacing">6</property>
+                            <property name="column-spacing">3</property>
                             <child>
                               <object class="GtkComboBox" id="fcb_outputFormat">
                                 <property name="name">PDF output format</property>
@@ -27943,7 +27932,7 @@ Archive (largest size, for keeping long-term)
 Note: All comply with archive standard PDF/A-1b.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">50</property>
+                                <property name="margin-start">30</property>
                                 <property name="label" translatable="yes">PDF Output Format:</property>
                               </object>
                               <packing>
@@ -27991,6 +27980,7 @@ previous versions can be kept.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
+                                <property name="width-request">110</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">By keeping previous versions of the
@@ -28006,6 +27996,7 @@ later date.</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">Number of Previous
 PDFs to be Kept:</property>
+                                <property name="xalign">1</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
@@ -28174,6 +28165,9 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                   <object class="GtkLabel" id="lb_Finishing">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Options to control pagination,
+PDF output format and compare
+output with a previous PDF.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Finishing</property>
                   </object>
@@ -28212,7 +28206,6 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">3</property>
                                 <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_prjdir">
@@ -28260,8 +28253,9 @@ in this location are TEMPORARY and
 can be deleted. None of these files are
 included in Paratext's Send/Recv data.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Output PDF Location (includes
-folders with temporary files):</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="label" translatable="yes">Output PDF Location:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28285,8 +28279,7 @@ is highly recommended and is a small download. You
 will need to set SumatraPDf as the default PDF viewer
 for best results.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Using a good
-PDF Viewer:</property>
+                                    <property name="label" translatable="yes">Recommended PDF Viewer:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28311,7 +28304,7 @@ PDF Viewer:</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">8</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28323,11 +28316,9 @@ the User-Interface. The PDFs are produced by recently
 enhanced XeTeX macros with a long and reliable history.
 This is a work in progress, so when you come across
 bugs, annoyances or can't make it work right, please file
-an issue using this link here. The developers work on this
-in their spare time, so please be patient for a response.</property>
+an issue using this link.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">How to Report Bugs, 
-Annoyances or Other Issues:</property>
+                                    <property name="label" translatable="yes">Report a Bug:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28352,7 +28343,7 @@ Annoyances or Other Issues:</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">10</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28384,8 +28375,7 @@ for new updates at the Home Page.
 Please ensure you are using the latest
 version before reporting an issue.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Home Page for Documentation, 
-Videos, FAQs and Latest Updates:</property>
+                                    <property name="label" translatable="yes">Home Page:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28399,13 +28389,14 @@ Videos, FAQs and Latest Updates:</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="opacity">0.80</property>
+                                    <property name="margin-end">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="hexpand">True</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">4</property>
-                                    <property name="width">6</property>
+                                    <property name="width">7</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28416,8 +28407,7 @@ Videos, FAQs and Latest Updates:</property>
 work and how to customize the stylesheets even
 further, this FAQ document is worth visiting.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Technical FAQs Related 
-to the PTX2PDF Macros:</property>
+                                    <property name="label" translatable="yes">Technical FAQs for PTX2PDF Macros:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28442,7 +28432,7 @@ to the PTX2PDF Macros:</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">9</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28469,9 +28459,9 @@ to the PTX2PDF Macros:</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Frequently Asked Questions (FAQs) from
-general users and common solutions.</property>
+users along with suggested solutions.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">PTXprint FAQ page:</property>
+                                    <property name="label" translatable="yes">FAQ:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28490,7 +28480,7 @@ general users and common solutions.</property>
 * MIT License.txt</property>
                                     <property name="halign">end</property>
                                     <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
+                                    <property name="margin-bottom">9</property>
                                     <property name="label" translatable="yes">PTXprint Docs Path:</property>
                                     <property name="justify">right</property>
                                   </object>
@@ -28506,17 +28496,14 @@ general users and common solutions.</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">In order to keep the size of the file to a minimum
 you are encouraged to turn off features (pictures?)
-that don't affect the issue being reported. To transfer
-the .ZIP file to the developers, either upload and send
-a link, OR email it to ptxprint_support@sil.org </property>
+that don't affect the issue being reported.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">start</property>
                                     <property name="vexpand">True</property>
-                                    <property name="label" translatable="yes">The easiest way for the developers to replicate
-an issue is for you to Create an Archive with
-all the required files and then send it to them:</property>
-                                    <property name="justify">right</property>
+                                    <property name="label" translatable="yes">For technical support, create an archive
+and send it to ptxprint_support@sil.org</property>
                                     <property name="wrap">True</property>
+                                    <property name="xalign">1</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -28572,10 +28559,10 @@ ptxprint_support@sil.org</property>
                                   <object class="GtkLabel" id="l_community">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Frequently Asked Questions (FAQs) from
-general users and common solutions.</property>
+                                    <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
+interact with other PTXprint users and the developers.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">PTXprint User Community:</property>
+                                    <property name="label" translatable="yes">User Community:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28602,7 +28589,7 @@ general users and common solutions.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">11</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28626,7 +28613,7 @@ by deleting unneeded files.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">11</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28646,7 +28633,7 @@ by deleting unneeded files.</property>
                                   <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
-                                    <property name="width">3</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28666,7 +28653,7 @@ by deleting unneeded files.</property>
                                   <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">4</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -28706,35 +28693,19 @@ by deleting unneeded files.</property>
                                   <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">3</property>
-                                    <property name="width">4</property>
+                                    <property name="width">5</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="hexpand">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">11</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>

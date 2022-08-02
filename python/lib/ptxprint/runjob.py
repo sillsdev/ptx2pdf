@@ -950,10 +950,10 @@ class RunJob:
         if len(missingPics):
             print(missingPics)
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
-            self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
-            self.printer.set("l_missingPictureString", "Missing Pictures: {}".format("\n".join(missingPicList)))
+            self.printer.set("l_missingPictureCount", _("({} Missing)").format(len(set(missingPics))))
+            self.printer.set("l_missingPictureString", _("Missing Pictures: {}").format("\n".join(missingPicList)))
         else:
-            self.printer.set("l_missingPictureCount", "(0 Missing)")
+            self.printer.set("l_missingPictureCount", _("(0 Missing)"))
             self.printer.set("l_missingPictureString", "")
         self.printer.incrementProgress()
         logger.debug("Illustrations gathered")
