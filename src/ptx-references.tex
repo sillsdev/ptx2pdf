@@ -72,10 +72,9 @@
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
-\edef\n@thing{}
 \def\r@ngerefs#1#2{%
- \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
- \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
+ \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
+ \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
   \ifOmitBookRef\else\@book\ \fi
@@ -169,28 +168,19 @@
       \the\noVoddhead
       \trace{h}{using noVoddhead}% 
     \else
-      \ifDoubleSided \trace{h}{using noVevenhead}\the\noVevenhead \else \trace{h}{using noVoddhead}\the\noVoddhead\fi\fi
+      \ifDoubleSided \trace{h}{using noVevenhead}\the\noVevenhead \else \trace{h}{single sided: using noVoddhead}\the\noVoddhead\fi
+    \fi
   %\global\rhr@lefalse
  \else
-%  \ifendbooknoeject
-%    \trace{h}{endbooknoeject, so treating as normal page}
-%    \ifodd\pageno
-%      \the\oddhead
-%    \else
-%      \ifDoubleSided \the\evenhead \else \the\oddhead \fi
-%    \fi
-%  \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
     \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
-      \the\titlehead \global\rhr@lefalse
-    \else\ifx\t@st\n@thing
-      \the\titlehead \global\rhr@lefalse
+      \ifodd\pageno\the\titleoddhead\else\the\titleevenhead\fi
+      \global\rhr@lefalse
+    \else
+      \ifodd\pageno
+	\the\oddhead
       \else
-        \ifodd\pageno
-          \the\oddhead
-        \else
-          \ifDoubleSided \the\evenhead \else \the\oddhead\fi
-        \fi
+	\ifDoubleSided \the\evenhead \else \the\oddhead\fi
       \fi
     \fi
 %  \fi
@@ -199,7 +189,8 @@
 % default headers are made of three components, placed left, center and right
 \newtoks\oddhead
 \newtoks\evenhead
-\newtoks\titlehead
+\newtoks\titleoddhead
+\newtoks\titleevenhead
 \newtoks\noVoddhead
 \newtoks\noVevenhead
 \newtoks\oddfoot
@@ -208,19 +199,40 @@
 \newtoks\titleoddfoot
 \newtoks\noVoddfoot
 \newtoks\noVevenfoot
+\def\RF@even@set{%
+	\ifx\RFtitleevenleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleevenleft\fi
+	\ifx\RFtitleevenright\undefined\let\RF@right\RFtitleright\else\let\RF@center\RFtitleevenright\fi
+	\ifx\RFtitleevencenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleevencenter\fi
+}
+\def\RF@odd@set{%
+	\ifx\RFtitleoddleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleoddleft\fi
+	\ifx\RFtitleoddright\undefined\let\RF@right\RFtitleright\else\let\RF@right\RFtitleoddright\fi
+	\ifx\RFtitleoddcenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleoddcenter\fi
+}
+\def\RH@even@set{%
+	\ifx\RHtitleevenleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleevenleft\fi
+	\ifx\RHtitleevenright\undefined\let\RH@right\RHtitleright\else\let\RH@center\RHtitleevenright\fi
+	\ifx\RHtitleevencenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleevencenter\fi
+}
+\def\RH@odd@set{%
+	\ifx\RHtitleoddleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleoddleft\fi
+	\ifx\RHtitleoddright\undefined\let\RH@right\RHtitleright\else\let\RH@right\RHtitleoddright\fi
+	\ifx\RHtitleoddcenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleoddcenter\fi
+}
 
 \def\defineheads{
     \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
     \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
     \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
     \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
     \oddfoot={\hbox to \columnshift{}\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\hbox to \columnshift{}\llap{\RFoddright}}
     \evenfoot={\hbox to \columnshift{}\rlap{\RFevenleft}\hfil\RFevencenter\hfil\hbox to \columnshift{}\llap{\RFevenright}}
     \noVoddfoot={\hbox to \columnshift{}\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RFnoVoddright}}
     \noVevenfoot={\hbox to \columnshift{}\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\hbox to \columnshift{}\llap{\RFnoVevenright}}
-    \titleevenfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleevencenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
-    \titleoddfoot={\hbox to \columnshift{}\rlap{\RFtitleleft}\hfil\RFtitleoddcenter\hfil\hbox to \columnshift{}\llap{\RFtitleright}}
+    \titleevenfoot={\RF@even@set\hbox to \columnshift{}\rlap{\RF@left}\hfil\RF@center\hfil\hbox to \columnshift{}\llap{\RF@right}}
+    \titleoddfoot={\RF@odd@set\hbox to \columnshift{}\rlap{\RF@left}\hfil\RF@center\hfil\hbox to \columnshift{}\llap{\RF@right}}
+    \titleevenhead={\RH@even@set\hbox to \columnshift{}\rlap{\RH@left}\hfil\RH@center\hfil\hbox to \columnshift{}\llap{\RH@right}}
+    \titleoddhead={\RH@odd@set\hbox to \columnshift{}\rlap{\RH@left}\hfil\RH@center\hfil\hbox to \columnshift{}\llap{\RH@right}}
 }
 
 % \footline is similar except it doesn't have to place a border graphic
