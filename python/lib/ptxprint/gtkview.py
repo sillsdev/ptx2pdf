@@ -1899,8 +1899,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
-        self.builder.get_object("btn_editZvars").set_sensitive(False)
-        self.builder.get_object("btn_removeZeros").set_sensitive(False)
+        self.builder.get_object("btn_editZvars").set_visible(False)
+        self.builder.get_object("btn_removeZeros").set_visible(False)
         self.noUpdate = True
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -1929,7 +1929,7 @@ class GtkViewModel(ViewModel):
                 fpath = None
             if self.get("t_invisiblePassword") == "":
                 genBtn.set_sensitive(True)
-                self.builder.get_object("btn_editZvars").set_sensitive(True)
+                self.builder.get_object("btn_editZvars").set_visible(True)
             else:
                 self.builder.get_object("btn_saveEdits").set_sensitive(False)
 
@@ -1954,7 +1954,7 @@ class GtkViewModel(ViewModel):
             if pgid == "scroll_AdjList":
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
-                    self.builder.get_object("btn_removeZeros").set_sensitive(True)
+                    self.builder.get_object("btn_removeZeros").set_visible(True)
                 else:
                     self.builder.get_object("btn_saveEdits").set_sensitive(False)
             elif pgid == "scroll_FinalSFM":
@@ -2244,7 +2244,21 @@ class GtkViewModel(ViewModel):
             self.styleEditor.selectMarker(mkr)
             mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.wiggleCurrentTabLabel()
 
+    # def hoverOverStyleLink(self, *argv):
+        # t = Thread(target=self.wiggleCurrentTabLabel()).start()
+
+    def wiggleCurrentTabLabel(self):
+        bounce = [5,4,3,2,1,0,1,2,3,2,1,0,1,2,1,0]
+        lb = self.builder.get_object("lb_StyleEditor")
+        t = lb.get_label()
+        for b in bounce:
+            lb.set_label(" "*b+t)
+            Gtk.main_iteration_do(False)
+            time.sleep(0.05)
+            Gtk.main_iteration_do(False)
+        
     def onProcessScriptClicked(self, btn):
         self.colorTabs()
         if not self.sensiVisible("c_processScript"):

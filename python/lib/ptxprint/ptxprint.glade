@@ -1687,7 +1687,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.2.8</property>
+    <property name="version">Version 2.2.7</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
@@ -9618,7 +9618,9 @@ space between lines of text.</property>
                                       <object class="GtkLabel" id="l_pageSize">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
+                                        <property name="tooltip-text" translatable="yes">Type required page width and height,
+     for example:    148mm, 208mm 
+or select from the list of preset values.</property>
                                         <property name="halign">end</property>
                                         <property name="margin-start">2</property>
                                         <property name="label" translatable="yes">Page Size:</property>
@@ -9633,7 +9635,9 @@ space between lines of text.</property>
                                         <property name="name">Page size setting</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">If the required size is not displayed, then just type the required page width and height separated by a comma. For example: 140mm,210mm</property>
+                                        <property name="tooltip-text" translatable="yes">Type required page width and height,
+     for example:    148mm, 208mm 
+or select from the list of preset values.</property>
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
                                         <property name="active-id">0</property>
@@ -17217,7 +17221,7 @@ flicking through pages to find the right chapter.</property>
                                         <property name="orientation">vertical</property>
                                         <child>
                                           <object class="GtkRadioButton" id="r_CVsep_colon">
-                                            <property name="label" translatable="yes">ch:vs</property>
+                                            <property name="label" translatable="yes">Colon (ch:vs)</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -17226,6 +17230,7 @@ chapter &amp; verse numbers
 in the header reference.</property>
                                             <property name="valign">center</property>
                                             <property name="margin-end">6</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_CVsep_period</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -17238,7 +17243,7 @@ in the header reference.</property>
                                         </child>
                                         <child>
                                           <object class="GtkRadioButton" id="r_CVsep_period">
-                                            <property name="label" translatable="yes">ch.vs</property>
+                                            <property name="label" translatable="yes">Period (ch.vs)</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -17247,6 +17252,7 @@ chapter &amp; verse numbers
 in the header reference.</property>
                                             <property name="valign">center</property>
                                             <property name="margin-end">6</property>
+                                            <property name="xalign">0</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_CVsep_colon</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -25649,16 +25655,15 @@ interlinear (&amp; ruby text) output.</property>
                     <property name="vexpand">True</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <!-- n-columns=8 n-rows=1 -->
+                      <!-- n-columns=10 n-rows=1 -->
                       <object class="GtkGrid" id="gr_editableButtons">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">4</property>
                         <property name="margin-bottom">4</property>
-                        <property name="column-spacing">8</property>
+                        <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkButton" id="btn_saveEdits">
                             <property name="label">gtk-save</property>
@@ -25681,7 +25686,7 @@ Shortcut: Ctrl-S</property>
                             <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">7</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -25707,7 +25712,7 @@ Shortcut: F5</property>
                             <accelerator key="F5" signal="activate"/>
                           </object>
                           <packing>
-                            <property name="left-attach">4</property>
+                            <property name="left-attach">8</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -25782,7 +25787,7 @@ Shortcut: Ctrl-G</property>
                             <accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -25790,6 +25795,7 @@ Shortcut: Ctrl-G</property>
                           <object class="GtkButton" id="btn_viewEdit">
                             <property name="label" translatable="yes">View/Edit...</property>
                             <property name="name">View (or edit) file in external editor</property>
+                            <property name="width-request">95</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25820,7 +25826,7 @@ Shortcut: Ctrl-E</property>
                             <accelerator key="e" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left-attach">7</property>
+                            <property name="left-attach">9</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -25828,6 +25834,7 @@ Shortcut: Ctrl-E</property>
                           <object class="GtkButton" id="btn_editZvars">
                             <property name="label" translatable="yes">Edit Variables...</property>
                             <property name="name">Edit peripheral variables</property>
+                            <property name="width-request">115</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25840,7 +25847,7 @@ this button to show that tab.</property>
                             <signal name="clicked" handler="editZvarsClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -25848,6 +25855,7 @@ this button to show that tab.</property>
                           <object class="GtkButton" id="btn_removeZeros">
                             <property name="label" translatable="yes">Remove +0's</property>
                             <property name="name">Remove redundant lines from AdjList</property>
+                            <property name="width-request">115</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25863,6 +25871,63 @@ more clearly where changes are being made.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <signal name="clicked" handler="removeZerosClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">5</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="hover_infoViewEdit">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">Use the following codes to include special text in front matter:
+
+  \nopagenums - turn OFF page numbers
+  \dopagenums - turn ON page number
+  \resetpagenums # - where # is the page number
+(setting # to -1 gives roman numerals i,ii,iii,iv,v,...)
+
+  \pc \zcopyright - copyright statement from the Basic tab
+  \pc \zlicense - license statement from the Basic tab
+  \pc \zimagecopyrights - generated list of images with copyright attribution
+  \pc \zimagecopyrightsfr - as above, but localized (fr = French)
+
+  \zbl|3\* - inserts 3 blank lines
+  \zgap|1.5in\*
+
+To include one or more table of contents:
+  \ip \ztoc|&lt;keyword&gt;\*
+Where &lt;keyword&gt; can be replaced with:
+  main – primary, all-inclusive table of contents
+  pre – any book prior to scripture (FRT, INT)
+  ot – only Old Testament books are listed
+  dc – only Deutero Canonical books are listed
+  nt – only New Testament books are listed
+  post – books that occur after REV (GLO, BAK, TDX, NDX, XXA-G)
+  sorta – alphabetical (main) list sorted by \toc1
+  sortb – alphabetical (main) list sorted by \toc2
+  sortc – alphabetical (main) list sorted by \toc3
+
+In addition to the above-mentioned codes, you may specify
+your own config-specific \zvar|variables\* as place-holders.
+Click on 'Edit Variables...' to assign values to these variables
+on the Peripherals tab. For example:
+  \mt1 \zvar|maintitle\*
+  \mt2 \zvar|subtitle\*</property>
+                            <property name="icon-name">help-about-symbolic</property>
+                            <property name="icon_size">3</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="l_spacer">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="hexpand">True</property>
                           </object>
                           <packing>
                             <property name="left-attach">6</property>
@@ -25896,20 +25961,6 @@ more clearly where changes are being made.</property>
                           <object class="GtkLabel" id="l_FrontMatter">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">You may use the following \zspecialcodes to
-include special text in the front matter:
-
-\zcopyright - copyright statement from the Basic tab
-\zlicense - license statement from the Basic tab
-\zimagecopyrights - generated list of images with copyright attribution
-\zimagecopyrightsfr - as above, but localized (fr = French)
-
-\zbl|3\* - inserts 3 blank lines
-
-In addition to the above-mentioned codes, you may specify
-your own config-specific \zvar|variables\* as place-holders.
-Click on 'Edit Variables...' to assign values to these variables
-on the Peripherals tab.</property>
                             <property name="label" translatable="yes">Front Matter</property>
                           </object>
                           <packing>
@@ -26461,6 +26512,12 @@ the style of leader you wish to apply.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">PTXprint does not directly typeset the FRT
+book from Paratext. Instead, it uses a "local"
+PTXprint-specific copy of Paratext's FRT book 
+which can be enhanced by additional codes
+which are described on the View+Edit tab's
+Information button.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="xalign">0</property>
@@ -28829,8 +28886,8 @@ from XeTeX processing.</property>
                 <property name="track-visited-links">False</property>
                 <property name="xalign">0.5</property>
                 <attributes>
-                  <attribute name="foreground" value="#a4a400000000"/>
-                  <attribute name="background" value="#ffffd4e5c887"/>
+                  <attribute name="foreground" value="#121212121212"/>
+                  <attribute name="background" value="#dd1ff2baff24"/>
                 </attributes>
               </object>
               <packing>
@@ -29014,19 +29071,20 @@ Shortcut: Ctrl-F</property>
             </child>
             <child>
               <object class="GtkCheckButton" id="c_quickRun">
+                <property name="label" translatable="yes">Quick Run</property>
                 <property name="name">Quick run (to speed up process)</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Quick Run - (Ctrl-Q)
-
-Enabling this option will give quicker 
+                <property name="tooltip-text" translatable="yes">Enabling this option will give quicker 
 output, but it may be less refined.
 
 PTXprint needs to rerun the typesetting
 process in order to ensure the Table of 
 Contents &amp; other dynamicly updated
-details are accurate.</property>
+details are accurate.
+
+Shortcut: Ctrl-Q</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <property name="margin-start">3</property>

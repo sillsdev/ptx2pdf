@@ -1122,7 +1122,7 @@ class ViewModel:
         return True
 
     def generateHyphenationFile(self):
-        listlimit = 27836 # 32749
+        listlimit = 65520 # 32749
         prjid = self.get("fcb_project") # self.dict['project/id']
         prjdir = os.path.join(self.settings_dir, self.prjid)
         infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')
@@ -1150,7 +1150,7 @@ class ViewModel:
                         if regex.search(r'[^\p{L}\p{M}\-]', l):
                             z += 1
                         else:
-                            if l[0] != "-":
+                            if l[0] != "-" and len(l) > 5:
                                 hyphenatedWords.append(l)
                     elif "\u2010" not in l:
                         lng = len(l)
