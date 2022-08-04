@@ -4436,6 +4436,10 @@ are using supports these digits too.)</property>
         <col id="0" translatable="yes">\w ...\w* char style</col>
         <col id="1">ww</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">\w keep|as is\w*</col>
+        <col id="1">ai</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="ls_gridOffset">
@@ -8776,11 +8780,13 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkLabel" id="lb_bibleModule">
                                 <property name="visible">True</property>
-                                <property name="sensitive">False</property>
                                 <property name="can-focus">False</property>
                                 <property name="opacity">0.7019607843137254</property>
                                 <property name="halign">start</property>
                                 <property name="ellipsize">middle</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#121212121212"/>
+                                </attributes>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
@@ -9176,7 +9182,7 @@ saved or the configuration to be deleted.
 
 Note that the Default config cannot be
 locked.</property>
-                                    <property name="halign">center</property>
+                                    <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_locked</property>
@@ -9229,7 +9235,6 @@ settings for a similar project.</property>
                                 </child>
                                 <child>
                                   <object class="GtkComboBoxText" id="ecb_savedConfig">
-                                    <property name="name">Name of saved configuration</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Select a previously-saved
@@ -9252,7 +9257,8 @@ of the same Paratext project.</property>
                                     <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="t_savedConfig">
-                                        <property name="can-focus">False</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
                                         <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
 
 Note that only Roman/Latin names
@@ -12361,8 +12367,9 @@ special \w glossary\w* tags. Specify
 how these words should be highlighted
 in the printed output.
 
-If you wish to apply your own custom
-styling to \w then select the last option.</property>
+The final option \w keeps|markup\w* as
+it is without removing any parameters
+such as Strong's numbers.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="model">ls_glossaryMarkupStyle</property>
@@ -28431,8 +28438,8 @@ version before reporting an issue.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_techFAQ">
-                                    <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">For technical FAQs relating to how the TeX macros
 work and how to customize the stylesheets even
 further, this FAQ document is worth visiting.</property>
@@ -28450,10 +28457,10 @@ further, this FAQ document is worth visiting.</property>
                                   <object class="GtkLinkButton" id="lb_techFAQ">
                                     <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
                                     <property name="name">Link to deeper technical help</property>
-                                    <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
                                     <property name="receives-default">True</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
@@ -28656,7 +28663,6 @@ by deleting unneeded files.</property>
                                     <property name="label">&lt;a href="working dir"&gt;working dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
-                                    <property name="max-width-chars">48</property>
                                     <property name="track-visited-links">False</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
@@ -28676,7 +28682,6 @@ by deleting unneeded files.</property>
                                     <property name="label">&lt;a href="prjdir"&gt;prjdir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
-                                    <property name="max-width-chars">48</property>
                                     <property name="track-visited-links">False</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
@@ -28696,7 +28701,6 @@ by deleting unneeded files.</property>
                                     <property name="label">&lt;a href="settings dir"&gt;settings dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
-                                    <property name="max-width-chars">70</property>
                                     <property name="track-visited-links">False</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>
@@ -28716,7 +28720,6 @@ by deleting unneeded files.</property>
                                     <property name="label">&lt;a href="docs dir"&gt;docs dir&lt;/a&gt;</property>
                                     <property name="use-markup">True</property>
                                     <property name="ellipsize">start</property>
-                                    <property name="max-width-chars">48</property>
                                     <property name="track-visited-links">False</property>
                                     <signal name="button-release-event" handler="onOpenFolderClicked" swapped="no"/>
                                   </object>

@@ -1005,8 +1005,9 @@ class GtkViewModel(ViewModel):
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
-                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_techFAQ",  "l_reportBugs",
-                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_techFAQ", "lb_reportBugs", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "btn_about"]:
+                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_reportBugs",
+                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_reportBugs", 
+                  "btn_about"]: #  "l_techFAQ",  "lb_techFAQ",
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -1016,7 +1017,8 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        self.builder.get_object("lb_omitPics").set_visible(not newval and adv)
+        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics"]:
+            self.builder.get_object(w).set_visible(not newval and adv)
         self.checkUpdates()
 
     def addCR(self, name, index):
@@ -1631,10 +1633,10 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         if self.get("t_invisiblePassword") == "":
             status = True
-            lockBtn.set_label(_("Lock"))
+            # lockBtn.set_label(_("Lock"))
         else:
             status = False
-            lockBtn.set_label(_("Unlock"))
+            # lockBtn.set_label(_("Unlock"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
@@ -2246,17 +2248,16 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             self.wiggleCurrentTabLabel()
 
-    # def hoverOverStyleLink(self, *argv):
-        # t = Thread(target=self.wiggleCurrentTabLabel()).start()
+    # def hoverOverStyleLink(self, *argv):  # signal: query_tooltip
+        # self.wiggleCurrentTabLabel()
 
     def wiggleCurrentTabLabel(self):
-        bounce = [5,4,3,2,1,0,1,2,3,2,1,0,1,2,1,0]
         lb = self.builder.get_object("lb_StyleEditor")
         t = lb.get_label()
-        for b in bounce:
+        for b in range(8,-1,-1):
             lb.set_label(" "*b+t)
             Gtk.main_iteration_do(False)
-            time.sleep(0.05)
+            time.sleep(0.08)
             Gtk.main_iteration_do(False)
         
     def onProcessScriptClicked(self, btn):
@@ -2764,7 +2765,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         # self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
-        lockBtn.set_label("Lock")
+        # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
         self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
         self.updateSavedConfigList()
@@ -2848,7 +2849,7 @@ class GtkViewModel(ViewModel):
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
         self.builder.get_object("fcb_uiLevel").set_sensitive(True)
-        lockBtn.set_label("Lock")
+        # lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
