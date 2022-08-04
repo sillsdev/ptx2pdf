@@ -174,7 +174,7 @@
     \ifx\p@ram\relax\else \temptrue\fi
     \getmcp@ramR{background}%
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
-    \ifx\@ttriblist\relax\let\@ttriblist\emtpy\fi
+    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
     \ifx\@ttriblist\empty\else\temptrue\fi 
     \getmcp@ram{underline}%
 	\ifx\p@ram\tru@\temptrue\fi
@@ -256,6 +256,7 @@
      \getmcp@ramR{background}%
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
+     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
      \ifx\@ttriblist\empty\else\temptrue\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi

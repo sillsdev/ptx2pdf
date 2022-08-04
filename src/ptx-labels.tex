@@ -103,7 +103,7 @@
   \fi
   \def\ch@ck{#3}%
   \x@\ifx\csname zref-\x@\detokenize{#2}\endcsname\ch@ck\else
-    \temptrue\edef\ch@nged{\ifx\ch@nged\emtpy Reference\else\ch@nged\space and reference\fi}%
+    \temptrue\edef\ch@nged{\ifx\ch@nged\empty Reference\else\ch@nged\space and reference\fi}%
   \fi
   \ifx\ch@nged\empty\else
     \message{\ch@nged\space for label #2 changed. Re-run file.}%
