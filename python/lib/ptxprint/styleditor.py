@@ -276,6 +276,7 @@ class StyleEditor:
         if key.lower() in absolutes:
             fa = asFloatPts(self, str(a))
             fb = asFloatPts(self, str(b))
+            return fa == fb
         else:
             try:
                 fa = float(a)

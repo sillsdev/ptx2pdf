@@ -386,6 +386,18 @@ def f2s(x, dp=3) :
         res = "0"
     return res
 
+_htmlentities = {
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    "'": 'apos',
+    '"': 'quot',
+}
+
+def htmlprotect(s):
+    sc = '([' + "".join(_htmlentities.keys()) + '])'
+    return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
+
 def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)
@@ -526,7 +538,6 @@ def mlcs(strings):
     """Return a long common subsequence of the strings.
     Uses a greedy algorithm, so the result is not necessarily the
     longest common subsequence.
-
     """
     if not strings:
         raise ValueError("mlcs() argument is an empty sequence")

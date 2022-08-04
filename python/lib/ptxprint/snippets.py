@@ -2,7 +2,7 @@ import re, os
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
-from .utils import pycodedir
+from .utils import pycodedir, htmlprotect
 
 class Snippet:
     order = 0
@@ -111,7 +111,7 @@ class PDFx1aOutput(Snippet):
       <rdf:Description rdf:about="">
         <dc:creator>
           <rdf:Seq>
-            <rdf:li>{document/author}</rdf:li>
+            <rdf:li>{_gtfauthor}</rdf:li>
           </rdf:Seq>
         </dc:creator>
         <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
@@ -124,12 +124,12 @@ class PDFx1aOutput(Snippet):
         <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
         <dc:title>
           <rdf:Alt>
-            <rdf:li xml:lang="x-default">{document/title}</rdf:li>
+            <rdf:li xml:lang="x-default">{_gtftitle}</rdf:li>
           </rdf:Alt>
         </dc:title>
         <dc:description>
           <rdf:Alt>
-            <rdf:li xml:lang="x-default">{document/subject}</rdf:li>
+            <rdf:li xml:lang="x-default">{_gtfsubject}</rdf:li>
           </rdf:Alt>
         </dc:description>
         <pdf:Producer>XeTeX</pdf:Producer>
@@ -182,6 +182,8 @@ class PDFx1aOutput(Snippet):
             extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
         extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['document/ifrtl'] == "true" else ""
+        for a in ('author', 'title', 'subject'):
+            extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
             res += "\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
