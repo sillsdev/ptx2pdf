@@ -3267,14 +3267,14 @@ section headings distinct from the scripture text.</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
     <property name="visible">True</property>
@@ -3285,40 +3285,40 @@ combination of Crop marks, Guides (margins,
 baselines, etc.) and/or a graph-paper-like Grid
 can be set.</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_spacing">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-run-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
     <property name="icon-name">software-update-available-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_folder">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">folder-symbolic</property>
     <property name="use-fallback">True</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_locked">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">system-lock-screen-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
     <property name="visible">True</property>
@@ -3335,7 +3335,7 @@ having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
     <property name="icon-name">view-grid-symbolic</property>
-    <property name="icon-size">3</property>
+    <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -18414,7 +18414,7 @@ odd/right-hand page of a spread.</property>
                                     <property name="baseline-position">top</property>
                                     <child>
                                       <object class="GtkFrame" id="fr_inclPictures">
-                                        <property name="width-request">550</property>
+                                        <property name="width-request">610</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="double-buffered">False</property>
@@ -18521,7 +18521,7 @@ the image quality will be as good as possible.</property>
                                               <object class="GtkButton" id="btn_selectFigureFolder">
                                                 <property name="label" translatable="yes">Select Folder...</property>
                                                 <property name="name">Select the folder which contains pictures</property>
-                                                <property name="width-request">130</property>
+                                                <property name="width-request">120</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">True</property>
@@ -18611,7 +18611,7 @@ or
                                             <child>
                                               <object class="GtkEntry" id="t_imageTypeOrder">
                                                 <property name="name">Pictures: Preferred image types</property>
-                                                <property name="width-request">130</property>
+                                                <property name="width-request">120</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="tooltip-text" translatable="yes">If multiple versions of an image are located
@@ -18779,8 +18779,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="focus-on-click">False</property>
                                                     <property name="receives-default">True</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="hexpand">True</property>
+                                                    <property name="halign">start</property>
                                                     <property name="relief">none</property>
                                                     <property name="uri">https://lingtran.net/How-to-tell-Paratext-which-images-are-for-print-and-which-are-for-electronic-outputs</property>
                                                   </object>
@@ -21701,60 +21700,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">2</property>
-                                <property name="width">4</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_thumbIsZthumb">
-                                <property name="label" translatable="yes">Use \zthumbtab Style</property>
-                                <property name="name">Thumb tabs: Use \zthumbtab style</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">By default the Thumb Tabs use the styling specified for the \toc3 marker. If 
-you want to specify different styling for the tabs, then select this option.
-
-Note that this setting is interconnected with the Table of Contents settings 
-on the Body tab. If \toc3 is not included in the ToC, then you will be forced 
-to use the \zthumbtab setting here (and will need to enter \zthumbtab data
-into your USFM text). For that reason it is highly recommended to use \toc3
-as your thumbtab text and include it in the Table of Contents. 
-
-The USFM extension \zthumbtab'' can be used to set an alternative value for 
-the thumbtab contents. If a book's header contains a \zthumbtab entry, then 
-\toc3 will not be used as the thumbtab contents. An empty \zthumbtab'' entry 
-specifies that there should be no text in the thumbtab for that book.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onTabsClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLinkButton" id="lb_style_toc3">
-                                <property name="label" translatable="yes">Edit Style</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="focus-on-click">False</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Click to jump to the appropriate
-(\toc3 or \zthumbtab) marker in
-the style editor to change the
-formatting of the thumb tabs.</property>
-                                <property name="halign">end</property>
-                                <property name="relief">none</property>
-                                <property name="uri">Click to edit style</property>
-                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">5</property>
-                                <property name="top-attach">1</property>
-                                <property name="width">2</property>
+                                <property name="width">5</property>
                               </packing>
                             </child>
                             <child>
@@ -21829,7 +21775,95 @@ default values for the Grouped Tabs.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="spacing">3</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="margin-start">3</property>
+                                    <property name="label" translatable="yes">Tab Text:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_thumbText_toc3">
+                                    <property name="label" translatable="yes">\toc3</property>
+                                    <property name="name">Decorative verse numbers: Use end of Ayah</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Use the End of Ayah character in the
+font to decorate the verse number.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_thumbText_zthumbtab</property>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onTabsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkRadioButton" id="r_thumbText_zthumbtab">
+                                    <property name="label" translatable="yes">\zthumbtab</property>
+                                    <property name="name">Decorative verse numbers: Use end of Ayah</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Use the End of Ayah character in the
+font to decorate the verse number.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="draw-indicator">True</property>
+                                    <property name="group">r_thumbText_toc3</property>
+                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                    <signal name="clicked" handler="onTabsClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_toc3">
+                                    <property name="label" translatable="yes">Edit Style</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to jump to the appropriate
+(\toc3 or \zthumbtab) marker in
+the style editor to change the
+formatting of the thumb tabs.</property>
+                                    <property name="halign">start</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to edit style</property>
+                                    <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">False</property>
+                                    <property name="position">3</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">4</property>
+                              </packing>
                             </child>
                           </object>
                         </child>
@@ -25885,9 +25919,21 @@ more clearly where changes are being made.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="hover_infoViewEdit">
+                          <object class="GtkLabel" id="l_spacer">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="hexpand">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">6</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="btn_infoViewEdit">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Use the following codes to include special text in front matter:
 
   \nopagenums - turn OFF page numbers
@@ -25922,22 +25968,20 @@ Click on 'Edit Variables...' to assign values to these variables
 on the Peripherals tab. For example:
   \mt1 \zvar|maintitle\*
   \mt2 \zvar|subtitle\*</property>
-                            <property name="icon-name">help-about-symbolic</property>
-                            <property name="icon-size">3</property>
+                            <property name="halign">center</property>
+                            <property name="valign">center</property>
+                            <property name="relief">none</property>
+                            <child>
+                              <object class="GtkImage" id="icon_infoViewEdit">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="icon-name">help-about-symbolic</property>
+                                <property name="icon_size">3</property>
+                              </object>
+                            </child>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_spacer">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="hexpand">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">6</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -28858,10 +28902,12 @@ from XeTeX processing.</property>
             <property name="can-focus">False</property>
             <property name="no-show-all">True</property>
             <property name="halign">center</property>
+            <property name="valign">end</property>
             <child>
               <object class="GtkImage">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="valign">center</property>
                 <property name="margin-start">60</property>
                 <property name="margin-end">8</property>
                 <property name="margin-top">6</property>

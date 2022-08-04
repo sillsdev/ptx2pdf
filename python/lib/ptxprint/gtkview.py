@@ -1899,6 +1899,7 @@ class GtkViewModel(ViewModel):
                   "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
+        self.builder.get_object("btn_infoViewEdit").set_sensitive(False)
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_visible(False)
@@ -1924,6 +1925,7 @@ class GtkViewModel(ViewModel):
                   "scroll_SettingsOld": ("", "")}
 
         if pgid == "scroll_FrontMatter":
+            self.builder.get_object("btn_infoViewEdit").set_sensitive(True)
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
@@ -2227,8 +2229,8 @@ class GtkViewModel(ViewModel):
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:]
-        if mkr == "toc3" and self.get("c_thumbIsZthumb"):
-            self.set("c_styTextProperties", False)
+        if mkr == "toc3" and self.get("r_thumbText") == "zthumbtab":  # "c_thumbIsZthumb"):
+            self.set("c_styTextProperties", False)  # MH: why is this being done?
             mkr = "zthumbtab"
         elif mkr == "x-credit|fig":
             dialog = self.builder.get_object("dlg_overlayCredit")
@@ -2640,10 +2642,12 @@ class GtkViewModel(ViewModel):
         if self.get("c_autoToC"):
             if self.get("c_thumbtabs"):
                 if not self.get("c_usetoc3"):
-                    self.set("c_thumbIsZthumb", True)
-                self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
+                    self.set("r_thumbText", "zthumbtab") # c_thumbIsZthumb", True)
+                self.builder.get_object("r_thumbText_toc3").set_sensitive(self.get("c_usetoc3"))
+                self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(self.get("c_usetoc3"))
         else:
-            self.builder.get_object("c_thumbIsZthumb").set_sensitive(True)
+            self.builder.get_object("r_thumbText_toc3").set_sensitive(True)
+            self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(True)
         
     def filter_numbers(self, wid):
         w = Gtk.Buildable.get_name(wid)
@@ -3411,8 +3415,9 @@ class GtkViewModel(ViewModel):
         self.onNumTabsChanged()
         if self.get("c_thumbtabs"):
             if not self.get("c_usetoc3"):
-                self.set("c_thumbIsZthumb", True)
-            self.builder.get_object("c_thumbIsZthumb").set_sensitive(self.get("c_usetoc3"))
+                self.set("r_thumbText", "zthumbtab")
+            self.builder.get_object("r_thumbText_toc3").set_sensitive(self.get("c_usetoc3"))
+            self.builder.get_object("r_thumbText_zthumbtab").set_sensitive(self.get("c_usetoc3"))
 
     def onNumTabsChanged(self, *a):
         if not super().onNumTabsChanged(*a):
@@ -3435,7 +3440,7 @@ class GtkViewModel(ViewModel):
             return h
         bcol = coltohex(self.get("col_thumbback"))
         self.set("l_thumbbackValue", bcol)
-        tabstyle = "zthumbtab" if self.get("c_thumbIsZthumb") else "toc3"
+        tabstyle = "zthumbtab" if self.get("r_thumbText") == "zthumbtab" else "toc3"
         fcol = coltohex(textocol(self.styleEditor.getval(tabstyle, "color")))
         bold = "bold" if self.styleEditor.getval(tabstyle, "bold") == "" else "normal"
         ital = "italic" if self.styleEditor.getval(tabstyle, "italic") == "" else "normal"
