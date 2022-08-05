@@ -1007,7 +1007,7 @@ class GtkViewModel(ViewModel):
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
                    "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_reportBugs", 
-                  "btn_about"]: #  "l_techFAQ",  "lb_techFAQ",
+                  "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -1017,7 +1017,7 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics"]:
+        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics", "l_techFAQ",  "lb_techFAQ"]:
             self.builder.get_object(w).set_visible(not newval and adv)
         self.checkUpdates()
 
@@ -1318,7 +1318,7 @@ class GtkViewModel(ViewModel):
     def onSaveConfig(self, btn, force=False):
         if self.prjid is None or (not force and self.configLocked()):
             return
-        newconfigId = self.configName() # self.get("ecb_savedConfig")
+        newconfigId = self.configName()
         if newconfigId != self.configId:
             self.applyConfig(self.configId, newconfigId, nobase=True)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
@@ -1336,6 +1336,7 @@ class GtkViewModel(ViewModel):
         self.writeConfig(force=force)
         self.savePics(force=force)
         self.saveStyles(force=force)
+        self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
         if self.prjid is not None:
@@ -1895,7 +1896,7 @@ class GtkViewModel(ViewModel):
         page = nbk_Viewer.get_nth_page(pgnum)
         if page == None:
             return
-        for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "btn_saveEdits", 
+        for w in ["gr_editableButtons", "l_examineBook", "ecb_examineBook", "c_autoSave",
                   "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
@@ -1935,7 +1936,8 @@ class GtkViewModel(ViewModel):
                 genBtn.set_sensitive(True)
                 self.builder.get_object("btn_editZvars").set_visible(True)
             else:
-                self.builder.get_object("btn_saveEdits").set_sensitive(False)
+                self.builder.get_object("c_autoSave").set_sensitive(False)
+                self.set("c_autoSave", False)
 
         elif pgid in ("scroll_AdjList", "scroll_FinalSFM"):
             fname = self.getBookFilename(bk, prjid)
@@ -1960,15 +1962,16 @@ class GtkViewModel(ViewModel):
                     genBtn.set_sensitive(True)
                     self.builder.get_object("btn_removeZeros").set_visible(True)
                 else:
-                    self.builder.get_object("btn_saveEdits").set_sensitive(False)
+                    self.builder.get_object("c_autoSave").set_sensitive(False)
+                    self.set("c_autoSave", False)
             elif pgid == "scroll_FinalSFM":
-                self.builder.get_object("btn_saveEdits").set_sensitive(False)
+                self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
                 self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
         elif pgid in ("scroll_TeXfile", "scroll_XeTeXlog"): # (TeX,Log)
             fpath = os.path.join(self.working_dir, self.baseTeXPDFnames()[0])+fndict[pgid][1]
-            self.builder.get_object("btn_saveEdits").set_sensitive(False)
+            self.builder.get_object("c_autoSave").set_sensitive(False)
             self.builder.get_object("btn_refreshViewerText").set_sensitive(False)
             self.builder.get_object("btn_viewEdit").set_label(_("View Only..."))
 
@@ -1990,9 +1993,8 @@ class GtkViewModel(ViewModel):
             return
         set_tooltip = self.builder.get_object("l_{1}".format(*pgid.split("_"))).set_tooltip_text
         buf = self.fileViews[pgnum][0]
-        # if not forced and buf.get_char_count():
-            # return
         logger.debug(f"Viewing({pgid[7:]} {bk} -> {fpath}")
+
         if os.path.exists(fpath):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
@@ -2953,12 +2955,15 @@ class GtkViewModel(ViewModel):
         label = self.builder.get_object(_allpgids[pgnum][5:])
         tt = label.get_tooltip_text()
         if tt is not None and not currentText == self.uneditedText[pgnum]:
-            if self.msgQuestion(_("Save changes?"), _("Do you wish to save the changes you made?") + \
-                                  "\n\n" + _("File: ") + tt):
+            if self.get("c_autoSave"):
+                self.onSaveEdits(None)
+            elif self.msgQuestion(_("Save changes?"), _("Do you wish to save the changes you made?") + \
+                                                        "\n\n" + _("File: ") + tt):
                 self.onSaveEdits(None)
             else:
                 self.onRefreshViewerTextClicked(None)
-
+        self.onViewEdited()
+                
     def onViewerFocus(self, widget, event):
         pgnum = self.notebooks['Viewer'].index(widget.pageid)
         tbuf = self.fileViews[pgnum][0]

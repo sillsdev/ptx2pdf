@@ -47,6 +47,7 @@ ModelMap = {
     "config/gitversion":        ("_gitversion", None),
     "config/name":              ("_cfgid", None),
     "config/filterpics":        ("c_filterPicList", None),
+    "config/autosave":          ("c_autoSave", None),
 
     "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
@@ -286,7 +287,6 @@ ModelMap = {
     "header/ifshowbook":        ("c_rangeShowBook", lambda w,v :"false" if v else "true"),
     "header/ifshowchapter":     ("c_rangeShowChapter", lambda w,v :"false" if v else "true"),
     "header/ifshowverse":       ("c_rangeShowVerse", lambda w,v :"true" if v else "false"),
-    # "header/chvseparator":      ("c_sepColon", lambda w,v : ":" if v else "."),
     "header/chvseparator":      ("r_CVsep", lambda w,v : ":" if v == "colon" else "."),
     "header/ifrhrule":          ("c_rhrule", lambda w,v: "" if v else "%"),
     "header/hdrleftside":       ("r_hdrLeft", None),

@@ -48,22 +48,6 @@ We then run this code over various key markers that we want to have verse
 numbers on. Notice we don't do this for all paragraph markers, since we aren't
 interested in tracking verse numbers in `\\q2` for example.
 
-## Mirror Gutter
-
-[Note that this snippet is now redundant as the Layout page has an
-option for an "Outer Gutter"]
-This snippet puts the extra gutter margin on the outside of the page rather than
-the inside. 
-
-```tex
-\BookOpenLefttrue
-```
-
-### Implementation
-
-This is what happens implicitly when the RTL book order is specified. And it may
-have some unforeseen effects in regard to RTL type books.
-
 ## Technique: Setting style parameters in ptxprint-mods.tex
 
 This snippet is less a snippet as a technique. It shows two ways of setting
@@ -227,24 +211,6 @@ before the block of renderings with their Strong's H and G numbers.
 
 ```perl
 at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"
-```
-
-## Adjust the underline position and thickness
-
-The default underline parameters might need to be tweaked based on the script, font and leading.
-
-```tex
-\Marker pn\relax\Underline \relax
-\def\UnderlineLower{-0.1em}\def\UnderlineThickness{0.05em}
-```
-
-## Exclude certain chapters from being printed
-
-Many teams translate some of the Psalms and want to print them out without all the intermediate
-Psalms (which may be drafted but unchecked). This snippet allows for specified chapters to be dropped.
-
-```perl
-at PSA "(?s)\\c (3|5|9|24|119|142)[ \r\n].+?(?=\\c)" > ""
 ```
 
 ## Display paragraph markers next to each paragraph

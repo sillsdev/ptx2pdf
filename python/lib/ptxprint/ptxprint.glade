@@ -25706,37 +25706,12 @@ interlinear (&amp; ruby text) output.</property>
                         <property name="margin-bottom">4</property>
                         <property name="column-spacing">6</property>
                         <child>
-                          <object class="GtkButton" id="btn_saveEdits">
-                            <property name="label">gtk-save</property>
-                            <property name="name">Save current file in view</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">If you edit any of these files, you should
-save them before moving to a different
-tab (otherwise your changes will be lost).
-
-Shortcut: Ctrl-S</property>
-                            <property name="double-buffered">False</property>
-                            <property name="halign">center</property>
-                            <property name="margin-top">5</property>
-                            <property name="margin-bottom">5</property>
-                            <property name="use-stock">True</property>
-                            <property name="always-show-image">True</property>
-                            <signal name="clicked" handler="onSaveEdits" swapped="no"/>
-                            <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">7</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
                             <property name="name">Reload current file in view from saved version</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="focus-on-click">False</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Discard any changes that have 
 been made and restore the contents
@@ -25836,7 +25811,7 @@ Shortcut: Ctrl-G</property>
                           <object class="GtkButton" id="btn_viewEdit">
                             <property name="label" translatable="yes">View/Edit...</property>
                             <property name="name">View (or edit) file in external editor</property>
-                            <property name="width-request">95</property>
+                            <property name="width-request">100</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -25932,7 +25907,8 @@ more clearly where changes are being made.</property>
                         <child>
                           <object class="GtkButton" id="btn_infoViewEdit">
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="focus-on-click">False</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Use the following codes to include special text in front matter:
 
@@ -25982,6 +25958,24 @@ on the Peripherals tab. For example:
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_autoSave">
+                            <property name="label" translatable="yes">Autosave</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="focus-on-click">False</property>
+                            <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Save any changes made below
+without a confirmation check.</property>
+                            <property name="valign">center</property>
+                            <property name="active">True</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">7</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -28484,11 +28478,14 @@ version before reporting an issue.</property>
                                   <object class="GtkLabel" id="l_techFAQ">
                                     <property name="can-focus">False</property>
                                     <property name="no-show-all">True</property>
-                                    <property name="tooltip-text" translatable="yes">For technical FAQs relating to how the TeX macros
-work and how to customize the stylesheets even
-further, this FAQ document is worth visiting.</property>
+                                    <property name="tooltip-text" translatable="yes">There are many additional capabilities
+within the software which cannot be
+accessed through the user-interface.
+However, these annotated code snippets
+can be copied into the ptxprint-mods.tex
+file or the Changes.txt file as appropriate.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Technical FAQs for PTX2PDF Macros:</property>
+                                    <property name="label" translatable="yes">Advanced Techniques:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -28499,7 +28496,7 @@ further, this FAQ document is worth visiting.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_techFAQ">
-                                    <property name="label" translatable="yes">See PTX2PDF Macros FAQ</property>
+                                    <property name="label" translatable="yes">View a set of useful code snippets</property>
                                     <property name="name">Link to deeper technical help</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -28508,7 +28505,7 @@ further, this FAQ document is worth visiting.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/ptx2pdf-faq.md</property>
+                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/snippets.md</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
