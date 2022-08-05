@@ -98,7 +98,7 @@ class Reference:
             if self.verse > minverse and (lastref is None or self.verse < 200 or lastref.verse > minverse):
                 res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else [addsep["end"], ""])))
         elif (lastref is None or lastref.verse != self.verse) and minverse < self.verse:
-            res.append("{}{}{}".format(" " if hasbook else ("" if this is None else addsep['verseonly']),
+            res.append("{}{}{}".format(" " if hasbook else ("" if this is None or lastref is not None else addsep['verseonly']),
                                        *[self.verse if self.verse < 200 else addsep["end"], self.subverse or ""]))
             if lastref is not None:
                 sep = sep or addsep['verses']
@@ -155,6 +155,9 @@ class Reference:
 
     def __hash__(self):
         return hash((self.book, self.chap, self.verse, self.subverse))
+
+    def __len__(self):
+        return 0
 
     @property
     def first(self):
@@ -334,6 +337,9 @@ class RefRange:
         if isinstance(r, RefRange):
             return self.first <= r.first and r.last <= self.last
         return self.first <= r <= self.last
+
+    def __len__(self):
+        return self.last.asint() - self.first.asint()
 
     def astag(self):
         return "{}-{}".format(self.first.astag(), self.last.astag())
@@ -581,16 +587,19 @@ class RefList(list):
             t, u = (r.first, r.last)
             n = lastref.nextverse()
             if t == n:
-                count += 1
+                count += len(r) + 1
                 if count < minlength:
                     temp.append(r)
-                elif isinstance(res[-1], RefRange):
-                    res[-1].last = u
                 else:
-                    res[-1] = RefRange(lastref, u)
+                    temp = []
+                    if isinstance(res[-1], RefRange):
+                        res[-1].last = u
+                    else:
+                        res[-1] = RefRange(lastref, u)
             else:
                 if len(temp):
                     res.extend(temp)
+                    temp = []
                 count = 0
                 res.append(r)
             lastref = u
