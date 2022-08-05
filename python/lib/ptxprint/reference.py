@@ -105,7 +105,8 @@ class Reference:
         return self.str()
 
     def __repr__(self):
-        return "Reference({mark} {book} {chap}:{verse} {subverse})".format(**self.__dict__)
+        d = {k: v or "" for k, v in self.__dict__.items()}
+        return "Reference({mark}{book} {chap}:{verse}{subverse})".format(**d)
 
     def __eq__(self, o):
         if not isinstance(o, Reference):
