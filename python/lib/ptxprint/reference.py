@@ -51,7 +51,9 @@ class RefSeparators(dict):
         "mark": lambda r, s: (r.mark or "") + s,
         "bksp": " ",
         "range": "-",
-        "sep": "\u200B"
+        "sep": "\u200B",
+        "verseonly": "v",
+        "end": "end"
     }
     def __init__(self, **kw):
         self.update(kw)
@@ -76,11 +78,11 @@ class Reference:
         cls.vrs = readvrs(fname)
         return cls.vrs
 
-    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators(), allowzero=False):
+    def str(self, context=None, level=0, lastref=None, this=None, addsep=RefSeparators(), allowzero=False):
         minverse = -1 if allowzero else 0
         sep = ""
         hasbook = False
-        if lastref is None or lastref.book != self.book:
+        if (lastref is None or lastref.book != self.book) and (this is None or this.book != self.book):
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level)).replace(" ", addsep['bksp'])]
             if lastref is not None and lastref.book is not None:
                 sep = addsep['books']
@@ -88,14 +90,16 @@ class Reference:
         else:
             res = []
         if self.chap > 0 and (addsep['onechap'] or self.book not in oneChbooks) \
-                    and (lastref is None or lastref.book != self.book or lastref.chap != self.chap):
+                    and (lastref is None or lastref.book != self.book or lastref.chap != self.chap) \
+                    and (this is None or this.book != self.book or this.chap != self.chap):
             if not len(res):
-                sep = sep or addsep['chaps']
+                sep = sep or (addsep['chaps'] if lastref is not None else "")
             res.append("{}{}".format(addsep['bkc'] if hasbook else "", self.chap))
             if self.verse > minverse and (lastref is None or self.verse < 200 or lastref.verse > minverse):
-                res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else ["end", ""])))
+                res.append("{}{}{}".format(addsep['cv'], *([self.verse, self.subverse or ""] if self.verse < 200 else [addsep["end"], ""])))
         elif (lastref is None or lastref.verse != self.verse) and minverse < self.verse:
-            res.append("{}{}{}".format(" " if hasbook else "", *[self.verse if self.verse < 200 else "end", self.subverse or ""]))
+            res.append("{}{}{}".format(" " if hasbook else ("" if this is None else addsep['verseonly']),
+                                       *[self.verse if self.verse < 200 else addsep["end"], self.subverse or ""]))
             if lastref is not None:
                 sep = sep or addsep['verses']
         result = sep + (addsep['mark'](self, "".join(res)) if getattr(self, 'mark', None) is not None else "".join(res))
@@ -252,6 +256,31 @@ class Reference:
             v = v - cls.vrs[ind][c]
         return cls(allbooks[ind], c+1, v)
 
+    def _getmaxvrs(self, bk, chap):
+        vrs = self.first.vrs or Reference.loadvrs()
+        if bk not in books or len(vrs[books[bk]]) < chap:
+            maxvrs = 200
+        else:
+            maxvrs = vrs[books[bk]][chap] - (vrs[books[bk]][chap-1] if chap > 1 else 0)
+        return maxvrs
+
+    def nextverse(self):
+        r = self.last.copy()
+        maxvrs = self._getmaxvrs(r.book, r.chap)
+        r.verse += 1
+        if r.verse > maxvrs:
+            r.chap += 1
+            r.verse = 1
+            if r.chap >= len(self.vrs[books[r.book]]):
+                newbk = books[r.book] + 1
+                while newbk < len(allbooks) and allbooks[newbk] not in books:
+                    newbk += 1
+                if newbk >= len(allbooks):
+                    return
+                r.book = allbooks[newbk]
+                r.chap = 1
+        return r
+
     def allrefs(self):
         yield self
 
@@ -268,9 +297,9 @@ class RefRange:
         self.first = first
         self.last = last
 
-    def str(self, context=None, level=0, lastref=None, addsep=RefSeparators()):
+    def str(self, context=None, level=0, lastref=None, this=None, addsep=RefSeparators()):
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
-        res = "{}{}{}".format(self.first.str(context, level, lastref, addsep=addsep, allowzero=self.first.chap==self.last.chap),
+        res = "{}{}{}".format(self.first.str(context, level, lastref, this, addsep=addsep, allowzero=self.first.chap==self.last.chap),
                               addsep['range'],
                               self.last.str(context, level, self.first, addsep=lastsep))
         return res
@@ -321,33 +350,11 @@ class RefRange:
             return (res, s)
         return res
 
-    def _getmaxvrs(self, bk, chap):
-        vrs = self.first.vrs or Reference.loadvrs()
-        if bk not in books or len(vrs[books[bk]]) < chap:
-            maxvrs = 200
-        else:
-            maxvrs = vrs[books[bk]][chap] - (vrs[books[bk]][chap-1] if chap > 1 else 0)
-        return maxvrs
-
     def allrefs(self):
-        vrs = self.first.vrs or Reference.loadvrs()
-        r = self.first.copy()
-        maxvrs = self._getmaxvrs(r.book, r.chap)
+        r = self.nextverse()
         while r <= self.last:
             yield r
-            r.verse += 1
-            if r.verse > maxvrs:
-                r.chap += 1
-                r.verse = 1
-                if r.chap >= len(vrs[books[r.book]]):
-                    newbk = books[r.book] + 1
-                    while newbk < len(allbooks) and allbooks[newbk] not in books:
-                        newbk += 1
-                    if newbk >= len(allbooks):
-                        return
-                    r.book = allbooks[newbk]
-                    r.chap = 1
-                maxvrs = self._getmaxvrs(r.book, r.chap)
+            r = r.nextverse()
 
     def reify(self):
         if self.first.chap == 0:
@@ -527,11 +534,11 @@ class RefList(list):
             self._addRefOrRange(start, curr, currmark, nextmark)
         return self
 
-    def str(self, context=None, level=0, addsep=RefSeparators()):
+    def str(self, context=None, level=0, this=None, addsep=RefSeparators()):
         res = []
         lastref = None # Reference(None, 0, 0)
         for r in self:
-            res.append(r.str(context, level, lastref, addsep=addsep))
+            res.append(r.str(context, level, lastref, this, addsep=addsep))
             lastref = r.last if isinstance(r, RefRange) else r
         return "".join(res)
 
@@ -560,9 +567,11 @@ class RefList(list):
         currmark = nextmark
         return (res, currmark)
 
-    def simplify(self):
+    def simplify(self, minlength=1):
         res = []
         lastref = Reference(None, 0, 0)
+        temp = []
+        count = 0
         for i,r in enumerate(self):
             if r.first == r.last and r.first.verse == 0:
                 if isinstance(r, RefRange):
@@ -570,16 +579,23 @@ class RefList(list):
                 else:
                     r = self[i] = RefRange(r.first, Reference(r.first.book, r.first.chap, 200))
             t, u = (r.first, r.last)
-            if t.book == lastref.book and t.chap == lastref.chap \
-                    and t.subverse is None and t.verse == lastref.verse + 1:
-                if isinstance(res[-1], RefRange):
+            n = lastref.nextverse()
+            if t == n:
+                count += 1
+                if count < minlength:
+                    temp.append(r)
+                elif isinstance(res[-1], RefRange):
                     res[-1].last = u
                 else:
                     res[-1] = RefRange(lastref, u)
             else:
+                if len(temp):
+                    res.extend(temp)
+                count = 0
                 res.append(r)
             lastref = u
         self[:] = res
+        return self
 
     def filterBooks(self, books):
         self[:] = [r for r in self if r.first.book in books]

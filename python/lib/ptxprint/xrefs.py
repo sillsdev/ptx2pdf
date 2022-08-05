@@ -154,7 +154,7 @@ class XMLXrefs(BaseXrefs):
                 a.append((st, None, RefGroup(self._unpackxml(e))))
         return a
 
-    def _procnested(self, xr):
+    def _procnested(self, xr, baseref):
         a = []
         for e in xr:
             st = e[0]
@@ -167,14 +167,16 @@ class XMLXrefs(BaseXrefs):
                     r.filterBooks(self.filters)
                 r.sort()
                 r.simplify()
-                rs = r.str(context=self.context, addsep=self.addsep, level=2)
+                rs = r.str(context=self.context, addsep=self.addsep, level=2, this=baseref)
                 if len(rs) and e[1] in ('backref', 'crossref'):
                     a.append(s + "\\+xti " + rs + "\\+xti*")
                 elif len(rs):
                     a.append(s + rs)
             else:
-                if len(e[2]):
-                    a.append(s + "[\\nobreak " + self._procnested(e[2]) + "]")
+                if len(e[2]) > 1:
+                    a.append(s + "[" + self._procnested(e[2], baseref) + "]")
+                elif len(e[2]):
+                    a.append(s + self._procnested(e[2], baseref))
         return r"\space ".join(a)
 
     def _updatedat(newdat, dat):
@@ -220,7 +222,7 @@ class XMLXrefs(BaseXrefs):
             self._addranges(xmldat, ranges)
             with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
                 for k, v in xmldat.items():
-                    res = self._procnested(v)
+                    res = self._procnested(v, k)
                     if len(res):
                         info = {
                             "book":         k.first.book,
