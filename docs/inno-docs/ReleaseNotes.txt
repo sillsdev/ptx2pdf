@@ -1,8 +1,20 @@
 PTXprint 2.2.9 Release Notes
-4 Aug 2022
+6 Aug 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.10 (6 Aug 2022)
+
+  * Added auto-save option for file editor
+  
+  * Added other languages (es, fr, pt, ru) to installer & tweaked install icon
+  
+  * Refactor Strong's to include all interesting Strong's and shorten output
+  
+  * Minor strongs xref bug fixes
+  
+  * Increased maximim hyphenation file size
+  
 Bug fixes and improvements in 2.2.9 (4 Aug 2022)
 
   * Fix missing footer problem and inconsistent controls #705
