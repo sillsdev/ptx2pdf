@@ -33,6 +33,7 @@ class BaseXrefs:
             self.addsep.update(dict(books="\u061B ", chaps="\u061B\u200B"))
         logger.debug(self.addsep)
         self.rtl = rtl
+        self.shortrefs = False
 
 
 class XrefFileXrefs(BaseXrefs):
@@ -173,7 +174,7 @@ class XMLXrefs(BaseXrefs):
                 elif len(rs):
                     a.append(s + rs)
             else:
-                if len(e[2]) > 1:
+                if len(e[2]) > 1 or (len(e[2]) and e[2][0][0] is not None):
                     a.append(s + "[" + self._procnested(e[2], baseref) + "]")
                 elif len(e[2]):
                     a.append(s + self._procnested(e[2], baseref))
@@ -227,7 +228,7 @@ class XMLXrefs(BaseXrefs):
                         info = {
                             "book":         k.first.book,
                             "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                            "colnobook":    k.str(context=NoBook),
+                            "colnobook":    k.str(context=NoBook) if not self.shortrefs else str(k.verse),
                             "refs":         res,
                             "brtl":         r"\beginR" if self.rtl else "",
                             "ertl":         r"\endR" if self.rtl else ""
@@ -249,6 +250,7 @@ class Xrefs:
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
+        seps['verseonly'] = parent.printer.getvar('verseident')
         if source == "strongs":
             self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters, localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl)
         elif xrfile is None:
