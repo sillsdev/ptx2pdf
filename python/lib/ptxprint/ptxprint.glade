@@ -13827,10 +13827,18 @@ located on the Footnotes tab.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_frVerseOnly">
+                                        <property name="label" translatable="yes">Only show verse numbers from \fr</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
@@ -13853,7 +13861,7 @@ located on the Footnotes tab.</property>
                                     <property name="margin-start">11</property>
                                     <property name="margin-end">6</property>
                                     <child>
-                                      <!-- n-columns=5 n-rows=3 -->
+                                      <!-- n-columns=5 n-rows=4 -->
                                       <object class="GtkGrid" id="tb_general">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -14119,6 +14127,21 @@ Footnotes and xRefs (pt):</property>
                                             <property name="top-attach">0</property>
                                             <property name="height">3</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -14622,10 +14645,18 @@ located on the Cross-References tab.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_xoVerseOnly">
+                                        <property name="label" translatable="yes">Only show verse numbers from \xo</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">0</property>
+                                        <property name="width">2</property>
+                                      </packing>
                                     </child>
                                     <child>
                                       <placeholder/>
