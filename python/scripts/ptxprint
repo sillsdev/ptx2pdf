@@ -62,6 +62,7 @@ parser.add_argument('-Z','--zip',help='Unzip into project directory and delete a
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
+parser.add_argument('-N','--nointernet',action="store_true",help="Disable all internet access")
 parser.add_argument('-l','--logging',help="Enable logging level [DEBUG, *INFO*, WARN, ERROR, number]")
 parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [ptxprint.log] or "none"')
 parser.add_argument('--timeout',default=1200,type=int,help='xetex runtime timeout')
@@ -289,6 +290,9 @@ else:
         reset_gtk_direction()
         goround = False
         mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
+        if args.nointernet:
+            mainw.set('c_noInternet', True)
+            mainw.noInt = True
         #restserver = startRestServer(model=mainw)
         if args.pid:
             mainw.setPrjid(args.pid)

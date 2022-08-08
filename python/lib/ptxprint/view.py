@@ -1147,7 +1147,7 @@ class ViewModel:
                     # (so there's nothing to filter them out, because they don't seem to exist!)
                     # Also need to strip out words with punctuation chars (eg. Burmese \u104C .. \u104F)
                     if "-" in l:
-                        if regex.search(r'[^\p{L}\p{M}\-]', l):
+                        if regex.search(r'[^\p{L}\p{M}\-\u200C\u200D]', l):
                             z += 1
                         else:
                             if l[0] != "-" and len(l) > 5:
