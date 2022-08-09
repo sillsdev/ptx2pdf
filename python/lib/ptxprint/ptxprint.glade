@@ -13119,7 +13119,7 @@ Also settings for special books.</property>
                                       <object class="GtkCheckButton" id="c_fnomitcaller">
                                         <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                         <property name="name">Show footnote callers in notes area</property>
-                                        <property name="width-request">240</property>
+                                        <property name="width-request">230</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -13296,12 +13296,13 @@ require each footnote to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-start">8</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -13321,7 +13322,7 @@ line then set this option.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -13344,7 +13345,7 @@ and place them all at the end of the book.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -13361,6 +13362,7 @@ of the 2nd column of text.</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">24</property>
                                         <property name="margin-end">6</property>
+                                        <property name="margin-top">8</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_fnpos_normal</property>
                                         <signal name="clicked" handler="onFnPosChanged" swapped="no"/>
@@ -13368,7 +13370,7 @@ of the 2nd column of text.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -13392,7 +13394,7 @@ usually placed at the end of each page.
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">2</property>
+                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -13406,7 +13408,7 @@ usually placed at the end of each page.
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -13823,7 +13825,7 @@ located on the Footnotes tab.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -13832,11 +13834,17 @@ located on the Footnotes tab.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">The footnote reference \fr usually
+includes the chapter &amp; verse number
+like this 3:16. If you prefer to hide the
+chapter, so that only 16 is shown, then
+enable this option.</property>
+                                        <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -14220,7 +14228,7 @@ and place them all at the end of the book.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14237,6 +14245,7 @@ of the 2nd column of text.</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">24</property>
                                         <property name="margin-end">6</property>
+                                        <property name="margin-top">8</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
                                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -14244,7 +14253,7 @@ of the 2nd column of text.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14267,7 +14276,7 @@ at the end of each page.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">2</property>
+                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14280,7 +14289,7 @@ at the end of each page.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -14297,12 +14306,13 @@ require each cross-reference to start on its own new
 line then set this option.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-start">8</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onParagraphednotesClicked" swapped="no"/>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="left-attach">2</property>
+                                        <property name="top-attach">4</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -14429,7 +14439,7 @@ showing, then a default set will appear.</property>
                                       <object class="GtkCheckButton" id="c_xromitcaller">
                                         <property name="label" translatable="yes">Show Callers in Notes Area</property>
                                         <property name="name">Show cross-reference callers in notes area</property>
-                                        <property name="width-request">240</property>
+                                        <property name="width-request">230</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -14488,7 +14498,7 @@ Print a second time before it applies.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
-                                        <property name="top-attach">1</property>
+                                        <property name="top-attach">0</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14511,7 +14521,7 @@ along with the footnotes as a single paragraph).</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">2</property>
+                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14531,6 +14541,7 @@ one type of caller (rather than a sequence)
 which must be specified above.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-top">8</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                         <property name="group">r_xrpos_normal</property>
@@ -14539,7 +14550,7 @@ which must be specified above.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14567,7 +14578,7 @@ column similar to a study/reference Bible layout.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">3</property>
-                                        <property name="top-attach">4</property>
+                                        <property name="top-attach">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -14650,11 +14661,17 @@ located on the Cross-References tab.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">The cross-reference origin \xo usually
+includes the chapter &amp; verse number
+like this 3:16. If you prefer to hide the
+chapter, so that only 16 is shown, then
+enable this option.</property>
+                                        <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
-                                        <property name="left-attach">2</property>
-                                        <property name="top-attach">0</property>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
                                         <property name="width">2</property>
                                       </packing>
                                     </child>
@@ -29211,7 +29228,7 @@ print a diglot with both texts.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_saveConfig">
-                <property name="label">Save Config</property>
+                <property name="label">Save</property>
                 <property name="name">Save configuration</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
