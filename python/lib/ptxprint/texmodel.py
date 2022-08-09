@@ -1538,6 +1538,12 @@ class TexModel:
             if self.asBool("notes/{}omitcaller".format(c)):
                 self.localChanges.append((None, regex.compile(r"(\d )(\\[{0}] - .*?\\[{0}]\*)\s+".format(c[0])), r"\1\2"))
 
+        if self.asBool("notes/frverseonly"):
+            self.localChanges.append((None, regex.compile(r"\\fr \d+[:.](\d+)"), r"\\fr \1"))
+
+        if self.asBool("notes/xrverseonly"):
+            self.localChanges.append((None, regex.compile(r"\\xo \d+[:.](\d+)"), r"\\xo \1"))
+
         # Paratext marks no-break space as a tilde ~
         self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
