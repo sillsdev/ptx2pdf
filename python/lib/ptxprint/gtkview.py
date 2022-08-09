@@ -1084,6 +1084,8 @@ class GtkViewModel(ViewModel):
             varlist = self.pubvarlist
         elif dest == "strongs":
             varlist = self.strongsvarlist
+        else:
+            varlist = []
         # elif dest == "sbcats":
             # varlist = self.sbcatlist
         for r in varlist:

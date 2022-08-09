@@ -302,6 +302,7 @@ ModelMap = {
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
     "footer/noinkinmargin":     ("c_AdvCompatFtrInMargin", lambda w,v :"false" if v else "true"),
+    "notes/frverseonly":        ("c_frVerseOnly", None),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
     "notes/fneachnewline":      ("c_fneachnewline", lambda w,v: "%" if v else ""),
@@ -332,6 +333,7 @@ ModelMap = {
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
+    "notes/xrverseonly":        ("c_xoVerseOnly", None),
     "notes/addcolon":           ("c_addColon", None),
     "notes/keepbookwithrefs":   ("c_keepBookWithRefs", None),
     "notes/glossaryfootnotes":  ("c_glossaryFootnotes", None),
@@ -1801,6 +1803,7 @@ class TexModel:
                     localfile = None
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
-                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile, self.dict['strongsndx/shownums'])
+                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile,
+                    self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
         self.xrefs.process(bk, outpath)
 

@@ -357,7 +357,7 @@ class RefRange:
         return res
 
     def allrefs(self):
-        r = self.nextverse()
+        r = self.first.nextverse()
         while r <= self.last:
             yield r
             r = r.nextverse()

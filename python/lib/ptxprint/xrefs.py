@@ -38,7 +38,7 @@ class BaseXrefs:
 
 class XrefFileXrefs(BaseXrefs):
     def __init__(self, xrfile, filters, separators=None, listsize=0, rtl=False, shortrefs=False):
-        super().__init__(separators, rtl)
+        super().__init__(separators, rtl, shortrefs=shortrefs)
         self.filters = filters
         self.xrlistsize = listsize
         self.xrefdat = cachedData(xrfile, self.readdat)
@@ -109,7 +109,7 @@ class RefGroup(list):
 class XMLXrefs(BaseXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
                  context=None, shownums=True, rtl=False, shortrefs=False):
-        super().__init__(separators, rtl=rtl)
+        super().__init__(separators, rtl=rtl, shortrefs=shortrefs)
         self.filters = filters
         self.context = context or BaseBooks
         self.shownums = shownums
@@ -237,7 +237,7 @@ class XMLXrefs(BaseXrefs):
 
 
 class Xrefs:
-    def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile, showstrongsnums):
+    def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile, showstrongsnums, shortrefs):
         self.parent = parent
         self.prjdir = prjdir
         self.template = "\n\\AddTrigger {book}{dotref}\n\\x - \\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
@@ -250,17 +250,17 @@ class Xrefs:
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
-        seps['verseonly'] = parent.printer.getvar('verseident')
+        seps['verseonly'] = parent.printer.getvar('verseident') or "v"
         if source == "strongs":
             self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters,
-                    localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl)
+                    localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         elif xrfile is None:
             self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"),
                     filters, separators=seps, listsize=listsize, rtl=rtl)
         elif xrfile.endswith(".xml"):
-            self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings, rtl=rtl)
+            self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings, rtl=rtl, shortrefs=shortrefs)
         else:
-            self.xrefs = XrefFileXrefs(xrfile, filters, separators=seps, rtl=rtl)
+            self.xrefs = XrefFileXrefs(xrfile, filters, separators=seps, rtl=rtl, shortrefs=shortrefs)
         gc.collect()
 
     def _getVerseRanges(self, sfm, bk):
