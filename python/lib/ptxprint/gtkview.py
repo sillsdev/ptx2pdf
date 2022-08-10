@@ -123,8 +123,8 @@ l_statusLine btn_hideStatusLine
 _ui_enable4diglot2ndary = """
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes c_includeFootnotes c_fneachnewline
-tb_xrefs     c_includeXrefs     c_xreachnewline
+tb_footnotes c_includeFootnotes l_fnPos  c_fneachnewline
+tb_xrefs     c_includeXrefs     l_xrPos  c_xreachnewline
 c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
@@ -150,8 +150,8 @@ fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
-tb_footnotes c_includeFootnotes c_fneachnewline
-tb_xrefs     c_includeXrefs     c_xreachnewline
+tb_footnotes c_includeFootnotes l_fnPos  c_fneachnewline
+tb_xrefs     c_includeXrefs     l_xrPos  c_xreachnewline
 tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter

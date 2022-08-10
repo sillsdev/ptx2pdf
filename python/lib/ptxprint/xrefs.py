@@ -87,7 +87,7 @@ class XrefFileXrefs(BaseXrefs):
                     info = {
                         "book":         k.first.book,
                         "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook),
+                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else str(k.verse),
                         "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                     }
                     outf.write(self.template.format(**info))

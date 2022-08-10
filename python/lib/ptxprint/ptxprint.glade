@@ -13796,6 +13796,7 @@ and Parameters:</property>
                                       <object class="GtkCheckButton" id="c_includeFootnotes">
                                         <property name="label" translatable="yes">Include Footnotes</property>
                                         <property name="name">Include Footnotes</property>
+                                        <property name="width-request">320</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -13806,6 +13807,7 @@ The specific settings for these are
 located on the Footnotes tab.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="xalign">0</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onFootnotesClicked" swapped="no"/>
@@ -13818,7 +13820,7 @@ located on the Footnotes tab.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_spacer1">
                                         <property name="width-request">162</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -14634,6 +14636,7 @@ along with other kinds of cross-references.</property>
                                       <object class="GtkCheckButton" id="c_includeXrefs">
                                         <property name="label" translatable="yes">Include Cross-References (From Project Text)</property>
                                         <property name="name">Include cross-references (from project)</property>
+                                        <property name="width-request">320</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
@@ -14644,6 +14647,7 @@ The specific settings for these are
 located on the Cross-References tab.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="xalign">0</property>
                                         <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -14676,7 +14680,14 @@ enable this option.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel" id="l_spacer2">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">5</property>
+                                      </packing>
                                     </child>
                                   </object>
                                   <packing>
@@ -25161,8 +25172,9 @@ Positive values move it up.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the thickness 
-(in ems) of the underline.</property>
+                                    <property name="tooltip-text" translatable="yes">This sets the thickness
+of the text underline,
+(measured in ems).</property>
                                     <property name="halign">start</property>
                                     <property name="label" translatable="yes">Underline
 Thickness (em):</property>
@@ -25177,7 +25189,7 @@ Thickness (em):</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the underline. 
+(in ems) of the text underline. 
 Negative values move it down.
 Positive values move it up.</property>
                                     <property name="halign">start</property>
@@ -26013,7 +26025,7 @@ on the Peripherals tab. For example:
                           <object class="GtkCheckButton" id="c_autoSave">
                             <property name="label" translatable="yes">Autosave</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
+                            <property name="can-focus">False</property>
                             <property name="focus-on-click">False</property>
                             <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Save any changes made below
@@ -27685,13 +27697,14 @@ total of 4 pages on a single sheet.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_scaleToFit">
-                                    <property name="label" translatable="yes">Scale to fit</property>
+                                    <property name="label" translatable="yes">Scale to fit*</property>
                                     <property name="name">Pagination: Scale to fit</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Enable this option if it is acceptable
+                                    <property name="tooltip-text" translatable="yes">(Coming soon...)
+Enable this option if it is acceptable
 to slightly scale the Page Size (set on
 the Layout tab) in order to fit the
 Physical Paper Size based on the Pages
@@ -28946,50 +28959,8 @@ from XeTeX processing.</property>
           <object class="GtkBox" id="bx_statusMsgBar">
             <property name="can-focus">False</property>
             <property name="no-show-all">True</property>
-            <property name="halign">center</property>
+            <property name="halign">start</property>
             <property name="valign">end</property>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="valign">center</property>
-                <property name="margin-start">60</property>
-                <property name="margin-end">8</property>
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="icon-name">dialog-warning-symbolic</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="l_statusLine">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="hexpand">False</property>
-                <property name="label"> This is where status messages go to alert the user.</property>
-                <property name="justify">center</property>
-                <property name="single-line-mode">True</property>
-                <property name="track-visited-links">False</property>
-                <property name="xalign">0.5</property>
-                <attributes>
-                  <attribute name="foreground" value="#121212121212"/>
-                  <attribute name="background" value="#dd1ff2baff24"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkLinkButton" id="btn_hideStatusLine">
                 <property name="label" translatable="yes">Hide</property>
@@ -29005,13 +28976,57 @@ from XeTeX processing.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="width-request">45</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="margin-end">3</property>
+                <property name="label" translatable="yes">Status:</property>
+                <property name="xalign">1</property>
+                <attributes>
+                  <attribute name="weight" value="bold"/>
+                  <attribute name="foreground" value="#3d3d38384646"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_statusLine">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="label"> This is where status messages go to alert the user.</property>
+                <property name="justify">center</property>
+                <property name="single-line-mode">True</property>
+                <property name="track-visited-links">False</property>
+                <property name="xalign">0.5</property>
+                <attributes>
+                  <attribute name="foreground" value="#121212121212"/>
+                  <attribute name="background" value="#dd1ff2baff24"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
                 <property name="position">2</property>
               </packing>
             </child>
           </object>
           <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -29034,8 +29049,8 @@ depending on the level set here.</property>
                 <property name="halign">start</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">3</property>
-                <property name="margin-top">4</property>
-                <property name="margin-bottom">4</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="model">ls_uiLevel</property>
                 <property name="wrap-width">1</property>
                 <property name="active">1</property>
@@ -29257,11 +29272,12 @@ Shortcut: Ctrl-S</property>
             </child>
             <child>
               <object class="GtkButton" id="b_print">
-                <property name="label" translatable="yes">Print (Create PDF)</property>
+                <property name="label" translatable="yes">Print (Make PDF)</property>
                 <property name="width-request">120</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
+                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Create the PDF as specified
 (automatically saves settings).

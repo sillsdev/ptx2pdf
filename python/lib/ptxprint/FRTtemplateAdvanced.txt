@@ -1,10 +1,10 @@
 \id FRT
+\rem Sample text. Edit before use!
+
 \rem This template has been created for use with PTXprint for semi-automatic 
 \rem generation of front matter. Though it is structured on the USFM specification
-\rem for Paratext's FRT book, there are additional \zvar variables used which
+\rem for Paratext's FRT book, there are additional \z... markers used which
 \rem make it unsuitable for use within Paratext without prior modification.
-
-\rem !!! Edit sample text before use !!!
 
 \rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
@@ -28,7 +28,7 @@
 \pc \zcopyright
 \pc \zlicense
 \pc \zvar|licensetext\*
-\rem Permission requests: The text of this publication may be quoted (in written, visual or electronic form) up to one thousand (1,000) verses, or up to two hundred and fifty (250) verses for audio use without express written permission of the publisher, provided the verses quoted do not amount to a complete book of the NT, nor 50 percent or more of the total text of the work in which they are quoted.
+\rem You can add other material here if needed.
 \zbl|2\*
 \pc \zimagecopyrights
 \zbl|3\*
@@ -40,9 +40,9 @@
 \mt1 Foreword
 \resetpagenums -1
 \dopagenums
-\p The \bk Wakawaka Translation\bk* of the Bible is a translation which seeks to state clearly,
+\p The \bk Xyz Translation\bk* of the Bible is a translation which seeks to state clearly,
 accurately and naturally the meaning of the original texts in words and forms that are widely
-accepted by people who use the Wakawaka language as a means of communication.
+accepted by people who use the Xyz language as a means of communication.
 \p We trust that the reading and study of this translation will result in a better understanding 
 of the meaning of the Bible.
 
@@ -52,8 +52,8 @@ of the meaning of the Bible.
 \h Preface
 \mt1 Preface
 \ie
-\mt2 to the New Testament in the Wakawaka language
-\p The translation of the Bible into the Wakawaka language began in ... when an invitation from ...
+\mt2 to the New Testament in the Xyz language
+\p The translation of the Bible into the Xyz language began in ... when an invitation from ...
 \s1 The translation process
 \p In order to achieve the highest quality, a rigorous process has been used ...
 \s2 The text used for this translation
@@ -62,8 +62,8 @@ of the meaning of the Bible.
 \p ...
 \s2 How trustworthy is this translation?
 \p ...
-\pr Wakawaka Translation Committee
-\pr YYYY
+\pr Xyz Translation Committee
+\pr Mnth, Year
 
 \s1 Helps for the reader
 \m Keep these matters in mind while reading:
@@ -87,14 +87,4 @@ of the meaning of the Bible.
 \is Alphabetical Order of Books
 \rem sorta will sort by toc1, sortb by toc2, sortc by toc3
 \ip \ztoc|sortc\*
-\ip
-
-\rem ---------RARELY USED -------------
-\periph Table of Abbreviations|id="abbreviations"
-\rem ----------------------------------
-\mt Abbreviations
-\tr  \tc1 Circa (around) \tc2 c \tc3 #
-\tr  \tc1 Old Testament \tc2 OT \tc3 #
-\tr  \tc1 New Testament \tc2 NT \tc3 #
-\tr  \tc1 Septuagint \tc2 LXX \tc3 #
 \ip
