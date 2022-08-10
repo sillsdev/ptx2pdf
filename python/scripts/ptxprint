@@ -61,6 +61,7 @@ parser.add_argument('-b','--books',help='Space separated bookid list to set')
 parser.add_argument('-Z','--zip',help='Unzip into project directory and delete at end')
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-L','--lang',help='Set UI language code')
+parser.add_argument('-n','--port',type=int,help='Listen on given port')
 parser.add_argument('-m','--macros',help="Directory containing TeX macros (paratext2.tex)")
 parser.add_argument('-N','--nointernet',action="store_true",help="Disable all internet access")
 parser.add_argument('-l','--logging',help="Enable logging level [DEBUG, *INFO*, WARN, ERROR, number]")
@@ -117,6 +118,7 @@ fontconfig_path = writefontsconf()
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
+    from ptxprint.ipcserver import make_server
     #from ptxprint.restserver import startRestServer
 
 from ptxprint.view import ViewModel, VersionStr, doError
@@ -243,6 +245,7 @@ if args.pid:
 
 if args.print or args.action is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
+    mainw.run()
     if args.pid:
         mainw.setPrjid(args.pid, loadConfig=False)
         mainw.setConfigId(args.config or "Default")
@@ -285,15 +288,24 @@ if args.print or args.action is not None:
     sys.exit(res)
 else:
     goround = True
+    loops = 0
     while (goround):
         setup_i18n(args.lang)
         reset_gtk_direction()
         goround = False
         mainw = GtkViewModel(args.paratext, args.directory, config, macrosdir, args)
+        if not loops and args.port:
+            (server, is_server) = make_server(mainw, "127.0.0.1", args.port)
+            if not is_server:
+                server.transmit({"verb": "project", "params": [args.pid, args.config or "Default"]})
+                loops = -1
+                break
+            else:
+                mainw.server = server
+        mainw.setup_ini()
         if args.nointernet:
             mainw.set('c_noInternet', True)
             mainw.noInt = True
-        #restserver = startRestServer(model=mainw)
         if args.pid:
             mainw.setPrjid(args.pid)
             mainw.setConfigId(args.config or "Default")
@@ -312,6 +324,7 @@ else:
                 args.pid = mainw.prjid
                 args.config = mainw.configId
                 goround = True
-        #restserver.shutdown()
-    with open(conffile, "w", encoding="utf-8") as outf:
-        config.write(outf)
+        loops += 1
+    if loops >= 0:
+        with open(conffile, "w", encoding="utf-8") as outf:
+            config.write(outf)

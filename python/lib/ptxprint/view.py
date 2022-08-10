@@ -122,6 +122,8 @@ class ViewModel:
 
         # private to this implementation
         self.dict = {}
+
+    def setup_ini(self):
         self.setDate()
 
     def setDate(self):

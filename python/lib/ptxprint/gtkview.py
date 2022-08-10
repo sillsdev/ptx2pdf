@@ -467,6 +467,12 @@ class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         logger.debug("Starting init in gtkview")
+        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
+        self.lang = args.lang if args.lang is not None else 'en'
+        self.args = args
+        self.initialised = False
+
+    def setup_ini(self):
         self._setup_css()
         self.radios = {}
         GLib.set_prgname("ptxprint")
@@ -520,11 +526,9 @@ class GtkViewModel(ViewModel):
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
         logger.debug("Glade loaded in gtkview")
-        super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.isDisplay = True
         self.searchWidget = []
         self.config_dir = None
-        self.initialised = False
         self.booklistKeypressed = False
         self.configKeypressed = False
         self.configNoUpdate = False
@@ -540,7 +544,6 @@ class GtkViewModel(ViewModel):
         self.warnedSIL = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
-        self.lang = args.lang if args.lang is not None else 'en'
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -672,7 +675,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
-        self.getInitValues(addtooltips=args.identify)
+        self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
@@ -724,6 +727,7 @@ class GtkViewModel(ViewModel):
         Gtk.StyleContext().add_provider_for_screen(Gdk.Screen.get_default(), provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
 
     def run(self, callback):
+        super().setup_ini()
         logger.debug("Starting to run gtkview")
         self.callback = callback
         fc = initFontCache()
@@ -2765,6 +2769,10 @@ class GtkViewModel(ViewModel):
             self.pendingConfig = configid
         else:
             self.set("ecb_savedConfig", configid)
+
+    def setPrjConfig(self, prjid, configid):
+        self.setPrjid(prjid)
+        self.setConfigId(configid)
 
     def onProjectChange(self, cb_prj):
         if not self.initialised:
