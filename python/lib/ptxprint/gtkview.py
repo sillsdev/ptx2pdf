@@ -769,7 +769,10 @@ class GtkViewModel(ViewModel):
         # self.onShowAdvancedOptionsClicked(None)
         sys.excepthook = self.doSysError
         lsfonts = self.builder.get_object("ls_font")
+        tvfonts = self.builder.get_object("tv_fontFamily")
+        tvfonts.set_model(None)
         lsfonts.clear()
+        tvfonts.set_model(lsfonts)
         # self.noInternetClicked(None)
         self.onUILevelChanged(None)
         self.checkUpdates(False)

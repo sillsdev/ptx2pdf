@@ -522,7 +522,7 @@ class ViewModel:
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
-        logger.debug(f"Changing project to {prjid} {configName=}")
+        logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {self.prjid}, {configName=}")
         currprj = self.prjid
         if currprj is None or currprj != prjid:
             if currprj is not None and saveCurrConfig:
