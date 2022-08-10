@@ -256,7 +256,7 @@ class Xrefs:
                     localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         elif xrfile is None:
             self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"),
-                    filters, separators=seps, listsize=listsize, rtl=rtl)
+                    filters, separators=seps, listsize=listsize, rtl=rtl, shortrefs=shortrefs)
         elif xrfile.endswith(".xml"):
             self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings, rtl=rtl, shortrefs=shortrefs)
         else:

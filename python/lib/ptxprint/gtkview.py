@@ -737,13 +737,16 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(o).set_sensitive(False)
         self.setPrintBtnStatus(1, _("No project set"))
         self.updateDialogTitle()
+        logger.debug("Setting project")
         if self.pendingPid is not None:
             self.set("fcb_project", self.pendingPid)
             self.pendingPid = None
+        logger.debug("Setting config")
         if self.pendingConfig is not None:
             self.set("ecb_savedConfig", self.pendingConfig)
             self.pendingConfig = None
 
+        logger.debug("More UI setup")
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
@@ -753,6 +756,7 @@ class GtkViewModel(ViewModel):
 
         self.mw.resize(830, 594)
         self.mw.show_all()
+        logger.debug("Capture?")
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.logfile = open(self.args.capture, "w")
@@ -768,14 +772,17 @@ class GtkViewModel(ViewModel):
         # self.set("c_showAdvancedOptions", not expert)
         # self.onShowAdvancedOptionsClicked(None)
         sys.excepthook = self.doSysError
+        logger.debug("Clearing fonts...")
         lsfonts = self.builder.get_object("ls_font")
         tvfonts = self.builder.get_object("tv_fontFamily")
         tvfonts.set_model(None)
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
         # self.noInternetClicked(None)
+        logger.debug("Fonts cleared")
+        # logger.debug("Checking for updates")
         self.onUILevelChanged(None)
-        self.checkUpdates(False)
+        # self.checkUpdates(False)
         logger.debug("Starting UI")
         try:
             Gtk.main()
@@ -3908,20 +3915,7 @@ class GtkViewModel(ViewModel):
         if not self.sensiVisible("c_includeFootnotes"):
             if self.get("r_xrpos") == "below" or self.get("r_xrpos") == "blend":
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
-              
-    # def onXrefClicked(self, btn):
-        # for w in ["tb_xrefs", "lb_xrefs"]:
-            # self.builder.get_object(w).set_sensitive(self.get("c_includeXrefs") or self.get("c_useXrefList"))
 
-    # def onXrefListClicked(self, btn):
-        # xrf = self.get("c_includeXrefs")
-        # xrl = self.get("c_useXrefList")
-        # if xrl:
-            # self.set("c_includeXrefs", False)
-        # self.builder.get_object("ex_xrListSettings").set_expanded(xrl)
-        # for w in ["tb_xrefs", "lb_xrefs"]:
-            # self.builder.get_object(w).set_sensitive(xrf or xrl)
-            
     def updateColxrefSetting(self, btn):
         xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
