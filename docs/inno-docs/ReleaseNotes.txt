@@ -1,8 +1,26 @@
 PTXprint 2.2.10 Release Notes
-6 Aug 2022
+10 Aug 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.11 (10 Aug 2022)
+
+  * Added client/server IPC for Paratext integration
+  
+  * Add -N command-line parameter to disable internet access
+  
+  * Added option to only show verse number on \fr and \xo
+  
+  * Improved startup time
+  
+  * Fixed config version numbers not updating
+  
+  * Fixed Strong's cross-references (again)
+  
+  * Adjusted hyphenation list limit (again)
+  
+  * Tweaked button labels and status bar location & behaviour
+  
 Bug fixes and improvements in 2.2.10 (6 Aug 2022)
 
   * Added auto-save option for file editor

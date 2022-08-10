@@ -746,7 +746,6 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", self.pendingConfig)
             self.pendingConfig = None
 
-        logger.debug("More UI setup")
         tv = self.builder.get_object("tv_fontFamily")
         cr = Gtk.CellRendererText()
         col = Gtk.TreeViewColumn("Family", cr, text=0, weight=1)
@@ -756,7 +755,6 @@ class GtkViewModel(ViewModel):
 
         self.mw.resize(830, 594)
         self.mw.show_all()
-        logger.debug("Capture?")
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.logfile = open(self.args.capture, "w")
@@ -772,17 +770,12 @@ class GtkViewModel(ViewModel):
         # self.set("c_showAdvancedOptions", not expert)
         # self.onShowAdvancedOptionsClicked(None)
         sys.excepthook = self.doSysError
-        logger.debug("Clearing fonts...")
         lsfonts = self.builder.get_object("ls_font")
         tvfonts = self.builder.get_object("tv_fontFamily")
         tvfonts.set_model(None)
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
-        # self.noInternetClicked(None)
-        logger.debug("Fonts cleared")
-        # logger.debug("Checking for updates")
         self.onUILevelChanged(None)
-        # self.checkUpdates(False)
         logger.debug("Starting UI")
         try:
             Gtk.main()
