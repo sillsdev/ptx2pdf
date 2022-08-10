@@ -112,6 +112,12 @@ def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
 
+def getcaller(count=0):
+    frame = currentframe().f_back.f_back
+    for i in range(count):
+        frame = frame.f_back
+    return f"{frame.f_code.co_name}({frame.f_code.co_filename}:{frame.f_lineno})"
+
 def refKey(r, info=""):
     m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
     if m:

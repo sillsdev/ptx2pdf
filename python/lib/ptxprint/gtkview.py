@@ -23,7 +23,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir, getcaller
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -1026,7 +1026,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
         for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics", "l_techFAQ",  "lb_techFAQ"]:
             self.builder.get_object(w).set_visible(not newval and adv)
-        self.checkUpdates()
 
     def addCR(self, name, index):
         if "|" in name:
@@ -3965,6 +3964,7 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
+        logger.debug(f"check for updates at {getcaller()}")
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
         if sys.platform != "win32":
