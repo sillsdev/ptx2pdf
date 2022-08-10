@@ -712,7 +712,7 @@ class ViewModel:
             hasval = config.has_option(sect, k)
         if isinstance(value, bool):
             value = "true" if value else "false"
-        if not update or not hasval:
+        if update or not hasval:
             config.set(sect, k, value)
 
     def createConfig(self):
