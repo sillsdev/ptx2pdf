@@ -96,7 +96,7 @@ elif args.logging:
     except ValueError:
         loglevel = getattr(logging, args.logging.upper(), None)
     if isinstance(loglevel, int):
-        parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
+        parms = {'level': loglevel, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(asctime)s.%(msecs)03d %(levelname)s:%(module)s(%(lineno)d) %(message)s'}
         if args.logfile.lower != "none":
             logfh = open(args.logfile, "w", encoding="utf-8")
             parms.update(stream=logfh, filemode="w") #, encoding="utf-8")

@@ -2158,15 +2158,15 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_parallelRefs").set_active(status)
 
     def onUseIllustrationsClicked(self, btn):
-        self.onSimpleClicked(btn)
+        pics = self.get("c_includeillustrations")
         self.colorTabs()
-        if btn.get_active():
+        if pics:
             self.loadPics()
         else:
             self.picinfos.clear(self)
             self.picListView.clear()
-        self.onPicRescan(btn)
-        self.picPreviewShowHide(btn.get_active())
+        self.onPicRescan(None)
+        self.picPreviewShowHide(pics)
         
     def picPreviewShowHide(self, show=True):
         for w in ["bx_showImage", "tb_picPreview"]: #, "fr_picPreview", "img_picPreview"]:
@@ -2801,6 +2801,7 @@ class GtkViewModel(ViewModel):
         if pts is not None:
             if self.get("t_copyrightStatement") == "":
                 self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+        self.onUseIllustrationsClicked(None)
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
@@ -3430,7 +3431,8 @@ class GtkViewModel(ViewModel):
         self.sensiVisible("c_thumbtabs")
         self.colorTabs()
         self.onNumTabsChanged()
-        if self.get("c_thumbtabs"):
+        status = self.get("c_thumbtabs")
+        if status:
             if not self.get("c_usetoc3"):
                 self.set("r_thumbText", "zthumbtab")
             self.builder.get_object("r_thumbText_toc3").set_sensitive(self.get("c_usetoc3"))
@@ -3442,14 +3444,18 @@ class GtkViewModel(ViewModel):
         if self.get("c_thumbtabs"):
             self.updateThumbLines()
             self.onThumbColorChange()
-            self.tabsHorizVert()
+        self.tabsHorizVert()
             
     def tabsHorizVert(self):
-        self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
-        self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
-        self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
-        self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
-
+        if self.get("c_thumbtabs"):
+            self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
+            self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
+            self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
+            self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
+        else:
+            for w in ["l_thumbHorizontalL", "l_thumbVerticalL", "l_thumbHorizontalR", "l_thumbVerticalR"]:
+                self.builder.get_object(w).set_visible(False)
+                
     def onThumbColorChange(self, *a):
         def coltohex(s):
             vals = s[s.find("(")+1:-1].split(",")
