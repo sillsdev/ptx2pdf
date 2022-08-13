@@ -1,7 +1,19 @@
 PTXprint 2.2.11 Release Notes
-10 Aug 2022
+13 Aug 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.12 (13 Aug 2022)
+
+  * Prevent excessive vertical growth when expanding Style attributes
+
+  * Fixed output path to PDF on Help tab
+  
+  * Ensure piclist is populated after project is changed
+  
+  * Improved show/hide graphics for tabs
+  
+  * Changed colour (to blue) for picture location previews
 
 Bug fixes and improvements in 2.2.11 (10 Aug 2022)
 

@@ -284,6 +284,7 @@ _nonsensitivities = {
     "c_doublecolumn" :         ["l_colXRside", "fcb_colXRside"],
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
+    "c_styTextProperties":     ["scr_styleSettings"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -2779,7 +2780,6 @@ class GtkViewModel(ViewModel):
     def onProjectChange(self, cb_prj):
         if not self.initialised:
             return
-        self.updatePrjLinks()
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         # self.builder.get_object("btn_deleteConfig").set_sensitive(False)
         lockBtn = self.builder.get_object("btn_lockunlock")
@@ -2802,6 +2802,7 @@ class GtkViewModel(ViewModel):
             if self.get("t_copyrightStatement") == "":
                 self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
         self.onUseIllustrationsClicked(None)
+        self.updatePrjLinks()
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
