@@ -1280,8 +1280,8 @@ contained within the sidebar.</property>
   <object class="GtkAdjustment" id="a_verseDecoratorScale">
     <property name="upper">10</property>
     <property name="value">1</property>
-    <property name="step-increment">0.10</property>
-    <property name="page-increment">1</property>
+    <property name="step-increment">0.05</property>
+    <property name="page-increment">0.10</property>
   </object>
   <object class="GtkAdjustment" id="a_verseDecoratorShift">
     <property name="lower">-20</property>
@@ -22515,7 +22515,7 @@ fit within the graphic.</property>
                                           <object class="GtkLabel" id="l_verseDecoratorScale">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
-                                            <property name="tooltip-text" translatable="yes">Scale verse decorator image. 1.0 is unity.</property>
+                                            <property name="tooltip-text" translatable="yes">Scale verse decorator image. 1.00 is unity.</property>
                                             <property name="halign">end</property>
                                             <property name="hexpand">True</property>
                                             <property name="label" translatable="yes">Scale:</property>
@@ -22533,8 +22533,8 @@ fit within the graphic.</property>
                                             <property name="text">1.0</property>
                                             <property name="xalign">1</property>
                                             <property name="adjustment">a_verseDecoratorScale</property>
-                                            <property name="climb-rate">0.10</property>
-                                            <property name="digits">1</property>
+                                            <property name="climb-rate">0.05</property>
+                                            <property name="digits">2</property>
                                             <property name="value">1</property>
                                           </object>
                                           <packing>
@@ -23365,6 +23365,11 @@ Email: ptxprint_support@sil.org</property>
                                                         <property name="has-entry">True</property>
                                                         <property name="entry-text-column">0</property>
                                                         <property name="id-column">1</property>
+                                                        <child internal-child="entry">
+                                                          <object class="GtkEntry">
+                                                            <property name="can-focus">False</property>
+                                                          </object>
+                                                        </child>
                                                       </object>
                                                       <packing>
                                                         <property name="left-attach">1</property>
@@ -24271,6 +24276,11 @@ After Paragraph: After where it comes in the text</property>
                                                             <property name="entry-text-column">0</property>
                                                             <property name="id-column">1</property>
                                                             <property name="active-id">t</property>
+                                                            <child internal-child="entry">
+                                                            <object class="GtkEntry">
+                                                            <property name="can-focus">False</property>
+                                                            </object>
+                                                            </child>
                                                             </object>
                                                             <packing>
                                                             <property name="left-attach">1</property>

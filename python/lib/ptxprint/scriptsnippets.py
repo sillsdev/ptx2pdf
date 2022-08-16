@@ -70,6 +70,14 @@ def nonbody(fn, bj, dat):
         res.append(fn(l))
     return "\n".join(res)
 
+
+class Indic(ScriptSnippet):
+    dialogstruct = [
+        MiniCheckButton("c_scrindicSyllable", _("Syllable line breaking")),
+        MiniCheckButton("c_scrindicshowhyphen", _("Show Hyphen"))
+    ]
+
+
 class mymr(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrmymrSyllable", _("Syllable line breaking"))
@@ -113,16 +121,12 @@ class arab(ScriptSnippet):
     def getrefseps(cls, model):
         return cls.refseparators[1 if model.get("c_scrarabrefs") else 0]
 
-class mlym(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scrmlymSyllable", _("Syllable line breaking"))
-    ]
-
+class mlym(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/mlym/syllables"]:
-            cls.hyphenChar = '\u200B'
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.indVowels = r'\u0d05-\u0d14\u0d60\u0d61'
             cls.vmodifiers = r'\u0d02-\u0d03\u0d3d\u0324'
             cls.cmodifiers = r'\u0324'
@@ -133,37 +137,30 @@ class mlym(ScriptSnippet):
             res = cls.indicSyls()
         return res
 
-class taml(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scrtamlSyllable", _("Syllable line breaking"))
-    ]
-
+class taml(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/taml/syllables"]:
-            cls.hyphenChar = '\u200B'
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.wordChars = r'\u0b81-\u0be3'
             cls.cons = r'\u0b95-\u0bb9'
             cls.indVowels = r'\u0b85-\u0b94'
-            cls.matras = r'\u0bbc-\u0bcc\u0bd7'
-            cls.viramas = r'\u0bcd'
+            cls.matras = r'\u0bbc-\u0bcc\u0bd7\u0bcd'
+            # cls.viramas = r'\u0bcd' # this behaves more like a vowel matra (keep with prev cons)
+            cls.viramas = r''
             cls.cmodifiers = r'\u0324'
             cls.vmodifiers = r'\u0b82'
             res = cls.indicSyls()
+            res += [(onlybody, re.compile(r"{}([\u0b95-\u0bb9]\u0bcd)".format(cls.hyphenChar)), r"\1")]
         return res
             
-class sinh(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scrsinhSyllable", _("Syllable line breaking"))
-    ]
-
+class sinh(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/sinh/syllables"]:
-            # cls.hyphenChar = '\u200B' # invisible
-            cls.hyphenChar = '\u00AD'   # visible
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.wordChars = r'\u0d81-\u0df3'
             cls.cons = r'\u0d9a-\u0dc6'
             cls.indVowels = r'\u0d85-\u0d96'
@@ -174,16 +171,12 @@ class sinh(ScriptSnippet):
             res = cls.indicSyls()
         return res
             
-class telu(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scrteluSyllable", _("Syllable line breaking"))
-    ]
-
+class telu(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/telu/syllables"]:
-            cls.hyphenChar = '\u200B'
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.wordChars = r'\u0c01-\u0c63\u0c7f'
             cls.cons = r'\u0c15-\u0c39\u0c58\u0c59'
             cls.indVowels = r'\u0c05-\u0c14\u0c60\u0c61'
@@ -194,16 +187,12 @@ class telu(ScriptSnippet):
             res = cls.indicSyls()
         return res
             
-class knda(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scrkndaSyllable", _("Syllable line breaking"))
-    ]
-
+class knda(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/knda/syllables"]:
-            cls.hyphenChar = '\u200B'
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.wordChars = r'\u0c81-\u0ce3\u0cf1\u0cf2'
             cls.cmodifiers = r'\u0324\u0cbc'  # KAN nukta
             cls.cons = r'\u0c95-\u0cb9\u0cde'
@@ -214,16 +203,12 @@ class knda(ScriptSnippet):
             res = cls.indicSyls()
         return res
             
-class orya(ScriptSnippet):
-    dialogstruct = [
-        MiniCheckButton("c_scroryaSyllable", _("Syllable line breaking"))
-    ]
-
+class orya(Indic):
     @classmethod
     def regexes(cls, model):
         res = []
-        if model["scripts/orya/syllables"]:
-            cls.hyphenChar = '\u200B'
+        if model["scripts/indic/syllables"]:
+            cls.hyphenChar = '\u00AD' if model["scripts/indic/showhyphen"] else '\u200B'
             cls.wordChars = r'\u0b01-\u0b63\u0b70\u0b71'
             cls.cmodifiers = r'\u0324\u0b3c'  # ORI nukta
             cls.cons = r'\u0b15-\u0b39\u0b5c\u0b5d\u0b5f\u0b70\u0b71'

@@ -408,14 +408,9 @@ ModelMap = {
 
     "scripts/mymr/syllables":   ("c_scrmymrSyllable", None),
     "scripts/arab/lrcolon":     ("c_scrarabrefs", None),
-    "scripts/mlym/syllables":   ("c_scrmlymSyllable", None),
-    "scripts/taml/syllables":   ("c_scrtamlSyllable", None),
-    "scripts/sinh/syllables":   ("c_scrsinhSyllable", None),
-    "scripts/telu/syllables":   ("c_scrteluSyllable", None),
-    "scripts/knda/syllables":   ("c_scrkndaSyllable", None),
-    "scripts/orya/syllables":   ("c_scroryaSyllable", None),
+    "scripts/indic/syllables":  ("c_scrindicSyllable", None),
+    "scripts/indic/showhyphen": ("c_scrindicshowhyphen", None),
 
-    # "strongsndx/includenames":  ("c_strongsInclNames", None),
     "strongsndx/shownums":      ("c_strongsShowNums", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),

@@ -1149,7 +1149,7 @@ class ViewModel:
                     # (so there's nothing to filter them out, because they don't seem to exist!)
                     # Also need to strip out words with punctuation chars (eg. Burmese \u104C .. \u104F)
                     if "-" in l:
-                        if regex.search(r'[^\p{L}\p{M}\-\u200C\u200D]', l):
+                        if regex.search(r'[^\p{L}\p{M}\-]', l):
                             z += 1
                         else:
                             if l[0] != "-" and len(l) > 5:
@@ -1185,7 +1185,7 @@ class ViewModel:
             else:
                 m1 = _("Hyphenation List was NOT Generated")
                 m2 = _("No valid words were found in Paratext's Hyphenation List")
-        self.doError(m1, m2)
+        self.doError(m1, secondary=m2)
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         count = collections.Counter()
