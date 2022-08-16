@@ -306,3 +306,30 @@ with open(sys.argv[2], "w", encoding="utf8") as outf:
         t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
         outf.write(t)
 ```
+
+## Show bridged verses at the start of chapters
+
+Generally people do not want to show the verse number for verse 1 at the start
+of a chapter. But they may want to show a bridged verse in such a situation.
+This snippet shows how to achieve this.
+
+```tex
+\catcode`\@=11
+\addtopreversehooks{\ifc@ncelfirstverse
+    \spl@tprintableverse
+    \ifx\v@rsefrom\v@rseto\else\c@ncelfirstversefalse\fi
+  \fi}
+```
+
+### Implementation
+
+Since we are digging into the internals of the ptx macros, we need access to
+internal variables. So we enable @ as a letter for use in macro names.
+
+Next we add a new preverse hook. This macro will be run just before printing (or
+not printing) any verse number. If printing the verse is currently disabled
+(i.e. at the start of a chapter where verse 1 has been disabled), then let's
+test to see if we have a bridged verse. First split the printable verse number
+into its components (versefrom and verseto). Then if the two do not compare the
+same then cancel the cancelling of verse printing. I.e. print the verse.
+
