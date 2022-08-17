@@ -117,7 +117,7 @@ fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch
 tb_Help lb_Help
 fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
-l_statusLine btn_hideStatusLine
+l_statusLine btn_dismissStatusLine
 """.split()
 
 _ui_enable4diglot2ndary = """
@@ -294,6 +294,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
+    "smallbutton": ("btn_dismissStatusLine", ),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -708,8 +709,9 @@ class GtkViewModel(ViewModel):
         css = """
             .printbutton:active { background-color: chartreuse; background-image: None }
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
+            .smallbutton {font-size: 10px; min-height: 0pt; min-width:0px;  padding:1px;}
             .fontbutton {font-size: 12px}
-            .tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)}
+            .tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}

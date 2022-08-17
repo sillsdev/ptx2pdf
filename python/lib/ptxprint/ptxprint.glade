@@ -28985,41 +28985,22 @@ from XeTeX processing.</property>
             <property name="halign">start</property>
             <property name="valign">end</property>
             <child>
-              <object class="GtkLinkButton" id="btn_hideStatusLine">
-                <property name="label" translatable="yes">Hide</property>
+              <object class="GtkButton" id="btn_dismissStatusLine">
+                <property name="label" translatable="yes">Dismiss</property>
+                <property name="width-request">55</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="margin-start">6</property>
-                <property name="relief">half</property>
-                <signal name="activate-link" handler="onHideStatusMsgClicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="width-request">45</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
                 <property name="halign">end</property>
-                <property name="margin-end">3</property>
-                <property name="label" translatable="yes">Status:</property>
-                <property name="xalign">1</property>
-                <attributes>
-                  <attribute name="foreground" value="#3d3d38384646"/>
-                </attributes>
+                <property name="margin-start">6</property>
+                <property name="margin-top">3</property>
+                <signal name="clicked" handler="onHideStatusMsgClicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">0</property>
               </packing>
             </child>
             <child>
@@ -29028,8 +29009,9 @@ from XeTeX processing.</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="margin-start">6</property>
+                <property name="margin-start">8</property>
                 <property name="margin-end">6</property>
+                <property name="margin-top">2</property>
                 <property name="label"> This is where status messages go to alert the user.</property>
                 <property name="justify">center</property>
                 <property name="single-line-mode">True</property>
@@ -29043,7 +29025,7 @@ from XeTeX processing.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">1</property>
               </packing>
             </child>
           </object>
