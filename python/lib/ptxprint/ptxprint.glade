@@ -24485,15 +24485,18 @@ any parameter to RESET it to the stylesheet value.</property>
                                       <object class="GtkLabel">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">It is recommended that you make changes in this Style editor which overrides all the stylesheets below. The settings modified here are stored in each config's ptxprint.sty file.
+                                        <property name="tooltip-text" translatable="yes">Stylesheets are applied in this order with later settings overriding earlier settings:
 
-[Optional: ptxprint-mods.sty can be edited using the Advanced tab, and contains style modifications specific to a publication/configuration.]
+usfm_sb.sty is the underlying Paratext stylesheet (uneditable).
 
-[Optional: custom.sty contains style modifications that are project-wide and also affect display of text within Paratext itseld (can also be edited using the shortcut on the Advanced tab)]
+ptx2pdf.sty contains PTXprint application modifications to make things work better (uneditable).
 
-ptx2pdf.sty contains PTXprint-specific modifications to make things work better (not to be edited)
+Optional: custom.sty contains style modifications that are project-wide and also affect display of text within Paratext itself (can be edited from the Advanced tab). Typically used to add project-specific markers.
 
-usfm_sb.sty is the underlying Paratext stylesheet (which should never be edited)</property>
+ptxprint.sty contains the config's settings as edited by this Styles editor.
+
+Optional: ptxprint-mods.sty can be edited from the Advanced tab. Because it comes last, it takes priority.
+</property>
                                         <property name="valign">center</property>
                                         <property name="label" translatable="yes">How are Stylesheets applied?</property>
                                         <attributes>
@@ -25329,8 +25332,8 @@ next book to start on a new page.</property>
 statement(s) can just contain the appropriate
 acronyms (e.g. BFBS or DCC) for some artists.
 
-And if PDF/X-1a:2003 Format is selected above, then
-the meta-data will not contain any sensitive data.</property>
+In addition, the PDF's metadata will not contain
+sensitive project-specific data.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-top">6</property>
