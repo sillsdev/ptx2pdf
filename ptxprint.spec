@@ -67,7 +67,9 @@ a = Analysis(['python/scripts/ptxprint'],
                              'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
                              'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
                              'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
-                             'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png')]
+                             'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png',
+                             'topmargin.png', 'bottommargin.png', 'blanktop.png', 'blankbottom.png',
+                             'headerposition.png', 'footerposition.png', 'margins.png', 'rhruleposition.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
