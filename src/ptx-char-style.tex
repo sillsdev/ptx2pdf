@@ -50,6 +50,7 @@
   \count3=0 \count1=0 \count2=0
 }
 
+% Decimal BGR -> RGB hex
 \def\colorhex#1{\count1=#1\divide\count1 by 256\multiply\count1 by 256
     \count2=#1\advance\count2 by -\count1 \multiply\count2 by 65536 % r << 16
     \count3=#1\divide\count3 by 65536 \multiply\count3 by 65536 % b << 16
