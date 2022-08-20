@@ -34,6 +34,7 @@ _errmsghelp = {
                                            "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
                                            "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
+"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \Color definition, not a color name. (e.g. \Color xff7f7f)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                            "Try running 'Basic Checks' in Paratext to validate markers."),
@@ -399,7 +400,8 @@ class RunJob:
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
         for l in reversed(finalLogLines):
-            if l[:1] == "!" and not foundmsg:
+            # if l[:1] == "!" and not foundmsg:
+            if not foundmsg:
                 for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                     if m in l or l.startswith(m):
                         finalLogLines.append(_errmsghelp[m]+"\n")
