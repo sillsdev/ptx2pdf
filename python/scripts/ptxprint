@@ -245,7 +245,7 @@ if args.pid:
 
 if args.print or args.action is not None:
     mainw = ViewModel(args.paratext, args.directory, config, macrosdir, args)
-    mainw.run()
+    mainw.setup_ini()
     if args.pid:
         mainw.setPrjid(args.pid, loadConfig=False)
         mainw.setConfigId(args.config or "Default")

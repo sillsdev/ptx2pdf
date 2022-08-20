@@ -25818,16 +25818,16 @@ Font metrics gives more consistent results.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_AdvCompatFtrInMargin">
-                                        <property name="label" translatable="yes">Bottom Footer in Margin</property>
+                                        <property name="label" translatable="yes">Put Footer in Margin Area</property>
                                         <property name="name">Place the footer within the margin</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">Normally the page number on an intro book
 occurs above the page margin (in the area
-that text would normally flow until.). However
-if you need that bottom footer page number
-to go below the bottom margin, then you
+that text would normally flow until). However
+if you need the footer page number to sit
+below the page's bottom margin, then you
 need to activate this compatibility option.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
@@ -27091,7 +27091,14 @@ using the following markers:
 \zimagecopyrightsfr - as above, but use localized (fr = French) version (ro, hu, es, fr, ru available).
 
 \b can be used to insert a blank line between markers if needed.
- 
+
+If using a Left-to-Right script for the colophon in a RTL publication
+you will need to add \beginL to force the colophon to render LTR.
+For example:
+   \pc \beginL \zcopyright
+   \pc \beginL \zlicense
+   \pc \beginL \zimagecopyrights
+
 These special codes may also be used in other
 books such as the front matter book (FRT). 
 
