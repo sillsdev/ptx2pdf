@@ -541,6 +541,7 @@ class GtkViewModel(ViewModel):
         self.notebooks = {}
         self.pendingerror = None
         self.logfile = None
+        self.highlight = False
         self.rtl = False
         self.isDiglotMeasuring = False
         self.warnedSIL = False
@@ -2570,7 +2571,7 @@ class GtkViewModel(ViewModel):
         self.alltoggles = []
         prjs = self.builder.get_object("ls_projects")
         prjCtr = len(prjs)
-        cols = int(prjCtr**0.6) if prjCtr <= 140 else 10
+        cols = int(prjCtr**0.6) if prjCtr <= 70 else 5
         for i, b in enumerate(prjs):
             if self.prjid == b[0]:
                 tbox = Gtk.Label()
@@ -4280,3 +4281,27 @@ class GtkViewModel(ViewModel):
         # if self.get("c_letterSpacing"):
             # self.set("c_letterSpacing", False)
         # self.noUpdate = False
+
+    def onMarginEnterNotifyEvent(self, btn, *args):
+        self.highlightMargin(btn, True)
+
+    def onMarginLeaveNotifyEvent(self, btn, *args):
+        self.highlightMargin(btn, False)
+
+    def highlightMargin(self, btn, highlightMargin=True):
+        n = Gtk.Buildable.get_name(btn)
+        wid = "img_" + n[2:]
+        for w in ["topmargin", "bottommargin", "footerposition", "headerposition", "margins", "rhruleposition", "blanktop", "blankbottom"]:
+            self.builder.get_object(f"img_{w}").set_visible(False)
+        if highlightMargin:
+            for b in ["1False", "2False", "2True"]:
+                self.builder.get_object(f"img_Bottom{b}").set_visible(False)
+            for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
+                self.builder.get_object(f"img_Top{t}").set_visible(False)
+            if wid in ["img_bottommargin", "img_footerposition"]:
+                self.builder.get_object("img_blanktop").set_visible(True)
+            else:
+                self.builder.get_object("img_blankbottom").set_visible(True)
+            self.builder.get_object(wid).set_visible(True)
+        else:
+            self.updateMarginGraphics()
