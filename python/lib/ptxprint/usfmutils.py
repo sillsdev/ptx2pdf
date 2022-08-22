@@ -124,6 +124,14 @@ class UsfmCollection:
                         tocs[i] = tocs[i+1]
                 self.booknames.addBookName(bk, *tocs)
 
+    def get_markers(self):
+        ''' returns a list of all markers used in the corpus '''
+        res = set()
+        for k, v in self.books.items():
+            mkrs = v.getmarkers()
+            res.update(mkrs)
+        return res
+
 class Usfm:
     def __init__(self, iterable, sheets):
         #tag_escapes = r"[^0-9A-Za-z]"
@@ -232,6 +240,17 @@ class Usfm:
             return a
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
+
+    def getmarkers(self):
+        ''' Return a set of all markers in the doc '''
+        res = set()
+        def _g(a, e):
+            if isinstance(e, sfm.Element):
+                a.add(e.name)
+                reduce(_g, a)
+        reduce(_g, self.doc[0], res)
+        return res
+
 
     def subdoc(self, refranges, removes={}, strippara=False, keepchap=False):
         ''' Creates a document consisting of only the text covered by the reference

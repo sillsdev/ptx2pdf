@@ -573,11 +573,14 @@ class ViewModel:
         else:
             return True
 
-    def get_usfms(self):
+    def get_usfms(self, readall=False):
         if self.usfms is None:
             self.usfms = UsfmCollection(self.getBookFilename, 
                             os.path.join(self.settings_dir, self.prjid),
                             Sheets(self.getStyleSheets()))
+        if readall:
+            for bk in self.getBooks():
+                u = usfms.get(bk)
         return self.usfms
 
     def getDialogTitle(self):

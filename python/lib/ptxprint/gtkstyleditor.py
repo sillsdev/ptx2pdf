@@ -153,6 +153,9 @@ class StyleEditorView(StyleEditor):
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
         self.treeview.set_model(self.treestore)
+        self.filter = self.treestore.filter_new()
+        self.filter_state = False
+        self.filter.set_visible_func(self.apply_filter)
         cr = Gtk.CellRendererText()
         tvc = Gtk.TreeViewColumn("Marker", cr, text=1)
         self.treeview.append_column(tvc)
@@ -317,6 +320,16 @@ class StyleEditorView(StyleEditor):
         self.treeview.expand_to_path(path)
         self.treeview.scroll_to_cell(path)
         return True
+
+    def add_filter(self, state, mrkrset):
+        self.filter_state = state
+        self.mrkrlist = mrkrset
+        self.filter.refilter()
+
+    def apply_filter(self, model, it, data):
+        if not self.filter_state:
+            return True
+        return model[it][0] in self.mrkrlist and model[it][2]
 
     def editMarker(self):
         if self.marker is None:
