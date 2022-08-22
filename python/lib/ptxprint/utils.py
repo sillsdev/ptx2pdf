@@ -6,6 +6,9 @@ from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
 from subprocess import check_output
+import logging
+
+logger = logging.getLogger(__name__)
 
 DataVersion = 3
 

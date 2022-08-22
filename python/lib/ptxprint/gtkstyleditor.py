@@ -149,6 +149,7 @@ class StyleEditorView(StyleEditor):
 
     def __init__(self, model):
         super().__init__(model)
+        self.mrkrlist = []
         self.builder = model.builder
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
@@ -305,7 +306,7 @@ class StyleEditorView(StyleEditor):
                 return it
             if model.iter_has_child(it):
                 childit = model.iter_children(it)
-                ret = self._searchMarker(model, childit, marker)
+                ret = self._searchMarker(model, childit, marker, findall=findall)
                 if ret is not None:
                     return ret
             it = model.iter_next(it)
@@ -317,9 +318,9 @@ class StyleEditorView(StyleEditor):
     def tree_search(self, model, colmn, key, rowiter):
         root = model.get_iter_first()
         it = self._searchMarker(model, root, self.normalizeSearchKey(key))
-        doselect = True
+        # doselect = True
         if it is None:
-            doselect = False
+            # doselect = False
             it = self._searchMarker(model, root, self.normalizeSearchKey(key), findall=True)
             if it is None:
                 return False
@@ -333,6 +334,7 @@ class StyleEditorView(StyleEditor):
         return True
 
     def add_filter(self, state, mrkrset):
+        # logger.debug(f"\n\n{mrkrset=}\n\n")
         self.filter_state = state
         self.mrkrlist = mrkrset
         self.filter.refilter()
@@ -341,7 +343,7 @@ class StyleEditorView(StyleEditor):
         if not self.filter_state:
             return True
         res = model[it][0] in self.mrkrlist or not model[it][2]
-        # print(f"{model[it][0]=} {res=}")
+        logger.debug(f"{model[it][0]}   {res}")
         return res
 
     def editMarker(self):

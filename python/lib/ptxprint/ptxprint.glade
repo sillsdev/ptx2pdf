@@ -22811,7 +22811,6 @@ or embelishments to the text.
                               <object class="GtkBox">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
@@ -22842,7 +22841,7 @@ the marker you need.</property>
 your marker can be found under,
 then use this Search tool to find
 the marker you need.</property>
-                                    <property name="halign">start</property>
+                                    <property name="hexpand">True</property>
                                     <property name="width-chars">20</property>
                                     <property name="secondary-icon-stock">gtk-clear</property>
                                     <property name="primary-icon-name">edit-find-symbolic</property>

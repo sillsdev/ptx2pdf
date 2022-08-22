@@ -226,7 +226,8 @@ class Usfm:
         ''' Counts words found in the document. If constrain then is a set or
             list that contains words to count, ignoring all others. Returns
             a dict of words: counts. '''
-        wre = re.compile(r"(\w+)")
+        # wre = re.compile(r"(\w+)")
+        wre = regex.compile(r"([\p{L}\p{M}\p{Cf}]+)")
         if init is None:
             init = {}
         def addwords(s, a):
