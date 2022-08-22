@@ -1180,7 +1180,7 @@ class ViewModel:
                         a = runChanges(scriptregs, None, w)
                         if len(a) != len(w):
                             continue
-                        moreWords.append(a.replace("\u200B", "-"))
+                        moreWords.append(a.replace("\u200B", "H"))
                         if len(moreWords) + c >= listlimit:
                             break
                     moreWords.sort(len, reverse=True)

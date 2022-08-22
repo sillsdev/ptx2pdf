@@ -247,7 +247,8 @@ class Usfm:
         def _g(a, e):
             if isinstance(e, sfm.Element):
                 a.add(e.name)
-                reduce(_g, a)
+                reduce(_g, e, a)
+            return a
         reduce(_g, self.doc[0], res)
         return res
 

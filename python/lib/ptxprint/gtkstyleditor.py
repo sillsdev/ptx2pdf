@@ -152,10 +152,10 @@ class StyleEditorView(StyleEditor):
         self.builder = model.builder
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
-        self.treeview.set_model(self.treestore)
         self.filter = self.treestore.filter_new()
         self.filter_state = False
         self.filter.set_visible_func(self.apply_filter)
+        self.treeview.set_model(self.filter)
         cr = Gtk.CellRendererText()
         tvc = Gtk.TreeViewColumn("Marker", cr, text=1)
         self.treeview.append_column(tvc)
@@ -294,31 +294,42 @@ class StyleEditorView(StyleEditor):
 
     def selectMarker(self, marker):
         root = self.treestore.get_iter_first()
-        it = self._searchMarker(root, marker)
+        it = self._searchMarker(self.treestore, root, marker)
         path = self.treestore.get_path(it)
         self.treeview.expand_to_path(path)
         self.treeview.get_selection().select_path(path)
 
-    def _searchMarker(self, it, marker):
+    def _searchMarker(self, model, it, marker, findall=False):
         while it is not None:
-            if self.treestore[it][0] == marker:
+            if model[it][0] == marker or (findall and marker in model[it][1].lower()):
                 return it
-            if self.treestore.iter_has_child(it):
-                childit = self.treestore.iter_children(it)
-                ret = self._searchMarker(childit, marker)
+            if model.iter_has_child(it):
+                childit = model.iter_children(it)
+                ret = self._searchMarker(model, childit, marker)
                 if ret is not None:
                     return ret
-            it = self.treestore.iter_next(it)
+            it = model.iter_next(it)
         return None
 
+    def normalizeSearchKey(self, key):
+        return key.lstrip('\\').lower()
+
     def tree_search(self, model, colmn, key, rowiter):
-        root = self.treestore.get_iter_first()
-        it = self._searchMarker(root, key.lower())
+        root = model.get_iter_first()
+        it = self._searchMarker(model, root, self.normalizeSearchKey(key))
+        doselect = True
         if it is None:
-            return False
+            doselect = False
+            it = self._searchMarker(model, root, self.normalizeSearchKey(key), findall=True)
+            if it is None:
+                return False
         path = model.get_path(it)
+        if path is None:
+            return False
         self.treeview.expand_to_path(path)
         self.treeview.scroll_to_cell(path)
+        # if doselect:
+        self.treeview.get_selection().select_path(path)
         return True
 
     def add_filter(self, state, mrkrset):
@@ -329,7 +340,9 @@ class StyleEditorView(StyleEditor):
     def apply_filter(self, model, it, data):
         if not self.filter_state:
             return True
-        return model[it][0] in self.mrkrlist and model[it][2]
+        res = model[it][0] in self.mrkrlist or not model[it][2]
+        # print(f"{model[it][0]=} {res=}")
+        return res
 
     def editMarker(self):
         if self.marker is None:

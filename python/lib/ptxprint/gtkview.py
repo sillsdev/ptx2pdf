@@ -23,7 +23,7 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir, getcaller
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -3616,8 +3616,8 @@ class GtkViewModel(ViewModel):
         self.styleEditor.mkrDialog()
 
     def onStyleFilter(self, btn):
-        mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.is_active() else set()
-        self.styleEditor.add_filter(btn.isactive(), mrkrset)
+        mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
+        self.styleEditor.add_filter(btn.get_active(), mrkrset)
 
     def onEditMarkerChanged(self, mkrw):
         m = mkrw.get_text()
