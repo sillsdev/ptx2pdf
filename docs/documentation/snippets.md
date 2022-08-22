@@ -1,11 +1,14 @@
 # Snippets
 
-This file contains a structured list of snippets. Destinations are marked with
-different kinds of fences. Thus snippets to go into the .tex or
-ptxprint-mods.tex are fenced with `tex`. Items for PrintDraftChanges are marked
-by `perl` (Ideally `regex` but syntax highlighting works so much better with a
-recognised language). Each snippet has a second level title, a description, the code and
-then marked with a 3rd level is a section called `Implementation` that describes
+This file contains a structured list of snippets which can be copied and pasted
+into the appropriate settings files. There are 3 sections:
+
+* RegEx snippets
+* TeX snippets
+* Pythin scripts
+
+Each snippet has a second level title, a description, the code and then
+marked with a 3rd level is a section called `Implementation` that describes
 how the snippet works, rather than how to use it.
 
 Snippets with an initial 'Technique:' in the name are not true snippets, but are
@@ -15,70 +18,10 @@ Notice that this document exists because not everything that people might want
 to do is made available in PTXprint via the UI. Should a snippet get so
 promoted, it is removed from this file.
 
-## Paragraph Initial Verses
-
-This snippet limits verse numbers so that only the first verse in a paragraph is
-shown. It is typically used in conjunction with marginal verses for reader
-editions where only limited verse hints are required.
-
-```tex
-\newif\iffirstinpara \firstinparatrue
-\let\mytv=\defaultprintverse
-\lowercase{\def\marginverse{\iffirstinpara\global\firstinparafalse\mytv\fi}}
-\def\paramarker#1{\expandafter\global\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
-    \expandafter\gdef\csname #1\endcsname{\firstinparatrue\csname _#1\endcsname}}
-\paramarker{p}\paramarker{q1}\paramarker{li}
-\let\defaultprintverse=\marginverse
-```
-
-### Implementation
-
-First there is a new `if` declared that is used to track whether we have started a
-new paragraph or not. Then we collect the old default printverse function that is used
-to print the verse number (whether simply or as a marginal verse). We are going
-to wrap this function to only call the original if the paragraph if is true.
-This is what the new definition of printverse does. Once the the first verse in
-a paragraph is printed, the if is set to false so that no others will be printed
-in that paragraph.
-
-Next we need to wrap various paragraph type markers to set the paragraph if. The
-`paramarker` function wraps a given marker by storing the old marker as `_marker`
-and then replace the \\marker with code to set the if and call the old `_marker`.
-We then run this code over various key markers that we want to have verse
-numbers on. Notice we don't do this for all paragraph markers, since we aren't
-interested in tracking verse numbers in `\\q2` for example.
-
-## Technique: Setting style parameters in ptxprint-mods.tex
-
-This snippet is less a snippet as a technique. It shows two ways of setting
-style parameters from TeX.
-
-```tex
-\expandafter\def\csname v:position\endcsname{inner}
-
-\Marker v\relax
-\Position inner\relax
-```
-
-### Implementation
-
-This first way sets the actual style attribute directly and works even if there
-is no .sty markup for the attribute. The second shows how style information can
-be specified more like a .sty file, within TeX. Notice that each value is
-delimited by `\relax` and that the `\Marker` is necessary to know which style
-marker we are setting attributes one.
-
-## Tabbed indent for glossary or index
-
-When typesetting an indented list, such as a glossary or Strongs index, it looks
-neater if the main body starts at the same indent position as the rest of the 
-paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
-we can add a 'tab' after the Strongs number to make things line up neatly.
-
-```tex
-\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
-\sethook{end}{bd}{\hfil\egroup}
-```
+# RegEx snippets
+The snippets in this section go into the changes.txt or PrintDraftChanges.txt file.
+Note that the code fence is marked as `perl` (this would ideally be `regex` but 
+syntax highlighting works so much better with a recognised language). 
 
 ## Auto lengthen poetry
 
@@ -213,6 +156,74 @@ before the block of renderings with their Strong's H and G numbers.
 at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"
 ```
 
+# TeX Snippets
+The snippets in this section go into the ptxprint-mods.tex file.
+
+## Paragraph Initial Verses
+
+This snippet limits verse numbers so that only the first verse in a paragraph is
+shown. It is typically used in conjunction with marginal verses for reader
+editions where only limited verse hints are required.
+
+```tex
+\newif\iffirstinpara \firstinparatrue
+\let\mytv=\defaultprintverse
+\lowercase{\def\marginverse{\iffirstinpara\global\firstinparafalse\mytv\fi}}
+\def\paramarker#1{\expandafter\global\expandafter\let\csname _#1\expandafter\endcsname \csname #1\endcsname
+    \expandafter\gdef\csname #1\endcsname{\firstinparatrue\csname _#1\endcsname}}
+\paramarker{p}\paramarker{q1}\paramarker{li}
+\let\defaultprintverse=\marginverse
+```
+
+### Implementation
+
+First there is a new `if` declared that is used to track whether we have started a
+new paragraph or not. Then we collect the old default printverse function that is used
+to print the verse number (whether simply or as a marginal verse). We are going
+to wrap this function to only call the original if the paragraph if is true.
+This is what the new definition of printverse does. Once the the first verse in
+a paragraph is printed, the if is set to false so that no others will be printed
+in that paragraph.
+
+Next we need to wrap various paragraph type markers to set the paragraph if. The
+`paramarker` function wraps a given marker by storing the old marker as `_marker`
+and then replace the \\marker with code to set the if and call the old `_marker`.
+We then run this code over various key markers that we want to have verse
+numbers on. Notice we don't do this for all paragraph markers, since we aren't
+interested in tracking verse numbers in `\\q2` for example.
+
+## Technique: Setting style parameters in ptxprint-mods.tex
+
+This snippet is less a snippet as a technique. It shows two ways of setting
+style parameters from TeX.
+
+```tex
+\expandafter\def\csname v:position\endcsname{inner}
+
+\Marker v\relax
+\Position inner\relax
+```
+
+### Implementation
+
+This first way sets the actual style attribute directly and works even if there
+is no .sty markup for the attribute. The second shows how style information can
+be specified more like a .sty file, within TeX. Notice that each value is
+delimited by `\relax` and that the `\Marker` is necessary to know which style
+marker we are setting attributes one.
+
+## Tabbed indent for glossary or index
+
+When typesetting an indented list, such as a glossary or Strongs index, it looks
+neater if the main body starts at the same indent position as the rest of the 
+paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
+we can add a 'tab' after the Strongs number to make things line up neatly.
+
+```tex
+\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
+\sethook{end}{bd}{\hfil\egroup}
+```
+
 ## Display paragraph markers next to each paragraph
 
 A typesetter may use changes.txt to change the paragraph style for typesetting
@@ -273,39 +284,6 @@ qr word, like 'Selah'.
 \sethook{end}{qr}{\egroup}
 ```
 
-## Process a file before/after PTXprint has processed it
-### Line by line
-
-When you need to call an external script to apply changes to the
-input file prior to, or even after PTXprint's internal changes.
-This handles the input file one line at a time which is fine 
-unless you are performing multi-line find/replace operations.
-
-```py
-import sys
-with open(sys.argv[2], "w", encoding="utf8") as outf:
-    with open(sys.argv[1], encoding="utf8") as inf:
-        for l in inf.readlines():
-            outf.write(l.replace("a", "A"))
-```
-
-## Process a file before/after PTXprint has processed it
-### Entire file at once, and using the 're' module
-
-When you need to call an external script to apply changes to the
-input file prior to, or even after PTXprint's internal changes.
-This handles the input file in one go using a couple of RegEx 
-substitutions that can also handle multiline changes (flags=re.M)
-
-```py
-import sys, re
-with open(sys.argv[2], "w", encoding="utf8") as outf:
-    with open(sys.argv[1], encoding="utf8") as inf:
-        t = inf.read()
-        t = re.sub(r"<<\n", "\u00AB", t)
-        t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
-        outf.write(t)
-```
 
 ## Show bridged verses at the start of chapters
 
@@ -333,3 +311,43 @@ test to see if we have a bridged verse. First split the printable verse number
 into its components (versefrom and verseto). Then if the two do not compare the
 same then cancel the cancelling of verse printing. I.e. print the verse.
 
+# Python scripts
+The scripts in this section are to demonstrate the kinds of things that are
+possible by calling an external script file (.py) and may be enabled by 
+the option "Process Text by Custom Script at start/end" on the Advanced tab.
+
+## Process a file before/after PTXprint has processed it
+
+### Line by line
+
+When you need to call an external script to apply changes to the
+input file prior to, or even after PTXprint's internal changes.
+This handles the input file one line at a time which is fine 
+unless you are performing multi-line find/replace operations.
+
+```py
+import sys
+with open(sys.argv[2], "w", encoding="utf8") as outf:
+    with open(sys.argv[1], encoding="utf8") as inf:
+        for l in inf.readlines():
+            outf.write(l.replace("a", "A"))
+```
+
+## Process a file before/after PTXprint has processed it
+
+### Entire file at once, and using the 're' module
+
+When you need to call an external script to apply changes to the
+input file prior to, or even after PTXprint's internal changes.
+This handles the input file in one go using a couple of RegEx 
+substitutions that can also handle multiline changes (flags=re.M)
+
+```py
+import sys, re
+with open(sys.argv[2], "w", encoding="utf8") as outf:
+    with open(sys.argv[1], encoding="utf8") as inf:
+        t = inf.read()
+        t = re.sub(r"<<\n", "\u00AB", t)
+        t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
+        outf.write(t)
+```
