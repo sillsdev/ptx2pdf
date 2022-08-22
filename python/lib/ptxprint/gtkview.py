@@ -712,7 +712,7 @@ class GtkViewModel(ViewModel):
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .smallbutton {font-size: 10px; min-height: 0pt; min-width:0px;  padding:1px;}
             .fontbutton {font-size: 12px}
-            .tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
+            tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
             progress, trough {min-height: 24px}
