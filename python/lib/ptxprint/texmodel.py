@@ -10,7 +10,8 @@ from ptxprint import sfm
 from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
-                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData, pycodedir
+                            chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData, pycodedir, \
+                            runChanges
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -987,7 +988,7 @@ class TexModel:
                     if len(script) > 0:
                         sclass = getattr(scriptsnippets, script[8:].lower(), None)
                         if sclass is not None:
-                            res.append(sclass.tex(self))
+                            res.append(sclass.tex(self.printer))
                     res.append("""
 \\catcode"FDEE=1 \\catcode"FDEF=2
 \\prepusfm
@@ -1103,27 +1104,6 @@ class TexModel:
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
-    def runChanges(self, changes, bk, dat):
-        def wrap(t):
-            def proc(m):
-                res = m.expand(t) if isinstance(t, str) else t(m)
-                logger.log(7, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
-                return res
-            return proc
-        for c in changes:
-            #import pdb; pdb.set_trace()
-            logger.debug("Change: {}".format(c))
-            if c[0] is None:
-                dat = c[1].sub(wrap(c[2]), dat)
-            elif isinstance(c[0], str):
-                if c[0] == bk:
-                    dat = c[1].sub(wrap(c[2]), dat)
-            else:
-                def simple(s):
-                    return c[1].sub(wrap(c[2]), s)
-                dat = c[0](simple, bk, dat)
-        return dat
-
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
         printer = self.printer
         if self.changes is None:
@@ -1209,7 +1189,7 @@ class TexModel:
                 dat = str(doc)
                 logger.log(5, "Unparsing text to run user changes\n"+dat)
                 doc = None
-            dat = self.runChanges(self.changes, bk, dat)
+            dat = runChanges(self.changes, bk, dat)
             #self.analyzeImageCopyrights(dat)
 
         if self.dict['project/canonicalise'] \
@@ -1237,7 +1217,7 @@ class TexModel:
             logger.log(5, "Unparsing text to run local changes\n"+dat)
 
         if self.localChanges is not None:
-            dat = self.runChanges(self.localChanges, bk, dat)
+            dat = runChanges(self.localChanges, bk, dat)
 
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
@@ -1380,7 +1360,7 @@ class TexModel:
         if len(script):
             sscript = getattr(scriptsnippets, script[8:].lower(), None)
             if sscript is not None:
-                self.changes.extend(sscript.regexes(self))
+                self.changes.extend(sscript.regexes(self.printer))
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of changes.txt:-------------------------------------------------------------")

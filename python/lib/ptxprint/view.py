@@ -1158,17 +1158,33 @@ class ViewModel:
                         lng = len(l)
                         if lng > 9:
                             nohyphendata.append(l)
+            snippet = self.getScriptSnippet()
+            scriptregs = snippet.regexes(self)
             c = len(hyphenatedWords)
-            if c >= listlimit:
+            if c >= listlimit or len(scriptregs):
                 hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
                 acc = {}
                 usfms = self.get_usfms()
                 for bk in self.getBooks():
                     u = usfms.get(bk)
-                    u.getwords(init=acc, constrain=hyphwords)
-                hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
-                hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
-                m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
+                    u.getwords(init=acc)
+                if c >= listlimit:
+                    hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
+                    hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
+                    m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
+                else:   # len(scriptregs) implied
+                    moreWords = []
+                    for w in sorted(acc.keys(), key=lambda x:-acc[x]):
+                        if w in hyphwords:
+                            continue
+                        a = runChanges(scriptregs, None, w)
+                        if len(a) != len(w):
+                            continue
+                        moreWords.append(a.replace("\u200B", "-"))
+                        if len(moreWords) + c >= listlimit:
+                            break
+                    hyphenatedWords.extend(moreWords)
+                    
             hyphenatedWords.sort(key = lambda s: s.casefold())
             outlist = '\\catcode"200C=12\n\\catcode"200D=12\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
             with open(outfname, "w", encoding="utf-8") as outf:

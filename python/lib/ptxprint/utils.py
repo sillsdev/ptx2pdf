@@ -392,6 +392,28 @@ def f2s(x, dp=3) :
         res = "0"
     return res
 
+def runChanges(changes, bk, dat):
+    def wrap(t):
+        def proc(m):
+            res = m.expand(t) if isinstance(t, str) else t(m)
+            logger.log(7, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+            return res
+        return proc
+    for c in changes:
+        #import pdb; pdb.set_trace()
+        if bk is not None:
+            logger.debug("Change: {}".format(c))
+        if c[0] is None:
+            dat = c[1].sub(wrap(c[2]), dat)
+        elif isinstance(c[0], str):
+            if c[0] == bk:
+                dat = c[1].sub(wrap(c[2]), dat)
+        else:
+            def simple(s):
+                return c[1].sub(wrap(c[2]), s)
+            dat = c[0](simple, bk, dat)
+    return dat
+
 _htmlentities = {
     '&': 'amp',
     '<': 'lt',
