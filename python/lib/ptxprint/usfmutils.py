@@ -124,11 +124,11 @@ class UsfmCollection:
                         tocs[i] = tocs[i+1]
                 self.booknames.addBookName(bk, *tocs)
 
-    def get_markers(self):
+    def get_markers(self, bks):
         ''' returns a list of all markers used in the corpus '''
         res = set()
-        for k, v in self.books.items():
-            mkrs = v.getmarkers()
+        for bk in bks:
+            mkrs = self.get(bk).getmarkers()
             res.update(mkrs)
         return res
 

@@ -3616,7 +3616,7 @@ class GtkViewModel(ViewModel):
         self.styleEditor.mkrDialog()
 
     def onStyleFilter(self, btn):
-        mrkrset = self.get_usfms(readall=True).get_markers() if btn.is_active() else set()
+        mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.is_active() else set()
         self.styleEditor.add_filter(btn.isactive(), mrkrset)
 
     def onEditMarkerChanged(self, mkrw):
