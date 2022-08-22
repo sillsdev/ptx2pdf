@@ -236,6 +236,7 @@ class RunJob:
                 else:
                     jobs[-1][0].append(r)
 
+        logger.debug(f"{jobs=}")
         reasons = info.prePrintChecks()
         if len(reasons):
             self.fail(", ".join(reasons))

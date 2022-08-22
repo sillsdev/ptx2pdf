@@ -233,36 +233,52 @@ class Usfm:
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, refrange, removes={}, strippara=False, keepchap=False):
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
-        if not isinstance(refrange, list):
-            refrange = [refrange]
+        if not isinstance(refranges, list):
+            refranges = [refranges]
         ispara = sfm.text_properties('paragraph')
-        chaps = sum((self.chapters[r.first.chap:r.last.chap+1] for r in refrange), [])
-        def pred(e):
-            if isinstance(e.pos, _Reference) and any(e.pos.ref in r for r in refrange):
+        last = (0, -1)
+        chaps = []
+        for i, r in enumerate(refranges):
+            if r.first.chap > last[1] or r.first.chap < last[0]:
+                chaps.append((self.chapters[r.first.chap:r.last.chap+1], [i]))
+                last = (r.first.chap, r.last.chap)
+            elif r.first.chap >= last[0] and r.last.chap <= last[1]:
+                chaps[-1][1].append(i)
+            else:
+                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chap+1])
+                chaps[-1][1].append(i)
+                last = (last[0], r.last.chap)
+        def pred(e, rlist):
+            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
             return False
 
-        def _g(a, e):
+        def _g(a, r):
+            e, rlist = r
             if isinstance(e, sfm.Text):
-                if pred(e):
+                if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a or None))
                 return a
             if e is None or e.name in removes:
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
-            reduce(_g, e, e_)
-            if pred(e) or (keepchap and (len(e_) or e.name == "cl")):
+            reduce(_g, [(x, rlist) for x in e], e_)
+            if pred(e, rlist) or (keepchap and (len(e_) or e.name == "cl")):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
             return a
-        return reduce(_g, chaps, [])
+        res = []
+        for c in chaps:
+            for chap in c[0]:
+                _g(res, (chap, c[1]))
+        return res
 
     def getsubbook(self, refrange, removes={}):
         # refrange.reify()
