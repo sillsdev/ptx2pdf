@@ -3339,6 +3339,12 @@ settings for a similar project.</property>
     <property name="icon-name">view-grid-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="img_filter">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">emblem-documents-symbolic.symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
       <!-- column-name NoteBlendInto -->
@@ -22847,6 +22853,23 @@ the marker you need.</property>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton" id="btn_styleFilter">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Enable (or disable) the filter to
+only show markers that are in 
+use in the current set of books.</property>
+                                    <property name="image">img_filter</property>
+                                    <signal name="toggled" handler="onStyleFilter" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                               </object>

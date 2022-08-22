@@ -1183,6 +1183,7 @@ class ViewModel:
                         moreWords.append(a.replace("\u200B", "-"))
                         if len(moreWords) + c >= listlimit:
                             break
+                    moreWords.sort(len, reverse=True)
                     hyphenatedWords.extend(moreWords)
                     
             hyphenatedWords.sort(key = lambda s: s.casefold())
