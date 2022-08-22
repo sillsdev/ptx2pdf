@@ -1,48 +1,25 @@
-# Snippets
-
-This file contains a structured list of snippets which can be copied and pasted
-into the appropriate settings files. There are 3 sections:
+This document exists because not everything that people might want to do is made available 
+in PTXprint via the UI. So this file contains a structured list of code snippets which can 
+be copied and pasted into the appropriate settings files. There are 4 sections:
 
 * RegEx snippets
 * TeX snippets
-* Pythin scripts
+* Python scripts
+* Other techniques
 
 Each snippet has a second level title, a description, the code and then
 marked with a 3rd level is a section called `Implementation` that describes
 how the snippet works, rather than how to use it.
 
 Snippets with an initial 'Technique:' in the name are not true snippets, but are
-more descriptive of programming techniques. Ideally this file should be empty.
+more descriptive of programming techniques.
 
-Notice that this document exists because not everything that people might want
-to do is made available in PTXprint via the UI. Should a snippet get so
-promoted, it is removed from this file.
+Should a snippet get so promoted, it is removed from this file.
 
 # RegEx snippets
 The snippets in this section go into the changes.txt or PrintDraftChanges.txt file.
 Note that the code fence is marked as `perl` (this would ideally be `regex` but 
 syntax highlighting works so much better with a recognised language). 
-
-## Auto lengthen poetry
-
-A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.
-But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
-turn every other \\q1 into a \\q2 to make it look like poetry.
-
-```perl
-"\\q2 " > ""
-"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
-```
-
-### Implementation
-
-First we delete all the \\q2 lines merging them into their preceding \\q1 lines.
-Then we match 2 adjacent \\q1 paragraphs. To do that we have to skip \\f \\x and \\v
-when searching for 2 adjacent \\q1 paragraphs. We do this with a big old \|or\| whose
-elements are: 
-- non backslash character
-- \\f or \\x upto their corresponding \\f\* \\x\*
-- \\v 
 
 ## Allow linebreaks after in-word hyphens
 
@@ -146,6 +123,27 @@ insert pictures through the specified changes, then this trick is useful.
 ```perl
 at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 ```
+
+## Auto lengthen poetry
+
+A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.
+But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
+turn every other \\q1 into a \\q2 to make it look like poetry.
+
+```perl
+"\\q2 " > ""
+"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
+```
+
+### Implementation
+
+First we delete all the \\q2 lines merging them into their preceding \\q1 lines.
+Then we match 2 adjacent \\q1 paragraphs. To do that we have to skip \\f \\x and \\v
+when searching for 2 adjacent \\q1 paragraphs. We do this with a big old \|or\| whose
+elements are: 
+- non backslash character
+- \\f or \\x upto their corresponding \\f\* \\x\*
+- \\v 
 
 ## Add an alphabetic section header to Strong's reversal index
 
@@ -284,7 +282,6 @@ qr word, like 'Selah'.
 \sethook{end}{qr}{\egroup}
 ```
 
-
 ## Show bridged verses at the start of chapters
 
 Generally people do not want to show the verse number for verse 1 at the start
@@ -350,4 +347,62 @@ with open(sys.argv[2], "w", encoding="utf8") as outf:
         t = re.sub(r"<<\n", "\u00AB", t)
         t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
         outf.write(t)
+```
+
+# Other Techniques
+
+## Creating a fancy front cover with ornaments
+
+This is still a very experimental process, which will hopefully be streamlined
+through the PTXprint UI in the near future.
+
+Step 1: Wrap the front cover matter text and logo etc. with this milestone:
+
+```
+\esb\cat frontcover\cat*
+
+     [your front cover content markers would be in here]
+
+\esbe
+```
+
+Step 2: Paste the keyword 'ornaments' into the Plugins box (on the Advanced tab)
+
+
+Step 3: Place this snippet into ptxprint-premods.tex
+
+```tex
+\stylesheet{standardborders.sty}
+```
+
+Step 4: Put these lines in ptxprint-mods.tex
+
+```tex
+\SwitchOrnamentsFamily{pgfhan}
+\SwitchOrnamentsFamily{vectorian}
+
+% You can either use a GraphicOrnament
+% \GraphicOrnament{400}{../../../shared/ptxprint/FullBibleWithFRTmatter/corner_hires.png}
+%  OR
+% You can use the OrnamentTest.ttf FONT which needs to be in the 
+% C:\My Paratext 9 Projects\{PrjID}\shared\fonts folder
+\StringOrnament{400}{OrnamentTest}{A}
+```
+
+Step 5: Place this block into the ptxprint-mods.sty file:
+
+```tex
+\Marker cat:frontcover|esb
+\Position Fcf
+\BoxPadding 0
+\BorderHPadding -50
+\BorderVPadding -55
+\Border All
+\BorderStyle ornaments
+\BorderPatternTop 400|||8.0,0||*a,400|h||8.0
+\BorderPatternBot 400|v||8.0,0||*a,400|d||8.0
+\BorderPatternLeft 0|l|*a
+\BorderPatternRight 0|r|*a
+\BorderLineWidth 1
+\BorderWidth 16
 ```
