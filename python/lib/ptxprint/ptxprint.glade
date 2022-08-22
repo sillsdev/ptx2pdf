@@ -10482,12 +10482,14 @@ from the descender of the final line of text
                                     <property name="width-request">95</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
-to the start of the text area. Note that the left
-and right (or inner and outer) margins are set
-to be identical. If you require a greater inner
-margin, then use the Binding Gutter setting
-above.</property>
+                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the 
+edge of the page to the start
+of the text area. Note that the
+left and right (or inner and 
+outer) margins are set to be
+identical. If you require a 
+greater inner margin, then
+set the Binding Gutter above.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">6</property>
@@ -10508,12 +10510,14 @@ Width (mm):</property>
                                     <property name="name">Side margin width</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
-to the start of the text area. Note that the left
-and right (or inner and outer) margins are set
-to be identical. If you require a greater inner
-margin, then use the Binding Gutter setting
-above.</property>
+                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the 
+edge of the page to the start
+of the text area. Note that the
+left and right (or inner and 
+outer) margins are set to be
+identical. If you require a 
+greater inner margin, then
+set the Binding Gutter above.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
