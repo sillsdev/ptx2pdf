@@ -28,6 +28,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
+from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
 from ptxprint.minidialog import MiniDialog
@@ -3616,8 +3617,16 @@ class GtkViewModel(ViewModel):
         self.styleEditor.mkrDialog()
 
     def onStyleFilter(self, btn):
+        def widen(x):
+            if x in aliases:
+                return [x, x+"1"]
+            elif x[:-1] in aliases and x.endswith("1"):
+                return [x, x[:-1]]
+            else:
+                return [x]
         mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
-        print(f"{self.getBooks()=}  {mrkrset=}")
+        mrkrset = set(sum((widen(x) for x in mrkrset), []))
+        logger.debug(f"{self.getBooks()=}  {mrkrset=}")
         self.styleEditor.add_filter(btn.get_active(), mrkrset)
 
     def onEditMarkerChanged(self, mkrw):

@@ -334,7 +334,6 @@ class StyleEditorView(StyleEditor):
         return True
 
     def add_filter(self, state, mrkrset):
-        # logger.debug(f"\n\n{mrkrset=}\n\n")
         self.filter_state = state
         self.mrkrlist = mrkrset
         self.filter.refilter()
