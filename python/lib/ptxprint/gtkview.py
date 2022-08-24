@@ -3363,7 +3363,22 @@ class GtkViewModel(ViewModel):
         self.loadPics()
         
     def onGenerateHyphenationListClicked(self, btn):
-        self.generateHyphenationFile()
+        bks2gen = self.getBooks()
+        if not len(bks2gen):
+            return
+        ab = self.getAllBooks()
+        bks = bks2gen
+        # Show dialog with various options
+        dialog = self.builder.get_object("dlg_createHyphenList")
+        self.set("l_createHyphenList_booklist", " ".join(bks))
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            self.generateHyphenationFile(self.get("r_createHyphenList") == "selected", self.get("None"))
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         missing = super(GtkViewModel, self).onFindMissingCharsClicked(btn_findMissingChars)
