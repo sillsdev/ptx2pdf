@@ -323,6 +323,8 @@ class StyleEditor:
             for k, v in sm.items():
                 if k.startswith(" "):
                     continue
+                if k == "Name":
+                    v = self.getval(m, k, v)
                 other = om.get(k, None)
                 if not self._eq_val(other, v, key=k):
                     if not markerout:

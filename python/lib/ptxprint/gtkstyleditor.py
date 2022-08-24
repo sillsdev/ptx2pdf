@@ -268,12 +268,11 @@ class StyleEditorView(StyleEditor):
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
                 n = self.getval(k, 'name') or "{} - Other".format(k)
-                m = re.match(r"^([^-\s]*)\s*([^-]+)(?:-\s*|$)", n)
-                if m:
-                    if m.group(1) and m.group(1) not in ('OBSOLETE', 'DEPRECATED'):
-                        n = ((str(k) + " - ") if not n.startswith(str(k)) else "") + n
-                    elif m.group(2):
-                        n = ((str(k) + " - ") if not n[m.end():].startswith(str(k)) else "") + n[m.end():]
+                b = re.split(r"\s*-\s*", n)
+                if not len(b):
+                    pass
+                elif b[0] != k or any(b[0].startswith(x) for x in ('OBSOLETE', 'DEPRECATED')):
+                    n = "{} - {}".format(k, " - ".join(b[1:]))
             elif k not in self.basesheet:
                 ismarker = False
                 n = k
@@ -341,8 +340,9 @@ class StyleEditorView(StyleEditor):
     def apply_filter(self, model, it, data):
         if not self.filter_state:
             return True
-        res = model[it][0] in self.mrkrlist or not model[it][2]
-        logger.debug(f"{model[it][0]}   {res}")
+        path = model.get_path(it)
+        res = model[it][0] in self.mrkrlist or len(path) == 1   # in the list or top level
+        #logger.debug(f"{model[it][0]} {path}({len(path)})   {res}")
         return res
 
     def editMarker(self):
