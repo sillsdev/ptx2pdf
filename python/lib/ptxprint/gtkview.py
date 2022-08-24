@@ -3363,6 +3363,7 @@ class GtkViewModel(ViewModel):
         self.loadPics()
         
     def onGenerateHyphenationListClicked(self, btn):
+        # getScriptSnippet
         bks2gen = self.getBooks()
         if not len(bks2gen):
             return
@@ -3375,7 +3376,7 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.generateHyphenationFile(self.get("r_createHyphenList") == "selected", self.get("None"))
+            self.generateHyphenationFile(self.get("c_hyphenLimitBooks"), self.get("None"))
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
@@ -3484,10 +3485,12 @@ class GtkViewModel(ViewModel):
         bcol = coltohex(self.get("col_thumbback"))
         self.set("l_thumbbackValue", bcol)
         tabstyle = "zthumbtab" if self.get("r_thumbText") == "zthumbtab" else "toc3"
-        fcol = coltohex(textocol(self.styleEditor.getval(tabstyle, "color")))
+        colval = self.styleEditor.getval(tabstyle, "color")
+        fcol = coltohex(textocol(colval))
         bold = "bold" if self.styleEditor.getval(tabstyle, "bold") == "" else "normal"
         ital = "italic" if self.styleEditor.getval(tabstyle, "italic") == "" else "normal"
         markup = '<span background="{}" foreground="{}" font-weight="{}" font-style="{}">  {{}}  </span>'.format(bcol, fcol, bold, ital)
+        # print(f"{colval=}  {markup=}")
         for w in ("VerticalL", "VerticalR", "HorizontalL", "HorizontalR"):
             wid = self.builder.get_object("l_thumb"+w)
             wid.set_text(markup.format(w[:-1]))
