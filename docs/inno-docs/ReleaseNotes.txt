@@ -1,8 +1,26 @@
 PTXprint 2.2.16 Release Notes
-20 Aug 2022
+24 Aug 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.17 (24 Aug 2022)
+
+  * Added abilty to filter markers in use in Styles editor
+  
+  * Improved search for style to extend to names (not just markers)
+  
+  * Improved creation of hyphenation file with user options and better logic
+    (also added hyphenation fallback to script syllable breaking)
+  
+  * Ensure the actual marker is displayed as part of the name in style list 
+    rather than what the name might say it is
+  
+  * Fixed printing reflists in the same book
+  
+  * Fixed tooltip css and remove background opacity
+  
+  * Tidied up snippets.md file for easier use
+  
 Bug fixes and improvements in 2.2.16 (20 Aug 2022)
 
   * Improve status bar message with a Dismiss button instead of Hide link

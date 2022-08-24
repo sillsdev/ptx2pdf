@@ -1136,6 +1136,9 @@ class ViewModel:
             self.doError(m1, secondary=m2)
             return
         z = 0
+        m2b = ""
+        m2c = ""
+        m2d = ""
         nohyphendata = []
         with universalopen(infname) as inf:
             for l in inf.readlines()[8:]: # Skip over the Paratext header lines
@@ -1158,9 +1161,7 @@ class ViewModel:
                         nohyphendata.append(l)
         snippet = self.getScriptSnippet()
         scriptregs = snippet.regexes(self)
-        print(f"{scriptregs=}")
         c = len(hyphenatedWords)
-        print(f"Before {c=}")
         if c >= listlimit or len(scriptregs) or inbooks:
             hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
             acc = {}
@@ -1171,7 +1172,6 @@ class ViewModel:
             if inbooks: # cut the list down to only include words that are actually in the text
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
                 c = len(hyphenatedWords)
-                print(f"After {c=}")
             if c >= listlimit:
                 hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
                 hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
@@ -1179,7 +1179,6 @@ class ViewModel:
             elif addsyls and len(scriptregs):
                 moreWords = []
                 incnthyphwords = 0
-                print(f"{len(hyphwords)=}")
                 for w in sorted(acc.keys(), key=lambda x:-acc[x]):
                     if len(w) < 7:
                         continue
@@ -1197,23 +1196,20 @@ class ViewModel:
                         break
                 moreWords.sort(key=len, reverse=True)
                 hyphenatedWords.extend(moreWords)
+                m2b = _("\n{} additional words were added using syllable-based rules.").format(len(moreWords)) + \
+                        _("\nResulting in a total of {} words in the hyphenation list.").format(len(hyphenatedWords))
                 
         # hyphenatedWords.sort(key = lambda s: s.casefold())
         outlist = '\\catcode"200C=12\n\\catcode"200D=12\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
-        m2b = ""
-        m2c = ""
-        m2d = ""
         with open(outfname, "w", encoding="utf-8") as outf:
             outf.write(outlist)
         if len(hyphenatedWords) > 1:
             m1 = _("Hyphenation List Generated")
-            m2a = _("{} hyphenated words were gathered\nfrom Paratext's Hyphenation Word List.").format(c)
+            m2a = _("{} words were gathered from Paratext's hyphenation word list.").format(c)
             if z > 0:
                 m2c = _("\n\nNote: {} words containing non-Letters and non-Marks").format(z) + \
                         _("\n(ZWJ, ZWNJ, etc.) have not been included in the hyphenation list.")
-            if len(nohyphendata) > 0:
-                m2d = _("\n\n{} words were at least 10 characters long but had no hyphenation marked").format(len(nohyphendata))
-            m2 = m2a + m2b + m2c + m2d
+            m2 = m2a + m2b + m2c
         else:
             m1 = _("Hyphenation List was NOT Generated")
             m2 = _("No valid words were found in Paratext's Hyphenation List")
