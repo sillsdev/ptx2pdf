@@ -1123,7 +1123,7 @@ class ViewModel:
         copyfile(srcp, destp)
         return True
 
-    def generateHyphenationFile(self, inbooks=True, addsyls=False):
+    def generateHyphenationFile(self, inbooks=False, addsyls=False):
         listlimit = 63929
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, self.prjid)
@@ -1176,7 +1176,7 @@ class ViewModel:
                 hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
                 hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
                 m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
-            elif addsylls and len(scriptregs):
+            elif addsyls and len(scriptregs):
                 moreWords = []
                 incnthyphwords = 0
                 print(f"{len(hyphwords)=}")
@@ -1196,7 +1196,6 @@ class ViewModel:
                     if len(moreWords) + c >= listlimit:
                         break
                 moreWords.sort(key=len, reverse=True)
-                #moreWords.reverse()
                 hyphenatedWords.extend(moreWords)
                 
         # hyphenatedWords.sort(key = lambda s: s.casefold())

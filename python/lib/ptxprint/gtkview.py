@@ -3363,20 +3363,19 @@ class GtkViewModel(ViewModel):
         self.loadPics()
         
     def onGenerateHyphenationListClicked(self, btn):
-        # getScriptSnippet
-        bks2gen = self.getBooks()
-        if not len(bks2gen):
-            return
-        ab = self.getAllBooks()
-        bks = bks2gen
+        scrsnpt = self.getScriptSnippet()
         # Show dialog with various options
         dialog = self.builder.get_object("dlg_createHyphenList")
-        self.set("l_createHyphenList_booklist", " ".join(bks))
+        self.set("l_createHyphenList_booklist", " ".join(self.getBooks()))
+        sylbrk = scrsnpt.isSyllableBreaking(self)
+        if not sylbrk:
+            self.set("c_addSyllableBasedHyphens", False)
+        self.builder.get_object("c_addSyllableBasedHyphens").set_sensitive(sylbrk)
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.generateHyphenationFile(self.get("c_hyphenLimitBooks"), self.get("None"))
+            self.generateHyphenationFile(inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()

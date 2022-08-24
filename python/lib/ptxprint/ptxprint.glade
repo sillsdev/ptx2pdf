@@ -1898,6 +1898,7 @@ only use words from the books being printed.
 Note that if there are too many words in the Paratext
 hyphenation file, PTXprint will automatically prioritize
 the list created for XeTeX based on frequency.</property>
+                        <property name="halign">start</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>

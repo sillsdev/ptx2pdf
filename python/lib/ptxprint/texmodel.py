@@ -163,6 +163,8 @@ ModelMap = {
     "paragraph/ifjustify":      ("c_justify", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", lambda w,v: "" if v else "%"),
+    "paragraph/ifhyphlimitbks": ("c_hyphenLimitBooks", None),
+    "paragraph/ifsylhyphens":   ("c_addSyllableBasedHyphens", None),
     "paragraph/ifnothyphenate": ("c_hyphenate", lambda w,v: "%" if v else ""),
     "paragraph/ifusefallback":  ("c_useFallbackFont", None),
     "paragraph/missingchars":   ("t_missingChars", lambda w,v: v or ""),
