@@ -20,6 +20,10 @@ class ScriptSnippet:
         return cls.refseparators
 
     @classmethod
+    def isSyllableBreaking(cls, view):
+        return False
+
+    @classmethod
     def indicSyls(cls):
         res = []
         # Define nonWordChars to also exclude the hyphenChar
@@ -77,11 +81,18 @@ class Indic(ScriptSnippet):
         MiniCheckButton("c_scrindicshowhyphen", _("Show Hyphen"))
     ]
 
+    @classmethod
+    def isSyllableBreaking(self, view):
+        return view.get("c_scrindicSyllable")
 
 class mymr(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrmymrSyllable", _("Syllable line breaking"))
     ]
+
+    @classmethod
+    def isSyllableBreaking(self, view):
+        return view.get("c_scrmymrSyllable")
 
     @classmethod
     def regexes(cls, view):
