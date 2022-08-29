@@ -23,13 +23,14 @@ _form_structure = {
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
-    'medW':     'c_plMediaW'
+    'medW':     'c_plMediaW',
+    'x-xetex':  't_picXetex'
 }
 
-_singlefields = ("anchor", "caption", "src", "ref", "alt")
+_singlefields = ("anchor", "caption", "src", "ref", "alt", "x-xetex")
 
 _piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
-                  "disabled", "cleardest", "key", "media"]
+                  "disabled", "cleardest", "key", "media", "x-xetex"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _comblist = ['pgpos', 'hpos', 'nlines']

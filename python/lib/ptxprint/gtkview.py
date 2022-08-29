@@ -3992,7 +3992,7 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
-        logger.debug(f"check for updates at {getcaller()}")
+        logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
         if sys.platform != "win32":
