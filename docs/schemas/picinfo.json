@@ -1,0 +1,29 @@
+{
+    "definitions": {
+        "root": {
+            "type": "object",
+            "properties" : {
+                "figs": {
+                    "type": "object",
+                    "additionalProperties": { "$ref": "#/definitions/picinfo" }
+                }
+            }
+        },
+        "picinfo": {
+            "type": "object",
+            "properties": {
+                "checks": {
+                    "type": "object",
+                    "properties": {
+                        "clear": { "type": "string" },
+                        "accept": { "type": "string" },
+                        "reverse": { "type": "string" },
+                        "approved": { "type": "boolean" }
+                    }
+                },
+                "creditpos": { "type": "string"}
+            }
+        }
+    },
+    "$ref": "#/definitions/root"
+}
