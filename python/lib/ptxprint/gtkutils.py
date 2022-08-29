@@ -115,7 +115,7 @@ def makeSpinButton(mini, maxi, start, step=1, page=1):
 class HelpTextViewWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title="PTXPrint help")
-        self.set_default_size(768, 768)
+        self.set_default_size(580, 740)
         #self.vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         #self.add(self.vb)
         self.connect("destroy", Gtk.main_quit)
