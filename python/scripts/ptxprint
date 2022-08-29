@@ -78,6 +78,30 @@ parser.add_argument("-C","--capture",help="Capture interaction events to file. N
 parser.add_argument("-z","--extras",type=int,default=0,help="Special bit flags: 0-3 - verbosity of xdvipdfmx")
 parser.add_argument("-I","--identify",action="store_true",help="add widget names to tooltips")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    import gi
+    gi.require_version("Gtk", "3.0")
+    from gi.repository import Gtk
+    from ptxprint.gtkutils import HelpTextViewWindow
+    tv = HelpTextViewWindow()
+    def print_message(message, file=None):
+        tv.print_message(message)
+    parser._print_message = print_message
+    class MyHelpAction(argparse.Action):
+        def __init__(self, option_strings, dest=argparse.SUPPRESS, default=argparse.SUPPRESS, help=None):
+            super().__init__(option_strings=option_strings, dest=dest, default=default, nargs=0, help=help)
+        def __call__(self, parser, namespace, values, option_string=None):
+            parser.print_help()
+            tv.connect("destroy", Gtk.main_quit)
+            tv.show_all()
+            Gtk.main()
+            parser.exit()
+    mha = MyHelpAction(["-h", "--help"])
+    for oss in mha.option_strings:
+        parser._option_string_actions[oss] = mha
+    parser._registries['action']['help'] = MyHelpAction
+
 args = parser.parse_args()
 
 # We might need to do this AFTER reading in the user-config file (as the UI language needs to be read)
