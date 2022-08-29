@@ -4013,6 +4013,7 @@ class GtkViewModel(ViewModel):
                 version = info['version']
         except (OSError, KeyError, ValueError):
             pass
+        logger.debug(f"{version=}")
         if version is None:
             return
         newv = [int(x) for x in version.split('.')]
