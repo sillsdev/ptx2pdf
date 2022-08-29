@@ -118,6 +118,7 @@ class HelpTextViewWindow(Gtk.Window):
         self.set_default_size(768, 768)
         #self.vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         #self.add(self.vb)
+        self.connect("destroy", Gtk.main_quit)
         self.create_textview()
         
     def create_textview(self):
@@ -132,8 +133,8 @@ class HelpTextViewWindow(Gtk.Window):
         self.tv.set_wrap_mode(Gtk.WrapMode.WORD)
         self.tb = self.tv.get_buffer()
         sw.add(self.tv)
-        self.has_text = False
 
     def print_message(self, message):
         self.tb.set_text(message, -1)
-        self.has_text = True
+        self.show_all()
+        Gtk.main()
