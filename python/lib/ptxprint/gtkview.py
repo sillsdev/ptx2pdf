@@ -40,7 +40,7 @@ from threading import Thread
 
 logger = logging.getLogger(__name__)
 
-# ssl._create_default_https_context = ssl._create_unverified_context
+ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
@@ -4006,18 +4006,23 @@ class GtkViewModel(ViewModel):
             return
         version = None
         if self.noInt is None or self.noInt:
+            logger.debug(f"Returning because {self.noInt=}.")
             return
         try:
+            logger.debug(f"Trying to access URL to see in updates are available")
             with urllib.request.urlopen("https://software.sil.org/downloads/r/ptxprint/latest.win.json") as inf:
                 info = json.load(inf)
                 version = info['version']
-        except (OSError, KeyError, ValueError):
+        except (OSError, KeyError, ValueError) as e:
+            logger.debug(f"{e=}")
             pass
         logger.debug(f"{version=}")
         if version is None:
+            logger.debug(f"Returning because version is None.")
             return
         newv = [int(x) for x in version.split('.')]
         currv = [int(x) for x in VersionStr.split('.')]
+        logger.debug(f"{newv=}, {currv=}")
         if newv <= currv:
             return
         def enabledownload():
