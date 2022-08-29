@@ -3515,14 +3515,14 @@ can be set.</property>
   <object class="GtkImage" id="icon_folder">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">folder-symbolic</property>
+    <property name="icon-name">folder-open-symbolic</property>
     <property name="use-fallback">True</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_locked">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">system-lock-screen-symbolic</property>
+    <property name="icon-name">changes-prevent-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
@@ -3542,10 +3542,16 @@ settings for a similar project.</property>
     <property name="icon-name">view-grid-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_unlocked">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">changes-allow-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="img_filter">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">emblem-documents-symbolic.symbolic</property>
+    <property name="icon-name">emblem-documents-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
@@ -15128,7 +15134,6 @@ popular or more obscure references).</property>
                                                 <property name="fill-level">5</property>
                                                 <property name="round-digits">0</property>
                                                 <property name="digits">0</property>
-                                                <property name="draw-value">False</property>
                                                 <property name="value-pos">left</property>
                                               </object>
                                               <packing>
@@ -20151,7 +20156,6 @@ changes specified in the PrintDraftChanges.txt file.</property>
                                                 <child>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
 can be applied for rotation and/or PDF page
@@ -20177,7 +20181,6 @@ rotate=binding page=2</property>
                                                     <property name="name">Picture: Additional attributes</property>
                                                     <property name="width-request">115</property>
                                                     <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="tooltip-text" translatable="yes">One or more optional (x-xetex) attributes 
 can be applied for rotation and/or PDF page

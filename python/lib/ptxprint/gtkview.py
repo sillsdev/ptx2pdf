@@ -625,6 +625,9 @@ class GtkViewModel(ViewModel):
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.set("txbf_colophon", _defaultColophon)
 
+        # Keep this tooltip safe for later
+        self.frtMatterTooltip = self.builder.get_object("btn_infoViewEdit").get_tooltip_text()
+
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
         self.pubvarlist = self.builder.get_object("ls_zvarList")
@@ -1913,7 +1916,9 @@ class GtkViewModel(ViewModel):
                   "btn_refreshViewerText", "btn_viewEdit"]:
             self.builder.get_object(w).set_sensitive(True)
         self.builder.get_object("btn_viewEdit").set_label("View/Edit...")
-        self.builder.get_object("btn_infoViewEdit").set_sensitive(False)
+        ibtn = self.builder.get_object("btn_infoViewEdit")
+        ibtn.set_sensitive(False)
+        ibtn.set_tooltip_text("")
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_visible(False)
@@ -1939,7 +1944,9 @@ class GtkViewModel(ViewModel):
                   "scroll_SettingsOld": ("", "")}
 
         if pgid == "scroll_FrontMatter":
-            self.builder.get_object("btn_infoViewEdit").set_sensitive(True)
+            ibtn = self.builder.get_object("btn_infoViewEdit")
+            ibtn.set_sensitive(True)
+            ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
