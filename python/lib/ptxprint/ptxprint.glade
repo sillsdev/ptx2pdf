@@ -22203,8 +22203,12 @@ default values for the Grouped Tabs.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Use the End of Ayah character in the
-font to decorate the verse number.</property>
+                                    <property name="tooltip-text" translatable="yes">By default, Thumb Tabs use the content and styling of the \toc3 marker.
+
+Note that this setting is interconnected with the Table of Contents settings 
+on the Pheripherals tab. If \toc3 is not included in the ToC, then this option
+will be disabled. So it is recommended to use \toc3 as your thumbtab text 
+and include it in the Table of Contents. </property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
@@ -22225,8 +22229,21 @@ font to decorate the verse number.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Use the End of Ayah character in the
-font to decorate the verse number.</property>
+                                    <property name="tooltip-text" translatable="yes">By default, Thumb Tabs use the content and styling of the \toc3 marker.
+If you prefer different content and/or styling for the tabs, then this
+\zthumbtab option needs to be enabled, and the thumbtab names
+entered into your USFM text.
+
+Note that this setting is interconnected with the Table of Contents settings 
+on the Pheripherals tab. If \toc3 is not included in the ToC, then you are 
+forced to use the \zthumbtab setting here. For that reason it is highly 
+recommended to use \toc3 as your thumbtab text and include it in 
+the Table of Contents. 
+
+The USFM extension \zthumbtab'' can be used to set an alternative value for 
+the thumbtab contents. If a book's header contains a \zthumbtab entry, then 
+\toc3 will not be used as the thumbtab contents. An empty \zthumbtab'' entry 
+specifies that there should be no text in the thumbtab for that book.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
