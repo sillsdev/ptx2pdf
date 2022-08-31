@@ -3506,6 +3506,12 @@ can be set.</property>
     <property name="icon-name">system-run-symbolic</property>
     <property name="icon_size">3</property>
   </object>
+  <object class="GtkImage" id="icon_downloa">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-revert-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
   <object class="GtkImage" id="icon_download">
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
@@ -3522,7 +3528,7 @@ can be set.</property>
   <object class="GtkImage" id="icon_locked">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">changes-prevent-symbolic</property>
+    <property name="icon-name">changes-allow-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_refresh">
@@ -9254,7 +9260,7 @@ be viewed or edited in Paratext.</property>
                             <property name="can-focus">False</property>
                             <property name="orientation">vertical</property>
                             <child>
-                              <!-- n-columns=6 n-rows=2 -->
+                              <!-- n-columns=7 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -9312,7 +9318,7 @@ or other advanced file-based settings.</property>
                                     <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">5</property>
                                     <property name="top-attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
@@ -9348,7 +9354,7 @@ saved/shared configuration named above.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">3</property>
+                                    <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -9376,7 +9382,7 @@ the password that was set.</property>
                                     <signal name="changed" handler="onPasswordChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -9408,7 +9414,7 @@ locked.</property>
                                     <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -9448,7 +9454,7 @@ settings for a similar project.</property>
                                     <signal name="clicked" handler="onChooseTargetProjectsClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">6</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -9493,6 +9499,28 @@ the Notes field below.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_importPDF">
+                                    <property name="name">Import Config from PDF</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Import Config from PDF
+
+If a PTXprint-produced PDF has the settings
+embedded in it, this button will import those
+settings into the current Config.</property>
+                                    <property name="halign">start</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="image">icon_downloa</property>
+                                    <signal name="clicked" handler="importPDFclicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>

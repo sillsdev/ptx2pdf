@@ -1648,12 +1648,22 @@ class GtkViewModel(ViewModel):
 
     def onPasswordChanged(self, t_invisiblePassword):
         lockBtn = self.builder.get_object("btn_lockunlock")
+    
         if self.get("t_invisiblePassword") == "":
             status = True
-            # lockBtn.set_label(_("Lock"))
+            img = Gtk.Image.new_from_icon_name("changes-allow-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            lockBtn.set_image(img)
+            # o = self.builder.get_object("icon_unlocked")
+            # print(f"{o=}")
+            # lockBtn.set_image(o)
         else:
             status = False
-            # lockBtn.set_label(_("Unlock"))
+            # o = self.builder.get_object("icon_locked")
+            # print(f"{o=}")
+            # lockBtn.set_image(o)
+            img = Gtk.Image.new_from_icon_name("changes-prevent-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
+            lockBtn.set_image(img)
+            # lockBtn.set_image(self.builder.get_object("icon_locked"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
@@ -4349,3 +4359,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(wid).set_visible(True)
         else:
             self.updateMarginGraphics()
+
+    def importPDFclicked(self, btn):
+        print("About to import config settings from existing PDF")
