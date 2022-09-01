@@ -55,7 +55,31 @@ def mapnamepages(names, pagemap):
     if names.Names is not None:
         for v in names.Names[1::2]:
             if v[0].pid in pagemap:
-                v[0] = pagemap[v[0].pid]
+                pm = pagemap[v[0].pid]
+                v[0] = pm[0]
+                if v[1] == '/XYZ':
+                    (x, y) = applycm(pm[1], (float(v[2]), float(v[3])))
+                    v[2] = PdfObject("{:.2f}".format(x))
+                    v[3] = PdfObject("{:.2f}".format(y))
+
+def buildPagesTree(pages, n=8):
+    if len(pages) < n:
+        res = IndirectPdfDict(Type=PdfName.Pages,
+                                  Count=PdfObject(len(pages)),
+                                  Kids = pages)
+        for p in pages:
+            p.Parent = res
+        return res
+    else:
+        collect = []
+        x = (len(pages) + n - 1) // n
+        res = IndirectPdfDict(Type=PdfName.Pages, Count=len(pages), Kids=collect)
+        for i in range(n):
+            p = buildPagesTree(pages[i*x:(i+1)*x], n=n)
+            collect.append(p)
+            p.Parent = res
+        return res
+
 
 @dataclass
 class PL:
@@ -220,13 +244,12 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
         p = m.render()
         p.Rotate = sig.rotate * 90
         writer.addpage(p)
-        for oldp in m.subpages:
-            pagemap[oldp] = p
+        #import pdb; pdb.set_trace()
+        for i, oldp in enumerate(m.subpages):
+            pagemap[oldp] = (p, m[i].Matrix)
     if trailer.Root.Names is not None:
         mapnamepages(trailer.Root.Names.Dests, pagemap)
-    trailer.Root.Pages=IndirectPdfDict(Type=PdfName.Pages,
-                                  Count=PdfObject(len(writer.pagearray)),
-                                  Kids = writer.pagearray)
+    trailer.Root.Pages=buildPagesTree(writer.pagearray)
     writer.trailer = trailer
     if outfname is not None:
         writer.write()

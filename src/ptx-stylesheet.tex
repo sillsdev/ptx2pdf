@@ -877,12 +877,12 @@
     % If omitting chapter number, skip this. 
     % We would have to set \OmitChapterNumbertrue on a book by book basis
     % in the configuration file in order to omit chapter numbers for single chapter books.
+   \ifhmode\unskip\fi % since a chapter effectively starts a new paragraph, clear out paragraph final whitespace
    \ifOmitChapterNumber
      \trace{c}{Chapter numbers ommitted}%
      % If we are mid paragraph remove the space caused by the \n before the \c.
      % Not sure why the damage is already done (e.g. end of ior*)
      %\ifhmode\unskip\fi
-     \unskip
      \pdfb@@kmark \pdfch@ptermark
    \else
      % if chapter label not present, set \ch@pter[X]waiting to cause chapter number to be printed
