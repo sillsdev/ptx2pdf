@@ -539,12 +539,12 @@
 % #1 style, #2 align, #3 #4 #5 #6 4 digits, #7 dummy
  \ifn@npublishable\else
   \trace{m}{dostr@ngs #1, #2, #3, #4, #5, #6, #7}%
-  \bgroup\s@tfont{#1}{\styst@k}%
+  \bgroup\s@tfont{#1}{#1}%
     \setbox0=\hbox{\if #4+\relax #3\else\if #6+\relax #3\else #3#4\fi\fi}%
     \setbox1=\hbox{\if #4+\relax\else\if #5+\relax #4\else\if #6+\relax #4#5\else #5#6\fi\fi\fi}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
     \getp@r@m{raise}{#1}\ifx\p@ram\relax\else\dimen1=\p@ram\trace{m}{raising by \the\dimen1, from \p@ram}\raise\dimen1\fi
-    \vbox{\s@tbaseline{#1}{\styst@k}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
+    \vbox{\s@tbaseline{#1}{#1}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox0\if#2l\relax\hfil\fi}%
                           \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
     }\egroup
