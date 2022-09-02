@@ -76,19 +76,22 @@ class UsfmCollection:
         self.basedir = basedir
         self.sheets = sheets
         self.books = {}
+        self.times = {}
         self.tocs = []
         self.booknames = None
 
     def get(self, bk):
-        if bk not in self.books:
-            bkfile = self.bkmapper(bk)
-            if bkfile is None:
-                return None
-            bkfile = os.path.join(self.basedir, bkfile)
-            if not os.path.exists(bkfile):
-                return None
+        bkfile = self.bkmapper(bk)
+        if bkfile is None:
+            return None
+        bkfile = os.path.join(self.basedir, bkfile)
+        if not os.path.exists(bkfile):
+            return None
+        mtime = os.stat(bkfile).st_mtime
+        if mtime > self.times.get(bk, 0):
             with open(bkfile, encoding="utf-8") as inf:
                 self.books[bk] = Usfm(inf, self.sheets)
+            self.times[bk] = time.time()
         return self.books[bk]
 
     def makeBookNames(self):
@@ -290,7 +293,7 @@ class Usfm:
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
             reduce(_g, [(x, rlist) for x in e], e_)
-            if pred(e, rlist) or (keepchap and (len(e_) or e.name == "cl")):
+            if pred(e, rlist) or (keepchap and e.name == "cl"):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
