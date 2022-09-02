@@ -618,11 +618,11 @@ def read_module(inf, sheets):
     return Usfm(lines, sheets)
 
 exclusionmap = {
-    'v': ['v'],
-    'x': ['x'],
-    'f': ['f'],
-    's': ['s', 's1', 's2'],
-    'p': ['fig']
+    'v': (['v'], "document/ifshowversenums"),
+    'x': (['x'], None),
+    'f': (['f'], "notes/includefootnotes"),
+    's': (['s', 's1', 's2'], "document/sectionheads"),
+    'p': (['fig'], None)
 }
 
 class Module:
@@ -666,7 +666,7 @@ class Module:
         if self.doc.doc is None:
             return []
         #self.removes = set()
-        self.removes = set(sum(exclusionmap.values(), []))
+        self.removes = set((sum(e[0] for e in exclusionmap.values()), []))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
@@ -715,10 +715,11 @@ class Module:
         elif e.name == 'inc':
             s = "".join(map(str, e)).strip()
             for c in s:
+                einfo = exclusionmap.get(c, ([], None))
                 if c == "-":
-                    self.removes = set(sum(exclusionmap.values(), []))
-                else:
-                    self.removes.difference_update(exclusionmap.get(c, []))
+                    self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
+                elif einfo[1] is None or not self.model.get(einfo[1]):
+                    self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
             mod = Module(e[0].strip(), self.usfms)
             return mod.parse()
