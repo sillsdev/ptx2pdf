@@ -9421,27 +9421,6 @@ locked.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_reloadConfig">
-                                    <property name="label">↺</property>
-                                    <property name="name">Reload saved configuration</property>
-                                    <property name="width-request">36</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Clicking this button will 
-reload the saved Config.</property>
-                                    <property name="opacity">0.29999999999999999</property>
-                                    <property name="halign">start</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <signal name="clicked" handler="onReloadConfigClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn_copyToTargetProj">
                                     <property name="name">Copy configuration to other projects </property>
                                     <property name="visible">True</property>
@@ -9526,6 +9505,9 @@ settings into the current Config.</property>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
@@ -18855,6 +18837,7 @@ odd/right-hand page of a spread.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="double-buffered">False</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
@@ -18983,8 +18966,7 @@ the list of illustrations and skip/ignore/remove any which
 are not found in the specified location of image files.
 
 If Pictures are missing after preparing a PDF, then
-they will be listed as a tooltip along with the number
-missing (right).</property>
+they will be listed in the section below.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="xalign">0</property>
@@ -19336,20 +19318,24 @@ the Header+Footer tab for details).
                                       <object class="GtkLabel" id="l_missingPictureString">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">start</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="margin-bottom">6</property>
+                                        <property name="margin-start">3</property>
+                                        <property name="margin-end">3</property>
+                                        <property name="margin-top">3</property>
+                                        <property name="margin-bottom">3</property>
+                                        <property name="vexpand">False</property>
                                         <property name="wrap">True</property>
+                                        <property name="selectable">True</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
-                                        <property name="fill">True</property>
+                                        <property name="fill">False</property>
                                         <property name="position">2</property>
                                       </packing>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="tab-expand">True</property>
                                     <property name="detachable">True</property>
                                   </packing>
                                 </child>

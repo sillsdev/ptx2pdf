@@ -109,7 +109,7 @@ tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
 l_chapfrom l_chapto t_chapfrom t_chapto 
 r_book_multiple btn_chooseBooks ecb_booklist 
-fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_reloadConfig btn_lockunlock t_password
+fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_lockunlock t_password
 tb_Layout lb_Layout
 fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
@@ -119,7 +119,7 @@ tb_Help lb_Help
 fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
-""".split()
+""".split() # btn_reloadConfig 
 
 _ui_enable4diglot2ndary = """
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
@@ -302,12 +302,12 @@ _object_classes = {
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
-    "stybutton":   ("btn_reloadConfig", "btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
+    "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
                     "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", 
-                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats")
+                    "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
 }
 
 _pgpos = {
@@ -1614,8 +1614,8 @@ class GtkViewModel(ViewModel):
             w2 = w1[:4]+s
             self.builder.get_object(w2).set_active(status)
 
-    def onReloadConfigClicked(self, btn_reloadConfig):
-        self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
+    # def onReloadConfigClicked(self, btn_reloadConfig):
+        # self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
 
     def onLockUnlockSavedConfig(self, btn):
         if self.configName() == "Default":
@@ -3201,20 +3201,21 @@ class GtkViewModel(ViewModel):
                 self.set("c_"+ident, False)
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
-        print("About to import config settings from existing PDF")
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
-                multiple = False, basedir=self.working_dir)
+                multiple = False, basedir=os.path.join(self.working_dir, ".."))
         if vals is None or not len(vals) or str(vals[0]) == "None":
             return
         zipdata = self.getPDFconfig(vals[0])
         if zipdata is not None:
             if self.msgQuestion(_("Overwite current Configuration?"), 
-                    _("Importing these settings will overwrite the current configuration. Are you sure you wish to continue?")):
+                    _("WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\nDo you wish to continue?")):
                 self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
         else:
             self.doError(_("PDF Config Import Error"), 
-                    secondary=_("Sorry - Can't find any PTXprint settings in the selected PDF"))
+                    secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
+                            _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
+                            _("if created with 'Include Config Settings Within PDF' option enabled."))
         
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 

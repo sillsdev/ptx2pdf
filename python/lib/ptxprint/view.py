@@ -1604,7 +1604,7 @@ set stack_size=32768""".format(self.configName())
         return None
         
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
-        import pdb; pdb.set_trace()
+        # import pdb; pdb.set_trace()
         inf = BytesIO(zipdata)
         zf = ZipFile(inf, compression=ZIP_DEFLATED)
         os.makedirs(configpath, exist_ok=True)
@@ -1621,14 +1621,26 @@ set stack_size=32768""".format(self.configName())
                 c.set("config", "name", config)
                 with open(cfgf, "w", encoding="utf-8") as outf:
                     c.write(outf)
-                plistfile = os.path.join(configpath, "{}-{}.piclist".format(oldprjid, oldconfig))
-                if os.path.exists(plistfile):
-                    os.rename(plistfile, os.path.join(configpath, "{}-{}.piclist".format(prjid, config)))
+                oldplistfile = os.path.join(configpath, "{}-{}.piclist".format(oldprjid, oldconfig))
+                newplistfile = os.path.join(configpath, "{}-{}.piclist".format(prjid, config))
+                if os.path.exists(oldplistfile):
+                    try:
+                        os.remove(newplistfile)
+                    except (OSError, FileNotFoundError, PermissionError) as E:
+                        logger.debug(f"Unable to delete file: {newplistfile} due to {E}") 
+                    os.rename(oldplistfile, newplistfile)
                 adjpath = os.path.join(configpath, "AdjLists")
                 if os.path.exists(adjpath):
                     for adjf in os.listdir(adjpath):
-                        newf = adjf.replace("{}-{}".format(oldprjid, oldconfig), "{}-{}".format(prjid, config))
-                        os.rename(os.path.join(adjpath, adjf), os.path.join(adjpath, newf))
+                        oldadjf = os.path.join(adjpath, adjf)
+                        if os.path.exists(oldadjf):
+                            newf = adjf.replace("{}-{}".format(oldprjid, oldconfig), "{}-{}".format(prjid, config))
+                            newadjf = os.path.join(adjpath, newf)
+                            try:
+                                os.remove(newadjf)
+                            except (OSError, FileNotFoundError, PermissionError) as E:
+                                logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
+                            os.rename(oldadjf, newadjf)
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
