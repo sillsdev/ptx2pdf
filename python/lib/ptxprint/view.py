@@ -11,6 +11,7 @@ from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import generateStrongsIndex
 from ptxprint.pdfrw.pdfreader import PdfReader
+from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
@@ -18,7 +19,7 @@ import os, sys
 from configparser import NoSectionError, NoOptionError, _UNSET
 from tempfile import NamedTemporaryFile
 from zipfile import ZipFile, ZIP_DEFLATED, ZipInfo
-from io import StringIO
+from io import StringIO, BytesIO
 from shutil import rmtree
 import datetime, time
 import json, logging
@@ -1589,11 +1590,46 @@ set stack_size=32768""".format(self.configName())
         return res
 
     def getPDFconfig(self, fname):
+        trailer = PdfReader(fname)
+        p = trailer.Root.PieceInfo
+        if p is None:
+            return None
+        pp = p.ptxprint
+        if pp is None:
+            return None
+        pd = pp.Private
+        if not isinstance(pd, bytes):
+            uncompress([pd], leave_raw=True)
+            return pd.stream
         return None
         
-    def unpackSettingsZip(self, zipdata):
-        pass
-        
+    def unpackSettingsZip(self, zipdata, prjid, config, configpath):
+        import pdb; pdb.set_trace()
+        inf = BytesIO(zipdata)
+        zf = ZipFile(inf, compression=ZIP_DEFLATED)
+        os.makedirs(configpath, exist_ok=True)
+        zf.extractall(path=configpath)
+        cfgf = os.path.join(configpath, "ptxprint.cfg")
+        if os.path.exists(cfgf):
+            c = configparser.ConfigParser()
+            with open(cfgf, encoding="utf-8", errors="ignore") as inf:
+                c.read_file(inf)
+            oldprjid = c.get("project", "id", fallback=prjid)
+            oldconfig = c.get("config", "name", fallback=config)
+            if oldprjid != prjid or oldconfig != config:
+                c.set("project", "id", prjid)
+                c.set("config", "name", config)
+                with open(cfgf, "w", encoding="utf-8") as outf:
+                    c.write(outf)
+                plistfile = os.path.join(configpath, "{}-{}.piclist".format(oldprjid, oldconfig))
+                if os.path.exists(plistfile):
+                    os.rename(plistfile, os.path.join(configpath, "{}-{}.piclist".format(prjid, config)))
+                adjpath = os.path.join(configpath, "AdjLists")
+                if os.path.exists(adjpath):
+                    for adjf in os.listdir(adjpath):
+                        newf = adjf.replace("{}-{}".format(oldprjid, oldconfig), "{}-{}".format(prjid, config))
+                        os.rename(os.path.join(adjpath, adjf), os.path.join(adjpath, newf))
+
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}

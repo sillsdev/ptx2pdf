@@ -806,8 +806,9 @@ class RunJob:
             else:
                 p = output.trailer.Root.PieceInfo
             pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
-            dat = "<" + "".join("{:2X}".format(c) for c in zio.getvalue()) + ">"
-            pdict.Private = PdfString.from_bytes(zio.getvalue())
+            pdict.Private = PdfDict()
+            pdict.Private.stream = zio.getvalue()
+            pdict.Private.Binary = True
             p.ptxprint = pdict
             zio.close()
 

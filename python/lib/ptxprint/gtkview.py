@@ -3211,7 +3211,7 @@ class GtkViewModel(ViewModel):
         if zipdata is not None:
             if self.msgQuestion(_("Overwite current Configuration?"), 
                     _("Importing these settings will overwrite the current configuration. Are you sure you wish to continue?")):
-                self.unpackSettingsZip(zipdata)
+                self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
         else:
             self.doError(_("PDF Config Import Error"), 
                     secondary=_("Sorry - Can't find any PTXprint settings in the selected PDF"))
