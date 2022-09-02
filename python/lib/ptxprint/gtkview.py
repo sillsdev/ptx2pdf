@@ -3200,6 +3200,22 @@ class GtkViewModel(ViewModel):
                 btn.set_sensitive(False)
                 self.set("c_"+ident, False)
 
+    def onImportPDFsettingsClicked(self, btn_importPDF):
+        print("About to import config settings from existing PDF")
+        vals = self.fileChooser(_("Select a PDF to import the settings from"),
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+                multiple = False, basedir=self.working_dir)
+        if vals is None or not len(vals) or str(vals[0]) == "None":
+            return
+        zipdata = self.getPDFconfig(vals[0])
+        if zipdata is not None:
+            if self.msgQuestion(_("Overwite current Configuration?"), 
+                    _("Importing these settings will overwrite the current configuration. Are you sure you wish to continue?")):
+                self.unpackSettingsZip(zipdata)
+        else:
+            self.doError(_("PDF Config Import Error"), 
+                    secondary=_("Sorry - Can't find any PTXprint settings in the selected PDF"))
+        
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
                 os.path.join(self.settings_dir, self.prjid), 
@@ -4359,6 +4375,3 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(wid).set_visible(True)
         else:
             self.updateMarginGraphics()
-
-    def importPDFclicked(self, btn):
-        print("About to import config settings from existing PDF")

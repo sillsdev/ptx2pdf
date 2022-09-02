@@ -9506,7 +9506,7 @@ the Notes field below.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_importPDF">
+                                  <object class="GtkButton" id="btn_selectImportPDF">
                                     <property name="name">Import Config from PDF</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -9520,7 +9520,7 @@ settings into the current Config.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
-                                    <signal name="clicked" handler="importPDFclicked" swapped="no"/>
+                                    <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>

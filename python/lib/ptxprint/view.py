@@ -58,6 +58,7 @@ def doError(txt, secondary=None, **kw):
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)
+        "project/importPDFsettings":("importPDFsettings", False, None),
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, "btn_selectScript"),
@@ -86,29 +87,13 @@ class ViewModel:
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
         self.args = args
-        self.ptsettings = None
-        self.FrontPDFs = None
-        self.BackPDFs = None
-        self.diffPDF = None
-        self.customScript = None
-        self.customXRfile = None
-        self.moduleFile = None
-        self.DBLfile = None
-        self.watermarks = None
-        self.pageborder = None
-        self.sectionheader = None
-        self.endofbook = None
-        self.versedecorator = None
-        self.customFigFolder = None
-        self.customOutputFolder = None
-        self.prjid = None
-        self.configId = None
-        self.diglotView = None
+        for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
+                     moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
+                     customFigFolder customOutputFolder prjid configId diglotView usfms picinfos bookrefs""").split():
+            setattr(self, v, None)
         self.isDiglot = False
         self.isDisplay = False
         self.tempFiles = []
-        self.usfms = None
-        self.picinfos = None
         self.picChecksView = PicChecks(self)
         self.loadingConfig = False
         self.styleEditor = StyleEditor(self)
@@ -116,7 +101,6 @@ class ViewModel:
         self.copyrightInfo = {}
         self.pubvars = {}
         self.strongsvars = {}
-        self.bookrefs = None
         self.font2baselineRatio = 1.
         self.docreatediff = False
 
@@ -1604,6 +1588,12 @@ set stack_size=32768""".format(self.configName())
                     res.write(fpath, f if d is None else os.path.join(d, f))
         return res
 
+    def getPDFconfig(self, fname):
+        return None
+        
+    def unpackSettingsZip(self, zipdata):
+        pass
+        
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))
         unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
