@@ -29427,35 +29427,16 @@ from XeTeX processing.</property>
           <object class="GtkBox" id="bx_statusMsgBar">
             <property name="can-focus">False</property>
             <property name="no-show-all">True</property>
-            <property name="halign">start</property>
+            <property name="halign">end</property>
             <property name="valign">end</property>
-            <child>
-              <object class="GtkButton" id="btn_dismissStatusLine">
-                <property name="label" translatable="yes">Dismiss</property>
-                <property name="width-request">55</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="focus-on-click">False</property>
-                <property name="receives-default">True</property>
-                <property name="halign">end</property>
-                <property name="margin-start">6</property>
-                <property name="margin-top">3</property>
-                <signal name="clicked" handler="onHideStatusMsgClicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
             <child>
               <object class="GtkLabel" id="l_statusLine">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="margin-start">8</property>
-                <property name="margin-end">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">8</property>
                 <property name="margin-top">2</property>
                 <property name="label"> This is where status messages go to alert the user.</property>
                 <property name="justify">center</property>
@@ -29466,6 +29447,26 @@ from XeTeX processing.</property>
                   <attribute name="foreground" value="#121212121212"/>
                   <attribute name="background" value="#dd1ff2baff24"/>
                 </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_dismissStatusLine">
+                <property name="label" translatable="yes">Dismiss</property>
+                <property name="width-request">55</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="halign">end</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">3</property>
+                <signal name="clicked" handler="onHideStatusMsgClicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>
