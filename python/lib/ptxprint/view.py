@@ -1600,7 +1600,10 @@ set stack_size=32768""".format(self.configName())
         pd = pp.Private
         if not isinstance(pd, bytes):
             uncompress([pd], leave_raw=True)
-            return pd.stream
+            try:
+                return pd.stream
+            except AttributeError:
+                return None
         return None
         
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):

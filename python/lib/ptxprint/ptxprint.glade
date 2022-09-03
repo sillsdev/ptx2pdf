@@ -9720,14 +9720,16 @@ Configuration settings.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <child>
                           <object class="GtkFrame" id="fr_pageSetup">
+                            <property name="width-request">483</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
+                            <property name="margin-top">8</property>
                             <property name="margin-bottom">4</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
@@ -9746,7 +9748,7 @@ Configuration settings.</property>
                                     <property name="valign">center</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="row-spacing">9</property>
-                                    <property name="column-spacing">3</property>
+                                    <property name="column-spacing">2</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_pagegutter">
                                         <property name="label" translatable="yes">Binding
@@ -9895,7 +9897,7 @@ or select from the list of preset values.</property>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">24</property>
+                                            <property name="width-chars">20</property>
                                             <property name="overwrite-mode">True</property>
                                           </object>
                                         </child>
@@ -9970,7 +9972,7 @@ Spacing (pt):</property>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_indentUnit">
-                                        <property name="width-request">95</property>
+                                        <property name="width-request">90</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The space by which paragraphs
@@ -9983,7 +9985,6 @@ updates automatically when you change
 from 1 to 2 columns, and vice versa. </property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">6</property>
                                         <property name="label" translatable="yes">Base Paragraph
 Indent (inches):</property>
                                         <property name="xalign">1</property>
@@ -10033,6 +10034,7 @@ and descent values of the main body font.</property>
                                         <property name="valign">start</property>
                                         <property name="margin-start">9</property>
                                         <property name="label" translatable="yes">99.9</property>
+                                        <property name="track-visited-links">False</property>
                                         <attributes>
                                           <attribute name="foreground" value="#2b0a4be2f850"/>
                                         </attributes>
@@ -10162,6 +10164,7 @@ on the OUTER edge of each page as
 commonly seen in a journaling layout.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
+                                        <property name="margin-start">2</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
                                       <packing>
@@ -10211,7 +10214,15 @@ can be customized.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">6</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
                                     </child>
                                   </object>
                                 </child>
@@ -10233,12 +10244,15 @@ can be customized.</property>
                         </child>
                         <child>
                           <object class="GtkFrame" id="fr_2colLayout">
+                            <property name="width-request">194</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="halign">start</property>
+                            <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">4</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="label-xalign">0.15000000596046448</property>
                             <child>
                               <!-- n-columns=2 n-rows=4 -->
@@ -10246,8 +10260,8 @@ can be customized.</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
-                                <property name="margin-start">6</property>
-                                <property name="margin-end">6</property>
+                                <property name="margin-start">3</property>
+                                <property name="margin-end">3</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">5</property>
                                 <property name="row-spacing">6</property>
@@ -10289,7 +10303,7 @@ the text of the two columns
 line between the two columns.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">8</property>
+                                    <property name="margin-start">3</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="active">True</property>
@@ -10449,20 +10463,20 @@ the Full View mode.</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="fill">True</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_margins">
-                        <property name="width-request">680</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -10478,7 +10492,7 @@ the Full View mode.</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="left-padding">12</property>
+                            <property name="left-padding">6</property>
                             <child>
                               <!-- n-columns=6 n-rows=7 -->
                               <object class="GtkGrid">
@@ -10490,7 +10504,7 @@ the Full View mode.</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="row-spacing">5</property>
-                                <property name="column-spacing">3</property>
+                                <property name="column-spacing">2</property>
                                 <child>
                                   <object class="GtkLabel" id="l_topmargin">
                                     <property name="height-request">35</property>
@@ -10590,7 +10604,7 @@ The bottom of the main text area is calculated
 from the descender of the final line of text 
 (including any footnotes).</property>
                                     <property name="halign">end</property>
-                                    <property name="margin-start">25</property>
+                                    <property name="margin-start">15</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Bottom of Text to
@@ -11061,7 +11075,7 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   <object class="GtkCheckButton" id="c_rhrule">
                                     <property name="label" translatable="yes">Horizontal Rule</property>
                                     <property name="name">Horizontal Rule</property>
-                                    <property name="width-request">110</property>
+                                    <property name="width-request">100</property>
                                     <property name="height-request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -11084,6 +11098,7 @@ main body text begins.</property>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
                                     <child>
                                       <object class="GtkLabel" id="l_margin2header2">
                                         <property name="width-request">80</property>
@@ -11094,7 +11109,7 @@ to the top of the header area. Note that due to
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
                                         <property name="halign">end</property>
-                                        <property name="margin-start">24</property>
+                                        <property name="margin-start">12</property>
                                         <property name="label" translatable="yes">Start of Page to
 Top of Header:</property>
                                         <attributes>
@@ -11137,7 +11152,7 @@ starts a little bit below the top of the header area.</property>
 other values (Start of Page to
 Top of Text, and Bottom of Header
 to Top of Text).</property>
-                                        <property name="margin-start">6</property>
+                                        <property name="margin-start">2</property>
                                         <property name="label" translatable="yes">(value is
 derived)</property>
                                         <attributes>
@@ -11352,7 +11367,7 @@ Margins, Columns and Rules (lines).</property>
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkFrame" id="fr_FontConfig">
-                            <property name="width-request">300</property>
+                            <property name="width-request">350</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="margin-top">8</property>
@@ -11591,7 +11606,7 @@ text will appear in black.</property>
                         </child>
                         <child>
                           <object class="GtkFrame" id="fr_fallbackFont">
-                            <property name="width-request">300</property>
+                            <property name="width-request">340</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="margin-start">6</property>
@@ -11729,7 +11744,7 @@ to ensure that they are displayed properly.</property>
                         </child>
                         <child>
                           <object class="GtkFrame" id="fr_hyphenation">
-                            <property name="width-request">300</property>
+                            <property name="width-request">340</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="margin-start">6</property>
@@ -12154,7 +12169,7 @@ or Expanding Paragraphs:</property>
                             </child>
                             <child>
                               <object class="GtkFrame" id="fr_writingSystem">
-                                <property name="width-request">300</property>
+                                <property name="width-request">310</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-top">2</property>
@@ -12403,7 +12418,7 @@ for characters missing in primary font.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_BeginEnding">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="margin-start">6</property>
@@ -12418,7 +12433,7 @@ for characters missing in primary font.</property>
                             <property name="margin-bottom">6</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=3 n-rows=3 -->
+                              <!-- n-columns=2 n-rows=3 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -12426,6 +12441,7 @@ for characters missing in primary font.</property>
                                 <property name="margin-bottom">4</property>
                                 <property name="row-spacing">6</property>
                                 <property name="column-spacing">20</property>
+                                <property name="column-homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_bookIntro">
                                     <property name="label" translatable="yes">Book Introductions</property>
@@ -12552,15 +12568,6 @@ selected books/chapters will show in the glossary.</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -12581,7 +12588,7 @@ selected books/chapters will show in the glossary.</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_IncludeScripture">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="margin-start">6</property>
@@ -12604,6 +12611,7 @@ selected books/chapters will show in the glossary.</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="column-spacing">4</property>
                                 <property name="row-homogeneous">True</property>
+                                <property name="column-homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
                                     <property name="label" translatable="yes">Chapter numbers</property>
@@ -13103,7 +13111,7 @@ be unchecked (to omit the main text).</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_layoutSpecialBooks">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="margin-start">6</property>
@@ -13447,14 +13455,17 @@ Also settings for special books.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkNotebook" id="nbk_fnxr">
+                            <property name="width-request">700</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="halign">start</property>
@@ -17081,8 +17092,8 @@ extended study notes and sidebars from being displayed. </property>
                             </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
@@ -17147,40 +17158,14 @@ Cross-references appear.</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
                                 <child>
-                                  <object class="GtkBox" id="bx_TopMarginSettings">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <property name="spacing">6</property>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <!-- n-columns=6 n-rows=3 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="hexpand">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="hexpand">False</property>
                                     <property name="row-spacing">4</property>
+                                    <property name="column-spacing">2</property>
                                     <child>
                                       <object class="GtkLabel" id="l_hdrleft">
                                         <property name="visible">True</property>
@@ -17253,10 +17238,10 @@ For example, to get this output:
 you would need to enter:
      This\ is\ page\ \#\pagenumber</property>
                                         <property name="halign">center</property>
-                                        <property name="margin-end">6</property>
+                                        <property name="margin-end">3</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="hexpand">False</property>
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -17272,7 +17257,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">15</property>
+                                            <property name="width-chars">13</property>
                                             <property name="xalign">0.5</property>
                                           </object>
                                         </child>
@@ -17310,7 +17295,7 @@ you would need to enter:
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="hexpand">False</property>
                                         <property name="active">4</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -17326,7 +17311,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">15</property>
+                                            <property name="width-chars">13</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -17361,10 +17346,10 @@ For example, to get this output:
 you would need to enter:
      This\ is\ page\ \#\pagenumber</property>
                                         <property name="halign">start</property>
-                                        <property name="margin-end">6</property>
+                                        <property name="margin-end">3</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">True</property>
+                                        <property name="hexpand">False</property>
                                         <property name="active">0</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -17380,7 +17365,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">15</property>
+                                            <property name="width-chars">13</property>
                                           </object>
                                         </child>
                                       </object>
@@ -17557,6 +17542,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="width-request">40</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">2</property>
@@ -17568,6 +17554,7 @@ setting, you must first enable Diglot.</property>
                                         <property name="width-request">40</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="halign">start</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
@@ -17581,11 +17568,11 @@ setting, you must first enable Diglot.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">1</property>
+                                    <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <!-- n-columns=7 n-rows=3 -->
+                                  <!-- n-columns=7 n-rows=1 -->
                                   <object class="GtkGrid" id="gr_HeaderAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -17741,53 +17728,11 @@ uncheck this option.</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -17828,10 +17773,11 @@ uncheck this option.</property>
                             <property name="left-padding">10</property>
                             <property name="right-padding">10</property>
                             <child>
-                              <!-- n-columns=3 n-rows=3 -->
+                              <!-- n-columns=3 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="halign">center</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="column-spacing">16</property>
                                 <child>
@@ -17943,15 +17889,6 @@ to produce the PDF.</property>
                                 <child>
                                   <placeholder/>
                                 </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
                               </object>
                             </child>
                           </object>
@@ -17982,7 +17919,7 @@ to produce the PDF.</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=6 n-rows=3 -->
+                          <!-- n-columns=6 n-rows=2 -->
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -18137,24 +18074,6 @@ and cross-references from going into the footer area.</property>
                                 <property name="height">2</property>
                               </packing>
                             </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -18172,9 +18091,6 @@ and cross-references from going into the footer area.</property>
                         <property name="fill">True</property>
                         <property name="position">2</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -18197,6 +18113,7 @@ headers and footers.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Pictures">
+                    <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">6</property>
@@ -18210,7 +18127,7 @@ headers and footers.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="orientation">vertical</property>
-                        <property name="position">240</property>
+                        <property name="position">250</property>
                         <property name="position-set">True</property>
                         <property name="wide-handle">True</property>
                         <child>
@@ -18219,16 +18136,20 @@ headers and footers.</property>
                             <property name="can-focus">False</property>
                             <child>
                               <object class="GtkScrolledWindow" id="scr_picListEdit">
+                                <property name="width-request">600</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="hexpand">True</property>
                                 <property name="hscrollbar-policy">always</property>
                                 <property name="vscrollbar-policy">always</property>
                                 <property name="shadow-type">in</property>
                                 <property name="overlay-scrolling">False</property>
                                 <child>
                                   <object class="GtkTreeView" id="tv_picListEdit">
+                                    <property name="width-request">600</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
+                                    <property name="hexpand">True</property>
                                     <property name="hadjustment">a_picListadjustment1</property>
                                     <property name="vadjustment">a_picListadjustment2</property>
                                     <property name="vscroll-policy">natural</property>
@@ -18439,18 +18360,18 @@ headers and footers.</property>
                                 <property name="width-request">130</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="margin-start">6</property>
+                                <property name="margin-start">3</property>
                                 <property name="margin-end">3</property>
                                 <property name="margin-top">3</property>
                                 <property name="margin-bottom">3</property>
                                 <property name="orientation">vertical</property>
                                 <property name="spacing">4</property>
                                 <child>
-                                  <!-- n-columns=3 n-rows=3 -->
+                                  <!-- n-columns=2 n-rows=2 -->
                                   <object class="GtkGrid" id="gr_picButtons">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="halign">end</property>
                                     <property name="row-spacing">4</property>
                                     <property name="column-spacing">4</property>
                                     <child>
@@ -18531,21 +18452,6 @@ will need to fill in all the details in the area below.</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
-                                    <child>
-                                      <placeholder/>
-                                    </child>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -18558,7 +18464,7 @@ will need to fill in all the details in the area below.</property>
                                     <property name="visible">True</property>
                                     <property name="sensitive">False</property>
                                     <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">end</property>
                                     <property name="label-xalign">0.15000000596046448</property>
                                     <child>
@@ -18568,7 +18474,7 @@ will need to fill in all the details in the area below.</property>
                                         <property name="halign">start</property>
                                         <property name="left-padding">12</property>
                                         <child>
-                                          <!-- n-columns=3 n-rows=3 -->
+                                          <!-- n-columns=1 n-rows=2 -->
                                           <object class="GtkGrid">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
@@ -18619,27 +18525,6 @@ any items that match.</property>
                                                 <property name="top-attach">1</property>
                                               </packing>
                                             </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
-                                            <child>
-                                              <placeholder/>
-                                            </child>
                                           </object>
                                         </child>
                                       </object>
@@ -18663,6 +18548,7 @@ any items that match.</property>
                                   <object class="GtkBox" id="bx_activeRefresh">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">end</property>
                                     <child>
                                       <object class="GtkCheckButton" id="c_filterPicList">
                                         <property name="label" translatable="yes">Only Show
@@ -18742,7 +18628,7 @@ settings will remain unchanged.</property>
                                     <property name="halign">center</property>
                                     <property name="valign">start</property>
                                     <property name="margin-left">6</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">3</property>
                                     <property name="margin-top">6</property>
                                     <child>
                                       <object class="GtkRadioButton" id="r_image_preview">
@@ -18815,11 +18701,13 @@ odd/right-hand page of a spread.</property>
                             <property name="can-focus">False</property>
                             <child>
                               <object class="GtkNotebook" id="nbk_PicList">
-                                <property name="width-request">608</property>
+                                <property name="width-request">586</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="halign">start</property>
-                                <property name="vexpand">True</property>
+                                <property name="hexpand">False</property>
+                                <property name="vexpand">False</property>
+                                <property name="resize-mode">immediate</property>
                                 <signal name="change-current-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
@@ -18833,22 +18721,23 @@ odd/right-hand page of a spread.</property>
                                     <property name="baseline-position">top</property>
                                     <child>
                                       <object class="GtkFrame" id="fr_inclPictures">
-                                        <property name="width-request">600</property>
+                                        <property name="width-request">590</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="double-buffered">False</property>
-                                        <property name="halign">start</property>
                                         <property name="valign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">12</property>
                                         <property name="margin-bottom">6</property>
+                                        <property name="hexpand">False</property>
                                         <property name="label-xalign">0.019999999552965164</property>
                                         <child>
                                           <!-- n-columns=5 n-rows=5 -->
                                           <object class="GtkGrid" id="gr_IllustrationOptions">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="halign">center</property>
                                             <property name="valign">start</property>
                                             <property name="margin-start">6</property>
                                             <property name="row-spacing">3</property>
@@ -19316,6 +19205,7 @@ the Header+Footer tab for details).
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_missingPictureString">
+                                        <property name="width-request">592</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">start</property>
@@ -19327,6 +19217,7 @@ the Header+Footer tab for details).
                                         <property name="vexpand">False</property>
                                         <property name="wrap">True</property>
                                         <property name="selectable">True</property>
+                                        <property name="max-width-chars">90</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -19373,7 +19264,7 @@ the Header+Footer tab for details).
                                             <property name="valign">start</property>
                                             <property name="shadow-type">none</property>
                                             <child>
-                                              <!-- n-columns=8 n-rows=6 -->
+                                              <!-- n-columns=8 n-rows=7 -->
                                               <object class="GtkGrid" id="gr_details">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
@@ -19837,7 +19728,7 @@ settings first.</property>
                                                       <object class="GtkEntry">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
-                                                        <property name="width-chars">10</property>
+                                                        <property name="width-chars">11</property>
                                                       </object>
                                                     </child>
                                                   </object>
@@ -20097,25 +19988,6 @@ be set here.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel" id="l_piccredit">
-                                                    <property name="visible">True</property>
-                                                    <property name="sensitive">False</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="no-show-all">True</property>
-                                                    <property name="halign">center</property>
-                                                    <property name="valign">start</property>
-                                                    <property name="margin-end">6</property>
-                                                    <attributes>
-                                                      <attribute name="foreground" value="#88888a8a8585"/>
-                                                    </attributes>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">5</property>
-                                                    <property name="top-attach">5</property>
-                                                    <property name="width">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
                                                   <object class="GtkBox">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
@@ -20123,7 +19995,7 @@ be set here.</property>
                                                     <child>
                                                       <object class="GtkEntry" id="t_plCaption">
                                                         <property name="name">Picture: Caption</property>
-                                                        <property name="width-request">260</property>
+                                                        <property name="width-request">300</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="tooltip-text" translatable="yes">By default the caption will appear below the picture.
@@ -20133,7 +20005,7 @@ then add this line to your ptxprint-mods.tex file:
 
 Note that captions are NOT processed by any
 changes specified in the PrintDraftChanges.txt file.</property>
-                                                        <property name="hexpand">True</property>
+                                                        <property name="hexpand">False</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>
@@ -20216,6 +20088,40 @@ rotate=binding page=2</property>
                                                     <property name="top-attach">4</property>
                                                     <property name="width">3</property>
                                                   </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_piccredit">
+                                                    <property name="visible">True</property>
+                                                    <property name="sensitive">False</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="no-show-all">True</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">start</property>
+                                                    <property name="margin-end">6</property>
+                                                    <attributes>
+                                                      <attribute name="foreground" value="#88888a8a8585"/>
+                                                    </attributes>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">5</property>
+                                                    <property name="top-attach">6</property>
+                                                    <property name="width">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
+                                                </child>
+                                                <child>
+                                                  <placeholder/>
                                                 </child>
                                               </object>
                                             </child>
@@ -21071,7 +20977,7 @@ in this publication, as well as other contexts.</property>
                                 </child>
                               </object>
                               <packing>
-                                <property name="expand">True</property>
+                                <property name="expand">False</property>
                                 <property name="fill">True</property>
                                 <property name="position">0</property>
                               </packing>
@@ -21174,7 +21080,7 @@ to copyrights.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_diglot">
-                        <property name="width-request">560</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -21699,6 +21605,7 @@ options here to create a Diglot or Didoc.</property>
                       <object class="GtkBox">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">end</property>
                         <child>
                           <object class="GtkButton" id="btn_diglotSwitch">
                             <property name="label" translatable="yes">Switch to Other
@@ -21729,9 +21636,6 @@ options here to create a Diglot or Didoc.</property>
                         <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -21764,7 +21668,7 @@ a secondary project and configuration.</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkFrame" id="fr_tabs">
-                        <property name="width-request">680</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -22015,12 +21919,13 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                             <child>
                               <object class="GtkComboBox" id="fcb_rotateTabs">
                                 <property name="name">Thumb tabs: Rotate options</property>
-                                <property name="width-request">130</property>
+                                <property name="width-request">140</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="can-default">True</property>
                                 <property name="tooltip-text" translatable="yes">If you choose to Rotate the tabs, there are various options as to how these should be oriented. The preview (right) will show how these will appear on facing pages.</property>
                                 <property name="halign">start</property>
+                                <property name="margin-end">10</property>
                                 <property name="model">ls_rotateTabs</property>
                                 <property name="wrap-width">1</property>
                                 <property name="active">1</property>
@@ -22033,7 +21938,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                                   <object class="GtkEntry">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="width-chars">10</property>
+                                    <property name="width-chars">11</property>
                                   </object>
                                 </child>
                               </object>
@@ -22328,7 +22233,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                     </child>
                     <child>
                       <object class="GtkFrame" id="fr_borders">
-                        <property name="width-request">680</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -22339,7 +22244,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=3 n-rows=3 -->
+                          <!-- n-columns=2 n-rows=2 -->
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -22979,21 +22884,6 @@ either of the options shown below.</property>
                                 <property name="top-attach">1</property>
                               </packing>
                             </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
                           </object>
                         </child>
                         <child type="label">
@@ -23042,13 +22932,14 @@ or embelishments to the text.
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_StyleEditor">
+                    <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
                       <object class="GtkPaned">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="position">300</property>
+                        <property name="position">265</property>
                         <property name="position-set">True</property>
                         <property name="wide-handle">True</property>
                         <child>
@@ -24997,11 +24888,13 @@ edit the USFM stylesheet files.</property>
                   <object class="GtkBox" id="tb_Advanced">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="margin-start">6</property>
                     <property name="orientation">vertical</property>
                     <child>
                       <object class="GtkBox">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -25019,12 +24912,12 @@ edit the USFM stylesheet files.</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkFrame">
-                                <property name="width-request">380</property>
+                                <property name="width-request">420</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">start</property>
-                                <property name="margin-end">6</property>
+                                <property name="margin-end">5</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="label-xalign">0.039999999105930328</property>
@@ -25042,7 +24935,7 @@ edit the USFM stylesheet files.</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">6</property>
                                         <property name="row-spacing">6</property>
-                                        <property name="column-spacing">6</property>
+                                        <property name="column-spacing">30</property>
                                         <child>
                                           <object class="GtkCheckButton" id="c_useModsTex">
                                             <property name="label" translatable="yes">Apply Customized Settings (ptxprint-mods.tex)</property>
@@ -25423,10 +25316,10 @@ other settings are applied. This file is rarely used.</property>
                         </child>
                         <child>
                           <object class="GtkFrame">
-                            <property name="width-request">250</property>
+                            <property name="width-request">270</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="margin-start">6</property>
+                            <property name="margin-start">5</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
                             <property name="label-xalign">0.05000000074505806</property>
@@ -25718,7 +25611,7 @@ next book to start on a new page.</property>
                     </child>
                     <child>
                       <object class="GtkBox">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -25727,11 +25620,12 @@ next book to start on a new page.</property>
                         <property name="spacing">7</property>
                         <child>
                           <object class="GtkFrame" id="fr_AdvOther">
-                            <property name="width-request">446</property>
+                            <property name="width-request">450</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
+                            <property name="margin-end">5</property>
                             <property name="label-xalign">0.019999999552965164</property>
                             <child>
                               <!-- n-columns=2 n-rows=4 -->
@@ -26045,11 +25939,11 @@ e.g. polyglot-simplepages, ornaments</property>
                         </child>
                         <child>
                           <object class="GtkFrame" id="fr_AdvCompat">
-                            <property name="width-request">186</property>
+                            <property name="width-request">240</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
-                            <property name="margin-start">6</property>
+                            <property name="margin-start">5</property>
                             <property name="vexpand">True</property>
                             <property name="label-xalign">0.05000000074505806</property>
                             <child>
@@ -26197,12 +26091,13 @@ interlinear (&amp; ruby text) output.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_ViewerEditor">
+                    <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">12</property>
                     <property name="margin-top">6</property>
-                    <property name="hexpand">True</property>
+                    <property name="hexpand">False</property>
                     <property name="vexpand">True</property>
                     <property name="orientation">vertical</property>
                     <child>
@@ -26214,6 +26109,7 @@ interlinear (&amp; ruby text) output.</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">4</property>
                         <property name="margin-bottom">4</property>
+                        <property name="hexpand">False</property>
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
@@ -26396,7 +26292,7 @@ more clearly where changes are being made.</property>
                             <signal name="clicked" handler="removeZerosClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">5</property>
+                            <property name="left-attach">4</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26486,6 +26382,9 @@ without a confirmation check.</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
+                        <child>
+                          <placeholder/>
+                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -26495,6 +26394,7 @@ without a confirmation check.</property>
                     </child>
                     <child>
                       <object class="GtkNotebook" id="nbk_Viewer">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">False</property>
@@ -26523,7 +26423,7 @@ without a confirmation check.</property>
                           <object class="GtkScrolledWindow" id="scroll_AdjList">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
@@ -26567,7 +26467,7 @@ are likely to have to re-do it all again.</property>
                             <property name="margin-end">4</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <property name="kinetic-scrolling">False</property>
@@ -26594,7 +26494,7 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_TeXfile">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
@@ -26620,7 +26520,7 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_XeTeXlog">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
@@ -26646,7 +26546,7 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_Settings">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
@@ -26672,7 +26572,7 @@ are likely to have to re-do it all again.</property>
                           <object class="GtkScrolledWindow" id="scroll_SettingsOld">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
-                            <property name="hexpand">True</property>
+                            <property name="hexpand">False</property>
                             <property name="vexpand">True</property>
                             <property name="shadow-type">in</property>
                             <child>
@@ -26724,8 +26624,10 @@ output and tweak adjust lists.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Peripherals">
+                    <property name="width-request">700</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="valign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="orientation">vertical</property>
@@ -26733,8 +26635,10 @@ output and tweak adjust lists.</property>
                     <child>
                       <!-- n-columns=4 n-rows=1 -->
                       <object class="GtkGrid" id="gr_importFrontPDF">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
@@ -26810,8 +26714,10 @@ cover using the online Canva.com tool (link provided).</property>
                     </child>
                     <child>
                       <object class="GtkBox" id="bx_ToC">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin-start">12</property>
                         <property name="margin-end">6</property>
                         <property name="spacing">2</property>
@@ -27052,8 +26958,10 @@ the style of leader you wish to apply.</property>
                     </child>
                     <child>
                       <object class="GtkBox">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="margin-start">12</property>
                         <property name="spacing">6</property>
                         <child>
@@ -27159,11 +27067,16 @@ after any front matter material).</property>
                     </child>
                     <child>
                       <object class="GtkFrame">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
                         <property name="margin-top">3</property>
                         <property name="margin-bottom">6</property>
+                        <property name="hexpand">False</property>
                         <property name="label-xalign">0.029999999329447746</property>
                         <child>
                           <!-- n-columns=2 n-rows=4 -->
@@ -27360,11 +27273,14 @@ as they might vary from one publication to another.</property>
                     </child>
                     <child>
                       <object class="GtkFrame" id="bx_colophon">
-                        <property name="width-request">675</property>
+                        <property name="width-request">700</property>
                         <property name="height-request">145</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
                           <!-- n-columns=3 n-rows=3 -->
@@ -27547,8 +27463,10 @@ on subsequent runs.</property>
                     <child>
                       <!-- n-columns=3 n-rows=1 -->
                       <object class="GtkGrid" id="gr_importBackPDF">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
@@ -28776,8 +28694,10 @@ output with a previous PDF.</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkFrame" id="fr_Help">
+                        <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>

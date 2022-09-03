@@ -6,7 +6,7 @@ from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
-import regex
+import regex, time
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
