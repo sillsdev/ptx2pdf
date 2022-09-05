@@ -197,20 +197,8 @@
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
-    \lineskiplimit=-10pt \leftskip=0pt \rightskip=0pt \parskip=0pt \parfillskip=0pt% plus 1fil%\lineskip=10pt
-    \xspaceskip=0pt
-    \getp@ram{justification}{#2}{#2}%
-    \ifx\p@ram\c@nter
-       \leftskip=\noteRag\rightskip=\noteRag
-    \else\ifx\p@ram\l@ft
-       \rightskip=\noteRag
-    \else\ifx\p@ram\r@ght
-       \leftskip=\noteRag
-    \fi\fi\fi
-    \getp@ram{leftmargin}{#2}{#2}%
-    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#2}{#2}%
-    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \let\styst@k\empty
+    \s@tsideskips{#2}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
     \else
@@ -220,6 +208,7 @@
         \s@tbaseline{#1}{#1}%
       \fi
     \fi
+    \trace{f}{note(#1) leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \ifp@ranotes\else
       \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
       \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
