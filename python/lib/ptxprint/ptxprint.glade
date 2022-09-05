@@ -23306,12 +23306,14 @@ properties for this style.</property>
                                                         <property name="label" translatable="yes">Scale Relative
 to Parent</property>
                                                         <property name="name">Styles: Scale relative to parent</property>
+                                                        <property name="width-request">100</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
                                                         <property name="tooltip-text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">center</property>
+                                                        <property name="xalign">0</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
@@ -23355,7 +23357,7 @@ to Parent</property>
                                                     </child>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_styFaceSuperscript">
-                                                        <property name="label" translatable="yes">Superscript   or</property>
+                                                        <property name="label" translatable="yes">Superscript</property>
                                                         <property name="name">Styles: Superscript</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
@@ -23372,7 +23374,6 @@ to Parent</property>
                                                       <packing>
                                                         <property name="left-attach">2</property>
                                                         <property name="top-attach">3</property>
-                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
