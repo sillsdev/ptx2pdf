@@ -78,13 +78,20 @@ def parseFeatString(featstring, defaults={}, langfeats={}):
     lang = None
     base = defaults
     if featstring is not None and featstring:
-        for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
-            k, v = l.split("=")
-            if k.lower() == "language":
-                lang = v.strip()
-                base = langfeats.get(lang, base)
-            else:
-                feats[k.strip()] = v.strip()
+        logging.debug(f"Parsing feature string {featstring}")
+        words = list(re.split(r'\s*[,;:]\s*|\s+', featstring))
+        if '=' in featstring:
+            for l in words:
+                k, v = l.split("=")
+                if k.lower() == "language":
+                    lang = v.strip()
+                    base = langfeats.get(lang, base)
+                else:
+                    feats[k.strip()] = v.strip()
+        else:
+            for k, v in zip(words[::2], words[1::2]):
+                key = k.strip('"')
+                feats[key] = v
     res = base.copy()
     res.update(feats)
     return (lang, res)

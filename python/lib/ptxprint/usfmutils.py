@@ -666,7 +666,7 @@ class Module:
         if self.doc.doc is None:
             return []
         #self.removes = set()
-        self.removes = set((sum(e[0] for e in exclusionmap.values()), []))
+        self.removes = set((sum((e[0] for e in exclusionmap.values()), [])))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
