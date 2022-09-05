@@ -366,7 +366,10 @@
      \edef\gl@e{\p@ram\noexpand\hsize}%
    \fi
    % inside \beginR rightskip is leftskip and leftskip is rightskip!
-   \ifRTL \beginR \fi\leftskip=0pt\rightskip=0pt \ifJustifyPars\else plus \gl@e\fi
+   \parfillskip=0pt plus \gl@e 
+   \ifRTL \rightskip\else\leftskip\fi =0pt
+   \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
+   \ifRTL\beginR\fi
    \getp@ram{justification}{#1}{\tmpstyst@k}%
    \ifx\p@ram\c@nter
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
