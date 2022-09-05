@@ -177,8 +177,8 @@ class StyleEditor:
 
     def __init__(self, model):
         self.model = model
-        self.sheet = None
-        self.basesheet = None
+        self.sheet = {}
+        self.basesheet = {}
         self.marker = None
         self.registers = {}
 
@@ -191,8 +191,6 @@ class StyleEditor:
         return res
 
     def allStyles(self):
-        if self.sheet is None:
-            return {}
         res = set(self.basesheet.keys())
         res.update(self.sheet.keys())
         return res
@@ -214,8 +212,6 @@ class StyleEditor:
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        if self.sheet is None:
-            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         res = self.sheet.get(mrk, {}).get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet.get(mrk, {}).get(key, default)
@@ -224,8 +220,6 @@ class StyleEditor:
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False):
-        if self.sheet is None:
-            raise KeyError(f"{mrk} + {key}")
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
@@ -244,8 +238,6 @@ class StyleEditor:
             del self.basesheet[mrk][key]
 
     def haskey(self, mrk, key):
-        if self.sheet is None:
-            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):
             return True
         return False
