@@ -324,7 +324,7 @@ class ViewModel:
             esid = s.lower().replace(" ", "")
             w = "bl_font"+sid
             nf = font_info.fromStyle(bold="Bold" in s, italic="Italic" in s)
-            # print(f"onFontChanged {w} {nf}")
+            logging.debug(f"onFontChanged {w} {nf}")
             if nf is not None:
                 self.set(w, nf)
 
@@ -659,6 +659,7 @@ class ViewModel:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
             font = FontRef(fname, "")
             self.set("bl_fontR", font)
+        self.onFontChanged(None)
         # clear generated pictures
         for f in ("tmpPics", "tmpPicLists"):
             path2del = os.path.join(self.working_dir, f)
