@@ -1,7 +1,15 @@
 PTXprint 2.2.19 Release Notes
-03 sep 2022
+05 sep 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.20 (5 Sep 2022)
+
+  * Fix font features preventing bold, ital and BI typefaces from showing up
+  
+  * Allow empty stylesheets
+  
+  * Minor bug fixes
 
 Bug fixes and improvements in 2.2.19 (3 Sep 2022)
 
