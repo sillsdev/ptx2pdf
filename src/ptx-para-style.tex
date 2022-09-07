@@ -914,7 +914,9 @@
 % #9 - pdfpos Y
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
   \thing@y=#9\relax 
-  \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \ifcsname baselineskip@\c@rrdstat\endcsname
+    \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+  \fi
   \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
   %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
     %%\def\this@thing{#1}% What is it?

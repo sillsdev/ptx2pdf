@@ -408,9 +408,11 @@
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
     \getp@ram{rightmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \ifRTL\beginR\fi
     \linepenalty=1000
     \s@tbaseline{#1}{#1}%
     \noindent\leavevmode #2\par
+    \ifRTL\endR\fi
     \egroup
 }
 %-cfig_docaption
@@ -474,7 +476,7 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\cr@dit}%
+  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
