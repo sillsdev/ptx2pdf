@@ -2824,6 +2824,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
         self.onUseIllustrationsClicked(None)
         self.updatePrjLinks()
+        self.checkFontsMissing()
 
     def updatePrjLinks(self):
         if self.settings_dir != None and self.prjid != None:
@@ -3360,7 +3361,7 @@ class GtkViewModel(ViewModel):
             self.otherDiglot = None
             btn.set_label(_("Switch to Other\nDiglot Project"))
             self.builder.get_object("b_print2ndDiglotText").set_visible(False)
-            self.changeLabel("b_print", _("Print (Create PDF)"))
+            self.changeLabel("b_print", _("Print (Make PDF)"))
         elif self.get("c_diglot"):
             oprjid = self.get("fcb_diglotSecProject")
             oconfig = self.get("ecb_diglotSecConfig")
