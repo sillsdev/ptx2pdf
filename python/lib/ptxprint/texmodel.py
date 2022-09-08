@@ -881,7 +881,7 @@ class TexModel:
                 t = self._doperiph(i)
                 if t != "":
                     res.append(t)
-        return "\n".join(t)
+        return "\n".join(res)
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
