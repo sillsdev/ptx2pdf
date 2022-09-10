@@ -631,9 +631,10 @@ class Module:
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
-    def __init__(self, fname, usfms, usfm=None):
+    def __init__(self, fname, usfms, model, usfm=None):
         self.fname = fname
         self.usfms = usfms
+        self.model = model
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
@@ -721,7 +722,7 @@ class Module:
                 elif einfo[1] is None or not self.model.get(einfo[1]):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
-            mod = Module(e[0].strip(), self.usfms)
+            mod = Module(e[0].strip(), self.usfms, self.model)
             return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), [])

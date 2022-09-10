@@ -1070,7 +1070,7 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         try:
-            mod = Module(infpath, usfms, usfm=usfm)
+            mod = Module(infpath, usfms, self, usfm=usfm)
             res = mod.parse()
         except SyntaxError as e:
             return (None, e)
