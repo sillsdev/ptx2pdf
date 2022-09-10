@@ -1116,6 +1116,11 @@ class TexModel:
                 self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
             else:
                 self.changes = []
+            script = self.dict["document/script"]
+            if len(script):
+                sscript = getattr(scriptsnippets, script[8:].lower(), None)
+                if sscript is not None:
+                    self.changes.extend(sscript.regexes(self.printer))
         draft = "-" + (printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1358,11 +1363,6 @@ class TexModel:
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
-        script = self.dict["document/script"]
-        if len(script):
-            sscript = getattr(scriptsnippets, script[8:].lower(), None)
-            if sscript is not None:
-                self.changes.extend(sscript.regexes(self.printer))
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of changes.txt:-------------------------------------------------------------")
