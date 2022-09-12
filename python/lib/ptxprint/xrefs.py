@@ -145,9 +145,6 @@ class XMLXrefs(BaseXrefs):
         a = []
         for e in xr:
             st = e.get('strongs', None)
-            if st is not None:
-                if st[0] in "GH":
-                    st = st[1:]
             if e.tag == "ref" and e.text is not None:
                 r = RefList.fromStr(e.text, marks=("+", "\u203A"))
                 a.append((st, e.get('style', None), r))
@@ -161,7 +158,7 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None and self.shownums else ""
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("G").lstrip("H")) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:

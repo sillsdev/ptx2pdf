@@ -10,7 +10,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-DataVersion = 3
+# Bump this number up in order to reset everyone's Cached files
+DataVersion = 4
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
