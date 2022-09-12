@@ -386,6 +386,9 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             lastinit = ""
             outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))
             for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
+                for a, b in (("G", "Grk"), ("H", "Heb")):
+                    if not view.get("c_strongs{}".format(b)):
+                        v = set((s for s in v if not s.startswith(a)))
                 ces = next(get_ces(k))
                 init = ces.split(b"\000")[0]
                 if init != lastinit:
