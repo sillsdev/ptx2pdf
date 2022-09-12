@@ -1,7 +1,7 @@
 
 from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
-from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
+from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
 from ptxprint.usfmutils import Usfm
 from unicodedata import normalize
 import xml.etree.ElementTree as et
@@ -386,19 +386,8 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
             lastinit = ""
             outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))
             for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
-                for i in range(len(k)):
-                    if indices is None:
-                        if k[i] not in "*\u0E40\u0E41\u0E42\u0E43\u0E44":
-                            init = k[i]
-                            break
-                    else:
-                        for s in indices:
-                            if k[i:].startswith(s):
-                                init = s
-                                break
-                        else:
-                            continue
-                        break
+                ces = next(get_ces(k))
+                init = ces.split(b"\000")[0]
                 if init != lastinit:
                     outf.write("\n\\m\n")
                     lastinit = init

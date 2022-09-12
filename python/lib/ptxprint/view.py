@@ -243,6 +243,8 @@ class ViewModel:
             self.bookrefs = RefList()
             for b in bl:
                 bname = self.getBookFilename(b.first.book, self.prjid)
+                if bname is None:
+                    continue
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()

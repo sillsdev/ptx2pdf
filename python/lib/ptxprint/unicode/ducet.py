@@ -128,11 +128,7 @@ class DUCET(dict):
         else:
             return (b"".join(bytes(val[x:x+6]) + l4 for x in range(0, len(val), 6)), False)
 
-    def sortkey(self, txt, level=0, back=-1, variable=NONIGNORE):
-        if not len(txt):
-            return b""
-        res = []
-        colls = []
+    def getces(self, txt, variable=NONIGNORE):
         txt = normal_ucd(txt, 'NFD')
         currk = txt[0]
         folvar = False
@@ -141,11 +137,17 @@ class DUCET(dict):
                 currk += c
                 continue
             (ce, folvar) = self.lookup(currk, variable, folvar)
-            colls.append(ce)
+            yield ce
             currk = c
         if currk:
             (ce, folvar) = self.lookup(currk, variable, folvar)
-            colls.append(ce)
+            yield ce
+
+    def sortkey(self, txt, level=0, back=-1, variable=NONIGNORE):
+        if not len(txt):
+            return b""
+        colls = [c for c in self.getces(txt, variable=variable)]
+        res = []
         for i in range(0, level or 5):
             if back == i:
                 res.append(b"".join(bytes(a) for k in colls for a in reversed(zip(k[2*i::10], k[2*i+1::10])) if a != (0,0)))
@@ -251,6 +253,11 @@ def get_sortkey(s, level=0, variable=NONIGNORE, ducet=None):
     if ducet is None:
         ducet = _get_local_ducet()
     return ducet.sortkey(s, level, variable=variable)
+
+def get_ces(s, variable=NONIGNORE, ducet=None):
+    if ducet is None:
+        ducet = _get_local_ducet()
+    return ducet.getces(s, variable=variable)
 
 def strkey(key):
     return ".".join("{:04X}".format(*unpack(">H", e)) for e in (bytes(a) for a in zip(key[::2], key[1::2])))
