@@ -28,8 +28,8 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.21"
-GitVersionStr = "2.2.21"
+VersionStr = "2.2.22"
+GitVersionStr = "2.2.22"
 ConfigVersion = "2.09"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
