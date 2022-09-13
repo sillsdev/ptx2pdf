@@ -1177,7 +1177,7 @@ contained within the sidebar.</property>
   <object class="GtkAdjustment" id="a_styFirstLineIndent">
     <property name="lower">-50</property>
     <property name="upper">50</property>
-    <property name="step-increment">0.10</property>
+    <property name="step-increment">0.05</property>
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_styFontSize">
@@ -1188,7 +1188,7 @@ contained within the sidebar.</property>
   <object class="GtkAdjustment" id="a_styLeftMargin">
     <property name="upper">100</property>
     <property name="step-increment">0.05</property>
-    <property name="page-increment">0.5000000002235174</property>
+    <property name="page-increment">0.5</property>
   </object>
   <object class="GtkAdjustment" id="a_styLineSpacing">
     <property name="upper">72</property>
@@ -12015,7 +12015,7 @@ space width. TeX's default value is 150%.</property>
                                             <property name="adjustment">a_letterShrink</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
-                                            <property name="value">1.5</property>
+                                            <property name="value">2</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
@@ -12035,7 +12035,7 @@ space width. TeX's default value is 150%.</property>
                                             <property name="adjustment">a_letterStretch</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
-                                            <property name="value">2</property>
+                                            <property name="value">0.40</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>

@@ -386,6 +386,8 @@ def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, 
                 for a, b in (("G", "Grk"), ("H", "Heb")):
                     if not view.get("c_strongs{}".format(b)):
                         v = set((s for s in v if not s.startswith(a)))
+                if not len(v):
+                    continue
                 ces = next(get_ces(k))
                 init = ces.split(b"\000")[0]
                 if init != lastinit:
