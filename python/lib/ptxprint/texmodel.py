@@ -1220,7 +1220,7 @@ class TexModel:
             logger.debug("versesToEnd")
             doc.versesToEnd()
 
-        if self.dict["strongsndx/showintext"]:
+        if self.dict["strongsndx/showintext"] and self.dict["notes/ifxrexternalist"]:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")

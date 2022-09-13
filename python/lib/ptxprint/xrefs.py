@@ -218,13 +218,12 @@ class XMLXrefs(BaseXrefs):
 
 
 class StrongsXrefs(XMLXrefs):
-    def __init__(self, xrfile, filters, **kw):
-        super().__init__(xrfile, filters, **kw)
+    def __init__(self, xrfile, filters, localfile=None, **kw):
+        super().__init__(xrfile, filters, localfile=localfile, **kw)
         self.btmap = None
         self.revwds = None
         self.strongs = None
         self.lang = None
-        localfile = kw.get('localfile', None)
         if localfile is not None:
             self.loadlocal(localfile, addfilter=True)
             logger.debug("strongsfilter="+str(self.strongsfilter))
