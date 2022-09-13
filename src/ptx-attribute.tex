@@ -193,7 +193,10 @@
   }
 
 
-\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}}
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}%
+  \edef\@ttrlistname{@ttriblist-#1}%
+  \x@\xdef\csname \@ttrlistname\endcsname{#2}%
+}
 
 \x@\def\csname nostore-attrib-eid\endcsname{}
 \x@\def\csname nostore-attrib-sid\endcsname{}
@@ -352,6 +355,7 @@
 % Parse list of attributes from style file to read the default attribute
 % and the complete list(comma separated).
 \def\Attributes#1\relax{% Override empty \Attributes from ptx-stylesheets
+  \trace{A}{Loading attr list for \m@rker (#1)}%
   \let\nxt@tem=\geton@item %only need the first one.
   \let\D@first=\interpr@tfirstattrib
   \let\save@ttrib=\setdefaultattrib
@@ -397,7 +401,7 @@
         \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
 \def\rubyt#1#2{\trace{A}{rubyt}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}{\styst@k}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}{#2|#1+\styst@k}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 

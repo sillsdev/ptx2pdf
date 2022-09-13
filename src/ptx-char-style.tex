@@ -163,6 +163,7 @@
    \iftemp\the\@veryparstarthooks\fi               %(2)
    \op@ninghooks{before}{\newch@rstyle}\relax% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
+   \trace{A}{Attributes-\newch@rstyle: \@ttriblist}%
    \bgroup % start a group to encapsulate the style's formatting changes
     \skipch@rstylefalse
     \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
@@ -233,8 +234,8 @@
 }
 
 %+cchar_endcharstyle
-\lccode`\|=`\\ % for printing backslash in error message
-\lowercase{
+%\lccode`\|=`\\ % for printing backslash in error message
+%\lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
@@ -258,7 +259,7 @@
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-     \ifx\@ttriblist\empty\else\temptrue\fi
+     \ifx\@ttriblist\empty\trace{s}{No attributes}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
      \global\tmpt@ks{}%
@@ -276,7 +277,7 @@
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
-         %\trace{A}{Special atributes done}%
+         \trace{A}{Special atributes done. trying complex-\oldch@rstyle}%
          \ifcsname complex-\oldch@rstyle\c@rrdstat\endcsname
            \csname complex-\oldch@rstyle\c@rrdstat\endcsname
          \else 
@@ -305,7 +306,7 @@
     \ifp@pping\else\setwh@tvrstyle\fi
   \fi
  }
-}
+%}
 \def\setwh@tvrstyle{%
   \trace{s}{setwh@tvrstyle: \mcstack}%
    \def\thiswh@tvrstyle{p}%Default value just in case
