@@ -3217,6 +3217,8 @@ class GtkViewModel(ViewModel):
                     secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
                             _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
                             _("if created with 'Include Config Settings Within PDF' option enabled."))
+            return
+        self.updateProjectSettings(self.prjid, self.configName(), readConfig=True)
         
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
