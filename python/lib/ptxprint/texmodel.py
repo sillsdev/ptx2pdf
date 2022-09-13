@@ -1220,6 +1220,12 @@ class TexModel:
             logger.debug("versesToEnd")
             doc.versesToEnd()
 
+        if self.dict["strongsndx/showintext"]:
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            logger.debug("Add strongs numbers to text")
+            doc.addStrongs(printer.getStrongs())
+
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
             logger.log(5, "Unparsing text to run local changes\n"+dat)

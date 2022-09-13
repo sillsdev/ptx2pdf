@@ -611,6 +611,29 @@ class Usfm:
             return True
         iterfn(self.doc[0], top=True)
 
+    def addStrongs(self, strongs):
+        self.addorncv()
+        def iterfn(el):
+            if isinstance(el, sfm.Element):
+                for c in el:
+                    iterfn(c)
+            if not isinstance(el.pos, _Reference):
+                return
+            r = el.pos.ref
+            newstr = str(el)
+            for st in strongs.getstrongs(r):
+                if st not in strongs.regexes:
+                    regs = strongs.addregex(st)
+                else:
+                    regs = strongs.regexes[st]
+                if not len(regs):
+                    continue
+                newstr = re.sub(regs, r'\xts|strongs="{}"\xts*\1'.format(st.lstrip("H").lstrip("G")), newstr)
+            el.data = newstr
+        iterfn(self.doc[0])
+            
+
+
 def read_module(inf, sheets):
     lines = inf.readlines()
     if not re.match(r"\uFEFF?\\id\s", lines[0]):

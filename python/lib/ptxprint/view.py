@@ -9,7 +9,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
-from ptxprint.xrefs import generateStrongsIndex
+from ptxprint.xrefs import StrongsXrefs
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
@@ -104,6 +104,7 @@ class ViewModel:
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
+        self.strongs = None
 
         # private to this implementation
         self.dict = {}
@@ -1669,8 +1670,20 @@ set stack_size=32768""".format(self.configName())
 
     def generateStrongs(self, bkid="XXA", cols=2):
         outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+        self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
+
+    def getStrongs(self):
+        if self.strongs is not None:
+            return self.strongs
         onlylocal = self.get("c_strongsLocal")
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, self._getPtSettings(), self)
+        seps = self.getScriptSnippet().getrefseps(self)
+        seps['verseonly'] = self.getvar('verseident') or "v"
+        ptsettings = self._getPtSettings()
+        self.strongs = StrongsXref(os.path.join(pycodedir(), "strongs.xml"), 
+                    None, localfile, seps, ptsettings, self.get("c_strongsShowNums"),
+                    self.get("fcb_textDirection") == "rtl", self.get("c_xoVerseOnly"))
+        return self.strongs
+
