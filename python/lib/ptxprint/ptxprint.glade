@@ -15399,71 +15399,12 @@ it is recommended to include an Index at the
 end of the publication. Click this button to set
 various options to be used to generate the index.</property>
                                                 <property name="halign">start</property>
-                                                <property name="margin-top">3</property>
-                                                <property name="margin-bottom">4</property>
+                                                <property name="margin-top">9</property>
+                                                <property name="margin-bottom">10</property>
                                                 <signal name="clicked" handler="onGenerateStrongsClicked" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">2</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkBox">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="orientation">vertical</property>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_strongsLocal">
-                                                    <property name="label" translatable="yes">Localized Terms Only</property>
-                                                    <property name="name">Only include localized terms (Strong's references)</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Restrict Strong's references to those 
-with localized renderings in Paratext's
-Biblical Terms List.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="draw-indicator">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_strongsShowNums">
-                                                    <property name="label" translatable="yes">Show Strong's Numbers</property>
-                                                    <property name="name">Show Strong's numbers in cross-references</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
-index, then it is highly recommended to
-include the Strong's numbers in the list 
-of cross-references in the text.
-
-But if you only want to show the references
-without any Strong's numbers, then uncheck
-this option for a more compact list.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw-indicator">True</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">1</property>
-                                                  </packing>
-                                                </child>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
                                                 <property name="top-attach">3</property>
                                               </packing>
                                             </child>
@@ -15488,6 +15429,106 @@ proper nouns (names of people and places).</property>
                                               <packing>
                                                 <property name="left-attach">2</property>
                                                 <property name="top-attach">4</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <!-- n-columns=2 n-rows=3 -->
+                                              <object class="GtkGrid">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_strongsLocal">
+                                                    <property name="label" translatable="yes">Show Localized Terms Only</property>
+                                                    <property name="name">Only include localized terms (Strong's references)</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">Restrict Strong's references to those 
+with localized renderings in Paratext's
+Biblical Terms List.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">2</property>
+                                                    <property name="width">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="margin-start">6</property>
+                                                    <property name="label" translatable="yes">Show Strong's Numbers:</property>
+                                                    <property name="xalign">0</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">0</property>
+                                                    <property name="top-attach">0</property>
+                                                    <property name="height">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_strongsShowInText">
+                                                    <property name="label" translatable="yes">in Text</property>
+                                                    <property name="name">Show Strong's numbers in cross-references</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">If the project's Biblical Terms list includes
+renderings, then it is possible to show
+Strong's numbers in the text itself, which
+should make it easier to look up the
+appropriate cross-references for a word
+in a Study Bible.
+
+Note that this option is disabled by default
+as it can clutter the scripture text and will
+also slow down the production of the PDF.
+
+If using this feature, it is recommended to
+also enable option: 'Show Localized Terms Only'.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <signal name="toggled" handler="warnStrongsInText" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_strongsShowNums">
+                                                    <property name="label" translatable="yes">in xRefs</property>
+                                                    <property name="name">Show Strong's numbers in cross-references</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
+index, then it is highly recommended to
+include the Strong's numbers in the list 
+of cross-references in the text.
+
+But if you only want to show the references
+without any Strong's numbers, then uncheck
+this option for a more compact list.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">1</property>
+                                                    <property name="top-attach">1</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">3</property>
                                               </packing>
                                             </child>
                                           </object>

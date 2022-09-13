@@ -1261,6 +1261,12 @@ class GtkViewModel(ViewModel):
     def onCancel(self, btn):
         self.onDestroy(btn)
 
+    def warnStrongsInText(self, btn):
+        if self.get("c_useXrefList") and self.get("c_strongsShowInText"):
+            self.doStatus(_("Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."))
+        else:
+            self.doStatus("")
+
     def warnSlowRun(self, btn):
         ofmt = self.get("fcb_outputFormat")
         if self.get("c_includeillustrations") and ofmt != "Screen":
@@ -3218,7 +3224,7 @@ class GtkViewModel(ViewModel):
                             _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
                             _("if created with 'Include Config Settings Within PDF' option enabled."))
             return
-        self.updateProjectSettings(self.prjid, self.configName(), readConfig=True)
+        self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
         
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 

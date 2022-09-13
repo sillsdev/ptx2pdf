@@ -414,6 +414,7 @@ ModelMap = {
     "scripts/indic/syllables":  ("c_scrindicSyllable", None),
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", None),
 
+    "strongsndx/showintext":    ("c_strongsShowInText", None),
     "strongsndx/shownums":      ("c_strongsShowNums", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
