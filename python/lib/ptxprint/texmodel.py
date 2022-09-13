@@ -1108,6 +1108,10 @@ class TexModel:
         return outfpath
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
+        try:
+            isCanon = int(bookcodes.get(bk, 100)) < 89
+        except ValueError:
+            isCanon = False
         printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -1220,7 +1224,7 @@ class TexModel:
             logger.debug("versesToEnd")
             doc.versesToEnd()
 
-        if self.dict["strongsndx/showintext"] and self.dict["notes/ifxrexternalist"]:
+        if self.dict["strongsndx/showintext"] and self.dict["notes/ifxrexternalist"] and isCanon:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")

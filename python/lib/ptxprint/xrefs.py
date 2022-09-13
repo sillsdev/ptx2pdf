@@ -309,7 +309,7 @@ class StrongsXrefs(XMLXrefs):
         if fallback is not None and fallback and fallback != "None":
             fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
             if os.path.exists(fallbackfile):
-                _readTermRenderings(fallbackfile, self.strongs, None, self.btmap, 'def')
+                self._readTermRenderings(fallbackfile, self.strongs, None, self.btmap, 'def')
         title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
         with open(outfile, "w", encoding="utf-8") as outf:
             outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
@@ -324,9 +324,10 @@ class StrongsXrefs(XMLXrefs):
                     for k, v in sorted(self.strongs.items(), key=lambda x:int(x[0][1:])):
                         if not k.startswith(a[0]):
                             continue
-                        d = ", ".join(v.get('local', v.get('def', None) if not onlylocal else None))
+                        d = v.get('local', v.get('def', None) if not onlylocal else None)
                         if d is None:
                             continue
+                        d = ", ".join(d)
                         if view.get("c_strongsNoComments"):
                             d = re.sub(r"\(.*?\)", "", d)
                         if wc in ("remove", "hyphen"):
@@ -342,7 +343,7 @@ class StrongsXrefs(XMLXrefs):
             if len(self.revwds) and view.get("c_strongsNdx"):
                 tailoring = self.context.getCollation()
                 ducet = tailored(tailoring.text) if tailoring else None
-                ldmlindices = ptsettings.getIndexList()
+                ldmlindices = self.context.getIndexList()
                 indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
                 lastinit = ""
                 outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))

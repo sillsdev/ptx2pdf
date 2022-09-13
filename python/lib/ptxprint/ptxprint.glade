@@ -15339,6 +15339,7 @@ Books on the Basic tab will be included.</property>
                                                 <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
                                                 <property name="name">Source of cross-references: "The Works"</property>
                                                 <property name="visible">True</property>
+                                                <property name="sensitive">False</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">This BibleWorks list contains carefully
@@ -15457,6 +15458,7 @@ Biblical Terms List.</property>
                                                 </child>
                                                 <child>
                                                   <object class="GtkLabel">
+                                                    <property name="name">Where to show Strong's numbers</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="margin-start">6</property>
@@ -15472,7 +15474,7 @@ Biblical Terms List.</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_strongsShowInText">
                                                     <property name="label" translatable="yes">in Text</property>
-                                                    <property name="name">Show Strong's numbers in cross-references</property>
+                                                    <property name="name">Show Strong's numbers in the text</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>

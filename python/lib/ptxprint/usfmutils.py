@@ -618,8 +618,7 @@ class Usfm:
         def iterfn(el, silent=False):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
-                
-                issilent = styletype.lower() == "note" or el.meta.get("Attributes", None) is not None or silent
+                issilent = styletype.lower() == "note" or el.meta.get("Attributes", None) is not None or el.name.startswith("s") or silent
                 for c in el:
                     iterfn(c, silent=issilent)
             if not isinstance(el.pos, _Reference) or silent:
@@ -634,7 +633,7 @@ class Usfm:
                 if not len(regs):
                     continue
                 logger.log(5, f"{regs=} {st=}")
-                newstr = re.sub(regs, r'\\xts|strong="{}"\\*\1'.format(st.lstrip("H").lstrip("G")), newstr)
+                newstr = re.sub(regs, '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("H").lstrip("G")), newstr, count=1)
             el.data = newstr
         iterfn(self.doc[0])
             
