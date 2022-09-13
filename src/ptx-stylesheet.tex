@@ -844,7 +844,9 @@
   \c@ncelfirstversefalse
   \dimen0=\lastkern
   \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
-   \ifOmitVerseNumberOne \c@ncelfirstversetrue \fi \fi
+   \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
+                         \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
+  \fi\fi
   % -1sp indicates that a hanging verse number has been requested here. But that does not seem as reliable as \ifhangingverse
   % When this happens we make ll@p use llap to right justify the verse number at the current position.
   % Otherwise make ll@p do nothing.
