@@ -15339,7 +15339,6 @@ Books on the Basic tab will be included.</property>
                                                 <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
                                                 <property name="name">Source of cross-references: "The Works"</property>
                                                 <property name="visible">True</property>
-                                                <property name="sensitive">False</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">This BibleWorks list contains carefully

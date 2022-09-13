@@ -6,7 +6,9 @@ from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
-import regex, time
+import regex, time, logging
+
+logger = logging.getLogger(__name__)
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
@@ -613,22 +615,26 @@ class Usfm:
 
     def addStrongs(self, strongs):
         self.addorncv()
-        def iterfn(el):
+        def iterfn(el, silent=False):
             if isinstance(el, sfm.Element):
+                styletype = el.meta["StyleType"]
+                
+                issilent = styletype.lower() == "note" or el.meta.get("Attributes", None) is not None or silent
                 for c in el:
-                    iterfn(c)
-            if not isinstance(el.pos, _Reference):
+                    iterfn(c, silent=issilent)
+            if not isinstance(el.pos, _Reference) or silent:
                 return
             r = el.pos.ref
             newstr = str(el)
             for st in strongs.getstrongs(r):
                 if st not in strongs.regexes:
-                    regs = strongs.addregex(st)
+                    regs = strongs.addregexes(st)
                 else:
                     regs = strongs.regexes[st]
                 if not len(regs):
                     continue
-                newstr = re.sub(regs, r'\xts|strongs="{}"\xts*\1'.format(st.lstrip("H").lstrip("G")), newstr)
+                logger.log(5, f"{regs=} {st=}")
+                newstr = re.sub(regs, r'\\xts|strong="{}"\\*\1'.format(st.lstrip("H").lstrip("G")), newstr)
             el.data = newstr
         iterfn(self.doc[0])
             

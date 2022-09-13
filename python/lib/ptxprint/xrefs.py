@@ -179,7 +179,7 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None and self.shownums else ""
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("G").lstrip("H")) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
@@ -218,8 +218,11 @@ class XMLXrefs(BaseXrefs):
 
 
 class StrongsXrefs(XMLXrefs):
-    def __init__(self, xrfile, filters, localfile=None, **kw):
-        super().__init__(xrfile, filters, localfile=localfile, **kw)
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
+                 context=None, shownums=True, rtl=False, shortrefs=False):
+        super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, separators=separators,
+                 context=context, shownums=shownums, rtl=rtl, shortrefs=shortrefs)
+        self.regexes = {}
         self.btmap = None
         self.revwds = None
         self.strongs = None
@@ -231,7 +234,7 @@ class StrongsXrefs(XMLXrefs):
             self.strongsfilter = None
 
     def getstrongs(self, ref):
-        return [x[0] for x in self.xmldat[ref.first.book][ref.first]]
+        return [x[0] for x in self.xmldat[ref.first.book].get(ref.first,[])]
 
     def loadinfo(self, lang):
         if lang is None or lang == 'und':
@@ -266,7 +269,7 @@ class StrongsXrefs(XMLXrefs):
             st = btmap[rid]
             if addfilter:
                 self.strongsfilter.add(st)
-            strongs[st][key] = [re.sub(r"\(.*?\)", s.strip()) for s in rend.split("||")]
+            strongs[st][key] = [re.sub(r"\((.*?)\)", r"\1", s.strip()) for s in rend.split("||")]
             if revwds is not None:
                 for w in strongs[st][key]:
                     revwds.setdefault(w.lower(), set()).add(st)
@@ -279,9 +282,12 @@ class StrongsXrefs(XMLXrefs):
         self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
 
     def addregexes(self, st):
-        wds = self.strongs[st].get('local', [])
+        wds = self.strongs.get(st,{}).get('local', [])
         reg = []
         for w in wds:
+            w = re.sub(r"\(.*?\)", "", w).strip()
+            if " " in w:
+                continue
             r = ""
             if w.startswith("*"):
                 w = w[1:]
@@ -290,7 +296,7 @@ class StrongsXrefs(XMLXrefs):
             if w.endswith("*"):
                 r += w[:-1]
             else:
-                r += w + r"\\b"
+                r += w + r"\b"
             reg.append(r)
         res = "(" + "|".join(reg) + ")" if len(reg) else ""
         self.regexes[st] = res
