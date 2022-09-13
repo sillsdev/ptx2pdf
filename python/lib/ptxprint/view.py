@@ -9,7 +9,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks
 from ptxprint.styleditor import StyleEditor
-from ptxprint.xrefs import generateStrongsIndex
+from ptxprint.xrefs import StrongsXrefs
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
@@ -28,8 +28,8 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.20"
-GitVersionStr = "2.2.20"
+VersionStr = "2.2.22"
+GitVersionStr = "2.2.22"
 ConfigVersion = "2.09"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -104,6 +104,7 @@ class ViewModel:
         self.strongsvars = {}
         self.font2baselineRatio = 1.
         self.docreatediff = False
+        self.strongs = None
 
         # private to this implementation
         self.dict = {}
@@ -243,6 +244,8 @@ class ViewModel:
             self.bookrefs = RefList()
             for b in bl:
                 bname = self.getBookFilename(b.first.book, self.prjid)
+                if bname is None:
+                    continue
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
@@ -1666,9 +1669,22 @@ set stack_size=32768""".format(self.configName())
         self.set("s_thumbtabs", newnum)
 
     def generateStrongs(self, bkid="XXA", cols=2):
-        outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+        self.getStrongs()
         onlylocal = self.get("c_strongsLocal")
+        outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
+        self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
+
+    def getStrongs(self):
+        if self.strongs is not None:
+            return self.strongs
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, self._getPtSettings(), self)
+        seps = self.getScriptSnippet().getrefseps(self)
+        seps['verseonly'] = self.getvar('verseident') or "v"
+        ptsettings = self._getPtSettings()
+        self.strongs = StrongsXrefs(os.path.join(pycodedir(), "strongs.xml"), 
+                    None, localfile, ptsettings, seps, ptsettings, self.get("c_strongsShowNums"),
+                    self.get("fcb_textDirection") == "rtl", self.get("c_xoVerseOnly"))
+        return self.strongs
+

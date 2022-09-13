@@ -1,7 +1,27 @@
-PTXprint 2.2.20 Release Notes
-05 sep 2022
+PTXprint 2.2.22 Release Notes
+13 Sep 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.22 (13 Sep 2022)
+
+  * Added feature to insert Strong's numbers in the text based on term renderings
+
+  * Strip H and G from reverse index if only Greek or Hebrew was requested
+  
+  * Fix reverse index to work off primary keys
+  
+  * Load project after importing settings from PDF
+
+Bug fixes and improvements in 2.2.21 (10 Sep 2022)
+
+  * Fix multiple ZWSP between syllables causing spacing problems for multibook jobs
+  
+  * Fix RTL on picture credits and captions
+  
+  * Fix reset Print button status after changing projects
+  
+  * Fix typo to enable periph introductions to work as advertised
 
 Bug fixes and improvements in 2.2.20 (5 Sep 2022)
 

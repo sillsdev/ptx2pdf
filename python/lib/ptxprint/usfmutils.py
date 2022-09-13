@@ -6,7 +6,9 @@ from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
-import regex, time
+import regex, time, logging
+
+logger = logging.getLogger(__name__)
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
@@ -611,6 +613,32 @@ class Usfm:
             return True
         iterfn(self.doc[0], top=True)
 
+    def addStrongs(self, strongs):
+        self.addorncv()
+        def iterfn(el, silent=False):
+            if isinstance(el, sfm.Element):
+                styletype = el.meta["StyleType"]
+                issilent = styletype.lower() == "note" or el.meta.get("Attributes", None) is not None or el.name.startswith("s") or silent
+                for c in el:
+                    iterfn(c, silent=issilent)
+            if not isinstance(el.pos, _Reference) or silent:
+                return
+            r = el.pos.ref
+            newstr = str(el)
+            for st in strongs.getstrongs(r):
+                if st not in strongs.regexes:
+                    regs = strongs.addregexes(st)
+                else:
+                    regs = strongs.regexes[st]
+                if not len(regs):
+                    continue
+                logger.log(5, f"{regs=} {st=}")
+                newstr = re.sub(regs, '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("H").lstrip("G")), newstr, count=1)
+            el.data = newstr
+        iterfn(self.doc[0])
+            
+
+
 def read_module(inf, sheets):
     lines = inf.readlines()
     if not re.match(r"\uFEFF?\\id\s", lines[0]):
@@ -631,9 +659,10 @@ class Module:
     localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
-    def __init__(self, fname, usfms, usfm=None):
+    def __init__(self, fname, usfms, model, usfm=None):
         self.fname = fname
         self.usfms = usfms
+        self.model = model
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
@@ -721,7 +750,7 @@ class Module:
                 elif einfo[1] is None or not self.model.get(einfo[1]):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
-            mod = Module(e[0].strip(), self.usfms)
+            mod = Module(e[0].strip(), self.usfms, self.model)
             return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), [])

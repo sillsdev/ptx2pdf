@@ -414,6 +414,7 @@ ModelMap = {
     "scripts/indic/syllables":  ("c_scrindicSyllable", None),
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", None),
 
+    "strongsndx/showintext":    ("c_strongsShowInText", None),
     "strongsndx/shownums":      ("c_strongsShowNums", None),
     "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
@@ -881,7 +882,7 @@ class TexModel:
                 t = self._doperiph(i)
                 if t != "":
                     res.append(t)
-        return "\n".join(t)
+        return "\n".join(res)
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
@@ -1070,7 +1071,7 @@ class TexModel:
             outfpath = outfpath[:doti] + "-flat" + outfpath[doti:]
         usfms = self.printer.get_usfms()
         try:
-            mod = Module(infpath, usfms, usfm=usfm)
+            mod = Module(infpath, usfms, self, usfm=usfm)
             res = mod.parse()
         except SyntaxError as e:
             return (None, e)
@@ -1107,6 +1108,10 @@ class TexModel:
         return outfpath
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
+        try:
+            isCanon = int(bookcodes.get(bk, 100)) < 89
+        except ValueError:
+            isCanon = False
         printer = self.printer
         if self.changes is None:
             if self.asBool('project/usechangesfile'):
@@ -1116,6 +1121,11 @@ class TexModel:
                 self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
             else:
                 self.changes = []
+            script = self.dict["document/script"]
+            if len(script):
+                sscript = getattr(scriptsnippets, script[8:].lower(), None)
+                if sscript is not None:
+                    self.changes.extend(sscript.regexes(self.printer))
         draft = "-" + (printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1213,6 +1223,12 @@ class TexModel:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("versesToEnd")
             doc.versesToEnd()
+
+        if self.dict["strongsndx/showintext"] and self.dict["notes/ifxrexternalist"] and isCanon:
+            if doc is None:
+                doc = self._makeUSFM(dat.splitlines(True), bk)
+            logger.debug("Add strongs numbers to text")
+            doc.addStrongs(printer.getStrongs())
 
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
@@ -1358,11 +1374,6 @@ class TexModel:
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
-        script = self.dict["document/script"]
-        if len(script):
-            sscript = getattr(scriptsnippets, script[8:].lower(), None)
-            if sscript is not None:
-                self.changes.extend(sscript.regexes(self.printer))
         #self.changes.append((None, regex.compile(r"(?<=\\[^\\\s]+)\*(?=\S)", flags=regex.S), "* "))
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of changes.txt:-------------------------------------------------------------")

@@ -198,7 +198,17 @@
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
     \let\styst@k\empty
-    \s@tsideskips{#2}%
+    \parfillskip=0pt plus 1fil
+    \leftskip=0pt \rightskip=0pt
+    \getp@ram{justification}{#1}{#1}%
+    \ifx\p@ram\c@nter
+     \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
+    \else\ifx\p@ram\l@ft
+     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
+    \else\ifx\p@ram\r@ght
+     \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
+    \fi\fi\fi
+    \trace{f}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
     \else
@@ -208,7 +218,6 @@
         \s@tbaseline{#1}{#1}%
       \fi
     \fi
-    \trace{f}{note(#1) leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \ifp@ranotes\else
       \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
       \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
@@ -217,14 +226,14 @@
         \vskip\dimen1
 		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}%
 	\fi\fi
-  \leavevmode % begin paragraph
-  \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
-  \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
-    \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
-  \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
-  % if note omitting caller from note (i.e. all callers are *'s)
-  \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
-  \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
+    \leavevmode % begin paragraph
+    \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
+    \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
+      \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
+    \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
+    % if note omitting caller from note (i.e. all callers are *'s)
+    \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
+    \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
     % save copy of caller in temporary box, if non-empty add a little space
     \setbox0=\hbox{#3}%
     \ifdim\wd0>0pt \ifdim\wd0 <\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth, for better alignment
@@ -415,6 +424,7 @@
     \iff@rstnote\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
       \footnoterule\global\f@rstnotefalse % output rule before first note
     \else\kern\InterNoteSpace\fi
+    %\ifnum\pagenumber=8\showbox\th@cl@ss\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
 
@@ -606,6 +616,7 @@
   \noindent % starting making new paragraph
   \ifRTL\beginR\fi % respect directionality
   \ifNoteTracing\tracingparagraphs=1\fi
+  %\ifnum\pagenumber=8\showbox0\fi
   \unhbox0 % unbox the text so it can be line-wrapped
   \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
   % set penalty which allows breaking between notes unless this would cause
@@ -618,12 +629,12 @@
 %+c_makehboxofhboxes
 \def\makehboxofhboxes{%
   \setbox0=\hbox{}%
-  \loop\setbox2=\lastbox \ifhbox2\setbox0=\hbox{\box2\unhbox0}\repeat} 
+  \loop\unskip\setbox2=\lastbox\unskip \ifhbox2\setbox0=\hbox{\box2\unhbox0}\repeat} 
 %
 % remove inside level of boxing and adding inter note space after each
 %     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
 \def\removehboxes{%
-  \setbox0=\lastbox
+  \unskip\setbox0=\lastbox\unskip
   \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
 %
 % skip between notes in paragraph. skip is good place to break.

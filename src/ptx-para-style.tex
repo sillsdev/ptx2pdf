@@ -199,13 +199,13 @@
    \makecutouts
    \cl@singhooks{end}{\m@rker}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
-   \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip par after \m@rker (\styst@k)}%
+   \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
    \ifdoingt@ble\else
      \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
        %\s@tsideskips{\m@rker}% 
-     \else
+     \else\ifinn@te\else
        \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
-     \fi
+     \fi\fi
    \fi
    \endgraf
    \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
@@ -366,7 +366,7 @@
      \edef\gl@e{\p@ram\noexpand\hsize}%
    \fi
    % inside \beginR rightskip is leftskip and leftskip is rightskip!
-   \parfillskip=0pt plus \gl@e 
+   \parfillskip=0pt plus 1fil
    \ifRTL \rightskip\else\leftskip\fi =0pt
    \ifRTL \leftskip\else\rightskip\fi =0pt \ifJustifyPars\else plus \gl@e\fi
    \ifRTL\beginR\fi

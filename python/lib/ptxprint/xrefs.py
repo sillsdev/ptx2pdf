@@ -1,7 +1,7 @@
 
 from ptxprint.utils import cachedData, pycodedir
 from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
-from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored
+from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
 from ptxprint.usfmutils import Usfm
 from unicodedata import normalize
 import xml.etree.ElementTree as et
@@ -113,23 +113,18 @@ class XMLXrefs(BaseXrefs):
         self.filters = filters
         self.context = context or BaseBooks
         self.shownums = shownums
-        if localfile is not None:
-            sinfodoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
-            btmap = {}
-            for s in sinfodoc.findall('.//strong'):
-                btmap[s.get('btid')] = s.get('ref')
-            with open(localfile, encoding="utf8") as inf:
-                termsdoc = et.parse(inf)
-            self.strongsfilter = set()
-            for r in termsdoc.findall('.//TermRendering'):
-                rend = r.findtext('Renderings')
-                rid = normalize('NFC', r.get('Id'))
-                if rend is not None and len(rend) and rid in btmap:
-                    self.strongsfilter.add(btmap[rid])
-            logger.debug("strongsfilter="+str(self.strongsfilter))
-        else:
-            self.strongsfilter = None
         self.xmldat = cachedData(xrfile, self.readxml)
+
+    def _unpackxml(self, xr):
+        a = []
+        for e in xr:
+            st = e.get('strongs', None)
+            if e.tag == "ref" and e.text is not None:
+                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
+                a.append((st, e.get('style', None), r))
+            elif e.tag == "refgroup":
+                a.append((st, None, RefGroup(self._unpackxml(e))))
+        return a
 
     def readxml(self, inf):
         doc = et.parse(inf)
@@ -140,45 +135,6 @@ class XMLXrefs(BaseXrefs):
             if len(a):
                 xmldat.setdefault(k.first.book, {})[k.first] = a
         return xmldat
-
-    def _unpackxml(self, xr):
-        a = []
-        for e in xr:
-            st = e.get('strongs', None)
-            if st is not None:
-                if st[0] in "GH":
-                    st = st[1:]
-            if e.tag == "ref" and e.text is not None:
-                r = RefList.fromStr(e.text, marks=("+", "\u203A"))
-                a.append((st, e.get('style', None), r))
-            elif e.tag == "refgroup":
-                a.append((st, None, RefGroup(self._unpackxml(e))))
-        return a
-
-    def _procnested(self, xr, baseref):
-        a = []
-        for e in xr:
-            st = e[0]
-            if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
-                continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st) if st is not None and self.shownums else ""
-            if isinstance(e[2], RefList):
-                r = e[2]
-                if self.filters is not None:
-                    r.filterBooks(self.filters)
-                r.sort()
-                r.simplify()
-                rs = r.str(context=self.context, addsep=self.addsep, level=2, this=baseref)
-                if len(rs) and e[1] in ('backref', 'crossref'):
-                    a.append(s + "\\+xti " + rs + "\\+xti*")
-                elif len(rs):
-                    a.append(s + rs)
-            else:
-                if len(e[2]) > 1 or (len(e[2]) and e[2][0][0] is not None):
-                    a.append(s + "[" + self._procnested(e[2], baseref) + "]")
-                elif len(e[2]):
-                    a.append(s + self._procnested(e[2], baseref))
-        return r"\space ".join(a)
 
     def _updatedat(newdat, dat):
         for k, v in dat.items():
@@ -217,6 +173,31 @@ class XMLXrefs(BaseXrefs):
             if len(newdat):
                 dat[ra] = newdat
 
+    def _procnested(self, xr, baseref):
+        a = []
+        for e in xr:
+            st = e[0]
+            if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
+                continue
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("G").lstrip("H")) if st is not None and self.shownums else ""
+            if isinstance(e[2], RefList):
+                r = e[2]
+                if self.filters is not None:
+                    r.filterBooks(self.filters)
+                r.sort()
+                r.simplify()
+                rs = r.str(context=self.context, addsep=self.addsep, level=2, this=baseref)
+                if len(rs) and e[1] in ('backref', 'crossref'):
+                    a.append(s + "\\+xti " + rs + "\\+xti*")
+                elif len(rs):
+                    a.append(s + rs)
+            else:
+                if len(e[2]) > 1 or (len(e[2]) and e[2][0][0] is not None):
+                    a.append(s + "[" + self._procnested(e[2], baseref) + "]")
+                elif len(e[2]):
+                    a.append(s + self._procnested(e[2], baseref))
+        return r"\space ".join(a)
+
     def process(self, bk, outpath, ranges, owner):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
@@ -236,6 +217,158 @@ class XMLXrefs(BaseXrefs):
                         outf.write(self.template.format(**info))
 
 
+class StrongsXrefs(XMLXrefs):
+    def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
+                 context=None, shownums=True, rtl=False, shortrefs=False):
+        super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, separators=separators,
+                 context=context, shownums=shownums, rtl=rtl, shortrefs=shortrefs)
+        self.regexes = {}
+        self.btmap = None
+        self.revwds = None
+        self.strongs = None
+        self.lang = None
+        if localfile is not None:
+            self.loadlocal(localfile, addfilter=True)
+            logger.debug("strongsfilter="+str(self.strongsfilter))
+        else:
+            self.strongsfilter = None
+
+    def getstrongs(self, ref):
+        return [x[0] for x in self.xmldat[ref.first.book].get(ref.first,[])]
+
+    def loadinfo(self, lang):
+        if lang is None or lang == 'und':
+            lang = 'en'
+        if self.btmap is not None and lang == self.lang:
+            return
+        strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
+        self.strongs = {}
+        self.btmap = {}
+        self.lang = lang
+        for s in strongsdoc.findall(".//strong"):
+            sref = s.get('ref')
+            le = s.find('.//trans[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(self.lang))
+            self.strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
+            self.btmap[s.get('btid')] = sref
+            if le is not None:
+                self.strongs[sref]['def'] = le.get('gloss', None)
+                self.strongs[sref]['trans'] = le.text or ""
+            else:
+                self.strongs[sref]['def'] = None
+                self.strongs[sref]['trans'] = ""
+
+    def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, addfilter=False):
+        if addfilter:
+            self.strongsfilter = set()
+        localdoc = et.parse(localfile)
+        for r in localdoc.findall(".//TermRendering"):
+            rid = normalize('NFC', r.get("Id"))
+            rend = r.findtext('Renderings')
+            if rid not in btmap or rend is None or not len(rend):
+                continue
+            st = btmap[rid]
+            if addfilter:
+                self.strongsfilter.add(st)
+            strongs[st][key] = [re.sub(r"\((.*?)\)", r"\1", s.strip()) for s in rend.split("||")]
+            if revwds is not None:
+                for w in strongs[st][key]:
+                    revwds.setdefault(w.lower(), set()).add(st)
+
+    def loadlocal(self, localfile, addfilter=False):
+        self.loadinfo(self.lang)
+        if self.revwds is not None:
+            return
+        self.revwds = {}
+        self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
+
+    def addregexes(self, st):
+        wds = self.strongs.get(st,{}).get('local', [])
+        reg = []
+        for w in wds:
+            w = re.sub(r"\(.*?\)", "", w).strip()
+            if " " in w:
+                continue
+            r = ""
+            if w.startswith("*"):
+                w = w[1:]
+            else:
+                r = r"\b"
+            if w.endswith("*"):
+                r += w[:-1]
+            else:
+                r += w + r"\b"
+            reg.append(r)
+        res = "(" + "|".join(reg) + ")" if len(reg) else ""
+        self.regexes[st] = res
+        return res
+
+    def generateStrongsIndex(self, bkid, cols, outfile, onlylocal, view):
+        lang = view.get('fcb_strongsMajorLg')
+        self.loadinfo(lang)
+        fallback = view.get("fcb_strongsFallbackProj")
+        if fallback is not None and fallback and fallback != "None":
+            fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
+            if os.path.exists(fallbackfile):
+                self._readTermRenderings(fallbackfile, self.strongs, None, self.btmap, 'def')
+        title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
+        with open(outfile, "w", encoding="utf-8") as outf:
+            outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
+            outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
+            rag = view.get("s_strongRag", 0)
+            if rag is not None and int(rag) > 0:
+                outf.write("\\zBottomRag {}\n".format(rag))
+            wc = view.get("fcb_strongswildcards") 
+            for a in ('Hebrew', 'Greek'):
+                if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
+                    hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower()), dest="strongs") or a))
+                    for k, v in sorted(self.strongs.items(), key=lambda x:int(x[0][1:])):
+                        if not k.startswith(a[0]):
+                            continue
+                        d = v.get('local', v.get('def', None) if not onlylocal else None)
+                        if d is None:
+                            continue
+                        d = ", ".join(d)
+                        if view.get("c_strongsNoComments"):
+                            d = re.sub(r"\(.*?\)", "", d)
+                        if wc in ("remove", "hyphen"):
+                            d = d.replace("*", "" if wc == "remove" else "-")
+                        if hdr:
+                            outf.write(hdr)
+                            hdr = ""
+                        v["_defn"] = d
+                        bits = [r"\{_marker} \bd {_key}\bd*"] + [cv for ck, cv, ct in components if view.get(ck) and v.get(ct, "")]
+                        if bits[-1][-1] == ";":
+                            bits[-1] = bits[-1][:-1]
+                        outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", **v) + "\n")
+            if len(self.revwds) and view.get("c_strongsNdx"):
+                tailoring = self.context.getCollation()
+                ducet = tailored(tailoring.text) if tailoring else None
+                ldmlindices = self.context.getIndexList()
+                indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
+                lastinit = ""
+                outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))
+                for k, v in sorted(self.revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
+                    for a, b in (("G", "Grk"), ("H", "Heb")):
+                        if not view.get("c_strongs{}".format(b)):
+                            v = set((s for s in v if not s.startswith(a)))
+                    if indices is None:
+                        ces = next(get_ces(k))
+                        init = ces.split(b"\000")[0]
+                    else:
+                        for i in range(len(k)):
+                            for s in indices:
+                                if k[i:].startswith(s):
+                                    init = s
+                                    break
+                            else:
+                                continue
+                            break
+                    if init != lastinit:
+                        outf.write("\n\\m\n")
+                        lastinit = init
+                    outf.write("{}\u200A({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
+            outf.write("\n\\singlecolumn\n\\strong-e\\*\n")
+
 class Xrefs:
     def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile, showstrongsnums, shortrefs):
         self.parent = parent
@@ -252,8 +385,11 @@ class Xrefs:
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
         seps['verseonly'] = parent.printer.getvar('verseident') or "v"
         if source == "strongs":
-            self.xrefs = XMLXrefs(os.path.join(pycodedir(), "strongs.xml"), filters,
-                    localfile, separators=seps, context=parent.ptsettings, shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
+            self.xrefs = getattr(parent.printer, 'strongs', None)
+            if self.xrefs is None:
+                self.xrefs = StrongsXrefs(os.path.join(pycodedir(), "strongs.xml"), filters,
+                        localfile, separators=seps, context=parent.ptsettings,
+                        shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         elif xrfile is None:
             self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"),
                     filters, separators=seps, listsize=listsize, rtl=rtl, shortrefs=shortrefs)
@@ -307,100 +443,3 @@ components = [
     ("c_strongsDefn", r"{trans};", "trans"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
 ]
-def _readTermRenderings(localfile, strongs, revwds, btmap, key):
-    localdoc = et.parse(localfile)
-    for r in localdoc.findall(".//TermRendering"):
-        rid = normalize('NFC', r.get("Id"))
-        rend = r.findtext('Renderings')
-        if rid not in btmap or rend is None or not len(rend):
-            continue
-        sref = btmap[rid]
-        strongs[sref][key] = ", ".join(rend.split("||"))
-        if revwds is not None:
-            for w in rend.split("||"):
-                s = re.sub(r"\(.*?\)", "", w).strip()
-                revwds.setdefault(s.lower(), set()).add(sref)
-
-def generateStrongsIndex(bkid, cols, outfile, localfile, onlylocal, ptsettings, view):
-    strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
-    strongs = {}
-    btmap = {}
-    revwds = {}
-    lang = view.get('fcb_strongsMajorLg')
-    if lang is None or lang == 'und':
-        lang = 'en'
-    #import pdb; pdb.set_trace()
-    for s in strongsdoc.findall(".//strong"):
-        sref = s.get('ref')
-        le = s.find('.//trans[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
-        strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
-        btmap[s.get('btid')] = sref
-        if le is not None:
-            strongs[sref]['def'] = le.get('gloss', None)
-            strongs[sref]['trans'] = le.text or ""
-        else:
-            strongs[sref]['def'] = None
-            strongs[sref]['trans'] = ""
-            
-    fallback = view.get("fcb_strongsFallbackProj")
-    if fallback is not None and fallback and fallback != "None":
-        fallbackfile = os.path.join(view.settings_dir, fallback, "TermRenderings.xml")
-        if os.path.exists(fallbackfile):
-            _readTermRenderings(fallbackfile, strongs, None, btmap, 'def')
-    if localfile is not None:
-        _readTermRenderings(localfile, strongs, revwds, btmap, 'local')
-    title = view.getvar("index_book_title", dest="strongs") or "Strong's Index"
-    with open(outfile, "w", encoding="utf-8") as outf:
-        outf.write("\\id {0} Strong's based terms index\n\\h {1}\n\\NoXrefNotes\n\\strong-s\\*\n\\mt1 {1}\n".format(bkid, title))
-        outf.write("\\onebody\n" if cols == 1 else "\\twobody\n")
-        rag = view.get("s_strongRag", 0)
-        if rag is not None and int(rag) > 0:
-            outf.write("\\zBottomRag {}\n".format(rag))
-        for a in ('Hebrew', 'Greek'):
-            if (view.get("c_strongsHeb") and a == 'Hebrew') or (view.get("c_strongsGrk") and a == 'Greek'):
-                hdr = ("\n\\mt2 {}\n\\p\n".format(view.getvar("{}_section_title".format(a.lower()), dest="strongs") or a))
-                for k, v in sorted(strongs.items(), key=lambda x:int(x[0][1:])):
-                    if not k.startswith(a[0]):
-                        continue
-                    d = v.get('local', v.get('def', None) if not onlylocal else None)
-                    if d is None:
-                        continue
-                    if view.get("c_strongsNoComments"):
-                        d = re.sub(r"\(.*?\)", "", d)
-                    wc = view.get("fcb_strongswildcards") 
-                    if wc in ("remove", "hyphen"):
-                        d = d.replace("*", "" if wc == "remove" else "-")
-                    if hdr:
-                        outf.write(hdr)
-                        hdr = ""
-                    v["_defn"] = d
-                    bits = [r"\{_marker} \bd {_key}\bd*"] + [cv for ck, cv, ct in components if view.get(ck) and v.get(ct, "")]
-                    if bits[-1][-1] == ";":
-                        bits[-1] = bits[-1][:-1]
-                    outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", **v) + "\n")
-        if len(revwds) and view.get("c_strongsNdx"):
-            tailoring = ptsettings.getCollation()
-            ducet = tailored(tailoring.text) if tailoring else None
-            ldmlindices = ptsettings.getIndexList()
-            indices = None if ldmlindices is None else sorted([c.lower() for c in ldmlindices], key=lambda s:(-len(s), s))
-            lastinit = ""
-            outf.write("\n\\mt2 {}\n".format(view.getvar("reverse_index_title", dest="strongs") or "Index"))
-            for k, v in sorted(revwds.items(), key=lambda x:get_sortkey(x[0].replace("*",""), variable=SHIFTTRIM, ducet=ducet)):
-                for i in range(len(k)):
-                    if indices is None:
-                        if k[i] not in "*\u0E40\u0E41\u0E42\u0E43\u0E44":
-                            init = k[i]
-                            break
-                    else:
-                        for s in indices:
-                            if k[i:].startswith(s):
-                                init = s
-                                break
-                        else:
-                            continue
-                        break
-                if init != lastinit:
-                    outf.write("\n\\m\n")
-                    lastinit = init
-                outf.write("{}\u200A({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
-        outf.write("\n\\singlecolumn\n\\strong-e\\*\n")
