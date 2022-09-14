@@ -283,6 +283,8 @@ class StrongsXrefs(XMLXrefs):
         self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
 
     def addregexes(self, st):
+        if self.strongs is None:
+            return ""
         wds = self.strongs.get(st,{}).get('local', [])
         reg = []
         for w in wds:

@@ -621,7 +621,7 @@ class Usfm:
                 issilent = styletype.lower() == "note" or el.name.startswith("s") or silent
                 if el.meta.get("Attributes", None) is not None:
                     base = el
-                for c in el:
+                for c in list(el):      # in case of insertions
                     iterfn(c, silent=issilent, base=base)
             if not isinstance(el.pos, _Reference) or silent:
                 return
@@ -635,13 +635,14 @@ class Usfm:
                 if not len(regs):
                     continue
                 logger.log(5, f"{regs=} {st=}")
-                if base is not None and re.search(regs, newstr):
-                    # insert xts before base
-                    newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("H").lstrip("G")))
-                    i = base.parent.index(base)
-                    base.parent.insert(i, newelement)
+                if base is not None:
+                    if re.search(regs, newstr):
+                        # insert xts before base
+                        newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("H").lstrip("G")))
+                        i = base.parent.index(base)
+                        base.parent.insert(i, newelement)
                 else:
-                    newstr = re.sub(r"(?<!\\xts.*?\\*)"+regs,
+                    newstr = regex.sub(r"(?<!\\xts.*?\\*)"+regs,
                             '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("H").lstrip("G")),
                             newstr, count=1)
             el.data = newstr
