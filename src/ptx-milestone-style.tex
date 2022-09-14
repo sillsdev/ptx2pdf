@@ -132,7 +132,6 @@
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
-   \leavevmode
    \op@ninghooks{before}{\thismil@stone}%
    \csname init@ttribs\endcsname
 }
@@ -234,6 +233,7 @@
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
     \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
+  \getp@ram{type}{\thismil@stone}{\thismil@stone}\ifx\p@ram\empty\else\leavevmode\fi
   \ifDefineParBeforeMilestone\leavevmode\fi
   \mcpush{\ss@Mstn}{\thisattrmil@stone}%
   \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%

@@ -299,7 +299,7 @@ class StrongsXrefs(XMLXrefs):
             else:
                 r += w + r"\b"
             reg.append(r)
-        res = "(" + "|".join(reg) + ")" if len(reg) else ""
+        res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         self.regexes[st] = res
         return res
 
