@@ -251,7 +251,8 @@ class StrongsXrefs(XMLXrefs):
             self.strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
             self.btmap[s.get('btid')] = sref
             if le is not None:
-                self.strongs[sref]['def'] = le.get('gloss', None)
+                d = le.get('gloss', None)
+                self.strongs[sref]['def'] = [d] if d is not None else None
                 self.strongs[sref]['trans'] = le.text or ""
             else:
                 self.strongs[sref]['def'] = None
@@ -269,7 +270,7 @@ class StrongsXrefs(XMLXrefs):
             st = btmap[rid]
             if addfilter:
                 self.strongsfilter.add(st)
-            strongs[st][key] = [re.sub(r"\((.*?)\)", r"\1", s.strip()) for s in rend.split("||")]
+            strongs[st][key] = rend.split("||")
             if revwds is not None:
                 for w in strongs[st][key]:
                     revwds.setdefault(w.lower(), set()).add(st)

@@ -132,6 +132,7 @@
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
+   \leavevmode
    \op@ninghooks{before}{\thismil@stone}%
    \csname init@ttribs\endcsname
 }
