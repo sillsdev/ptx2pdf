@@ -552,6 +552,7 @@ class ViewModel:
             if readConfig:  # project changed
                 self.usfms = None
                 self.get_usfms()
+            self.strongs = None
             self.onNumTabsChanged()
             self.readCopyrights()
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)

@@ -328,7 +328,7 @@ class StrongsXrefs(XMLXrefs):
                         d = v.get('local', v.get('def', None) if not onlylocal else None)
                         if d is None:
                             continue
-                        d = ", ".join(d)
+                        d = ", ".join(s.strip() for s in d)
                         if view.get("c_strongsNoComments"):
                             d = re.sub(r"\(.*?\)", "", d)
                         if wc in ("remove", "hyphen"):

@@ -750,7 +750,11 @@
   \ifcsname baselineskip@\c@rrdstat\endcsname
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
   \fi
-  \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+  %\ifdim\baselineskip<1pt \trace{C}{baselineskip too low}\baselineskip=12pt\fi
+  \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
+  \ifdim #1 > 1pt
+    \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+  \fi
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
