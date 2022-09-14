@@ -1669,6 +1669,7 @@ set stack_size=32768""".format(self.configName())
         self.set("s_thumbtabs", newnum)
 
     def generateStrongs(self, bkid="XXA", cols=2):
+        self.strongs = None
         self.getStrongs()
         onlylocal = self.get("c_strongsLocal")
         outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))

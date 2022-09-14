@@ -1121,11 +1121,6 @@ class TexModel:
                 self.changes = self.readChanges(os.path.join(printer.configPath(printer.configName()), 'changes.txt'), bk)
             else:
                 self.changes = []
-            script = self.dict["document/script"]
-            if len(script):
-                sscript = getattr(scriptsnippets, script[8:].lower(), None)
-                if sscript is not None:
-                    self.changes.extend(sscript.regexes(self.printer))
         draft = "-" + (printer.configName() or "draft")
         self.makelocalChanges(printer, bk, chaprange=(chaprange if isbk else None))
         customsty = os.path.join(prjdir, 'custom.sty')
@@ -1386,6 +1381,11 @@ class TexModel:
                 except UnicodeEncodeError:
                     print("Unable to print details of changes.txt")
         self.localChanges = []
+        script = self.dict["document/script"]
+        if len(script):
+            sscript = getattr(scriptsnippets, script[8:].lower(), None)
+            if sscript is not None:
+                self.localChanges.extend(sscript.regexes(self.printer))
         if bk == "GLO" and self.dict['document/filterglossary']:
             self.filterGlossary(printer)
         
@@ -1399,12 +1399,7 @@ class TexModel:
         if self.asBool("document/ifchaplabels", true="%"):
             clabel = self.dict["document/clabel"]
             clbooks = self.dict["document/clabelbooks"].split()
-            # print("Chapter label: '{}' for '{}' with {}".format(clabel, " ".join(clbooks), bk))
             if len(clabel) and (not len(clbooks) or bk in clbooks):
-                #self.localChanges.append((lambda fn,b,d: d if r'\cl ' in d else fn(d),
-                #                          regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
-                # self.localChanges.append((None,
-                                          # regex.compile(r"(\\c 1)(?=\s*\r?\n|\s)", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 self.localChanges.append((None,
                                           regex.compile(r"(\\c )", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 

@@ -286,7 +286,7 @@ class StrongsXrefs(XMLXrefs):
         reg = []
         for w in wds:
             w = re.sub(r"\(.*?\)", "", w).strip()
-            if " " in w:
+            if " ** " in w:
                 continue
             r = ""
             if w.startswith("*"):
