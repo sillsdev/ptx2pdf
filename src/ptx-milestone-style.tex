@@ -233,7 +233,6 @@
     \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
     \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
-  \getp@ram{type}{\thismil@stone}{\thismil@stone}\ifx\p@ram\empty\else\leavevmode\fi
   \ifDefineParBeforeMilestone\leavevmode\fi
   \mcpush{\ss@Mstn}{\thisattrmil@stone}%
   \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
@@ -287,6 +286,9 @@
     \mcpush{\ss@Mstn}{\thismil@stone}%
     \trace{m}{Milestone stacked, \mcstack}%
   \fi
+  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
+  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
+  \ifx\p@ram\empty\else\leavevmode\fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1

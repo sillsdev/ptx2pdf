@@ -621,8 +621,9 @@ class Usfm:
                 issilent = styletype.lower() == "note" or el.name.startswith("s") or silent
                 if el.meta.get("Attributes", None) is not None:
                     base = el
-                for c in list(el):      # in case of insertions
+                for c in tuple(el):      # in case of insertions
                     iterfn(c, silent=issilent, base=base)
+                return
             if not isinstance(el.pos, _Reference) or silent:
                 return
             r = el.pos.ref
@@ -637,7 +638,6 @@ class Usfm:
                 logger.log(5, f"{regs=} {st=}")
                 if base is not None:
                     if re.search(regs, newstr):
-                        # insert xts before base
                         newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("H").lstrip("G")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)

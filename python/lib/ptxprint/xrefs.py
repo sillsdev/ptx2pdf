@@ -294,6 +294,7 @@ class StrongsXrefs(XMLXrefs):
             r = ""
             if w.startswith("*"):
                 w = w[1:]
+                r = r"\b.*?"
             else:
                 r = r"\b"
             if w.endswith("*"):
