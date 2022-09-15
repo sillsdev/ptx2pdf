@@ -649,13 +649,13 @@ class Usfm:
                 logger.log(5, f"{r} {regs=} {st=}")
                 if base is not None:
                     if regex.search(regs, newstr):
-                        newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("H").lstrip("G")))
+                        newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
                 else:
                     #newstr = regex.sub(regs,
                     newstr = regex.sub("(?<!\u200A)"+regs,
-                            '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("H").lstrip("G")),
+                            '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
                             newstr, count=1)
             el.data = newstr
         iterfn(self.doc[0])

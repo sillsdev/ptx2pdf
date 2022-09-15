@@ -170,7 +170,7 @@ class XMLXrefs(BaseXrefs):
                     self._updatedat(newdat, dat[r], r)
                     del dat[r]
             if len(newdat):
-                dat[ra] = newdat
+                dat[ra] = sorted(newdat, key=lambda x:int(x[0].lstrip("GH")))
 
     def _procnested(self, xr, baseref):
         a = []
@@ -178,7 +178,7 @@ class XMLXrefs(BaseXrefs):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
-            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("G").lstrip("H")) if st is not None and self.shownums else ""
+            s = '\\xts|strong="{}" align="r"\\*\\nobreak\u2006'.format(st.lstrip("GH")) if st is not None and self.shownums else ""
             if isinstance(e[2], RefList):
                 r = e[2]
                 if self.filters is not None:
