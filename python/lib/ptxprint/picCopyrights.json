@@ -375,6 +375,22 @@
         },
         "ib": {
             "copyright": {
+                "en": "©_BIBLICA_WARNING: Unpermitted_Use!",
+                "es": "©_BIBLICA_ADVERTENCIA: ¡Uso no permitido!",
+                "fr": "©_BIBLICA_AVERTISSEMENT: Utilisation_non_autorisée!"
+            },
+            "media": {
+                "default": "x",
+                "limit": "p",
+                "tip": {
+                    "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
+                    "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",
+                    "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !"
+                }
+            }
+        },
+        "xb": {
+            "copyright": {
                 "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc. Used_by_permission. All_rights_reserved_worldwide.",
                 "es": "por_Farid_Faadil. Copyright ©_by_Biblica, Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
                 "fr": "de_Farid_Faadil. Copyright ©_par_Biblica, Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
