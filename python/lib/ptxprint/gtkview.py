@@ -4385,3 +4385,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(wid).set_visible(True)
         else:
             self.updateMarginGraphics()
+
+    def onOnlyShowVerseumsToggled(self, btn):
+        self.strongs = None
