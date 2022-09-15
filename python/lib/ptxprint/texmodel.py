@@ -1794,5 +1794,5 @@ class TexModel:
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
                     self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile,
                     self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
-        self.xrefs.process(bk, outpath)
+        self.xrefs.process(bk, outpath, usfm=self.printer.get_usfms().get(bk))
 

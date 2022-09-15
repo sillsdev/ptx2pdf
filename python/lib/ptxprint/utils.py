@@ -430,6 +430,19 @@ def htmlprotect(s):
     sc = '([' + "".join(_htmlentities.keys()) + '])'
     return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
 
+special_regexes = {
+    'ba': r'(?=[^\p{L}\p{M}\p{Cf}\p{Sk}\-])',
+    'BA': r'(?=[\p{L}\p{M}\p{Cf}\p{Sk}]\-)',
+    'bb': r'(?<=[^\p{L}\p{M}\p{Cf}\p{Sk}\-])',
+    'BB': r'(?<=[\p{L}\p{M}\p{Cf}\p{Sk}]\-)',
+    'w': r'[\p{L}\p{M}\p{Cf}\p{Sk}\-]',
+    'W': r'[^\p{L}\p{M}\p{Cf}\p{Sk}\-]'
+}
+
+def regex_localiser(r):
+    specials = "|".join(special_regexes.keys())
+    return re.sub(r"\\({})".format(specials), lambda m:special_regexes.get(m.group(1), "\\"+m.group(1)), r)
+
 def cachedData(filepath, fn):
     cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
     os.makedirs(cfgdir, exist_ok=True)

@@ -29,7 +29,8 @@ space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos[:2])
-        p.ref = RefList.fromStr("{} {}:{}".format(*ref))[0]
+        refs = RefList.fromStr("{} {}:{}".format(*ref))
+        p.ref = refs.simplify()[0]
         return p
 
     def __str__(self):
@@ -167,6 +168,7 @@ class Usfm:
             return
         ispara = sfm.text_properties('paragraph')
         self.chapters = []
+        self.bridges = {}
         ref = ["", "0", "0"]
         pending = []
 
@@ -197,17 +199,26 @@ class Usfm:
                     ref[2] = e.args[0]
                     for t in pending:
                         t.pos = _Reference(t.pos, ref)
+                        if t.pos.ref.first != t.pos.ref.last and t.pos.ref.last.verse < 200 and t.pos.ref.first not in self.bridges:
+                            for r in t.pos.ref.allrefs():
+                                self.bridges[r] = t.pos.ref
                     pending.clear()
                 elif ref[2] != "0":
                     if isHeading(e) or len(pending):
                         pending.append(e)
                 e.pos = _Reference(e.pos, ref)
+                if e.pos.ref.first != e.pos.ref.last and e.pos.ref.last.verse < 200 and e.pos.ref.first not in self.bridges:
+                    for r in e.pos.ref.allrefs():
+                        self.bridges[r] = e.pos.ref
                 reduce(_g, e, None)
             else:
                 if len(pending):
                     pending.append(e)
                 else:
                     e.pos = _Reference(e.pos, ref)
+                    if e.pos.ref.first != e.pos.ref.last and e.pos.ref.last.verse < 200 and e.pos.ref.first not in self.bridges:
+                        for r in e.pos.ref.allrefs():
+                            self.bridges[r] = e.pos.ref
         reduce(_g, self.doc, None)
         self.cvaddorned = True
 
@@ -635,19 +646,19 @@ class Usfm:
                     regs = strongs.regexes[st]
                 if not len(regs):
                     continue
-                logger.log(5, f"{regs=} {st=}")
+                logger.log(5, f"{r} {regs=} {st=}")
                 if base is not None:
-                    if re.search(regs, newstr):
+                    if regex.search(regs, newstr):
                         newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("H").lstrip("G")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
                 else:
-                    newstr = regex.sub(r"(?<!\\xts.*?\\*)"+regs,
+                    #newstr = regex.sub(regs,
+                    newstr = regex.sub("(?<!\u200A)"+regs,
                             '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("H").lstrip("G")),
                             newstr, count=1)
             el.data = newstr
         iterfn(self.doc[0])
-            
 
 
 def read_module(inf, sheets):
