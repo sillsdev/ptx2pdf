@@ -335,6 +335,7 @@ ModelMap = {
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
     "notes/xrlistsource":       ("r_xrSource", None),
     "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
+    "notes/xrextlistsource":    ("fcb_xRefExtListSource", None),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
     "notes/xrverseonly":        ("c_xoVerseOnly", None),
     "notes/addcolon":           ("c_addColon", None),
@@ -1571,6 +1572,8 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
+        # Remove any spaces before the \ior*
+        self.localChanges.append((None, regex.compile(r"\s+(?=\\ior\*)", flags=regex.M), r"")) 
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])(\s?)".format("".join(self._specialchars)),
                                                       flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space " if m.group(2) else " "))) 

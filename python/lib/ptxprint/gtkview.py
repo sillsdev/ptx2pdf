@@ -213,6 +213,7 @@ _sensitivities = {
                                 "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers",
                                 "lb_style_f", "l_fnPos", "r_fnpos_normal", "r_fnpos_column", "r_fnpos_endnote"],
     "c_useXrefList" :          ["gr_extXrefs"],
+    "c_strongsShowInText" :    ["c_strongsShowAll", "c_strongsAllowMultiples"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
@@ -564,7 +565,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
-                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
+                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId", "xRefExtListSource"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -4388,3 +4389,9 @@ class GtkViewModel(ViewModel):
 
     def onOnlyShowVerseumsToggled(self, btn):
         self.strongs = None
+        
+    def onExtListSourceChanges(self, fcb):
+        s= self.get("fcb_xRefExtListSource")
+        ttt = self.builder.get_object("r_xrSource_{}".format(s.split("_")[0])).get_tooltip_text()
+        self.builder.get_object("btn_infoXrefSource").set_tooltip_text(ttt)
+        self.builder.get_object("fr_strongs").set_sensitive(s.startswith("strongs"))
