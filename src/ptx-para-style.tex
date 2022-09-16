@@ -768,7 +768,13 @@
 
 \def\@parend#1#2{%
   \this@y=#2\relax
-  \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+  \ifnum\this@y=\prev@y 
+    \x@\ifdim \csname baselineskip@\c@rrdstat\endcsname=0pt
+      \advance\p@rlinesgone by 1
+    \fi
+  \else
+    \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+  \fi
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
