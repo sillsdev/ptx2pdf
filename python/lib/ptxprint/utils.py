@@ -303,7 +303,20 @@ def get_gitver(gitdir=None, version=None):
             ref = l[l.index(":")+1:].strip()
         except ValueError:
             return version
-    with open(os.path.join(gitdir, *ref.split("/"))) as inf:
+    refpath = os.path.join(gitdir, *ref.split("/"))
+    if not os.path.exists(refpath):
+        packedrefsfile = os.path.join(gitdir, "packed-refs")
+        if not os.path.exists(packedrefsfile):
+            return version
+        with open(packedresfile) as inf:
+            for l in inf.readlines():
+                if l.startswith("#"):
+                    continue
+                b = l.strip().split(" ")
+                if b[1] == ref:
+                    return b[0][:8]
+        return version
+    with open(refpath) as inf:
         res = inf.readline().strip()[:8]
     if version is not None:
         res = f"{version}-g{res}"

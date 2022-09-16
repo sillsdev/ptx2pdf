@@ -1673,7 +1673,7 @@ set stack_size=32768""".format(self.configName())
     def generateStrongs(self, bkid="XXA", cols=2):
         self.strongs = None
         self.getStrongs()
-        onlylocal = self.get("c_strongsLocal")
+        onlylocal = self.get("fcb_xRefExtListSource") == "strongs_proj"
         outfile = os.path.join(self.settings_dir, self.prjid, self.getBookFilename(bkid))
         self.strongs.generateStrongsIndex(bkid, cols, outfile, onlylocal, self)
 

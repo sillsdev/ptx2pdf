@@ -196,16 +196,8 @@ _sensitivities = {
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
     "r_xrpos": {
-        # "r_xrpos_normal" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        # "r_xrpos_column" :    ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        # "r_xrpos_endnote" :   ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth", "r_fnpos_column"],
-        # "r_xrpos_below" :     ["l_internote", "s_internote", "l_xrColWid", "s_centreColWidth"], # , "r_fnpos_column"],
-        # "r_xrpos_blend" :     [],
         "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
         
-    "r_xrSource": {
-        "r_xrSource_standard": ["s_xrSourceSize", "l_xrSourceSize", "l_xrSourceLess", "l_xrSourceMore"],
-        "r_xrSource_custom" :  ["btn_selectXrFile"]},
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
     "c_useFallbackFont" :      ["btn_findMissingChars", "t_missingChars", "l_fallbackFont", "bl_fontExtraR"],
@@ -213,6 +205,7 @@ _sensitivities = {
                                 "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers",
                                 "lb_style_f", "l_fnPos", "r_fnpos_normal", "r_fnpos_column", "r_fnpos_endnote"],
     "c_useXrefList" :          ["gr_extXrefs"],
+    "c_strongsShowInText" :    ["c_strongsShowAll"],
     
     "c_includeillustrations" : ["gr_IllustrationOptions", "lb_details", "tb_details", "tb_checklist"],
     "c_diglot" :               ["gr_diglot", "fcb_diglotPicListSources", "r_hdrLeft_Pri", "r_hdrCenter_Pri", "r_hdrRight_Pri",
@@ -564,7 +557,7 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
-                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId"):
+                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId", "xRefExtListSource"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -3102,7 +3095,9 @@ class GtkViewModel(ViewModel):
     def onSelectXrFileClicked(self, btn_selectXrFile):
         prjdir = os.path.join(self.settings_dir, self.prjid)
         customXRfile = self.fileChooser("Select a Custom Cross-Reference file", 
-                filters = {"Paratext XRF Files": {"patterns": "*.xrf", "mime": "text/plain", "default": True},
+                filters = {"Paratext XRF Files": {"patterns": "*.xrf" , "mime": "text/plain", "default": True},
+                           "Extended XRF files": {"pattern": "*.xre"},
+                           "XML Cross-Ref Files": {"pattern": "*.xml"},
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=os.path.join(prjdir, "..", "_Cross References"))
         if customXRfile is not None:
@@ -3146,7 +3141,6 @@ class GtkViewModel(ViewModel):
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
-            # print("onSelectModuleClicked-A-mod")
             self.set("r_book", "module")
 
         else:
@@ -3154,7 +3148,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
-            # print("onSelectModuleClicked-B-s")
             self.set("r_book", "single")
         self.updateDialogTitle()
 
@@ -4388,3 +4381,11 @@ class GtkViewModel(ViewModel):
 
     def onOnlyShowVerseumsToggled(self, btn):
         self.strongs = None
+        
+    def onExtListSourceChanges(self, fcb):
+        self.Strongs = None
+        s= self.get("fcb_xRefExtListSource")
+        ttt = self.builder.get_object("r_xrSource_{}".format(s.split("_")[0])).get_tooltip_text()
+        self.builder.get_object("btn_infoXrefSource").set_tooltip_text(ttt)
+        self.builder.get_object("fr_strongs").set_sensitive(s.startswith("strongs"))
+        self.builder.get_object("btn_selectXrFile").set_sensitive(s == "custom")

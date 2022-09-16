@@ -39,7 +39,7 @@ class BaseXrefs:
 
 
 class XrefFileXrefs(BaseXrefs):
-    def __init__(self, xrfile, filters, separators=None, listsize=0, rtl=False, shortrefs=False):
+    def __init__(self, xrfile, filters, separators=None, context=None, listsize=0, rtl=False, shortrefs=False):
         super().__init__(separators, rtl, shortrefs=shortrefs)
         self.filters = filters
         self.xrlistsize = listsize
@@ -111,7 +111,7 @@ class RefGroup(list):
 
 class XMLXrefs(BaseXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
-                 context=None, shownums=True, rtl=False, shortrefs=False):
+                 context=None, listsize=None, shownums=True, rtl=False, shortrefs=False):
         super().__init__(separators, rtl=rtl, shortrefs=shortrefs)
         self.filters = filters
         self.context = context or BaseBooks
@@ -389,6 +389,12 @@ class StrongsXrefs(XMLXrefs):
                     outf.write("{}\u200A({}) ".format(k, ", ".join(sorted(v, key=lambda s:(int(s[1:]), s[0]))))) 
             outf.write("\n\\singlecolumn\n\\strong-e\\*\n")
 
+
+xreftypes = {
+    ".xre": StandardXrefs,
+    ".xml": XMLXrefs,
+    ".xrf": XrefFileXrefs
+}
 class Xrefs:
     def __init__(self, parent, filters, prjdir, xrfile, listsize, source, localfile, showstrongsnums, shortrefs):
         self.parent = parent
@@ -404,23 +410,32 @@ class Xrefs:
         logger.debug(f"Source: {source}, {rtl=}")
         seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
         seps['verseonly'] = parent.printer.getvar('verseident') or "v"
-        if source == "strongs":
+        if source.startswith("strongs"):
             self.xrefs = getattr(parent.printer, 'strongs', None)
             if self.xrefs is None:
                 self.xrefs = StrongsXrefs(os.path.join(pycodedir(), "strongs.xml"), filters,
                         localfile, separators=seps, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
-        elif xrfile is None:
-            self.xrefs = StandardXrefs(os.path.join(pycodedir(), "cross_references.txt"),
-                    filters, separators=seps, listsize=listsize, rtl=rtl, shortrefs=shortrefs)
-        elif xrfile.endswith(".xml"):
-            self.xrefs = XMLXrefs(xrfile, filters, separators=seps, context=parent.ptsettings, rtl=rtl, shortrefs=shortrefs)
         else:
-            self.xrefs = XrefFileXrefs(xrfile, filters, separators=seps, rtl=rtl, shortrefs=shortrefs)
+            testf = os.path.join(pycodedir(), source) if xrfile is None else xrfile
+            if os.path.exists(testf):
+                t = xreftypes.get(os.path.splitext(testf)[1], None)
+                fp = testf
+            else:
+                for a, at in xreftypes.items():
+                    fp = testf + a[0]
+                    if os.path.exists(fp):
+                        t = at
+                        break
+                else:
+                    t = None
+            self.xrefs = t(fp, filters, separators=sep, context=parent.ptsettings,
+                        listsize=listsize, rtl=rtl, shortrefs=shortrefs) if t is not None else None
         gc.collect()
 
     def process(self, bk, outpath, usfm=None):
         if usfm is not None:
             usfm.addorncv()
-        self.xrefs.process(bk, outpath, self, usfm=usfm)
+        if self.xrefs is not None:
+            self.xrefs.process(bk, outpath, self, usfm=usfm)
 

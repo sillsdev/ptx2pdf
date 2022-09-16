@@ -8327,6 +8327,64 @@ unbalanced lines on the page.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_xRefExtListSource">
+    <columns>
+      <!-- column-name Description -->
+      <column type="gchararray"/>
+      <!-- column-name Code -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Standard list (fewest)</col>
+        <col id="1">standard_1</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Standard list (fewer)</col>
+        <col id="1">standard_2</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Standard list</col>
+        <col id="1">standard_3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Standard list (more)</col>
+        <col id="1">standard_4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Standard list (most)</col>
+        <col id="1">standard_5</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Strong's list (all)</col>
+        <col id="1">strongs_all</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Strong's list (project)</col>
+        <col id="1">strongs_proj</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">TSK list</col>
+        <col id="1">tsk</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">BibleWorks™ list</col>
+        <col id="1">works</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">UBS GNT92 list</col>
+        <col id="1">ubs_gnt</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">UBS GNT92 list (DC)</col>
+        <col id="1">ubs_dc</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Custom list (.xrf format)...</col>
+        <col id="1">custom</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_xrruleHorizPosn">
     <columns>
       <!-- column-name HorizPosition -->
@@ -8380,6 +8438,10 @@ unbalanced lines on the page.</property>
       <row>
         <col id="0">languagename</col>
         <col id="1">Wakawaka</col>
+      </row>
+      <row>
+        <col id="0">verseident</col>
+        <col id="1" translatable="yes" comments="This is the letter (or abbreviation) for &quot;verse&quot;. So in English we use 'v' to refer to verse; so v16 points us to verse 16 of the (same) chapter. Used in external cross-reference lists, particularly in Strong's list.">v</col>
       </row>
     </data>
   </object>
@@ -14725,6 +14787,7 @@ has been specified within the text itself.</property>
                                             <property name="label" translatable="yes">Show Callers 
 in the Text: </property>
                                             <property name="name">Show Cross-Reference Callers in the Text</property>
+                                            <property name="width-request">100</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
@@ -14972,7 +15035,7 @@ settings (See: Scripture reference settings...)
 
 This feature is usually used for Study or
 Reference Bibles in conjunction with the 
-'Centre Column xRefs' location option.</property>
+'Column Cross-References' placement option.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
@@ -15077,198 +15140,28 @@ enable this option.</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
+                                    <property name="expanded">True</property>
                                     <child>
                                       <object class="GtkBox" id="tb_extXrefs">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <child>
-                                          <!-- n-columns=3 n-rows=7 -->
+                                          <!-- n-columns=3 n-rows=4 -->
                                           <object class="GtkGrid" id="gr_extXrefs">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="valign">start</property>
-                                            <property name="margin-start">12</property>
-                                            <property name="margin-end">12</property>
-                                            <property name="margin-top">12</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="margin-top">14</property>
                                             <property name="margin-bottom">6</property>
-                                            <property name="row-spacing">2</property>
+                                            <property name="row-spacing">6</property>
                                             <property name="column-spacing">6</property>
                                             <child>
-                                              <object class="GtkRadioButton" id="r_xrSource_standard">
-                                                <property name="label" translatable="yes">Standard List</property>
-                                                <property name="name">Source of cross-references: Standard list</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">The Standard List contains more 
-than 340,000 cross-references.</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_custom</property>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkRadioButton" id="r_xrSource_custom">
-                                                <property name="label" translatable="yes">Custom List</property>
-                                                <property name="name">Source of cross-references: Custom list</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">You can use a specially-curated list of cross-references
-in the form of an .xrf file. For example, the UBS-supplied
-cross-references are available in:
-       \My Paratext X Projects\_Cross References
-
-It is also possible to extract cross-references from another
-project (as an .xrf file) to be included in this project.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_standard</property>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkScale" id="s_xrSourceSize">
-                                                <property name="name">How many references to include from Standard list</property>
-                                                <property name="width-request">260</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">You can adjust how many of the cross-references
-get used from the standard list. The slider restricts
-or expands the pool from which references are used
-based on a popularity vote.
-
-If the slider is moved toward the Less side, then 
-fewer xRefs will be included (i.e. only those that
-are the MOST popular). Conversely, if the slider
-is moved toward the More side, then many more
-xRefs will be included (including some of the less
-popular or more obscure references).</property>
-                                                <property name="valign">center</property>
-                                                <property name="adjustment">a_xrSourceSize</property>
-                                                <property name="fill-level">5</property>
-                                                <property name="round-digits">0</property>
-                                                <property name="digits">0</property>
-                                                <property name="value-pos">left</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                                <property name="width">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkButton" id="btn_selectXrFile">
-                                                <property name="label" translatable="yes">Select...</property>
-                                                <property name="name">Select a custom cross-reference list</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-top">4</property>
-                                                <property name="margin-bottom">4</property>
-                                                <signal name="clicked" handler="onSelectXrFileClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_xrSourceSize">
+                                              <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">You can adjust how many of the cross-references
-get used from the standard list. The slider restricts
-or expands the pool from which references are used
-based on a popularity vote.
-
-If the slider is moved toward the Less side, then 
-fewer xRefs will be included (i.e. only those that
-are the MOST popular). Conversely, if the slider
-is moved toward the More side, then many more
-xRefs will be included (including some of the less
-popular and more spurious references).</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">How Many
-to Include:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_xrSourceLess">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">end</property>
-                                                <property name="margin-start">18</property>
-                                                <property name="label" translatable="yes">Less</property>
-                                                <attributes>
-                                                  <attribute name="style" value="italic"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_xrSourceMore">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">end</property>
-                                                <property name="margin-end">18</property>
-                                                <property name="label" translatable="yes">More</property>
-                                                <attributes>
-                                                  <attribute name="style" value="italic"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkSeparator">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-top">2</property>
-                                                <property name="margin-bottom">4</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">5</property>
-                                                <property name="width">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkBox">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="spacing">3</property>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
+                                                <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
 more than 340,000 references. You may want
 to only include target references that are
 currently available to your readers by 
@@ -15282,24 +15175,24 @@ If you select Books in "This Publication",
 then only cross-references targetting 
 books in the list of Multiple Books on 
 the Basic tab will be included.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="label" translatable="yes">Include xRefs
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">Include Refs
 for Books in:</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="expand">False</property>
-                                                    <property name="fill">True</property>
-                                                    <property name="position">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkComboBox" id="fcb_filterXrefs">
-                                                    <property name="name">Include references for which category of books</property>
-                                                    <property name="width-request">120</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="can-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
+                                                <property name="xalign">1</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBox" id="fcb_filterXrefs">
+                                                <property name="name">Include references for which category of books</property>
+                                                <property name="width-request">120</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="can-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
 more than 300,000 references. You may want
 to only include target references that are
 currently available to your readers by 
@@ -15312,59 +15205,117 @@ cross-references to NT Books.
 If you select Books in "This Publication", then only
 cross-references targetting books in the list of Multiple
 Books on the Basic tab will be included.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="margin-top">4</property>
-                                                    <property name="margin-bottom">4</property>
-                                                    <property name="model">ls_filterXrefs</property>
-                                                    <property name="wrap-width">1</property>
-                                                    <property name="active">1</property>
-                                                    <property name="entry-text-column">0</property>
-                                                    <property name="id-column">1</property>
-                                                    <property name="active-id">all</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="model">ls_filterXrefs</property>
+                                                <property name="wrap-width">1</property>
+                                                <property name="active">1</property>
+                                                <property name="entry-text-column">0</property>
+                                                <property name="id-column">1</property>
+                                                <property name="active-id">all</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel" id="l_colXRside1">
+                                                <property name="width-request">94</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="halign">end</property>
+                                                <property name="label" translatable="yes">External Refs:</property>
+                                                <property name="xalign">1</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkComboBox" id="fcb_xRefExtListSource">
+                                                <property name="name">Select external list of cross-references</property>
+                                                <property name="width-request">120</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="can-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">There are multiple options to choose
+from if you wish to use an external list
+of cross-references. Select whichever
+is most appropriate and the list will
+automatically be localized to use the
+abbreviated book names as defined in
+Paratext's Scripture Reference Settings
+which should match the \toc3 markers.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="model">ls_xRefExtListSource</property>
+                                                <property name="wrap-width">1</property>
+                                                <property name="active">1</property>
+                                                <property name="entry-text-column">0</property>
+                                                <property name="id-column">1</property>
+                                                <property name="active-id">all</property>
+                                                <signal name="changed" handler="onExtListSourceChanges" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_selectXrFile">
+                                                <property name="label" translatable="yes">Select...</property>
+                                                <property name="name">Select a custom cross-reference list</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onSelectXrFileClicked" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="sensitive">False</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="no-show-all">True</property>
+                                                <property name="margin-start">15</property>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_standard">
+                                                    <property name="label" translatable="yes">Standard</property>
+                                                    <property name="name">Source of cross-references: Standard list</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">The Standard List contains more 
+than 340,000 cross-references
+which have been prioritized by
+crowd-sourcing.</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_works</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">True</property>
-                                                    <property name="position">1</property>
+                                                    <property name="position">0</property>
                                                   </packing>
                                                 </child>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">6</property>
-                                                <property name="width">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkRadioButton" id="r_xrSource_bibleWorks">
-                                                <property name="label" translatable="yes">"The Works" from BibleWorks™</property>
-                                                <property name="name">Source of cross-references: "The Works"</property>
-                                                <property name="visible">True</property>
-                                                <property name="sensitive">False</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">This BibleWorks list contains carefully
-selected cross-references for both NT and OT.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_custom</property>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                                <property name="width">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkRadioButton" id="r_xrSource_strongs">
-                                                <property name="label" translatable="yes">Strong's List</property>
-                                                <property name="name">Source of cross-references: Strong's list</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">The Strong's List contains a curated
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_strongs">
+                                                    <property name="label" translatable="yes">Strongs</property>
+                                                    <property name="name">Source of cross-references: Strong's list</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">The Strong's List contains a curated
 subset of cross-references generated
 from the Strong's Numbers. Optionally
 an index for these numbers can also
@@ -15376,110 +15327,161 @@ by a Hebrew or Greek Strong's number
 which can be looked up in the (optional)
 Index which can be generated using the
 "Generate Index..." button.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_xrSource_custom</property>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkButton" id="btn_strongsGenerate">
-                                                <property name="label" translatable="yes">Generate
-Index...</property>
-                                                <property name="name">Generate Index (based on Strong's numbers)</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">For Strong's Cross References to be most useful,
-it is recommended to include an Index at the
-end of the publication. Click this button to set
-various options to be used to generate the index.</property>
-                                                <property name="halign">start</property>
-                                                <property name="margin-top">9</property>
-                                                <property name="margin-bottom">10</property>
-                                                <signal name="clicked" handler="onGenerateStrongsClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkCheckButton">
-                                                <property name="label" translatable="yes">Include Proper Nouns
-(c_strongsInclNames)</property>
-                                                <property name="name">Include proper names in Strong's index</property>
-                                                <property name="sensitive">False</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="no-show-all">True</property>
-                                                <property name="tooltip-text" translatable="yes">For the sake of being more concise, and not
-cluttering the index and cross-references with
-too much detail, you may choose to exclude 
-proper nouns (names of people and places).</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="active">True</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <!-- n-columns=2 n-rows=3 -->
-                                              <object class="GtkGrid">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
+                                                    <property name="halign">center</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_tsk</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">1</property>
+                                                  </packing>
+                                                </child>
                                                 <child>
-                                                  <object class="GtkCheckButton" id="c_strongsLocal">
-                                                    <property name="label" translatable="yes">Show Localized Terms Only</property>
-                                                    <property name="name">Only include localized terms (Strong's references)</property>
+                                                  <object class="GtkRadioButton" id="r_xrSource_tsk">
+                                                    <property name="label" translatable="yes">TSK</property>
+                                                    <property name="name">Source of cross-references: Treasury of Scripture Knowledge</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Restrict Strong's references to those 
-with localized renderings in Paratext's
-Biblical Terms List.</property>
+                                                    <property name="tooltip-text" translatable="yes">For generations, the Treasury of Scripture Knowledge
+has been an enduring cross-reference resource for Bible
+students worldwide. This highly respected and nearly
+exhaustive compilation of cross-references was developed
+by R.A. Torrey from references in the Rev. Thomas Scott's
+Commentary and the Comprehensive Bible. With nearly
+500,000 cross-references it is the most thorough source
+available.</property>
+                                                    <property name="halign">center</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_custom</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_works">
+                                                    <property name="label" translatable="yes">BibWrx</property>
+                                                    <property name="name">Source of cross-references: The Works</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">The BibleWorks list contains 112,000 cross-references
+which were formerly part of the BibleWorks software
+which has been discontinued.</property>
+                                                    <property name="halign">center</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="active">True</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_strongs</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_ubs">
+                                                    <property name="label" translatable="yes">UBS</property>
+                                                    <property name="name">Source of cross-references: The Works</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">This list contains New Testament and Old Testament
+references (NO Deuterocanonical  references). Short
+Bible Reference System, edited by Robert G. Bratcher,
+(c) 1961 United Bible Societies. This list was used in
+GNT92. Organizations that have a Paratext license may
+use this list in their publication without attribution or
+notifying UBS. All other rights to use this list are reserved.
+
+Use the (DC) list if Deutero Canonical references are needed.</property>
+                                                    <property name="halign">center</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_strongs</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">4</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkRadioButton" id="r_xrSource_custom">
+                                                    <property name="label" translatable="yes">Custom</property>
+                                                    <property name="name">Source of cross-references: Custom .xrf list</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">You can use a specially-curated list of cross-references
+in the form of an .xrf file. Note that it is also possible to
+extract cross-references from another project (in the
+.xrf file format) to be included in this project.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
                                                     <property name="draw-indicator">True</property>
+                                                    <property name="group">r_xrSource_standard</property>
+                                                    <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">2</property>
-                                                    <property name="width">2</property>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">5</property>
                                                   </packing>
                                                 </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
+                                                <property name="width">3</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkFrame" id="fr_strongs">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="margin-start">24</property>
+                                                <property name="margin-top">12</property>
+                                                <property name="label-xalign">0.05000000074505806</property>
                                                 <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="name">Where to show Strong's numbers</property>
+                                                  <object class="GtkAlignment">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
-                                                    <property name="margin-start">6</property>
-                                                    <property name="label" translatable="yes">Show Strong's Numbers:</property>
-                                                    <property name="xalign">0</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">0</property>
-                                                    <property name="top-attach">0</property>
-                                                    <property name="height">2</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_strongsShowInText">
-                                                    <property name="label" translatable="yes">in Text</property>
-                                                    <property name="name">Show Strong's numbers in the text</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">If the project's Biblical Terms list includes
+                                                    <property name="left-padding">12</property>
+                                                    <child>
+                                                      <!-- n-columns=2 n-rows=3 -->
+                                                      <object class="GtkGrid">
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">False</property>
+                                                        <property name="margin-start">6</property>
+                                                        <property name="margin-end">6</property>
+                                                        <property name="margin-top">3</property>
+                                                        <property name="margin-bottom">6</property>
+                                                        <property name="row-spacing">8</property>
+                                                        <property name="column-spacing">12</property>
+                                                        <child>
+                                                          <object class="GtkCheckButton" id="c_strongsShowInText">
+                                                            <property name="label" translatable="yes">Show Numbers in the Text</property>
+                                                            <property name="name">Show Strong's numbers in the text</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can-focus">True</property>
+                                                            <property name="receives-default">False</property>
+                                                            <property name="tooltip-text" translatable="yes">If the project's Biblical Terms list includes
 renderings, then it is possible to show
 Strong's numbers in the text itself, which
 should make it easier to look up the
@@ -15492,24 +15494,25 @@ also slow down the production of the PDF.
 
 If using this feature, it is recommended to
 also enable option: 'Show Localized Terms Only'.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="draw-indicator">True</property>
-                                                    <signal name="toggled" handler="warnStrongsInText" swapped="no"/>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">0</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_strongsShowNums">
-                                                    <property name="label" translatable="yes">in xRefs</property>
-                                                    <property name="name">Show Strong's numbers in cross-references</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="draw-indicator">True</property>
+                                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                                            <signal name="toggled" handler="warnStrongsInText" swapped="no"/>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left-attach">0</property>
+                                                            <property name="top-attach">1</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkCheckButton" id="c_strongsShowNums">
+                                                            <property name="label" translatable="yes">Show Numbers in Cross-References</property>
+                                                            <property name="name">Show Strong's numbers in cross-references</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can-focus">True</property>
+                                                            <property name="receives-default">False</property>
+                                                            <property name="tooltip-text" translatable="yes">If you are generating a localized Strong's
 index, then it is highly recommended to
 include the Strong's numbers in the list 
 of cross-references in the text.
@@ -15517,20 +15520,107 @@ of cross-references in the text.
 But if you only want to show the references
 without any Strong's numbers, then uncheck
 this option for a more compact list.</property>
-                                                    <property name="halign">start</property>
-                                                    <property name="valign">center</property>
-                                                    <property name="active">True</property>
-                                                    <property name="draw-indicator">True</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="active">True</property>
+                                                            <property name="draw-indicator">True</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left-attach">0</property>
+                                                            <property name="top-attach">0</property>
+                                                            <property name="width">2</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkButton" id="btn_strongsGenerate">
+                                                            <property name="label" translatable="yes">Generate Index...</property>
+                                                            <property name="name">Generate Index (based on Strong's numbers)</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can-focus">True</property>
+                                                            <property name="receives-default">True</property>
+                                                            <property name="tooltip-text" translatable="yes">For Strong's Cross References to be most useful,
+it is recommended to include an Index at the
+end of the publication. Click this button to set
+various options to be used to generate the index.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">start</property>
+                                                            <property name="margin-bottom">4</property>
+                                                            <signal name="clicked" handler="onGenerateStrongsClicked" swapped="no"/>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left-attach">0</property>
+                                                            <property name="top-attach">2</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkCheckButton" id="c_strongsShowAll">
+                                                            <property name="label" translatable="yes">Show All Occurences</property>
+                                                            <property name="name">Show Strong's numbers in cross-references</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can-focus">True</property>
+                                                            <property name="receives-default">False</property>
+                                                            <property name="tooltip-text" translatable="yes">If a particular word occurs more than once
+in the given verse, each occurrence will be
+tagged with the Strong's number. If a word 
+matches more than one Strong's number
+then both will be displayed.
+
+This may be rather confusing for the reader,
+but could be helpful for a consultant to easily
+identify overlap issues with the project's
+Biblical terms renderings.</property>
+                                                            <property name="halign">start</property>
+                                                            <property name="valign">center</property>
+                                                            <property name="draw-indicator">True</property>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left-attach">1</property>
+                                                            <property name="top-attach">1</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <placeholder/>
+                                                        </child>
+                                                      </object>
+                                                    </child>
                                                   </object>
-                                                  <packing>
-                                                    <property name="left-attach">1</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
+                                                </child>
+                                                <child type="label">
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="label" translatable="yes">Strong's References</property>
+                                                  </object>
                                                 </child>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">1</property>
+                                                <property name="left-attach">0</property>
                                                 <property name="top-attach">3</property>
+                                                <property name="width">3</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_infoXrefSource">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="focus-on-click">False</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text">External Cross-Reference List Source Description</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="relief">none</property>
+                                                <child>
+                                                  <object class="GtkImage" id="icon_infoViewEdit1">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="icon-name">help-about-symbolic</property>
+                                                    <property name="icon_size">3</property>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">2</property>
                                               </packing>
                                             </child>
                                           </object>
