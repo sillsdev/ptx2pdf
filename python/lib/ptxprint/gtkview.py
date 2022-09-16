@@ -3096,8 +3096,8 @@ class GtkViewModel(ViewModel):
         prjdir = os.path.join(self.settings_dir, self.prjid)
         customXRfile = self.fileChooser("Select a Custom Cross-Reference file", 
                 filters = {"Paratext XRF Files": {"patterns": "*.xrf" , "mime": "text/plain", "default": True},
-                           "XML cross-ref Files": {"pattern": "*.xml"},
-                           "External cross-ref TXT Files": {"pattern": "*.xrt"},
+                           "Extended XRF files": {"pattern": "*.xre"},
+                           "XML Cross-Ref Files": {"pattern": "*.xml"},
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=os.path.join(prjdir, "..", "_Cross References"))
         if customXRfile is not None:
@@ -3141,7 +3141,6 @@ class GtkViewModel(ViewModel):
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
-            # print("onSelectModuleClicked-A-mod")
             self.set("r_book", "module")
 
         else:
@@ -3149,7 +3148,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_bibleModule").set_label("")
             self.moduleFile = None
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text("")
-            # print("onSelectModuleClicked-B-s")
             self.set("r_book", "single")
         self.updateDialogTitle()
 
@@ -4385,6 +4383,7 @@ class GtkViewModel(ViewModel):
         self.strongs = None
         
     def onExtListSourceChanges(self, fcb):
+        self.Strongs = None
         s= self.get("fcb_xRefExtListSource")
         ttt = self.builder.get_object("r_xrSource_{}".format(s.split("_")[0])).get_tooltip_text()
         self.builder.get_object("btn_infoXrefSource").set_tooltip_text(ttt)

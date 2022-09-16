@@ -15456,7 +15456,7 @@ extract cross-references from another project (in the
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="margin-start">24</property>
-                                                <property name="margin-top">8</property>
+                                                <property name="margin-top">12</property>
                                                 <property name="label-xalign">0.05000000074505806</property>
                                                 <child>
                                                   <object class="GtkAlignment">
@@ -15507,7 +15507,7 @@ also enable option: 'Show Localized Terms Only'.</property>
                                                         </child>
                                                         <child>
                                                           <object class="GtkCheckButton" id="c_strongsShowNums">
-                                                            <property name="label" translatable="yes">Show Numbers in x-Refs</property>
+                                                            <property name="label" translatable="yes">Show Numbers in Cross-References</property>
                                                             <property name="name">Show Strong's numbers in cross-references</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
@@ -15528,6 +15528,7 @@ this option for a more compact list.</property>
                                                           <packing>
                                                             <property name="left-attach">0</property>
                                                             <property name="top-attach">0</property>
+                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -15576,9 +15577,6 @@ Biblical terms renderings.</property>
                                                             <property name="left-attach">1</property>
                                                             <property name="top-attach">1</property>
                                                           </packing>
-                                                        </child>
-                                                        <child>
-                                                          <placeholder/>
                                                         </child>
                                                         <child>
                                                           <placeholder/>

@@ -391,7 +391,7 @@ class StrongsXrefs(XMLXrefs):
 
 
 xreftypes = {
-    ".txt": StandardXrefs,
+    ".xre": StandardXrefs,
     ".xml": XMLXrefs,
     ".xrf": XrefFileXrefs
 }
