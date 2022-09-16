@@ -624,8 +624,9 @@ class Usfm:
             return True
         iterfn(self.doc[0], top=True)
 
-    def addStrongs(self, strongs):
+    def addStrongs(self, strongs, showall):
         self.addorncv()
+        self.currstate = [None, set()]
         def iterfn(el, silent=False, base=None):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
@@ -639,12 +640,15 @@ class Usfm:
                 return
             r = el.pos.ref
             newstr = str(el)
-            for st in strongs.getstrongs(r):
+            if r != self.currstate[0]:
+                self.currstate = [r, set(strongs.getstrongs(r))]
+            for st in list(self.currstate[1]):
                 if st not in strongs.regexes:
                     regs = strongs.addregexes(st)
                 else:
                     regs = strongs.regexes[st]
                 if not len(regs):
+                    self.currstate[1].remove(st)
                     continue
                 logger.log(5, f"{r} {regs=} {st=}")
                 if base is not None:
@@ -652,11 +656,17 @@ class Usfm:
                         newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
+                        if not showall:
+                            self.currstate[1].remove(st)
                 else:
                     #newstr = regex.sub(regs,
-                    newstr = regex.sub("(?<!\u200A)"+regs,
+                    newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
                             '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
-                            newstr, count=1)
+                            newstr, count=0 if showall else 1)
+                    if newstr_diff != newstr:
+                        newstr = newstr_diff
+                        if not showall:
+                            self.currstate[1].remove(st)
             el.data = newstr
         iterfn(self.doc[0])
 

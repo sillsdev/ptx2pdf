@@ -1223,7 +1223,7 @@ class TexModel:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")
-            doc.addStrongs(printer.getStrongs())
+            doc.addStrongs(printer.getStrongs(), False)
 
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
