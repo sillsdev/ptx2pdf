@@ -737,5 +737,5 @@ class StyleEditorView(StyleEditor):
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
-        oldval = self.getval(self.marker, k, baseonly=True)
+        oldval = self.getval(self.marker, k, v[2], baseonly=True)
         self._setFieldVal(k, v, oldval, oldval)
