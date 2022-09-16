@@ -1299,6 +1299,7 @@ class ViewModel:
         sfiles = {'c_useCustomSty': "custom.sty",
                   # should really parse changes.txt and follow the include chain, sigh
                   'c_usePrintDraftChanges': "PrintDraftChanges.txt",
+                  'c_strongsShowInText': "TermRenderings.xml",
                   None: "picChecks.txt"}
         res = {}
         cfgchanges = {}

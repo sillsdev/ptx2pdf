@@ -162,8 +162,10 @@ class XMLXrefs(BaseXrefs):
             except ValueError:
                 continue
 
-    def _addranges(self, dat, usfm):
-        for ra in usfm.bridges.values():
+    def _addranges(self, dat, usfm, ref=None):
+        for ra in usfm.bridges.values() if ref is None else [ref]:
+            if ra in dat:
+                continue
             newdat = []
             for r in ra.allrefs():
                 if r in dat:
@@ -198,7 +200,7 @@ class XMLXrefs(BaseXrefs):
         return r"\space ".join(a)
 
     def process(self, bk, outpath, owner, usfm=None):
-        xmldat = self.xmldat.get(bk, {}).copy()
+        xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
             #import pdb; pdb.set_trace()
             if usfm is not None:
@@ -220,6 +222,14 @@ class XMLXrefs(BaseXrefs):
                         outf.write(self.template.format(**info))
 
 
+components = [
+    ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*", "lemma"),
+    ("c_strongsTranslit", r"\wl {translit}\wl*", "translit"),
+    ("c_strongsRenderings", r"\k {_defn}\k*;", "_defn"),
+    ("c_strongsDefn", r"{trans};", "trans"),
+    ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
+]
+
 class StrongsXrefs(XMLXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
                  context=None, shownums=True, rtl=False, shortrefs=False):
@@ -237,7 +247,9 @@ class StrongsXrefs(XMLXrefs):
             self.strongsfilter = None
 
     def getstrongs(self, ref):
-        return [x[0] for x in self.xmldat[ref.first.book].get(ref.first,[])]
+        if ref.first != ref.last and ref not in self.xmldat[ref.first.book] and ref.last.verse < 200:
+            self._addranges(self.xmldat[ref.first.book], None, ref=ref)
+        return [x[0] for x in self.xmldat[ref.first.book].get(ref,[])]
 
     def loadinfo(self, lang):
         if lang is None or lang == 'und':
@@ -412,10 +424,3 @@ class Xrefs:
             usfm.addorncv()
         self.xrefs.process(bk, outpath, self, usfm=usfm)
 
-components = [
-    ("c_strongsSrcLg", r"\w{_lang} {lemma}\w{_lang}*", "lemma"),
-    ("c_strongsTranslit", r"\wl {translit}\wl*", "translit"),
-    ("c_strongsRenderings", r"\k {_defn}\k*;", "_defn"),
-    ("c_strongsDefn", r"{trans};", "trans"),
-    ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
-]
