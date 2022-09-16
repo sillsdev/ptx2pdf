@@ -333,8 +333,9 @@ ModelMap = {
     "notes/xrcolbottom":        ("c_xrColumnBottom", lambda w,v: "true" if v else "false"),
     "notes/xrcolalign":         ("c_xrSideAlign", lambda w,v: "true" if v else "false"),
     "notes/ifxrexternalist":    ("c_useXrefList", lambda w,v: "%" if v else ""),
-    "notes/xrlistsource":       ("r_xrSource", None),
-    "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
+    # "notes/xrlistsource":       ("r_xrSource", None),
+    "notes/xrlistsource":       ("fcb_xRefExtListSource", None),
+    # "notes/xrlistsize":         ("s_xrSourceSize", lambda w,v: int(float(v)) if v else "3"),
     "notes/xrextlistsource":    ("fcb_xRefExtListSource", None),
     "notes/xrfilterbooks":      ("fcb_filterXrefs", None),
     "notes/xrverseonly":        ("c_xoVerseOnly", None),
@@ -405,7 +406,6 @@ ModelMap = {
     "thumbtabs/background":     ("col_thumbback", None),
     "thumbtabs/rotate":         ("c_thumbrotate", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", None),
-    # "thumbtabs/thumbiszthumb":  ("c_thumbIsZthumb", None),
     "thumbtabs/thumbtextmkr":   ("r_thumbText", None),
     "thumbtabs/restart":        ("c_thumbrestart", None),
     "thumbtabs/groups":         ("t_thumbgroups", None),
@@ -416,8 +416,8 @@ ModelMap = {
     "scripts/indic/showhyphen": ("c_scrindicshowhyphen", None),
 
     "strongsndx/showintext":    ("c_strongsShowInText", None),
+    "strongsndx/showall":       ("c_strongsShowAll", None),
     "strongsndx/shownums":      ("c_strongsShowNums", None),
-    "strongsndx/localterms":    ("c_strongsLocal", None),
     "strongsndx/showhebrew":    ("c_strongsHeb", None),
     "strongsndx/showgreek":     ("c_strongsGrk", None),
     "strongsndx/showindex":     ("c_strongsNdx", None),
@@ -1224,8 +1224,8 @@ class TexModel:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")
-            doc.addStrongs(printer.getStrongs(), False)
-
+            doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
+            
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
             logger.log(5, "Unparsing text to run local changes\n"+dat)
@@ -1789,13 +1789,18 @@ class TexModel:
             if filters is not None and len(filters) == 0:
                 filters = None
             localfile = None
-            if self.dict['strongsndx/localterms']:
+            xrsrc = self.dict['notes/xrlistsource']
+            if xrsrc == "strongs_proj":
                 localfile = os.path.join(self.printer.settings_dir, self.printer.prjid, "TermRenderings.xml")
                 if not os.path.exists(localfile):
                     localfile = None
+            if xrsrc[-1] in "0123456789":
+                listsize = int(xrsrc[-1])
+                xrsrc = xrsrc[:-2]
+            else:
+                listsize = 0
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
-                    self.dict['notes/xrlistsize'], self.dict['notes/xrlistsource'], localfile,
-                    self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
+                    listsize, xrsrc, localfile, self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
         self.xrefs.process(bk, outpath, usfm=self.printer.get_usfms().get(bk))
 

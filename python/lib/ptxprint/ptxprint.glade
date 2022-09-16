@@ -15140,6 +15140,7 @@ enable this option.</property>
                                     <property name="margin-start">12</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
+                                    <property name="expanded">True</property>
                                     <child>
                                       <object class="GtkBox" id="tb_extXrefs">
                                         <property name="visible">True</property>
@@ -15463,7 +15464,7 @@ extract cross-references from another project (in the
                                                     <property name="can-focus">False</property>
                                                     <property name="left-padding">12</property>
                                                     <child>
-                                                      <!-- n-columns=4 n-rows=4 -->
+                                                      <!-- n-columns=2 n-rows=3 -->
                                                       <object class="GtkGrid">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
@@ -15471,7 +15472,8 @@ extract cross-references from another project (in the
                                                         <property name="margin-end">6</property>
                                                         <property name="margin-top">3</property>
                                                         <property name="margin-bottom">6</property>
-                                                        <property name="row-spacing">6</property>
+                                                        <property name="row-spacing">8</property>
+                                                        <property name="column-spacing">12</property>
                                                         <child>
                                                           <object class="GtkCheckButton" id="c_strongsShowInText">
                                                             <property name="label" translatable="yes">Show Numbers in the Text</property>
@@ -15501,7 +15503,6 @@ also enable option: 'Show Localized Terms Only'.</property>
                                                           <packing>
                                                             <property name="left-attach">0</property>
                                                             <property name="top-attach">1</property>
-                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -15527,13 +15528,11 @@ this option for a more compact list.</property>
                                                           <packing>
                                                             <property name="left-attach">0</property>
                                                             <property name="top-attach">0</property>
-                                                            <property name="width">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
                                                           <object class="GtkButton" id="btn_strongsGenerate">
-                                                            <property name="label" translatable="yes">Generate
-Index...</property>
+                                                            <property name="label" translatable="yes">Generate Index...</property>
                                                             <property name="name">Generate Index (based on Strong's numbers)</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">True</property>
@@ -15542,39 +15541,14 @@ Index...</property>
 it is recommended to include an Index at the
 end of the publication. Click this button to set
 various options to be used to generate the index.</property>
-                                                            <property name="halign">end</property>
+                                                            <property name="halign">start</property>
                                                             <property name="valign">start</property>
                                                             <property name="margin-bottom">4</property>
                                                             <signal name="clicked" handler="onGenerateStrongsClicked" swapped="no"/>
                                                           </object>
                                                           <packing>
-                                                            <property name="left-attach">3</property>
-                                                            <property name="top-attach">0</property>
-                                                            <property name="height">2</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkCheckButton" id="c_strongsAllowMultiples">
-                                                            <property name="label" translatable="yes">Allow Multiple Matches</property>
-                                                            <property name="name">Show Strong's numbers in cross-references</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">True</property>
-                                                            <property name="receives-default">False</property>
-                                                            <property name="tooltip-text" translatable="yes">If the same vernacular word matches
-more than one rendering within the
-verse, this will display 2 or more
-Strongs numbers. This may be rather
-confusing for the reader, but could be
-very helpful for a consultant to easily
-identify overlap issues with the project's
-Biblical terms renderings.</property>
-                                                            <property name="halign">start</property>
-                                                            <property name="valign">center</property>
-                                                            <property name="draw-indicator">True</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">1</property>
-                                                            <property name="top-attach">3</property>
+                                                            <property name="left-attach">0</property>
+                                                            <property name="top-attach">2</property>
                                                           </packing>
                                                         </child>
                                                         <child>
@@ -15585,76 +15559,29 @@ Biblical terms renderings.</property>
                                                             <property name="can-focus">True</property>
                                                             <property name="receives-default">False</property>
                                                             <property name="tooltip-text" translatable="yes">If a particular word occurs more than once
-in the given verse, should it be tagged with
-the Strong's number more than once? If so,
-then enable this option.</property>
+in the given verse, each occurrence will be
+tagged with the Strong's number. If a word 
+matches more than one Strong's number
+then both will be displayed.
+
+This may be rather confusing for the reader,
+but could be helpful for a consultant to easily
+identify overlap issues with the project's
+Biblical terms renderings.</property>
                                                             <property name="halign">start</property>
                                                             <property name="valign">center</property>
                                                             <property name="draw-indicator">True</property>
                                                           </object>
                                                           <packing>
                                                             <property name="left-attach">1</property>
-                                                            <property name="top-attach">2</property>
+                                                            <property name="top-attach">1</property>
                                                           </packing>
                                                         </child>
                                                         <child>
-                                                          <object class="GtkLabel">
-                                                            <property name="width-request">30</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">False</property>
-                                                            <property name="halign">start</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">0</property>
-                                                            <property name="top-attach">2</property>
-                                                          </packing>
+                                                          <placeholder/>
                                                         </child>
                                                         <child>
-                                                          <object class="GtkSeparator">
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">False</property>
-                                                            <property name="margin-start">20</property>
-                                                            <property name="margin-end">20</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">2</property>
-                                                            <property name="top-attach">0</property>
-                                                            <property name="height">4</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkLabel">
-                                                            <property name="width-request">30</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">False</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">3</property>
-                                                            <property name="top-attach">2</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkLabel">
-                                                            <property name="width-request">30</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">False</property>
-                                                            <property name="halign">start</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">0</property>
-                                                            <property name="top-attach">3</property>
-                                                          </packing>
-                                                        </child>
-                                                        <child>
-                                                          <object class="GtkLabel">
-                                                            <property name="width-request">30</property>
-                                                            <property name="visible">True</property>
-                                                            <property name="can-focus">False</property>
-                                                          </object>
-                                                          <packing>
-                                                            <property name="left-attach">3</property>
-                                                            <property name="top-attach">3</property>
-                                                          </packing>
+                                                          <placeholder/>
                                                         </child>
                                                       </object>
                                                     </child>
