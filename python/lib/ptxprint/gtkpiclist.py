@@ -199,6 +199,9 @@ class PicList:
         if self.loading or selection.count_selected_rows() == 0:
             return
         if self.currows:
+            if not self.currows[-1][_pickeys['anchor']]:
+                self.parent.doError(_("Empty Anchor"), _("You must set an anchor"))
+                return
             for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
                 w = self.builder.get_object(s)
                 if w.has_focus():

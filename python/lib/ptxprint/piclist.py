@@ -301,6 +301,8 @@ class PicInfo(dict):
                     continue
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
+                if not len(r):  # no id, what to do? Ignore entry? Create an id?
+                    continue    # skip the entry. Pretty radical.
                 if suffix.startswith("B"):
                     s = r[0][3:4] or suffix[1:]
                 else:

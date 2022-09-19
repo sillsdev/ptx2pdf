@@ -413,7 +413,7 @@ def runChanges(changes, bk, dat):
     def wrap(t):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(7, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+            logger.log(5, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
             return res
         return proc
     for c in changes:

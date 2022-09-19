@@ -252,18 +252,19 @@ class StrongsXrefs(XMLXrefs):
         return [x[0] for x in self.xmldat[ref.first.book].get(ref,[])]
 
     def loadinfo(self, lang):
-        if lang is None or lang == 'und':
-            lang = 'en'
-        if self.btmap is not None and lang == self.lang:
+        if lang is None:
+            lang = 'und'
+        if self.btmap is not None and len(self.btmap) and lang == self.lang:
             return
         strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
-        self.strongs = {}
-        self.btmap = {}
         self.lang = lang
+        if self.strongs is None:
+            self.strongs = {}
+            self.btmap = {}
         for s in strongsdoc.findall(".//strong"):
             sref = s.get('ref')
             le = s.find('.//trans[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(self.lang))
-            self.strongs[sref] = {k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')}
+            self.strongs.setdefault(sref, {}).update({k: s.get(k) for k in ('btid', 'lemma', 'head', 'translit')})
             self.btmap[s.get('btid')] = sref
             if le is not None:
                 d = le.get('gloss', None)
@@ -346,7 +347,10 @@ class StrongsXrefs(XMLXrefs):
                             continue
                         d = v.get('local', v.get('def', None) if not onlylocal else None)
                         if d is None:
-                            continue
+                            if not onlylocal:
+                                d = []
+                            else:
+                                continue
                         d = ", ".join(s.strip() for s in d)
                         if view.get("c_strongsNoComments"):
                             d = re.sub(r"\(.*?\)", "", d)
