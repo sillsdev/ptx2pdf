@@ -421,7 +421,7 @@ class Xrefs:
                         localfile, separators=seps, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         else:
-            testf = os.path.join(pycodedir(), source) if xrfile is None else xrfile
+            testf = os.path.join(os.path.join(pycodedir(), 'xrefs'), source) if xrfile is None else xrfile
             if os.path.exists(testf):
                 t = xreftypes.get(os.path.splitext(testf)[1], None)
                 fp = testf

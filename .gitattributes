@@ -18,6 +18,9 @@
 *.dtd    text
 *.conf   text
 *.cnf    text
+*.xml    text
+*.xre    text
+*.xrf    text
 *.pdf    binary
 *.fmt    binary
 *.dll    binary
