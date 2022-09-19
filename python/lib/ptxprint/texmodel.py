@@ -76,6 +76,7 @@ ModelMap = {
     "project/ifstarthalfpage":  ("c_startOnHalfPage", lambda w,v :"true" if v else "false"),
     "project/randompicposn":    ("c_randomPicPosn", None),
     "project/canonicalise":     ("c_canonicalise", None),
+    "project/autotaghebgrk":    ("c_autoTagHebGrk", None),
     "project/interlinear":      ("c_interlinear", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", None),
     "project/ruby":             ("c_ruby", lambda w,v : "t" if v else "b"),
@@ -1534,6 +1535,13 @@ class TexModel:
 
         # Convert hyphens from minus to hyphen
         self.localChanges.append((None, regex.compile(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", flags=regex.M), r"\u2011"))
+
+        # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
+        if self.asBool("project/autotaghebgrk"):
+            if self.dict["document/script"] != "Hebr":
+                self.localChanges.append((None, regex.compile(r"(?<!\\wh\s*)([\u0590-\u05FF\uFB1D-\uFB4F]+)", flags=regex.M), r"\\+wh \1\\+wh*"))
+            if self.dict["document/script"] != "Grek":
+                self.localChanges.append((None, regex.compile(r"(?<!\\wg\s*)([\u0370-\u03FF\u1F00-\u1FFF]+)", flags=regex.M), r"\\+wg \1\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book

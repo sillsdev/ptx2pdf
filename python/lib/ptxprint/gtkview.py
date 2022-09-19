@@ -891,8 +891,10 @@ class GtkViewModel(ViewModel):
         if highlight:
             self.searchWidget.append(wid)
         parent = w.get_parent()
+        logger.debug(f"{parent=}")
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
+            logger.debug(f"{name=}")
             if name.startswith("tb_"):
                 if highlight:
                     w.get_style_context().add_class("highlighted")
@@ -902,17 +904,22 @@ class GtkViewModel(ViewModel):
                             pgnum = v.index(name)
                             t = self.builder.get_object('nbk_{}'.format(k)).set_current_page(pgnum)
                             keepgoing = k != 'Main'
+                            logger.debug("Break out of for loop")
                             break
                     if not keepgoing:
+                        logger.debug("Breaking out of while")
                         break
                 else:
                     w.get_style_context().remove_class("highlighted")
+                    logger.debug("remove_class highlighted")
                     break
             elif name.startswith("ex_"):
                 parent.set_expanded(True)
+                logger.debug(f"expanding {parent=}")
             elif name in _dlgtriggers:
                 if highlight:
                     w.get_style_context().add_class("highlighted")
+                    logger.debug(f"highlighting {name=}")
                     getattr(self, _dlgtriggers[name])(None)
                 else:
                     w.get_style_context().remove_class("highlighted")
