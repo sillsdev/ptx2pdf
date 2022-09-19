@@ -8380,7 +8380,7 @@ unbalanced lines on the page.</property>
         <col id="1">ubs_dc</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Custom list (.xrf format)...</col>
+        <col id="0" translatable="yes">Select a Custom list...</col>
         <col id="1">custom</col>
       </row>
     </data>
@@ -13516,7 +13516,7 @@ Also settings for special books.</property>
                     <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="tb_notesrefs">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -14634,7 +14634,7 @@ Footnotes and xRefs (pt):</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <!-- n-columns=4 n-rows=6 -->
-                                  <object class="GtkGrid">
+                                  <object class="GtkGrid" id="gr_xrefs">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
@@ -15161,8 +15161,8 @@ enable this option.</property>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
-more than 340,000 references. You may want
+                                                <property name="tooltip-text" translatable="yes">The various cross-reference lists often contain
+hundreds of 1000s of references. You may want
 to only include target references that are
 currently available to your readers by 
 selecting a subset of Biblical books.
@@ -15192,8 +15192,8 @@ for Books in:</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="can-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">The Standard List of cross-references contains
-more than 300,000 references. You may want
+                                                <property name="tooltip-text" translatable="yes">The various cross-reference lists often contain
+hundreds of 1000s of references. You may want
 to only include target references that are
 currently available to your readers by 
 selecting a subset of Biblical books.
@@ -15202,9 +15202,10 @@ So for example, if there is no Old Testament
 yet, you may want to only include target 
 cross-references to NT Books.
 
-If you select Books in "This Publication", then only
-cross-references targetting books in the list of Multiple
-Books on the Basic tab will be included.</property>
+If you select Books in "This Publication", 
+then only cross-references targetting 
+books in the list of Multiple Books on 
+the Basic tab will be included.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="model">ls_filterXrefs</property>
@@ -16295,7 +16296,7 @@ and Parameters:</property>
                                     <property name="margin-bottom">4</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <object class="GtkBox">
+                                      <object class="GtkBox" id="tb_efs">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="orientation">vertical</property>

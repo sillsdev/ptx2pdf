@@ -308,7 +308,7 @@ def get_gitver(gitdir=None, version=None):
         packedrefsfile = os.path.join(gitdir, "packed-refs")
         if not os.path.exists(packedrefsfile):
             return version
-        with open(packedresfile) as inf:
+        with open(packedrefsfile) as inf:
             for l in inf.readlines():
                 if l.startswith("#"):
                     continue
