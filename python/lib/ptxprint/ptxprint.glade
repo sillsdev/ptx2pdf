@@ -15427,10 +15427,13 @@ Use the (DC) list if Deutero Canonical references are needed.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
                                                     <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">You can use a specially-curated list of cross-references
-in the form of an .xrf file. Note that it is also possible to
-extract cross-references from another project (in the
-.xrf file format) to be included in this project.</property>
+                                                    <property name="tooltip-text" translatable="yes">You can select a specially-curated list of cross-references.
+For example. it is possible to extract cross-references from
+another project (in the .xrf file format) to be included here.
+There is also an .xre format (extended .xrf) and an .xml
+format which can be used as external cross-references.
+These formats are explained in the documentation.
+Search Google for "ptx2pdf/xrefs.md"</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
                                                     <property name="draw-indicator">True</property>
@@ -26058,17 +26061,15 @@ e.g. polyglot-simplepages, ornaments</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_autoTagHebGrk">
                                     <property name="label" translatable="yes">Auto-tag Hebrew words with \wh ... \wh* and Greek words with  \wg ... \wg*</property>
-                                    <property name="name">Auto-correct common USFM syntax errors</property>
+                                    <property name="name">Auto-tag Hebrew and Greek words</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">PTXprint can analyze the USFM files and
-automatically correct some common 
-errors in syntax. It will also notify you of 
-errors which are likely to cause the print 
-process to fail - giving you helpful feedback
-about how to fix the issue before re-trying 
-to print.</property>
+                                    <property name="tooltip-text" translatable="yes">PTXprint can automatically tag all
+source language words (Hebrew and
+Greek) with the appropriate markup
+to ensure they display with the right
+font and direction for that script.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-top">6</property>
