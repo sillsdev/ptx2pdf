@@ -70,4 +70,8 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall 
-;skipifsilent - I removed this so that it would automatically (re)start the app after a silent install
+;skipifsilent - removed this param so it can automatically (re)start the app after a silent install
+
+[InstallDelete]
+Type: files; Name: "{app}\ptxprint\Strong*.xml"
+Type: files; Name: "{app}\ptxprint\cross_references.txt"
