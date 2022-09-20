@@ -1219,7 +1219,8 @@ class TexModel:
             logger.debug("versesToEnd")
             doc.versesToEnd()
 
-        if self.dict["strongsndx/showintext"] and self.dict["notes/ifxrexternalist"] and isCanon:
+        if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
+                    and self.dict["notes/ifxrexternalist"] and isCanon:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")

@@ -61,10 +61,11 @@ class XrefFileXrefs(BaseXrefs):
 
     def _addranges(self, results, usfm):
         for ra in usfm.bridges.keys():
-            acc = RefList()
+            acc = []
             for r in ra.allrefs():
                 if r in results:
-                    acc.extend(results[r])
+                    acc = [a[i] + results[r][i] for i in range(min(len(a), len(results[r])))]
+                    acc.extend(results[r][min(len(a), len(results[r])):])
                     del results[r]
             if len(acc):
                 results[ra] = acc
@@ -90,7 +91,7 @@ class XrefFileXrefs(BaseXrefs):
                     info = {
                         "book":         k.first.book,
                         "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else str(k.verse),
+                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else str(k.first.verse),
                         "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                     }
                     outf.write(self.template.format(**info))
