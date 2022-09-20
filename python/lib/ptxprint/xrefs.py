@@ -427,13 +427,13 @@ class Xrefs:
                 fp = testf
             else:
                 for a, at in xreftypes.items():
-                    fp = testf + a[0]
+                    fp = testf + a
                     if os.path.exists(fp):
                         t = at
                         break
                 else:
                     t = None
-            self.xrefs = t(fp, filters, separators=sep, context=parent.ptsettings,
+            self.xrefs = t(fp, filters, separators=seps, context=parent.ptsettings,
                         listsize=listsize, rtl=rtl, shortrefs=shortrefs) if t is not None else None
         gc.collect()
 

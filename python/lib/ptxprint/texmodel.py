@@ -1805,6 +1805,7 @@ class TexModel:
                 xrsrc = xrsrc[:-2]
             else:
                 listsize = 0
+            logger.debug(f"Create Xrefs: {bk=} {xrsrc=}, {localfile=}, {outpath=}")
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
                     listsize, xrsrc, localfile, self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
