@@ -343,7 +343,7 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_notebooks = ("Main", "Viewer", "PicList")
+_notebooks = ("Main", "Viewer", "PicList", "fnxr")
 
 # Vertical Thumb Tab Orientation options L+R
 _vertical_thumb = {
