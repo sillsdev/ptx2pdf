@@ -135,6 +135,7 @@ class XMLXrefs(BaseXrefs):
         results = []
         for g in groups:
             if isinstance(g[2][0], (Reference, RefRange)):
+                # demote top level ref under implicit refgroup
                 self._updatedat(results, [(None, None, [g])], None)
             else:
                 self._updatedat(results, [g], None)
