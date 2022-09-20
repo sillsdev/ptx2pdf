@@ -131,6 +131,15 @@ class XMLXrefs(BaseXrefs):
                 a.append((st, None, RefGroup(self._unpackxml(e))))
         return a
 
+    def simplify(self, groups):
+        results = []
+        for g in groups:
+            if isinstance(g[2][0], (Reference, RefRange)):
+                self._updatedat(results, [(None, None, [g])], None)
+            else:
+                self._updatedat(results, [g], None)
+        return results
+
     def readxml(self, inf):
         doc = et.parse(inf)
         xmldat = {}
@@ -138,7 +147,7 @@ class XMLXrefs(BaseXrefs):
             k = RefList.fromStr(xr.get('ref'))[0]
             a = self._unpackxml(xr)
             if len(a):
-                xmldat.setdefault(k.first.book, {})[k.first] = a
+                xmldat.setdefault(k.first.book, {})[k.first] = self.simplify(a)
         return xmldat
 
     def _updatedat(self, newdat, dat, newr):
@@ -155,14 +164,15 @@ class XMLXrefs(BaseXrefs):
                         s[2].extend(t[s[0]][2])
                         del t[s[0]]
                 for sk, sv in t.items():
-                    newdat[k][2].append(sv)
+                    newtemp[k][2].append(sv)
             else:
                 newdat.append(v)
-        for r in newdat:
-            try:
-                r[2].remove(newr)
-            except ValueError:
-                continue
+        if newr is not None:
+            for r in newdat:
+                try:
+                    r[2].remove(newr)
+                except ValueError:
+                    continue
 
     def _addranges(self, dat, usfm, ref=None):
         for ra in usfm.bridges.values() if ref is None else [ref]:
@@ -174,7 +184,7 @@ class XMLXrefs(BaseXrefs):
                     self._updatedat(newdat, dat[r], r)
                     del dat[r]
             if len(newdat):
-                dat[ra] = sorted(newdat, key=lambda x:int(x[0].lstrip("GH")))
+                dat[ra] = sorted(newdat, key=lambda x:0 if x[0] is None else int(x[0].lstrip("GH")))
 
     def _procnested(self, xr, baseref):
         a = []
@@ -247,6 +257,9 @@ class StrongsXrefs(XMLXrefs):
             logger.debug("strongsfilter="+str(self.strongsfilter))
         else:
             self.strongsfilter = None
+
+    def simplify(self, groups):
+        return groups
 
     def getstrongs(self, ref):
         if ref.first != ref.last and ref not in self.xmldat[ref.first.book] and ref.last.verse < 200:
