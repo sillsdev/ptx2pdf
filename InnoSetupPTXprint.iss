@@ -1,6 +1,6 @@
 ; Inno Setup Script
 #define MyAppName "PTXprint"
-#define MyAppVersion "2.2.22"
+#define MyAppVersion "2.2.23"
 #define MyAppPublisher "SIL International"
 #define MyAppURL "http://software.sil.org/"
 #define MyAppExeName "PTXprint.exe"
