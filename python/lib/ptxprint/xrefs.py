@@ -418,11 +418,11 @@ class Xrefs:
         if source.startswith("strongs"):
             self.xrefs = getattr(parent.printer, 'strongs', None)
             if self.xrefs is None:
-                self.xrefs = StrongsXrefs(os.path.join(pycodedir(), "strongs.xml"), filters,
+                self.xrefs = StrongsXrefs(os.path.join(pycodedir(), 'xrefs', "strongs.xml"), filters,
                         localfile, separators=seps, context=parent.ptsettings,
                         shownums=showstrongsnums, rtl=rtl, shortrefs=shortrefs)
         else:
-            testf = os.path.join(os.path.join(pycodedir(), 'xrefs'), source) if xrfile is None else xrfile
+            testf = os.path.join(pycodedir(), 'xrefs', source) if xrfile is None else xrfile
             if os.path.exists(testf):
                 t = xreftypes.get(os.path.splitext(testf)[1], None)
                 fp = testf
