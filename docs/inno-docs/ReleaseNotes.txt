@@ -3,9 +3,9 @@ PTXprint 2.2.23 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.2.23 (20 Sep 2022)
+Bug fixes and improvements in 2.2.24 (20 Sep 2022)
 
-  * Added several more external cross-reference sources (incl. TSK, UBS, BibleWorks lists)
+  * Added other external cross-reference sources (incl. TSK, UBS, BibleWorks lists)
 
   * Fixed missing bridged verse xrefs
   
