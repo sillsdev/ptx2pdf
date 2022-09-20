@@ -1,7 +1,29 @@
 PTXprint 2.2.22 Release Notes
-13 Sep 2022
+20 Sep 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.23 (20 Sep 2022)
+
+  * Added several more external cross-reference sources (incl. TSK, UBS, BibleWorks lists)
+
+  * Fixed missing bridged verse xrefs
+  
+  * Added feature (defaulted ON) to auto-tag Hebrew and Greek words with \wh and \wg
+
+  * Added warning for IB seriers illustrations (until permissions have been restored by Biblica)
+
+  * Added option for number of in-line Strongs numbers to be displayed in text
+
+  * Fixed Final reference in header one too high #734
+
+  * Fixed Creating new saved configuration resets Scope and sets password #731
+  
+  * Fixed git having no head ref and resetting style setting values
+  
+  * Fixed TeX to do something sensible if style wrongly specifies 0ht paragraph
+  
+  * Fixed resetting book choice when saving new config
 
 Bug fixes and improvements in 2.2.22 (13 Sep 2022)
 
