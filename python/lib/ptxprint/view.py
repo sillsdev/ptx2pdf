@@ -81,7 +81,7 @@ class ViewModel:
     _activekeys = {
         "document/diglotsecprj": "updateDiglotConfigList"
     }
-    _bklistcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
+    _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
                        "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -539,17 +539,20 @@ class ViewModel:
         if readConfig is None:
             readConfig = False
         if readConfig or self.configId != configName:
-            self.resetToInitValues(updatebklist=False)
             newconfig = False   # if saving new config, we don't want to change the book list
             if currprj == self.prjid:
                 if configName == "Default":
                     newconfig = self.applyConfig(None, configName, moving=True)
                 else:
                     newconfig = self.applyConfig(self.configId, configName)
+            if not newconfig:
+                self.resetToInitValues(updatebklist=False)
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
+            if newconfig:
+                self.set("t_invisiblePassword", "")
             if oldVersion >= 0 or forceConfig:
                 self.configId = configName
             if readConfig:  # project changed
@@ -939,7 +942,7 @@ class ViewModel:
     def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True):
         if setv is None:
             def setv(k, v):
-                if updatebklist or k not in self._bklistcontrols:
+                if updatebklist or k not in self._nonresetcontrols:
                     self.set(k, v, skipmissing=True)
             def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
             self.clearvars()

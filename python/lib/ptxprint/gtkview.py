@@ -963,7 +963,7 @@ class GtkViewModel(ViewModel):
         if self.picinfos is not None:
             self.picinfos.clear(self)
         for k, v in self.initValues.items():
-            if not updatebklist and k in self._bklistcontrols:
+            if not updatebklist and k in self._nonresetcontrols:
                 continue
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)
@@ -1343,7 +1343,7 @@ class GtkViewModel(ViewModel):
         if self.prjid is None or (not force and self.configLocked()):
             return
         newconfigId = self.configName()
-        if newconfigId != self.configId:
+        if newconfigId != self.configId: # only for new configs
             # self.applyConfig(self.configId, newconfigId, nobase=True)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
