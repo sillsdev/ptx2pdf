@@ -957,12 +957,14 @@ class GtkViewModel(ViewModel):
                     self.initValues["r_{}".format(r)] = v
         self.resetToInitValues()
 
-    def resetToInitValues(self):
+    def resetToInitValues(self, updatebklist=True):
         self.rtl = False
-        super().resetToInitValues()
+        super().resetToInitValues(updatebklist=updatebklist)
         if self.picinfos is not None:
             self.picinfos.clear(self)
         for k, v in self.initValues.items():
+            if not updatebklist and k in self._bklistcontrols:
+                continue
             if k.startswith("bl_") or v is not None:
                 self.set(k, v)
         self.colorTabs()
@@ -1342,7 +1344,7 @@ class GtkViewModel(ViewModel):
             return
         newconfigId = self.configName()
         if newconfigId != self.configId:
-            self.applyConfig(self.configId, newconfigId, nobase=True)
+            # self.applyConfig(self.configId, newconfigId, nobase=True)
             self.updateProjectSettings(self.prjid, configName=newconfigId, readConfig=True)
             self.configId = newconfigId
             self.updateSavedConfigList()
@@ -1466,9 +1468,9 @@ class GtkViewModel(ViewModel):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", "Default")
 
-    def loadConfig(self, config):
+    def loadConfig(self, config, **kw):
         self.updateBookList()
-        super(GtkViewModel, self).loadConfig(config)
+        super(GtkViewModel, self).loadConfig(config, **kw)
         for k, v in _sensitivities.items():
             if k.startswith("r_"):
                 continue

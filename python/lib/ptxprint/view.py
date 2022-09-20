@@ -81,6 +81,8 @@ class ViewModel:
     _activekeys = {
         "document/diglotsecprj": "updateDiglotConfigList"
     }
+    _bklistcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
+                       "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self.settings_dir = settings_dir        # ~/Paratext8Projects
@@ -146,7 +148,7 @@ class ViewModel:
         print(q2)
         return default
 
-    def resetToInitValues(self):
+    def resetToInitValues(self, updatebklist=True):
         if self.ptsettings is not None and self.ptsettings.dir == "right":
             self.set("fcb_textDirection", "rtl")
 
@@ -537,14 +539,15 @@ class ViewModel:
         if readConfig is None:
             readConfig = False
         if readConfig or self.configId != configName:
-            self.resetToInitValues()
+            self.resetToInitValues(updatebklist=False)
+            newconfig = False   # if saving new config, we don't want to change the book list
             if currprj == self.prjid:
                 if configName == "Default":
-                    self.applyConfig(None, configName, moving=True)
+                    newconfig = self.applyConfig(None, configName, moving=True)
                 else:
-                    self.applyConfig(self.configId, configName)
+                    newconfig = self.applyConfig(self.configId, configName)
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
-            oldVersion = self.readConfig(cfgname=configName)
+            oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if oldVersion >= 0 or forceConfig:
@@ -638,7 +641,7 @@ class ViewModel:
     def configLocked(self):
         return self.get("t_invisiblePassword") != ""
 
-    def readConfig(self, cfgname=None):
+    def readConfig(self, cfgname=None, updatebklist=True):
         if cfgname is None:
             cfgname = self.configName() or ""
         path = os.path.join(self.configPath(cfgname, makePath=False), "ptxprint.cfg")
@@ -650,7 +653,7 @@ class ViewModel:
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cfgname)
         self.loadingConfig = True
         self.localiseConfig(config)
-        self.loadConfig(config)
+        self.loadConfig(config, updatebklist=updatebklist)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
@@ -933,9 +936,11 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True):
         if setv is None:
-            def setv(k, v): self.set(k, v, skipmissing=True)
+            def setv(k, v):
+                if updatebklist or k not in self._bklistcontrols:
+                    self.set(k, v, skipmissing=True)
             def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
             self.clearvars()
         for sect in config.sections():
