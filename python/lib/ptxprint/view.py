@@ -1694,7 +1694,7 @@ set stack_size=32768""".format(self.configName())
         seps = self.getScriptSnippet().getrefseps(self)
         seps['verseonly'] = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
-        self.strongs = StrongsXrefs(os.path.join(pycodedir(), "strongs.xml"), 
+        self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
                     None, localfile, ptsettings, seps, ptsettings, self.get("c_strongsShowNums"),
                     self.get("fcb_textDirection") == "rtl", self.get("c_xoVerseOnly"))
         return self.strongs

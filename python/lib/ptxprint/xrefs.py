@@ -60,15 +60,15 @@ class XrefFileXrefs(BaseXrefs):
         return xrefdat
 
     def _addranges(self, results, usfm):
-        for ra in usfm.bridges.keys():
+        for ra in usfm.bridges.values():
             acc = []
             for r in ra.allrefs():
                 if r in results:
-                    acc = [a[i] + results[r][i] for i in range(min(len(a), len(results[r])))]
-                    acc.extend(results[r][min(len(a), len(results[r])):])
+                    acc = RefList(acc + results[r])
                     del results[r]
             if len(acc):
                 results[ra] = acc
+                logger.debug(f"{ra=} {acc=}")
 
     def process(self, bk, outpath, owner, usfm=None):
         results = {}
@@ -88,10 +88,11 @@ class XrefFileXrefs(BaseXrefs):
                     v.simplify()
                     if not len(v):
                         continue
+                    shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                     info = {
                         "book":         k.first.book,
                         "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else str(k.first.verse),
+                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
                         "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                     }
                     outf.write(self.template.format(**info))
@@ -257,7 +258,7 @@ class StrongsXrefs(XMLXrefs):
             lang = 'und'
         if self.btmap is not None and len(self.btmap) and lang == self.lang:
             return
-        strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "strongs_info.xml"))
+        strongsdoc = et.parse(os.path.join(os.path.dirname(__file__), "xrefs", "strongs_info.xml"))
         self.lang = lang
         if self.strongs is None:
             self.strongs = {}

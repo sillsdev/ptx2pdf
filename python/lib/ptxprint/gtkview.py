@@ -1486,6 +1486,7 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
+        self.onExtListSourceChanges(None)
 
     def colorTabs(self):
         # col = "crimson"
