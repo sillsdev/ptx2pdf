@@ -30,7 +30,7 @@ class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos[:2])
         refs = RefList.fromStr("{} {}:{}".format(*ref))
-        p.ref = refs.simplify()[0]
+        p.ref = refs.simplify(sort=False)[0]
         return p
 
     def __str__(self):

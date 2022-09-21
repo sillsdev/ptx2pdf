@@ -576,12 +576,13 @@ class RefList(list):
         currmark = nextmark
         return (res, currmark)
 
-    def simplify(self, minlength=1):
+    def simplify(self, minlength=1, sort=True):
         res = []
         lastref = Reference(None, 0, 0)
         temp = []
         count = 0
-        self.sort()
+        if sort:
+            self.sort()
         for i,r in enumerate(self):
             if r.first == r.last and r.first.verse == 0:
                 if isinstance(r, RefRange):
@@ -595,7 +596,7 @@ class RefList(list):
             if t > u:
                 print("{} inside {}".format(r, lastref))
                 continue
-            if t == n and lastref.book is not None:
+            if t == n and lastref.last.book is not None:
                 count += len(r) + 1
                 if count < minlength:
                     temp.append(r)

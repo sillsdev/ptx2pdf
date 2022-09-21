@@ -84,7 +84,6 @@ class XrefFileXrefs(BaseXrefs):
                 for k, v in sorted(results.items()):
                     if self.filters is not None:
                         v.filterBooks(self.filters)
-                    v.sort()
                     v.simplify()
                     if not len(v):
                         continue
@@ -198,7 +197,6 @@ class XMLXrefs(BaseXrefs):
                 r = e[2]
                 if self.filters is not None:
                     r.filterBooks(self.filters)
-                r.sort()
                 r.simplify()
                 rs = r.str(context=self.context, addsep=self.addsep, level=2, this=baseref.last)
                 if len(rs) and e[1] in ('backref', 'crossref'):

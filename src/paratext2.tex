@@ -794,7 +794,7 @@
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
   \setbox\colA=\vsplit255 to \availht
-  \ifdim\ht\colA>\baselineskip\xdef\p@gebotmark{\splitbotmark}\fi
+  \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
   \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
   \decr{\availht}{\colA}
@@ -1063,7 +1063,7 @@
         \ifColNotes\setbox\colA\vbox{\unvbox\colA\vfil\copy\coln@tebox}\else\setbox\colA\vbox{\unvbox\colA}\fi
       \fi
     \fi
-    \ifdim\ht\colA>\baselineskip\xdef\p@gebotmark{\splitbotmark}\fi
+    \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
   \fi
   \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin\ifb@dy\iftob@dy\else\advance\dimen1 by -\columnshift\fi\fi
   \dimen3=\ht\colA\advance\dimen3 by \dp\colA

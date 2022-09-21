@@ -253,7 +253,7 @@ class ViewModel:
                         self.switchFRTsettings()
                     else:
                         res.append(b)
-            res.simplify()
+            res.simplify(sort=False)
             return self._bookrefsBooks(res, local)
         else:
             # return self.booklist
