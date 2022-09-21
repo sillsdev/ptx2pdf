@@ -504,7 +504,7 @@ class RunJob:
             logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
             try:
                 out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
-                digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1], letterspace="\ufdd1")
+                digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1])
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None

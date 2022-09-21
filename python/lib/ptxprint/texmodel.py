@@ -1107,7 +1107,7 @@ class TexModel:
                     checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
-    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True, letterspace="\uFDD0"):
+    def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
         except ValueError:

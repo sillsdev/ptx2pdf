@@ -2263,6 +2263,8 @@
 \def\HAIRSPACE{\hskip 0.042em\intercharspace} % 1/24 em
 \def\HYPHEN{\-}
 \def\LINESEP{\break}
+\def\GOODBREAK{\penalty-\OptionalBreakPenalty}
+\def\BADBREAK{\penalty\the\badspacepenalty}
 \def\emdash{\char"2014\relax}
 %endash defined in ptx-references.tex
 
@@ -2285,6 +2287,8 @@
   \let\HAIRSPACE=\relax
   \let\HYPHEN=\relax
   \let\LINESEP=\relax
+  \let\GOODBREAK=\relax
+  \let\BADBREAK=\relax
 }
 
 \catcode"A0=12
@@ -2302,6 +2306,8 @@
 \catcode"2009=12
 \catcode"200A=12
 \catcode"2010=12
+\catcode"2063=12
+\catcode"2064=12
 \def\liter@lspecials{%
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
@@ -2321,6 +2327,8 @@
   \def\HAIRSPACE{^^^^200a}%
   \def\HYPHEN{^^^^2010}%
   \def\LINESEP{^^^^2028}%
+  \def\GOODBREAK{^^^^2063}%
+  \def\BADBREAK{^^^^2064}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -2339,6 +2347,8 @@
 \catcode"2009=\active \def^^^^2009{\pr@tect\THINSPACE}
 \catcode"200A=\active \def^^^^200a{\pr@tect\HAIRSPACE}
 \catcode"2010=\active \def^^^^2010{\pr@tect\HYPHEN}
+\catcode"2063=\active \def^^^^2063{\pr@tect\GOODBREAK}
+\catcode"2064=\active \def^^^^2064{\pr@tect\BADBREAK}
 \lccode"2010="2010
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
 \catcode`\@=12
