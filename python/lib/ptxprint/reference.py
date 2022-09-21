@@ -592,9 +592,10 @@ class RefList(list):
             n = lastref.last.nextverse()
             if lastref.first < t <= lastref.last:
                 t = n
-            if t >= u:
+            if t > u:
+                print("{} inside {}".format(r, lastref))
                 continue
-            if t == n:
+            if t == n and lastref.book is not None:
                 count += len(r) + 1
                 if count < minlength:
                     temp.append(r)
