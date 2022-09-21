@@ -165,7 +165,7 @@ class Reference:
 
     @property
     def last(self):
-        return self
+        return Reference(self.book, self.chap, 200) if self.verse == 0 else self
 
     def copy(self):
         res = self.__class__(self.book, self.chap, self.verse, self.subverse, self.mark)
@@ -268,13 +268,16 @@ class Reference:
         return maxvrs
 
     def nextverse(self):
-        r = self.last.copy()
+        r = self.first.copy()
         maxvrs = self._getmaxvrs(r.book, r.chap)
         r.verse += 1
         if r.verse > maxvrs:
             r.chap += 1
             r.verse = 1
-            if r.chap >= len(self.vrs[books[r.book]]):
+            if r.book not in books:
+                r.book = "GEN"
+                r.chap = 1
+            elif r.chap >= len(self.vrs[books[r.book]]):
                 newbk = books[r.book] + 1
                 while newbk < len(allbooks) and allbooks[newbk] not in books:
                     newbk += 1
@@ -578,6 +581,7 @@ class RefList(list):
         lastref = Reference(None, 0, 0)
         temp = []
         count = 0
+        self.sort()
         for i,r in enumerate(self):
             if r.first == r.last and r.first.verse == 0:
                 if isinstance(r, RefRange):
@@ -585,7 +589,11 @@ class RefList(list):
                 else:
                     r = self[i] = RefRange(r.first, Reference(r.first.book, r.first.chap, 200))
             t, u = (r.first, r.last)
-            n = lastref.nextverse()
+            n = lastref.last.nextverse()
+            if lastref.first < t <= lastref.last:
+                t = n
+            if t >= u:
+                continue
             if t == n:
                 count += len(r) + 1
                 if count < minlength:
@@ -602,7 +610,7 @@ class RefList(list):
                     temp = []
                 count = 0
                 res.append(r)
-            lastref = u
+            lastref = r
         self[:] = res
         return self
 
@@ -686,6 +694,14 @@ def tests():
             init += 1
         print("{} = {}".format(s, str(res)))
 
+    def testlist(s, a):
+        res = RefList.fromStr(s)
+        res.simplify()
+        base = RefList.fromStr(a)
+        if res != base:
+            raise TestException("{} simplified to {} instead of {}".format(s, res, base))
+        print("{} -> {}".format(s, res))
+
     t("GEN 1:1", "ACB", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
     t("JHN 3", "fQA", r("JHN", 3, 0))
@@ -693,9 +709,10 @@ def tests():
     t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
     testrange("LEV 13:0-4", r("LEV", 13, 0), r("LEV", 13, 4))
     t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
-    t("MAT 7:1,2;8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
+    t("MAT 7:1,2; 8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
     t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
     testrange("PSA 125:4-128:4", r("PSA", 125, 4), r("PSA", 128, 4))
+    testlist("ROM 1; MAT 3:4-11; ROM 1:3-2:7", "MAT 3:4-11; ROM 1-2:7")
 
 
 if __name__ == "__main__":
