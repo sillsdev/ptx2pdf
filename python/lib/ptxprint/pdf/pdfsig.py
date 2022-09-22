@@ -165,8 +165,11 @@ class Signature:
             self.docropmark(res, [0, self.src.h], 2)
         return res
 
-    def pagenum(self, i, maxpages):
+    def pagenum(self, i, maxpages, rtl):
         ''' returns (signum, output_pnum, output_pnum_within_sig) '''
+        if rtl:
+            tmaxpages = ((maxpages + self.pages - 1) // self.pages) * self.pages
+            i = tmaxpages - i
         if self.sigsheets == 0:
             ppsig = ((maxpages + self.pages - 1) // self.pages) * self.pages
         else:
@@ -216,7 +219,7 @@ class Signature:
         pobj = p[-1]
         pobj.Matrix = cm
 
-def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, hascrops, outfname=None):
+def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, hascrops, rtl, outfname=None):
     if isinstance(trailer, str):
         trailer = PdfReader(trailer)
     writer = PdfWriter(outfname)
@@ -228,7 +231,7 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
     merges = []
     for i, p in enumerate(pages):
         p.pid = i
-        sign, sigi, sigp = sig.pagenum(i, len(pages))
+        sign, sigi, sigp = sig.pagenum(i, len(pages), rtl)
         if sigi & 1 == 0:
             sigi += 1
         while sigi >= len(merges):
