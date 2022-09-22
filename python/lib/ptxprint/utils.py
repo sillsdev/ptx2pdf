@@ -49,12 +49,22 @@ _allbooks = ["FRT", "INT",
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
 
+def booknum(bookcode):
+    if len(bookcode):
+        if bookcode[0] in "ABC":
+            return int(bookcode[1:]) + (ord(bookcode[0])-64) * 10 + 100
+        else:
+            return int(bookcode)
+    else:
+        return 0
+
 _allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
 allbooks = [b.split("|")[0] for b in _bookslist.split()] # if b != "ZZZ|0"]
 books = dict((b.split("|")[0], i) for i, b in enumerate(_bookslist.split()) if b[-2:] != "|0")
 bookcodes = dict((b.split("|")[0], "{:02d}".format(i+1)) for i, b in enumerate(_bookslist.split()[:99]) if b[-2:] != "|0")
 bookcodes.update(_endBkCodes)
+booknumbers = {k: booknum(v) for k, v in bookcodes.items()}
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 

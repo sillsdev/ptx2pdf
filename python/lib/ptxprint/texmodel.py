@@ -11,7 +11,7 @@ from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
                             chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData, pycodedir, \
-                            runChanges
+                            runChanges, booknumbers
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -874,9 +874,9 @@ class TexModel:
 
     def _getinsert(self, bk):
         res = []
-        bki = bookcodes.get(bk, 200)
+        bki = booknumbers.get(bk, 200)
         for b, i in self._bookinserts:
-            r = [bookcodes[s] for s in b.split("-")]
+            r = [booknumbers[s] for s in b.split("-")]
             if i not in self.inserts and r[0] <= bki <= r[1]:
                 self.inserts[i] = bk
                 t = self._doperiph(i)

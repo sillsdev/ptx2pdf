@@ -3680,7 +3680,11 @@ class GtkViewModel(ViewModel):
                 return [x, x[:-1]]
             else:
                 return [x]
-        mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
+        try:
+            mrkrset = self.get_usfms().get_markers(self.getBooks()) if btn.get_active() else set()
+        except SyntaxError as e:
+            self.doError(_("USFM syntax error"), secondary=_("Syntax error: {}").format(e))
+            return
         mrkrset = set(sum((widen(x) for x in mrkrset), []))
         logger.debug(f"{self.getBooks()=}  {mrkrset=}")
         self.styleEditor.add_filter(btn.get_active(), mrkrset)
