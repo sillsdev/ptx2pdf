@@ -154,6 +154,18 @@ before the block of renderings with their Strong's H and G numbers.
 at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"
 ```
 
+## Suppress introductory material for *some* books, but keep it for others
+
+I would like most intro material (stuff before \c 1) to print. But in a few back matter books, 
+there is intro material which is fine for apps, but not needed in a printed book.
+
+Here is the trick to suppress these in specific books. Just add this line to your changes.txt 
+file and replace BAK,XXA,XXE with whichever books you want the intro material stripped from.
+
+```perl
+at BAK,XXA,XXE "\\i[so]\d?\s.+\r?\n" > ""
+```
+
 # TeX Snippets
 The snippets in this section go into the ptxprint-mods.tex file.
 
