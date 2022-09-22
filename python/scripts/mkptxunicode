@@ -10,7 +10,7 @@ args = parser.parse_args()
 classes = {
     "Vir":  ("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"]),
     "CM":   ("gc", ["Mc", "Mn"]),
-    "Num":  ("bc", ["ES", "EN", "ET", "AN", "CS", "NSM", "BN"]),
+    "Num":  ("bc", ["ES", "EN", "ET", "AN", "CS", "BN"]),
 }
 
 pairs = [ (0, 0), ("\\KclassCM", 0), ("\\KclassNum", 0), (0, "\\KclassNum"),
