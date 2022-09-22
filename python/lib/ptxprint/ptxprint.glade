@@ -15146,7 +15146,7 @@ enable this option.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <child>
-                                          <!-- n-columns=3 n-rows=4 -->
+                                          <!-- n-columns=4 n-rows=4 -->
                                           <object class="GtkGrid" id="gr_extXrefs">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
@@ -15181,7 +15181,7 @@ for Books in:</property>
                                                 <property name="xalign">1</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">0</property>
+                                                <property name="left-attach">1</property>
                                                 <property name="top-attach">2</property>
                                               </packing>
                                             </child>
@@ -15216,13 +15216,12 @@ the Basic tab will be included.</property>
                                                 <property name="active-id">all</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">1</property>
+                                                <property name="left-attach">2</property>
                                                 <property name="top-attach">2</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="l_colXRside1">
-                                                <property name="width-request">94</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">end</property>
@@ -15230,7 +15229,7 @@ the Basic tab will be included.</property>
                                                 <property name="xalign">1</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">0</property>
+                                                <property name="left-attach">1</property>
                                                 <property name="top-attach">1</property>
                                               </packing>
                                             </child>
@@ -15260,7 +15259,7 @@ which should match the \toc3 markers.</property>
                                                 <signal name="changed" handler="onExtListSourceChanges" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">1</property>
+                                                <property name="left-attach">2</property>
                                                 <property name="top-attach">1</property>
                                               </packing>
                                             </child>
@@ -15276,7 +15275,7 @@ which should match the \toc3 markers.</property>
                                                 <signal name="clicked" handler="onSelectXrFileClicked" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
+                                                <property name="left-attach">3</property>
                                                 <property name="top-attach">1</property>
                                               </packing>
                                             </child>
@@ -15452,7 +15451,7 @@ Search Google for "ptx2pdf/xrefs.md"</property>
                                               <packing>
                                                 <property name="left-attach">0</property>
                                                 <property name="top-attach">0</property>
-                                                <property name="width">3</property>
+                                                <property name="width">4</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -15600,7 +15599,7 @@ Biblical terms renderings.</property>
                                               <packing>
                                                 <property name="left-attach">0</property>
                                                 <property name="top-attach">3</property>
-                                                <property name="width">3</property>
+                                                <property name="width">4</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -15610,8 +15609,9 @@ Biblical terms renderings.</property>
                                                 <property name="focus-on-click">False</property>
                                                 <property name="receives-default">True</property>
                                                 <property name="tooltip-text">External Cross-Reference List Source Description</property>
-                                                <property name="halign">end</property>
+                                                <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="margin-start">12</property>
                                                 <property name="relief">none</property>
                                                 <child>
                                                   <object class="GtkImage" id="icon_infoViewEdit1">
@@ -15623,9 +15623,23 @@ Biblical terms renderings.</property>
                                                 </child>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="label" translatable="yes">	</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
                                                 <property name="top-attach">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                           <packing>
@@ -26309,7 +26323,7 @@ Shortcut: F5</property>
 Focus:</property>
                           </object>
                           <packing>
-                            <property name="left-attach">0</property>
+                            <property name="left-attach">2</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26341,7 +26355,7 @@ in the list to be printed.)</property>
                             </child>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
+                            <property name="left-attach">3</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26368,7 +26382,7 @@ Shortcut: Ctrl-G</property>
                             <accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">1</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -26522,7 +26536,7 @@ on the Peripherals tab. For example:
                             </child>
                           </object>
                           <packing>
-                            <property name="left-attach">2</property>
+                            <property name="left-attach">0</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
