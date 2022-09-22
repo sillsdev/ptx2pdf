@@ -9,6 +9,7 @@ SYNOPSIS:
     from palaso.unicode.ucd import get_ucd, norm_ucd
     print(get_ucd(0x0041, 'scx'))
     nfc = normal_ucd(astring, "NFC")
+    print("".join(find_ucd(bc', 'cs')))
 
 If you want to use your own data file (perhaps the module data is stale) the use
 the object interface:
@@ -187,6 +188,17 @@ class UCD(list):
             return v[key].replace("#", "{:04X}".format(cp))
         return v[key] if noenum else self.enumstr(key, v[key])
 
+    def findall(self, key, val):
+        """ Returns a list of all the codepoints whose key value is value """
+        if key in self.enums:
+            try:
+                enumval = self.enums[key].index(val)
+            except ValueError:
+                return []
+        else:
+            enumval = val
+        return [cp for cp in range(len(self)) if self[cp] is not None and self[cp][key] == enumval]
+
     def enumstr(self, key, v):
         """ Returns the string for an enum value given enum name and value """
         if key in self.enums:
@@ -326,6 +338,10 @@ def get_ucd(cp, key):
         return lcd.get(cp, key)
     except KeyError:
         return ""
+
+def find_ucd(key, val):
+    lcd = _Singleton()(UCD)
+    return lcd.findall(key, val)
 
 def normal_ucd(txt, mode="NFC"):
     return _Singleton()(UCD).normalize(txt, mode)

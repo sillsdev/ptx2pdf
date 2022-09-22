@@ -169,7 +169,7 @@ class Signature:
         ''' returns (signum, output_pnum, output_pnum_within_sig) '''
         if rtl:
             tmaxpages = ((maxpages + self.pages - 1) // self.pages) * self.pages
-            i = tmaxpages - i
+            i = tmaxpages - 1 - i
         if self.sigsheets == 0:
             ppsig = ((maxpages + self.pages - 1) // self.pages) * self.pages
         else:
@@ -198,8 +198,8 @@ class Signature:
         cstr = " q {:.2f} w ".format(w) + ("{:.2f} " * 6).format(*ccm) + " cm " + cropstr + " Q"
         self.crops.append(cstr)
 
-    def appendpage(self, i, page, p1, p2, maxpages):
-        sigid, sigsheet, signum = self.pagenum(i, maxpages)
+    def appendpage(self, i, page, p1, p2, maxpages, rtl):
+        sigid, sigsheet, signum = self.pagenum(i, maxpages, rtl)
         # print(f"{i=} {sigid=} {sigsheet=} {signum=}")
         cm = self.cm(signum)
         pnum = layouts[self.pages][signum].page
@@ -240,7 +240,7 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
             m.subpages = []
             m.crops = []
         p1, p2 = merges[sigi-1:sigi+1]
-        sig.appendpage(i, p, p1, p2, len(pages))
+        sig.appendpage(i, p, p1, p2, len(pages), rtl)
     pagemap = {}
     for m in merges:
         m.mbox = sig.mbox
