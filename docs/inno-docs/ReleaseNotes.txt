@@ -1,7 +1,25 @@
 PTXprint 2.2.24 Release Notes
-20 Sep 2022
+22 Sep 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.25 (22 Sep 2022)
+
+  * Added RTL support for booklet pagination on finishing tab
+
+  * Make auto-tag Hebrew and Greek words more robust
+  
+  * Fixed various module bugs
+  
+  * Don't insert inter-char space between numbers
+  
+  * Minor UI tweaks on View+Edit and Notes+Refs tabs #733
+  
+  * Fixed reflist simplification with full chapter references
+  
+  * Fixed reference simplify
+  
+  * Added spaces and documented them (docs/documentation/special_chars.md)
 
 Bug fixes and improvements in 2.2.24 (20 Sep 2022)
 
