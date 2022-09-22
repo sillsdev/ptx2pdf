@@ -5,6 +5,7 @@ This document provides links to various other key documents
 ## Documentation
 
 - [documentation/ptx2pdf-faq.md](documentation/ptx2pdf-faq.md)
+- [documentation/snippets.md](documentation/snippets.md)
 - [documentation/figures.md](documentation/figures.md)
 - [documentation/SideBars.md](documentation/SideBars.md)
 - [documentation/Categories.md](documentation/Categories.md)
