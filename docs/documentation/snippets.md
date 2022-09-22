@@ -308,6 +308,29 @@ test to see if we have a bridged verse. First split the printable verse number
 into its components (versefrom and verseto). Then if the two do not compare the
 same then cancel the cancelling of verse printing. I.e. print the verse.
 
+## Avoid two marginal verses crashing into each other
+
+It is possible to have verse numbers printed in a left of text margin. This is 
+referred to as Marginal verses.
+
+Sometimes, where there is a short verse, two verse numbers appear in the same
+line. This causes a crash between the two marginal verse numbers. One way around
+this is to tell the ptx macros to bridge two verses. This can be done using, for
+example:
+
+```tex
+\bridgeVerses ROM3.17-18.
+
+```
+
+The structure of this command is very precise. The book must be the 3 letter
+book id. The chapter must be included even for single chapter books. The
+separator between the chapter and verse must be a period. The number after the
+hyphen must be the next verse after the first verse and there must be a final
+period to complete the specification. Apart from all that, this is a very
+convenient way to bridge verses without having to edit the source text. It may
+also be used not in a marginal verses context.
+
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
 possible by calling an external script file (.py) and may be enabled by 

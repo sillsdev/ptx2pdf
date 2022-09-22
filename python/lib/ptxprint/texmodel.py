@@ -1539,9 +1539,13 @@ class TexModel:
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wh\s*)([\u0590-\u05FF\uFB1D-\uFB4F]+)", flags=regex.M), r"\\+wh \1\\+wh*"))
+                self.localChanges.append((None, regex.compile(r"(?<!\\wh\s[^\\]*)(\p{sc=Hebr}.*?)"
+                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Hebr}\p{sc=Zyyy}\p{sc=Zinh}]))", 
+                                          flags=regex.M), r"\\+wh \1\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wg\s*)([\u0370-\u03FF\u1F00-\u1FFF]+)", flags=regex.M), r"\\+wg \1\\+wg*"))
+                self.localChanges.append((None, regex.compile(r"(?<!\\wg\s[^\\]*)(\p{sc=Grek}.*?)"
+                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Grek}\p{sc=Zyyy}\p{sc=Zinh}]))", 
+                                          flags=regex.M), r"\\+wg \1\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
