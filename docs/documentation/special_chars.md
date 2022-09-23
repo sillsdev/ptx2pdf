@@ -30,8 +30,8 @@ encoding level.
 Unicode has a number of whitespace characters. Within TeX these are resolved to
 a combination of a penalty (or no penalty) and an hskip of some glue.
 
-| Character | Penalty | Skip                      | Defined     |
-|-----------|---------|---------------------------|-------------|
+| Character | Penalty | Skip                      | Defined             |
+|-----------|---------|---------------------------|---------------------|
 | U+00A0    | nobreak | \\space                   | NBSP                |
 | U+2000    | bad     | \\space                   | NQUAD               |
 | U+2001    | bad     | 1em plus .2em minus .2em  | MQUAD               |
@@ -51,12 +51,12 @@ a combination of a penalty (or no penalty) and an hskip of some glue.
 
 The various penalties are defined as:
 
-| Penalty | Defined             | Default Value |
-|---------|---------------------|--------|
-| nobreak |                     | 10000  |
-| bad     | \\the\\badspacepenalty | 50  |
-| good    | -\\OptionalBreakPenalty | 100 |
-| break   |                     | -10000 |
+| Penalty | Defined                 | Default Value |
+|---------|-------------------------|---------------|
+| nobreak |                         | 10000         |
+| bad     | \\the\\badspacepenalty  | 100           |
+| good    | -\\OptionalBreakPenalty | 300           |
+| break   |                         | -10000        |
 
 To output a space with a given linebreak penalty, output a penalty character
 followed by a spacing character (with no penalty).

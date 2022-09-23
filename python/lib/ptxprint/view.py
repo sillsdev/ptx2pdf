@@ -1332,7 +1332,7 @@ class ViewModel:
             cfgchanges['btn_chooseBibleModule'] = (Path("${prjdir}/"+os.path.basename(bk)), "moduleFile")
             cfgchanges['lb_bibleModule'] = os.path.basename(bk)
             usfms = self.get_usfms()
-            mod = Module(os.path.join(fpath, bk), usfms=usfms)
+            mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
         for bk in books:
             fname = self.getBookFilename(bk, prjid)
