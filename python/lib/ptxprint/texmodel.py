@@ -894,14 +894,17 @@ class TexModel:
             p = Path(f, self.printer)
             outp = str(p).replace("/", "_")
             outpath = os.path.join(file_dir, outp)
-            use = outp
+            sanitiseme = False
             if os.path.exists(outpath):
                 ostat = os.stat(outpath)
                 fstat = os.stat(f)
-                if fstat.st_mtime < ostat.st_mtime:
-                    use = f
-            if use != f:
-                if not sanitise(f.as_posix(), Path(outpath).as_posix()):
+                if fstat.st_mtime > ostat.st_mtime:
+                    sanitiseme = True
+            else:
+                sanitiseme = True
+            use = outpath
+            if sanitiseme:
+                if not sanitise(f.as_posix(), Path(outpath).as_posix(), forced=False):
                     use = f
             outps.append(use)
         self.dict[restag] = "\n".join('\\includepdf{{{}}}'.format(Path(s).as_posix()) for s in outps)
