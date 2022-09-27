@@ -1694,6 +1694,15 @@ class GtkViewModel(ViewModel):
                                       usepiclists=usepiclists)
         return self.picListView.getinfo()
 
+    def updatePicList(self, bks=None, priority="Both", output=False):
+        super().updatePicList(bks=bks, priority=priority, output=output)
+        if self.picinfos is None:
+            return
+        filtered = self.get("c_filterPicList")
+        if bks is None and filtered:
+            bks = self.getBooks()
+        self.picinfos.updateView(self.picListView, bks, filtered=filtered)
+
     def updatePicChecks(self, src):
         self.picChecksView.loadpic(src)
 

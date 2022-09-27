@@ -1049,24 +1049,20 @@ class ViewModel:
             self.styleEditor.output_diffile(outf)
 
     def updatePicList(self, bks=None, priority="Both", output=False):
-        if self.picinfos is None:
-            return
-        filtered = self.get("c_filterPicList")
-        if bks is None and filtered:
-            bks = self.getBooks()
-        self.picinfos.updateView(self.picListView, bks, filtered=filtered)
+        return
 
     def generatePicList(self, procbks=None, doclear=True):
+        ab = self.getAllBooks()
         if procbks is None:
-            procbks = self.getAllBooks()
+            procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
         mrgCptn = self.get("c_diglot2captions")
         if self.diglotView is None:
-            PicInfoUpdateProject(self, procbks, procbks, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+            PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
         else:
             mode = self.get("fcb_diglotPicListSources")
-            PicInfoUpdateProject(self, procbks, procbks, self.picinfos,
+            PicInfoUpdateProject(self, procbks, ab, self.picinfos,
                                  suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
             diallbooks = self.diglotView.getAllBooks()
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
