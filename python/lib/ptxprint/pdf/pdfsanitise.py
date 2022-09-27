@@ -15,6 +15,7 @@ def ensure_contents(trailer):
             c = PdfDict(indirect=True)
             c._stream = ""
             c.Length = 0
+            p.Contents = c
     return changed
 
 def sanitise(trailer, opath=None, force=True):

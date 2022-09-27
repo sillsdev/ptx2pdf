@@ -898,13 +898,13 @@ class TexModel:
             if os.path.exists(outpath):
                 ostat = os.stat(outpath)
                 fstat = os.stat(f)
-                if fstat.mtime < ostat.mtime:
+                if fstat.st_mtime < ostat.st_mtime:
                     use = f
             if use != f:
-                if not sanitise(f, outpath):
+                if not sanitise(f.as_posix(), Path(outpath).as_posix()):
                     use = f
             outps.append(use)
-        self.dict[restag] = "\n".join('\\includepdf{{{}}})'.format(Path(s).as_posix()) for s in outps)
+        self.dict[restag] = "\n".join('\\includepdf{{{}}}'.format(Path(s).as_posix()) for s in outps)
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
@@ -919,11 +919,11 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
-        for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontMatter_'),
-                  ('BackPDFs', 'c_inclBackMatter', 'backMatter_')):
+        for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontincludes_'),
+                  ('BackPDFs', 'c_inclBackMatter', 'backincludes_')):
             files = getattr(self.printer, a[0], None)
             if files is not None and self.printer.get(a[1]):
-                self.prep_pdfs(a[0], restag=a[2], file_dir=filedir)
+                self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
         with universalopen(os.path.join(pycodedir(), template)) as inf:

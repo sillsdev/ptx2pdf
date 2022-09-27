@@ -612,7 +612,7 @@ class Usfm:
                 for p in predels:
                     try:
                         p.parent.remove(p)
-                    except ValueError:
+                    except (AttributeError, ValueError):
                         pass
                 predels = [ell] if ell is not None else []
                 st = el.meta.get("styletype", "") 
