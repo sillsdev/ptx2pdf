@@ -177,16 +177,24 @@ will apply the ```\hangversenumber``` only for the left column.
 
 The font-switching code requires that ```\diglottrue``` is specified before 
 any style sheets are loaded. 
-If ```\diglottrue``` has been specified, then any usfm code text is set in the left column (L) until a ```\righttext``` is encountered. 
-If ```\diglotfalse``` is in force, then the non-diglot parameters will take effect, e.g.:
 ```
-\TitleColumns=1 
-\IntroColumns=1  
-\BodyColumns=2
+\monoglotcolumn L
 ```
-A .usfm file cannot (easily) redefine those values (as numbers are not treated as numbers within the .usfm code, otherwise ```\s2``` would be treated by XeTeX as ```\s``` followed by 
-parameter ```2```. However, ```\singlecolumn```, ```\doublecolumns``` and ```\diglotcolumns``` will probably work. These are internal commands and their use hasn't been tested recently. It may be 
-necesary to specify \diglotfalse before switching.
+This command performs all the font switching etc. that might be expected for a diglot text, but *without* 
+any of the column switching code being activated.  The expectation is that this
+will be used in front-matter and back-matter books, etc. where  a single or dual-column layout 
+is best but font (and stylesheet) switching is still desired. Although this switches on
+`\diglottrue`, so that font switching functions correctly, it should be used in
+a USFM file that was started in single or dual column mode (`\singlecolumn
+\diglotfalse`). It will probably cause unpredictable results if used in a normal diglot
+(or polyglot) file.
+
+Hybrid files, which contain a mixture of diglot and monoglot (including
+serial-monoglot text as with `\monoglotcolumn`) material are possible, but 
+they are basically untested.
+
+`\diglotfalse\singlecolumn` and `\diglotfalse\doublecolumns` will switch to monoglot text, 
+and `\diglotcolumns` will switch to diglot text.
 
 
 ### Other settings
