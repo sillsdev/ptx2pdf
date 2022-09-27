@@ -1,6 +1,5 @@
 import configparser, re, os, traceback, sys
 from shutil import copyfile
-from pathlib import Path
 from functools import reduce
 from inspect import signature
 import regex
@@ -11,12 +10,13 @@ from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, coltoonemax, \
                             chaps, books, bookcodes, allbooks, oneChbooks, asfloat, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers
+                            runChanges, booknumbers, Path
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
 from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
 from ptxprint.xrefs import Xrefs
+from ptxprint.pdf.pdfsanitise import sanitise
 import logging
 
 logger = logging.getLogger(__name__)
@@ -884,6 +884,28 @@ class TexModel:
                     res.append(t)
         return "\n".join(res)
 
+    def prep_pdfs(self, files, restag="frontIncludes_", file_dir="."):
+        # for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
+        #  and w.FrontPDFs != 'None') else ""),
+        if files is None:
+            return
+        outps = []
+        for f in files:
+            p = Path(f, self.printer)
+            outp = str(p).replace("/", "_")
+            outpath = os.path.join(file_dir, outp)
+            use = outp
+            if os.path.exists(outpath):
+                ostat = os.stat(outpath)
+                fstat = os.stat(f)
+                if fstat.mtime < ostat.mtime:
+                    use = f
+            if use != f:
+                if not sanitise(f, outpath):
+                    use = f
+            outps.append(use)
+        self.dict[restag] = "\n".join('\\includepdf{{{}}})'.format(Path(s).as_posix()) for s in outps)
+
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -897,6 +919,13 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
+        for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontMatter_'),
+                  ('BackPDFs', 'c_inclBackMatter', 'backMatter_')):
+            files = getattr(self.printer, a[0], None)
+            if files is not None and self.printer.get(a[1]):
+                self.prep_pdfs(a[0], restag=a[2], file_dir=filedir)
+            else:
+                self.dict[a[2]] = ""
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):

@@ -515,6 +515,8 @@ class Path(pathlib.Path):
         return res
 
     def __new__(cls, txt, view=None):
+        if not isinstance(txt, str):
+            return txt
         if view is None or not txt.startswith("${"):
             return pathlib.Path.__new__(cls, txt)
         varlib = cls.create_varlib(view)
