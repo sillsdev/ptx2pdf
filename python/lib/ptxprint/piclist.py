@@ -361,11 +361,11 @@ class PicInfo(dict):
         isperiph = bk in TexModel._peripheralBooks
         with universalopen(fname) as inf:
             dat = inf.read()
-            blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
-            for c, t in zip(blocks[0::2], blocks[1::2]):
-                if isperiph:
-                    self._readpics(dat, bk, suffix, c, None, isperiph, parent)
-                else:
+            if isperiph:
+                self._readpics(dat, bk, suffix, 0, None, isperiph, parent)
+            else:
+                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+                for c, t in zip(blocks[0::2], blocks[1::2]):
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]

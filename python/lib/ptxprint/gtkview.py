@@ -1694,14 +1694,6 @@ class GtkViewModel(ViewModel):
                                       usepiclists=usepiclists)
         return self.picListView.getinfo()
 
-    def updatePicList(self, bks=None, priority="Both", output=False):
-        if self.picinfos is None:
-            return
-        filtered = self.get("c_filterPicList")
-        if bks is None and filtered:
-            bks = self.getBooks()
-        self.picinfos.updateView(self.picListView, bks, filtered=filtered)
-
     def updatePicChecks(self, src):
         self.picChecksView.loadpic(src)
 
@@ -1754,23 +1746,7 @@ class GtkViewModel(ViewModel):
             else:
                 procbks = bks
                 doclear = False
-            rnd = self.get("c_randomPicPosn")
-            cols = 2 if self.get("c_doublecolumn") else 1
-            mrgCptn = self.get("c_diglot2captions")
-            if self.diglotView is None:
-                PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
-            else:
-                mode = self.get("fcb_diglotPicListSources")
-                PicInfoUpdateProject(self, procbks, ab, self.picinfos,
-                                     suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
-                diallbooks = self.diglotView.getAllBooks()
-                PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
-                                     self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
-                if mode == "pri":
-                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn)
-                elif mode == "sec":
-                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn)
-            self.updatePicList(procbks)
+            self.generatePicList(procbks=procbks, doclear=doclear)
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)

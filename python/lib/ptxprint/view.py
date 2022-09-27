@@ -7,7 +7,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
                             get_gitver, getcaller, runChanges
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
-from ptxprint.piclist import PicInfo, PicChecks
+from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from ptxprint.pdfrw.pdfreader import PdfReader
@@ -1047,6 +1047,35 @@ class ViewModel:
         fname = os.path.join(self.configPath(self.configName(), makePath=True), "ptxprint.sty")
         with open(fname, "w", encoding="Utf-8") as outf:
             self.styleEditor.output_diffile(outf)
+
+    def updatePicList(self, bks=None, priority="Both", output=False):
+        if self.picinfos is None:
+            return
+        filtered = self.get("c_filterPicList")
+        if bks is None and filtered:
+            bks = self.getBooks()
+        self.picinfos.updateView(self.picListView, bks, filtered=filtered)
+
+    def generatePicList(self, procbks=None, doclear=True):
+        if procbks is None:
+            procbks = self.getAllBooks()
+        rnd = self.get("c_randomPicPosn")
+        cols = 2 if self.get("c_doublecolumn") else 1
+        mrgCptn = self.get("c_diglot2captions")
+        if self.diglotView is None:
+            PicInfoUpdateProject(self, procbks, procbks, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+        else:
+            mode = self.get("fcb_diglotPicListSources")
+            PicInfoUpdateProject(self, procbks, procbks, self.picinfos,
+                                 suffix="L", random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
+            diallbooks = self.diglotView.getAllBooks()
+            PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
+                                 self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
+            if mode == "pri":
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn)
+            elif mode == "sec":
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn)
+        self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
         if not force and self.configLocked():
