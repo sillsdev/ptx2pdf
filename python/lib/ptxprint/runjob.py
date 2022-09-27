@@ -723,13 +723,13 @@ class RunJob:
                 break
 
         if not self.noview and not self.args.testing and not self.res:
+            import pdb; pdb.set_trace()
             self.printer.incrementProgress()
             tmppdf = self.procpdfFile(outfname, pdffile, info)
-            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-q", "-o", tmppdf]
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
-            if self.args.extras & 7:
-                cmd += ["-" + ("v" * (self.args.extras & 7))]
+            cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
             logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
@@ -799,6 +799,7 @@ class RunJob:
             z = info.printer.createSettingsZip(zio)
             z.close()
             if outpdf is None:
+                import pdb; pdb.set_trace()
                 outpdf = PdfWriter(None, trailer=PdfReader(opath))
             if outpdf.trailer.Root.PieceInfo is None:
                 p = PdfDict()

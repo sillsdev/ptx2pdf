@@ -1149,7 +1149,7 @@
   \trace{D}{digl@tc@ntentlist now:(\digl@tc@ntentlist)}%
 }
 
-\def\swap@diglot#1{% Because we need to set things appropriately.
+\def\setside#1{
  %Swapping fonts isn't actually needed, as that's done elsewhere, but do need to set
  %baselineskip and other things
  \trace{d}{swap@diglot #1 (\show@dstat)}%
@@ -1172,8 +1172,6 @@
  \s@tstyst@k
  \trace{D}{mcstack set to '\mcstack', styst@k set to '\styst@k', m@rker to '\m@rker'}%
  \x@\stystacksplit\styst@k+\E
- \x@\let\x@\w@dth\csname column#1width\endcsname
- \global\hsize=\w@dth\relax
  \x@\global\x@\let\x@\ch@pter\csname @ch@pter\g@tdstat\endcsname
  \x@\global\x@\let\x@\ch@ptert@xt\csname @ch@ptert@xt\g@tdstat\endcsname
  \x@\global\x@\let\x@\v@rse\csname @v@rse\g@tdstat\endcsname
@@ -1197,6 +1195,13 @@
  \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
  \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi
 }%
+
+
+\def\swap@diglot#1{% Because we need to set things appropriately.
+ \setside#1
+ \x@\let\x@\w@dth\csname column#1width\endcsname
+ \global\hsize=\w@dth\relax
+}
 
 
 %\output={\diglotLeft}

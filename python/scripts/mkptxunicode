@@ -8,22 +8,30 @@ parser.add_argument("outfile",nargs="?",default="ptx-unicode.tex",help="Output T
 args = parser.parse_args()
 
 classes = {
-    "Vir":  ("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"]),
-    "CM":   ("gc", ["Mc", "Mn"]),
-    "Num":  ("bc", ["ES", "EN", "ET", "AN", "CS", "BN"]),
+    "Vir":  [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
+    "CM":   [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
+    "Num":  [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
 }
 
 pairs = [ (0, 0), ("\\KclassCM", 0), ("\\KclassNum", 0), (0, "\\KclassNum"),
           ("\\KclassCM", "\\KclassNum") ]
 
+extras = {
+    0x0E33: 'CM'
+}
+
 classdat = {}
-for k, v in classes.items():
+for k, b in classes.items():
     dat = set()
-    for val in v[1]:
-        dat.update(find_ucd(v[0], val))
+    for v in b:
+        for val in v[1]:
+            dat.update(find_ucd(v[0], val))
     if "Vir" in classdat:
         dat -= classdat["Vir"]
     classdat[k] = dat
+
+for k, v in extras.items():
+    classdat[v].add(k)
 
 with open(args.outfile, "w", encoding="utf-8") as outf:
     outf.write("\\XeTeXinterchartokenstate=1\n")
