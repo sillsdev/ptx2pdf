@@ -120,7 +120,15 @@ class Reference:
     def __contains__(self, o):
         if isinstance(o, RefRange):
             return self in o
-        return self == o        
+        if self.book != o.book:
+            return False
+        if self.chap != 0 and self.verse != 0 and self != o:
+            return False
+        if self.chap != 0 and self.chap != o.chap:
+            return False
+        if self.verse != 0 and self.verse != o.verse:
+            return False
+        return True
 
     def __lt__(self, o):
         if o is None:
