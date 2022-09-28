@@ -1056,12 +1056,18 @@
   \fi
 }
 
+\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\diglotfalse\else\x@\monoglotcolumn\x@{\tmp}\fi}
+
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
-  \endlastp@rstyle{p}%
-  \diglottrue
-  \@setside{#1}%
-  \@@switchstyles{#1}%
+  \ifcsname #1isDiglotColumn\endcsname % 
+    \endlastp@rstyle{p}%
+    \diglottrue
+    \@setside{#1}%
+    \@@switchstyles{#1}%
+  \else
+    \errmessage{zglot must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
+  \fi
 }
 
 \let\LisDiglotColumn\empty

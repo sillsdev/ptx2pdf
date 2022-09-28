@@ -175,19 +175,25 @@ will apply the ```\hangversenumber``` only for the left column.
 
 ### Mixing diglot and monoglot text
 
-The font-switching code requires that ```\diglottrue``` is specified before 
-any style sheets are loaded. 
+The font-switching code requires that ```\diglottrue``` must be specified before 
+any style sheets are loaded. However, it is now possible to have
+language-switching without the diglot layout:
+
 ```
+\zglot|L\*
 \monoglotcolumn L
 ```
-This command performs all the font switching etc. that might be expected for a diglot text, but *without* 
-any of the column switching code being activated.  The expectation is that this
+These (equivalent) commands performs all the font switching etc. that might be expected for a diglot text, but *without* 
+any of the column switching code being activated. 
+The shorter milestone-like format is preferred as it is USFM-compliant, but the longer form works.
+The expectation is that this
 will be used in front-matter and back-matter books, etc. where  a single or dual-column layout 
-is best but font (and stylesheet) switching is still desired. Although this switches on
-`\diglottrue`, so that font switching functions correctly, it should be used in
-a USFM file that was started in single or dual column mode (`\singlecolumn
-\diglotfalse`). It will probably cause unpredictable results if used in a normal diglot
-(or polyglot) file.
+is best but font (and stylesheet) switching is still desired. 
+
+Although this switches on `\diglottrue`, so that font switching functions
+correctly, it should be used in a USFM file that was started in single or dual
+column mode (`\singlecolumn \diglotfalse`). It will probably cause
+unpredictable results if used in a normal diglot (or polyglot) file.
 
 Hybrid files, which contain a mixture of diglot and monoglot (including
 serial-monoglot text as with `\monoglotcolumn`) material are possible, but 
