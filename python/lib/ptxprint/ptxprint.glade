@@ -13516,7 +13516,7 @@ Also settings for special books.</property>
                     <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkBox" id="tb_notesrefs">
+                      <object class="GtkBox">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -18858,7 +18858,6 @@ odd/right-hand page of a spread.</property>
                                 <property name="halign">start</property>
                                 <property name="hexpand">False</property>
                                 <property name="vexpand">False</property>
-                                <property name="resize-mode">immediate</property>
                                 <signal name="change-current-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="select-page" handler="onPLpageChanged" swapped="no"/>
                                 <signal name="switch-page" handler="onPLpageChanged" swapped="no"/>
