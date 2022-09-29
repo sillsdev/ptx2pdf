@@ -316,13 +316,17 @@
 }
 
 \newif\iftoplevelp@r
+\newif\ifdebugthispar
+\newif\ifdebugthisparearly
 \def\endlastp@rstyle#1{%
+ \ifdebugthisparearly\global\debugthisparearlyfalse\showlists\fi
  \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the  style active when the last paragraph ended.
  \global\let\spaceafterp@ram\p@ram
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
+ \ifdebugthispar\global\debugthisparfalse\showlists\fi
  \trace{s}{endlastp@rstyle #1 stack=\mcstack, stys@k:\styst@k}%
  \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
  \toplevelp@rtrue
