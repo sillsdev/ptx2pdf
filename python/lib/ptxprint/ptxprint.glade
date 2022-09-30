@@ -10565,12 +10565,11 @@ the Full View mode.</property>
                                 <property name="margin-end">3</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="column-spacing">2</property>
+                                <property name="column-spacing">3</property>
                                 <property name="row-homogeneous">True</property>
                                 <child>
                                   <object class="GtkSpinButton" id="s_headerposition">
                                     <property name="name">Header spacing</property>
-                                    <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This setting determines the vertical positioning
@@ -10582,7 +10581,6 @@ above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
-                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">1.00</property>
                                     <property name="xalign">1</property>
@@ -10614,7 +10612,6 @@ space between the end of the text and the footer line.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
-                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0.80</property>
                                     <property name="xalign">1</property>
@@ -10689,6 +10686,7 @@ set the Binding Gutter above.</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">12.0</property>
+                                    <property name="xalign">1</property>
                                     <property name="caps-lock-warning">False</property>
                                     <property name="progress-pulse-step">0</property>
                                     <property name="placeholder-text" translatable="yes">0.0</property>
@@ -10704,14 +10702,13 @@ set the Binding Gutter above.</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_rhruleposition">
                                     <property name="name">Space between horizontal rule and main text area</property>
-                                    <property name="height-request">35</property>
                                     <property name="can-focus">True</property>
                                     <property name="no-show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
@@ -10724,7 +10721,6 @@ above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
-                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0</property>
                                     <property name="xalign">1</property>
@@ -10742,14 +10738,13 @@ above the base line of the first line of the body text.</property>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkSpinButton" id="s_topmargin">
                                     <property name="name">Top margin</property>
-                                    <property name="height-request">35</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
@@ -11165,20 +11160,6 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="height-request">23</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-top">10</property>
-                                    <property name="label" translatable="yes"> </property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_noinkinmargin">
                                     <property name="label" translatable="yes">Footer in Margin</property>
                                     <property name="name">Place footer within the margin</property>
@@ -11211,13 +11192,13 @@ need to activate this compatibility option.</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_footer2edge">
-                                        <property name="width-request">55</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
 to the bottom of the footer area.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin-top">6</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">3</property>
                                         <property name="label" translatable="yes">8.5mm</property>
                                         <property name="justify">center</property>
                                         <attributes>
@@ -11235,21 +11216,20 @@ to the bottom of the footer area.</property>
                                   <object class="GtkCheckButton" id="c_rhrule">
                                     <property name="label" translatable="yes">Horizontal Rule</property>
                                     <property name="name">Horizontal Rule</property>
-                                    <property name="width-request">100</property>
-                                    <property name="height-request">23</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
                                     <property name="tooltip-text" translatable="yes">Check this option to add a horizontal
 line under the page header, before the
 main body text begins.</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-start">14</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -11274,7 +11254,6 @@ main body text begins.</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_margin2header">
-                                        <property name="width-request">55</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
@@ -11282,7 +11261,8 @@ to the top of the header area. Note that due to
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
                                         <property name="halign">start</property>
-                                        <property name="margin-top">6</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">3</property>
                                         <property name="label" translatable="yes">8.5mm</property>
                                         <property name="justify">center</property>
                                         <attributes>
@@ -11328,8 +11308,8 @@ Width (mm):</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11340,7 +11320,6 @@ Width (mm):</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_topmargin">
-                                        <property name="height-request">35</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
@@ -11374,7 +11353,6 @@ Top of Text (mm):</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_headerposition">
-                                        <property name="height-request">35</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The space (pt) between the bottom of the header
@@ -11386,7 +11364,6 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">Bottom of Header
 to Top of Text (pt):</property>
                                         <attributes>
@@ -11404,11 +11381,11 @@ to Top of Text (pt):</property>
                                   <object class="GtkEventBox" id="e_rhruleposition">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">end</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_rhruleoffset">
-                                        <property name="height-request">35</property>
                                         <property name="can-focus">False</property>
                                         <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
@@ -11420,7 +11397,6 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">Space between Rule
 and Top of Text (pt):</property>
                                         <attributes>
@@ -11430,8 +11406,8 @@ and Top of Text (pt):</property>
                                     </child>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11450,7 +11426,6 @@ Note that (by default) only the introduction
 pages use the footer for page numbers.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">Top of Header to
 Bottom of Text (pt):</property>
                                         <attributes>
@@ -11472,7 +11447,6 @@ Bottom of Text (pt):</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_btmMrgn">
-                                        <property name="width-request">95</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
@@ -11483,7 +11457,7 @@ from the descender of the final line of text
 (including any footnotes).</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="margin-start">15</property>
+                                        <property name="margin-start">6</property>
                                         <property name="label" translatable="yes">Bottom of Text to
 End of Page (mm):</property>
                                         <attributes>
@@ -11496,6 +11470,9 @@ End of Page (mm):</property>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">4</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -28992,7 +28969,7 @@ output with a previous PDF.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=7 n-rows=12 -->
+                              <!-- n-columns=7 n-rows=11 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -29076,7 +29053,7 @@ for best results.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">8</property>
+                                    <property name="top-attach">7</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -29095,7 +29072,7 @@ for best results.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">8</property>
+                                    <property name="top-attach">7</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -29115,7 +29092,7 @@ an issue using this link.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">10</property>
+                                    <property name="top-attach">9</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -29134,13 +29111,13 @@ an issue using this link.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">10</property>
+                                    <property name="top-attach">9</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_homePage">
-                                    <property name="label" translatable="yes">Visit PTXprint's Home Page to Download Latest Version</property>
+                                    <property name="label" translatable="yes">Documentation | FAQs | Gallery | Support | Download</property>
                                     <property name="name">Link to PTXprint home page</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -29167,7 +29144,7 @@ for new updates at the Home Page.
 Please ensure you are using the latest
 version before reporting an issue.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Home Page:</property>
+                                    <property name="label" translatable="yes">PTXprint Home Page:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -29202,18 +29179,18 @@ However, these annotated code snippets
 can be copied into the ptxprint-mods.tex
 file or the Changes.txt file as appropriate.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Advanced Techniques:</property>
+                                    <property name="label" translatable="yes">Further Documentation:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">9</property>
+                                    <property name="top-attach">8</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_techFAQ">
-                                    <property name="label" translatable="yes">View a set of useful code snippets</property>
+                                    <property name="label" translatable="yes">View Advanced Technical Documentation</property>
                                     <property name="name">Link to deeper technical help</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -29222,47 +29199,12 @@ file or the Changes.txt file as appropriate.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/blob/master/docs/documentation/snippets.md</property>
+                                    <property name="uri">https://github.com/sillsdev/ptx2pdf/tree/master/docs#readme</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">9</property>
+                                    <property name="top-attach">8</property>
                                     <property name="width">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton" id="lb_faq">
-                                    <property name="label" translatable="yes">Answers to Frequently Asked Questions (FAQs)</property>
-                                    <property name="name">Link to PTXprint's FAQ page</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">end</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">https://software.sil.org/ptxprint/faq/</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">7</property>
-                                    <property name="width">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_faq">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Frequently Asked Questions (FAQs) from
-users along with suggested solutions.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">FAQ:</property>
-                                    <property name="justify">right</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">7</property>
-                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29276,7 +29218,7 @@ users along with suggested solutions.</property>
                                     <property name="halign">end</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">9</property>
-                                    <property name="label" translatable="yes">PTXprint Docs Path:</property>
+                                    <property name="label" translatable="yes">PTXprint Program Path:</property>
                                     <property name="justify">right</property>
                                   </object>
                                   <packing>
@@ -29302,7 +29244,7 @@ and send it to ptxprint_support@sil.org</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">10</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -29328,7 +29270,7 @@ ptxprint_support@sil.org</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">10</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29384,7 +29326,7 @@ interact with other PTXprint users and the developers.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">10</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29408,7 +29350,7 @@ by deleting unneeded files.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">10</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29495,7 +29437,7 @@ by deleting unneeded files.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">11</property>
+                                    <property name="top-attach">10</property>
                                   </packing>
                                 </child>
                               </object>

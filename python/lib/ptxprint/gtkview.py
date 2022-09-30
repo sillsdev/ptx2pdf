@@ -1018,8 +1018,8 @@ class GtkViewModel(ViewModel):
             val = self.noInt if self.noInt is not None else True
         adv = (ui >= 6)
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
-                   "l_homePage",  "l_community",  "l_faq",  "l_pdfViewer",  "l_reportBugs",
-                  "lb_homePage", "lb_community", "lb_faq", "lb_pdfViewer", "lb_reportBugs", 
+                   "l_homePage",  "l_community", "l_pdfViewer",  "l_reportBugs",
+                  "lb_homePage", "lb_community", "lb_pdfViewer", "lb_reportBugs", 
                   "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
@@ -1030,7 +1030,7 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics", "l_techFAQ",  "lb_techFAQ"]:
+        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics", "l_techFAQ",  "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
             self.builder.get_object(w).set_visible(not newval and adv)
 
     def addCR(self, name, index):
