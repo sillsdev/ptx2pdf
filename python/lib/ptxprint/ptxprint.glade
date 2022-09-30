@@ -11161,7 +11161,7 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_noinkinmargin">
-                                    <property name="label" translatable="yes">Footer in Margin</property>
+                                    <property name="label" translatable="yes">Don't Place Footer in Margin Area</property>
                                     <property name="name">Place footer within the margin</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -11418,16 +11418,15 @@ and Top of Text (pt):</property>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
                                       <object class="GtkLabel" id="l_ftrPosn">
+                                        <property name="name">Footer position - space between text and footer</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the TOP of the footer
-area (the ascender) to the bottom of the text.
-Note that (by default) only the introduction
-pages use the footer for page numbers.</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (pt) from the bottom of the text area
+to the TOP of the footer (including ascenders).</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Top of Header to
-Bottom of Text (pt):</property>
+                                        <property name="label" translatable="yes">Bottom of Text to
+Top of Footer (pt):</property>
                                         <attributes>
                                           <attribute name="foreground" value="#808000008080"/>
                                         </attributes>
