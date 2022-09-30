@@ -10556,7 +10556,7 @@ the Full View mode.</property>
                             <property name="valign">start</property>
                             <property name="left-padding">6</property>
                             <child>
-                              <!-- n-columns=6 n-rows=7 -->
+                              <!-- n-columns=6 n-rows=6 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -10565,8 +10565,8 @@ the Full View mode.</property>
                                 <property name="margin-end">3</property>
                                 <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">5</property>
                                 <property name="column-spacing">2</property>
+                                <property name="row-homogeneous">True</property>
                                 <child>
                                   <object class="GtkLabel" id="l_topmargin">
                                     <property name="height-request">35</property>
@@ -10607,6 +10607,7 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-top">6</property>
                                     <property name="label" translatable="yes">Bottom of Header
 to Top of Text (pt):</property>
                                     <attributes>
@@ -10633,6 +10634,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
+                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">1.00</property>
                                     <property name="xalign">1</property>
@@ -10666,9 +10668,8 @@ The bottom of the main text area is calculated
 from the descender of the final line of text 
 (including any footnotes).</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-start">15</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
                                     <property name="label" translatable="yes">Bottom of Text to
 End of Page (mm):</property>
                                     <attributes>
@@ -10677,29 +10678,29 @@ End of Page (mm):</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_ftrPosn">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the TOP of the footer 
-area (the ascender) to the bottom of the page. 
-Note that (by default) only the introduction 
+                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the TOP of the footer
+area (the ascender) to the bottom of the text.
+Note that (by default) only the introduction
 pages use the footer for page numbers.</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="label" translatable="yes">Top of Footer to
-End of Page (mm):</property>
+                                    <property name="label" translatable="yes">Top of Header to
+Bottom of Text (pt):</property>
                                     <attributes>
-                                      <attribute name="foreground" value="#2b0a4be2f850"/>
+                                      <attribute name="foreground" value="#808000008080"/>
                                     </attributes>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">6</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10712,6 +10713,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
+                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0.80</property>
                                     <property name="xalign">1</property>
@@ -10730,22 +10732,7 @@ space between the end of the text and the footer line.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">6</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkSeparator" id="rule_margins">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">30</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
-                                    <property name="width">5</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10781,35 +10768,7 @@ from the descender of the final line of text
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_margins">
-                                    <property name="width-request">95</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the 
-edge of the page to the start
-of the text area. Note that the
-left and right (or inner and 
-outer) margins are set to be
-identical. If you require a 
-greater inner margin, then
-set the Binding Gutter above.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">Side Margin
-Width (mm):</property>
-                                    <property name="xalign">1</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#cece5c5c0000"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10862,6 +10821,7 @@ The top of the main text area is 1 base line spacing
 above the base line of the first line of the body text.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-top">6</property>
                                     <property name="label" translatable="yes">Space between Rule
 and Top of Text (pt):</property>
                                     <attributes>
@@ -10870,7 +10830,7 @@ and Top of Text (pt):</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10889,6 +10849,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-end">3</property>
+                                    <property name="margin-top">6</property>
                                     <property name="width-chars">4</property>
                                     <property name="text">0</property>
                                     <property name="xalign">1</property>
@@ -10907,7 +10868,7 @@ above the base line of the first line of the body text.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11013,14 +10974,14 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top2TrueFalse">
+                                  <object class="GtkImage" id="img_toporange">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top2TrueFalse.png</property>
+                                    <property name="pixbuf">toporange.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11030,10 +10991,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top1FalseTrue">
+                                  <object class="GtkImage" id="img_toppurple">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top1FalseTrue.png</property>
+                                    <property name="pixbuf">toppurple.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11043,10 +11004,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top2FalseFalse">
+                                  <object class="GtkImage" id="img_topred">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top2FalseFalse.png</property>
+                                    <property name="pixbuf">topred.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11056,10 +11017,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top2FalseTrue">
+                                  <object class="GtkImage" id="img_topblue">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top2FalseTrue.png</property>
+                                    <property name="pixbuf">topblue.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11069,10 +11030,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top1FalseFalse">
+                                  <object class="GtkImage" id="img_topgreen">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top1FalseFalse.png</property>
+                                    <property name="pixbuf">topgreen.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11082,10 +11043,10 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Top2TrueTrue">
+                                  <object class="GtkImage" id="img_tophrule">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Top2TrueTrue.png</property>
+                                    <property name="pixbuf">tophrule.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
@@ -11095,42 +11056,303 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Bottom2True">
+                                  <object class="GtkImage" id="img_topvrule">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Bottom2True.png</property>
+                                    <property name="pixbuf">topvrule.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_topgrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">topgrid.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_top1col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">top1col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_top2col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">top2col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">3</property>
+                                    <property name="height">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_botblue">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">botblue.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
                                     <property name="width">3</property>
                                     <property name="height">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Bottom2False">
+                                  <object class="GtkImage" id="img_botpurple">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Bottom2False.png</property>
+                                    <property name="pixbuf">botpurple.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">4</property>
                                     <property name="width">3</property>
                                     <property name="height">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_Bottom1False">
+                                  <object class="GtkImage" id="img_botred">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">Bottom1False.png</property>
+                                    <property name="pixbuf">botred.png</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">4</property>
                                     <property name="width">3</property>
                                     <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_botvrule">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">botvrule.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_botgrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">botgrid.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibotblue">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibotblue.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibotpurple">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibotpurple.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibotred">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibotred.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibotvrule">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibotvrule.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibotgrid">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibotgrid.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_bot1col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">bot1col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_bot2col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">bot2col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibot1col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibot1col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkImage" id="img_nibot2col">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="pixbuf">nibot2col.png</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                    <property name="height">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="height-request">23</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-top">10</property>
+                                    <property name="label" translatable="yes"> </property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_noinkinmargin">
+                                    <property name="label" translatable="yes">Footer in Margin</property>
+                                    <property name="name">Place footer within the margin</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Normally the page number on an intro book
+occurs above the page margin (in the area
+that text would normally flow until). However
+if you need the footer page number to sit
+below the page's bottom margin, then you
+need to activate this compatibility option.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">start</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onNoInkInMarginClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">5</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_footer2edge">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_footer2edge">
+                                        <property name="width-request">55</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
+to the bottom of the header area.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="label" translatable="yes">8.5mm</property>
+                                        <property name="justify">center</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#2b0a4be2f850"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11151,85 +11373,6 @@ main body text begins.</property>
                                     <signal name="clicked" handler="onRHruleClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">start</property>
-                                    <child>
-                                      <object class="GtkLabel" id="l_margin2header2">
-                                        <property name="width-request">80</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
-to the top of the header area. Note that due to 
-the ascent of the font, the header text actually 
-starts a little bit below the top of the header area.</property>
-                                        <property name="halign">end</property>
-                                        <property name="margin-start">12</property>
-                                        <property name="label" translatable="yes">Start of Page to
-Top of Header:</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#2b0a4be2f850"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_margin2header1">
-                                        <property name="width-request">55</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
-to the top of the header area. Note that due to 
-the ascent of the font, the header text actually 
-starts a little bit below the top of the header area.</property>
-                                        <property name="halign">end</property>
-                                        <property name="label" translatable="yes">8.5mm</property>
-                                        <property name="justify">center</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#2b0a4be2f850"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_margin2header3">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">This value is calculated using the
-other values (Start of Page to
-Top of Text, and Bottom of Header
-to Top of Text).</property>
-                                        <property name="margin-start">2</property>
-                                        <property name="label" translatable="yes">(value is
-derived)</property>
-                                        <attributes>
-                                          <attribute name="scale" value="0.90000000000000002"/>
-                                          <attribute name="foreground" value="#2b094be2f850"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
@@ -11243,133 +11386,74 @@ derived)</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_topmargin">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">topmargin.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_bottommargin">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">bottommargin.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
                                     <property name="top-attach">5</property>
-                                    <property name="width">3</property>
-                                    <property name="height">2</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkImage" id="img_footerposition">
+                                  <object class="GtkEventBox" id="e_margin2header">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="pixbuf">footerposition.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
-                                    <property name="width">3</property>
-                                    <property name="height">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_headerposition">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">headerposition.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_margins">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">margins.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_rhruleposition">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">rhruleposition.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_blanktop">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">blanktop.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">3</property>
-                                    <property name="height">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkImage" id="img_blankbottom">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="pixbuf">blankbottom.png</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
-                                    <property name="width">3</property>
-                                    <property name="height">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="height-request">35</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="label" translatable="yes"> </property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_margin2header">
+                                        <property name="width-request">55</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
+to the top of the header area. Note that due to 
+the ascent of the font, the header text actually 
+starts a little bit below the top of the header area.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="label" translatable="yes">8.5mm</property>
+                                        <property name="justify">center</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#2b0a4be2f850"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
+                                  <object class="GtkEventBox" id="e_margins">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_margins">
+                                        <property name="width-request">95</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the 
+edge of the page to the start
+of the text area. Note that the
+left and right (or inner and 
+outer) margins are set to be
+identical. If you require a 
+greater inner margin, then
+set the Binding Gutter above.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="label" translatable="yes">Side Margin
+Width (mm):</property>
+                                        <property name="xalign">1</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#cece5c5c0000"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>
@@ -26143,6 +26227,7 @@ font and direction for that script.</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-top">4</property>
                                         <property name="draw-indicator">True</property>
@@ -26169,7 +26254,7 @@ troubleshooting use only.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
-                                        <property name="top-attach">3</property>
+                                        <property name="top-attach">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -26192,27 +26277,7 @@ Font metrics gives more consistent results.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_AdvCompatFtrInMargin">
-                                        <property name="label" translatable="yes">Put Footer in Margin Area</property>
-                                        <property name="name">Place the footer within the margin</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Normally the page number on an intro book
-occurs above the page margin (in the area
-that text would normally flow until). However
-if you need the footer page number to sit
-below the page's bottom margin, then you
-need to activate this compatibility option.</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="margin-top">6</property>
-                                        <property name="draw-indicator">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>

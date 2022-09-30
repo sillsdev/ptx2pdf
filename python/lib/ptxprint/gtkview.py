@@ -141,7 +141,7 @@ btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_btmMrgn s_bottommargin
-l_margin2header1 l_margin2header2 l_margin2header3
+l_margin2header 
 c_rhrule l_rhruleoffset s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
@@ -160,6 +160,9 @@ tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
 l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra btn_deleteTempFiles btn_about
 """.split()
+
+_clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
+        "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
@@ -3898,15 +3901,26 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_adjust_{}".format(w)).set_sensitive(clickable)
     
     def updateMarginGraphics(self):
+
+        self.builder.get_object("img_topgreen").set_visible(False)
+        self.builder.get_object("img_toporange").set_visible(False)
+        for tb in ["top", "bot", "nibot"]:
+            self.builder.get_object("img_{}grid".format(tb)).set_visible(False)
+            self.builder.get_object("img_{}vrule".format(tb)).set_visible(False)
+            for c in ["1", "2"]:
+                self.builder.get_object("img_{}{}col".format(tb,c)).set_visible(False)
+        self.turnOffColouredArrows()
+
         cols = 2 if self.get("c_doublecolumn") else 1
-        vert = self.get("c_verticalrule")
+        vert = self.get("c_verticalrule") and self.get("c_doublecolumn")
         horiz = self.get("c_rhrule")
-        top = re.sub("1True", "1False", "{}{}{}".format(cols,vert,horiz))
-        bottom = re.sub("1True", "1False", "{}{}".format(cols,vert))
-        for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
-            self.builder.get_object("img_Top{}".format(t)).set_visible(t == top)
-        for b in ["1False", "2False", "2True"]:
-            self.builder.get_object("img_Bottom{}".format(b)).set_visible(b == bottom)
+        ni = "ni" if self.get("c_noinkinmargin") else ""
+        
+        for tb in ["top", ni+"bot"]:
+            self.builder.get_object("img_{}grid".format(tb)).set_visible(True)
+            self.builder.get_object("img_{}{}col".format(tb,cols)).set_visible(True)
+            self.builder.get_object("img_{}vrule".format(tb)).set_visible(vert)
+        self.builder.get_object("img_tophrule".format(tb)).set_visible(horiz)
 
     def onOverlayCreditClicked(self, btn):
         dialog = self.builder.get_object("dlg_overlayCredit")
@@ -4330,22 +4344,6 @@ class GtkViewModel(ViewModel):
         self.noUpdate = True
         self.set("s_paperWeight", wght)
         self.noUpdate = False
-    
-    # def onLetterSpacingClicked(self, btn):
-        # if self.loadingConfig or self.noUpdate:
-            # return
-        # self.noUpdate = True
-        # if self.get("c_hyphenate"):
-            # self.set("c_hyphenate", False)
-        # self.noUpdate = False
-
-    # def onHyphenateClicked(self, btn):
-        # if self.loadingConfig or self.noUpdate:
-            # return
-        # self.noUpdate = True
-        # if self.get("c_letterSpacing"):
-            # self.set("c_letterSpacing", False)
-        # self.noUpdate = False
 
     def onMarginEnterNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, True)
@@ -4353,20 +4351,20 @@ class GtkViewModel(ViewModel):
     def onMarginLeaveNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, False)
 
+    def turnOffColouredArrows(self):
+        for i in _clr:
+            self.builder.get_object("img_{}".format(_clr[i])).set_visible(False)
+            if _clr[i].startswith("bot"):
+                self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(False)
+                
     def highlightMargin(self, btn, highlightMargin=True):
+        self.turnOffColouredArrows()
         n = Gtk.Buildable.get_name(btn)
-        wid = "img_" + n[2:]
-        for w in ["topmargin", "bottommargin", "footerposition", "headerposition", "margins", "rhruleposition", "blanktop", "blankbottom"]:
-            self.builder.get_object(f"img_{w}").set_visible(False)
+        iname = _clr[n[2:]]
+        ni = "ni" if self.get("c_noinkinmargin") and iname.startswith("bot") else ""
+        wid = "img_" + ni + iname
+
         if highlightMargin:
-            for b in ["1False", "2False", "2True"]:
-                self.builder.get_object(f"img_Bottom{b}").set_visible(False)
-            for t in ["1FalseFalse", "1FalseTrue", "2FalseFalse", "2FalseTrue", "2TrueFalse", "2TrueTrue"]:
-                self.builder.get_object(f"img_Top{t}").set_visible(False)
-            if wid in ["img_bottommargin", "img_footerposition"]:
-                self.builder.get_object("img_blanktop").set_visible(True)
-            else:
-                self.builder.get_object("img_blankbottom").set_visible(True)
             self.builder.get_object(wid).set_visible(True)
         else:
             self.updateMarginGraphics()
@@ -4381,3 +4379,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_infoXrefSource").set_tooltip_text(ttt)
         self.builder.get_object("fr_strongs").set_sensitive(s.startswith("strongs"))
         self.builder.get_object("btn_selectXrFile").set_sensitive(s == "custom")
+
+    def onNoInkInMarginClicked(self, btn):
+        self.updateMarginGraphics()
