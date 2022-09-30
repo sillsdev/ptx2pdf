@@ -3844,7 +3844,7 @@ class GtkViewModel(ViewModel):
         status = self.get("c_rhrule")
         self.updateMarginGraphics()
         for w in ["l_rhruleoffset", "s_rhruleposition"]:
-            self.builder.get_object(w).set_visible(status)        
+            # self.builder.get_object(w).set_visible(status)        
             self.builder.get_object(w).set_sensitive(status)        
 
     def _calcBodyHeight(self):

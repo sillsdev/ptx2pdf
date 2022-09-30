@@ -10568,58 +10568,6 @@ the Full View mode.</property>
                                 <property name="column-spacing">2</property>
                                 <property name="row-homogeneous">True</property>
                                 <child>
-                                  <object class="GtkLabel" id="l_topmargin">
-                                    <property name="height-request">35</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
-to the top of the main text area. Note that
-the first line actually starts a little bit below
-where the the main text area starts.
-
-The top of the main text area is 1 base line spacing 
-above the base line of the first line of the body text.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Start of Page to
-Top of Text (mm):</property>
-                                    <property name="xalign">1</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#cccc00000000"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_headerposition">
-                                    <property name="height-request">35</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The space (pt) between the bottom of the header
-and the top of the main text area. Note that
-the first line actually starts a little bit below
-where the the main text area starts.
-
-The top of the main text area is 1 base line spacing 
-above the base line of the first line of the body text.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="label" translatable="yes">Bottom of Header
-to Top of Text (pt):</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#808000008080"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_headerposition">
                                     <property name="name">Header spacing</property>
                                     <property name="height-request">35</property>
@@ -10654,53 +10602,6 @@ above the base line of the first line of the body text.</property>
                                   <packing>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_btmMrgn">
-                                    <property name="width-request">95</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
-main text area to the bottom of the page.
-
-The bottom of the main text area is calculated
-from the descender of the final line of text 
-(including any footnotes).</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">15</property>
-                                    <property name="label" translatable="yes">Bottom of Text to
-End of Page (mm):</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#cccc00000000"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_ftrPosn">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The distance (mm) from the TOP of the footer
-area (the ascender) to the bottom of the text.
-Note that (by default) only the introduction
-pages use the footer for page numbers.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="label" translatable="yes">Top of Header to
-Bottom of Text (pt):</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#808000008080"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -10805,32 +10706,6 @@ set the Binding Gutter above.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_rhruleoffset">
-                                    <property name="height-request">35</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="no-show-all">True</property>
-                                    <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
-and the top of the main text area. Note that
-the first line actually starts a little bit below
-where the the main text area starts.
-
-The top of the main text area is 1 base line spacing 
-above the base line of the first line of the body text.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="label" translatable="yes">Space between Rule
-and Top of Text (pt):</property>
-                                    <attributes>
-                                      <attribute name="foreground" value="#22228b8b2222"/>
-                                    </attributes>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -11317,7 +11192,7 @@ if you need the footer page number to sit
 below the page's bottom margin, then you
 need to activate this compatibility option.</property>
                                     <property name="halign">start</property>
-                                    <property name="valign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onNoInkInMarginClicked" swapped="no"/>
                                   </object>
@@ -11331,6 +11206,7 @@ need to activate this compatibility option.</property>
                                   <object class="GtkEventBox" id="e_footer2edge">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11339,8 +11215,8 @@ need to activate this compatibility option.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the edge of the page
-to the bottom of the header area.</property>
-                                        <property name="halign">end</property>
+to the bottom of the footer area.</property>
+                                        <property name="halign">start</property>
                                         <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">8.5mm</property>
                                         <property name="justify">center</property>
@@ -11393,6 +11269,7 @@ main body text begins.</property>
                                   <object class="GtkEventBox" id="e_margin2header">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">start</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11404,7 +11281,7 @@ main body text begins.</property>
 to the top of the header area. Note that due to 
 the ascent of the font, the header text actually 
 starts a little bit below the top of the header area.</property>
-                                        <property name="halign">end</property>
+                                        <property name="halign">start</property>
                                         <property name="margin-top">6</property>
                                         <property name="label" translatable="yes">8.5mm</property>
                                         <property name="justify">center</property>
@@ -11453,6 +11330,171 @@ Width (mm):</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_topmargin">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_topmargin">
+                                        <property name="height-request">35</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the top of the page
+to the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Start of Page to
+Top of Text (mm):</property>
+                                        <property name="xalign">1</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#cccc00000000"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_headerposition">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_headerposition">
+                                        <property name="height-request">35</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The space (pt) between the bottom of the header
+and the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="label" translatable="yes">Bottom of Header
+to Top of Text (pt):</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#808000008080"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_rhruleposition">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_rhruleoffset">
+                                        <property name="height-request">35</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
+                                        <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
+and the top of the main text area. Note that
+the first line actually starts a little bit below
+where the the main text area starts.
+
+The top of the main text area is 1 base line spacing 
+above the base line of the first line of the body text.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="label" translatable="yes">Space between Rule
+and Top of Text (pt):</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#22228b8b2222"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_footerposition">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_ftrPosn">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the TOP of the footer
+area (the ascender) to the bottom of the text.
+Note that (by default) only the introduction
+pages use the footer for page numbers.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="label" translatable="yes">Top of Header to
+Bottom of Text (pt):</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#808000008080"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox" id="e_bottommargin">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
+                                    <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_btmMrgn">
+                                        <property name="width-request">95</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
+main text area to the bottom of the page.
+
+The bottom of the main text area is calculated
+from the descender of the final line of text 
+(including any footnotes).</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">15</property>
+                                        <property name="label" translatable="yes">Bottom of Text to
+End of Page (mm):</property>
+                                        <attributes>
+                                          <attribute name="foreground" value="#cccc00000000"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                               </object>
