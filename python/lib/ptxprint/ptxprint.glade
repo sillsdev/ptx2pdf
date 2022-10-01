@@ -11162,7 +11162,7 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_noinkinmargin">
                                     <property name="label" translatable="yes">Don't Place Footer in Margin Area</property>
-                                    <property name="name">Place footer within the margin</property>
+                                    <property name="name">Don't place footer in the margin area</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
