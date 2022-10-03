@@ -57,7 +57,8 @@
     \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
     \fi\vss}%
   %\ifx\t@mp\l@ft\else\showbox0
-  \dp0=0pt\vadjust {\kern -\dimen9
+  \dp0=0pt\vadjust {%
+    \kern -\dimen9
     \kern #5\box0
     \kern-#5 \kern \dimen9}%
 }
