@@ -346,7 +346,7 @@ class ViewModel:
         if self.loadingConfig:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
-        self.set("l_margin2header1", "{}mm".format(f2s(headerlabel, 1)))
+        self.set("l_margin2header", "{}mm".format(f2s(headerlabel, 1)))
         return True
 
     def getMargins(self):

@@ -305,7 +305,7 @@ ModelMap = {
     "footer/ftrcenter":         ("ecb_ftrcenter", lambda w,v: v or "-empty-"),
     "footer/ifftrtitlepagenum": ("c_pageNumTitlePage", lambda w,v: "" if v else "%"),
     "footer/ifprintconfigname": ("c_printConfigName", lambda w,v: "" if v else "%"),
-    "footer/noinkinmargin":     ("c_AdvCompatFtrInMargin", lambda w,v :"false" if v else "true"),
+    "footer/noinkinmargin":     ("c_noinkinmargin", lambda w,v :"false" if v else "true"),
     "notes/frverseonly":        ("c_frVerseOnly", None),
 
     "notes/includefootnotes":   ("c_includeFootnotes", lambda w,v: "%" if v else ""),
