@@ -785,7 +785,7 @@
   \s@ttrialheight
   \setbox14=\makefootbox
   \ifnoinkinmargin \advance\trialheight -\ht14\else\setbox14=\vbox to 0pt{\box14\vss}\fi
-  \trace{i}{1c TRIAL with ht=\the\trialheight, vsize=\the\vsize, hIns=\the\holdinginserts}%
+  \trace{i}{1c TRIAL with ht=\the\trialheight, depth=\the\dp255, vsize=\the\vsize, hIns=\the\holdinginserts, vfuzz=\the\vfuzz}%
   \keepn@testrue\c@lcavailht\keepn@tesfalse
   \ifColNotes\advance\availht by -\ht\coln@tebox\fi
   \setbox\s@vedpage=\copy255
@@ -793,7 +793,9 @@
   \ifdim\availht<0pt                                                        %(2)
     \MSG{Page overfull with inserts. Perhaps a little more text and less pictures would help}%
   \fi
-  \setbox\colA=\vsplit255 to \availht
+  %\setbox\colA=\vsplit255 to \availht
+  % Marginal verses (and other things with 0 height vadjusts) need us to split to avail+lastdepth
+  \setbox\colA=\vsplit255 to \dimexpr \availht + \lastdepth\relax
   \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
   \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
@@ -1635,7 +1637,7 @@
   \bmg@p=\availht
   \dimen0=8\baselineskip
   \ifdim\dimen0>0.5pt
-      \trace{i}{dimen0=\the\dimen0, availht=\the\availht}%
+      \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
       \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
   \fi
   \advance\bmg@p by -\availht
