@@ -429,7 +429,7 @@ class BookNames(BaseBooks):
         return self.bookNames.get(s, self.bookNames.get(s.upper(), None))
 
     def getLocalBook(self, s, level=0):
-        return self.bookStrs[s][level]
+        return self.bookStrs.get(s, [s]*(level+1))[level]
 
     def readBookNames(self, fpath):
         from xml.etree import ElementTree as et
