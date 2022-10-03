@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.2.27"
 GitVersionStr = "2.2.27"
-ConfigVersion = "2.09"
+ConfigVersion = "2.10"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -908,13 +908,18 @@ class ViewModel:
         if v < 2.08:
             if config.get("snippets", "pdfoutput", fallback="None") == "None":
                 self._configset(config, "snippets/pdfoutput", "Screen")
-        # print(f"{forcerewrite} {v} {ConfigVersion} {cfgname} {self.configPath(cfgname)}")
 
         if v < 2.09:
             if config.get("finish", "pgsperspread", fallback="None") == "None":
                 self._configset(config, "finishing/pgsperspread", "1")
             if config.get("paper", "cropmarks", fallback="None") == "None":
                 self._configset(config, "paper/cropmarks", config.getboolean("paper", "ifcropmarks", fallback=False))
+        if v < 2.10:
+            fpos = config.getfloat("paper", "footerpos", fallback=10) * 72.27 / 25.4
+            bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
+            lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
+            self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos) * 25.4 / 72.27)))
+            self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=True))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")

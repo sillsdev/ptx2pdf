@@ -54,7 +54,7 @@
   \dimen9=\ht#1
   \setbox0=\vbox to 0pt{\vss\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}%
     \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
-    \else\noindent\hfil\rlap{\kern #4\kern #3\box #1}%
+    \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
     \fi\vss}%
   %\ifx\t@mp\l@ft\else\showbox0
   \dp0=0pt\vadjust {\kern -\dimen9
@@ -88,7 +88,8 @@
 \def\@nner{inner}
 \def\d@marginnote#1#2#3{%
 % #1 = vbox, #2 = reference, #3 = marker
-  \getp@ram{position}{#3}{\styst@k}%
+  \getp@ram{posn}{#3}{#3,\styst@k}%
+  \trace{M}{getp@ram posn #3, \styst@k =\p@ram}%
   \edef\p@s{\p@ram}%
   \ifcsname marginnote-#2@#3:pageno\endcsname\edef\p@geno{\csname marginnote-#2@#3:pageno\endcsname}\trace{M}{read pageno=\p@geno}\else\edef\p@geno{\the\pageno}\fi
   \ifx\p@ram\@uter\ifodd\p@geno\let\s@de\r@ght\else\let\s@de\l@ft\fi
