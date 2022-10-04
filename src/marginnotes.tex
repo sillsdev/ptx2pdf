@@ -89,7 +89,7 @@
 \def\@nner{inner}
 \def\d@marginnote#1#2#3{%
 % #1 = vbox, #2 = reference, #3 = marker
-  \getp@ram{posn}{#3}{#3,\styst@k}%
+  \getp@ram{posn}{#3}{#3}%,\styst@k}%
   \trace{M}{getp@ram posn #3, \styst@k =\p@ram}%
   \edef\p@s{\p@ram}%
   \ifcsname marginnote-#2@#3:pageno\endcsname\edef\p@geno{\csname marginnote-#2@#3:pageno\endcsname}\trace{M}{read pageno=\p@geno}\else\edef\p@geno{\the\pageno}\fi

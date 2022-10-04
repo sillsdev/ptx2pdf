@@ -833,7 +833,7 @@
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
+        \ifb@dy\iftob@dy\else\lshiftc@lumn{\pageno}\fi\fi
         \vbox to\dimen3{%
           \ifdim\ht\colA>1\onel@neunit
             \doTextB@rder{\colA}%3
@@ -841,6 +841,7 @@
           \box\colA\kern0pt \vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
+          \iftob@dy\else\rshiftc@lumn{\pageno}\fi
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
@@ -1092,10 +1093,11 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifb@dy\iftob@dy\else\hbox to \columnshift{}\fi\fi
+        \ifb@dy\iftob@dy\else\lshiftc@lumn{\pageno}\fi\fi
         %\special{"testme1"}
         \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
+          \iftob@dy\else\rshiftc@lumn{\pageno}\fi
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
@@ -1783,14 +1785,19 @@
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
       % not all the output text (after a \singlecolumn) was passed the first time
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\hskip\columnshift\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
-      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\noindent\lshiftc@lumn{0}\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
+      \ifvoid\topins\else \hbox{\noindent\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
-      \setbox\colA=\vbox{\hbox to \dimen5{\noindent\hbox to \columnshift{}%
-          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
-          \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}
+      \setbox\colA=\vbox{\hbox to \dimen5{\noindent\lshiftc@lumn{0}%
+          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{0}%
+            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
+            \vbox to \dimen2{\box\colA\vfil}%
+          \else \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
+            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
+            \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi
+          \rshiftc@lumn{1}}
         \kern\lastd@pth}%
       \doTextB@rder{\colA}%
       \box\colA
@@ -1924,13 +1931,18 @@
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\vbox{%
           \unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
-      \ifvoid\topins\else \hbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
+      \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
-      \setbox\colA\hbox to \dimen1{\noindent\hbox to \columnshift{}%
-        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colA\vfil}%
-        \else \vbox to \dimen2{\box\colA\vfil}\makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi}%
+      \setbox\colA\hbox to \dimen1{\noindent\lshiftc@lumn{0}%
+        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{0}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen2{\box\colA\vfil}%
+        \else \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi
+        \rshiftc@lumn{1}}%
       \doTextB@rder{\colA}%
       \box\colA
       \p@geendcontent
@@ -1968,6 +1980,21 @@
 
 %+c_makecolumngutter
 \newdimen\columnshift \columnshift=0pt
+\edef\colshiftmode{\l@ft}
+\def\rshiftc@lumn#1{%
+ \ifdim\columnshift>0pt\ifnum
+    \ifx\colshiftmode\r@ght 1
+    \else\ifodd #1\ifx\colshiftmode\@uter 1\else 0\fi
+      \else\ifx\colshiftmode\@nner 1\else 0\fi\fi
+    \fi =1\hbox to \columnshift {}\fi\fi
+}
+\def\lshiftc@lumn#1{%
+ \ifdim\columnshift>0pt\ifnum
+    \ifx\colshiftmode\l@ft 1%
+    \else\ifodd #1\ifx\colshiftmode\@nner 1\else 0\fi
+      \else\ifx\colshiftmode\@uter 1\else 0\fi\fi
+    \fi =1\hbox to \columnshift{}\else\fi\fi
+}
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse
 
@@ -2001,9 +2028,7 @@
     \fi
     \ifnum#5>1\hbox to \XrefNotesMargin{}\ifColNotesRule\box4\fi\fi
   \fi\fi
-  \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
-  \hbox to \columnshift{}}
-
+  \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi}
 
 \newif\ifColumnGutterRule
 \newdimen\StudyColumnGutterRuleSkip

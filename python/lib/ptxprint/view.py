@@ -919,7 +919,7 @@ class ViewModel:
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
             lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos) * 25.4 / 72.27)))
-            self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=True))
+            self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
