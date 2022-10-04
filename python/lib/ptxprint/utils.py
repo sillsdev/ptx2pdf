@@ -453,13 +453,14 @@ def htmlprotect(s):
     sc = '([' + "".join(_htmlentities.keys()) + '])'
     return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
 
+wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
 special_regexes = {
-    'ba': r'(?=[^\p{L}\p{M}\p{Cf}\p{Sk}\-])',
-    'BA': r'(?=[\p{L}\p{M}\p{Cf}\p{Sk}]\-)',
-    'bb': r'(?<=[^\p{L}\p{M}\p{Cf}\p{Sk}\-])',
-    'BB': r'(?<=[\p{L}\p{M}\p{Cf}\p{Sk}]\-)',
-    'w': r'[\p{L}\p{M}\p{Cf}\p{Sk}\-]',
-    'W': r'[^\p{L}\p{M}\p{Cf}\p{Sk}\-]'
+    'ba': f'(?=[^{wfreg}])',
+    'BA': f'(?=[{wfreg})',
+    'bb': f'(?<=[^{wfreg}])',
+    'BB': f'(?<=[{wfreg}])',
+    'w': f'[{wfreg}]',
+    'W': f'[^{wfreg}]'
 }
 
 def regex_localiser(r):
