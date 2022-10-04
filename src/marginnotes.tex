@@ -44,7 +44,9 @@
 \def\@m@rginnote#1#2#3#4#5{%
 % #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
-  \dimen0=#4 sp \ifdim\dimen0 > 0.5\PaperWidth \edef\c@l{1}\else\edef\c@l{0}\fi
+  \dimen0=#4 sp \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
+  \ifodd #3\else\advance\dimen1 \BindingGutter\fi
+  \ifdim\dimen0 > \dimen1 \edef\c@l{1}\else\edef\c@l{0}\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
   \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l}%
 }
