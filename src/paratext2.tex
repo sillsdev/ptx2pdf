@@ -1790,14 +1790,13 @@
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
-      \setbox\colA=\vbox{\hbox to \dimen5{\noindent\lshiftc@lumn{0}%
-          \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{0}%
+      \setbox\colA=\vbox{\hbox to \dimen5{\noindent
+          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{1}%
+            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{0}%
+            \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
+          \else \lshiftc@lumn{0}\vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
             \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen2{\box\colA\vfil}%
-          \else \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi
-          \rshiftc@lumn{1}}
+            \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \doTextB@rder{\colA}%
       \box\colA
@@ -1935,14 +1934,13 @@
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
-      \setbox\colA\hbox to \dimen1{\noindent\lshiftc@lumn{0}%
-        \ifRTL \hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{0}%
+      \setbox\colA\hbox to \dimen1{\noindent
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{1}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen2{\box\colA\vfil}%
-        \else \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\fi
-        \rshiftc@lumn{1}}%
+          \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \doTextB@rder{\colA}%
       \box\colA
       \p@geendcontent
