@@ -1982,18 +1982,19 @@
 \newdimen\columnshift \columnshift=0pt
 \edef\colshiftmode{\l@ft}
 \def\rshiftc@lumn#1{%
- \ifdim\columnshift>0pt\ifnum
+ \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\r@ght 1
-    \else\ifodd #1\ifx\colshiftmode\@uter 1\else 0\fi
+    \else\ifodd\count255 \ifx\colshiftmode\@uter 1\else 0\fi
       \else\ifx\colshiftmode\@nner 1\else 0\fi\fi
-    \fi =1\hbox to \columnshift {}\fi\fi
+     \fi =1 \hbox to \columnshift {}\fi\fi
 }
+\def\z@ropt{0pt}
 \def\lshiftc@lumn#1{%
- \ifdim\columnshift>0pt\ifnum
-    \ifx\colshiftmode\l@ft 1%
-    \else\ifodd #1\ifx\colshiftmode\@nner 1\else 0\fi
+ \ifdim\columnshift>0pt \count255=#1 \ifnum
+    \ifx\colshiftmode\l@ft 1
+    \else\ifodd\count255 \ifx\colshiftmode\@nner 1\else 0\fi
       \else\ifx\colshiftmode\@uter 1\else 0\fi\fi
-    \fi =1\hbox to \columnshift{}\else\fi\fi
+  \fi =1 \trace{M}{lshifting for \colshiftmode \space at #1}\hbox to \columnshift{}\else\trace{M}{Not lshifting for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}\fi\fi
 }
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse

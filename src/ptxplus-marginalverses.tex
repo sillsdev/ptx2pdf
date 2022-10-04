@@ -13,22 +13,23 @@
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
   \getp@ram{position}{v}{\styst@k}\ifx\p@ram\relax\let\p@ram\l@ft\fi
   \trace{v}{position is \p@ram}%
+  \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifx\v@rsefrom\v@rseto\edef\t@mp{\id@@@\ch@pter.\v@rsefrom}\else\edef\t@mp{\id@@@\ch@pter.\v@rsefrom-\v@rseto}\fi
-  \ifcsname marginnote-\t@mp @v:pageno\endcsname \count10=\csname marginnote-\t@mp @v:pageno\endcsname
-    \trace{v}{from marginnote-\t@mp @v:pageno, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
-  \else\trace{v}{no marginnote-\t@mp @v:pageno, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
+  \ifcsname marginnote-\t@mp @v:\t@mpa no\endcsname \count10=\csname marginnote-\t@mp @v:\t@mpa no\endcsname
+    \trace{v}{from marginnote-\t@mp @v:\t@mpa no, count=\the\count10}\ifodd\count10\relax\t@mptrue\else\t@mpfalse\fi
+  \else\trace{v}{no marginnote-\t@mp @v:\t@mpa no, pageno=\the\pageno}\ifodd\pageno\relax\t@mptrue\else\t@mpfalse\fi\fi%
   \trace{v}{pagenumber is \ift@mp odd\else even\fi, and side is \p@ram, value=\the\count10, mcstack=\mcstack}%
   \ifnum \ifx\p@ram\@nner\ift@mp 0\else 1\fi\else\ifx\p@ram\@uter\ift@mp 1\else 0\fi\else\ifx\p@ram\r@ght 1\else 0\fi\fi\fi =0
     \t@mptrue\else\t@mpfalse
   \fi
-  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}%
+  \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\simpleprintv@rse\ift@mp\else\hfil\fi}}%
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
     \s@tsideskips{v}%
     \ift@mp \dimen9=\leftskip\leftskip=\rightskip\rightskip=\dimen9\fi
     \trace{v}{leftskip=\the\leftskip, rightskip=\the\rightskip}%
     \myh@ngprintv@rse{2}%
-    \setbox2=\vbox{\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\kern\AfterVerseSpaceFactor\FontSizeUnit\ift@mp\else\hfil\fi}}%
+    \setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{\ift@mp\hfil\fi\box2\kern\AfterVerseSpaceFactor\FontSizeUnit\ift@mp\else\hfil\fi}}%
   \fi
   \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}%
