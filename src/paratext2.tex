@@ -833,7 +833,7 @@
       \hbox to \dimen1{\noindent\ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifb@dy\iftob@dy\else\lshiftc@lumn{\pageno}\fi\fi
+        \ifb@dy\iftob@dy\else\lshiftc@lumn{\the\pageno}\fi\fi
         \vbox to\dimen3{%
           \ifdim\ht\colA>1\onel@neunit
             \doTextB@rder{\colA}%3
@@ -841,7 +841,7 @@
           \box\colA\kern0pt \vfil}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
           \trace{o}{onecoltrial rcolgutter makecolumngutter}%
-          \iftob@dy\else\rshiftc@lumn{\pageno}\fi
+          \iftob@dy\else\rshiftc@lumn{\the\pageno}\fi
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
@@ -1093,11 +1093,11 @@
         \ifb@dy\testXrefSideL\ifnum\tmp=1
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{2}%
         \fi\fi
-        \ifb@dy\iftob@dy\else\lshiftc@lumn{\pageno}\fi\fi
+        \ifb@dy\iftob@dy\else\lshiftc@lumn{\the\pageno}\fi\fi
         %\special{"testme1"}
         \vbox to \dimen3{\unvbox\colA\vfil}%\special{"testme2"}%
         \ifb@dy\testXrefSideR\ifnum\tmp=1
-          \iftob@dy\else\rshiftc@lumn{\pageno}\fi
+          \iftob@dy\else\rshiftc@lumn{\the\pageno}\fi
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
@@ -1984,17 +1984,18 @@
 \def\rshiftc@lumn#1{%
  \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\r@ght 1
-    \else\ifodd\count255 \ifx\colshiftmode\@uter 1\else 0\fi
-      \else\ifx\colshiftmode\@nner 1\else 0\fi\fi
+    \else\ifodd\count255 \ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else\ifx\colshiftmode\@uter 1\else 0\fi\fi
+      \else\ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else\ifx\colshiftmode\@nner 1\else 0\fi\fi\fi
      \fi =1 \hbox to \columnshift {}\fi\fi
 }
 \def\z@ropt{0pt}
 \def\lshiftc@lumn#1{%
  \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\l@ft 1
-    \else\ifodd\count255 \ifx\colshiftmode\@nner 1\else 0\fi
-      \else\ifx\colshiftmode\@uter 1\else 0\fi\fi
-  \fi =1 \trace{M}{lshifting for \colshiftmode \space at #1}\hbox to \columnshift{}\else\trace{M}{Not lshifting for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}\fi\fi
+    \else\ifodd\count255 \ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else \ifx\colshiftmode\@nner 1\else 0\fi\fi
+      \else\ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else\ifx\colshiftmode\@uter 1\else 0\fi\fi\fi
+  \fi =1 \trace{M}{lshifting}\hbox to \columnshift{}\else\trace{M}{Not lshifting}\fi\fi
+  \trace{M}{for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}%
 }
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse

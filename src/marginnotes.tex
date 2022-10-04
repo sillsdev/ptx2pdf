@@ -98,8 +98,8 @@
   \edef\p@s{\p@ram}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else\edef\p@geno{\the\pageno}\fi
-  \ifx\p@ram\@uter\ifodd\p@geno\let\s@de\r@ght\else\let\s@de\l@ft\fi
-  \else\ifx\p@ram\@nner\ifodd\p@geno\let\s@de\l@ft\else\let\s@de\r@ght\fi
+  \ifx\p@ram\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
+  \else\ifx\p@ram\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@ram\relax\let\s@de\l@ft\else\let\s@de\p@ram\fi\fi\fi
   \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was \p@ram, col=\csname marginnote-#2@#3:colno\endcsname}%
   \getp@ram{leftmargin}{#3}{\styst@k}%
