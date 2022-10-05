@@ -893,7 +893,12 @@
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
     \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
-      \kern\RHruleposition \hrule
+      \kern\RHruleposition
+      \begingroup\everypar={}\noindent
+        \dimen1=\textwidth \setbox1=\hbox{\lshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
+        \setbox1=\hbox{\rshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
+        \hbox{\lshiftc@lumn{\the\pageno}\vrule width \dimen1 height 0.4pt}%
+      \endgroup
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%
