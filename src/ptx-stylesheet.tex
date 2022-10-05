@@ -1126,7 +1126,9 @@
  \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
         \gdef\b@okShort{}%Prevent roll-over of short-form book name
         \csname bookstart-all\endcsname
-        \csname bookstart-\id@@@\endcsname}%
+        \csname bookstart-\id@@@\endcsname
+        \runtrigg@rsother{bookstart}%
+        }%
  %
  \def\b{\endlastp@rstyle{b}\bgroup % End previous par before making a gap
    \getp@ram{baseline}{b}{\styst@k}\ifx\p@ram\relax
@@ -1717,7 +1719,7 @@
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
  % no idea why we need \noindent here:
- \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space remaining}\ifdim\ht\partial>0pt \noindent\eject\fi
+ \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space used}\ifdim\ht\partial>0pt \noindent\eject\fi
  \iflastptxfile\closepiclist\fi
  \closeadjlist
  \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
