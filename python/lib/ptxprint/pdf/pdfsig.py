@@ -165,7 +165,7 @@ class Signature:
             self.docropmark(res, [0, self.src.h], 2)
         return res
 
-    def pagenum(self, i, maxpages, rtl):
+    def pagenum(self, i, maxpages, rtl, cutfirst=True):
         ''' returns (signum, output_pnum, output_pnum_within_sig) '''
         if rtl:
             tmaxpages = ((maxpages + self.pages - 1) // self.pages) * self.pages
@@ -176,9 +176,16 @@ class Signature:
             ppsig = self.pages * self.sigsheets
         sigid = i // ppsig          # signature number
         n = i - sigid * ppsig       # page number within signature
-        normnum = n if n < ppsig // 2 else ppsig - n - 1
-        sheetnum = normnum // (self.pages // 2)     # sheet number within signature
-        sigindex = n - sheetnum * (self.pages // 2) if n < ppsig // 2 else self.pages - (ppsig - n - sheetnum * (self.pages // 2))
+        if cutfirst and self.pages >= 4:
+            a = ppsig // self.pages
+            doneg = int((n + 2 * a) // (2 * a)) & 1
+            sheetnum = (n - (2 * ppsig // 4) * ((n + 2 * a) // (4 * a))) // 2 * (1 if doneg else -1) - (0 if doneg else 1)
+            sigindex = 2 * (n // (2 * a)) + (n & 1)
+        else:
+            normnum = n if n < ppsig // 2 else ppsig - n - 1
+            sheetnum = normnum // (self.pages // 2)     # sheet number within signature
+            sigindex = n - sheetnum * (self.pages // 2) if n < ppsig // 2 else self.pages - (ppsig - n - sheetnum * (self.pages // 2))
+        print(f"{i=} {sheetnum=} {doneg=} {sigid=} {sigindex=} {ppsig=} {a=}")
         opnum = sigid * self.sigsheets * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page
         # print(f"pagenum({i}, {maxpages}) = ({sigid}, {opnum}, {sigindex}) [{sheetnum=}, {n=}, {normnum=}]")
         return (sigid, opnum, sigindex)

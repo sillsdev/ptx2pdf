@@ -369,7 +369,7 @@ class ViewModel:
         bottommarginmms = float(self.get("s_bottommargin"))
         # specified topmargin subtract 0.7 * hfontsize which the macros add in
         headerposmms = float(self.get("s_topmargin")) - asmm(float(self.get("s_headerposition"))) - 0.7 * hfontsizemms
-        footerposmms = float(self.get("s_footerposition"))
+        footerposmms = asmm(float(self.get("s_footerposition")))
         # report top of TeX headerbox then add that box back on and remove the 'true' height of the font
         headerlabel = headerposmms - (hfontheight - 0.7) * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
@@ -918,7 +918,7 @@ class ViewModel:
             fpos = config.getfloat("paper", "footerpos", fallback=10) * 72.27 / 25.4
             bmargin = config.getfloat("paper", "bottommargin", fallback=10) * 72.27 / 25.4
             lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
-            self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos) * 25.4 / 72.27)))
+            self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
         self._configset(config, "config/version", ConfigVersion)
             
