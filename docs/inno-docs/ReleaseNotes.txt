@@ -1,15 +1,35 @@
 PTXprint 2.2.27 Release Notes
-1 Oct 2022
+7 Oct 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.2.27 (1 Oct 2022)
+Bug fixes and improvements in 2.2.28 (7 Oct 2022)
 
   * Fixed Help | PTXPrint Docs Path link opens app not help #730
   
   * Improved Layout tab to make footer settings clearer #742
   
-  * 
+  * Improvement: Ensure consistent position for footers
+  
+  * Refactor page layout bottom margins and update .cfg (Inverted noinkmargin) 
+  
+  * Get inner, outer, & right working for marginnotes and marginal verses
+  
+  * Fixed: inner and outer marginal verses for 2 cols and also RTL 1-col or 2-cols
+  
+  * Fixed: Allow marginal verse numbers on last line
+  
+  * Adjust headers and footers to fit with offset columns (single and double)
+  
+  * Fix word boundaries for ZWSP
+  
+  * Added bookstart trigger for quick & dirty front covers
+  
+  * Enable imposition for cut first
+  
+  * Added a few other common paper sizes
+  
+  * Added Fold First option to pagination
 
 Bug fixes and improvements in 2.2.27 (29 Sep 2022)
 
