@@ -5262,6 +5262,32 @@ the text. This may be useful for precise measuring.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_marginVrsPosn">
+    <columns>
+      <!-- column-name Heading -->
+      <column type="gchararray"/>
+      <!-- column-name marginVrsPosn -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">Left</col>
+        <col id="1">left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Right</col>
+        <col id="1">right</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Inner</col>
+        <col id="1">inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Outer</col>
+        <col id="1">outer</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_outputFormat">
     <columns>
       <!-- column-name FormatDesc -->
@@ -9946,7 +9972,12 @@ or select from the list of preset values.</property>
                                         <items>
                                           <item translatable="yes">210mm, 297mm (A4)</item>
                                           <item translatable="yes">148mm, 210mm (A5)</item>
+                                          <item translatable="yes">105mm, 148mm (A6)</item>
                                           <item translatable="yes">176mm, 250mm (B5)</item>
+                                          <item translatable="yes">125mm, 176mm (B6)</item>
+                                          <item translatable="yes">210mm, 280mm (PA4)</item>
+                                          <item translatable="yes">140mm, 210mm (PA5)</item>
+                                          <item translatable="yes">105mm, 140mm (PA6)</item>
                                           <item translatable="yes">8.5in, 11in (Letter)</item>
                                           <item translatable="yes">5.5in, 8.5in (1/2 Letter)</item>
                                           <item translatable="yes">5.25in, 8.25in (133x210mm)</item>
@@ -12766,15 +12797,15 @@ selected books/chapters will show in the glossary.</property>
                             <property name="margin-start">10</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=3 n-rows=5 -->
+                              <!-- n-columns=3 n-rows=6 -->
                               <object class="GtkGrid" id="gr_mainBodyText">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-end">6</property>
-                                <property name="margin-top">3</property>
+                                <property name="margin-top">4</property>
                                 <property name="margin-bottom">6</property>
+                                <property name="row-spacing">3</property>
                                 <property name="column-spacing">4</property>
-                                <property name="row-homogeneous">True</property>
                                 <property name="column-homogeneous">True</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_chapterNumber">
@@ -12890,56 +12921,6 @@ a \m(argin) paragraph with no indentation.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkComboBox" id="fcb_glossaryMarkupStyle">
-                                    <property name="name">Markup for glossary words in text</property>
-                                    <property name="width-request">180</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Glossary words are marked up with
-special \w glossary\w* tags. Specify
-how these words should be highlighted
-in the printed output.
-
-The final option \w keeps|markup\w* as
-it is without removing any parameters
-such as Strong's numbers.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="model">ls_glossaryMarkupStyle</property>
-                                    <property name="active">0</property>
-                                    <property name="id-column">1</property>
-                                    <property name="active-id">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_marginalverses">
-                                    <property name="label" translatable="yes">Marginal Verses ... Col Width (pts):</property>
-                                    <property name="name">Show verse numbers in the margin</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Some language communities prefer the
-verse numbers to be displayed in a
-vertical stack NEXT to the text (rather
-than within the text itself). If that is
-what is required, check this option
-and also adjust the width of that
-column to fit the verse numbers.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="draw-indicator">True</property>
-                                    <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_hangpoetry">
                                     <property name="label" translatable="yes">Hanging Poetry Verse Numbers</property>
                                     <property name="name">Use hanging verse number for poetry</property>
@@ -12956,70 +12937,6 @@ Verse Bridges (3-4) also stack vertically.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="spacing">7</property>
-                                    <child>
-                                      <object class="GtkSpinButton" id="s_columnShift">
-                                        <property name="name">Column width for marginal verses</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="tooltip-text" translatable="yes">This is the amount of space to the left
-of the column of text to accommodate 
-marginal verse numbers. (pts)</property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="width-chars">4</property>
-                                        <property name="text">15.0</property>
-                                        <property name="caps-lock-warning">False</property>
-                                        <property name="progress-pulse-step">0</property>
-                                        <property name="placeholder-text">0.0</property>
-                                        <property name="input-purpose">number</property>
-                                        <property name="adjustment">a_columnShift</property>
-                                        <property name="climb-rate">0.10</property>
-                                        <property name="numeric">True</property>
-                                        <property name="update-policy">if-valid</property>
-                                        <property name="value">16</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_glossaryMarkupStyle">
-                                        <property name="name">Markup for glossary words</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">Glossary words are marked up with
-special \w glossary\w* tags. Specify
-how these words should be highlighted
-in the printed output.
-
-If you wish to apply your own custom
-styling to \w then select the last option.</property>
-                                        <property name="halign">end</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">Glossary Words
-Markup Style:</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13076,6 +12993,7 @@ Note that a justification setting of "Justify"
 in a style is subject to this setting.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-bottom">3</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -13241,6 +13159,154 @@ parts of the text have been skipped.</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">3</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_marginalverses">
+                                        <property name="label" translatable="yes">Marginal Verses:</property>
+                                        <property name="name">Show verse numbers in the margin</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Some language communities prefer the
+verse numbers to be displayed in a
+vertical stack NEXT to the text (rather
+than within the text itself). If that is
+what is required, check this option
+and also adjust the width of that
+column to fit the verse numbers.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onMarginalVersesClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_marginVrsPosn">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Marginal verses are usually placed
+on the left of the text, but can be
+positioned elsewhere if needed.</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-start">17</property>
+                                        <property name="label" translatable="yes">Position on Page: </property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkComboBox" id="fcb_marginVrsPosn">
+                                        <property name="name">Horizontal position of marginal verses</property>
+                                        <property name="width-request">10</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="can-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Marginal verses are usually placed
+on the left of the text, but can be
+positioned elsewhere if needed.</property>
+                                        <property name="halign">start</property>
+                                        <property name="model">ls_marginVrsPosn</property>
+                                        <property name="wrap-width">1</property>
+                                        <property name="has-entry">True</property>
+                                        <property name="entry-text-column">0</property>
+                                        <property name="id-column">1</property>
+                                        <property name="active-id">left</property>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="max-length">8</property>
+                                            <property name="width-chars">12</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="l_columnShift">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This is the amount of space to the left
+of the column of text to accommodate 
+marginal verse numbers. (pts)</property>
+                                        <property name="halign">end</property>
+                                        <property name="margin-start">13</property>
+                                        <property name="label" translatable="yes">Col Width (pts):</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">3</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkSpinButton" id="s_columnShift">
+                                        <property name="name">Column width for marginal verses</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="tooltip-text" translatable="yes">This is the amount of space to the left
+of the column of text to accommodate 
+marginal verse numbers. (pts)</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="width-chars">4</property>
+                                        <property name="text">16</property>
+                                        <property name="caps-lock-warning">False</property>
+                                        <property name="progress-pulse-step">0</property>
+                                        <property name="placeholder-text">0.0</property>
+                                        <property name="input-purpose">number</property>
+                                        <property name="adjustment">a_columnShift</property>
+                                        <property name="climb-rate">0.10</property>
+                                        <property name="numeric">True</property>
+                                        <property name="update-policy">if-valid</property>
+                                        <property name="value">16</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">4</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">5</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSeparator" id="rule_marginalVerses">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">12</property>
+                                    <property name="margin-top">4</property>
+                                    <property name="margin-bottom">4</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
                               </object>
                             </child>
                           </object>
@@ -13296,7 +13362,7 @@ be unchecked (to omit the main text).</property>
                                 <property name="can-focus">False</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
-                                <property name="row-spacing">4</property>
+                                <property name="row-spacing">6</property>
                                 <property name="column-spacing">4</property>
                                 <child>
                                   <object class="GtkCheckButton" id="c_useChapterLabel">
@@ -13319,12 +13385,13 @@ these settings will overrirde what has been set in the text.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_clBookList">
                                     <property name="name">List of books with special features enabled</property>
+                                    <property name="width-request">260</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">Add the 3-letter book codes for any books that
@@ -13337,14 +13404,14 @@ setting will be applied to ALL books</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkEntry" id="t_clHeading">
                                     <property name="name">Chapter label (for special feature books)</property>
-                                    <property name="width-request">150</property>
+                                    <property name="width-request">180</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">The chapter “label” to be used when rendering
@@ -13360,7 +13427,7 @@ insert a Zero Width Non-Break Space.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">4</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13382,7 +13449,7 @@ Label:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13415,49 +13482,6 @@ be set in single-column layout.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_showNonScriptureChapters">
-                                    <property name="label" translatable="yes">Non-Scripture Books</property>
-                                    <property name="name">Show chapters in non-scripture books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Peripheral books often have more than one
-"chapter" but do not need the chapter number
-to be printed. By default, PTXprint removes
-the chapter numbers from non-scripture books.
-If you need it to retain (and show) those chapter
-numbers then check this option.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_show1chBookNum">
-                                    <property name="label" translatable="yes">Single Chapter Books</property>
-                                    <property name="name">Show chapters in single chapter books</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select this option to show the 1 at the beginning
-of books that only have a single chapter (OBA, PHM,
-2JN, 3JN, JUD, etc.)</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
                                     <property name="top-attach">3</property>
                                   </packing>
                                 </child>
@@ -13481,8 +13505,8 @@ lines to occur, which is a negative side-effect.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">2</property>
+                                    <property name="top-attach">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13510,7 +13534,7 @@ be set in single-column layout.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">2</property>
+                                    <property name="top-attach">3</property>
                                     <property name="width">2</property>
                                   </packing>
                                 </child>
@@ -13523,7 +13547,7 @@ be set in single-column layout.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">3</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13540,9 +13564,9 @@ between books. For example:
   \periph Old Testament Introduction|id="intot"
   \periph New Testament Introduction|id="intnt"
   \periph Gospels Introduction|id="intgospels"</property>
-                                    <property name="halign">start</property>
+                                    <property name="halign">end</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">3</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
@@ -13552,16 +13576,120 @@ between books. For example:
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel" id="l_glossaryMarkupStyle">
+                                    <property name="name">Markup for glossary words</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.
+
+If you wish to apply your own custom
+styling to \w then select the last option.</property>
+                                    <property name="halign">end</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="label" translatable="yes">Glossary Words
+Markup Style:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                    <property name="width">2</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkComboBox" id="fcb_glossaryMarkupStyle">
+                                    <property name="name">Markup for glossary words in text</property>
+                                    <property name="width-request">180</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Glossary words are marked up with
+special \w glossary\w* tags. Specify
+how these words should be highlighted
+in the printed output.
+
+The final option \w keeps|markup\w* as
+it is without removing any parameters
+such as Strong's numbers.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="model">ls_glossaryMarkupStyle</property>
+                                    <property name="active">0</property>
+                                    <property name="id-column">1</property>
+                                    <property name="active-id">1</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_show1chBookNum">
+                                        <property name="label" translatable="yes">Single Chapter Books</property>
+                                        <property name="name">Show chapters in single chapter books</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Select this option to show the 1 at the beginning
+of books that only have a single chapter (OBA, PHM,
+2JN, 3JN, JUD, etc.)</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="active">True</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_showNonScriptureChapters">
+                                        <property name="label" translatable="yes">Non-Scripture Books</property>
+                                        <property name="name">Show chapters in non-scripture books</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Peripheral books often have more than one
+"chapter" but do not need the chapter number
+to be printed. By default, PTXprint removes
+the chapter numbers from non-scripture books.
+If you need it to retain (and show) those chapter
+numbers then check this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
                                 </child>
                                 <child>
                                   <placeholder/>
@@ -13574,7 +13702,7 @@ between books. For example:
                           <object class="GtkLabel">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Special Books </property>
+                            <property name="label" translatable="yes">Other Features</property>
                           </object>
                         </child>
                       </object>

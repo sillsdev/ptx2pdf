@@ -229,7 +229,7 @@ _sensitivities = {
     "c_differentColLayout" :   ["t_differentColBookList"],
     "c_autoToC" :              ["t_tocTitle", "gr_toc", "l_toc", "l_leaderStyle", "fcb_leaderStyle"],
     "c_hideEmptyVerses" :      ["c_elipsizeMissingVerses"],
-    "c_marginalverses" :       ["s_columnShift"],
+    "c_marginalverses" :       ["l_marginVrsPosn", "fcb_marginVrsPosn", "l_columnShift", "s_columnShift"],
     "c_rangeShowVerse" :       ["l_chvsSep", "r_CVsep_period", "r_CVsep_colon"],
     "c_fnautocallers" :        ["t_fncallers", "btn_resetFNcallers", "c_fnomitcaller", "c_fnpageresetcallers"],
     "c_xrautocallers" :        ["t_xrcallers", "btn_resetXRcallers", "c_xromitcaller", "c_xrpageresetcallers"],
