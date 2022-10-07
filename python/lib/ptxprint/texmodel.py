@@ -193,6 +193,7 @@ ModelMap = {
     "document/script":          ("fcb_script", lambda w,v: ":script="+v.lower() if v and v != "Zyyy" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", None),
     "document/marginalverses":  ("c_marginalverses", lambda w,v: "" if v else "%"),
+    "document/marginalposn":    ("fcb_marginVrsPosn", None),
     "document/columnshift":     ("s_columnShift", lambda w,v: v or "16"),
     "document/ifshowchapternums": ("c_chapterNumber", lambda w,v: "%" if v else ""),
     "document/showxtrachapnums":  ("c_showNonScriptureChapters", None),
@@ -909,6 +910,11 @@ class TexModel:
             outps.append(use)
         self.dict[restag] = "\n".join('\\includepdf{{{}}}'.format(Path(s).as_posix()) for s in outps)
 
+    def updateStyles(self):
+        if self.dict['document/marginalverses'] != '%':
+            self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
+            self.printer.saveStyles()
+
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
@@ -922,6 +928,7 @@ class TexModel:
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
         self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
+        self.updateStyles()
         for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontincludes_'),
                   ('BackPDFs', 'c_inclBackMatter', 'backincludes_')):
             files = getattr(self.printer, a[0], None)
