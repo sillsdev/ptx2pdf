@@ -789,7 +789,8 @@ class RunJob:
             try:
                 outpdf = make_signatures((outpdf._trailer if outpdf else opath),
                                      paper[0], paper[1], nums,
-                                     sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true')
+                                     sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
+                                     info['finishing/foldfirst'])
             except OverflowError as e:
                 info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
                                      title=_("Paper Size Error"), secondary=str(e), threaded=True)

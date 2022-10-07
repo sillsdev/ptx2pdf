@@ -6,6 +6,9 @@ from typing import Tuple, Union
 from ptxprint.pdfrw.objects import PdfObject, PdfDict, PdfArray, PdfName, IndirectPdfDict
 from ptxprint.pdfrw import PdfReader, PdfWriter, PageMerge
 from ptxprint.pdfrw.uncompress import uncompress
+import logging
+
+logger = logging.getLogger(__name__)
 
 k = 0.5522847498  # cp multiplier for 90 degree arc
 
@@ -176,10 +179,10 @@ class Signature:
             ppsig = self.pages * self.sigsheets
         sigid = i // ppsig          # signature number
         n = i - sigid * ppsig       # page number within signature
-        if cutfirst and self.pages >= 4:
+        if cutfirst and self.pages >= 8:
             a = ppsig // self.pages
-            doneg = int((n + 2 * a) // (2 * a)) & 1
-            sheetnum = (n - (2 * ppsig // 4) * ((n + 2 * a) // (4 * a))) // 2 * (1 if doneg else -1) - (0 if doneg else 1)
+            normnum = (n // 2) % (2 * a)
+            sheetnum = 2 * a - 1 - normnum if normnum >= a else normnum
             sigindex = 2 * (n // (2 * a)) + (n & 1)
         else:
             normnum = n if n < ppsig // 2 else ppsig - n - 1
@@ -187,7 +190,7 @@ class Signature:
             sigindex = n - sheetnum * (self.pages // 2) if n < ppsig // 2 else self.pages - (ppsig - n - sheetnum * (self.pages // 2))
         #print(f"{i=} {sheetnum=} {doneg=} {sigid=} {sigindex=} {ppsig=} {a=}")
         opnum = sigid * self.sigsheets * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page
-        # print(f"pagenum({i}, {maxpages}) = ({sigid}, {opnum}, {sigindex}) [{sheetnum=}, {n=}, {normnum=}]")
+        logger.debug(f"pagenum({i}, {maxpages}, {self.pages}) = ({sigid}, {opnum}, {sigindex}) [{sheetnum=}, {normnum=}]")
         return (sigid, opnum, sigindex)
 
     def docropmark(self, cm, p, n):
@@ -205,8 +208,8 @@ class Signature:
         cstr = " q {:.2f} w ".format(w) + ("{:.2f} " * 6).format(*ccm) + " cm " + cropstr + " Q"
         self.crops.append(cstr)
 
-    def appendpage(self, i, page, p1, p2, maxpages, rtl):
-        sigid, sigsheet, signum = self.pagenum(i, maxpages, rtl)
+    def appendpage(self, i, page, p1, p2, maxpages, rtl, cutfirst):
+        sigid, sigsheet, signum = self.pagenum(i, maxpages, rtl, cutfirst=cutfirst)
         # print(f"{i=} {sigid=} {sigsheet=} {signum=}")
         cm = self.cm(signum)
         pnum = layouts[self.pages][signum].page
@@ -226,7 +229,7 @@ class Signature:
         pobj = p[-1]
         pobj.Matrix = cm
 
-def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, hascrops, rtl, outfname=None):
+def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, hascrops, rtl, foldfirst, outfname=None):
     if isinstance(trailer, str):
         trailer = PdfReader(trailer)
     writer = PdfWriter(outfname)
@@ -238,7 +241,7 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
     merges = []
     for i, p in enumerate(pages):
         p.pid = i
-        sign, sigi, sigp = sig.pagenum(i, len(pages), rtl)
+        sign, sigi, sigp = sig.pagenum(i, len(pages), rtl, cutfirst=not foldfirst)
         if sigi & 1 == 0:
             sigi += 1
         while sigi >= len(merges):
@@ -247,7 +250,7 @@ def make_signatures(trailer, outwidth, outheight, num, sigsheets, foldmargin, ha
             m.subpages = []
             m.crops = []
         p1, p2 = merges[sigi-1:sigi+1]
-        sig.appendpage(i, p, p1, p2, len(pages), rtl)
+        sig.appendpage(i, p, p1, p2, len(pages), rtl, not foldfirst)
     pagemap = {}
     for m in merges:
         m.mbox = sig.mbox
@@ -290,6 +293,7 @@ if __name__ == "__main__":
     parser.add_argument('-S','--sigsheets',type=int,default=1,help='Number of sheets per signature')
     parser.add_argument('-f','--fold',type=float,default=0.,help='Minimum fold cut margin')
     parser.add_argument('-c','--crops',action="store_true",help="Add cropmarks")
+    parser.add_argument('-F','--foldfirst',action='store_true',help='Fold before cut')
     parser.add_argument('-H','--height',type=float,help="Source page height")
     parser.add_argument('-W','--width',type=float,help="Source page width")
     args = parser.parse_args()
@@ -308,9 +312,9 @@ if __name__ == "__main__":
                     args.num, args.sigsheets, args.fold)
         print(f"{sig.margin=}, {sig.cell=}, num=({sig.numx}, {sig.numy})")
         for i in range(2*args.num):
-            print(i, sig.pagenum(i, args.num), sig.cm(i), sig.crops)
+            print(i, sig.pagenum(i, args.num), sig.cm(i), sig.crops, cutfirst=not args.foldfirst)
     elif not args.outfile:
         print("Must specify an output file if processing an input file")
     else:
         make_signatures(args.infile, args.outwidth, args.outheight, args.num,
-                        args.sigsheets, args.fold, args.crops, outfname=args.outfile)
+                        args.sigsheets, args.fold, args.crops, args.foldfirst, outfname=args.outfile)

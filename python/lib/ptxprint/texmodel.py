@@ -281,6 +281,7 @@ ModelMap = {
     "document/rotatespinetext": ("fcb_rotateSpineText", None),
     
     "finishing/pgsperspread":   ("fcb_pagesPerSpread", None),
+    "finishing/foldfirst":      ("c_foldFirst", None),
     "finishing/scaletofit":     ("c_scaleToFit", None),
     "finishing/sheetsize":      ("ecb_sheetSize", None),
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", None),
