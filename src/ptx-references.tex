@@ -221,19 +221,20 @@
 }
 
 \def\defineheads{
+  \trace{M}{Defining heads for \mainBodyColumns \space columns}%
   \ifnum\mainBodyColumns=2
-    \oddhead={\lshiftc@lumn{0}\rlap{\RHoddleft}\hfil\rshiftc@lumn{0}\RHoddcenter\lshiftc@lumn{1}\hfil\llap{\RHoddright}\rshiftc@lumn{1}}
-    \evenhead={\lshiftc@lumn{0}\rlap{\RHevenleft}\hfil\rshiftc@lumn{0}\RHevencenter\lshiftc@lumn{1}\hfil\llap{\RHevenright}\rshiftc@lumn{1}}
-    \noVoddhead={\lshiftc@lumn{0}\rlap{\RHnoVoddleft}\hfil\rshiftc@lumn{0}\RHnoVoddcenter\lshiftc@lumn{1}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{1}}
-    \noVevenhead={\lshiftc@lumn{0}\rlap{\RHnoVevenleft}\hfil\rshiftc@lumn{0}\RHnoVevencenter\lshiftc@lumn{1}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{1}}
-    \oddfoot={\lshiftc@lumn{0}\rlap{\RFoddleft}\hfil\rshiftc@lumn{0}\RFoddcenter\hfil\lshiftc@lumn{1}\llap{\RFoddright}\rshiftc@lumn{1}}
-    \evenfoot={\lshiftc@lumn{0}\rlap{\RFevenleft}\hfil\rshiftc@lumn{0}\RFevencenter\hfil\lshiftc@lumn{1}\llap{\RFevenright}\rshiftc@lumn{1}}
-    \noVoddfoot={\lshiftc@lumn{0}\rlap{\RFnoVoddleft}\hfil\rshiftc@lumn{0}\RFnoVoddcenter\hfil\lshiftc@lumn{1}\llap{\RFnoVoddright}\rshiftc@lumn{1}}
-    \noVevenfoot={\lshiftc@lumn{0}\rlap{\RFnoVevenleft}\hfil\rshiftc@lumn{0}\RFnoVevencenter\hfil\lshiftc@lumn{1}\llap{\RFnoVevenright}\rshiftc@lumn{1}}
-    \titleevenfoot={\RF@even@set\lshiftc@lumn{0}\rlap{\RF@left}\hfil\rshiftc@lumn{0}\RF@center\hfil\lshiftc@lumn{1}\llap{\RF@right}\rshiftc@lumn{1}}
-    \titleoddfoot={\RF@odd@set\lshiftc@lumn{0}\rlap{\RF@left}\hfil\rshiftc@lumn{0}\RF@center\hfil\lshiftc@lumn{1}\llap{\RF@right}\rshiftc@lumn{1}}
-    \titleevenhead={\RH@even@set\lshiftc@lumn{0}\rlap{\RH@left}\hfil\rshiftc@lumn{0}\RH@center\hfil\lshiftc@lumn{1}\llap{\RH@right}\rshiftc@lumn{1}}
-    \titleoddhead={\RH@odd@set\lshiftc@lumn{0}\rlap{\RH@left}\hfil\rshiftc@lumn{0}\RH@center\hfil\lshiftc@lumn{1}\llap{\RH@right}\rshiftc@lumn{1}}
+    \oddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \oddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenfoot={\RF@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddfoot={\RF@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenhead={\RH@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddhead={\RH@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
   \else
     \oddhead={\lshiftc@lumn{1}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}\rshiftc@lumn{1}}
     \evenhead={\lshiftc@lumn{0}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}\rshiftc@lumn{0}}

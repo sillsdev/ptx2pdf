@@ -185,7 +185,7 @@ class Signature:
             normnum = n if n < ppsig // 2 else ppsig - n - 1
             sheetnum = normnum // (self.pages // 2)     # sheet number within signature
             sigindex = n - sheetnum * (self.pages // 2) if n < ppsig // 2 else self.pages - (ppsig - n - sheetnum * (self.pages // 2))
-        print(f"{i=} {sheetnum=} {doneg=} {sigid=} {sigindex=} {ppsig=} {a=}")
+        #print(f"{i=} {sheetnum=} {doneg=} {sigid=} {sigindex=} {ppsig=} {a=}")
         opnum = sigid * self.sigsheets * 2 + sheetnum * 2 + layouts[self.pages][sigindex].page
         # print(f"pagenum({i}, {maxpages}) = ({sigid}, {opnum}, {sigindex}) [{sheetnum=}, {n=}, {normnum=}]")
         return (sigid, opnum, sigindex)
