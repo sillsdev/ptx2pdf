@@ -920,6 +920,7 @@ class ViewModel:
             lineskip = config.getfloat("paragraph", "linespacing", fallback=12)
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
+            self._configset(config, "document/marginalposn", "left")
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
