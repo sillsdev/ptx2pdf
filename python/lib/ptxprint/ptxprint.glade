@@ -136,7 +136,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_columnShift">
     <property name="lower">1</property>
     <property name="upper">50</property>
-    <property name="value">16</property>
+    <property name="value">12</property>
     <property name="step-increment">1</property>
     <property name="page-increment">1</property>
   </object>
@@ -13276,7 +13276,7 @@ marginal verse numbers. (pts)</property>
                                         <property name="climb-rate">0.10</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
-                                        <property name="value">16</property>
+                                        <property name="value">12</property>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>

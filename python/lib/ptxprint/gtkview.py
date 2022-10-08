@@ -141,7 +141,6 @@ btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages l_gutterWidth btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_btmMrgn s_bottommargin
-l_margin2header 
 c_rhrule l_rhruleoffset s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
 c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
@@ -3902,14 +3901,12 @@ class GtkViewModel(ViewModel):
     
     def updateMarginGraphics(self):
 
-        self.builder.get_object("img_topgreen").set_visible(False)
-        self.builder.get_object("img_toporange").set_visible(False)
         for tb in ["top", "bot", "nibot"]:
             self.builder.get_object("img_{}grid".format(tb)).set_visible(False)
             self.builder.get_object("img_{}vrule".format(tb)).set_visible(False)
             for c in ["1", "2"]:
                 self.builder.get_object("img_{}{}col".format(tb,c)).set_visible(False)
-        self.turnOffColouredArrows()
+        self.showColouredArrows(True)
 
         cols = 2 if self.get("c_doublecolumn") else 1
         vert = self.get("c_verticalrule") and self.get("c_doublecolumn")
@@ -4351,14 +4348,20 @@ class GtkViewModel(ViewModel):
     def onMarginLeaveNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, False)
 
-    def turnOffColouredArrows(self):
+    def showColouredArrows(self, status=True):
         for i in _clr:
-            self.builder.get_object("img_{}".format(_clr[i])).set_visible(False)
+            self.builder.get_object("img_{}".format(_clr[i])).set_visible(status)
             if _clr[i].startswith("bot"):
-                self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(False)
+                if self.get("c_noinkinmargin"):
+                    self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(status)
+                    self.builder.get_object("img_{}".format(_clr[i])).set_visible(False)
+                else:
+                    self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(False)
+                    self.builder.get_object("img_{}".format(_clr[i])).set_visible(status)
+            
                 
     def highlightMargin(self, btn, highlightMargin=True):
-        self.turnOffColouredArrows()
+        self.showColouredArrows(False)
         n = Gtk.Buildable.get_name(btn)
         iname = _clr[n[2:]]
         ni = "ni" if self.get("c_noinkinmargin") and iname.startswith("bot") else ""
