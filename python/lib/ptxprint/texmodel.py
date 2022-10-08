@@ -671,7 +671,6 @@ class TexModel:
         else:
             vals = ("0.0", "0.0")
         (self.dict["grid/xoffset_"], self.dict["grid/yoffset_"]) = vals
-        self.dict['project/usefrontfile_'] = '%' if 'project/frontfile' not in self.dict or not len(self.dict['project/frontfile']) else ''
         for a in ('project/frontfile', 'project/ptxprintstyfile_', 'diglot/ptxprintstyfile_'):
             if a not in self.dict:
                 self.dict[a] = ''
