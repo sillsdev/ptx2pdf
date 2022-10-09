@@ -66,11 +66,12 @@ a = Analysis(['python/scripts/ptxprint'],
                             ('Google-Noto-Emoji-Objects-62859-open-book.ico', '62859-open-book-icon(128).png', 
                              'picLocationPreviews.png',
                              'FRTtemplateBasic.txt', 'FRTtemplateAdvanced.txt',
-                             'Top1FalseFalse.png', 'Top1FalseTrue.png', 'Top2FalseFalse.png',
-                             'Top2FalseTrue.png', 'Top2TrueFalse.png', 'Top2TrueTrue.png',
-                             'Bottom1False.png', 'Bottom2False.png', 'Bottom2True.png',
-                             'topmargin.png', 'bottommargin.png', 'blanktop.png', 'blankbottom.png',
-                             'headerposition.png', 'footerposition.png', 'margins.png', 'rhruleposition.png')]
+                             'top1col.png', 'top2col.png', 'topblue.png', 'topgreen.png', 'topgrid.png', 
+                             'tophrule.png', 'toporange.png', 'toppurple.png', 'topred.png', 'topvrule.png',
+                             'bot1col.png', 'bot2col.png', 'botblue.png', 'botgrid.png', 
+                             'botpurple.png', 'botred.png', 'botvrule.png', 
+                             'nibot1col.png', 'nibot2col.png', 'nibotblue.png', 'nibotgrid.png', 
+                             'nibotpurple.png', 'nibotred.png', 'nibotvrule.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
