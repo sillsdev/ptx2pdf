@@ -1,7 +1,21 @@
 PTXprint 2.2.29 Release Notes
-9 Oct 2022
+10 Oct 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.30 (10 Oct 2022)
+
+  * Improved layout graphics (swapped sides for colored arrows)
+  
+  * Added option to control Rule Thickness (Advanced tab)
+  
+  * Fixed marginal notes (verses appearing in center between text)
+  
+  * Fix RTL aligned (not justified) text (for example, \qr)
+  
+  * Fix header rule for RTL inner+outer layouts
+  
+  * Adjust and monitor column threshold for margin notes
 
 Bug fixes and improvements in 2.2.29 (9 Oct 2022)
 
