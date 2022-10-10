@@ -47,10 +47,10 @@
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
   \dimen0=#4 sp \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
   \ifodd #3\else\advance\dimen1 \BindingGutter\fi
-  \advance\dimen1 -\dimen2
+  \advance\dimen1 -\dimen2 \advance\dimen1 \ColumnGutterFactor\FontSizeUnit \advance\dimen1 \ColumnGutterFactor\FontSizeUnit
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
-  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l}%
+  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1}%
 }
 
 \def\pl@cemnote#1#2#3#4#5{%
