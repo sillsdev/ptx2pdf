@@ -898,7 +898,7 @@
         \dimen1=\textwidth \setbox1=\hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}}\advance\dimen1 by -\wd1
         \setbox1=\hbox{\rshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 0\else 1\fi\else\the\pageno\fi}}\advance\dimen1 by -\wd1
         \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
-        \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height 0.4pt}%
+        \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
@@ -1791,7 +1791,7 @@
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
       % not all the output text (after a \singlecolumn) was passed the first time
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\noindent\lshiftc@lumn{0}\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\noindent\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
       \ifvoid\topins\else \hbox{\noindent\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
@@ -2013,7 +2013,7 @@
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
-    \hbox to 1pt{\hfil\vrule width \RuleThicknessheight \the\dimen4 \hfil}%\dp5=#3 \box5
+    \hbox to 1pt{\hfil\vrule width \RuleThickness height \the\dimen4 \hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifx\XrefNotes\empty
     \ifColumnGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
@@ -2253,7 +2253,7 @@
 \newcount\im@gecount
 
 \newif\ifendbooknoeject \endbooknoejectfalse
-\def\pagebreak{\message{pagebreak}\ifhmode\par\fi
+\def\pagebreak{\leavevmode\message{pagebreak}\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
   \ifdiglot \vbox to 0pt{}\fi%

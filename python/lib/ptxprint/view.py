@@ -347,6 +347,7 @@ class ViewModel:
             return False
         (marginmms, topmarginmms, bottommarginmms, headerpos, footerpos, rulerpos, headerlabel, footerlabel) = self.getMargins()
         self.set("l_margin2header", "{}mm".format(f2s(headerlabel, 1)))
+        self.set("l_footer2edge", "{}mm".format(f2s(footerlabel, 1)))
         return True
 
     def getMargins(self):
@@ -372,7 +373,7 @@ class ViewModel:
         footerposmms = asmm(float(self.get("s_footerposition")))
         # report top of TeX headerbox then add that box back on and remove the 'true' height of the font
         headerlabel = headerposmms - (hfontheight - 0.7) * hfontsizemms
-        footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) * 72.27 / 25.4
+        footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) # * 72.27 / 25.4
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)
