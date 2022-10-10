@@ -897,7 +897,7 @@
       \begingroup\everypar={}\noindent
         \dimen1=\textwidth \setbox1=\hbox{\lshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
         \setbox1=\hbox{\rshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
-        \hbox{\lshiftc@lumn{\the\pageno}\vrule width \dimen1 height 0.4pt}%
+        \hbox{\lshiftc@lumn{\the\pageno}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
@@ -2002,6 +2002,7 @@
 }
 \newdimen\ColumnGutterRuleSkip \ColumnGutterRuleSkip=0pt
 \newif\ifColNotesRule \ColNotesRulefalse
+\newdimen\RuleThickness \RuleThickness=0.4pt
 
 \def\makecolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
   \trace{o}{makecolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
@@ -2011,7 +2012,7 @@
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\ColumnGutterRuleSkip
-    \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
+    \hbox to 1pt{\hfil\vrule width \RuleThicknessheight \the\dimen4 \hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifx\XrefNotes\empty
     \ifColumnGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
@@ -2045,7 +2046,7 @@
   \dimen4=#1\advance\dimen4-\ColumnGutterRuleSkip%\advance\dimen4 by #3
   \setbox4=\ifdim#2>\onel@neunit\vbox to #4{%       don't rule empty single column stuff at end of 2 col
     \vskip\StudyColumnGutterRuleSkip
-    \hbox to 1pt{\hfil\vrule height \the\dimen4\hfil}%\dp5=#3 \box5
+    \hbox to 1pt{\hfil\vrule width \RuleThickness height \the\dimen4 \hfil}%\dp5=#3 \box5
     \vfil}\else\box\voidb@x\fi
   \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
