@@ -895,9 +895,10 @@
     \ifrhr@le\ifdim\RHruleposition=\maxdimen\else
       \kern\RHruleposition\leftskip=0pt\rightskip=0pt
       \begingroup\everypar={}\noindent
-        \dimen1=\textwidth \setbox1=\hbox{\lshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
-        \setbox1=\hbox{\rshiftc@lumn{\the\pageno}}\advance\dimen1 by -\wd1
-        \hbox{\lshiftc@lumn{\the\pageno}\vrule width \dimen1 height \RuleThickness}%
+        \dimen1=\textwidth \setbox1=\hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}}\advance\dimen1 by -\wd1
+        \setbox1=\hbox{\rshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 0\else 1\fi\else\the\pageno\fi}}\advance\dimen1 by -\wd1
+        \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
+        \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height 0.4pt}%
       \endgroup
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le

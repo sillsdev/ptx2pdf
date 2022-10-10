@@ -266,6 +266,7 @@ ModelMap = {
     "document/noblankpage":        ("c_periphSuppressPage", None),
     "document/cutouterpadding":    ("s_cutouterpadding", None),
     "document/underlinethickness": ("s_underlineThickness", lambda w,v: float(v or "0.05")),
+    "document/rulethickness":      ("s_ruleThickness", lambda w,v: float(v or "0.40")),
     "document/underlineposition":  ("s_underlinePosition", lambda w,v: float(v or "-0.1")),
     "document/pagefullfactor":     ("s_pageFullFactor", lambda w,v: float(v or "0.65")),
     

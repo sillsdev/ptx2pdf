@@ -1499,6 +1499,9 @@ class GtkViewModel(ViewModel):
         dg = " color='"+col+"'" if self.get("c_diglot") else ""
         self.builder.get_object("lb_Diglot").set_markup("<span{}>".format(dg)+_("Diglot")+"</span>")
 
+        fh = " color='"+col+"'" if self.get("fcb_pagesPerSpread") != "1" else ""
+        self.builder.get_object("lb_Finishing").set_markup("<span{}>".format(fh)+_("Finishing")+"</span>")
+
         xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
         self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
         self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
@@ -4385,3 +4388,10 @@ class GtkViewModel(ViewModel):
 
     def onNoInkInMarginClicked(self, btn):
         self.updateMarginGraphics()
+
+    def onPagesPerSpreadChanged(self, btn):
+        self.colorTabs()
+        status = self.get("fcb_pagesPerSpread") != "1"
+        for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
+                  "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
+            self.builder.get_object(w).set_sensitive(status)

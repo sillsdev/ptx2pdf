@@ -38,7 +38,6 @@
 % #6 = height, #7 = x-shift, #8 = y-shift
   \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#7}%
   \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#8}%
-  \dimen2=#5
   \@m@rginnote{#1}{#2}%
 }
 
@@ -46,8 +45,7 @@
 % #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
   \dimen0=#4 sp \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
-  \ifodd #3\else\advance\dimen1 \BindingGutter\fi
-  \advance\dimen1 -\dimen2 \advance\dimen1 \ColumnGutterFactor\FontSizeUnit \advance\dimen1 \ColumnGutterFactor\FontSizeUnit
+  \ifBindingGutter\ifodd #3\else\advance\dimen1 \BindingGutter\fi\fi
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
   \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1}%
