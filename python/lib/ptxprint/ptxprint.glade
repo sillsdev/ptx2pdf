@@ -1694,7 +1694,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint</property>
-    <property name="version">Version 2.2.29</property>
+    <property name="version">Version 2.2.30</property>
     <property name="copyright">© 2020-2021, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
 the User-Interface. The PDFs are produced by enhanced 
