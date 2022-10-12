@@ -2758,7 +2758,7 @@ class GtkViewModel(ViewModel):
             return h
         c = self.get("col_styColor")
         col = coltohex(c)
-        self.set("l_styColorValue", col)
+        self.set("l_styColor", _("Color:")+"\n"+col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
             self.doError(_("'Enable Colored Text' has now been turned on.\nSee Fonts+Script tab for details."))

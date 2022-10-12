@@ -244,8 +244,8 @@ THE SOFTWARE.
     <property name="lower">0.5</property>
     <property name="upper">2</property>
     <property name="value">1</property>
-    <property name="step-increment">0.05</property>
-    <property name="page-increment">0.20</property>
+    <property name="step-increment">0.01</property>
+    <property name="page-increment">0.05</property>
   </object>
   <object class="GtkAdjustment" id="a_fontsize">
     <property name="lower">2</property>
@@ -268,13 +268,13 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_gridMinorDivisions">
     <property name="upper">25</property>
-    <property name="value">5</property>
+    <property name="value">12</property>
     <property name="step-increment">1</property>
-    <property name="page-increment">5</property>
+    <property name="page-increment">2</property>
   </object>
   <object class="GtkAdjustment" id="a_gridMinorThick">
     <property name="upper">2</property>
-    <property name="value">0.20</property>
+    <property name="value">0.10</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.10</property>
   </object>
@@ -328,16 +328,16 @@ THE SOFTWARE.
     <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_letterShrink">
-    <property name="upper">10</property>
-    <property name="value">1.5</property>
-    <property name="step-increment">0.10</property>
-    <property name="page-increment">1</property>
-  </object>
-  <object class="GtkAdjustment" id="a_letterStretch">
-    <property name="upper">10</property>
+    <property name="upper">5</property>
     <property name="value">2</property>
     <property name="step-increment">0.10</property>
-    <property name="page-increment">1</property>
+    <property name="page-increment">0.10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_letterStretch">
+    <property name="upper">5</property>
+    <property name="value">0.5</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">0.10</property>
   </object>
   <object class="GtkAdjustment" id="a_linespacing">
     <property name="lower">4</property>
@@ -4419,6 +4419,7 @@ more horizontal space, or less (shrink text).
                         <property name="text" translatable="yes">1.00</property>
                         <property name="xalign">1</property>
                         <property name="adjustment">a_fontExtend</property>
+                        <property name="climb-rate">0.01</property>
                         <property name="digits">2</property>
                         <property name="value">1</property>
                       </object>
@@ -4965,7 +4966,7 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="title" translatable="yes">Color of major lines in grid.</property>
-                            <property name="rgba">rgb(204,0,0)</property>
+                            <property name="rgba">rgb(237,51,59)</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -4984,7 +4985,7 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="margin-start">6</property>
                             <property name="margin-end">6</property>
                             <property name="title" translatable="yes">Color of minor lines in grid.</property>
-                            <property name="rgba">rgb(115,210,22)</property>
+                            <property name="rgba">rgb(255,190,111)</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -5035,7 +5036,7 @@ of the minor divisions.</property>
                             <property name="adjustment">a_gridMinorThick</property>
                             <property name="climb-rate">0.10</property>
                             <property name="digits">1</property>
-                            <property name="value">0.20</property>
+                            <property name="value">0.10</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
@@ -5056,6 +5057,8 @@ and 3, 4, 6, or 12 for inches.</property>
                             <property name="text">0</property>
                             <property name="xalign">1</property>
                             <property name="adjustment">a_gridMinorDivisions</property>
+                            <property name="climb-rate">1</property>
+                            <property name="value">12</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -5130,7 +5133,7 @@ of the Page, or at the top-left Margin.</property>
                             <property name="halign">start</property>
                             <property name="model">ls_gridOffset</property>
                             <property name="wrap-width">1</property>
-                            <property name="active">1</property>
+                            <property name="active">0</property>
                             <property name="entry-text-column">0</property>
                             <property name="id-column">1</property>
                             <property name="active-id">1</property>
@@ -12237,7 +12240,7 @@ space width. TeX's default value is 150%.</property>
                                             <property name="adjustment">a_letterStretch</property>
                                             <property name="climb-rate">0.10</property>
                                             <property name="digits">1</property>
-                                            <property name="value">0.40</property>
+                                            <property name="value">0.5</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -23685,12 +23688,11 @@ properties for this style.</property>
                                                       <packing>
                                                         <property name="left-attach">1</property>
                                                         <property name="top-attach">1</property>
-                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
                                                       <object class="GtkCheckButton" id="c_styFontScale">
-                                                        <property name="label" translatable="yes">Scale Relative
+                                                        <property name="label" translatable="yes">Scale Relative 
 to Parent</property>
                                                         <property name="name">Styles: Scale relative to parent</property>
                                                         <property name="width-request">100</property>
@@ -23704,9 +23706,9 @@ to Parent</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left-attach">3</property>
+                                                        <property name="left-attach">4</property>
                                                         <property name="top-attach">1</property>
-                                                        <property name="width">3</property>
+                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
@@ -23776,9 +23778,9 @@ to Parent</property>
                                                         <property name="draw-indicator">True</property>
                                                       </object>
                                                       <packing>
-                                                        <property name="left-attach">3</property>
+                                                        <property name="left-attach">4</property>
                                                         <property name="top-attach">2</property>
-                                                        <property name="width">3</property>
+                                                        <property name="width">2</property>
                                                       </packing>
                                                     </child>
                                                     <child>
@@ -23814,7 +23816,7 @@ to Parent</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">True</property>
                                                         <property name="tooltip-text" translatable="yes">Sets text color for text in this style.</property>
-                                                        <property name="halign">center</property>
+                                                        <property name="halign">start</property>
                                                         <property name="title" translatable="yes">Text Color</property>
                                                         <property name="rgba">rgb(0,0,0)</property>
                                                         <signal name="color-set" handler="onstyColorSet" swapped="no"/>
@@ -23853,12 +23855,14 @@ to Parent</property>
                                                         <signal name="button-release-event" handler="resetParam" swapped="no"/>
                                                         <child>
                                                           <object class="GtkLabel" id="l_styColor">
-                                                            <property name="width-request">45</property>
+                                                            <property name="width-request">50</property>
                                                             <property name="visible">True</property>
                                                             <property name="can-focus">False</property>
                                                             <property name="halign">end</property>
-                                                            <property name="label" translatable="yes">Color:</property>
+                                                            <property name="label">Color:
+x001122</property>
                                                             <property name="justify">right</property>
+                                                            <property name="xalign">1</property>
                                                           </object>
                                                         </child>
                                                       </object>
@@ -23918,39 +23922,6 @@ Factor:</property>
                                                       </packing>
                                                     </child>
                                                     <child>
-                                                      <object class="GtkLabel" id="l_styActualFontSize">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="tooltip-text" translatable="yes">Font name with calculated absolute point size 
-given the current Base Font Size (on the Layout tab).
-The (+Ascender -Descender) values from the base
-line for this font are provided for reference. </property>
-                                                        <property name="halign">start</property>
-                                                        <property name="hexpand">True</property>
-                                                        <property name="label" translatable="yes">11.7pt</property>
-                                                        <property name="use-markup">True</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">2</property>
-                                                        <property name="top-attach">0</property>
-                                                        <property name="width">3</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkLabel" id="l_styColorValue">
-                                                        <property name="visible">True</property>
-                                                        <property name="can-focus">False</property>
-                                                        <property name="tooltip-text" translatable="yes">RGB value in hexadecimal.</property>
-                                                        <property name="halign">center</property>
-                                                        <property name="valign">start</property>
-                                                        <property name="label" translatable="yes">ColorVal</property>
-                                                      </object>
-                                                      <packing>
-                                                        <property name="left-attach">5</property>
-                                                        <property name="top-attach">1</property>
-                                                      </packing>
-                                                    </child>
-                                                    <child>
                                                       <object class="GtkCheckButton" id="c_styFaceUnderline">
                                                         <property name="label" translatable="yes">Underline</property>
                                                         <property name="name">Styles: Underline</property>
@@ -23974,6 +23945,58 @@ Email: ptxprint_support@sil.org</property>
                                                         <property name="left-attach">2</property>
                                                         <property name="top-attach">2</property>
                                                       </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_styActualFontSize">
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">False</property>
+                                                        <property name="tooltip-text" translatable="yes">Calculated absolute point size 
+given the current Base Font Size
+(which is set on the Layout tab).
+
+The (↑Ascender ↓Descender) values 
+from the base line for this font are 
+provided for reference.</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="valign">center</property>
+                                                        <property name="hexpand">True</property>
+                                                        <property name="label" translatable="yes">&lt;span foreground="blue"&gt;11.7pt
+(↑6.6 ↓2.2)&lt;/span&gt;</property>
+                                                        <property name="use-markup">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left-attach">2</property>
+                                                        <property name="top-attach">1</property>
+                                                        <property name="width">2</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_styFontFeats">
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">False</property>
+                                                        <property name="tooltip-text" translatable="yes">If any modifications to the typeface
+have been selected, then they will
+be displayed here.
+
+GR= Graphite has been enabled
+stretch= (or shrink) font horizontally
+bold= embolden value (faux bold)
+ital= slant value (faux italics)</property>
+                                                        <property name="halign">start</property>
+                                                        <property name="valign">center</property>
+                                                        <property name="hexpand">True</property>
+                                                        <property name="label" translatable="yes">&lt;span foreground="blue"&gt;GR stretch=95%
+&lt;b&gt;bold=1.8&lt;/b&gt; &lt;i&gt;ital=0.15&lt;/i&gt;&lt;/span&gt;</property>
+                                                        <property name="use-markup">True</property>
+                                                      </object>
+                                                      <packing>
+                                                        <property name="left-attach">2</property>
+                                                        <property name="top-attach">0</property>
+                                                        <property name="width">3</property>
+                                                      </packing>
+                                                    </child>
+                                                    <child>
+                                                      <placeholder/>
                                                     </child>
                                                     <child>
                                                       <placeholder/>

@@ -194,7 +194,7 @@ class StyleEditorView(StyleEditor):
             self.set(v[0], val or "")
             if key == "Color":
                 print(f"setval {val=}")
-                self.set("l_styColorValue", str(val))
+                self.set("l_styColor", _("Color:")+"\n"+str(val))
             self.loading = False
 
     def get(self, key, default=None):
@@ -468,15 +468,15 @@ class StyleEditorView(StyleEditor):
         if f is not None:
             asc = f.ascent / f.upem * bfontsize
             des = f.descent / f.upem * bfontsize
-            print(fref.feats)
-            self.set("l_styActualFontSize", "{}\n{}{:.1f}pt {}{}{}(\u2191{:.1f} \u2193{:.1f})".format(fref.name, 
-                                            "GR " if fref.isGraphite else "", fsize,
-                                            "{:.0f}% ".format(float(fref.feats["extend"])*100) if "extend" in fref.feats else "",
-                                            "<b>{}</b> ".format(fref.feats["embolden"]) if "embolden" in fref.feats else "",
-                                            "<i>{}</i> ".format(fref.feats["slant"]) if "slant" in fref.feats else "",
+            self.set("l_styFontFeats", '<span foreground="blue">{}{}\n{}{}</span>'.format("GR " if fref.isGraphite else "",
+                                            "stretch={:.0f}%".format(float(fref.feats["extend"])*100) if "extend" in fref.feats else "",
+                                            "<b>bold={:.1f}</b> ".format(float(fref.feats["embolden"])) if "embolden" in fref.feats else "",
+                                            "<i>ital={:.2f}</i>".format(float(fref.feats["slant"])) if "slant" in fref.feats else ""),
+                                                        useMarkup=True)
+            self.set("l_styActualFontSize", '<span foreground="blue">{:.1f}pt\n(\u2191{:.1f} \u2193{:.1f})</span>'.format(fsize, 
                                             asc, -des), useMarkup=True)
         else:
-            self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
+            self.set("l_styActualFontSize", '<span foreground="blue">{:.1f}pt</span>'.format(fsize), useMarkup=True)
 
     def _cmp(self, a, b):
         try:
@@ -495,7 +495,7 @@ class StyleEditorView(StyleEditor):
             if v[0].startswith("col_"):
                 newval = textocol(val)
                 if v[0] == "col_styColor":
-                    self.set("l_styColorValue", str(val))
+                    self.set("l_styColor", _("Color:")+"\n"+str(val))
             else:
                 newval = val
             if newval is None:
