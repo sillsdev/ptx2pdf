@@ -71,9 +71,10 @@
 
 %Defined penalties
 \xdef\sp@cialpen{-10001}
-\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all marksN are registered with this function.
+\def\newsp@cialpen#1{%define a new special penalty {#1}  which gets set as the next special penalty number (assuming all special penalties are registered with this function.
   {\count255=\numexpr \sp@cialpen-1\relax
   \x@\xdef\x@\sp@cialpen{\the\count255}%
+  \message{Special penalty #1 is \sp@cialpen}%
   \x@\xdef\csname #1\endcsname{\sp@cialpen}}%
 }
 \newsp@cialpen{dgl@tPenColSwap}%
@@ -430,7 +431,7 @@
   \setbox0\vbox{\penalty9000\unvcopy\galleyexc@ss}%
   \dimen1=\ht\galleyexc@ss\advance\dimen1 by \dp\galleyexc@ss\relax
   \ifdim\dimen1<\trialheight
-    \trace{D}{ODD: trialheight bigger than contents. Reducing trialheight from \the\trialheight to \the\dimen1}%
+    \trace{D}{ODD: trialheight bigger than contents. Probably a footnote/fig.  Reducing trialheight from \the\trialheight to \the\dimen1}%
     \global\trialheight=\dimen1
   \fi
   %\splittopskip=0pt
@@ -445,6 +446,7 @@
     \vfuzz=\dimen0
     \let\after@this=\whichtrial
   \else 
+    \trace{D}{Split result:ht=\the\ht1, dp=\the\dp1. Remainder \ifvoid 0 void\else \the\ht0+\the\dp0\fi}%
     \savingvdiscards=1
     \global\setbox\galley=\vsplit\galleyexc@ss to \trialheight
     \ifdiglotDebugFollowContents
@@ -453,9 +455,7 @@
     \fi
     \setbox3=\vbox{\vskip\dp\galley\splitdiscards}%
     \trace{D}{discard ht:\the\ht3}%
-    \ifdiglotDebugFollowContents
-      \showbox3
-    \fi
+    \ifdiglotDebugFollowContents\showbox3 \fi
     \vfuzz=\dimen0
     \global\setbox\galley=\vbox{\unvbox\galley\global\galleypenalty=\lastpenalty\unpenalty\penalty\endtri@lpen@lty}%
     \ifvoid\galleyexc@ss\else
@@ -549,7 +549,7 @@
     \global\p@rtlsettrue
     \global\setbox\p@rtl\vbox{\unvbox\p@rtl}%
     \setbox3=\vbox{\vskip\dp\p@rtl\splitdiscards}%
-    \trace{D}{discard ht:\the\ht3}%
+    \trace{D}{discard ht was \the\ht3}%
     \ifdiglotDebugFollowContents
       \showbox3
       \showbox\p@rtl
@@ -558,7 +558,7 @@
     \global\vsize=\availht
     \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
     \ifvoid\@xcs\else
-      \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}%
+      \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}% %TeX will not split at glue with a penalty after it.
       \ifdiglotDebugFollowContents
         \trace{D}{Showing xcs after split}%
         \showbox\@xcs
@@ -787,7 +787,7 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
+  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -884,6 +884,12 @@
     \advance\TempDim by -\dp\trialbox\relax
     \ifdim\TempDim<-0.3\baselineskip 
       \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
+      \ifnum\outputpenalty=\endtri@lpen@lty\relax\else
+        %\showbox\trialbox
+        %\showbox\galley
+        %\showbox\galleyexc@ss
+        %\showlists
+      \fi
       \global\holdinginserts=1
       \global\trialfailedtrue
       \global\vsize=\textheight
@@ -931,6 +937,11 @@
       %\global\outputpenalty=\galleypenalty
       \let\after@this=\whichtrial
     \fi
+  \else
+    \iftrialfailed
+      \traceNum{D}{Trial failed with output penalty \the\outputpenalty}%
+      %\global\setbox\galleyexc@ss\vbox{\undog@lley}% This didn't help
+    \fi
   \fi
   \after@this
 }
@@ -941,6 +952,10 @@
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
   \tmpcount=\lastnodetype
+  \ifintrial
+    %\showlists
+    \message{!!! EEK. Internal error detected. #1 met during trial}%
+  \fi
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
@@ -978,7 +993,7 @@
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \relax
   \ifintrial 
-    \message{EEK! Still in trial! on page \the\pageno}%
+    \message{EEK! Still in trial! on page \the\pageno. Expect synchronisation and text loss}%
   \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
@@ -1340,8 +1355,8 @@
    \ifvoid#2
      \trace{D}{Box joint is \join@a-\join@b, no skip}%
    \else
-     \vskip \dimen3 
-     \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> skip: \the\dimen3)}%
+     \ifdim\dimen3=0pt \else \kern \dimen3 \fi % Don't add a vskip needlessly, it might be a  break point.
+     \trace{D}{Box joint is \join@a-\join@b (bls:\the\baselineskip, ts:\the\topskip -> \ifdim\dimen3=0pt noskip\else skip: \the\dimen3\fi)}%
    \fi
    \kern \dimen4 % kern away old depth.
    \ifVisTrace
@@ -1352,6 +1367,7 @@
  \fi%
  %
  \ifvoid#2\else
+   %\ifnum #4=0 \else \penalty#4\fi %put the appropriate penalty back 
    \penalty#4 %put the appropriate penalty back 
    %\setbox0=\copy#2
    %\setbox1=\vsplit0 to \baselineskip
@@ -2079,7 +2095,8 @@
   % assumes: \availht is correct, 
   % Fills: \excessX
   % Empties: \box255
-  \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize}%
+  \traceNum{D}{diglotCollect \c@rrdstat O:\the\outputpenalty, P:\the\savedpenalty, vs:\the\vsize. \ifintrial IN trial\fi}%
+  %\ifintrial\showlists\fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \ifx\destb@x\relax
