@@ -837,6 +837,9 @@ class FontRef:
     def __repr__(self):
         return str(type(self)) + self.asConfig()
 
+    def __str__(self):
+        return self.asConfig()
+
     def _iseq(self, other, ignorestyle=False):
         if id(self) == id(other):
             return True
@@ -875,7 +878,7 @@ class FontRef:
                         lang = v
                     else:
                         feats[k] = v
-        return cls(name, styles, isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
+        return cls(name, styles.strip(), isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
 
     @classmethod
     def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi, fontextend, fontdigits):
@@ -891,7 +894,7 @@ class FontRef:
             res.feats.pop('extend', None)
         if fontdigits and fontdigits.lower() != "default":
             res.feats['mapping']='mappings/{}{}'.format(fontdigits.lower(), "digits" if fontdigits[0].upper() == fontdigits[0] else "")
-        print(f"{res.feats=}")
+        logger.debug(f"fromDialog {res=}")
         return res
 
     @classmethod
@@ -906,7 +909,11 @@ class FontRef:
             name = f.family
         styles = []
         res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")!="0"))
-        res.updateTeXFeats(style.get("ztexFontFeatures", ""))
+        ztffeats = style.get("ztexFontFeatures", "")
+        res.updateTeXFeats(ztffeats)
+        for a in ("Bold", "Italic"):
+            v = style.get(a, None)
+            setattr(res, "is"+a, v)
         return res
 
     def copy(self, cls=None):
@@ -931,9 +938,14 @@ class FontRef:
             return
         while len(featstring) and featstring[0] == "/":
             m = re.match("/([^:;,/]+)", featstring)
-            if m.group(1).lower() == "gr":
+            s = m.group(1).lower()
+            if s == "gr":
                 self.isGraphite = True
-            featstring = featstring[m.endpos:]
+            if "b" in s:
+                self.isBold = True
+            if "i" in s:
+                self.isItalic = True
+            featstring = featstring[m.end(1):]
         if not featstring:
             return
         f = TTFont(self.name, self.style)
@@ -1047,22 +1059,23 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False, noStyles=False):
         res = []
         # only use of main regular fonts use the \Bold etc.
         if not force and regular is not None and self._iseq(regular, ignorestyle=True):
             for a in ('FontName', 'ztexFontFeatures', 'ztexFontGrSpace'):
                 if a in style:
                     del style[a]
-            for a in ("Bold", "Italic"):
-                x = getattr(regular, "is"+a, False)
-                y = getattr(self, "is"+a, False)
-                if x and not y:
-                    style[a] = "-"
-                elif y and not x:
-                    style[a] = ""
-                elif x:     # implies: and y
-                    del style[a]
+            if not noStyles:
+                for a in ("Bold", "Italic"):
+                    x = getattr(regular, "is"+a, False)
+                    y = getattr(self, "is"+a, False)
+                    if x and not y:
+                        style[a] = "-"
+                    elif y and not x:
+                        style[a] = ""
+                    elif x:     # implies: and y
+                        del style[a]
         # All other non-main fonts use /B, etc.
         else:
             (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
@@ -1085,11 +1098,12 @@ class FontRef:
                 style["ztexFontGrSpace"] = "2"
             else:
                 style.pop("ztexFontGrSpace", None)
-            for a in ("Bold", "Italic"):
-                if getattr(self, "is"+a, False):
-                    style[a] = ""
-                else:
-                    del style[a]
+            if not noStyles:
+                for a in ("Bold", "Italic"):
+                    if getattr(self, "is"+a, False):
+                        style[a] = ""
+                    else:
+                        del style[a]
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)

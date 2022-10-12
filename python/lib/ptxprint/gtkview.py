@@ -3613,8 +3613,8 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
 
     def onFontStyclicked(self, btn):
-        self.getFontNameFace("bl_font_styFontName") #, noStyles=True)
-        self.styleEditor.item_changed(btn, "FontName")
+        if self.getFontNameFace("bl_font_styFontName"): #, noStyles=True)
+            self.styleEditor.item_changed(btn, "FontName")
         
     def onColophonClicked(self, btn):
         self.onSimpleClicked(btn)

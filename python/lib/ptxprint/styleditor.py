@@ -58,7 +58,7 @@ def asFloatPts(self, s, mrk=None, model=None):
         except (ValueError, TypeError):
             return 0.
 
-def toFloatPts(self, v, mrk=None, model=None):
+def toFloatPts(self, v, mrk=None, model=None, parm=None):
     return "{} pt".format(f2s(float(v)))
 
 def fromFloat(self, s, mrk=None, model=None):
@@ -67,7 +67,7 @@ def fromFloat(self, s, mrk=None, model=None):
     except (ValueError, TypeError):
         return 0.
 
-def toFloat(self, v, mrk=None, model=None):
+def toFloat(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v))
 
 def from12(self, s, mrk=None, model=None):
@@ -76,13 +76,13 @@ def from12(self, s, mrk=None, model=None):
     except (TypeError, ValueError):
         return 0.
 
-def to12(self, v, mrk=None, model=None):
+def to12(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
     return not(s is None or s is False or s == "-")
 
-def toBool(self, v, mrk=None, model=None):
+def toBool(self, v, mrk=None, model=None, parm=None):
     return "" if v else "-"
 
 def fromSet(self, s, mrk=None, model=None):
@@ -90,7 +90,7 @@ def fromSet(self, s, mrk=None, model=None):
         return s
     return set(s.split())
 
-def toSet(self, s, mrk=None, model=None):
+def toSet(self, s, mrk=None, model=None, parm=None):
     if isinstance(s, set):
         return " ".join(s)
     return s
@@ -106,7 +106,7 @@ def fromFont(self, s, mrk=None, model=None):
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
-def toFont(self, v, mrk=None, model=None):
+def toFont(self, v, mrk=None, model=None, parm=None):
     if v is None:
         return
     if mrk is None:
@@ -125,14 +125,14 @@ def toFont(self, v, mrk=None, model=None):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
     oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
-    return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
+    return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
 
 def fromOneMax(self, v, mrk=None, model=None):
     res = coltotex(textocol(v))
     # print(f"FROM: {mrk=} {v=} {res=}")
     return res
 
-def toOneMax(self, v, mrk=None, model=None):
+def toOneMax(self, v, mrk=None, model=None, parm=None):
     res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
     # print(f"TO: {mrk=} {v=} {res=}")
     return res
@@ -144,7 +144,7 @@ def fromFileName(self, v, mrk=None, model=None):
     else:
         return v
 
-def toFileName(self, v, mrk=None, model=None):
+def toFileName(self, v, mrk=None, model=None, parm=None):
     return v
 
 _fieldmap = {
@@ -219,12 +219,12 @@ class StyleEditor:
             res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
-    def setval(self, mrk, key, val, ifunchanged=False):
+    def setval(self, mrk, key, val, ifunchanged=False, parm=None):
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
         if val is not None and key.lower() in _fieldmap:
-            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model)
+            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
             if newval is None and val is not None:
                 return      # Probably a font which has edited the object for us
             else:
