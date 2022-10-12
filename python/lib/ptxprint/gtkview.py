@@ -1068,7 +1068,7 @@ class GtkViewModel(ViewModel):
             return super().get(wid, default=default)
         return getWidgetVal(wid, w, default=default, asstr=asstr, sub=sub)
 
-    def set(self, wid, value, skipmissing=False):
+    def set(self, wid, value, skipmissing=False, useMarkup=False):
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
@@ -1088,7 +1088,7 @@ class GtkViewModel(ViewModel):
             if w is not None:
                 w.set_active(True)
             return
-        setWidgetVal(wid, w, value)
+        setWidgetVal(wid, w, value, useMarkup=useMarkup)
 
     def getvar(self, k, dest=None):
         if dest is None:

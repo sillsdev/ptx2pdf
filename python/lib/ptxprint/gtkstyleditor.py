@@ -203,12 +203,12 @@ class StyleEditorView(StyleEditor):
             return None
         return getWidgetVal(key, w, default)
 
-    def set(self, key, value):
+    def set(self, key, value, useMarkup=False):
         w = self.builder.get_object(key)
         if w is None:
             return
         try:
-            setWidgetVal(key, w, value)
+            setWidgetVal(key, w, value, useMarkup=useMarkup)
         except (TypeError, ValueError) as e:
             raise e.__class__("{} for widget {}".format(e, key))
 
@@ -413,15 +413,9 @@ class StyleEditorView(StyleEditor):
                 fref = self.getval(self.marker, 'FontName')
                 if fref is None:
                     fref = self.model.get("bl_fontR")
-                f = fref.getTtfont() if fref is not None else None
                 bfontsize = float(self.model.get("s_fontsize"))
                 fsize = asfloat(val, 1.) * bfontsize
-                if f is not None:
-                    asc = f.ascent / f.upem * bfontsize
-                    des = f.descent / f.upem * bfontsize
-                    self.set("l_styActualFontSize", "{}\n{:.1f}pt (+{:.1f} -{:.1f})".format(fref.name, fsize, asc, -des))
-                else:
-                    self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
+                self.setFontLabel(fref, fsize)
             self._setFieldVal(k, v, oldval, val)
 
         stype = self.getval(self.marker, 'StyleType')
@@ -467,6 +461,22 @@ class StyleEditorView(StyleEditor):
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
+
+    def setFontLabel(self, fref, fsize):
+        bfontsize = float(self.model.get("s_fontsize"))
+        f = fref.getTtfont() if fref is not None else None
+        if f is not None:
+            asc = f.ascent / f.upem * bfontsize
+            des = f.descent / f.upem * bfontsize
+            print(fref.feats)
+            self.set("l_styActualFontSize", "{}\n{}{:.1f}pt {}{}{}(\u2191{:.1f} \u2193{:.1f})".format(fref.name, 
+                                            "GR " if fref.isGraphite else "", fsize,
+                                            "{:.0f}% ".format(float(fref.feats["extend"])*100) if "extend" in fref.feats else "",
+                                            "<b>{}</b> ".format(fref.feats["embolden"]) if "embolden" in fref.feats else "",
+                                            "<i>{}</i> ".format(fref.feats["slant"]) if "slant" in fref.feats else "",
+                                            asc, -des), useMarkup=True)
+        else:
+            self.set("l_styActualFontSize", "{:.1f}pt".format(fsize))
 
     def _cmp(self, a, b):
         try:
@@ -557,8 +567,11 @@ class StyleEditorView(StyleEditor):
             value = val
         if not key.startswith("_"):
             super(self.__class__, self).setval(self.marker, key, value)
-            if key == "FontSize":
-                self.set("l_styActualFontSize", "{:.1f}pt".format(float(value) * float(self.model.get("s_fontsize"))))
+            if key in ("FontSize", "FontName"):
+                fref = self.getval(self.marker, 'FontName')
+                if fref is None:
+                    fref = self.model.get("bl_fontR")
+                self.setFontLabel(fref, float(self.getval(self.marker, "FontSize")) * float(self.model.get("s_fontsize")))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):

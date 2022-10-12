@@ -891,6 +891,7 @@ class FontRef:
             res.feats.pop('extend', None)
         if fontdigits and fontdigits.lower() != "default":
             res.feats['mapping']='mappings/{}{}'.format(fontdigits.lower(), "digits" if fontdigits[0].upper() == fontdigits[0] else "")
+        print(f"{res.feats=}")
         return res
 
     @classmethod

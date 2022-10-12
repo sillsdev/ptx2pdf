@@ -43,7 +43,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         return default
     return v
 
-def setWidgetVal(wid, w, value, noui=False):
+def setWidgetVal(wid, w, value, noui=False, useMarkup=False):
     try:
         if wid.startswith("ecb_"):
             model = w.get_model()
@@ -77,7 +77,10 @@ def setWidgetVal(wid, w, value, noui=False):
         elif wid.startswith("lb_"):
             w.set_label(value or "")
         elif wid.startswith("l_"):
-            w.set_text(value or "")
+            if useMarkup:
+                w.set_markup(value or "")
+            else:
+                w.set_text(value or "")
         elif wid.startswith("col_"):
             c = Gdk.RGBA()
             c.parse(value)

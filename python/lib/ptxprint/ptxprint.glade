@@ -23928,9 +23928,7 @@ line for this font are provided for reference. </property>
                                                         <property name="halign">start</property>
                                                         <property name="hexpand">True</property>
                                                         <property name="label" translatable="yes">11.7pt</property>
-                                                        <attributes>
-                                                          <attribute name="foreground" value="#cece5c5c0000"/>
-                                                        </attributes>
+                                                        <property name="use-markup">True</property>
                                                       </object>
                                                       <packing>
                                                         <property name="left-attach">2</property>
