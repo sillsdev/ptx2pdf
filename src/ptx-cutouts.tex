@@ -98,6 +98,17 @@
         \@width=\csname cut@width\the\@index\endcsname
         \edef\@side{\csname cut@side\the\@index\endcsname}%
         \@cutout{\@side}{\the\@width}{\the\@after}{\the\@until}%
+        \ifx\ch@pterc@tnum\empty\else % keep track of ch@pterc@tnum
+          \ifnum\@index=\ch@pterc@tnum
+            \xdef\ch@pterc@tnum{\@numcuts}%
+          \fi
+        \fi
+      \else
+        \ifx\ch@pterc@tnum\empty\else % keep track of ch@pterc@tnum
+          \ifnum\@index=\ch@pterc@tnum
+            \global\let\ch@pterc@tnum\empty
+          \fi
+        \fi
       \fi
     \repeat
   \fi

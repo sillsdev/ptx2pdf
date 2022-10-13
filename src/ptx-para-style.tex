@@ -480,7 +480,7 @@
 %Some user-supplied code may cause unwanted side-effects, e.g. to newch@rstyle 
 \def\preservesettings{\let\epch@rstyle\newch@rstyle}
 \def\restoresettings{\let\newch@rstyle\epch@rstyle}
-
+\def\ch@pterc@tnum{}
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
@@ -522,9 +522,11 @@
      \else
       \m@kechapterbox
       \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
+      \xdef\ch@pterc@tnum{}%
       \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
       \ifx\p@ram\relax % simple case - no left indent
         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{2}%
+        \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
       \else % probably \q or something like that;                               %(1)
             % need to compare cutout width with leftindent
         \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
@@ -535,6 +537,7 @@
           \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
           \dimen4=\ch@pterwd \advance\dimen4 by -\dimen2 % and for wrap if needed
           \ifdim\dimen4>0pt \x@\c@tcmd\x@{\the\dimen4}{1}{1}\fi
+          \xdef\ch@pterc@tnum{\the\@numcuts}% remember which cutout number the chapter number uses
         \else % the indent is already big enough, so just use it as is
           \setbox\ch@pterbox=\hbox to \dimen0{\box\ch@pterbox\hfil}%
         \fi
@@ -550,21 +553,32 @@
 %+cpar_parstyle_drop
    \else
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
-     \cancelcutouts % forget existing cutout, we're re-doing it
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
      \ifx\p@ram\relax % simple case - no left indent
-       \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}%
+       \ifx\ch@pterc@tnum\empty
+         \trace{C}{New cutout needed}%
+         \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}% No pre-existing cutout
+       \else
+         \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+       \fi
      \else % probably \q or something like that;
            % need to compare cutout width with leftindent
        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
        \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
        % now \dimen0 is the real indent of the 1st line
        \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
+       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
-         \x@\c@tcmd\x@{\the\dimen4}{0}{1}% create extra indent
+         \ifx\ch@pterc@tnum\empty
+           \trace{C}{New cutout needed}%
+           \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
+         \else
+           \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+         \fi
        \else % the indent is already big enough, so just use it as is
        \fi
+      \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
      \dr@ppednumberfalse
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
@@ -597,6 +611,10 @@
 }
 %-cpar_parstyle_final
 
+\def\m@difychapcut#1#2{%Change the width of an existing cutout
+  \trace{C}{Modifying cutout #1 width to be #2 from \csname cut@width#1\endcsname, length: \csname cut@lines#1\endcsname }%
+  \expandafter\xdef\csname cut@width#1\endcsname{#2}%
+}
 %+cpar_pdfbookmark
 \newif\ifRTL
 \newif\ifallowp@rindent
