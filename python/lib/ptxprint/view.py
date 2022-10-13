@@ -261,6 +261,7 @@ class ViewModel:
             
     def switchFRTsettings(self):
         frtpath = self.configFRT()
+        logger.debug(f"Front Matter file is {frtpath}")
         if not os.path.exists(frtpath) or os.path.getsize(frtpath) == 0:
             self.doError(_("FRT must not be included in the list of books"), \
                 secondary = _("The 'Front Matter' option has now been enabled for you " + \
@@ -396,6 +397,7 @@ class ViewModel:
     def applyConfig(self, oldcfg, newcfg, action=None, moving=False, newprj=None, nobase=False):
         oldp = self.configPath(cfgname=oldcfg, makePath=False)
         newp = self.configPath(cfgname=newcfg, makePath=False, prjid=newprj)
+        logger.debug(f"Apply Config {oldcfg=} {newcfg=} {newp=}")
         if action is None:
             if os.path.exists(newp):
                 return False
@@ -527,6 +529,7 @@ class ViewModel:
             self.ptsettings = None
             self.prjid = self.get("fcb_project") if prjid is None else prjid
             self.configId = "Default"
+            logger.debug(f"Project set from {currprj} to {self.prjid}")
             if self.prjid:
                 self.ptsettings = ParatextSettings(self.settings_dir, self.prjid)
                 self.updateBookList()
@@ -549,12 +552,14 @@ class ViewModel:
             if not newconfig:
                 self.resetToInitValues(updatebklist=False)
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", configName)
+            logger.debug(f"Reading config {configName} in the config context of {self.configId}")
             oldVersion = self.readConfig(cfgname=configName, updatebklist=not newconfig)
             self.styleEditor.load(self.getStyleSheets(configName))
             self.updateStyles(oldVersion)
             if newconfig:
                 self.set("t_invisiblePassword", "")
             if oldVersion >= 0 or forceConfig:
+                logger.debug(f"Switching config from {self.configId} to {configName}")
                 self.configId = configName
             if readConfig:  # project changed
                 self.usfms = None

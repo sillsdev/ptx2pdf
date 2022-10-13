@@ -1951,6 +1951,7 @@ class GtkViewModel(ViewModel):
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
             if not os.path.exists(fpath):
+                logger.debug(f"Front matter from {fpath} does not exist")
                 self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 fpath = None
@@ -1958,6 +1959,7 @@ class GtkViewModel(ViewModel):
                 genBtn.set_sensitive(True)
                 self.builder.get_object("btn_editZvars").set_visible(True)
             else:
+                logger.debug(f"Front matter from {fpath} exists")
                 self.builder.get_object("c_autoSave").set_sensitive(False)
                 self.set("c_autoSave", False)
 
@@ -2770,7 +2772,7 @@ class GtkViewModel(ViewModel):
             self.set("ecb_savedConfig", cfgName)
         else:
             self.pendingConfig = cfgName
-        return cfgName or None
+        return cfgName or super().configName()
 
     def setPrjid(self, prjid, saveCurrConfig=False):
         if not self.initialised:

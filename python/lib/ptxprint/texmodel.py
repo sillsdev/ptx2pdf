@@ -1084,6 +1084,7 @@ class TexModel:
     def createFrontMatter(self, outfname):
         self.dict['project/frontfile'] = os.path.basename(outfname)
         infpath = self.printer.configFRT()
+        logger.debug(f"Using front matter from {infpath}")
         bydir = os.path.join(pycodedir(), "images").replace("\\", "/")
         fmt = self.dict['snippets/pdfoutput']
         cmyk = fmt in ('CMYK', 'PDF/X-1A', 'PDF/A-1')
