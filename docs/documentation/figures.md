@@ -448,6 +448,8 @@ the combinations do not trigger an unprintable page.
   in the USFM. Note that at present only stand-alone milestones trigger figure 
   inclusion, but there is nothing particularly magic about `\zfiga`, it's just a 'neutral' 
   stand-alone milestone.
+- The anchor for the beginning of a book is ```_bk_ bookstart``` This anchor point was added to 
+  allow the placement of whole-page images before any content of the book.
 - A second or subsequent paragraph within a verse or keyterm entry, or after a stand-alone 
   milestone may be referenced  by appending a separator (by default an equals
   sign) and a number. e.g. ```_bk_ 1.2=3``` will trigger on the third paragraph
@@ -465,7 +467,12 @@ the combinations do not trigger an unprintable page.
     supported, with the restriction that (a) it sould not be expected to occur 
     in normal text of a type that might crop up in a key term. (b) it must not contain characters 
     with a special meaning within TeX (e.g. `#`, `$`, `%`, `{`, `}`). Multiple character separators 
-    are permissible. The command  below (to be included in the `.tex` file before any piclists, etc. are loaded) sets the separator to be the sequence `=@=`, in case a simple = sign is used in the text of a keyword. Piclists would then need to specify paragraphs in form ```_bk_ 1.2=@=3```
+    are permissible. The command  below (to be included in the `.tex` file
+    before any piclists, etc. are loaded) sets the separator to be the sequence
+    `=@=`, in case a simple = sign is used in the text of a keyword. Piclists would
+    then need to specify paragraphs in form ```_bk_ 1.2=@=3``` A sequence of rare
+    letters, such as `zqz` could also be used, provided none of these letters has been 
+    declared active, e.g. by declaring that they should use the fallback font.
 ```
 \SetTriggerParagraphSeparator{=@=}
 ```
