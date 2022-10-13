@@ -437,7 +437,7 @@
   \ifvoid\th@cl@ss\trace{n}{no note}\else
     \dimen10=0.4\ht\th@cl@ss
     \setbox10=\box1
-    \splittopskip=0pt
+    \splittopskip=\baselineskip%0pt
     \@@LOOP\temptrue
       \setbox1=\copy\th@cl@ss
       \trace{n}{splitting study box to \the\dimen10}%
@@ -454,12 +454,16 @@
       \StudyNoteRuleLeftIndent \vrule height \StudyNoteRuleThickness width \StudyNoteRuleWidth\textwidth \StudyNoteRuleRightIndent}%
       \global\f@rstnotefalse
     \fi%\else\kern\InterNoteSpace\fi
-    \dimen11=\ht11\ifdim\dimen11<\ht12 \dimen11=\ht12\fi
-    \dimen12=\dp11\ifdim\dimen12<\dp12 \dimen12=\dp12\fi
+    \setbox11=\vbox{\unvbox11} \setbox12=\vbox{\unvbox12}
+    \ifdim\ht12=0pt \setbox12=\vbox{\hbox to \wd11{}}\fi
+    \dimen11=\ht11 \ifdim\dimen11<\ht12 \dimen11=\ht12\fi
+    \dimen12=\dp11 \ifdim\dimen12<\dp12 \dimen12=\dp12\fi
     \trace{n}{Study notes (\the\ht11, \the\ht12)=\the\dimen11}%
-    \hbox to \textwidth {\box\ifRTL 12\else11\fi
-      \trace{o}{StudyGutterRule\ifStudyGutterRule true\else false\fi, ColumnGutterRule\ifColumnGutterRule true\else false\fi}%
-      \makestudycolumngutter{\dimen11}{\dimen11}{\dimen12}{\dimen11}{0}\box\ifRTL 11\else12\fi}%
+    \trace{o}{StudyGutterRule\ifStudyGutterRule true\else false\fi, ColumnGutterRule\ifColumnGutterRule true\else false\fi, ht=\the\dimen11 (\the\ht11 >\the\ht12 ) \space dp=\the\dimen12(\the\dp11 <\the\dp12 )}%
+    \hbox to \textwidth {\vbox to \dimen11{\unvbox\ifRTL 12\else11\fi \vfil}%
+      \makestudycolumngutter{\the\dimen11}{\the\dimen11}{\the\dimen12}{\the\dimen11}{0}%
+      \vbox to \dimen11{\unvbox\ifRTL 11\else12\fi \vfil}}%
+    \kern\dimen12
     \ifkeepn@tes\else
       \global\setbox\th@cl@ss\box\voidb@x
     \fi
@@ -759,16 +763,20 @@
         \ifodd\pageno\else \xdef\tmp{1}\fi
   \fi\fi\fi\fi\fi\fi}
 
+\newif\ifFinalNotesDown \FinalNotesDownfalse
 \def\p@geendcontent{%
   \traceifset{p@geendcontent}%
-  \ifdim\ht\bottomins>0pt \vfil\kern-\lastd@pth
-    \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\box\bottomins} \fi % ouput bottom spanning pictures
+  \tempfalse
+  \ifdim\ht\bottomins>0pt \vfil\kern-\lastd@pth \temptrue
+    \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
-  \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
+  \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth \temptrue\fi\fi
+    \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
+  \fi
   \noteseenfalse
   \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \vfil % \kern-\dimen0
-    \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\verybottomins}}%
+  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\fi % \kern-\dimen0
+    \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
   \traceifcheck{p@geendcontent}%
 }
@@ -845,8 +853,8 @@
           \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{1}%
         \fi\fi
         \hbox to \ExtraRMargin{}}%
-        \p@geendcontent
-        \box14
+      \p@geendcontent
+      \box14
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -1143,7 +1151,7 @@
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
       \def\pagecontents{%
         \doTextB@rder{\partial}%
-        \box\partial
+        \box\partial\vfil
         \p@geendcontent
         \ifnoinkinmargin\box14\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
@@ -2039,7 +2047,7 @@
 
 \newif\ifColumnGutterRule
 \newdimen\StudyColumnGutterRuleSkip
-\def\makestudycolumngutter#1#2#3#4#5{\ifnum#5=1\hfil\else\ifnum#5=3\hfil\else\ifnum#5=0\hfil\fi\fi\fi
+\def\makestudycolumngutter#1#2#3#4#5{\ifnum#5=2\else\hfil\fi
   \trace{o}{makestudycolumngutter: rule height=#1, box height=#2, box depth=#3, total height=#4, lineside=#5 bits
             ColumnGutterRuleSkip=\the\StudyColumnGutterRuleSkip, baselineskip=\the\onel@neunit}%
 % #1: Height of gutter rule, #2: height of gutter rule box, #3: depth of gutter rule box, #4: total height
