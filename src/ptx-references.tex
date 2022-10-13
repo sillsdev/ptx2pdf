@@ -161,6 +161,7 @@
  \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \trace{h}{page \the\pageno (h), first mark=\t@st}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
   \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi}%
@@ -254,8 +255,9 @@
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
  \s@tfont{h}{h}%
+ \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \trace{h}{page \the\pageno, first mark=\t@st}%
+ \trace{h}{page \the\pageno (f), first mark=\t@st}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
    \ifodd\pageno \the\noVoddfoot \else 
      \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
