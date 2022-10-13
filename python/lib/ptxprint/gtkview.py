@@ -3735,6 +3735,32 @@ class GtkViewModel(ViewModel):
         label = Gtk.Buildable.get_name(btn.get_child())
         self.styleEditor.resetParam(label)
 
+    def resetLabel(self, btn, foo):
+        lb = btn.get_child()
+        ctxt = lb.get_style_context()
+        if not ctxt.has_class("changed"):
+            return
+        label = Gtk.Buildable.get_name(lb)
+        (pref, name) = label.split("_")
+        ctrl = "s_"+name
+        if ctrl in self.initValues:
+            self.set(ctrl, self.initValues[ctrl])
+
+    def labelledChanged(self, widg, *a):
+        ctrl = Gtk.Buildable.get_name(widg)
+        logger.debug(f"{ctrl} changed")
+        (pref, name) = ctrl.split("_")
+        lb = self.builder.get_object("l_"+name)
+        if lb is None or ctrl not in self.initValues:
+            return
+        v = self.get(ctrl)
+        logger.debug(f"{ctrl} changed to {v}, default is {self.initValues[ctrl]}")
+        ctxt = lb.get_style_context()
+        if v == self.initValues[ctrl]:
+            ctxt.remove_class("changed")
+        else:
+            ctxt.add_class("changed")
+
     def adjustGuideGrid(self, btn):
         # if self.get('c_grid'):
         dialog = self.builder.get_object("dlg_gridsGuides")

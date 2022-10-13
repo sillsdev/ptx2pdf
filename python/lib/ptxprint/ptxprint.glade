@@ -25954,22 +25954,6 @@ Position (em):</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This setting is related to how full
-a page needs to be to force the
-next book to start on a new page.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Page Full
-Factor:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_pageFullFactor">
                                     <property name="name">Start new page threshold (page full factor)</property>
                                     <property name="visible">True</property>
@@ -25989,6 +25973,7 @@ next book to start on a new page.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">0.65</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -26037,6 +26022,29 @@ rule and the study notes inter-column rule.</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">6</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_pageFullFactor">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This setting is related to how full
+a page needs to be to force the
+next book to start on a new page.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Page Full
+Factor:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                               </object>
