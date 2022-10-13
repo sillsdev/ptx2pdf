@@ -100,7 +100,7 @@
         \@cutout{\@side}{\the\@width}{\the\@after}{\the\@until}%
         \ifx\ch@pterc@tnum\empty\else % keep track of ch@pterc@tnum
           \ifnum\@index=\ch@pterc@tnum
-            \xdef\ch@pterc@tnum{\@numcuts}%
+            \xdef\ch@pterc@tnum{\the\@numcuts}%
           \fi
         \fi
       \else
