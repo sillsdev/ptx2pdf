@@ -148,29 +148,30 @@ def toFileName(self, v, mrk=None, model=None, parm=None):
     return v
 
 _fieldmap = {
-    'bold':             (fromBool, toBool),
-    'italic':           (fromBool, toBool),
-    'superscript':      (fromBool, toBool),
-    'smallcaps':        (fromBool, toBool),
-    'firstlineindent':  (fromFloat, toFloat),
-    'leftmargin':       (fromFloat, toFloat),
-    'rightmargin':      (fromFloat, toFloat),
-    'linespacing':      (fromFloat, toFloat),
-    'raise':            (asFloatPts, toFloatPts),
-    'baseline':         (asFloatPts, toFloatPts),
-    'callerraise':      (asFloatPts, toFloatPts),
-    'notecallerraise':  (asFloatPts, toFloatPts),
-    'fontsize':         (from12, to12),
-    'spacebefore':      (from12, to12),
-    'spaceafter':       (from12, to12),
-    'fontname':         (fromFont, toFont),
-    'textproperties':   (fromSet, toSet),
-    'occursunder':      (fromSet, toSet),
-    'bordercolor':      (fromOneMax, toOneMax),
-    'bgimagecolor':     (fromOneMax, toOneMax),
-    'bgcolor':          (fromOneMax, toOneMax),
-    'bgimage':          (fromFileName, toFileName),
-    'fgimage':          (fromFileName, toFileName)
+    'bold':             (fromBool, toBool, None),
+    'italic':           (fromBool, toBool, None),
+    'superscript':      (fromBool, toBool, None),
+    'smallcaps':        (fromBool, toBool, None),
+    'firstlineindent':  (fromFloat, toFloat, 0.),
+    'leftmargin':       (fromFloat, toFloat, 0.),
+    'rightmargin':      (fromFloat, toFloat, 0.),
+    'nonjustifiedfill': (fromFloat, toFloat, 0.25),
+    'linespacing':      (fromFloat, toFloat, 0.),
+    'raise':            (asFloatPts, toFloatPts, 0),
+    'baseline':         (asFloatPts, toFloatPts, 0),
+    'callerraise':      (asFloatPts, toFloatPts, 0),
+    'notecallerraise':  (asFloatPts, toFloatPts, 0),
+    'fontsize':         (from12, to12, 12),
+    'spacebefore':      (from12, to12, 0),
+    'spaceafter':       (from12, to12, 0),
+    'fontname':         (fromFont, toFont, None),
+    'textproperties':   (fromSet, toSet, None),
+    'occursunder':      (fromSet, toSet, None),
+    'bordercolor':      (fromOneMax, toOneMax, None),
+    'bgimagecolor':     (fromOneMax, toOneMax, None),
+    'bgcolor':          (fromOneMax, toOneMax, None),
+    'bgimage':          (fromFileName, toFileName, None),
+    'fgimage':          (fromFileName, toFileName, None)
 }
 
 class StyleEditor:
@@ -318,7 +319,10 @@ class StyleEditor:
                 if k == "Name":
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
-                if not self._eq_val(other, v, key=k):
+                defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
+                if k.lower() == "nonjustifiedfill":
+                    print(f"{k=}={v=} [{defaultval=}]")
+                if not self._eq_val(other, v, key=k) and (defaultval is None or defaultval != float(v)):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True

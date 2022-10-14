@@ -29,6 +29,7 @@ stylemap = {
     'LineSpacing':  ('s_styLineSpacing',    'l_styLineSpacing', 1, None, None),
     'SpaceBefore':  ('s_stySpaceBefore',    'l_stySpaceBefore', 0, None, None),
     'SpaceAfter':   ('s_stySpaceAfter',     'l_stySpaceAfter',  0, None, None),
+    'NonJustifiedFill':  ("s_styNonJustifiedFill", "l_styNonJustifiedFill", 0.25, None, None),
     'CallerStyle':  ('t_styCallerStyle',    'l_styCallerStyle', '', None, None),
     'NoteCallerStyle': ('t_styNoteCallerStyle', 'l_styNoteCallerStyle', '', None, None),
     'NoteBlendInto': ('t_NoteBlendInto',    'l_NoteBlendInto',  '', None, None),
