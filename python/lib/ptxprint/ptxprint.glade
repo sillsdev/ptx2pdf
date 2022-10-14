@@ -9901,6 +9901,7 @@ be useful for a journaling layout.</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
                                         <property name="value">5</property>
+                                        <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -9943,6 +9944,7 @@ space between lines of text.</property>
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
                                         <property name="value">14</property>
+                                        <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onBaseLineSpacingChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                       </object>
@@ -10012,25 +10014,6 @@ or select from the list of preset values.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLabel" id="l_fontsize">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">This is the base font size for default paragraph 
-text. All other font sizes are calculated (according 
-to their factor size) based on this value.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="hexpand">True</property>
-                                        <property name="label" translatable="yes">Base Font
-Size (pt):</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkSpinButton" id="s_fontsize">
                                         <property name="name">Base font size</property>
                                         <property name="visible">True</property>
@@ -10047,6 +10030,7 @@ Size (pt):</property>
                                         <property name="digits">2</property>
                                         <property name="numeric">True</property>
                                         <property name="value">11</property>
+                                        <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onBaseFontSizeChanged" swapped="no"/>
                                         <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                       </object>
@@ -10054,47 +10038,6 @@ Size (pt):</property>
                                         <property name="left-attach">4</property>
                                         <property name="top-attach">1</property>
                                         <property name="width">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_linespacing">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">This is the base line spacing 
-for default paragraph text.</property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Base Line
-Spacing (pt):</property>
-                                        <property name="justify">right</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">3</property>
-                                        <property name="top-attach">2</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLabel" id="l_indentUnit">
-                                        <property name="width-request">90</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">The space by which paragraphs
-should be indented (inches). This 
-also affects poetry indentation.
-Note that for a single-column text
-this value needs to be higher than
-for two-column texts, and the value
-updates automatically when you change
-from 1 to 2 columns, and vice versa. </property>
-                                        <property name="halign">end</property>
-                                        <property name="valign">center</property>
-                                        <property name="label" translatable="yes">Base Paragraph
-Indent (inches):</property>
-                                        <property name="xalign">1</property>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">0</property>
-                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -10119,6 +10062,7 @@ also affects poetry indentation.
                                         <property name="numeric">True</property>
                                         <property name="update-policy">if-valid</property>
                                         <property name="value">0.80</property>
+                                        <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">1</property>
@@ -10327,6 +10271,87 @@ can be customized.</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkEventBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                        <child>
+                                          <object class="GtkLabel" id="l_indentUnit">
+                                            <property name="width-request">90</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">The space by which paragraphs
+should be indented (inches). This 
+also affects poetry indentation.
+Note that for a single-column text
+this value needs to be higher than
+for two-column texts, and the value
+updates automatically when you change
+from 1 to 2 columns, and vice versa. </property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="label" translatable="yes">Base Paragraph
+Indent (inches):</property>
+                                            <property name="xalign">1</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEventBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                        <child>
+                                          <object class="GtkLabel" id="l_fontsize">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This is the base font size for default paragraph 
+text. All other font sizes are calculated (according 
+to their factor size) based on this value.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="label" translatable="yes">Base Font
+Size (pt):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkEventBox">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                        <child>
+                                          <object class="GtkLabel" id="l_linespacing">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">This is the base line spacing 
+for default paragraph text.</property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="label" translatable="yes">Base Line
+Spacing (pt):</property>
+                                            <property name="justify">right</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">3</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                 </child>
                               </object>
@@ -10389,6 +10414,7 @@ the text of the two columns
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="value">4</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -10420,24 +10446,6 @@ line between the two columns.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_gutterWidth">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This is the space (mm) between 
-the text of the two columns.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">12</property>
-                                    <property name="label" translatable="yes">Gutter 
-Width (mm):</property>
-                                    <property name="justify">right</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkSpinButton" id="s_colgutteroffset">
                                     <property name="name">Adjust top of vertical rule</property>
                                     <property name="visible">True</property>
@@ -10458,27 +10466,10 @@ point of the vertical rule between columns.
                                     <property name="digits">1</property>
                                     <property name="numeric">True</property>
                                     <property name="value">3</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel" id="l_colgutteroffset">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
-lowers (using a positive value) the starting 
-point of the vertical rule between columns.
-(Value in pts).</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Adjust
-Top (pt):</property>
-                                    <property name="justify">right</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
                                   </packing>
                                 </child>
@@ -10503,6 +10494,7 @@ manually balancing pages.</property>
                                     <property name="width-chars">4</property>
                                     <property name="xalign">1</property>
                                     <property name="adjustment">a_bottomRag</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -10510,11 +10502,41 @@ manually balancing pages.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_bottomRag">
-                                    <property name="name">Maximum unbalanced lines</property>
+                                  <object class="GtkEventBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_colgutterfactor">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This is the space (mm) between 
+the text of the two columns.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">12</property>
+                                        <property name="label" translatable="yes">Gutter 
+Width (mm):</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_bottomRag">
+                                        <property name="name">Maximum unbalanced lines</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">By default (when this is set to 0)
 PTXprint will balance the number of
 lines used in each column. Sometimes
 this results in large empty spaces at the
@@ -10526,14 +10548,41 @@ unbalanced lines on the page. Note that
 you can still stretch/shrink paragraphs
 using AdjLists to refine the output by
 manually balancing pages.</property>
-                                    <property name="halign">end</property>
-                                    <property name="label" translatable="yes">Unbalanced
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Unbalanced
 Lines (max):</property>
-                                    <property name="justify">right</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_colgutteroffset">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This setting raises (using a negative value) or 
+lowers (using a positive value) the starting 
+point of the vertical rule between columns.
+(Value in pts).</property>
+                                        <property name="halign">end</property>
+                                        <property name="label" translatable="yes">Adjust
+Top (pt):</property>
+                                        <property name="justify">right</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
                                   </packing>
                                 </child>
                               </object>
@@ -10636,6 +10685,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="value">15</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -10667,6 +10717,7 @@ space between the end of the text and the footer line.</property>
                                     <property name="value">10.5</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -10702,6 +10753,7 @@ from the descender of the final line of text
                                     <property name="value">10.5</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
@@ -10740,6 +10792,7 @@ set the Binding Gutter above.</property>
                                     <property name="value">12</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -10776,6 +10829,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="update-policy">if-valid</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
                                   <packing>
@@ -10812,6 +10866,7 @@ above the base line of the first line of the body text.</property>
                                     <property name="value">18</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onBodyHeightChanged" swapped="no"/>
                                     <signal name="value-changed" handler="onNumTabsChanged" swapped="no"/>
                                   </object>
@@ -11321,6 +11376,7 @@ starts a little bit below the top of the header area.</property>
                                   <object class="GtkEventBox" id="e_margins">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11357,6 +11413,7 @@ Width (mm):</property>
                                   <object class="GtkEventBox" id="e_topmargin">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11390,6 +11447,7 @@ Top of Text (mm):</property>
                                   <object class="GtkEventBox" id="e_headerposition">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11423,10 +11481,11 @@ to Top of Text (pt):</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">end</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
-                                      <object class="GtkLabel" id="l_rhruleoffset">
+                                      <object class="GtkLabel" id="l_rhruleposition">
                                         <property name="can-focus">False</property>
                                         <property name="no-show-all">True</property>
                                         <property name="tooltip-text" translatable="yes">The space (pt) between the horizontal rule
@@ -11455,10 +11514,11 @@ and Top of Text (pt):</property>
                                   <object class="GtkEventBox" id="e_footerposition">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
-                                      <object class="GtkLabel" id="l_ftrPosn">
+                                      <object class="GtkLabel" id="l_footerposition">
                                         <property name="name">Footer position - space between text and footer</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -11486,7 +11546,7 @@ Top of Footer (pt):</property>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
-                                      <object class="GtkLabel" id="l_btmMrgn">
+                                      <object class="GtkLabel" id="l_bottommargin">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">The distance (mm) from the bottom of the 
@@ -11503,6 +11563,7 @@ End of Page (mm):</property>
                                         <attributes>
                                           <attribute name="foreground" value="#cccc00000000"/>
                                         </attributes>
+                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>
@@ -19935,19 +19996,6 @@ difference between Column Width and Span Width.</property>
                                                   <object class="GtkLabel">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
-                                                    <property name="halign">end</property>
-                                                    <property name="label" translatable="yes">Scale:</property>
-                                                    <property name="justify">right</property>
-                                                  </object>
-                                                  <packing>
-                                                    <property name="left-attach">2</property>
-                                                    <property name="top-attach">1</property>
-                                                  </packing>
-                                                </child>
-                                                <child>
-                                                  <object class="GtkLabel">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
                                                     <property name="tooltip-text" translatable="yes">Several options here are extensions to the normal USFM
 markup standard for illustrations and are not expected
 to work in other software. But PTXprint allows a greater
@@ -19986,6 +20034,7 @@ taking up too much space within the text.</property>
                                                     <property name="adjustment">a_plScale</property>
                                                     <property name="climb-rate">5</property>
                                                     <property name="value">100</property>
+                                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="left-attach">3</property>
@@ -20496,6 +20545,26 @@ rotate=binding page=2</property>
                                                     <property name="left-attach">5</property>
                                                     <property name="top-attach">6</property>
                                                     <property name="width">3</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkEventBox">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                                    <child>
+                                                      <object class="GtkLabel" id="l_plScale">
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">False</property>
+                                                        <property name="halign">end</property>
+                                                        <property name="label" translatable="yes">Scale:</property>
+                                                        <property name="justify">right</property>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="left-attach">2</property>
+                                                    <property name="top-attach">1</property>
                                                   </packing>
                                                 </child>
                                                 <child>
@@ -25759,24 +25828,10 @@ text and the side of a figure/sidebar in a cutout.</property>
                                     <property name="climb-rate">1</property>
                                     <property name="numeric">True</property>
                                     <property name="value">10</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">3</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the default gap (pt) between the body 
-text and the side of a figure/sidebar in a cutout.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Space (pt) Beside
-Cutout/Sidebar:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
                                     <property name="top-attach">3</property>
                                   </packing>
                                 </child>
@@ -25801,44 +25856,11 @@ body text size as specified in layout.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">0.14999999999999999</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the gap between the verse 
-number and the text following. The
-setting here is a multiple of the main
-body text size as specified in layout.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">After Verse
-Space Factor:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the gap between the chapter 
-number and the text following. The
-setting here is a multiple of the main
-body text size as specified in layout.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">After Chapter
-Space Factor:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25862,6 +25884,7 @@ body text size as specified in layout.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">0.25</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -25887,6 +25910,7 @@ body text size as specified in layout.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">0.05</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -25914,42 +25938,10 @@ Positive values move it up.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">-0.10</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the thickness
-of the text underline,
-(measured in ems).</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Underline
-Thickness (em):</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">4</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the text underline. 
-Negative values move it down.
-Positive values move it up.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Underline Vertical
-Position (em):</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
                                     <property name="top-attach">5</property>
                                   </packing>
                                 </child>
@@ -26001,26 +25993,10 @@ rule and the study notes inter-column rule.</property>
                                     <property name="digits">2</property>
                                     <property name="numeric">True</property>
                                     <property name="value">0.40</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
-                                    <property name="top-attach">6</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the thickness (pt) of rules (lines)
-in the document. This includes the
-horizontal rule between the header
-and the text, the vertical column gutter
-rule and the study notes inter-column rule.</property>
-                                    <property name="halign">start</property>
-                                    <property name="label" translatable="yes">Rule Thickness (pt):</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
                                     <property name="top-attach">6</property>
                                   </packing>
                                 </child>
@@ -26045,6 +26021,147 @@ Factor:</property>
                                   <packing>
                                     <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_afterChapterSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the gap between the chapter 
+number and the text following. The
+setting here is a multiple of the main
+body text size as specified in layout.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">After Chapter
+Space Factor:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_afterVerseSpace">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the gap between the verse 
+number and the text following. The
+setting here is a multiple of the main
+body text size as specified in layout.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">After Verse
+Space Factor:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_cutouterpadding">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the default gap (pt) between the body 
+text and the side of a figure/sidebar in a cutout.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Space (pt) Beside
+Cutout/Sidebar:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_underlineThickness">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the thickness
+of the text underline,
+(measured in ems).</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Underline
+Thickness (em):</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_underlinePosition">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the vertical position
+(in ems) of the text underline. 
+Negative values move it down.
+Positive values move it up.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Underline Vertical
+Position (em):</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">5</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_ruleThickness">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">This sets the thickness (pt) of rules (lines)
+in the document. This includes the
+horizontal rule between the header
+and the text, the vertical column gutter
+rule and the study notes inter-column rule.</property>
+                                        <property name="halign">start</property>
+                                        <property name="label" translatable="yes">Rule Thickness (pt):</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">6</property>
                                   </packing>
                                 </child>
                               </object>
@@ -29083,28 +29200,6 @@ Pantone color code.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel" id="l_spotColorTolerance">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
-to 0%. If text in similar colors are also to be
-set to this Spot Color, then select an acceptable
-tolerance range (suggested default is 15%).
-
-Note that this will include similar colors either 
-side (e.g. -15% to +15%) of the selected hue.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin-left">6</property>
-                                <property name="margin-start">6</property>
-                                <property name="label" translatable="yes">Tolerance (%):</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkSpinButton" id="s_spotColorTolerance">
                                 <property name="name">Spot color tolerance</property>
                                 <property name="visible">True</property>
@@ -29126,11 +29221,40 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                 <property name="numeric">True</property>
                                 <property name="update-policy">if-valid</property>
                                 <property name="value">15</property>
+                                <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left-attach">5</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkEventBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                <child>
+                                  <object class="GtkLabel" id="l_spotColorTolerance">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">To match the Spot Color Hue exactly, set this
+to 0%. If text in similar colors are also to be
+set to this Spot Color, then select an acceptable
+tolerance range (suggested default is 15%).
+
+Note that this will include similar colors either 
+side (e.g. -15% to +15%) of the selected hue.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">Tolerance (%):</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                           </object>
