@@ -320,8 +320,6 @@ class StyleEditor:
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
                 defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
-                if k.lower() == "nonjustifiedfill":
-                    print(f"{k=}={v=} [{defaultval=}]")
                 if not self._eq_val(other, v, key=k) and not self._eq_val(defaultval, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
