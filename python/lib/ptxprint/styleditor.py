@@ -157,11 +157,11 @@ _fieldmap = {
     'rightmargin':      (fromFloat, toFloat, 0.),
     'nonjustifiedfill': (fromFloat, toFloat, 0.25),
     'linespacing':      (fromFloat, toFloat, 0.),
-    'raise':            (asFloatPts, toFloatPts, 0),
-    'baseline':         (asFloatPts, toFloatPts, 0),
-    'callerraise':      (asFloatPts, toFloatPts, 0),
-    'notecallerraise':  (asFloatPts, toFloatPts, 0),
-    'fontsize':         (from12, to12, 12),
+    'raise':            (asFloatPts, toFloatPts, None),
+    'baseline':         (asFloatPts, toFloatPts, None),
+    'callerraise':      (asFloatPts, toFloatPts, None),
+    'notecallerraise':  (asFloatPts, toFloatPts, None),
+    'fontsize':         (from12, to12, 0),
     'spacebefore':      (from12, to12, 0),
     'spaceafter':       (from12, to12, 0),
     'fontname':         (fromFont, toFont, None),
@@ -322,7 +322,7 @@ class StyleEditor:
                 defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
                 if k.lower() == "nonjustifiedfill":
                     print(f"{k=}={v=} [{defaultval=}]")
-                if not self._eq_val(other, v, key=k) and (defaultval is None or (defaultval != float(v) and other is None)):
+                if not self._eq_val(other, v, key=k) and not self._eq_val(defaultval, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
