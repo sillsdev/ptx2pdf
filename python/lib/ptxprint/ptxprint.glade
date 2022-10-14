@@ -11543,6 +11543,7 @@ Top of Footer (pt):</property>
                                   <object class="GtkEventBox" id="e_bottommargin">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                     <signal name="enter-notify-event" handler="onMarginEnterNotifyEvent" swapped="no"/>
                                     <signal name="leave-notify-event" handler="onMarginLeaveNotifyEvent" swapped="no"/>
                                     <child>
@@ -11563,7 +11564,6 @@ End of Page (mm):</property>
                                         <attributes>
                                           <attribute name="foreground" value="#cccc00000000"/>
                                         </attributes>
-                                        <signal name="button-release-event" handler="resetLabel" swapped="no"/>
                                       </object>
                                     </child>
                                   </object>

@@ -1003,7 +1003,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
 
     def toggleUIdetails(self, w, state):
-        print(w)
+        # print(w)
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
