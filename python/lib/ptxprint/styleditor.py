@@ -322,7 +322,7 @@ class StyleEditor:
                 defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
                 if k.lower() == "nonjustifiedfill":
                     print(f"{k=}={v=} [{defaultval=}]")
-                if not self._eq_val(other, v, key=k) and (defaultval is None or defaultval != float(v)):
+                if not self._eq_val(other, v, key=k) and (defaultval is None or (defaultval != float(v) and other is None)):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
