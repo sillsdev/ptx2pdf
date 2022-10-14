@@ -896,7 +896,7 @@
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
-  \vbox to 0pt{\kern-\topm@rgin
+  \vbox to 0pt{\hsize=\textwidth\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
     \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
