@@ -1,7 +1,30 @@
 PTXprint 2.2.31 Release Notes
-12 Oct 2022
+15 Oct 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.31 (15 Oct 2022)
+
+  WARNING: This update may change the positioning of text compared to previous
+           versions of PTXprint. Backup settings and be prepared to roll back.
+
+  * Improved: Remove undesired break-point in diglot box joining
+  
+  * Added capability to reset values on any spin buttons
+  
+  * Added NonJustifiedFill setting for paragraphs on Styles tab
+  
+  * Logic to blank out p@gefirstmark in footline as well as headline #712
+  
+  * Fixed loss of FRT when switching projects
+  
+  * Fixed appropriate positioning of study note columns and handle empty columns OK
+  
+  * Fixed cutouts after 1 line paragraph. (#757)
+  
+  * Fixed no-ink-in-margin positioning 
+  
+  * Refactor tests for quality and speed and update standards
 
 Bug fixes and improvements in 2.2.31 (12 Oct 2022)
 
