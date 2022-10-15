@@ -1,4 +1,4 @@
-PTXprint 2.2.31 Release Notes
+PTXprint 2.2.32 Release Notes
 15 Oct 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
