@@ -1690,11 +1690,12 @@ set stack_size=32768""".format(self.configName())
                         if os.path.exists(oldadjf):
                             newf = adjf.replace("{}-{}".format(oldprjid, oldconfig), "{}-{}".format(prjid, config))
                             newadjf = os.path.join(adjpath, newf)
-                            try:
-                                os.remove(newadjf)
-                            except (OSError, FileNotFoundError, PermissionError) as E:
-                                logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
-                            os.rename(oldadjf, newadjf)
+                            if newadjf != oldadfj:
+                                try:
+                                    os.remove(newadjf)
+                                except (OSError, FileNotFoundError, PermissionError) as E:
+                                    logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
+                                os.rename(oldadjf, newadjf)
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

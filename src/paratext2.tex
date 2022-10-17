@@ -828,7 +828,7 @@
           \ifpartialfr@med\else
             \doTextB@rder{\partial}%2HERE
           \fi
-          \hbox to \dimen1{\vbox{\unvbox\partial}}} \fi
+          \hbox to \dimen1{\box\partial}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
       \setbox1=\vbox{\unvcopy\colA\unskip}%
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
@@ -956,7 +956,7 @@
     \ifdim\dimen0>\PageFullFactor\textheight
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
-      \unvbox\partial
+      \box\partial
       \ifdim\dimen0>\PageFullFactor\textheight \vfill\eject
       \else \holdinginserts=0 \global\output={\savepartialpage}\eject \holdinginserts=1
       \fi
@@ -1099,7 +1099,7 @@
     \locs@startstop{\colA}{1}%
     \global\setbox\partial=\vbox{%
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
-        \vbox{\unvbox\partial}}} \fi
+        \box\partial}} \fi
       \ifvoid\topins\else \unvbox\topins \vskip\skip\topins \fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -1135,7 +1135,7 @@
       \dimen0=\baselineskip
       \m@d\advance\dimen1 by -\ht\partial\ifdim\dimen1 < -0.01pt
         \dimen1=\ht\partial \advance\dimen1\dimen0
-        \trace{o}{Adjusting single partial ht from \the\ht\partial to \the\dimen1 with baselineskip=\the\baselineskip}%
+        \trace{o}{Adjusting single partial ht from \the\ht\partial \space to \the\dimen1 with baselineskip=\the\baselineskip}%
         \global\ht\partial=\dimen1
       \fi
     \fi
@@ -1801,7 +1801,7 @@
       % bodge the partial box which should really have been properly textually merged
       % the problem is that savepartialpaged can get called twice in succession because
       % not all the output text (after a \singlecolumn) was passed the first time
-      \ifvoid\partial\else \vbox{\hbox to \dimen1{\noindent\vbox{\unvbox\partial}}\vskip -2\dimen5} \fi
+      \ifvoid\partial\else \vbox{\hbox to \dimen1{\noindent\box\partial}\vskip -2\dimen5} \fi
       \ifvoid\topins\else \hbox{\noindent\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \dimen5=\textwidth\advance\dimen5 by -\ExtraRMargin% \advance\dimen5 by -\columnshift %
       \dimen2=\dimen3% \advance\dimen2\bmg@p
@@ -1944,8 +1944,7 @@
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
       \dimen2=\availht\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
-        \vbox{\hbox to \dimen1{\vbox{%
-          \unvbox\partial}}}\fi % output partial page % \vskip -2\dimen5
+        \vbox{\hbox to \dimen1{\box\partial}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
       \iflastpage\setbox\colA=\vbox{\unvbox\colA}\setbox\colB=\vbox{\unvbox\colB}%
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
