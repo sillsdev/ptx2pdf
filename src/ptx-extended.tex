@@ -390,7 +390,7 @@
 }
 \def\@@sbar#1{%
   \trace{e}{Starting side bar (\sb@rmarker) from \m@rker, \the\lastdepth}%
-  %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc.
+  %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
   \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
   \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
@@ -490,9 +490,12 @@
 \x@\def\csname \sb@rb@x @warning\endcsname#1#2{\msg{converted sidebar placement "#1" to "#2" in single-column layout}}
 
 \def\localsb@rpos{}
+\edef\sb@lastpen{0}
 \def\@sbe{%
   \trace{e}{@sbe: \sb@rmarker|\localsb@rpos}%
   \endlastp@rstyle{esbe}% Fire any triggers, etc.
+  \xdef\sb@lastpen{\the\lastpenalty}%
+  \trace{e}{@sbe: ld:\lastdepth, lp:\sb@lastpen}%
   \let\m@rker\sb@rmarker
   \global\let\sb@rpos\localsb@rpos
   \ifhe@dings\endhe@dings\fi
@@ -535,7 +538,9 @@
   \ifx\fgfig@cutout\tr@e
     \cancelcutouts
   \fi
-  \let\c@tegory=\c@t@gory %recover value from box, without making global changes.
+  \let\p@stpenalty=\sb@lastpen %recover value from group
+  \def\prepenalty{10}%recover value from group
+  \let\c@tegory=\c@t@gory %recover value from group, without making global changes.
   \s@tc@tpr@fix
   \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x)}%
   %\showbox\extb@x

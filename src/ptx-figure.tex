@@ -593,6 +593,8 @@
 |def|ch@ckpath#1{|global|tempfalse|ch@ckpathfwd#1/|E|ch@ckpathback#1\|E}%
 |normalc@tcodes%
 %+cfig_dofigure_intro
+
+\gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
  \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
  \ifIncludeFigures
@@ -602,6 +604,7 @@
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
   \rotimagefalse
   \figh@scaptionfalse
+  \def\pr@penalty{10}\def\p@stpenalty{10}%
   \edef\hs@ze{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
@@ -944,8 +947,8 @@
   \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
 }
 \def\d@figureInl#1{%
-  \trace{g}{\w@tsit\space is inline, \the\hsize \ifhmode , in HMODE\fi \ifpicNarrow , narrow\fi}%
-  \penalty10 % Allow the page to break
+  \trace{g}{\w@tsit\space is inline, \the\hsize \ifhmode , in HMODE\fi \ifpicNarrow , narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
+  \penalty\pr@penalty % Allow the page to break
   \ifpicNarrow
     \@lignpic{#1}%
   \fi
@@ -963,7 +966,7 @@
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty10}%
+  \penalty\p@stpenalty}%
   \ifvmode \picc@ntents
   \else\vadjust pre{\picc@ntents}\fi
 }
