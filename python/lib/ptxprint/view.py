@@ -1690,7 +1690,7 @@ set stack_size=32768""".format(self.configName())
                         if os.path.exists(oldadjf):
                             newf = adjf.replace("{}-{}".format(oldprjid, oldconfig), "{}-{}".format(prjid, config))
                             newadjf = os.path.join(adjpath, newf)
-                            if newadjf != oldadfj:
+                            if newadjf != oldadjf:
                                 try:
                                     os.remove(newadjf)
                                 except (OSError, FileNotFoundError, PermissionError) as E:

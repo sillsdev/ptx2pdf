@@ -126,7 +126,7 @@ l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI
 tb_NotesRefs lb_NotesRefs tb_general
 tb_footnotes c_includeFootnotes l_fnPos  c_fneachnewline
 tb_xrefs     c_includeXrefs     l_xrPos  c_xreachnewline
-c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
+c_fontFake fr_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
 fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
@@ -143,7 +143,7 @@ s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_bottommargin s_bottommargin
 c_rhrule l_rhruleposition s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
-c_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
+c_fontFake fr_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
 fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak

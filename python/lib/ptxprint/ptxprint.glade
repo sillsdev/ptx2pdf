@@ -1699,20 +1699,21 @@ download and use in a publication.</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
-    <property name="program-name">PTXprint</property>
+    <property name="program-name">PTXprint - Bible Layout For Everyone</property>
     <property name="version">Version 2.2.32</property>
-    <property name="copyright">© 2020-2021, SIL International</property>
+    <property name="copyright">© 2020-2022, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
-the User-Interface. The PDFs are produced by enhanced 
+the user-interface. The PDFs are produced by enhanced 
 XeTeX macros (ptx2pdf) with a long and reliable history.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website-label" translatable="yes">PTXprint Homepage</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
-Mark Penny (UI Developer, Testing + Documentation)
+Mark Penny (UI Developer, Testing &amp; Documentation)
 David Gardner (TeX Macro Coding, Diglot Specialist)
+David Coward (User Acceptance Testing)
 
 Built on the foundation laid by:
-Jonathan Kew (Author of XeTeX + sfm2pdf)</property>
+Jonathan Kew (author of XeTeX + sfm2pdf)</property>
     <property name="logo">62859-open-book-icon(128).png</property>
     <property name="license-type">mit-x11</property>
     <child internal-child="vbox">
@@ -4142,6 +4143,7 @@ settings for a similar project.</property>
                 <property name="can-focus">True</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
+                <property name="vexpand">True</property>
                 <property name="shadow-type">in</property>
                 <child>
                   <object class="GtkTreeView" id="tv_fontFamily">
@@ -4246,7 +4248,7 @@ in the Windows system.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <child>
-                  <object class="GtkFrame">
+                  <object class="GtkFrame" id="fr_fontFake">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="margin-start">6</property>
@@ -4484,7 +4486,7 @@ litr=1, dig0=1, dig1=1, dig4=1</property>
                     <property name="receives-default">False</property>
                     <property name="tooltip-text" translatable="yes">Set this option if the font changes the width of 
 spaces depending on the text around them.</property>
-                    <property name="halign">start</property>
+                    <property name="halign">center</property>
                     <property name="draw-indicator">True</property>
                   </object>
                   <packing>
@@ -4548,7 +4550,7 @@ are using supports these digits too.)</property>
                     <property name="active-id">0</property>
                   </object>
                   <packing>
-                    <property name="left-attach">2</property>
+                    <property name="left-attach">1</property>
                     <property name="top-attach">2</property>
                     <property name="width">2</property>
                   </packing>
@@ -4565,8 +4567,10 @@ are using supports these digits too.)</property>
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">2</property>
-                    <property name="width">2</property>
                   </packing>
+                </child>
+                <child>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -14582,6 +14586,8 @@ includes the chapter &amp; verse number
 like this 3:16. If you prefer to hide the
 chapter, so that only 16 is shown, then
 enable this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                       </object>
@@ -15412,6 +15418,8 @@ includes the chapter &amp; verse number
 like this 3:16. If you prefer to hide the
 chapter, so that only 16 is shown, then
 enable this option.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
                                         <property name="xalign">0</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="toggled" handler="onOnlyShowVerseumsToggled" swapped="no"/>
@@ -15774,7 +15782,7 @@ Search Google for "ptx2pdf/xrefs.md"</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="left-padding">12</property>
                                                     <child>
-                                                      <!-- n-columns=2 n-rows=3 -->
+                                                      <!-- n-columns=3 n-rows=3 -->
                                                       <object class="GtkGrid">
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">False</property>
@@ -15782,7 +15790,7 @@ Search Google for "ptx2pdf/xrefs.md"</property>
                                                         <property name="margin-end">6</property>
                                                         <property name="margin-top">3</property>
                                                         <property name="margin-bottom">6</property>
-                                                        <property name="row-spacing">8</property>
+                                                        <property name="row-spacing">3</property>
                                                         <property name="column-spacing">12</property>
                                                         <child>
                                                           <object class="GtkCheckButton" id="c_strongsShowInText">
@@ -15886,7 +15894,30 @@ Biblical terms renderings.</property>
                                                           <packing>
                                                             <property name="left-attach">1</property>
                                                             <property name="top-attach">1</property>
+                                                            <property name="width">2</property>
                                                           </packing>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkLinkButton" id="lb_style_xts">
+                                                            <property name="label">\xts</property>
+                                                            <property name="visible">True</property>
+                                                            <property name="can-focus">True</property>
+                                                            <property name="focus-on-click">False</property>
+                                                            <property name="receives-default">True</property>
+                                                            <property name="tooltip-text" translatable="yes">Click to edit the Strong's 4 digit cell number properties on the Styles tab.</property>
+                                                            <property name="halign">end</property>
+                                                            <property name="hexpand">True</property>
+                                                            <property name="relief">none</property>
+                                                            <property name="uri">Click to view the Styles tab</property>
+                                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                                          </object>
+                                                          <packing>
+                                                            <property name="left-attach">2</property>
+                                                            <property name="top-attach">0</property>
+                                                          </packing>
+                                                        </child>
+                                                        <child>
+                                                          <placeholder/>
                                                         </child>
                                                         <child>
                                                           <placeholder/>
