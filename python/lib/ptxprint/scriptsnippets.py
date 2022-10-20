@@ -119,6 +119,8 @@ class thai(ScriptSnippet):
         res = [(None, re.compile(r'(\s)/'), r'\1'),
                (None, re.compile('/([\\s\u0E46])'), r'\1'),
                (None, re.compile(r'/'), "\u200B"),
+               (None, re.compile(r'([^\u0E00-\u0E7F])\u200B'), r'\1'),
+               (None, re.compile(r'\u200B([^\\\u0E00-\u0E7F])'), r'\1'),
                (nonbody, re.compile('\u200B'), "")]
         return res
 
