@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 debugPrint = False
 
 class ChunkType(Enum):
+    DEFSCORE = 0        # Value for default scores
     CHAPTER = 1
     HEADING = 2
     TITLE = 3
@@ -19,7 +20,12 @@ class ChunkType(Enum):
     BODY = 5
     ID = 6
     TABLE = 7
+    VERSE = 8           # A verse chunk, inside a paragraph 
+    MIDVERSEPAR = 9     # A mid-verse paragraph
+    PREVERSEPAR = 10    # A paragrpah where the next content is a verse number
+    NOVERSEPAR = 11     # A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction
 
+   
 _textype_map = {
     "ChapterNumber":   ChunkType.CHAPTER,
     "Section":   ChunkType.HEADING,
@@ -73,21 +79,56 @@ class Chunk(list):
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl', 'nb'))
 
+SyncPoints = {
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1} # split at every verse
+}
+
 def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
     
 class Collector:
-    def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None, key=None):
+    """TODO: write more here
+        synchronise : str
+            This picks the ChunkTypes that will be contribute to scoring for this collection. 
+        scores : int or {ChunkType.DEFSCORE:int, ...}
+            Normally this takes a single value, which is promoted to the default score.
+            For really interesting scoring, a mapping of ChunkType.*:score can
+            be supplied, e.g. to force a chunk-break at all headings from one source)
+             For any ChunkType  that is missing from the scores mapping (or for
+            all ChunkTypes if a single value is supplied), then the default score is applied
+            according to the rule-set chosen from synchronise
+    """
+    def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None, colkey=None, scores=None, synchronise=None):
         self.acc = []
-        self.key=key
+        self.colkey=colkey
         self.fsecondary = fsecondary
         self.stylesheet = stylesheet
+       
         self.chap = 0
         self.verse = 0
         self.end = 0
         self.counts = {}
+        self.scores = {}
         self.currChunk = None
         self.mode = ChunkType.INTRO
+        if (scores==None):
+            raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
+        print(type(scores))
+        if synchronise in SyncPoints:
+            syncpoints=SyncPoints[synchronise.lower()] 
+        else:
+            syncpoints=SyncPoints['normal'] 
+
+        if (type(scores)==int):
+            scores={ChunkType.DEFSCORE:scores}
+
+        for st in ChunkType:
+            if st.value==ChunkType.DEFSCORE:
+                self.scores=scores[st.value]
+            else:
+                self.scores[st.value]=scores[st.value] if (st.value in scores) else (scores[ChunkType.DEFSCORE] * (syncpoints[st.value] if (st.value in syncpoints) else 0))
         if doc is not None:
             self.collect(doc, primary=primary)
             self.reorder()
@@ -384,19 +425,33 @@ modes = {
     "simple": alignSimple
 }
 
-def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False):
+def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal"):
     global debugPrint, debstr
     debugPrint = debug
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
     stylesheetb = {k: v.copy() for k, v in stylesheeta.items()}
     tag_escapes = r"[^a-zA-Z0-9]"
+    tmp=synchronise.split(",")
+    if len(tmp)==1:
+        syncarr={k:synchronise for k in keyarr}
+    else:
+        if len(tmp)!=len(keyarr):
+            raise ValueError("Cannot have %d keys and %d synchronisation modes!" % (len(keyarr),len(tmp)) )
+        else:
+            syncarr=tmp
+
+    if len(scorearr)==0:
+        s=int(1+100/len(keyarr))
+        scorearr={k:s for k in keyarr}
+        
     if debugPrint:
         print(stylesheetsa, stylesheetsb)
     for s in stylesheetsa:
         stylesheeta = appendsheet(s, stylesheeta)
     for s in stylesheetsb:
         stylesheetb = appendsheet(s, stylesheetb)
+    
 
     def texttype(m):
         res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
@@ -411,7 +466,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsec
     chunks={}
     chunklocs={}
     colls={}
-    for key,infile in zip(keyarr,infilearr):
+    for colkey,infile in zip(keyarr,infilearr):
         with open(infile, encoding="utf-8") as inf:
             doc = list(usfm.parser(inf, stylesheet=stylesheeta,
                                    canonicalise_footnotes=False, tag_escapes=tag_escapes))
@@ -420,9 +475,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsec
                     doc.pop(0)
                 else:
                     break
-            colls[key] = Collector(doc=doc, key=key, fsecondary=fsecondary, stylesheet=stylesheeta)
-        chunks[key] = {c.ident: c for c in colls[key].acc}
-        chunklocs[key] = ["_".join(str(x) for x in c.ident) for c in colls[key].acc]
+            colls[colkey] = Collector(doc=doc, colkey=colkey, fsecondary=fsecondary, stylesheet=stylesheeta, scores=scorearr[colkey],synchronise=syncarr[colkey])
+        chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
+        chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]
 
     f = modes[mode]
     pairs = f(*((colls[k].acc, chunklocs[k]) for k in keyarr))
