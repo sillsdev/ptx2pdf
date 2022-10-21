@@ -4158,6 +4158,7 @@ class GtkViewModel(ViewModel):
             it = model.get_iter_from_string(path)
             if it:
                 model.set(it, 1, text)
+                self.setvar(model.get(it, 0)[0], text)
 
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):

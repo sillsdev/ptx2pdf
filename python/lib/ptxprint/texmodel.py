@@ -928,7 +928,7 @@ class TexModel:
         self.dict['document/imageCopyrights'] = self.generateImageCopyrightText()
                 # if self.dict['document/includeimg'] else self.generateEmptyImageCopyrights()
         self.dict['project/colophontext'] = re.sub(r'://', r':/ / ', self.dict['project/colophontext']).replace("//","\u2028")
-        self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})", \
+        self.dict['project/colophontext'] = re.sub(r"(?i)(\\zimagecopyrights)([A-Z]{2,3})",
                 lambda m:m.group(0).lower(), self.dict['project/colophontext'])
         self.updateStyles()
         for a in (('FrontPDFs', 'c_inclFrontMatter', 'frontincludes_'),
@@ -1704,7 +1704,8 @@ class TexModel:
             except FileNotFoundError:
                 return
         else:
-            txt = self.dict['project/colophontext']
+            txt = ""
+        txt += self.dict.get('project/colophontext', '')
         for m in re.findall(r"(?i)\\(\S+).*?\\zimagecopyrights([A-Z]{2,3})?", txt):
             self.imageCopyrightLangs[m[1].lower() if m[1] else "en"] = m[0]
         return

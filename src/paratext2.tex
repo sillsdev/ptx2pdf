@@ -1409,11 +1409,11 @@
     \setbox9=\copy#1
     \ifdim\colhtB<0pt \setbox#1=\box9\setbox\colB\box\voidb@x\else
       \setbox\colB=\vsplit#1 to \colhtB
-      \ifnum\badness>999999\setbox#1=\box9\setbox\colB\box\voidb@x\else\setbox\colB=\vbox{\unvbox\colB}\fi
+      \ifnum\badness>999999\setbox#1=\box9\setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else\setbox\colB=\vbox{\unvbox\colB}\fi
     \fi
     \xdef\p@gebotmark{\splitbotmark}%
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
-    \ifvoid\colA\ifvoid\colB\else\ifswapcol\ifdim\colhtA<\ht\colB\else
+    \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA \ifdim\ht\colB<1pt \ifdim\ht\colA<\colhtB \setbox\colB=\box\colA\fi\fi\fi
 }
@@ -1574,7 +1574,7 @@
   \dimen9=\availht\advance\dimen9 by \bmg@p
   \trace{o}{fitting columns to \the\dimen9, coln@tes=\the\ht\xr@fbox}%
   \lastd@pth=\dp\colA \setbox\colA=\vbox to \dimen9{\unvbox5\unvbox\colA\ifdim\ht7>0pt \vfil\unvbox7\fi}\dp\colA=\lastd@pth
-  \ifdim\ht\colB<1pt \setbox\colB\vbox{\noindent\par}\else
+  \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else
     \ifcolbfull\ifdim\lastd@pth<\dp\colB \lastd@pth=\dp\colB\fi\else\lastd@pth=\dp\colB\fi
   \fi
   \setbox\colB=\vbox to \dimen9{\unvbox6\unvbox\colB\ifdim\ht8>0pt \vfil\unvbox8\fi}\dp\colB=\lastd@pth
@@ -1909,7 +1909,7 @@
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
   \else\ifdim\vsize<\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
-  \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}
+  \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}%
 %-c_twocoltrial_intro
 %+c_twocoltrial
   \iffitonpage
@@ -1918,7 +1918,7 @@
     \setbox2=\vbox{\unvcopy\colB\unskip}%
     \locs@startstop{\colA}{1}%
     \locs@startstop{\colB}{2}%
-    \ifdim\ht\colB<1pt \setbox\colB\vbox{\noindent\par}\fi
+    \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\fi
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi
     \ifColNotes\ifdim\dp\xr@fbox<\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
@@ -1927,7 +1927,7 @@
       \reheightcolnotesd{13}\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
       \c@lcboxheights
       \keepn@tesfalse
-      \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
+      \setbox\colA=\vbox{\unvbox\colA\unskip}\ifdim\ht\colB>0pt\setbox\colB=\vbox{\unvbox\colB\unskip}\fi
     \fi
     \dimen3=\ht\colA
     \ifdim\ht\colB>\dimen3

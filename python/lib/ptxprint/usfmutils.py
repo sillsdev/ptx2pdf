@@ -653,7 +653,7 @@ class Usfm:
                 matched = False
                 if base is not None:
                     if regex.search(regs, newstr):
-                        newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
+                        newelement = sfm.Text('\u200B\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
                         matched = True
@@ -662,7 +662,7 @@ class Usfm:
                 else:
                     #newstr = regex.sub(regs,
                     newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
-                            '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
+                            '\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
                             newstr, count=0 if showall else 1)
                     if newstr_diff != newstr:
                         newstr = newstr_diff
