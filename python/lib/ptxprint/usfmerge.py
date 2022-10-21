@@ -77,8 +77,9 @@ def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
     
 class Collector:
-    def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None):
+    def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None, key=None):
         self.acc = []
+        self.key=key
         self.fsecondary = fsecondary
         self.stylesheet = stylesheet
         self.chap = 0
@@ -383,7 +384,7 @@ modes = {
     "simple": alignSimple
 }
 
-def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False):
+def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False):
     global debugPrint, debstr
     debugPrint = debug
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
@@ -407,33 +408,24 @@ def usfmerge2(infilea, infileb, outfile, stylesheetsa=[], stylesheetsb=[], fseco
 
     def myGroupChunks(*a, **kw):
         return groupChunks(*a, texttype, **kw)
+    chunks={}
+    chunklocs={}
+    colls={}
+    for key,infile in zip(keyarr,infilearr):
+        with open(infile, encoding="utf-8") as inf:
+            doc = list(usfm.parser(inf, stylesheet=stylesheeta,
+                                   canonicalise_footnotes=False, tag_escapes=tag_escapes))
+            while len(doc) > 1:
+                if isinstance(doc[0], sfm.Text):
+                    doc.pop(0)
+                else:
+                    break
+            colls[key] = Collector(doc=doc, key=key, fsecondary=fsecondary, stylesheet=stylesheeta)
+        chunks[key] = {c.ident: c for c in colls[key].acc}
+        chunklocs[key] = ["_".join(str(x) for x in c.ident) for c in colls[key].acc]
 
-    with open(infilea, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheeta,
-                               canonicalise_footnotes=False, tag_escapes=tag_escapes))
-        while len(doc) > 1:
-            if isinstance(doc[0], sfm.Text):
-                doc.pop(0)
-            else:
-                break
-        pcoll = Collector(doc=doc, fsecondary=fsecondary, stylesheet=stylesheeta)
-    mainchunks = {c.ident: c for c in pcoll.acc}
-
-    with open(infileb, encoding="utf-8") as inf:
-        doc = list(usfm.parser(inf, stylesheet=stylesheetb,
-                               canonicalise_footnotes=False, tag_escapes=tag_escapes))
-        while len(doc) > 1:
-            if isinstance(doc[0], sfm.Text):
-                doc.pop(0)
-            else:
-                break
-        scoll = Collector(doc=doc, primary=False, stylesheet=stylesheetb)
-    secondchunks = {c.ident: c for c in scoll.acc}
-
-    mainkeys = ["_".join(str(x) for x in c.ident) for c in pcoll.acc]
-    secondkeys = ["_".join(str(x) for x in c.ident) for c in scoll.acc]
     f = modes[mode]
-    pairs = f((pcoll.acc, mainkeys), (scoll.acc, secondkeys))
+    pairs = f(*((colls[k].acc, chunklocs[k]) for k in keyarr))
     #pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
 
     if outfile is not None:
