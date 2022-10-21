@@ -9,6 +9,7 @@
 \gdef\getverseboxwidth{\setbox2=\hbox{\ch@rstylepls{v}~\endash 000\ch@rstylepls{v}*}\global\VerseBoxWidth=\wd2}
 }}
 
+\def\getnum#1#2{\setbox0=\hbox{\global #1=0#2}}
 \def\mymarginpverse{%
   \ifdim\VerseBoxWidth=0pt \getverseboxwidth\fi
   \getp@ram{position}{v}{\styst@k}\ifx\p@ram\relax\let\p@ram\l@ft\fi
@@ -39,7 +40,8 @@
 \let\printverse\defaultprintverse
 \catcode`\~=12 \lccode`\~=32\lowercase{
 \def\myh@ngprintv@rse#1{%
-    \setbox1=\hbox{\ch@rstylepls{v}~\endash\adornv{\v@rseto}\ch@rstylepls{v}*}%
+    \setbox1=\hbox{\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}\global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp}\advance\c@untA by 1
+    \setbox1=\hbox{\ch@rstylepls{v}~\ifnum\c@untA=\c@untB\else\endash\fi\adornv{\v@rseto}\ch@rstylepls{v}*}%
     \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*}%
         \box1}}
 }
