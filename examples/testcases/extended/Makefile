@@ -7,16 +7,16 @@ DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
 	TEXINPUTS=.:$(DIR) xetex $<
 	
 
-test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty
+test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty cover.usfm
 test2.pdf: test2.tex usfmTex-ext.tex usfmTex-settings.tex test2.usfm $(DIR)/*.tex *.sty
 
 bisect:
-	mkdir ../bisect || rm -f ../bisect/*
-	cp *.tex *.usfm *.sty Makefile ../bisect
+	mkdir ../bisect || rm -fr ../bisect/*
+	cp *.tex *.usfm *.jpg inner_include.pdf *.sty Makefile ../bisect
 
-auto:
+auto: test.pdf
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
-auto2:
+auto2: test2.pdf
 	echo Source code in $(DIR)
 	while inotifywait -e close_write . $(DIR) ; do make test2.pdf ; done < /dev/null

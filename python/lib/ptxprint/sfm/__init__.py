@@ -265,17 +265,17 @@ class Text(collections.UserString):
     def __add__(self, rhs):
         return Text(super().__add__(rhs), self.pos, self.parent)
 
-#    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
+    def __getslice__(self, i, j): return self.__getitem__(slice(i, j))
 
-#    def __getitem__(self, i):
-#        return Text(super().__getitem__(i),
-#                    Position(self.pos.line,
-#                             self.pos.col
-#                             + (i.start or 0 if isinstance(i, slice) else i)),
-#                    self.parent)
+    def __getitem__(self, i):
+        return Text(super().__getitem__(i),
+                    Position(self.pos.line,
+                             self.pos.col
+                             + (i.start or 0 if isinstance(i, slice) else i)),
+                    self.parent)
 
 
-class _put_back_iter(collections.Iterator):
+class _put_back_iter(collections.abc.Iterator):
     '''
     >>> i=_put_back_iter([1,2,3])
     >>> next(i)
@@ -357,7 +357,7 @@ class Tag(NamedTuple):
         return self.name[-1] == '*'
 
 
-class parser(collections.Iterable):
+class parser(collections.abc.Iterable):
     '''
     SFM parser, and base class for more complex parsers such as USFM and the
     stylesheet parser.  This can be used to parse unstructured SFM files as a
@@ -518,7 +518,8 @@ class parser(collections.Iterable):
                  default_meta=default_meta,
                  private_prefix=None, error_level=ErrorLevel.Content,
                  tag_escapes=r'\\',
-                 tokeniser=None):
+                 tokeniser=None,
+                 debug=False):
         """
         Create a SFM parser object. This object is an interator over SFM
         Element trees. For simple unstructured documents this is one element
@@ -555,11 +556,12 @@ class parser(collections.Iterable):
         self._default_meta = default_meta
         self._pua_prefix = private_prefix
         if tokeniser is None:
-            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|]+',
+            tokeniser = re.compile(rf'(?:\\(?:{tag_escapes})|[^\\])+|\\[^\s\\|*]*\*?',
                 re.DOTALL | re.UNICODE)
         self._tokens = _put_back_iter(self.__lexer(source, tokeniser))
         self._error_level = error_level
         self._escaped_tag = re.compile(rf'^\\{tag_escapes}', re.DOTALL | re.UNICODE)
+        self.debug = debug
 
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
@@ -627,17 +629,25 @@ class parser(collections.Iterable):
     def __pp_marker_list(tags):
         return ', '.join('\\'+c if c else 'toplevel' for c in sorted(tags))
 
-    @staticmethod
-    def __lexer(lines, tokeniser):
+    def __lexer(self, lines, tokeniser):
         """ Return an iterator that returns tokens in a sequence:
             marker, text, marker, text, ...
         """
         lmss = enumerate(map(tokeniser.finditer, lines))
+        if getattr(self, 'debug', False):
+            lmss = list(lmss)
         fs = (Text(m.group(), Position(l+1, m.start()+1))
               for l, ms in lmss for m in ms)
+        if getattr(self, 'debug', False):
+            fs = list(fs)
         gs = groupby(fs, operator.methodcaller('startswith', '\\'))
-        return chain.from_iterable(g if istag else (Text.concat(g),)
-                                   for istag, g in gs)
+        for istag, g in gs:
+            if istag:
+                yield from g
+            else:
+                yield Text.concat(g)
+        #return chain.from_iterable(g if istag else (Text.concat(g),)
+        #                           for istag, g in gs)
 
     def __get_tag(self, parent: Element, tok: str):
         if tok[0] != '\\' or self._escaped_tag.match(str(tok)):
@@ -647,6 +657,9 @@ class parser(collections.Iterable):
         tag = Tag(tok.lstrip('+'), tok[0] == '+')
         if parent is None:
             return tag
+        stype = self._sty.get(tok.lstrip('+'),{}).get('StyleType', None)
+        if stype == 'Standalone':
+            return None
 
         # Check for the expected end markers with no separator and
         # break them apart
@@ -668,7 +681,7 @@ class parser(collections.Iterable):
     @staticmethod
     def __need_subnode(parent, tag, meta):
         occurs = meta['OccursUnder']
-        if not occurs:  # No occurs under means it can occur anywhere.
+        if not occurs or meta['StyleType'] == 'Milestone':  # No occurs under means it can occur anywhere.
             return True
 
         parent_tag = None
@@ -679,14 +692,17 @@ class parser(collections.Iterable):
                 while parent.meta['StyleType'] == 'Character':
                     parent = parent.parent
             parent_tag = getattr(parent, 'name', None)
-        return parent_tag in occurs
+        return parent_tag in occurs and (parent is None or parent.meta['StyleType'] != 'Paragraph' or parent_tag != tag)
 
     def _default_(self, parent):
         force_need = False
         for tok in self._tokens:
+            if getattr(tok, 'parent', None) is None:
+                tok.parent = parent
             tag = self.__get_tag(parent, tok)
             if tag:  # Parse markers.
-                if tag.name == "*" and parent is not None:
+                if tag.name == "*":
+                    parent.annotations['milestone'] = True
                     return
                 meta = self.__get_style(tag.name)
                 if force_need or self.__need_subnode(parent, tag, meta):
@@ -702,6 +718,7 @@ class parser(collections.Iterable):
                         e.annotations['nested'] = True
                     e.extend(sub_parser(e))
                     yield e
+                    force_need = False
                 elif parent is None:
                     tok = Text(tag, tok.pos, tok.parent)
                     # We've failed to find a home for marker tag, poor thing.
@@ -713,9 +730,7 @@ class parser(collections.Iterable):
                                     tok, list(meta['OccursUnder'])[0])
                     else:
                         self._error(ErrorLevel.Unrecoverable,
-                                    'orphan marker {token}: '
-                                    'may only occur under {0}', tok,
-                                    self.__pp_marker_list(meta['OccursUnder']))
+                                    'orphan marker {token}', tok,)
                 else:
                     tok = Text(tag, tok.pos, tok.parent)
                     # Do implicit closure only for non-inline markers or
@@ -950,25 +965,31 @@ def generate(doc):
         styletype = e.meta['StyleType']
         sep = ''
         end = ''
+        presep = ''
         if len(e) > 0:
             if styletype == 'Paragraph' \
                     and isinstance(e[0], Element) \
-                    and e[0].meta['StyleType'] == 'Paragraph':
+                    and e[0].meta['StyleType'] == 'Paragraph'\
+                    and not any(body.startswith(x) for x in ('\r\n', '\n')):
                 sep = os.linesep
-            elif not body.startswith(('\r\n', '\n', '|')):
+            elif not any(body.startswith(x) for x in ('\r\n', '\n', '|')):
                 sep = ' '
-            elif styletype != 'Character' and not body.endswith((" ", "\r\n", "\n")):
+                if styletype == 'Paragraph' and not a.endswith("\n"):
+                    presep = os.linesep
+            elif styletype not in ('Character', 'Paragraph') and not body.endswith((" ", "\r\n", "\n")):
                 end = '*'
         elif styletype == 'Character':
             body = ' '
         elif styletype == 'Paragraph':
             body = os.linesep
+            if not a.endswith("\n"):
+                presep = os.linesep
         nested = '+' if 'nested' in e.annotations else ''
         if 'implicit-closed' not in e.annotations:
             end = e.meta.get('Endmarker', '') or end
         end = end and f"\\{nested}{end}"
 
-        return f"{a}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \
+        return f"{a}{presep}\\{nested}{' '.join([e.name] + e.args)}{sep}{body}{end}" \
                if e.name else ''
 
     def gt(t, a):

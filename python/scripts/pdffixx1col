@@ -1,0 +1,120 @@
+#!/usr/bin/python3
+
+import argparse, re
+from ptxprint.pdfrw import *
+from ptxprint.pdfrw.objects.pdfindirect import PdfIndirect
+from ptxprint.pdfrw.objects.pdfname import BasePdfName
+from ptxprint.pdfrw.uncompress import uncompress
+
+def simplefloat(s, dp=3):
+    return ("{:."+str(dp)+"f}").format(s).rstrip("0").rstrip(".")
+
+def parsestrtok(s):
+    if not isinstance(s, str):
+        return s
+    return PdfObject(s)
+
+def rgbtocmyk(r, g, b):
+    k = 1 - max(r, g, b)
+    if k < 1.0:
+        c = (1 - r - k) / (1 - k)
+        m = (1 - g - k) / (1 - k)
+        y = (1 - b - k) / (1 - k)
+    else:
+        c, m, y = (0, 0, 0)
+    return [c, m, y, k]
+
+class PageState:
+    opmap = {'K': 'k', 'RG': 'rg'}
+    def __init__(self, threshold, gstates):
+        self.currgs = None
+        self.threshold = threshold
+        self.gstates = gstates
+
+    def gs(self, op, operands):
+        self.currgs = str(operands[-1])
+        return operands + [op]
+
+    def k(self, op, operands):
+        try:
+            b = float(operands[-1])
+        except (ValueError, TypeError):
+            return operands + [op]
+        extras = []
+        if self.currgs is not None:
+            overprint = dict.get(self.gstates[self.currgs], "/OP", "false") == "true"
+            if overprint != (b >= self.threshold):
+                newgs = (self.currgs[:-1] if self.currgs.endswith("a") else self.currgs+"a")[1:]
+                extras = ["/"+newgs, "gs"]
+                if newgs not in self.gstates:
+                    opval = "true" if b >= self.threshold else "false"
+                    opmval = 1 if b >= self.threshold else None
+                    self._addgstate(newgs, self.currgs, op=opval, OP=opval, OPM=opmval)
+                self.currgs = "/"+newgs
+        return extras + operands + [op]
+
+    def rg(self, op, operands):
+        rgb = [float(x) for x in operands[-3:]]
+        cmyk = rgbtocmyk(*rgb)
+        newop = "k" if op.lower() == op else "K"
+        return [simplefloat(x) for x in cmyk] + [newop]
+
+    def _addgstate(self, newgs, gs, **kw):
+        res = self.gstates[gs].copy()
+        self.gstates[PdfName(newgs)] = res
+        for k, v in kw.items():
+            if v is not None:
+                res[PdfName(k)] = PdfObject(v)
+
+    def parsestream(self, rdr, strm):
+        res = []
+        operands = []
+        toks = PdfTokens(strm)
+        for t in toks:
+            func = rdr.special.get(t)
+            if func is not None:
+                val = func(toks)
+                if isinstance(val, PdfArray):
+                    val = PdfArray([parsestrtok(x) for x in val])
+                elif isinstance(val, PdfDict):
+                    val = PdfDict({k: parsestrtok(v) for k, v in val.items()})
+                operands.append(val)
+        
+            elif isinstance(t, (PdfString, BasePdfName)):
+                operands.append(t)
+            elif re.match(r"^[+-]?\d+(\.\d*)?", t):
+                operands.append(t)
+            elif t in ("true", "false", "null"):
+                operands.append(t)
+            else:       # must be an operator
+                fn = getattr(self, self.opmap.get(t, t), None)
+                if fn is None:
+                    res.append(" ".join(str(x) for x in (operands + [t])))
+                else:
+                    res.append(" ".join(fn(t, operands)))
+                operands = []
+        return "\r\n".join(res)
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile", help="Input PDF file")
+parser.add_argument("outfile", help="Output PDF file")
+parser.add_argument("-t","--threshold",type=float,default=1.0,help="Overprint black threshold [1.0]")
+args = parser.parse_args()
+
+trailer = PdfReader(args.infile)
+
+for pagenum, page in enumerate(trailer.pages, 1):
+    pstate = PageState(args.threshold, page.Resources.ExtGState)
+    instrm = page.Contents
+    if not isinstance(instrm, PdfArray):
+        instrm = [instrm]
+    for i in instrm:
+        if isinstance(i, PdfIndirect):
+            i = i.real_value()
+        uncompress([i])
+        strm = pstate.parsestream(trailer, i.stream)
+        i.stream = strm
+        i.Filter = PdfName.FlateDecode
+
+PdfWriter(args.outfile, trailer=trailer).write()
+        

@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="PTXprint",
-    version="1.8.2",
+    version="2.2.33",
     description="Typesetting using (Xe)TeX for Paratext",
     url="https://software.sil.org/ptxprint",
     author="SIL International",
@@ -15,7 +15,7 @@ setup(
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
     scripts=["python/scripts/ptxprint", "python/scripts/xdvitype"],
-    install_requires=["regex", "pygobject", "fonttools", "pycairo", "appdirs"],
+    install_requires=["regex", "pygobject", "fonttools", "pycairo", "appdirs", "Pillow"], #, "ssl"],
     zip_safe=False,
     license="MIT",
     classifiers=[

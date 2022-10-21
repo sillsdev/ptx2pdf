@@ -1,0 +1,10 @@
+\id TST Test file
+\h Caclulation test file
+\c 1
+\s Caclulation test file
+\p
+\v 1 A font-based zrule
+\zrule |cat="orntest" thick="10pt" width="0.9" \*
+\b
+\zrule |cat="plain" thick="10pt" width=".9" \*
+\p The end

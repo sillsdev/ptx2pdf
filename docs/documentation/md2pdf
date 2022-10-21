@@ -1,0 +1,6 @@
+#!/bin/sh
+
+fname=$1
+shift
+pandoc --metadata-file=metadata.yaml "$@" -o "${fname%.md}.pdf" "$fname"
+

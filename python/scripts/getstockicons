@@ -115,7 +115,7 @@ for e in doc.findall('.//object'):
             n = c.get("name")
             if n == "label":
                 l = c.text
-            elif n == "use_stock":
+            elif n in ["use_stock", "use-stock"]:
                 isstock = True if c.text == "True" else False
     if isstock and l in icon_mappings:
         icons.add(icon_mappings[l]+".png")

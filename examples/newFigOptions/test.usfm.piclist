@@ -1,0 +1,8 @@
+TST 1.2 cr3: note small caption width |loc="cr3" src="image.jpg" alt="Figs are tasty"  ref="1:2" size="col*0.36"
+TST 1.5 hl: note width\penalty1 |loc="hl" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.2"
+TST 1.6 hc: centred images get full-width captions, those to the side do not. |loc="hc" src="image.jpg" alt="Figs are tasty"  ref="1:6" size="col*0.2"
+TST 1.8 p: after the end of the paragraph |loc="pc" src="image.jpg" alt="Figs are tasty"  ref="1:8" size="col*0.2"
+TST 1.8 P: A page (normal margins and headers) |loc="P" src="snake2BW.png" alt=""  ref="1:8" size="page"
+TST 1.8 P: A second 'F' or 'P' image that fits on the page will do so. |loc="P" src="snake2BW.png" alt="" mirror="both" ref="1:8" size="page"
+TST 1.8 F: A Full page on its own|loc="F" src="womanchildBW.png" alt=""  ref="1:8" size="full"
+TST 1.9 size=width: An image placed top set to the full-width of the page|loc="t" src="snake2BW.png" size="width" scale="1.0"

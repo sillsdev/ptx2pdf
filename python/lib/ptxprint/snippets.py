@@ -2,43 +2,191 @@ import re, os
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
+from .utils import pycodedir, htmlprotect
 
 class Snippet:
+    order = 0
     regexes = []
     processTex = False
     texCode = ""
     takesDiglot = False
 
 class PDFx1aOutput(Snippet):
-    processTex = True
-    texCode = r"""
+
+    def generateTex(self, model, diglotSide=""):
+        res = r"""
+\bgroup \catcode`\^^M=10
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
 /Author({document/author})%
-/Creator(PTXprint ({config/name}))%
+/Creator(PTXprint {/ptxprint_gitversion} ({config/name}))%
 /CreationDate(D:{pdfdate_})%
 /ModDate(D:{pdfdate_})%
 /Producer(XeTeX)%
 /Trapped /False
-/GTS_PDFXVersion(PDF/X-1:2001)%
-/GTS_PDFXConformance(PDF/X-1a:2001)%
->> }} 
+{_gtspdfx}>> }}
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
-\special{{pdf:put @OBJCVR <</N 4>>}}
+\special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
+\catcode`\#=12
+\special{{pdf:stream @OBJCMR (
+<x:xmpmeta xmlns:x="adobe:ns:meta/">
+  <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
+       xmlns:xmp="http://ns.adobe.com/xap/1.0/"
+       xmlns:dc="http://purl.org/dc/elements/1.1/"
+       xmlns:pdf="http://ns.adobe.com/pdf/1.3/"
+       xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/"
+       xmlns:xmpMM="http://ns.adobe.com/xap/1.0/mm/"
+       xmlns:pdfxid="http://www.npes.org/pdfx/ns/id/">
+      <rdf:Description rdf:about="" xmlns:pdfaExtension="http://www.aiim.org/pdfa/ns/extension/" xmlns:pdfaSchema="http://www.aiim.org/pdfa/ns/schema#" xmlns:pdfaProperty="http://www.aiim.org/pdfa/ns/property#">
+        <pdfaExtension:schemas>
+          <rdf:Bag>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://ns.adobe.com/pdf/1.3/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>pdf</pdfaSchema:prefix>
+              <pdfaSchema:schema>Adobe PDF Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Trapped property</pdfaProperty:description>
+                    <pdfaProperty:name>Trapped</pdfaProperty:name>
+                    <pdfaProperty:valueType>Boolean</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://ns.adobe.com/xap/1.0/mm/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>xmpMM</pdfaSchema:prefix>
+              <pdfaSchema:schema>XMP Media Management Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>UUID based identifier for specific incarnation of a document</pdfaProperty:description>
+                    <pdfaProperty:name>InstanceID</pdfaProperty:name>
+                    <pdfaProperty:valueType>URI</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
+            </rdf:li>
+            <rdf:li rdf:parseType="Resource">
+              <pdfaSchema:namespaceURI>http://www.aiim.org/pdfa/ns/id/</pdfaSchema:namespaceURI>
+              <pdfaSchema:prefix>pdfaid</pdfaSchema:prefix>
+              <pdfaSchema:schema>PDF/A ID Schema</pdfaSchema:schema>
+              <pdfaSchema:property>
+                <rdf:Seq>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Part of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>part</pdfaProperty:name>
+                    <pdfaProperty:valueType>Integer</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Amendment of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>amd</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>Conformance level of PDF/A standard</pdfaProperty:description>
+                    <pdfaProperty:name>conformance</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <pdfaProperty:category>internal</pdfaProperty:category>
+                    <pdfaProperty:description>PDF/X version</pdfaProperty:description>
+                    <pdfaProperty:name>GTS_PDFXVersion</pdfaProperty:name>
+                    <pdfaProperty:valueType>Text</pdfaProperty:valueType>
+                  </rdf:li>
+                </rdf:Seq>
+              </pdfaSchema:property>
+            </rdf:li>
+          </rdf:Bag>
+        </pdfaExtension:schemas>
+      </rdf:Description>
+      <rdf:Description rdf:about="">
+        <dc:creator>
+          <rdf:Seq>
+            <rdf:li>{_gtfauthor}</rdf:li>
+          </rdf:Seq>
+        </dc:creator>
+        <xmp:CreateDate>{xmpdate_}</xmp:CreateDate>
+        <xmp:ModifyDate>{xmpdate_}</xmp:ModifyDate>
+        <xmp:MetadataDate>{xmpdate_}</xmp:MetadataDate>
+        <xmp:CreatorTool>PTXprint ({config/name})</xmp:CreatorTool>
+        <xmpMM:DocumentID>uuid:5589311-bbc3-4ac7-9aaf-fc8ab4739b3c</xmpMM:DocumentID>
+        <xmpMM:RenditionClass>default</xmpMM:RenditionClass>
+        <xmpMM:VersionID>1</xmpMM:VersionID>
+        <pdfxid:GTS_PDFXVersion>PDF/X-4</pdfxid:GTS_PDFXVersion>
+        <dc:title>
+          <rdf:Alt>
+            <rdf:li xml:lang="x-default">{_gtftitle}</rdf:li>
+          </rdf:Alt>
+        </dc:title>
+        <dc:description>
+          <rdf:Alt>
+            <rdf:li xml:lang="x-default">{_gtfsubject}</rdf:li>
+          </rdf:Alt>
+        </dc:description>
+        <pdf:Producer>XeTeX</pdf:Producer>
+        <pdf:Trapped>False</pdf:Trapped>
+{_gtspdfaid}      </rdf:Description>
+  </rdf:RDF>
+</x:xmpmeta>
+<?xpacket end="w"?>)}}
+\special{{pdf:put @OBJCMR <</Type /Metadata /Subtype /XML>>}}
 \special{{pdf:docview <<
+/Metadata @OBJCMR{rtlview}
 /OutputIntents [ <<
 /Type/OutputIntent
 /S/GTS_PDFX
 /OutputCondition (An Unknown print device)
 /OutputConditionIdentifier (Custom)
+/Info (Boilerplate null output intent)
 /DestOutputProfile @OBJCVR
 /RegistryName (http://www.color.og)
->> ] >>}}
-\XeTeXgenerateactualtext=1
-
+>> <<
+/Type/OutputIntent
+/S/GTS_PDFA1
+/OutputCondition (An Unknown print device)
+/OutputConditionIdentifier (Custom)
+/Info (Boilerplate null output intent)
+/DestOutputProfile @OBJCVR
+/RegistryName (http://www.color.og)
+>> ]
+>>}}
+\egroup
+\catcode`\#=6
 """
+# /MarkInfo <</Marked /False>>
+
+        extras = {'_gtspdfx': '', '_gtspdfaid': ''}
+        pdftype = model['snippets/pdfoutput'] or "Screen"
+        libpath = pycodedir()
+        if pdftype in ("Screen", "Transparent", "Digital" ):
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-4)%\n"
+        else:
+            extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
+            res += "\\Actionsfalse\n"
+        if pdftype in ("Screen", "Digital"):
+            model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
+            extras['_iccnumcols'] = "3"
+        if pdftype == "Gray":
+            model.dict['/iccfpath'] = os.path.join(libpath, "default_gray.icc").replace("\\","/")
+            extras['_iccnumcols'] = "1"
+        else:
+            extras['_iccnumcols'] = "4"
+        extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
+        extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['document/ifrtl'] == "true" else ""
+        for a in ('author', 'title', 'subject'):
+            extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
+        if model['document/printarchive']:
+            res += "\XeTeXgenerateactualtext=1\n"
+        return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
     texCode = r"""
@@ -49,30 +197,33 @@ class FancyIntro(Snippet):
 class Diglot(Snippet):
     processTex = True
     texCode = r"""
-\def\regularR{{"{diglot/fontregular}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\boldR{{"{diglot/fontbold}{diglot/docdigitmapping}"}}
-\def\italicR{{"{diglot/fontitalic}{diglot/docscript}{diglot/docdigitmapping}"}}
-\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}{diglot/docdigitmapping}"}}
+\def\regularR{{"{diglot/fontregular}{diglot/docscript}"}}
+\def\boldR{{"{diglot/fontbold}"}}
+\def\italicR{{"{diglot/fontitalic}{diglot/docscript}"}}
+\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}"}}
 
 \def\DiglotLeftFraction{{{document/diglotprifraction}}}
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
 
-{diglot/colorfonts}\ColorFontsfalse
 %\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
 %\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
 \FontSizeUnitR={diglot/fontfactor}pt
 \def\LineSpacingFactorR{{{diglot/linespacingfactor}}}
+\def\AfterChapterSpaceFactorR{{{diglot/afterchapterspace}}}
+\def\AfterVerseSpaceFactorR{{{diglot/afterversespace}}}
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
 %{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 \diglotSwap{document/diglotswapside}
 {diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
+{diglot/ifletter}\newskip\intercharskipR \intercharskipR=0pt plus {diglot/letterstretch:.2f}em minus {diglot/lettershrink:.2f}em
+{diglot/ifletter}\def\letterspaceR{{\leavevmode\nobreak\hskip\intercharskipR}}
+{diglot/ifletter}\DefineActiveChar{{^^^^fdd1}}{{\letterspaceR}}
 \catcode `@=12
 
 """
 
 class FancyBorders(Snippet):
-    processTex = True
     takesDiglot = True
     def generateTex(self, texmodel, diglotSide=""):
         res = r"""
@@ -114,9 +265,9 @@ class FancyBorders(Snippet):
 {%E%fancy/versedecoratorisfile}    \raise {%E%fancy/versedecoratorshift}pt\copy\versestarbox%D%\endL}}
 {%E%fancy/versedecoratorisayah}\catcode`@=11\catcode`-=11\catcode`\~=12\lccode`\~=32\lowercase{{%
 {%E%fancy/versedecoratorisayah} \def\vp #1\vp*{{\edef\temp{{#1}}\x@\spl@tverses\temp --\relax
-{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\printv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
+{%E%fancy/versedecoratorisayah}  \ch@rstyle{{vp}}~\plainv@rse\ch@rstylepls{{vp}}*\kern 2\FontSizeUnit}}}}
 {%E%fancy/versedecoratorisayah}\catcode`@=12\catcode`=12
-{%E%fancy/versedecoratorisayah}\def\AdornVerseNumber#1{{\hbox{{\char"06DD #1}}}}
+{%E%fancy/versedecoratorisayah}\def\AdornVerseNumber%D%#1{{\hbox{{\char"06DD #1}}}}
 """.replace("%D%", replaceD).replace("%E%", replaceE)
         return res.format(**texmodel.dict)
 
@@ -252,6 +403,7 @@ class ThumbTabs(Snippet):
         return "\n".join(texlines)+"\n"
 
 class Colophon(Snippet):
+    order = 10
     processTex = True
     texCode = """
 \\catcode"FDEE=1 \\catcode"FDEF=2
@@ -265,7 +417,7 @@ class Colophon(Snippet):
 
 """
 
-class Grid:
+class Grid(Snippet):
     regexes = []
     processTex = True
     texCode = """

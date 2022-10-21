@@ -50,7 +50,7 @@
       \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern 15pt
       \hss
-      \raise20pt\vtop{\hsize\PaperWidth \everypar={}
+      \raise12pt \vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
         \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL}%
@@ -80,8 +80,8 @@
       \vrule height .2pt depth .2pt width 25pt
       \kern -30pt
     }%
-    \dp0=0pt\ht0=0pt\box0
-  }\ht\bottomcr@p=0pt\dp\bottomcr@p=0pt% end \vbox for \bottomcr@p
+    \dp0=0pt \ht0=0pt \box0
+  }\ht\bottomcr@p=0pt \dp\bottomcr@p=0pt% end \vbox for \bottomcr@p
 }
 %-c_makecropmarks
 
@@ -150,7 +150,7 @@
   \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
    \advance\dimen2 by #5\advance\dimen2 by -\ht0
-   \ifdim\dimen2<0pt\dimen2=0pt\fi
+   \ifdim\dimen2<0pt \dimen2=0pt \fi
   \else 
     \ifdim\dimen2=1sp%Magic number to indicate vertical centering.
      %To centre text, it goes UP by ((#5-ht0)-(#4-dp0))/2
@@ -160,7 +160,7 @@
      \advance\dimen2 by \dp0
      \divide\dimen2 by 2
     \else
-      \ifdim\dimen2=0pt\else
+      \ifdim\dimen2=0pt \else
         %Distance from bottom  shift=#6+dp0 -#4
         %can't use -#4 because #4 may be -ve already.
         \dimen2=#4\multiply\dimen2 by -1
@@ -169,9 +169,14 @@
       \fi
     \fi
   \fi
-  \edef\bgc@l{#1}\ifx\bgc@l\empty\let\endbgc@l\empty\else\edef\bgc@l{\special{color push rgb #1}}\let\endbgc@l=\cp@p\fi%
-  \edef\fgc@l{#2}\ifx\fgc@l\empty\let\endfgc@l\empty\else\edef\fgc@l{\special{color push rgb #2}}\let\endfgc@l=\cp@p\fi%
+  \setbgc@l{#1}%
+  \setfgc@l{#2}%
   \setbox0\hbox{\hbox to 0pt{\bgc@l\vrule depth #4 height #5 width #3 \hss}\endbgc@l\fgc@l\raise \dimen2\box0}\ht0=#5\dp0=#4\box0\endfgc@l}
+
+\def\setbgc@l#1{\edef\bgc@l{#1}\ifx\bgc@l\empty\let\endbgc@l\empty\else\edef\bgc@l{\special{color push rgb #1}}\let\endbgc@l=\cp@p\fi}%
+\def\setfgc@l#1{\edef\fgc@l{#1}\ifx\fgc@l\empty\let\endfgc@l\empty\else\edef\fgc@l{\special{color push rgb #1}}\let\endfgc@l=\cp@p\fi}%
+
+
 
 %Rotate box0 about a point on it's baseline, half way along its width. Adjust size so that height/depth and width are correct for rotated box. box height/depth becomes left-most edge.
 \def\r@acwSet{\edef\@ngle{90}\kern\ht0}% anticlockwise
@@ -196,8 +201,8 @@
     \ht0=\dimen3\dp0=\dimen2\kern-0.5\dimen1\box0\special{x:grestore}\hss}}
 
 
-\def\TabTxtFarFromEdge#1{\if\st@rtatedge F\kern 2pt\else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt\fi}% Normal position for horizontal text - left-aligned on odd pages / bottom when rotated
-\def\TabTxtCloseToEdge#1{\if\st@rtatedge T\kern 2pt\else\hss\fi #1\if\st@rtatedge T\hss\else\kern 2pt\fi}% Right-aligned on odd-pages / Top when rotated
+\def\TabTxtFarFromEdge#1{\if\st@rtatedge F\kern 2pt \else\hss\fi #1\if\st@rtatedge F\hss\else\kern 2pt \fi}% Normal position for horizontal text - left-aligned on odd pages / bottom when rotated
+\def\TabTxtCloseToEdge#1{\if\st@rtatedge T\kern 2pt \else\hss\fi #1\if\st@rtatedge T\hss\else\kern 2pt \fi}% Right-aligned on odd-pages / Top when rotated
 \def\TabTxtCentred#1{\hss #1\hss}% 
 \let\horizThumbtabContents=\TabTxtFarFromEdge% How should the thumbtab be positioned when horizontal?
 \let\vertThumbtabContents=\TabTxtCentred% How should the thumbtab be positioned when vertical?
@@ -215,8 +220,9 @@
      
 \reinitThumbTabs
 
+\def\TabBleed{5pt}%
 \def\t@bbox{%
- \s@tfont{\ThumbTabStyle}%
+ \s@tfont{\ThumbTabStyle}{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
  \x@\let\x@\t@bFontCol\csname\t@bname -col\endcsname
  \ifx\t@bgrp\relax
@@ -254,8 +260,9 @@
      \ifTabTopToEdgeEven\temptrue\fi
    \fi
    \trace{pt}{pg \the\pageno, Top to \iftemp edge \else page\fi}%
+   \dimen0=\TabBleed\advance\dimen0 by 1pt
    \iftemp %Rotated text has its top at the edge of the page (decenders to text)
-     \edef\bxht{2pt}% Bleed distance
+     \edef\bxht{\the\dimen0}% Bleed distance
      \edef\bxdp{\the\tabwidth}%
      \bgroup
        \dimen1=\vertThumbtabVadj%
@@ -266,7 +273,7 @@
      \egroup
    \else %Rotated text has its bottom at the edge of the page (descenders to edge)
      \edef\bxht{\the\tabwidth}%
-     \edef\bxdp{2pt}% Bleed distance
+     \edef\bxdp{\the\dimen0}%
      \edef\V@dj{\vertThumbtabVadj}%
    \fi
    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
@@ -287,14 +294,16 @@
  \else%Unrotated tabs
    \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
    \hbox to 0pt{%
-    \if\st@rtatedge F\hss\else\kern -1pt\fi% Bleed of 1pt
-    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabwidth}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
+    \dimen0=\ifodd\pageno\TabBleed\else-\TabBleed\fi
+    \if\st@rtatedge F\hss\else\kern \dimen0\fi% Bleed of 1pt
+    \dimen0=\TabBleed \advance\dimen0\tabwidth
+    \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\dimen0}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
    %\ifodd\pageno\else\showbox0\fi
     \box0
    % \box2 
-    \if\st@rtatedge F\kern -1pt \else\hss\fi%bleed of 1pt.
+    \if\st@rtatedge F\kern -\TabBleed \else\hss\fi%bleed of 1pt.
     }%
  \fi
 }
@@ -353,19 +362,43 @@
  \fi %ifnum
  \XeTeXuseglyphmetrics=\@seglyphmetrics% Restore to normal value.
 }
+
+
+\def\pdfp@geout{%
+    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
+    %%%%% Note the \special line here seems to work but there may be a better location for it
+    %%%%% Also, the numbers used are hard coded now but need to be calculated
+  \bgroup
+    \dimen1=0.99626401\pdfpagewidth \dimen2=0.99626401\pdfpageheight
+    \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\pdfpagewidth}%
+    \ifCropMarks
+      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
+      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
+        \strip@pt{\dimen3} \space \strip@pt\pdfcropwidth \space
+        \strip@pt\pdfcropheight ] >>}
+    \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ]>> }\fi
+  \egroup
+}
+
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
   \def\g@tterside{L} % figure out if we're adding a binding gutter, and which side
-  \ifBindingGutter
+  %\ifBindingGutter
     \ifDoubleSided
       \ifodd\pageno\ifBookOpenLeft\def\g@tterside{R} \else\def\g@tterside{L}\fi
       \else\ifBookOpenLeft\def\g@tterside{L} \else\def\g@tterside{R}\fi
       \fi
     \else\ifBookOpenLeft\def\g@tterside{R}\else\def\g@tterside{L}\fi
     \fi
-  \fi
+  %\fi
   \ifx\doLines\empty\else
     \x@\ifvoid\csname gp@box\g@tterside\endcsname
+      \ifrotate\XeTeXupwardsmode=0\fi
       \global\x@\setbox\csname gp@box\g@tterside\endcsname\vbox{\doLines}%
+      \ifrotate\XeTeXupwardsmode=1\fi
     \fi
   \fi
   \dimen0=0\ifCropMarks .5\fi in
@@ -375,21 +408,7 @@
   \let\pr@tect=\noexpand
   \trace{G}{\the\pdfpagewidth x \the\pdfpageheight}
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
-    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
-    %%%%% Note the \special line here seems to work but there may be a better location for it
-    %%%%% Also, the numbers used are hard coded now but need to be calculated
-    \ifCropMarks
-      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-      \def\tmp{\dimen0}
-      \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
-        \strip@pt\pdfcropheight ] >>}
-    \else\trace{s}{pdfpagewidth=\the\pdfpagewidth}\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ] /TrimBox [0 0 \strip@pt{\pdfpagewidth} \space
-        \strip@pt{\pdfpageheight} ]>> }\fi
-    % End inserted \special line
+    \pdfp@geout
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
     \ifrotate
@@ -399,7 +418,7 @@
     \fi
     \m@rgepdf
     \pl@ceborder % add PageBorder (or watermark) graphic, if defined
-    \offinterlineskip
+    \trace{o}{p@ = \the\p@}\offinterlineskip
     \x@\ifvoid\csname gp@box\g@tterside\endcsname\else
       \vbox to 0pt{\vbox to \ifrotate\pdfpagewidth\else\pdfpageheight\fi
         {\ifCropMarks\kern0.5in\hbox{\kern 0.5in\x@\copy\csname gp@box\g@tterside\endcsname}\else
@@ -421,6 +440,7 @@
     \docr@pmarks
     \putthumbtab
     \ifrotate\special{x:grestore}\fi
+    \specialfooter
   }%
   \let\pr@tect=\relax
 }
@@ -431,50 +451,34 @@
                                      % but without adding margins, borders, etc
                                      % (used for \includepdf)
   \dimen0=0\ifCropMarks .5\fi in
+  \dimen9=\pdfpageheight \dimen8=\pdfpagewidth
   \advance\pdfpagewidth by 2\dimen0 % increase PDF media size
   \advance\pdfpageheight by 2\dimen0
+  \trace{G}{shipcomplete \the\pdfpagewidth x\the\pdfpageheight}%
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \shipout\vbox to 0pt{% ship the actual page
-    %%%%% The following was added to help produce proper x1a PDF output (djd - 20150504)
-    %%%%% Note the \special line here seems to work but there may be a better location for it
-    %%%%% Also, the numbers used are hard coded now but need to be calculated
-    \ifCropMarks
-      \pdfcropwidth=\pdfpagewidth\advance\pdfcropwidth by -\dimen0
-      \pdfcropheight=\pdfpageheight\advance\pdfcropheight by -\dimen0
-      \def\tmp{\dimen0}
-      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space
-        \strip@pt\pdfcropheight ] /ArtBox [\strip@pt\tmp \space
-        \strip@pt\tmp \space \strip@pt\pdfcropwidth \space \strip@pt\pdfcropheight ]>>}
-    \else
-      \special {pdf: put @thispage <</MediaBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /TrimBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ] /ArtBox [0 0 \strip@pt\pdfpagewidth \space
-        \strip@pt\pdfpageheight ]>>}
-    \fi
-    \trace{p}{Pagesize \the\pdfpagewidth, \the\pdfpageheight}
-    % End inserted \special line
+    \pdfp@geout
     \offinterlineskip                                                           %(1)
     \vbox to \pdfpageheight{\vss
       \hbox to \pdfpagewidth{\hss#1\hss}
       \vss}
     \vss
     \docr@pmarks
+  \pdfpageheight=\dimen9 \pdfpagewidth=\dimen8
   }%
 }
 %-c_shipcomplete
-
 %+c_docropmarks
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
       \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
+      \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
         \kern\dimen0
         \moveright\dimen0\copy\topcr@p
         \kern\PaperHeight
         \moveright\dimen0\copy\bottomcr@p
-        \moveright\dimen0\vbox to 0pt{\kern15pt\hsize\PaperWidth \everypar={}
+        \moveright\dimen0\vbox to 0pt{\kern12pt\hsize\ifrotate\PaperHeight\else\PaperWidth\fi \everypar={}
           \lineskiplimit=0pt \baselineskip=10pt \linepenalty=200
           \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
           \noindent \beginL\idf@nt
@@ -482,6 +486,7 @@
           \vss}
         \vss
       }
+      %\ifrotate\XeTeXupwardsmode=1\fi
     \fi}
 %-c_docropmarks
 
@@ -539,13 +544,12 @@
   \gp@nxt
 }
 \def\gp@hrules{%
-  \dimen5=\ht0\advance\dimen5 by \dimen1
-  \ifdim\dimen5<\dimen2
-    \setbox0\vbox{\unvbox0\vskip\dimen1\gp@hrule}%
+  \setbox0\vbox{\unvbox0\vskip\dimen1\gp@hrule}%
+  \ifdim\ht0>\dimen2
+    \let\gp@nxt\relax
+  \else
     \gp@step
     \let\gp@nxt\gp@hrules
-  \else
-    \let\gp@nxt\relax
   \fi
   \gp@nxt
 }
@@ -588,43 +592,44 @@
     \dimen1=\GraphPaperY
     \dimen2=\pdfpageheight
     \advance\dimen2 by -\dimen1
-    \advance\dimen2 by -\GraphPaperYoffset
+    %\advance\dimen2 by -\GraphPaperYoffset
     \dimen3=\pdfpagewidth
     \dimen0=\GraphPaperXoffset
     \advance\dimen3 by -2\dimen0 % assume identical lr margins
     \setbox0=\vbox{\kern\GraphPaperYoffset\gp@hrule}%
     \gp@step
     \gp@hrules
-    \vbox to 0pt{\unvbox 0\gp@hrule\vss}%
+    \vbox to 0pt{\unvbox 0\vss}%
     \cp@p\global\let\l@stgprule\empty
   \egroup
 }
 
 \def\doGridLines{%
   \bgroup\topskip=0pt\parindent=0pt\everypar{}\relax
-    \hsize=\pdfpagewidth\vsize=\pdfpageheight
+    \ifrotate\hsize=\pdfpageheight\vsize=\pdfpagewidth\else
+    \hsize=\pdfpagewidth\vsize=\pdfpageheight\fi
     \leftskip=0pt\parshape=0\hangindent=0pt\parindent=0pt
     \let\par=\endgraf
-    \s@tfont{h}\mkstr@t
+    \s@tfont{h}{h}\mkstr@t
     %
     % horizontal rules
     \def\gp@type{GridPaper}%
     \def\th@sgprule{Minor}%
     \count255=500
-    \dimen3=\pdfpagewidth
-    \dimen2=\pdfpageheight
+    \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
+    \dimen2=\ifrotate\pdfpagewidth\else\pdfpageheight\fi
     \advance\dimen2 by -\bottomm@rgin
-    \s@tbaseline{p}
-    \dimen1=\baselineskip
+    \dimen1=\onel@neunit
     \baselineskip=0pt
     \dimen0=\HeaderPosition\MarginUnit
     \dimen6=\GraphPaperXoffset
     \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\kern\dimen0\gp@hrule}
     \setbox0=\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}
     \edef\GraphPaperXoffset{0pt}
-    \dimen3=\pdfpagewidth
+    \dimen3=\ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \advance\dimen0 by \ht\str@tbox
     \advance\dimen0 by -\topm@rgin
     \dimen0=-\dimen0
@@ -639,7 +644,8 @@
     \advance\dimen2 by -\FooterPosition\MarginUnit
     \def\th@sgprule{Minor}
     \edef\GraphPaperXoffset{\SideMarginFactor\MarginUnit}
-    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2 \advance\dimen3 by \pdfpagewidth
+    \dimen3=\GraphPaperXoffset \multiply\dimen3 by -2
+    \advance\dimen3 by \ifrotate\pdfpageheight\else\pdfpagewidth\fi
     \setbox0=\vbox{\unvbox0\vskip\dimen2\gp@hrule}
     \vbox to 0pt{\unvbox0\vbox{\unvbox0\vskip\ht\str@tbox\gp@hrule}\vss}
     \edef\GraphPaperXoffset{\the\dimen6}
@@ -661,15 +667,16 @@
     \fi
     %\setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     %\advance\dimen1\dimen4
-    \ifnum\BodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
-      \advance\dimen2 by \XrefNotesWidth
-    \else\dimen2=0pt\fi
+    \ifnum\mainBodyColumns=2 \dimen2=\ColumnGutterFactor\FontSizeUnit
+      \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\advance\dimen2 -2\XrefNotesMargin\fi
+    \else\dimen2=0pt \fi
     \divide\dimen2 by 2
-    \advance\dimen2 \XrefNotesMargin
-    \ifdiglot\dimen4=\columnLwidth\advance\dimen4 0.5\gutter\else\dimen4=0.5\textwidth\fi
+    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter
+    \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
-    \ifdim\columnshift>0pt\advance\dimen4 by -\columnshift\fi
-    \ifnum\BodyColumns=2
+    \ifdim\columnshift>0pt \advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
+    \ifnum\mainBodyColumns=2
+      \def\th@sgprule{Minor}
       \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
       \def\th@sgprule{Major}
       \setbox0=\hbox{\unhbox0\hskip\dimen2\gp@vrule}
@@ -681,11 +688,12 @@
     \fi
     \ifdim\columnshift>0pt
       \dimen0=\columnshift
+      \def\th@sgprule{Minor}
       \setbox0=\hbox{\unhbox0\hskip\dimen0\gp@vrule}
       \advance\dimen2\columnshift
     \fi
     \def\th@sgprule{Major}
-    \ifdiglot\dimen4=\columnRwidth\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
+    \ifdiglot\dimen4=\csname column\if L\g@tterside R\else L\fi width\endcsname\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
@@ -694,7 +702,7 @@
   \egroup
 }
 
-\def\doLines{}
+\def\doLines{} % GraphPaper/Gridlines
 
 %-c_graphpaper
 
@@ -703,7 +711,7 @@
 \newbox\b@rder
 \def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
   \ifvoid\b@rder % set up the \b@rder box the first time it's needed
-    \global\setbox\b@rder=\hbox{\XeTeXpdffile \PageBorder \relax}%
+    \global\setbox\b@rder=\hbox{\mapimagefile{\XeTeXpdffile}{\PageBorder}{}\relax}%
     \global\setbox\b@rder=\vbox to \pdfpageheight{\vss
       \hbox to \pdfpagewidth{\hss\box\b@rder\hss}\vss}%
   \fi
@@ -720,7 +728,7 @@
 \def\addqu@tes#1#2\E{\if #1"\relax \def\m@rgePDF{#1#2 }\else\def\m@rgePDF{"#1#2" }\fi}
 \def\m@rgepdf{\ifx\MergePDF\empty\else
   \x@\addqu@tes \MergePDF\E  %Make \m@rgePDF a copy of \MergePDF, adding quotes if needed
-  \vbox to 0pt{\vbox to \pdfpageheight{\vss\hbox to \pdfpagewidth{\hss\XeTeXpdffile \m@rgePDF media\relax\hss}\vss}\vss}
+  \vbox to 0pt{\vbox to \pdfpageheight{\vss\hbox to \pdfpagewidth{\hss\mapimagefile{\XeTeXpdffile}{\m@rgePDF}{media}\relax\hss}\vss}\vss}
 \fi}
 %-c_pageborders
 
@@ -728,15 +736,25 @@
 \m@rksonpagefalse
 \newif\ifp@geone\p@geonetrue
 % redefine plain TeX's output routine to add the cropmarks
-\def\plainoutput{%
+\def\specialfooter{}
+\def\plainoutput{\pl@inoutput{\vbox{\makeheadline\pagebody}}}%\makefootline}}}
+\def\emptyoutput{\pl@inoutput{\vbox{}}}
+\def\pl@inoutput#1{%
+  \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
+  \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
+  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
+  \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-  \shipwithcr@pmarks{\vbox{\makeheadline\pagebody\makefootline}}%
+  \shipwithcr@pmarks{#1}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
-  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \global\p@geonefalse
+%NB: dosupereject (from plain.tex) will continue triggering outputs as long as
+%there are footnotes/floats coming.
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
+  \global\let\mspr@fix\opS@ve@msprefix
+  \global\let\c@tprefix\opS@ve@catprefix
   }
 %-c_plainoutput
 

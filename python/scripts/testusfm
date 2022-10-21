@@ -1,0 +1,55 @@
+#!/usr/bin/python3
+
+from ptxprint.sfm import usfm, style, generate
+from ptxprint import sfm
+from io import StringIO
+import argparse, os, sys
+from pprint import pprint
+
+def appendsheet(fname, sheet):
+    if os.path.exists(fname):
+        with open(fname) as s:
+            sheet = style.update_sheet(sheet, style.parse(s))
+    return sheet
+
+parser = argparse.ArgumentParser()
+parser.add_argument('usfm',nargs='+',help='usfm string components')
+parser.add_argument('-i','--input',action='store_true',help='strings are files')
+parser.add_argument('-s','--stylesheet',action='append',default=[])
+parser.add_argument('-e','--error',default=sfm.ErrorLevel.Unrecoverable,action='store_const',const=sfm.ErrorLevel.Marker)
+parser.add_argument('-o','--outfile',help='Store output in a file')
+parser.add_argument('-l','--literal',action="store_true",help="pretty print the python data structure")
+parser.add_argument('-S','--string',action='store_true',help="output as str() not generate")
+args = parser.parse_args()
+
+sheet = usfm.default_stylesheet
+if not len(args.stylesheet):
+    args.stylesheet = [os.path.join(os.path.dirname(__file__), '..', 'src', 'ptx2pdf.sty')]
+for s in args.stylesheet:
+    sheet=appendsheet(s, sheet)
+
+if args.outfile is not None:
+    outf = open(args.outfile, "w", encoding="utf-8")
+else:
+    outf = sys.stdout
+
+def makedoc(inf, sheets):
+    return list(usfm.parser(inf, stylesheet=sheets, canonicalise_footnotes=True, debug=True))
+
+def outdoc(doc):
+    if args.literal:
+        outf.write("\n".join(x.pprint() for x in doc))
+    elif args.string:
+        outf.write("\n".join(str(x) for x in doc))
+    else:
+        outf.write("\n".join(generate(x) for x in doc))
+    outf.write("\n")
+
+if args.input:
+    for f in args.usfm:
+        with open(f, encoding="utf-8") as inf:
+            doc = makedoc(inf, sheet)
+            outdoc(doc)
+else:
+    doc = makedoc([s.encode("utf-8").decode("raw_unicode_escape") for s in args.usfm], sheet)
+    outdoc(doc)

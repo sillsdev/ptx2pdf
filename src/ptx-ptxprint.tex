@@ -31,8 +31,27 @@
 
 % Local configurations for ptxprint
 
-\sethook{start}{wh}{^^^^2067}
-\sethook{end}{wh}{^^^^2069}
-\sethook{start}{wg}{^^^^2066}
-\sethook{end}{wg}{^^^^2069}
+\sethook{start}{wh}{\beginR}
+\sethook{end}{wh}{\endR}
+\sethook{start}{wg}{\beginL}
+\sethook{end}{wg}{\endL}
+\begingroup\obeylines
+\catcode`\@=11\catcode`\^=7
+\gdef\zpdf{\bgroup\obeylines\unc@tcodespecials\@zdpf}
+\gdef\@zdpf#1#2^^M{\egroup\includepdf{#2}}
+%\gdef\rem{\bgroup\obeylines\unc@tcodespecials\catcode`\\=12\@rem}
+%\gdef\@rem#1^^M{\egroup}
+\gdef\zBottomRag{\bgroup\obeylines\m@kedigitsother\@zbottomrag}
+\gdef\@zbottomrag #1^^M{\egroup\xdef\BalanceThreshold{#1}}
+\gdef\include{\bgroup\obeylines\unc@tcodespecials\catcode`\/=12 \@include}
+\gdef\@include#1#2^^M{\egroup\mapinput "#2" \relax}
+\gdef\nopagenums{\global\let\pagenumberL=\relax\global\let\pagenumberR=\relax\global\let\pagenumber=\relax}
+\gdef\dopagenums{\global\let\pagenumberL=\folio\global\let\pagenumberR=\folio\global\let\pagenumber=\folio}
+\gdef\resetpagenums{\bgroup\m@kedigitsother\obeylines\r@setpagenums}
+\gdef\r@setpagenums #1^^M{\global\pageno=#1\egroup}
+\sethook{start}{xts}{\proc@strong{xts}}
+\endgroup
+\catcode`\@=12
+\def\onebody{\global\BodyColumns=1}
+\def\twobody{\global\BodyColumns=2}
 

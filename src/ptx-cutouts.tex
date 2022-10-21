@@ -48,6 +48,28 @@
   \expandafter\xdef\csname cut@after\the\@numcuts\endcsname{#3}%
   \expandafter\xdef\csname cut@lines\the\@numcuts\endcsname{#4}%
 }
+
+\def\save@cutouts#1{%
+  \@index=0
+  \loop \ifnum\@index<\@numcuts \advance\@index by 1
+    \trace{C}{Saving cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
+    \expandafter\let\csname cut@side\the\@index#1\x@\endcsname\csname cut@side\the\@index\endcsname
+    \expandafter\let\csname cut@width\the\@index#1\x@\endcsname\csname cut@width\the\@index\endcsname
+    \expandafter\let\csname cut@after\the\@index#1\x@\endcsname\csname cut@after\the\@index\endcsname
+    \expandafter\let\csname cut@lines\the\@index#1\x@\endcsname\csname cut@lines\the\@index\endcsname
+  \repeat
+}
+\def\restore@cutouts#1{%
+  \@index=0
+  \loop \ifnum\@index<\@numcuts \advance\@index by 1
+    \x@\global\x@\let\csname cut@side\the\@index\x@\endcsname\csname cut@side\the\@index#1\endcsname
+    \x@\global\x@\let\csname cut@width\the\@index\x@\endcsname\csname cut@width\the\@index#1\endcsname
+    \x@\global\x@\let\csname cut@after\the\@index\x@\endcsname\csname cut@after\the\@index#1\endcsname
+    \x@\global\x@\let\csname cut@lines\the\@index\x@\endcsname\csname cut@lines\the\@index#1\endcsname
+    \trace{C}{restored cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
+  \repeat
+}
+
 \newcount\@numcuts
 
 % Forget any current cutouts
@@ -61,6 +83,7 @@
 %
 %+ccut_carryover
 \def\cutoutcarryover{%
+  \trace{C}{cutoutcarryover}%
   \ifnum\@numcuts>0
     \count@=\@numcuts \@numcuts=0
     \@index=0
@@ -75,6 +98,17 @@
         \@width=\csname cut@width\the\@index\endcsname
         \edef\@side{\csname cut@side\the\@index\endcsname}%
         \@cutout{\@side}{\the\@width}{\the\@after}{\the\@until}%
+        \ifx\ch@pterc@tnum\empty\else % keep track of ch@pterc@tnum
+          \ifnum\@index=\ch@pterc@tnum
+            \xdef\ch@pterc@tnum{\the\@numcuts}%
+          \fi
+        \fi
+      \else
+        \ifx\ch@pterc@tnum\empty\else % keep track of ch@pterc@tnum
+          \ifnum\@index=\ch@pterc@tnum
+            \global\let\ch@pterc@tnum\empty
+          \fi
+        \fi
       \fi
     \repeat
   \fi
@@ -97,6 +131,7 @@
     \ifnum\@parshapelines>500 \MSG{*** Impossible number of lines in cutout:\the\count@}\@parshapelines=500\fi
   \repeat
   \advance\@parshapelines by 1
+  \trace{C}{Cutouts: \the\@numcuts, \the\@parshapelines\space lines}%
   \def\@shape{}%                                                                %(1)
   \@line=0
   \loop \ifnum\@line<\@parshapelines \advance\@line by 1

@@ -1,0 +1,90 @@
+\id FRT
+\rem Sample text. Edit before use!
+
+\rem This template has been created for use with PTXprint for semi-automatic 
+\rem generation of front matter. Though it is structured on the USFM specification
+\rem for Paratext's FRT book, there are additional \z... markers used which
+\rem make it unsuitable for use within Paratext without prior modification.
+
+\rem -------------------------------------------------------------------------
+\periph Title Page|id="title"
+\rem -------------------------------------------------------------------------
+\nopagenums
+\zgap|1.5in\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\rem -------------------------------------------------------------------------
+\periph Publication Data|id="pubdata"
+\rem -------------------------------------------------------------------------
+\zgap|0.5in\*
+\mt3 \zvar|maintitle\* 
+\mt4 \zvar|subtitle\*
+\zbl|2\*
+\pc Language: \zvar|languagename\* (\zvar|langiso\*)
+\pc Script: \zvar|script\*
+\pc Trial edition for limited distribution
+\pc Copies printed: \zvar|copiesprinted\*
+\zbl|2\*
+\pc \zcopyright
+\pc \zlicense
+\pc \zvar|licensetext\*
+\rem You can add other material here if needed.
+\zbl|2\*
+\pc \zimagecopyrights
+\zbl|3\*
+\pc Printed by: \zvar|printedby\*
+\rem -------------------------------------------------------------------------
+\periph Foreword|id="foreword"
+\rem -------------------------------------------------------------------------
+\h Foreword
+\mt1 Foreword
+\resetpagenums -1
+\dopagenums
+\p The \bk Xyz Translation\bk* of the Bible is a translation which seeks to state clearly,
+accurately and naturally the meaning of the original texts in words and forms that are widely
+accepted by people who use the Xyz language as a means of communication.
+\p We trust that the reading and study of this translation will result in a better understanding 
+of the meaning of the Bible.
+
+\rem -------------------------------------------------------------------------
+\periph Preface|id="preface"
+\rem -------------------------------------------------------------------------
+\h Preface
+\mt1 Preface
+\ie
+\mt2 to the New Testament in the Xyz language
+\p The translation of the Bible into the Xyz language began in ... when an invitation from ...
+\s1 The translation process
+\p In order to achieve the highest quality, a rigorous process has been used ...
+\s2 The text used for this translation
+\p ...
+\s2 How this translation is different to other translations of the Bible
+\p ...
+\s2 How trustworthy is this translation?
+\p ...
+\pr Xyz Translation Committee
+\pr Mnth, Year
+
+\s1 Helps for the reader
+\m Keep these matters in mind while reading:
+\li 1. Wherever there is a word or phrase \w marked like this\w* it shows that this is a new or difficult word (for example, baptism, synagogue, or Pharisee). Words like these have an explanation in the glossary section at the end of the book.
+\li 2. In order to understand more about a word or phrase which is marked with a symbol like this* you need to read about it at the bottom of the page. 
+\li 3. And a symbol like this† indicated that this matter also is contained in another book - look for the reference at the bottom of the page.
+\li 4. In some places, in the original language books, where these words are not there, and in some books where verses have been missed, in order to show them, *[we have marked in square brackets like this] and have explained about them at the bottom of the page.
+
+\rem -------------------------------------------------------------------------
+\periph Table of Contents|id="contents"
+\rem -------------------------------------------------------------------------
+\mt \zvar|contentsheader\*
+\is Old Testament
+\ip \ztoc|ot\*
+\is New Testament
+\ip \ztoc|nt\*
+
+\rem -------------------------------------------------------------------------
+\periph Alphabetical Contents|id="alphacontents"
+\rem -------------------------------------------------------------------------
+\is Alphabetical Order of Books
+\rem sorta will sort by toc1, sortb by toc2, sortc by toc3
+\ip \ztoc|sortc\*
+\ip

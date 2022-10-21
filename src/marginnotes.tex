@@ -1,0 +1,113 @@
+%:strip
+% marginnotes.tex: Provide marginnotes support
+% Copyright (c) 2021 by SIL International 
+% written by Martin Hosken
+% 
+% This optional plugin (see ptx-plugins) extends the basic diglot engine to
+% provide marginal notes.
+%
+% Permission is hereby granted, free of charge, to any person obtaining
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\plugin@startif{marginalnotes}
+
+\def\@marginnote#1#2#3#4#5#6#7#8{%
+% #1 = reference, #2 = marker, #3 = side, #4 = distance from text, #5 = width,
+% #6 = height, #7 = x-shift, #8 = y-shift
+  \x@\xdef\csname marginnote-#1@#2:xshift\endcsname{#7}%
+  \x@\xdef\csname marginnote-#1@#2:yshift\endcsname{#8}%
+  \@m@rginnote{#1}{#2}%
+}
+
+\def\@m@rginnote#1#2#3#4#5{%
+% #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
+  \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
+  \dimen0=#4 sp \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
+  \ifBindingGutter\ifodd #3\else\advance\dimen1 \BindingGutter\fi\fi
+  \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
+  \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
+  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1}%
+}
+
+\def\pl@cemnote#1#2#3#4#5{%
+% #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
+  \edef\t@mp{#2}%
+  \trace{M}{kerns: pstrut=\the\dp\pstr@t, y-shift=\the#5, text = \the#3, side = #2}%
+  \dimen9=\ht#1
+  \setbox0=\vbox to 0pt{\begingroup\leftskip=0pt\rightskip=0pt\parfillskip=0pt\everypar={}\let\par=\endgraf\vss
+    \ifx\t@mp\l@ft\llap{\box #1\kern #4\kern #3}%
+    \else\noindent\hfill\rlap{\kern #4\kern #3\box #1}%
+    \fi
+    \vss\endgroup}%
+  %\ifx\t@mp\l@ft\else\showbox0
+  \dp0=0pt\indent\vadjust {%
+    \kern -\dimen9
+    \kern #5\box0
+    \kern-#5 \kern \dimen9}%
+}
+
+\def\finishm@rginnotes "#1"{\immediate\closeout\m@rginnotes\m@rginnotesopenfalse}
+
+\def\openm@rginnotes "#1"{
+  \ifm@rginnotesopen\else
+    \trace{M}{reading #1}
+    \catcode`\@=11
+    \includeifpresent{#1}
+    \openout\m@rginnotes="#1"
+    \m@rginnotesopentrue
+    \addtoendhooks{\finishm@rginnotes "#1"}
+  \fi
+}
+
+\newwrite\m@rginnotes \newif\ifm@rginnotesopen \m@rginnotesopenfalse
+\def\writem@rginnote#1#2#3#4#5#6#7{%
+% #1 = vbox, #2 = side, #3 = distance from text, #4 = x-shift, #5 = y-shift
+% #6 = reference, #7 = marker
+  \pdfsavepos
+  \edef\t@mp{\string\@marginnote{#6}{#7}{#2}{#3}{\the\wd#1}{\the\ht#1}{#4}{#5}}%
+  \x@\write\x@\m@rginnotes\x@{\t@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
+}
+
+\def\@uter{outer}
+\def\@nner{inner}
+\def\d@marginnote#1#2#3{%
+% #1 = vbox, #2 = reference, #3 = marker
+  \getp@ram{posn}{#3}{#3}%,\styst@k}%
+  \edef\p@s{\p@ram}%
+  \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
+  \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else\edef\p@geno{\the\pageno}\fi
+  \ifx\p@ram\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
+  \else\ifx\p@ram\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
+  \else\ifx\p@ram\relax\let\s@de\l@ft\else\let\s@de\p@ram\fi\fi\fi
+  \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was \p@ram, col=\csname marginnote-#2@#3:colno\endcsname}%
+  \getp@ram{leftmargin}{#3}{\styst@k}%
+  %\ifx\p@ram\relax\dimen0=1pt\else\dimen0=-\p@ram\IndentUnit\fi
+  \dimen0=0pt
+  \ifcsname marginnote-#2@#3:xshift\endcsname\dimen1=\csname marginnote-#2@#3:xshift\endcsname\else\dimen1=0pt\fi
+  \ifcsname marginnote-#2@#3:yshift\endcsname\dimen2=\csname marginnote-#2@#3:yshift\endcsname\else\dimen2=0pt\fi
+  \writem@rginnote{#1}{\p@s}{\the\dimen0}{\the\dimen1}{\the\dimen2}{#2}{#3}%
+  \pl@cemnote{#1}{\s@de}{\dimen0}{\dimen1}{\dimen2}%
+}
+

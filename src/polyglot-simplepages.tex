@@ -284,7 +284,7 @@
 \edef\pagects@list{}%
 
 \def\count@dim@simplepages#1{%Is the dimension non non-zero? Count using curactivecols and add tag to list IF it is on the present page
-  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt\else
+  \x@\ifdim \csname \v@lpfx#1\v@lsfx\endcsname=0pt \else
     \advance\curactivecols by 1
     \edef\cts@list{\cts@list#1}%
     \x@\let\x@\sp@lynum\csname p@lyp@ge#1\endcsname

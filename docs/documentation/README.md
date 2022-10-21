@@ -15,26 +15,28 @@ A [PDF](../documentation/ptx2pdf-MacroSetupParameters.pdf?attredirects=0/index.h
     -  [**2.2** Crop Marks](#ptx2pdf-MacroSetupParameters-CropMarks)
     -  [**2.3** Margins](#ptx2pdf-MacroSetupParameters-Margins)
     -  [**2.4** Columns](#ptx2pdf-MacroSetupParameters-Columns)
--  [**3** Fonts](#ptx2pdf-MacroSetupParameters-Fonts)
-    -  [**3.1** Faces](#ptx2pdf-MacroSetupParameters-Faces)
--  [**4** Text Spacing](#ptx2pdf-MacroSetupParameters-TextSpacing)
--  [**5** Chapters & Verses](#ptx2pdf-MacroSetupParameters-Chapters&Verses)
--  [**6** Running Header/Footer](#ptx2pdf-MacroSetupParameters-RunningHeader/Footer)
-    -  [**6.1** Header/Footer Position](#ptx2pdf-MacroSetupParameters-Header/FooterPosition)
-    -  [**6.2** Odd Header](#ptx2pdf-MacroSetupParameters-OddHeader)
-    -  [**6.3** Even Header](#ptx2pdf-MacroSetupParameters-EvenHeader)
-    -  [**6.4** Title-page Header](#ptx2pdf-MacroSetupParameters-TitlepageHeader)
-    -  [**6.5** Front-/Back-matter Header](#ptx2pdf-MacroSetupParameters-NoVpage)
-    -  [**6.6** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
-    -  [**6.8** Header Contents](#ptx2pdf-MacroSetupParameters-HeaderContent)
-    -  [**6.7** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
--  [**7** Other](#ptx2pdf-MacroSetupParameters-Other)
--  [**8** Notes](#ptx2pdf-MacroSetupParameters-Notes)
--  [**9** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
--  [**10** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
--  [**11** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
--  [**12** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
--  [**12** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
+-  [**3** Peripherals](#ptx2pdf-Periph)
+-  [**4** Fonts](#ptx2pdf-MacroSetupParameters-Fonts)
+    -  [**4.1** Faces](#ptx2pdf-MacroSetupParameters-Faces)
+-  [**5** Text Spacing](#ptx2pdf-MacroSetupParameters-TextSpacing)
+-  [**6** Chapters & Verses](#ptx2pdf-MacroSetupParameters-Chapters&Verses)
+-  [**7** Running Header/Footer](#ptx2pdf-MacroSetupParameters-RunningHeader/Footer)
+    -  [**7.1** Header/Footer Position](#ptx2pdf-MacroSetupParameters-Header/FooterPosition)
+    -  [**7.2** Odd Header](#ptx2pdf-MacroSetupParameters-OddHeader)
+    -  [**7.3** Even Header](#ptx2pdf-MacroSetupParameters-EvenHeader)
+    -  [**7.4** Title-page Header](#ptx2pdf-MacroSetupParameters-TitlepageHeader)
+    -  [**7.5** Front-/Back-matter Header](#ptx2pdf-MacroSetupParameters-NoVpage)
+    -  [**7.6** Odd, Even, and Title-page Footer](#ptx2pdf-MacroSetupParameters-Odd,Even,andTitlepageFooter)
+    -  [**7.8** Header Contents](#ptx2pdf-MacroSetupParameters-HeaderContent)
+    -  [**7.7** Other Header Setup](#ptx2pdf-MacroSetupParameters-OtherHeaderSetup)
+-  [**8** Other](#ptx2pdf-MacroSetupParameters-Other)
+-  [**9** Notes](#ptx2pdf-MacroSetupParameters-Notes)
+-  [**10** Illustrations (Figures)](#ptx2pdf-MacroSetupParameters-Illustrations(Figures))
+-  [**11** Thumb Tabs](#ptx2pdf-MacroSetupParameters-Tabs)
+-  [**12** Hooks](#ptx2pdf-MacroSetupParameters-Hooks)
+-  [**13** Introduction markers](#ptx2pdf-MacroSetupParameters-IntroMarkers)
+-  [**14** Grid and Graphpaper](#ptx2pdf-MacroSetupParameters-Graphpaper)
+-  [**15** PageNumbers](#ptx2pdf-PageNumbers)
 
    [**A.1** Appendix: Common OpenType script tags](#ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags)
 
@@ -42,7 +44,6 @@ Text in ```gray``` represents the portion of the setup parameter syntax which ca
 
 ## <a name="TOC-Paratext-Stylesheet">Paratext Stylesheet</a>
 
-<a name="TOC-Paratext-Stylesheet">
 
 *   \stylesheet{```usfm.sty```} – Define the Paratext stylesheet to be used as a basis for formatting (default=usfm.sty)
 
@@ -51,13 +52,8 @@ For example:
 
 *   \stylesheet{```mods.sty```}
 
-In the file ```mods.sty```, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). Note that the first stylesheet is only loaded if it is used. Also, you cannot change fonts in subsequent stylesheets. Fonts are only loaded once at the beginning of the process.
+In the file ```mods.sty```, add standard Paratext marker style definition parameters to override the default stylesheet definitions provided through \stylesheet{...} (above). 
 
-</a>
-
-<div style="border-width:1px"><a name="TOC-Paratext-Stylesheet"></a>
-
-<div><a name="TOC-Paratext-Stylesheet">
 
 ```
 \Marker s1
@@ -67,11 +63,10 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 \Justification Left
 ```
 
+## <a name="TOC-Page-Setup">Page Setup</a>
 
-## <a name="TOC-Paratext-Stylesheet"></a><a name="TOC-Page-Setup">Page Setup</a>
 
-
-### <a name="TOC-Page-Setup"></a><a name="ptx2pdf-MacroSetupParameters-Dimensions">Dimensions</a>
+### <a name="ptx2pdf-MacroSetupParameters-Dimensions">Dimensions</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Dimensions">
 
@@ -80,7 +75,7 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 
 </a>
 
-### <a name="ptx2pdf-MacroSetupParameters-Dimensions"></a><a name="ptx2pdf-MacroSetupParameters-CropMarks">Crop Marks</a>
+### <a name="ptx2pdf-MacroSetupParameters-CropMarks">Crop Marks</a>
 
 <a name="ptx2pdf-MacroSetupParameters-CropMarks">
 
@@ -120,12 +115,44 @@ In the file ```mods.sty```, add standard Paratext marker style definition parame
 *   \ColumnGutterRule```true``` – Place a vertical line between the columns in the column gutter? (default = false)
 
 </a>
+## <a name="ptx2pdf-Periph"> Peripheral mater</a>
+Assuming that the perpheral matter has been marked with a USFM-3 id="...", thus:
+```
+\periph Introduction to OT|id="intot"
+```
+Then the ptx2pdf code now automatically stores certain peripheral divisions for
+later use. The material can be retrieved by e.g. `\zgetperiph|intot\*`.
+ The divisions that are stored by default are:
+intbible, intnt, intot, intpent, inthistory, intpoetry, intprophesy, intdc, intgospels, intepistles, 
+intletters, cover, spine. Control of which divisions are stored or not is via the configuration macros:
+```
+\StorePeriph{promo}
+\NoStorePeriph{intbible}
+\StorePeriphtrue
+\StorePeriphfalse
+```
+
+(If `\StorePeriphfalse` is declared, then no storing of peripherals will occur,
+and the assumption is that they have been (re-)positioned correctly).
+
+Stored periph items are assumed to be single use, and are tidied away (deleted)
+unless otherwise instructed, in order to save memory.  `\KeepPeriph{intbible}`
+instructs the code to keep the 'intbible' periphery for re-use.  Irrespective
+of a periphery division being stored or not, material within a
+periph division may be styled with the prefix `periph:id|` , e.g. 
+```tex
+\Marker periph:intbible|p
+```
+See [styling.md](styling.md) for more details of how more complex styling may be applied.
+
+**NOTE** that all of the above refers to the behaviour of the TeX macros. The python
+PTXprint code which pre-process the code may take different actions.
 
 ## <a name="ptx2pdf-MacroSetupParameters-Columns"></a><a name="ptx2pdf-MacroSetupParameters-Fonts">Fonts</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Fonts">
 
-*   \FontSizeUnit=```0.75``` – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9)
+*   \FontSizeUnit=```0.75pt``` – Scaling factor for interpreting font sizes in the stylesheet. Changing this will scale all text proportionately (default = 0.9pt)
 
 </a>
 
@@ -169,8 +196,7 @@ You can also specify a font definition like this directly in a stylesheet marker
 *   \OmitChapterNumberRH```true``` – Omit the chapter numbers in the running header (RH). (default = false)
 *   \def\AdornVerseNumber#1{```(```#1```)```} – Put parentheses around the verse number (which is represented by #1)
 *   \def\AfterVerseSpaceFactor{```0```} – Remove extra space after verse numbers, when you have set them to be "invisible", or a very small size, such as \Marker v \FontSize 0.0001
-
-</a>
+*   ```\def\MakeChapterLabel#1#2{#1\ #2}```   – If there is a global (before `\c 1`) `\cl`, how should that be combined with the chapter number. The default is to put the label (`#1`) before the number (`#2`). Altering this macro would to `\def\MakeChapterLabel#1#2{#2. #1}`  will make Hungarian-style numbering (`23. Zsoltár`) the default rather than English-style (`Psalm 23`).
 
 ## <a name="ptx2pdf-MacroSetupParameters-RunningHeader/Footer">Running Header/Footer</a>
 
@@ -280,9 +306,9 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
 *   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)
 *   \def\EndNoteRuleWidth{```0.5```} –  Fraction of column width to make the rule above automatically inserted endnotes (default =```0.5```)
-*   \def\EndNoteRuleThickness{```0.4```} – Fraction of _1pt_ to make the rule above automatically inserted endnotes (default=```0.4```)
-*   \def\SpaceAboveEndNoteRule{```1.2```} – Space (measured relative to the line space currently in force) between the body text and the  end-note separator line.
-*   \def\SpaceBelowEndNoteRule{```0.8```} – Space (measured relative to the line space currently in force) between the separator line and the start of the end-notes. If this and `\EndNoteRuleAbove` add up to a whole number, then (with the default definition for `\EndNoteSeparator`) then gridding will be preserved.
+*   \def\EndNoteRuleThickness{```0.4pt```} – Thickness of the rule above automatically inserted endnotes (default=```0.4pt```)
+*   \def\AboveEndNoteRule{```14 pt```} – Space between the body text and the  end-note separator line.
+*   \def\BelowEndNoteRule{```10 pt```} – Space between the separator line and the start of the end-notes. If this and `\EndNoteRuleAbove` add up to a whole number, then (with the default definition for `\EndNoteSeparator`) then gridding will be preserved. I.e. the macros will not ensure the above end note rule will keep to the grid.
 
 #### Custom end-note use
 *   \zplaceallnotes – Non-standard USFM marker to place any currently-waiting endnotes (with preceding endnote rule and spacing, if there are any endnotes).
@@ -338,6 +364,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \NumTabs=```5``` - Pre-set / reset the number of tabs between which the available space will be divided. Normally there is no need to set this number, as ```\setthumbtab{ZEC}{39}``` will set it to 39 unless it is already larger than that.  
 * \TabsStart=```10pt``` Distance between the upper edge of the topmost thumb-tab and the top margin of the page (text area). Negative values may be given to extend tabs into the upper margin.
 * \TabsEnd=```10pt``` Distance between the lower edge of the lowermost thumb-tab and the bottom page margin (text area). Negative values may be given to extend tabs into the lower margins.
+* \def\TabBleed{```1pt```} - Amount the tab goes over the edge of the page. (default 1pt)
 
 
 ## ><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
@@ -433,6 +460,43 @@ cleared, so that the old page is not reused.
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
 
 <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a>
+##  <a name="ptx2pdf-PageNumbers">PageNumbers and Reference</a>
+Some special-purpose milestones have been defined for page and chapter:verse
+references within a publication:
+```
+\esb \cat BibleBackgroud\cat*
+\zlabel|TypesOfPsalms\*
+Scripure contains several different types of Psalms....
+\esbe
+
+...
+
+\fe + \ft A psalm of ascent, see article on page \zpage|TypesOfPsalms\* \fe*
+
+\f + \ft A maskil, see note at \zref|label="MaskilMeaking" show="b_c.v"\* \f*
+```
+The `\zlabel` milestone instructs TeX to remember the page number of the text
+when the text is written to the pdf file. (using the `.picpages` file). The
+next time the file is processed, the page number will be 
+available.  `\zpage` will use that number, assuming it is defined. It will use
+the page number as printed by default (i.e. Roman numerals for introductory
+matter).
+
+The  `\zref` milestone performs a similar task but giving book, chapter and verse 
+for the specified text. It is most useful for footnotes, rather than side-bars or 
+images, as these can end up some distance from their anchor point.
+
+The (optional) parameter `show` gives a string that shows what should be printed:
+* `b` The book name (`\toc1`)
+* `c` Chapter number
+* `v` Verse number
+* `\_` A space
+
+Letters and punctuation that do not match 
+the above special characters will copied into the output.  The default value
+for `show` is `b\_c:v`, giving an output such as "Genesis 1:1".
+WARNING: spaces in the string are ignored (due to a peculiarity of TeX). 
+
 
 ### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>
 

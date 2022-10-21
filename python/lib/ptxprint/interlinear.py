@@ -2,6 +2,7 @@ from xml.etree import ElementTree as et
 from ptxprint.usfmutils import Usfm, Sheets
 from ptxprint import sfm
 from hashlib import md5
+from ptxprint.reference import Reference
 import re, os
 
 _refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
@@ -29,7 +30,7 @@ class Interlinear:
             elif event == "end":
                 if e.tag == "Gloss":
                     if e.get("Language") == self.lang:
-                        self.lexicon.setdefault(currlex, {})[currsense] = e.text
+                        self.lexicon.setdefault(currlex, {})[currsense] = e.text or ""
 
     def makeref(self, s):
         m = _refre.match(s)
@@ -53,10 +54,10 @@ class Interlinear:
                     vend = (e.pos.line, e.pos.col + 3 + len(e.args[0]))
                 adj += getattr(e, 'adjust', 0)
                 continue
-            if e.parent.name == "fig":
+            if e.parent is not None and e.parent.name == "fig":
                 continue
             thisadj = adj - getattr(e.parent, 'adjust', 0)
-            ispara = e.parent.meta['StyleType'] != 'Character'
+            ispara = e.parent is None or e.parent.meta['StyleType'] != 'Character'
             thismrk = mrk[1:] if ispara else mrk
             lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc
             lend = lstart + len(e)
@@ -89,7 +90,8 @@ class Interlinear:
                         lid = e.get('Id', '')
                         gid = e.get('GlossId', '')
                         if lid.startswith('Word:'):
-                            lexemes.append((currange, str(self.lexicon.get(lid, {}).get(gid, ''))))
+                            wd = self.lexicon.get(lid, {}).get(gid, '')
+                            lexemes.append((currange, str(wd)))
                 elif event == "end":
                     if e.tag == "string":
                         curref = self.makeref(e.text)
@@ -97,7 +99,7 @@ class Interlinear:
                         if m:
                             vrange = list(range(int(m.group(1)), int(m.group(2))+1))
                         else:
-                            vrange = [int(curref[1])]
+                            vrange = [int(curref[1]), 0]
                         lexemes = []
                     elif e.tag == "VerseData":
                         if e.get('Hash', "") != "":
@@ -107,5 +109,5 @@ class Interlinear:
                         else:
                             for v in vrange:
                                 notdones.add((curref[0], v))
-        self.fails.extend(["{} {}:{}".format(bkid, a[0], a[1]) for a in notdones if a not in dones])
+        self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
 

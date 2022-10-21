@@ -8,7 +8,7 @@ after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle 
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
 \p And that was a  new  parargaph.\f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
-\p And that was a p class paragraph \nd break 
+\p And that was a p class paragraph \nd NDbreak 
 \qt-s | foo \*
 now inside a qt-s..qt-e block \nd*
 \p with a paragraph break
@@ -54,7 +54,7 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
 \esb\cat cut\cat*
 \s1 Testing 4
 \p
-This esb should be in a cut-out, two lines below 'possimus'
+This esb should be in a cut-out, two lines below 'possimus'. It has a pale blue background with a transparent pdf image as a 'watermark'.
 \esbe
 omnis voluptas assumenda est, omnis dolor repellendus.
 \p Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.
@@ -66,6 +66,7 @@ omnis voluptas assumenda est, omnis dolor repellendus.
 \p
 \esbe
 \esb \cat something\cat*
+\cancelcutouts
 \s1 Testing 6
 \p This is a box of category "\showTheCategory", which is not defined.
 \esbe
@@ -89,10 +90,58 @@ mentioned  in the nonsense poem Jaberwocky).
 
 \p
 Rem nesciunt voluptatem labore eaque necessitatibus repellat itaque id. Ut est placeat tempora. Est et saepe molestiae fugit quas officiis. Omnis hic est quas aut. Ut amet hic harum sed voluptates quia beatae.
-\p ~
 \esbe
 
 \p
 \v 11
 Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut occaecati et aspernatur voluptatum voluptate consequatur. Alias illum molestiae quia sed blanditiis est. Saepe ipsam omnis beatae magnam culpa.
+\p
+
+\esb\cat pc\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+\pb
+\p Interesting
+
+\esb\cat pr\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+
+\p
+\v 13  There needs to be a par break between p type sidebars, or the boxing ends up putting box in box
+\esb\cat top\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning. 
+\esbe
+\esb\cat pl\cat*
+\p This  esb of category "\showTheCategory" is testing the appropriate positioning.
+\esbe
+Note that the  box below was inserted with a mid-paragraph pl.
+\s \cat testpar\cat* Categorised paragraphs
+\p
+\v 14 This is a paragraph of category "\showTheCategory" and is testing the appropriate
+formatting.
+\p\cat testpar\cat*
+\v 15
+This is a p paragraph of category "\showTheCategory" and is testing the appropriate
+formatting.
+\m The end. Back to '\showTheCategory'
+
+\s Poetic line-breaks
+\p The following lines show the effect of altering the NonJustifiedFill parameter:
+\m\bd Normal (0.25)\bd*
+
+\m|\hfill\hfill\hfill|\hfill|
+\q1
+\v 16 This is a first q // to see what we can 
+\q1
+\v 17 This is a first q // to see what we can do
+
+\m\bd More generous (0.5)\bd*
+\m|\hfill <-- 0.5 -->\hfill|\hfill <-- 0.5 -->\hfill|
+\q1 \cat 0.5w\cat*
+\v 18 This is a first q // to see what we can
+\q1 \cat 0.5w\cat*
+\v 19 This is a first q // to see what we can do
+
+
 

@@ -1,0 +1,20 @@
+\id INT
+\periph InsideCover|id="insidecover"
+\zgap|400pt\*
+\pb
+
+\periph Bible Introduction |id="intbible"
+\mt1 The Bible
+\rem What does this do?
+\ip This might be the intro to a Bible. It might talk about how such a
+translation into this language is a good thing, and how the people of God
+should feed on His word in their homes and their home language.
+\zgap|10pt\*
+
+\periph NT Intro | id="intnt"
+\mt1 The New Testament
+\ip This bit might talk about the good news that Jesus came.
+
+\periph Testing
+\is1 Testing a no-attrib periph
+\ip This periph has no attribute.

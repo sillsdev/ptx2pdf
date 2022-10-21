@@ -72,12 +72,12 @@
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
-\edef\n@thing{}
 \def\r@ngerefs#1#2{%
- \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
- \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\n@thing\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
+ \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
+ \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
+ \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
-  \@book\ 
+  \ifOmitBookRef\else\@book\ \fi
   \ifVerseRefs
    \ifOmitChapterNumberRH\else
     \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
@@ -88,7 +88,7 @@
       \ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
      \fi
     \else
-     \ranges@p\@@book\ \ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+     \ranges@p\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
     \fi
    \fi
   \else
@@ -130,10 +130,11 @@
 %
 % split a possible verse range on hyphen, setting \v@rsefrom and \v@rseto
 %
-\def\getcatcodes#1#2\E{#1=\the\catcode`#1 \space \ifx #2\relax\else\getcatcodes #2\E\fi}
-\message{catcode - = \the\catcode`-}
+\def\getcatcodes#1#2\E{#1=\the\catcode`#1 \space \ifx #2\relax\else\getcatcodes #2\E\E\fi}
+\catcode`\-=11
 \def\spl@tverses#1-#2-#3\relax{%
  \edef\v@rsefrom{#1}\edef\v@rseto{#2}%
+ \trace{v}{spl@tverses #1 - #2 - #3, \getcatcodes#1\E\E}%
  \ifx\v@rseto\empty\let\v@rseto=\v@rsefrom\fi}
 \catcode`-=12
 \newif\ifVerseRefs % whether to include verse numbers, or only book+chapter
@@ -157,9 +158,10 @@
 
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
- \s@tfont{h}%
+ \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \trace{h}{page \the\pageno (h), first mark=\t@st}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
   \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi}%
@@ -167,28 +169,19 @@
       \the\noVoddhead
       \trace{h}{using noVoddhead}% 
     \else
-      \ifDoubleSided \trace{h}{using noVevenhead}\the\noVevenhead \else \trace{h}{using noVoddhead}\the\noVoddhead\fi\fi
+      \ifDoubleSided \trace{h}{using noVevenhead}\the\noVevenhead \else \trace{h}{single sided: using noVoddhead}\the\noVoddhead\fi
+    \fi
   %\global\rhr@lefalse
  \else
-%  \ifendbooknoeject
-%    \trace{h}{endbooknoeject, so treating as normal page}
-%    \ifodd\pageno
-%      \the\oddhead
-%    \else
-%      \ifDoubleSided \the\evenhead \else \the\oddhead \fi
-%    \fi
-%  \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
     \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
-      \the\titlehead \global\rhr@lefalse
-    \else\ifx\t@st\n@thing
-      \the\titlehead \global\rhr@lefalse
+      \ifodd\pageno\the\titleoddhead\else\the\titleevenhead\fi
+      \global\rhr@lefalse
+    \else
+      \ifodd\pageno
+	\the\oddhead
       \else
-        \ifodd\pageno
-          \the\oddhead
-        \else
-          \ifDoubleSided \the\evenhead \else \the\oddhead\fi
-        \fi
+	\ifDoubleSided \the\evenhead \else \the\oddhead\fi
       \fi
     \fi
 %  \fi
@@ -197,53 +190,87 @@
 % default headers are made of three components, placed left, center and right
 \newtoks\oddhead
 \newtoks\evenhead
-\newtoks\titlehead
+\newtoks\titleoddhead
+\newtoks\titleevenhead
 \newtoks\noVoddhead
 \newtoks\noVevenhead
+\newtoks\oddfoot
+\newtoks\evenfoot
+\newtoks\titleevenfoot
+\newtoks\titleoddfoot
+\newtoks\noVoddfoot
+\newtoks\noVevenfoot
+\def\RF@even@set{%
+	\ifx\RFtitleevenleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleevenleft\fi
+	\ifx\RFtitleevenright\undefined\let\RF@right\RFtitleright\else\let\RF@center\RFtitleevenright\fi
+	\ifx\RFtitleevencenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleevencenter\fi
+}
+\def\RF@odd@set{%
+	\ifx\RFtitleoddleft\undefined\let\RF@left\RFtitleleft\else\let\RF@left\RFtitleoddleft\fi
+	\ifx\RFtitleoddright\undefined\let\RF@right\RFtitleright\else\let\RF@right\RFtitleoddright\fi
+	\ifx\RFtitleoddcenter\undefined\let\RF@center\RFtitlecenter\else\let\RF@center\RFtitleoddcenter\fi
+}
+\def\RH@even@set{%
+	\ifx\RHtitleevenleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleevenleft\fi
+	\ifx\RHtitleevenright\undefined\let\RH@right\RHtitleright\else\let\RH@center\RHtitleevenright\fi
+	\ifx\RHtitleevencenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleevencenter\fi
+}
+\def\RH@odd@set{%
+	\ifx\RHtitleoddleft\undefined\let\RH@left\RHtitleleft\else\let\RH@left\RHtitleoddleft\fi
+	\ifx\RHtitleoddright\undefined\let\RH@right\RHtitleright\else\let\RH@right\RHtitleoddright\fi
+	\ifx\RHtitleoddcenter\undefined\let\RH@center\RHtitlecenter\else\let\RH@center\RHtitleoddcenter\fi
+}
+
 \def\defineheads{
-  \ifnum\BodyColumns=2
-    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
-    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
-    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
-    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
+  \trace{M}{Defining heads for \mainBodyColumns \space columns}%
+  \ifnum\mainBodyColumns=2
+    \oddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVoddcenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenhead={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RHnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RHnoVevencenter\lshiftc@lumn{\ifRTL 0\else 1\fi}\hfil\llap{\RHnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \oddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \evenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVoddfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVoddleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVoddcenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVoddright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \noVevenfoot={\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RFnoVevenleft}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RFnoVevencenter\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RFnoVevenright}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenfoot={\RF@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddfoot={\RF@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RF@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RF@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RF@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleevenhead={\RH@even@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
+    \titleoddhead={\RH@odd@set\lshiftc@lumn{\ifRTL 1\else 0\fi}\rlap{\RH@left}\hfil\rshiftc@lumn{\ifRTL 1\else 0\fi}\RH@center\hfil\lshiftc@lumn{\ifRTL 0\else 1\fi}\llap{\RH@right}\rshiftc@lumn{\ifRTL 0\else 1\fi}}
   \else
-    \oddhead={\hbox to \columnshift{}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\hbox to \columnshift{}\llap{\RHoddright}}
-    \evenhead={\hbox to \columnshift{}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\hbox to \columnshift{}\llap{\RHevenright}}
-    \noVoddhead={\hbox to \columnshift{}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\hbox to \columnshift{}\llap{\RHnoVoddright}}
-    \noVevenhead={\hbox to \columnshift{}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\hbox to \columnshift{}\llap{\RHnoVevenright}}
-    \titlehead={\hbox to \columnshift{}\rlap{\RHtitleleft}\hfil\RHtitlecenter\hfil\hbox to \columnshift{}\llap{\RHtitleright}}
+    \oddhead={\lshiftc@lumn{1}\rlap{\RHoddleft}\hfil\RHoddcenter\hfil\llap{\RHoddright}\rshiftc@lumn{1}}
+    \evenhead={\lshiftc@lumn{0}\rlap{\RHevenleft}\hfil\RHevencenter\hfil\llap{\RHevenright}\rshiftc@lumn{0}}
+    \noVoddhead={\lshiftc@lumn{1}\rlap{\RHnoVoddleft}\hfil\RHnoVoddcenter\hfil\llap{\RHnoVoddright}\rshiftc@lumn{1}}
+    \noVevenhead={\lshiftc@lumn{0}\rlap{\RHnoVevenleft}\hfil\RHnoVevencenter\hfil\llap{\RHnoVevenright}\rshiftc@lumn{0}}
+    \oddfoot={\lshiftc@lumn{1}\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}\rshiftc@lumn{1}}
+    \evenfoot={\lshiftc@lumn{0}\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}\rshiftc@lumn{0}}
+    \noVoddfoot={\lshiftc@lumn{1}\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\llap{\RFnoVoddright}\rshiftc@lumn{1}}
+    \noVevenfoot={\lshiftc@lumn{0}\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\llap{\RFnoVevenright}\rshiftc@lumn{0}}
+    \titleevenfoot={\RF@even@set\lshiftc@lumn{0}\rlap{\RF@left}\hfil\RF@center\hfil\llap{\RF@right}\rshiftc@lumn{0}}
+    \titleoddfoot={\RF@odd@set\lshiftc@lumn{1}\rlap{\RF@left}\hfil\RF@center\hfil\llap{\RF@right}\rshiftc@lumn{1}}
+    \titleevenhead={\RH@even@set\lshiftc@lumn{0}\rlap{\RH@left}\hfil\RH@center\hfil\llap{\RH@right}\rshiftc@lumn{0}}
+    \titleoddhead={\RH@odd@set\lshiftc@lumn{1}\rlap{\RH@left}\hfil\RH@center\hfil\llap{\RH@right}\rshiftc@lumn{1}}
   \fi
 }
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
- \s@tfont{h}%
+ \s@tfont{h}{h}%
+ \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
+ \trace{h}{page \the\pageno (f), first mark=\t@st}%
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
    \ifodd\pageno \the\noVoddfoot \else 
      \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
  \else
-   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \the\titlefoot \else
+   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi \else
      \ifodd\pageno \the\oddfoot \else
        \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
  \fi\fi\fi}}
-\newtoks\oddfoot
-\newtoks\evenfoot
-\newtoks\titlefoot
-\newtoks\noVoddfoot
-\newtoks\noVevenfoot
-\oddfoot={\rlap{\RFoddleft}\hfil\RFoddcenter\hfil\llap{\RFoddright}}
-\evenfoot={\rlap{\RFevenleft}\hfil\RFevencenter\hfil\llap{\RFevenright}}
-\noVoddfoot={\rlap{\RFnoVoddleft}\hfil\RFnoVoddcenter\hfil\llap{\RFnoVoddright}}
-\noVevenfoot={\rlap{\RFnoVevenleft}\hfil\RFnoVevencenter\hfil\llap{\RFnoVevenright}}
-\titlefoot={\rlap{\RFtitleleft}\hfil\RFtitlecenter\hfil\llap{\RFtitleright}}
 
-
-\def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}\setc@rdstat{\tmp@dstat}}
+\def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}{h}\setc@rdstat{\tmp@dstat}}
 \def\headfootL#1{\headfoot L{#1}}
 \def\headfootR#1{\headfoot R{#1}}
-\def\headfoot#1#2{\bgroup\let\tmp@dstat\c@rrdstat\setc@rdstat{#1}\x@\the\csname diglot#1ho@ks\endcsname\ifRTL\beginR\fi\s@tfont{h}#2\ifRTL\endR\fi\setc@rdstat{\tmp@dstat}\egroup}
+\def\headfoot#1#2{\bgroup\let\tmp@dstat\c@rrdstat\setc@rdstat{#1}\x@\the\csname diglot#1ho@ks\endcsname\ifRTL\beginR\fi\s@tfont{h}{h}#2\ifRTL\endR\fi\setc@rdstat{\tmp@dstat}\egroup}
 
 %
 % user-level macros for use within the running header
@@ -313,7 +340,8 @@
 \def\RFnoVevenright{\empty}
 
 \def\RFtitleleft{\empty}
-\def\RFtitlecenter{\pagenumber}
+\def\RFtitleevencenter{\pagenumber}
+\def\RFtitleoddcenter{\pagenumber}
 \def\RFtitleright{\empty}
 
 \endinput

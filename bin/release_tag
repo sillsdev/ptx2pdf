@@ -5,17 +5,24 @@ import re
 from subprocess import call, check_output
 from datetime import datetime
 
-def replacefile(file, match, replace):
+def _replacefile(file, match, replace, dryrun=False):
+    if dryrun:
+        print(f"{file}: {match} -> {replace}")
+        return
     with open(file, encoding="utf-8") as inf:
         lines = [re.sub(match, replace, l) for l in inf.readlines()]
     with open(file, "w", encoding="utf-8") as outf:
         for l in lines:
             outf.write(l)
         
-def git(cmd, *a):
-    call(["git", cmd]+list(a))
+def _git(cmd, *a, dryrun=False):
+    s = ["git", cmd]+list(a)
+    if dryrun:
+        print(" ".join(s))
+    else:
+        call(s)
 
-def dch(version):
+def _dch(version, dryrun=False):
     tz = datetime.now().astimezone().tzinfo
     dt = datetime.now(tz)
     date = dt.strftime("%a, %d %b %Y %H:%M:%S %z")
@@ -26,6 +33,9 @@ def dch(version):
  -- Martin Hosken <martin_hosken@sil.org>  {1}
 
 """.format(version, date)
+    if dryrun:
+        print(txt)
+        return
     with open("debian/changelog") as inf:
         lines = list(inf.readlines())
     with open("debian/changelog", "w") as outf:
@@ -47,19 +57,33 @@ def get_branches():
             res[name] = upstream
     return res
 
+#def get_gitver():
+#    txt = check_output(["git", "describe", "--long"]).decode("utf-8", errors="ignore")
+#    return txt.strip()
+
 parser = argparse.ArgumentParser()
 parser.add_argument("version")
 parser.add_argument("-a", action="store_true")
 parser.add_argument("-s", action="store_true")
+parser.add_argument("-n","--noaction",action="store_true")
 args = parser.parse_args()
 tagopt = "-a"
 if args.s:
     tagopt = "-s"
 
+def replacefile(*a, **kw):
+    _replacefile(*a, dryrun=args.noaction, **kw)
+def git(*a, **kw):
+    _git(*a, dryrun=args.noaction, **kw)
+def dch(*a, **kw):
+    _dch(*a, dryrun=args.noaction, **kw)
+
+#gitversion = get_gitver()
 replacefile("setup.py", r'(version=").*?"', r'\g<1>'+args.version+'"')
 replacefile("InnoSetupPTXprint.iss", r'(#define MyAppVersion ").*?"', r'\g<1>'+args.version+'"')
 replacefile("python/lib/ptxprint/ptxprint.glade", r'(property name=\"version\">Version ).*?(<\/property>)', r'\g<1>'+args.version+r'\g<2>')
-replacefile("python/lib/ptxprint/view.py", r'(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/view.py", r'^\s*(VersionStr = ").*?"', r'\g<1>'+args.version+'"')
+replacefile("python/lib/ptxprint/view.py", r'^\s*(GitVersionStr = ").*?"', r'\g<1>'+args.version+'"')
 replacefile("docs/inno-docs/ReleaseNotes.txt", r'(PTXprint )\S+( Release Notes)', r'\g<1>'+args.version+'\g<2>')
 
 branches = get_branches()

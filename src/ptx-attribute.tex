@@ -41,11 +41,60 @@
 \def\use@ttrGrab{%
     \let|=\start@ttributegrab %have to build attributes char-by-char, sadly.
 }
+\def\use@ttrSpecific{%
+   %\tracingmacros=1
+   %\tracingassigns=1
+   \setgr@bname{\thiswh@tstyle}%
+   \trace{A}{grabname set to \gr@bname}%
+   \x@\let\x@|\csname \gr@bname\endcsname
+}
 \catcode`\|=12
 \def\kill@ttrib #1\E{%
   \trace{A}{removing (old) attribute '#1'}%
   \x@\global\x@\let\csname attr:#1\endcsname=\undefined
 }
+\def\apply@attr@specials #1\E{% Apply 'simple' attribute features - one feature=one atribute.
+  \x@\let\x@\tmpa\csname \Spec@lAttribName{#1}{start}\endcsname
+  \x@\let\x@\tmpb\csname \Spec@lAttribName{#1}{end}\endcsname
+  \temptrue
+  \ifx\tmpa\relax
+    \ifx\tmpb\relax\tempfalse
+    \fi
+  \fi
+  \iftemp
+    \get@ttribute{#1}%
+    \trace{A}{Special '#1':'\attr@b'}%
+    %\tracingmacros=1
+    %\tracingassigns=1
+    \let\exptmp\relax\let\tmp\relax
+    \setbox0\hbox{%
+        \begingroup% Ensure there are no nesting errors
+        %\trace{A}{>>>}%
+	\ifx\tmpa\relax\else
+          \edef\exptmp{\tmpa}\exptmp\fi
+        \relax
+	\unhbox0
+	\ifx\tmpb\relax\else
+          \edef\exptmp{\tmpb}\exptmp\fi
+        \relax
+        %\trace{A}{<<<}%
+        \endgroup
+      }%
+    %\tracingassigns=0
+    %\tracingmacros=0
+  \fi
+}
+\def\Spec@lAttribName#1#2{attr-spec-#1-#2}
+\def\SetOneSpecialAttrib#1#2#3{%
+  \def\tmp{#3}\def\tmpa{\Spec@lAttribName{#1}{#2}}\ifx\tmp\empty
+    \x@\let\csname\tmpa\endcsname\relax
+  \else
+    \x@\let\csname\tmpa\endcsname\tmp
+  \fi}
+\def\SetSpeciallAttribs#1#2#3{%\tracingassigns=1\relax%
+  \SetOneSpecialAttrib{#1}{start}{#2}%
+  \SetOneSpecialAttrib{#1}{end}{#3}\tracingassigns=0\relax}%
+
 \def\unset@ttribs{% Remove any current attibute definitions
   \let\d@=\kill@ttrib
   \x@\cstackdown \attribsus@d,\E
@@ -61,9 +110,7 @@
   \let\attrkey\relax
   %\x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
   \x@\let\x@\t@st\csname thiswh@tstyle\endcsname
-  \ifx\t@st\relax
-    \x@\let\x@\attrkey\csname defaultattrkey-\thiswh@tstyle\endcsname
-  \else
+  \ifx\t@st\relax\else
 %
     \x@\let\x@\attrkey\csname defaultattrkey-\thiswh@tstyle\endcsname
   \fi
@@ -78,12 +125,60 @@
   \ifmst@nestyle
     \use@ttrSlash
   \else
-    \use@ttrGrab
+    \use@ttrSpecific % based on style
+    %\use@ttrGrab % char-by-char 
   \fi
   \in@ttribfalse
   \xdef\@ttributes{}%
 }
+\def\GOTOLinkBorderstyle{/S/U/W 1} % Underline
+\def\URLLinkBorderstyle{/S/U/W 1} % Underline
+\def\GOTOLinkBorderCol{.9 .5 .5}% pale red
+\def\URLLinkBorderCol{.5 .5 .5}% Gry
 
+%\def\LinkBorderstyle{}
+
+\def\pdfURL#1{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+
+\edef\h@shcatcode{\the\catcode`\#}
+\catcode`\#=12
+\def\h@sh{#}
+\catcode`\#=\h@shcatcode
+
+\def\pdfG@T@#1#2 #3\E{\edef\tmp{#1}\ifx\tmp\h@sh \edef\tmp{#2}\else\edef\tmp{#3}\ifx\tmp\empty\edef\tmp{#1#2}\else\edef\tmp{\zap@space #1#2.#3 \empty}\fi\fi
+  \special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\GOTOLinkBorderstyle\empty\else/BS<<\GOTOLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\GOTOLinkBorderCol]\fi\ifActions/A<</S/GoTo/D(\tmp)>>\fi>>}%
+  \trace{A}{link is GOTO to '\tmp'}%
+}
+\def\pdfGOTO#1{\x@\pdfG@T@#1 \E}
+\def\pdfURLorGOTO#1:#2\end{\lowercase{\edef\tmp{#1:schema}}\x@\ifcsname\tmp\endcsname\csname\tmp\endcsname{\attr@b}\else\pdfGOTO{\attr@b}\fi}
+\def\pdfPRJ#1{}
+
+\x@\let\csname http:schema\endcsname\pdfURL
+\x@\let\csname https:schema\endcsname\pdfURL
+\x@\let\csname prj:schema\endcsname\pdfPRJ
+
+
+\SetSpeciallAttribs{link-id}{\ifActions\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}\fi}{}
+\SetSpeciallAttribs{link-href}{\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end}{\special{pdf:eann}}
+%%%%%%%%%
+%
+\def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
+% make something that swallows everything up to a given end-marker
+\def\s@tend@marker#1{\let\end@marker\relax\let\d@\def@endm@rker\mctop\ifx\end@marker\relax\edef\end@marker{#1}\fi}
+\def\setgr@bname#1{%
+  \s@tend@marker{#1}%
+  \edef\gr@bname{@attr@grab-\end@marker}%
+  \trace{A}{Grab@name: \gr@bname}%
+  \x@\ifcsname \gr@bname\endcsname\else
+    \trace{A}{New grabber: \gr@bname\space about to be defined, endmarker: \end@marker}%
+    \x@\setup@ttr@grab\x@{\csname \end@marker\endcsname}%
+  \fi
+}
+
+\def\setup@ttr@grab#1{%
+  \x@\xdef\csname \gr@bname\endcsname{\catcode`\/=12\relax % FIXME other active chars too?
+    \csname @@\gr@bname\endcsname}%
+  \x@\gdef\csname @@\gr@bname\endcsname##1#1{\xdef\@ttributes{\noexpand{##1}}\trace{A}{\gr@bname:found \@ttributes}#1}}
 
 \def\proc@ttribs{%
   \trace{A}{Processing attributes (\ifin@ttrib true\else false\fi)}%
@@ -93,10 +188,15 @@
     \in@ttribfalse
   \fi
   \catcode`\|=12
+  \catcode`\/=\active
+  \activ@tecustomch@rs
+  }
+
+
+\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}%
+  \edef\@ttrlistname{@ttriblist-#1}%
+  \x@\xdef\csname \@ttrlistname\endcsname{#2}%
 }
-
-
-\def\setdefaultattrib#1#2{\trace{A}{Default attrib for #1 is #2}\x@\xdef\csname defaultattrkey-#1\endcsname{#2}}
 
 \x@\def\csname nostore-attrib-eid\endcsname{}
 \x@\def\csname nostore-attrib-sid\endcsname{}
@@ -107,20 +207,11 @@
   \ifx\tmp\relax
     \x@\let\x@\tmp\csname defaultattrkey-#1\endcsname
   \fi
-  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}}
+  \x@\xdef\csname \@ttrlistname\endcsname{\tmp,#2}%
+}
 
 \edef\p@stattribcmd{}% Parse the attributes, run any code.
-\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
-\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
-\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
-\lccode`\~=32
-\lowercase{
- \gdef\isitcmd{%
-        \let\c@ntinue\storep@stattribcmd
-        \ifcat a\nxt\else%\ifcat=\nxt \else
-	\let\c@ntinue\end@ttributegrab\fi%\fi
-	\c@ntinue}%
-}
+
 %\def\foo#1{Thatsit "#1"}
 
 \def\oddc@tcodes{\xdef\sl@shcode{\the\catcode`\/}\catcode`"=11 \catcode`==11
@@ -132,47 +223,89 @@
 
 \xdef\attribsus@d{}% List of used attributes.
 
+%%%%%%%%%%%%
+%
+% Grabbing attribute values char-by-char 
+%
 \def\start@ttributegrab{\let\c@ntinue\isitslash\oddc@tcodes\futurelet\nxt\c@ntinue}
 \def\end@ttributegrab{%
   \xdef\@ttributes{\x@\noexpand\x@{\@ttributes}}% Make it all strings.
   \trace{A}{Now executing \p@stattribcmd}%
   \csname\p@stattribcmd\endcsname}% 
 
+\def\store@ttributes#1{\def\newbit{#1}\edef\@ttributes{\@ttributes\newbit}\futurelet\nxt\isitslash}
+\def\startp@stattribcmd#1{\futurelet\nxt\isitcmd}
+\def\storep@stattribcmd#1{\def\newbit{#1}\edef\p@stattribcmd{\p@stattribcmd\newbit}\futurelet\nxt\isitcmd}
+\lccode`\~=32
+\lowercase{
+ \gdef\isitcmd{%
+        \let\c@ntinue\storep@stattribcmd
+        \ifcat a\nxt\else%\ifcat=\nxt \else
+	\let\c@ntinue\end@ttributegrab\fi%\fi
+	\c@ntinue}%
+}
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
 |gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
 |normalc@tcodes%
 %
+%
+%
+%%%%%%%%%%%%
 
 %Parse key="value" or value.
 \def\default@ttrkey{} % What unnamed attributes get saved 
 \def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
 \def\relaxval{\relax}
-\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="The crowd"
-\def\save@ttribute#1="#2"=#3\E{%
-  \lowercase{\def\attr@key{#1}}\def\attr@val{#2}%
+\def\spaceval{ }
+\def\s@tattr@val #1 #2\E{\edef\test{#2}\ifx\test\empty\else\edef\attr@val{\ifx\attr@val\empty\else\attr@val\space\fi#1}\x@\s@tattr@val \test\E\fi}% Remove trailing space(s)
+\def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"
+\def\save@ttribute#1="#2" #3\E{%
+  \trace{A}{save@ttribute '#1'="#2" #3}%
+  \lowercase{\edef\attr@key{#1}}\edef\attr@val{#2}%
   \ifx\attr@val\relaxval
     \ifx\thisdefault@ttrkey\empty
       \edef\thisdefault@ttrkey{UnNamed}%
     \fi
-    \get@ttribute{\thisdefault@ttrkey}%
-    \if\attr@b\relax
-      \edef\attr@val{#1}%
-    \else
-      \ifmst@nestyle
-	\edef\attr@val{\attr@b\milestoneJoinChar#1}% Join words with milestoneJoinChar instead of space.
-      \else
-	\edef\attr@val{\attr@b\space #1}% Join words with a space.
-      \fi 
+    \ifx\attr@key\spaceval\else
+      \ifx\attr@key\empty\else
+      \get@ttribute{\thisdefault@ttrkey}%
+      \edef\attr@val{}%
+        \ifx\attr@b\relax
+          \s@tattr@val #1 \E
+        \else
+          \ifmst@nestyle
+            \s@tattr@val \attr@b\milestoneJoinChar#1 \E% Join words with milestoneJoinChar instead of space.
+          \else
+            \s@tattr@val \attr@b\space #1 \E% Join words with a space.
+          \fi 
+        \fi
+        \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute '#1' -> '\attr@val'}%
+        \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
+      \fi
     \fi
-    \trace{A}{Got unnamed(\thisdefault@ttrkey) attribute #1 -> \attr@val}%
-    \set@ttribute{\thisdefault@ttrkey}{\attr@val}%
   \else
-    \trace{A}{Got named attribute \attr@key="\attr@val"}%
-    \set@ttribute{\attr@key}{\attr@val}%
+    \edef\t@st{\zap@space #1 \empty}%
+    \ifx\attr@key\t@st
+      \trace{A}{Got named attribute \attr@key="\attr@val"}%
+      \set@ttribute{\attr@key}{\attr@val}%
+    \else
+      \trace{A}{Got unnamed AND named attributes '#1'}%
+      \x@\spl@tonspace #1\E
+      \trace{A}{Got unnamed(\thisdefault@ttrkey) -> '\f@rstitem'}%
+      \set@ttribute{\thisdefault@ttrkey}{\f@rstitem}%
+      \trace{A}{Got named attribute \s@conditem="\attr@val"}%
+      \set@ttribute{\s@conditem}{\attr@val}%
+    \fi
+  \fi
+  \def\t@st{#3}%
+  \ifx\t@st\empty\else
+    \ifx\t@st\spaceval\else
+      \save@ttribute #3\E
+    \fi
   \fi
 }
 
-\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib #1 is \attr@b}} %simple access function
+\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}} %simple access function
 \def\set@ttribute#1#2{%
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.
@@ -184,6 +317,14 @@
 \def\zap@space#1 #2{%borrowed from latex.ltx. Eats all spaces in arg, including mid-space
   #1%
   \ifx#2\empty\else\expandafter\zap@space\fi
+  #2}
+\def\zap@plus#1+#2{%borrowed from latex.ltx. Eats all pluses in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@plus\fi
+  #2}
+\def\zap@comma#1,#2{%borrowed from latex.ltx. Eats all commas in arg, including mid-space
+  #1%
+  \ifx#2\empty\else\expandafter\zap@comma\fi
   #2}
 
 \def\geton@item #1 #2\E{% Parse space separated list
@@ -197,20 +338,24 @@
 }
 
 
-% Parse an attribute="value" from the USFM code.
-\def\s@ve@ttribute#1{%
-   \x@\save@ttribute #1="\relax"=\E
+% Parse an attribute="value" from the USFM code. May be wrapped in {}
+\def\parse@ttribs#1{% Expand again to solve brackets
+   \x@\@parse@ttribs #1 \E
+}
+\def\@parse@ttribs#1 \E{%
+   \x@\save@ttribute #1 ="\relax" \E
 }
 
-\def\parse@ttribs#1{%
-  \let\nxt@tem=\geton@item
-  \let\D@first=\s@ve@ttribute
-  \x@\geton@item #1 \E
-}
+%\def\parse@ttribs#1{%
+  %\let\nxt@tem=\geton@item
+  %\let\D@first=\s@ve@ttribute
+  %\x@\geton@item #1 \E
+%}
 
 % Parse list of attributes from style file to read the default attribute
 % and the complete list(comma separated).
 \def\Attributes#1\relax{% Override empty \Attributes from ptx-stylesheets
+  \trace{A}{Loading attr list for \m@rker (#1)}%
   \let\nxt@tem=\geton@item %only need the first one.
   \let\D@first=\interpr@tfirstattrib
   \let\save@ttrib=\setdefaultattrib
@@ -220,14 +365,14 @@
     \trace{A}{Attribute list for \m@rker\space is \csname\@ttrlistname\endcsname}%
   \fi
 }
-
+\def\spl@tonspace#1 #2\E{\trace{A}{Spl@tonspace{#1}{#2}}\edef\f@rstitem{#1}\edef\s@conditem{#2}}
 
 \def\interpr@tfirstattrib#1{%
   \x@\interpr@t@ttrib #1??\E
   \let\D@first=\interpr@tother@ttrib
   \let\save@ttrib=\extend@ttriblist
 }
-\def\interpr@tother@ttrib#1{
+\def\interpr@tother@ttrib#1{%
   \x@\interpr@t@ttrib #1??\E
 }
 \def\store@nattrib#1-#2|#3\E{%Ignore - in milestone markers
@@ -236,7 +381,7 @@
 
 
 \def\interpr@t@ttrib#1?#2?#3\E{% There may be a preceding ? mark. Also setdefaultattrib needs to not have the -s / -e for milestones. 
-  \def\tmp{#1}
+  \def\tmp{#1}%
   \ifx\tmp\empty
      \trace{A}{Attribute '#2' is optional (#1,#2,#3)}%
      \x@\store@nattrib\m@rker-|#2\E
@@ -246,17 +391,17 @@
   \fi
 }
 
-\def\alignb@x#1#2{\getp@ram{justification}{#1}%
+\def\alignb@x#1#2{\getp@ram{justification}{#1}{\styst@k}%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\r@ght\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi
     \box#2%
     \ifx\p@ram\c@nter\hfil\else\ifx\p@ram\l@ft\hfil\else\ifx\p@ram\relax\hfil\fi\fi\fi}
-\def\rubyb#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
+\def\rubyb#1#2{\trace{A}{rubyb}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vtop{\s@tbaseline{#1}\hbox to \dimen0{\alignb@x{#1}{0}}%
+    \setbox0=\hbox{\vtop{\s@tbaseline{#1}{\styst@k}\hbox to \dimen0{\alignb@x{#1}{0}}%
         \hbox to \dimen0{\alignb@x{#2|#1}{1}}}}}
-\def\rubyt#1#2{\setbox1=\hbox{\s@tfont{#2|#1}\get@ttribute{#2}\attr@b}%
+\def\rubyt#1#2{\trace{A}{rubyt}\setbox1=\hbox{\s@tfont{#2|#1}{#2|#1+\styst@k}\get@ttribute{#2}\attr@b}%
     \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
-    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
+    \setbox0=\hbox{\vbox{\s@tbaseline{#2|#1}{#2|#1+\styst@k}\hbox to \dimen0{\alignb@x{#2|#1}{1}}%
         \hbox to \dimen0{\alignb@x{#1}{0}}}}}
 
 \expandafter\def\csname complex-rb\endcsname{\rubyt{rb}{gloss}} % USFM-3 suggests ruby goes above. 

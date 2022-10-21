@@ -1,0 +1,485 @@
+#!/usr/bin/python3
+
+import argparse, json, os
+import xml.etree.ElementTree as et
+from math import log10
+import numpy as np
+import sklearn.cluster as cl
+from itertools import groupby
+from ptxprint.reference import Reference, RefRange, RefList, RefJSONEncoder
+from unicodedata import normalize
+
+refmark = "\u203A"
+
+def distance(a, b):
+    return float(abs(a.asint() - b.asint())) if a.book == b.book else 10000.
+
+def cluster(refs, threshold=10):
+    bks = set([r.book for r in refs])
+    #if not len(bks) or len(bks) > 10 or len(refs) > 1000:
+    #if len(refs) > 1000:
+    #    return None
+    distances = [[0] * len(refs) for i in range(len(refs))]
+    for i in range(len(refs)):
+        for j in range(i+1, len(refs)):
+            d = distance(refs[i], refs[j])
+            distances[i][j] = d
+            distances[j][i] = d
+    dm = np.array(distances)
+    agg = cl.AgglomerativeClustering(n_clusters=None, affinity='precomputed', linkage='single', distance_threshold=threshold).fit(dm)
+    results = [None] * agg.n_clusters_
+    for i, r in enumerate(refs):
+        l = agg.labels_[i]
+        if results[l] is None:
+            results[l] = r
+            r = None
+        elif r < results[l].first:
+            if isinstance(results[l], RefRange):
+                results[l].first = r
+            else:
+                results[l] = RefRange(r, results[l])
+        elif r > results[l].last:
+            if isinstance(results[l], RefRange):
+                results[l].last = r
+            else:
+                results[l] = RefRange(results[l], r)
+        if r is not None and r.mark is not None:
+            results.append(r)
+    return results
+
+def addstrongsrefs(allocs, strongs, head, refs):
+    hr = allocs[head.first]
+    hr.setdefault('strongs', {}).setdefault(strongs, {})['refs'] = refs
+    hr['len'] += len(refs)
+    for r in refs:
+        ar = allocs[r.first]
+        if r.first != head.first:
+            ar['strongs'].setdefault(strongs, {})
+            ar['len'] += 1
+        if strongs in ar['bids']:
+            del ar['bids'][strongs]
+
+def fillhead(allocs, strongs, head, refs, cross):
+    news = allocs[head.first].setdefault('strongs', {}).setdefault(strongs, {})
+    #if strongs == "H8269":
+    #    import pdb; pdb.set_trace()
+    l = 0
+    if len(refs) < 10:
+        addstrongsrefs(allocs, strongs, head, refs)
+    else:
+        def gkey(g):
+            return -len(g[1])
+        groups = sorted([(k, list(g)) for k, g in groupby(sorted(refs), lambda r:r.first.book)], key=gkey)
+        subrefs = []
+        fills = []
+        i = 0
+        while len(groups):
+            gbest = sorted(groups, key=gkey)[0]
+            g = gbest[1]
+            glen = len(g)
+            if glen > 10:
+                subrefs.append(g[:8])
+                fills.append(0)
+                groups.append(("", g[8:]))
+            else:
+                curri = -1
+                currf = 100
+                for i, f in enumerate(fills):
+                    if glen <= f and glen - f < currf:
+                        curri = i
+                        currf = f - glen
+                        if currf == 0:
+                            break
+                if curri >= 0:
+                    subrefs[curri].extend(g)
+                    fills[curri] -= glen
+                else:
+                    subrefs.append(g)
+                    fills.append(8 - glen)
+            groups.remove(gbest)
+        heads = [min(x, key=lambda r:allocs[r.first]['len']).first for x in subrefs]
+        for i, h in enumerate(heads):
+            addstrongsrefs(allocs, strongs, h, subrefs[i])
+        news['refs'] = [x.copy() for x in heads]
+        for x in news['refs']:
+            x.mark = refmark
+    news['cross'] = cross
+    l += len(cross)
+    allocs[head]['len'] += l
+
+def getcross(res, key):
+    results = []
+    resk = res[key]
+    for a in ('h', 'g'):
+        results.extend([s for s in resk[a] if not res.get(s, {}).get('skipme', False)])
+    return results
+
+def createxml(res, allocs):
+    root = et.Element('cross-references')
+    for k, v in sorted(allocs.items()):
+        if 'strongs' not in v:
+            continue
+        xref = et.SubElement(root, 'xref', ref=str(k))
+        for s, sv in sorted(v['strongs'].items()):
+            crs = [c for c in sv.get('cross', []) if res.get(c, {}).get('head', None) is not None]
+            if len(sv.get('refs', [])) or len(crs) > 1 or len(sv.get('backrefs', [])) > 1:
+                xgroup = et.SubElement(xref, 'refgroup', strongs=s)
+            else:
+                xgroup = xref
+            for r in sv.get('backrefs', []):
+                attribs = {'strongs': s} if xgroup == xref else {}
+                xr = et.SubElement(xgroup, 'ref', attribs, style='backref')
+                xr.text = str(r)
+            if len(sv.get('refs', [])):
+                xr = et.SubElement(xgroup, 'ref')
+                rlist = RefList(sv['refs'])
+                try:
+                    rlist.remove(k)
+                except ValueError:
+                    pass
+                rlist.sort()
+                xr.text = str(rlist)
+            for r in crs:
+                head = res[r]['head']
+                xr = et.SubElement(xgroup, 'ref', strongs=r, style='cross')
+                xr.text = str(head)
+    return root
+
+parser = argparse.ArgumentParser()
+parser.add_argument("outfile",help="Output JSON")
+parser.add_argument("-i","--input",help="Input results.json")
+parser.add_argument("-x","--xml",help="Output strongs info xml file")
+parser.add_argument("-O","--ot",default="LEB.json",help="OT JSON")
+parser.add_argument("-N","--nt",default="GNT.json",help="BT JSON")
+parser.add_argument("-H","--hebrew",default="StrongHebrewG.xml",help="Hebrew strongs xml")
+parser.add_argument("-G","--greek",default="strongsgreek.xml",help="Greek strongs xml")
+parser.add_argument("-S","--scores",default="cross_scores.json",help="Reference scores")
+parser.add_argument("-B","--bterms",help="PTX BiblicalTerms.xml")
+parser.add_argument('-L','--localizations',action='append',default=['en','es','fr','id','pt','zh-Hans','zh-Hant'],help='list of language codes for localizations from -B directory')
+parser.add_argument("-g","--gnt",default="opengnt.csv",help="OpenGNT CSV")
+parser.add_argument("-t","--threshold",type=int,default=20,help="Set verse range threshold")
+parser.add_argument("-z","--zdebug",type=int,default=0,help="debug. 1=no cluster")
+args = parser.parse_args()
+
+res = {}    # strongs info
+rev = {}    # reverse map from btid to res
+refcount = 0
+skipcount = 0
+allrefs = set()
+populars = {}
+boringH = {'conj', "d", "dp", "i", "inj", "p", "prep", "pron", "prt", "r", "x"}
+boringG = {'T', 'P', 'R', 'C', 'D', 'K', 'I', 'X', 'Q', 'F', 'S', 'CONJ', 'COND', 'PRT', 'PREP', 'INJ'}
+
+if args.bterms is None:
+    for a in ('8', '9'):
+        p = "/usr/lib/Paratext{}/BiblicalTerms/Lists/BiblicalTerms.xml".format(a)
+        if os.path.exists(p):
+            args.bterms = p
+
+if args.input:
+    with open(args.input) as inf:
+        temp = json.load(inf)
+        res = temp['strongs']
+        allocs = {RefList.fromStr(k)[0]: v for k, v in temp['refs'].items()}
+        crefcount = 0
+        refcount = 0
+        skipcount = 0
+        allrefs = []
+        for k, v in res.items():
+            if 'btid' in v:
+                rev[v['btid']] = k
+else:
+    for f, p in ((args.ot, 'H'), (args.nt, 'G')):
+        if f is not None:
+            with open(f) as inf:
+                d = json.load(inf)
+                for k, v in d:
+                    res[p+str(k)] = {'refs': v, 'h': set(), 'g': set(), 'morph': ''}
+                    if 1 < len(v) < 1000:
+                        refcount += len(v)
+                        for r in v:
+                            allrefs.add(r)
+                    else:
+                        skipcount += 1
+                        if len(v) >= 1000:
+                            populars[p+str(k)] = len(v)
+
+    crefcount = 0
+    if args.hebrew:
+        ns = {'': 'http://www.bibletechnologies.net/2003/OSIS/namespace'}
+        d = et.parse(args.hebrew)
+        for e in d.findall('./osisText/div/div[@type="entry"]', namespaces=ns):
+            w = e.find("./w", namespaces=ns)
+            if w is None:
+                continue
+            i = w.get('ID')
+            if i not in res:
+                continue
+            res[i]['lemma'] = w.get('lemma')
+            res[i]['translit'] = w.get('xlit')
+            morph = w.get('morph', None)
+            if morph is not None:
+                res[i]['morph'] = morph
+                if morph in boringH:
+                    skipcount += 1
+                    refcount -= len(res[i]['refs'])
+                    res[i]['skipme'] = True
+            for n in e.findall('./note[@type="exegesis"]/w', namespaces=ns):
+                r = n.get('src')
+                if r is None:
+                    continue
+                c = "H"+r
+                #res[c]['h'].add(i)
+                res[i]['h'].add(c)
+                crefcount += 1
+            d = e.find('.//note[@type="translation"]', namespaces=ns)
+            if d is not None:
+                res[i]['definition'] = d.text
+
+    if args.greek:
+        d = et.parse(args.greek)
+        for e in d.findall('.//entry'):
+            i = e.get('strongs')
+            if i is None:
+                continue
+            i = "G"+str(int(i, 10))
+            if i not in res:
+                continue
+            grefs = {}
+            for r in e.findall('.//strongsref'):
+                p = r.get('language')[0]
+                c = p+str(int(r.get('strongs'), 10))
+                if c in res and i in res:
+                    res[i][p.lower()].add(c)
+                    if p == 'H':
+                        res[c]['g'].add(i)
+                        crefcount += 1
+                    crefcount += 1
+            d = e.find('.//strongs_def')
+            if d is not None:
+                res[i]['definition'] = d.text.replace("\n", "").strip()
+            d = e.find('.//kjv_def')
+            if d is not None:
+                res[i]['kjv'] = d.text.replace("\n", "").strip()
+            d = e.find('.//greek')
+            if d is not None:
+                res[i]['lemma'] = d.get('unicode')
+                res[i]['translit'] = d.get('translit')
+
+    if args.bterms:
+        btdoc = et.parse(args.bterms)
+        for t in btdoc.findall(".//Term"):
+            s = t.findtext('./Strong')
+            if s is None or len(s) < 2:
+                continue
+            try:
+                s = s[0]+str(int(s[1:], 10))
+            except ValueError:
+                continue
+            if s not in res:
+                continue
+            g = t.findtext('./Gloss')
+            if g is not None:
+                res[s]['gloss'] = g
+            tid = normalize('NFC', t.get('Id'))
+            res[s]['btid'] = tid
+            rev[tid] = s
+
+    if args.gnt:
+        with open(args.gnt) as inf:
+            for l in inf.readlines():
+                bits = l.split("\t")
+                b = bits[7].lstrip("\u3014").rstrip("\u3015").split("\uFF5C")
+                if len(b) < 5:
+                    continue
+                morph = b[4].strip()
+                ref = b[5].strip()
+                if ref in res and res[ref]['morph'] == '':
+                    mi = morph.find("-")
+                    if mi >= 0:
+                        morph = morph[:mi]
+                    res[ref]['morph'] = morph
+        for k, v in res.items():
+            if not k.startswith("G"):
+                continue
+            if v['morph'] in boringG:
+                v['skipme'] = True
+                if len(v['refs']) > 1000:
+                    refcount -= len(v['refs'])
+                    skipcount += 1
+
+    allocs = {}
+    scores = {}
+    if args.scores:
+        with open(args.scores) as inf:
+            dat = json.load(inf)
+            scores = {k: v[0] for k, v in dat}
+
+    count = 0
+    for k, v in res.items():
+        r = [Reference.fromtag(x) for x in v['refs']]
+        for ar in r:
+            if str(ar) not in allocs:
+                allocs[ar] = {'strongs': {}, 'len': 0, 'bids': {}, 'bidhistory': {}, 'score': scores.get(str(ar), 0)}
+        if (args.zdebug & 1 == 0) and len(r) > 1:
+            c = cluster(r, args.threshold)
+        else:
+            c = set(r)
+        if count % 100 == 0:
+            print(".", end="", flush=True)
+        count += 1
+        if len(c) > 5:
+            c = sorted(c, key=lambda r:-sum(scores.get(x, 0) for x in r.allrefs()))[:50]
+        if not v.get('skipme', False):
+            res[k]['reflist'] = sorted(c)
+
+lbase = os.path.dirname(args.bterms)
+for l in args.localizations:
+    fname = os.path.join(lbase, 'BiblicalTerms{}{}.xml'.format(l[0].upper(), l[1:]))
+    if not os.path.exists(fname):
+        fname = os.path.join(lbase, 'BiblicalTerms{}.xml'.format(l))
+        if not os.path.exists(fname):
+            continue
+    ldoc = et.parse(fname)
+    for e in ldoc.findall('.//Terms/Localization'):
+        tid = e.get('Id')
+        if tid not in rev or l in res[rev[tid]].get('localized', {}):
+            continue
+        res[rev[tid]].setdefault('localized', {})[l] = {'gloss': e.get('Gloss')}
+        d = e.text
+        if d is not None:
+            d = d.strip()
+            if len(d) > 2:
+                res[rev[tid]]['localized'][l]['defn'] = d
+
+for k, v in allocs.items():
+    v['len'] = 0
+    v['strongs'] = {}
+
+for k, v in res.items():
+    if v.get('skipme', False):
+        continue
+    # step 1. Allocate all single references
+    c = [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in v['reflist']]
+    if len(c) == 1:
+        crs = getcross(res, k)
+        allocs[c[0].first]['strongs'][k] = {'cross': crs}
+        allocs[c[0].first]['len'] += len(v['g']) + len(v['h'])
+    else:
+        for ac in c:
+            allocs[ac.first]['bids'][k] = c[:]
+            allocs[ac.first].setdefault('bidhistory', {})[k] = c
+
+# step 2. Allocate everything that fits and has no contenders
+changed = True
+while changed:
+    changed = True
+    while changed:
+        changed = False
+        for k, v in allocs.items():
+            # length one sets have no choice where they go. So they win if they fit.
+            if len(v['bids']) == 1:
+                s, refs = list(v['bids'].items())[0]
+                crs = getcross(res, s)
+                res[s]['head'] = k
+                fillhead(allocs, s, k, [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in refs], crs)
+                changed = True
+            # length 2 cost 1 for both sides, choose which one gets the cross links
+            elif any(len(x) == 2 for x in v['bids'].values()):
+                keys = [x for x, y in v['bids'].items() if len(y) == 2]
+                arefs = [x.first for y in keys for x in v['bids'][y] if x.first != k]
+                alens = [allocs[x].get('len', 0) for x in arefs]
+                # calculate which strongs on which ref brings their list closest to 10
+                jobs = [(abs(10 - alens[i] - len(allocs[arefs[i]]['bids']) - len(res[r]['h']) - len(res[r]['g'])), arefs[i], r, k) for i, r in enumerate(keys)] \
+                     + [(abs(10 - v['len'] - len(allocs[k]['bids']) - len(res[r]['h']) - len(res[r]['g'])), k, r, arefs[i]) for i, r in enumerate(keys)]
+                score, newk, news, newo = min(jobs)
+                # do the allocation for real
+                res[news]['head'] = newk
+                crs = getcross(res, news)
+                fillhead(allocs, news, newk, [newk, newo], crs)
+                changed = True
+    # step 3. Pick the first strongs in a verse and allocate it
+    for k, v in allocs.items():
+        if len(v['bids']):
+            s, refs = list(v['bids'].items())[0]
+            crs = getcross(res, s)
+            res[s]['head'] = k
+            fillhead(allocs, s, k, [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in refs], crs)
+            changed = True
+
+for k, v in allocs.items():
+    if 'strongs' not in v:
+        continue
+    for s, sv in v['strongs'].items():
+        head = res.get(s, {}).get('head', None)
+        if head is None:
+            if not res.get(s, {}).get('skipme', False) and len(sv.get('refs', [])):
+                print(f"Can't find head for {s}")
+            continue
+        if head != k:
+            sv.setdefault('backrefs', []).append(head)
+
+if args.xml:
+    xmlout = et.Element('strongs')
+    for s, sv in res.items():
+        if 'btid' not in sv or 'head' not in sv:
+            continue
+        xref = et.SubElement(xmlout, 'strong', ref=s, btid=normalize('NFC', sv['btid']),
+                             lemma=sv['lemma'], head=sv['head'], translit=sv['translit'])
+        t = sv.get('localized', {})
+        for lk, lv in t.items():
+            lref = et.SubElement(xref, 'trans', {'xml:lang': lk, 'gloss': lv['gloss']})
+            if 'defn' in lv:
+                lref.text = lv['defn']
+    et.indent(xmlout, space='    ')
+    xmldoc = et.ElementTree(xmlout)
+    xmldoc.write(args.xml, encoding="utf-8", xml_declaration=True)
+
+if args.outfile.endswith(".json"):
+    numcontend = sum(1 for v in allocs.values() if len(v['bids']) > 1)
+
+    res = {str(k): v for k, v in res.items()}
+
+    with open(args.outfile, "w", encoding="utf-8") as outf:
+        json.dump({'strongs': res, 'refs': {str(k): v for k, v in allocs.items()}}, outf, indent=2, cls=RefJSONEncoder, sort_keys=True, ensure_ascii=False)
+
+    m = float(max(len(v['refs']) for v in res.values()))
+    top = log10(m) / 50.
+    hist = [0] * 51
+    histrefs = {}
+    maxcrefs = 0
+    for k, v in res.items():
+        if (k.startswith("H") and v.get('morph', '') in boringH) \
+                or (k.startswith("G") and v.get('morph', '') in boringG):
+            continue
+        s = log10(len(v['refs'])) / top
+        hist[int(s)] += 1
+        if len(v['refs']) > 1000:
+            continue
+        lcrefs = len(v['h']) + len(v['g'])
+        histrefs[lcrefs] = histrefs.setdefault(lcrefs, 0) + 1
+        if lcrefs > maxcrefs:
+            maxcrefs = lcrefs
+            rcrefs = k
+    print("Num strongs = {}; num refs = {}; num unique refs = {}; num cross refs = {}, max cross refs[{}] = {}".format(len(res)-skipcount, refcount, len(allrefs), crefcount, rcrefs, maxcrefs))
+    print("Number of cross references and number of verses: ", hist)
+    print("Number of refs for each value: ", sorted(histrefs.items()))
+    print("Values for each number: ", [int(pow(10, i*top)) for i in range(51)])
+    # print("Most popular strongs: ", populars)
+    print("Number of contended references: {}".format(numcontend))
+    histlen = {}
+    maxlen = 0
+    maxlenref = None
+    for k, v in allocs.items():
+        histlen[v['len']] = histlen.setdefault(v['len'], 0) + 1
+        if v['len'] > maxlen:
+            maxlen = v['len']
+            maxlenref = k
+    print("Maximum length: {} at {}".format(maxlen, maxlenref))
+    print("Verse lengths: ", sorted(histlen.items()))
+else:
+    xmlout = createxml(res, allocs)
+    et.indent(xmlout, space='    ')
+    xmldoc = et.ElementTree(xmlout)
+    xmldoc.write(args.outfile, encoding="utf-8", xml_declaration=True)
+

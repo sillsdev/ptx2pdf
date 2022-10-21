@@ -1,9 +1,9 @@
 % Created by ptxprint {config/version} at {date_}
-
+\def\pluginlist{{{project/plugins}}}
 \input paratext2.tex
 \input ptx-ptxprint.tex
 
-{project/ifusepremodstex}\inputifpresent{{{/premodspath}}}
+{project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifdiglot}\diglotcolumns
@@ -17,13 +17,14 @@
 \stylesheet{{ptx2pdf.sty}}
 
 {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
-{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{{{/ptxrpath}/{project/id}/custom.sty}}
+
+%{document/ifdiglot}\stylesheet{{{/cfgrpath}/ptxprint.sty}}
+\stylesheet{{{/cfgrpath}/ptxprint.sty}}
+{document/ifdiglot}\stylesheet{R_}{{{diglot/ptxprintstyfile_}}}
 
 {document/ifdiglot}{ifusediglotmodsty_}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
-{project/ifusemodssty}\stylesheet{L_}{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
-
-\stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
-{document/ifdiglot}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint.sty}}
+{project/ifusemodssty}\stylesheet{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -39,51 +40,63 @@
 \def\SideMarginFactor{{1.0}}
 \BindingGutter{paper/ifaddgutter}
 \BindingGutter={paper/gutter}mm
+\BookOpenLeft{paper/ifoutergutter}
+\def\DefaultSpaceBeside{{{document/cutouterpadding} pt}}
+\noinkinmargin{footer/noinkinmargin}
 
 %% Columns
 \TitleColumns=1
 \IntroColumns=1
-\BodyColumns={paper/columns}
+\BodyColumns={paper/columns}\def\mainBodyColumns{{{paper/columns}}}
 \ColumnGutterRule{paper/ifverticalrule}
+\ColNotesRule{notes/xrcolrule}
 \def\ColumnGutterFactor{{{document/colgutterfactor}}}
 \ColumnGutterRuleSkip={paper/colgutteroffset}pt
+\StudyColumnGutterRuleSkip={studynotes/colgutteroffset}pt
+\def\StudyGutterFactor{{{studynotes/colgutterfactor}}}
+\StudyGutterRule{studynotes/ifverticalrule}
 {document/marginalverses}\input ptxplus-marginalverses.tex
 {document/marginalverses}\columnshift={document/columnshift}pt
-{document/marginalverses}\def\AfterVerseSpaceFactor{{2}}
+{document/marginalverses}\VerseBoxWidth={document/columnshift}pt
+{document/marginalverses}\def\colshiftmode{{{document/marginalposn}}}
+%{document/marginalverses}\def\AfterVerseSpaceFactor{{0}}
 \endbooknoeject{project/ifstarthalfpage}
-\def\PageFullFactor{{0.66}}
+\def\PageFullFactor{{{document/pagefullfactor}}}
+\def\BalanceThreshold{{{paper/bottomrag}}}
 
 %%%%% Text Spacing %%%%%
 \def\LineSpaceBase{{{paragraph/linespacebase}}}
-\def\LineSpacingFactor{L_}{{{paragraph/linespacingfactor}}}
-\def\VerticalSpaceFactor{L_}{{1.0}}
+\def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
+\def\VerticalSpaceFactor{{1.0}}
 {paragraph/useglyphmetrics}\XeTeXuseglyphmetrics=0
 
 %% Cross-space contextualization
 \XeTeXinterwordspaceshaping={document/spacecntxtlztn}
 
 %%%%% Fonts %%%%%
-\FontSizeUnit{L_}={paper/fontfactor}pt
+\FontSizeUnit={paper/fontfactor}pt
 %% Faces
-\def\regular{L_}{{"{document/fontregular}{document/script}{document/digitmapping}"}}
-\def\bold{L_}{{"{document/fontbold}{document/script}{document/digitmapping}"}}
-\def\italic{L_}{{"{document/fontitalic}{document/script}{document/digitmapping}"}}
-\def\bolditalic{L_}{{"{document/fontbolditalic}{document/script}{document/digitmapping}"}}
-{document/ifspacing}\def\SpaceStretchFactor{L_}{{{document/spacestretch}}}
-{document/ifspacing}\def\SpaceShrinkFactor{L_}{{{document/spaceshrink}}}
+\def\regular{{"{document/fontregular}{document/script}"}}
+\def\bold{{"{document/fontbold}{document/script}"}}
+\def\italic{{"{document/fontitalic}{document/script}"}}
+\def\bolditalic{{"{document/fontbolditalic}{document/script}"}}
+{document/ifspacing}\def\SpaceStretchFactor{{{document/spacestretch}}}
+{document/ifspacing}\def\SpaceShrinkFactor{{{document/spaceshrink}}}
 {document/ifcolorfonts}\ColorFontsfalse
+
+\def\UnderlineThickness{{{document/underlinethickness}em}}
+\def\UnderlineLower{{{document/underlineposition}em}}
+\RuleThickness={document/rulethickness}pt
 
 %% Specify the fallback font to be used for special/missing characters
 %\extrafont
 
 {document/ifletter}\newskip\intercharskip \intercharskip=0pt plus {document/letterstretch:.2f}em minus {document/lettershrink:.2f}em
-{document/ifletter}\def\letterspace{{\leavevmode\nobreak\hskip\intercharskip}}
-{document/ifletter}\DefineActiveChar{{^^^^fdd0}}{{\letterspace}}
-
+{document/ifletter}\def\intercharspace{{\leavevmode\nobreak\hskip\intercharskip}}\XeTeXinterchartokenstate=1
 
 %%%%% Layout %%%%%
 {document/ifhidehboxerrors}\overfullrule=0pt
-\RTL{L_}{document/ifrtl}   % Use right-to-left layout mode?
+\RTL{document/ifrtl}   % Use right-to-left layout mode?
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
 {document/toptobottom}\rotatetrue
 % Specify ISO 639-1 language code.
@@ -100,8 +113,8 @@
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
 {document/ifshowchapternums}\OmitChapterNumbertrue
-{document/ifshowchapternums}\def\AfterChapterSpaceFactor{{10}}
-{document/ifshowversenums}\def\AfterVerseSpaceFactor{{0}}
+\def\AfterChapterSpaceFactor{{{document/afterchapterspace}}}
+{document/ifshowversenums}\def\AfterVerseSpaceFactor{{{document/afterversespace}}}
 
 %%% Poetry - Hang Verse Numbers
 {document/hangpoetry}\catcode`\@=11
@@ -128,7 +141,6 @@
 %%%%% Notes %%%%%
 
 %% Disable footnote rule (when line is commented out, the footnote rule will show)
-{notes/iffootnoterule}\def\footnoterule{{}} 
 
 %\AutoCallerStartChar=97
 %\AutoCallerNumChars=26
@@ -152,17 +164,31 @@
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
 {notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
-{notes/xrlocation}\def\XrefNotes{{x}}\def\XrefNotesMargin{{1.5pt}}\XrefNotesWidth={notes/xrcentrecolwidth}pt
-\ColNotes{notes/columnnotes}
+{notes/xrlocation}\def\XrefNotes{{x}}\XrefNotesMargin={notes/xrguttermargin}pt \XrefNotesWidth={notes/xrcentrecolwidth}pt\def\XrefSide{{{notes/xrcolside}}}
+\XrefSideAlign{notes/xrcolalign}
+\ColNotes{notes/columnnotes_}
+\XrefTopfill{notes/xrcolbottom}
+{notes/endnotes_}\NoteAtEnd{{f}}
 %%%{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 
-\AboveNoteSpace={notes/abovenotetotal}pt
-\def\BelowNoteRuleSpace{{{notes/belownoterulespace}pt}}
+{noterules/endnotemarkers}
+{noterules/foot}
+{noterules/end}
+{noterules/study}
+{notes/iffootnoterule}\def\FootNoteRuleThickness{{0pt}}
+{notes/ifstudynoterule}\def\StudyNoteRuleThickness{{0pt}}
+{notes/endnotes_}\def\EndNoteRuleThickness{{0pt}}
 \InterNoteSpace={notes/internotespace}pt
+\NoteGutterRule{document/diglotnotesrule}
+\JoinGutterRule{document/diglotjoinvrule}
 %\AboveNoteSpace=\medskipamount % but is a dimension not a skip
 %\InterNoteSpace=3.5pt
 %\horiznotespacing
+
+%%%%% Extended Study Notes features
+{studynotes/includextfn}\StudyNotes{{ef}}
+{studynotes/showcallers}\OmitCallerInNote{{ef}}
 
 %%%%% Running Header/Footer %%%%%
 \def\HeaderPosition{{{paper/headerposition}}}
@@ -191,29 +217,30 @@
 \def\RHnoVoddcenter{{{header/noVoddcenter}}}
 \def\RHnoVoddright{{{header/noVoddright}}}
 
-\VerseRefs{header/ifverses}                  % Include verses in reference text?
-\OmitChapterNumberRH{header/ifomitrhchapnum} % Omit the chapter numbers in the running header (RH)
+\VerseRefs{header/ifshowverse}               % Include verses in reference text?
+\OmitChapterNumberRH{header/ifshowchapter}   % Omit the chapter numbers in the running header (RH)
+\OmitBookRef{header/ifshowbook}              % Omit the book name in the running header reference
 
 %% Footer
 \def\RFoddcenter{{{footer/oddcenter}}}
 \def\RFevencenter{{{footer/oddcenter}}}
-\def\RFtitlecenter{{{footer/oddcenter}}}
+\def\RFtitleevencenter{{{footer/titleevencenter}}}
+\def\RFtitleoddcenter{{{footer/titleoddcenter}}}
 \def\RFnoVoddcenter{{{footer/oddcenter}}}
-\def\RFnoVoddcenter{{{footer/oddcenter}}}
+\def\RFnoVevencenter{{{footer/oddcenter}}}
   
-{footer/ifftrtitlepagenum}\def\RFtitlecenter{{\pagenumber}}
-{footer/ifprintconfigname}\def\RFtitlecenter{{{config/name}}}
-
 \pageno={document/startpagenum}
 
 %%%%% Illustration and Adjustment Locations and Lists %%%%%
 \IncludeFigures{document/ifinclfigs}
+\DoCaptions{document/iffigshowcaptions}
 \FigurePlaceholders{document/iffigplaceholders}
 \PicPath={{{document/directory}/tmpPics/}}
 {document/ifusepiclist}\PicListPath={{{project/piclists}}}
 \AdjListPath={{{project/adjlists}}}
 \TrigListPath={{{project/triggers}}}
 {document/ifusepiclist}\openpiclist "{document/piclistfile}"
+\NoTransparency{transparency_}
 
 % tweak to enable blank lines
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
@@ -244,31 +271,46 @@
 %\snippets
 
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
+{project/ifcolophon}\layoutstylebreak
+{project/ifcolophon}\singlecolumn
 {project/ifcolophon}{project/pgbreakcolophon}\pb
 {project/ifcolophon}\zcolophon}}
 % Looks in local Config folder for ptxprint-mods.tex, and drops back to shared/ptxprint .tex if not found 
-{project/ifusemodstex}\input "{/modspath}"% adjust/override setup parameters here
+{project/ifusemodstex}\includeifpresent{{{/modspath}}}% adjust/override setup parameters here
+
+%\defzvar
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% all settings need to come before this line %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%% Watermark PDF file or Grid PDF etc. %%%%%
-{paper/ifwatermark}{paper/watermarkpdf}
+{paper/ifwatermark}\def\MergePDF{{"{paper/watermarkpdf}"}}
 
 %%%%% Front Matter PDF file(s) get included here %%%%%
-{project/frontincludes}
+\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
+{document/ifdiglot}\diglotfalse
+\NoBodytrue
+{document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
+{document/toc}\includeifpresent{{{jobname}.toc}}
+{frontincludes_}
+\ptxfile{{{project/frontfile}}}
+{document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
+{document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
+\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+{document/ifdiglot}\diglottrue
+\useTOCone{document/usetoc1}
+\useTOCtwo{document/usetoc2}
+\useTOCthree{document/usetoc3}
 {document/toc}\GenerateTOC[{document/toctitle}]{{{jobname}.toc}}
-{document/toc}\BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
-{document/toc}\ptxfile{{{jobname}.toc}}
-{document/toc}\BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
+\NoBodyfalse
 
 %%%%% Load Paratext USFM %%%%%
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
 % job files:
-\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
+%\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 %%%%% Back Matter PDF file(s) get included here %%%%%
-{project/backincludes}
+{backincludes_}
 
 \end

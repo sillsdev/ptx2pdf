@@ -1,14 +1,1413 @@
-PTXprint 1.8.2 Release Notes 
-2 June 2021
+PTXprint 2.2.33 Release Notes
+18 Oct 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.33 (18 Oct 2022)
+  
+  * Minor UI improvements (link to \xts)
+
+  * Fixed import PDF to work even if Adj files are missing
+  
+Bug fixes and improvements in 2.2.32 (15 Oct 2022)
+
+  WARNING: This update may change the positioning of text compared to previous
+           versions of PTXprint. Backup settings and be prepared to roll back.
+
+  * Improved: Remove undesired break-point in diglot box joining
+  
+  * Added capability to reset values on any spin buttons
+  
+  * Added NonJustifiedFill setting for paragraphs on Styles tab
+  
+  * Logic to blank out p@gefirstmark in footline as well as headline #712
+  
+  * Fixed loss of FRT when switching projects
+  
+  * Fixed appropriate positioning of study note columns and handle empty columns OK
+  
+  * Fixed cutouts after 1 line paragraph. (#757)
+  
+  * Fixed no-ink-in-margin positioning 
+  
+  * Refactor tests for quality and speed and update standards
+
+Bug fixes and improvements in 2.2.31 (12 Oct 2022)
+
+  * Improved handling of complex font settings (GR etc.) in Style editor
+  
+  * Fixed bold and italic and fonts in style editor
+  
+  * Fixed ragged paragraph end to ragged
+  
+Bug fixes and improvements in 2.2.30 (10 Oct 2022)
+
+  * Improved layout graphics (swapped sides for colored arrows)
+  
+  * Added option to control Rule Thickness (Advanced tab)
+  
+  * Fixed marginal notes (verses appearing in center between text)
+  
+  * Fix RTL aligned (not justified) text (for example, \qr)
+  
+  * Fix header rule for RTL inner+outer layouts
+  
+  * Adjust and monitor column threshold for margin notes
+
+Bug fixes and improvements in 2.2.29 (9 Oct 2022)
+
+  * Fixed Help | PTXPrint Docs Path link opens app not help #730
+  
+  * Improved Layout tab to make footer settings clearer #742
+  
+  * Improvement: Ensure consistent position for footers
+  
+  * Refactor page layout bottom margins and update .cfg (Inverted noinkmargin) 
+  
+  * Get inner, outer, & right working for marginnotes and marginal verses
+  
+  * Fixed: inner and outer marginal verses for 2 cols and also RTL 1-col or 2-cols
+  
+  * Fixed: Allow marginal verse numbers on last line
+  
+  * Adjust headers and footers to fit with offset columns (single and double)
+  
+  * Fix word boundaries for ZWSP
+  
+  * Added bookstart trigger for quick & dirty front covers
+  
+  * Enable imposition for cut first
+  
+  * Added a few other common paper sizes
+  
+  * Added Fold First option to pagination
+
+Bug fixes and improvements in 2.2.27 (29 Sep 2022)
+
+  * Fixed crash when switching configuration files within a project #744, #750
+  
+  * Fixed reference containment testing
+  
+  * Added milestone-like zglot to switch monoglot style (for peripheral books)
+
+Bug fixes and improvements in 2.2.26 (27 Sep 2022)
+
+  * Fixed archive creation for modules #739
+  
+  * Fixed Thai Sara am acts like a CM
+  
+  * Improvement for imported PDFs which are now sanitised #740
+  
+  * Fixed piclist generation for peripheral books #735
+  
+Bug fixes and improvements in 2.2.25 (22 Sep 2022)
+
+  * Added RTL support for booklet pagination on finishing tab
+
+  * Make auto-tag Hebrew and Greek words more robust
+  
+  * Fixed various module bugs
+  
+  * Don't insert inter-char space between numbers
+  
+  * Minor UI tweaks on View+Edit and Notes+Refs tabs #733
+  
+  * Fixed reflist simplification with full chapter references
+  
+  * Fixed reference simplify
+  
+  * Added spaces and documented them (docs/documentation/special_chars.md)
+
+Bug fixes and improvements in 2.2.24 (20 Sep 2022)
+
+  * Added other external cross-reference sources (incl. TSK, UBS, BibleWorks lists)
+
+  * Fixed missing bridged verse xrefs
+  
+  * Added feature (defaulted ON) to auto-tag Hebrew and Greek words with \wh and \wg
+
+  * Added warning for IB seriers illustrations (until permissions have been restored by Biblica)
+
+  * Added option for number of in-line Strongs numbers to be displayed in text
+
+  * Fixed Final reference in header one too high #734
+
+  * Fixed Creating new saved configuration resets Scope and sets password #731
+  
+  * Fixed git having no head ref and resetting style setting values
+  
+  * Fixed TeX to do something sensible if style wrongly specifies 0ht paragraph
+  
+  * Fixed resetting book choice when saving new config
+
+Bug fixes and improvements in 2.2.22 (13 Sep 2022)
+
+  * Added feature to insert Strong's numbers in the text based on term renderings
+
+  * Strip H and G from reverse index if only Greek or Hebrew was requested
+  
+  * Fix reverse index to work off primary keys
+  
+  * Load project after importing settings from PDF
+
+Bug fixes and improvements in 2.2.21 (10 Sep 2022)
+
+  * Fix multiple ZWSP between syllables causing spacing problems for multibook jobs
+  
+  * Fix RTL on picture credits and captions
+  
+  * Fix reset Print button status after changing projects
+  
+  * Fix typo to enable periph introductions to work as advertised
+
+Bug fixes and improvements in 2.2.20 (5 Sep 2022)
+
+  * Fix font features preventing bold, ital and BI typefaces from showing up #715
+  
+  * Allow empty stylesheets
+  
+  * Default \fig captions to be italic and slightly smaller than body text
+  
+  * Minor bug fixes #720, #724
+
+Bug fixes and improvements in 2.2.19 (3 Sep 2022)
+
+  * Now displays help for commandline parameters on Windows (using -h flag)
+
+  * Added feature to import settings from previously generated PDF
+  
+  * Fixed missing tooltips on thumbtab page and updated wording
+  
+  * Now using dynamic lock and unlock icons for protecting Configs
+  
+  * Tidied up UI on Styles tab to handle resizing main window better
+  
+  * Fixed booklet signature creation for n>2
+  
+  * Fixed erroneous space after \k in Strong's index creation
+  
+  * Tweaked baseline of Strong's numbers
+  
+  * Fixed signature PDF generation so Acrobat can also load PDFs
+  
+  * Tidied up UI to have standardized widths on each tab
+  
+Bug fixes and improvements in 2.2.18 (29 Aug 2022)
+
+  * Added abilty to use add extra parameters with pictures (e.g. rotate)
+  
+  * Fixed SSL issue so that Download Updated Version button shows up
+  
+  * Updated Crowdin localization files
+
+Bug fixes and improvements in 2.2.17 (24 Aug 2022)
+
+  * Added abilty to filter markers in use in Styles editor
+  
+  * Improved search for style to extend to names (not just markers)
+  
+  * Improved creation of hyphenation file with user options and better logic
+    (also added hyphenation fallback to script syllable breaking)
+  
+  * Ensure the actual marker is displayed as part of the name in style list 
+    rather than what the name might say it is
+  
+  * Fixed printing reflists in the same book
+  
+  * Fixed tooltip css and remove background opacity
+  
+  * Tidied up snippets.md file for easier use
+  
+Bug fixes and improvements in 2.2.16 (20 Aug 2022)
+
+  * Improve status bar message with a Dismiss button instead of Hide link
+  
+  * Updated various tooltips to reflect new behaviour
+  
+  * Add error message for faulty color defition in style files
+  
+  * Highlight margin settings when hovering over settings
+  
+Bug fixes and improvements in 2.2.14 (16 Aug 2022)
+
+  * Improved Indic syllable-based hyphenation rules
+  
+  * Fixed generate hyphenation file (to not include ZWJ and ZWNJ)
+  
+  * Added printing bridged verse 1 snippet
+
+Bug fixes and improvements in 2.2.13 (13 Aug 2022)
+
+  * Prevent excessive vertical growth when expanding Style attributes
+
+  * Fixed output path to PDF on Help tab
+  
+  * Ensure piclist is populated after project is changed
+  
+  * Improved show/hide graphics for tabs
+  
+  * Changed colour (to blue) for picture location previews
+
+Bug fixes and improvements in 2.2.11 (10 Aug 2022)
+
+  * Added client/server IPC for Paratext integration
+  
+  * Add -N command-line parameter to disable internet access
+  
+  * Added option to only show verse number on \fr and \xo
+  
+  * Improved startup time
+  
+  * Fixed config version numbers not updating
+  
+  * Fixed Strong's cross-references (again)
+  
+  * Adjusted hyphenation list limit (again)
+  
+  * Tweaked button labels and status bar location & behaviour
+  
+Bug fixes and improvements in 2.2.10 (6 Aug 2022)
+
+  * Added auto-save option for file editor
+  
+  * Added other languages (es, fr, pt, ru) to installer & tweaked install icon
+  
+  * Refactor Strong's to include all interesting Strong's and shorten output
+  
+  * Minor strongs xref bug fixes
+  
+  * Increased maximim hyphenation file size
+  
+Bug fixes and improvements in 2.2.9 (4 Aug 2022)
+
+  * Fix missing footer problem and inconsistent controls #705
+  
+  * Add all OT lookup tags; Fix typos
+  
+  * Fix style element comparison for dimensions
+  
+  * Further UI improvements to aid just-in-time tooltip documentation
+  
+  * Fix Config name not working
+
+Bug fixes and improvements in 2.2.8 (2 Aug 2022)
+
+  * Re-enabled check for program updates (with newer SSL library)
+  
+  * Further refinement to the UI
+  
+  * Ensure no web links are visible when Disable ALL Internet Access is enabled
+  
+  * Fixed \pn within \li# does strange things #706
+  
+  * Fixed signature pagenum calculation (again) #692
+  
+  * Fixed selecting last search element in search pop-up list #694
+
+Bug fixes and improvements in 2.2.7 (29 Jul 2022) [Withdrawn]
+
+  * More UI refinements based on Paratext's UX team's advice
+
+Bug fixes and improvements in 2.2.6 (28 Jul 2022)
+
+  * Improve layout and interactive behaviour of various tabs
+  
+  * Simplify the Footnotes tab
+  
+  * Stay on the same tab when switching between View modes
+  
+Bug fixes and improvements in 2.2.5 (20 Jul 2022)
+
+  * Improve behaviour of View/Edit tab for saving and refreshing files
+  
+Bug fixes and improvements in 2.2.4 (13 Jul 2022)
+
+  * Don't resize Style Editor when a different style is selected
+  
+  * Added vertical scroll bar to copy config dialog
+  
+  * Shorten confirmation message when about to overwrite AdjList files
+
+Bug fixes and improvements in 2.2.3 (24 Jun 2022)
+
+  * Add facility for project-specific digit mappings
+
+  * Reorder ptxprint-mods.sty to after ptxprint.sty so that it can override
+
+  * Give non paragraphed footnotes a good last line
+
+Bug fixes and improvements in 2.2.2 (21 Jun 2022)
+  
+  * Use placeholders instead of text in special book list (stops unexpected column layouts).
+
+  * Fixed filtering & show glossary entries as footnotes for non-standard markup in GLO book.
+  
+Bug fixes and improvements in 2.2.1 (14 Jun 2022)
+  
+  * Updated Crowdin localization, and fixed spelling of Portuguese
+
+  * Fixed crash due to very short error logs
+
+Bug fixes and improvements in 2.2 (13 Jun 2022)
+  
+  * Fixed faulty signature creation #692 
+  
+  * Clear "peached" highlighting when searching for next setting
+  
+  * Ensure ptxprint-premods.tex gets copied to new configs
+  
+Bug fixes and improvements in 2.1.27 (8 Jun 2022)
+  
+  * Added Search for settings (to find settings based on key words)
+  
+  * Highlight settings and buttons on search
+  
+  * Improved updating GUI while waiting for a thread
+  
+  * Added logging statements to track startup activities better
+  
+  * Added keyboard shortcuts and tidied up help page links
+  
+  * Improved PDF Output options
+  
+  * Improved performance of CMYK conversion with numpy
+  
+  * Improved spot color handling
+  
+  * Added converter of CIE colour spaces
+  
+  * Implemented \GraphicOrnament - enabling images to be used as ornaments
+  
+  * Handle L images in PDF analysis
+  
+  * Stop repeated entries in stylesheet
+  
+  * Solved issue of non-skipping char style inside skipping char style
+  
+  * Fixed crashing for obscure colorspaces
+  
+  * Fixed missing styles on config output
+  
+  * Fixed broken ornamental zrules, fill calculation
+  
+  * Fixed transition from body to title at start of new document
+  
+  * Fixed bugs for graphite fonts and RTL cross references
+  
+  * Fixed paragraphed footnotes paragraph fill
+  
+Bug fixes and improvements in 2.1.26 (26 May 2022)
+  
+  * Make Bold and Italic work with FontName
+  
+  * Fixed fonts: italic bold fonts in styles
+  
+  * Fixed duotone
+  
+  * Fixed 'at' changes (which were skipping some verses)
+  
+  * Fixed alternate diglot losing info
+  
+  * Fixed printing multiple refs of the same book in odd orders
+  
+  * Fix oddity with indentation
+  
+  * Fix more pdf image stuff and parsing strongs.xml
+  
+Bug fixes and improvements in 2.1.25 (25 May 2022)
+  
+  * Fixed missing lib (numpy) issue
+  
+  * Refactor alternate usfmerge ready for multi-glot 
+  
+  * Fixed cropmarks
+  
+  * Fixed refactoring of diglots to allow polyglots
+  
+  * Correctly save calculated L and R units
+  
+Bug fixes and improvements in 2.1.24 - withdrawn (23 May 2022)
+  
+  * Added ability to select a spot color (for 2-color printing)
+  
+  * Added ornaments to the distribution (UI to follow)
+
+  * Fixed wrapping TOC entries & toc-tc1 now has hanging indent
+
+  * Psalm chapters 100-150 overwrite parts of second line #682
+  
+  * Fixed spot colour generation for CMYK docs
+  
+  * Fixed "^^5e" bug
+
+Bug fixes and improvements in 2.1.23 (19 May 2022)
+  
+  * Added ability to select a spot color (for 2-color printing)
+
+  * Fixed Table of Contents leaders (again!)
+
+  * Added stage 1 of Find Help (work in progress...)
+  
+  * TeX: Added textborder on whole diglot page (UI to follow)
+  
+  * TeX: Set baseline correctly for di/polyglots
+  
+  * Fixed smallcaps typo in style editor
+  
+  * Fixed PermissionError issue with _diff.pdf being un-deleteable
+  
+  * Fixed marker name auto update in Add/Edit Style dialog
+  
+  * Fixed runaway headingbox
+  
+  * Fixed control over drop chapter number sizes (automatic if <= 1.5)
+
+  * Fixed crashing on diff if page sizes differ
+  
+Bug fixes and improvements in 2.1.22 (14 May 2022)
+  
+  * Added ability to create 4, 8, 16 page signatures on finishing tab
+    (for booklet printing and more)
+  
+  * Don't include consultant notes projects and study bible additions
+  
+  * Pad intro material to grid
+  
+  * Create captions appropriately and measure
+  
+  * Fixed error message when deleting temp files
+  
+  * Fixed iterating verses beyond range of scripture in doc
+  
+  * Fixed hiding \s1 \s2 when section heads should be hidden
+  
+  * Fixed interlinear refs in error message
+  
+  * Fixed peripheral section introductions
+  
+Bug fixes and improvements in 2.1.21 (9 May 2022)
+  
+  * Refactored tests to use pdf differencing (Standards to follow)
+  
+  * Added -F --diff arg for cmd-line driven diffs (helps bulk testing)
+  
+  * Added -Z --zip arg to unZip and run directly from a .zip archive
+  
+  * Fixed multiple issues in copy config to other projects
+    (and make sure base settings are created for future merges)
+  
+  * Fixed gridding after p images/sidebars (once and for all?)
+  
+  * Fixed prepress pdf filenames
+  
+  * Removed SSL from setup.py (causing issues in Jammy #676)
+  
+  * Remove ZWSP from nonbodymarkers
+  
+Bug fixes and improvements in 2.1.20 (5 May 2022)
+
+  * Refactored fig reading to support periphs better #648 #648 #640
+  
+  * Fix vertical text cropmarks
+  
+  * Improved spacing for captions
+  
+  * Fixed "Failed to create" error #664
+  
+  * Improved wording of tooltips for several controls
+    (including warning about Char spacing affecting Hyphenation)
+  
+  * Added MAL and TAM to Crowdin localization
+  
+  * Added ParallelNoteNumbering{f} command #674 
+  
+  * Temporary fix for TOC page number filling
+  
+Bug fixes and improvements in 2.1.19 (30 Apr 2022)
+
+  * Added Sinhala-script hyphenation option
+  
+Bug fixes and improvements in 2.1.18 (30 Apr 2022)
+
+  * Remove ptxprint.sty stylesheet when deleting Default config
+  
+  * Ignore non publishable border styles
+  
+  * Border catalogue and border improvements
+  
+  * Increase resiliance against .git version missing or faulty
+  
+Bug fixes and improvements in 2.1.17 (27 Apr 2022)
+
+  * Fix outputting whole chapters in references list (e.g. PSA 23; 100)
+  
+  * Handle study column gutter and note rule
+  
+  * Border improvements (Additional border styles, Styles for ornamental zrules,
+    text border spacing logic)
+  
+  * Added locale files for all 14 localization languages
+
+Bug fixes and improvements in 2.1.16 (21 Apr 2022)
+
+  * Added options for Copying Configuration to other projects (preserve/merge/overwrite)
+    which allows cluster projects to have the configs UPDATED rather than just replaced
+
+  * Added ability to call Plugins (on Advanced tab) which enables facing-page polyglots
+    and also paves the way for Ornaments
+  
+  * Added underline position and thickness adjustments (Misc settings on Advanced tab)
+
+  * Added Finishing tab with several new features (not all implemented yet)
+  
+  * Added feature to Compare PDFs to show any differences
+  
+  * Added feature to retain N previous copies (*_1, *_2, *_3 etc.) of generated PDFs
+  
+  * Added 'Screen' PDF Output Format for fastest re-generation of PDFs
+  
+  * Added option to lock ratio of font and baseline
+    (Complete scalability on a single factor #651)
+  
+  * Fixed Missing section heading #659
+
+Bug fixes and improvements in 2.1.15 (7 Apr 2022)
+
+  * Fixed \cat in footnotes
+  
+  * Put git version into config, and into PDF properties
+  
+  * Fixed book change not changing view+edit
+  
+  * Fixed save picture list filtering to config
+  
+  * Put PTXprint version and SHA into the error messages people submit
+  
+  * Fixed Table of Contents ordering
+  
+  * Improved docs and control for ornaments
+  
+  * Follow (symbolic) links in the figures folders 
+   (enabling multiple locations to be searched for the most appropriate image)
+  
+  * Added documentation for periph: and id: styling. 
+    (mechanism for python to use for periph-based formatting)
+  
+Bug fixes and improvements in 2.1.13 (2 Apr 2022)
+
+  * Handle figures/illustrations in FRT matter better #640
+  
+  * Handle arbitrary non-standard SFM filenames in a project directory #642
+  
+  * Handle periph sections being included anywhere in the output
+  
+  * TeX code added for ornaments (UI for this is not yet implemented)
+  
+  * Output software version in pdf properties
+  
+  * Add config and project ids to ptxprint.cfg
+  
+  * Fixed restore linepenalty after temporary change by // (#599, #643)
+  
+  * Fixed table column logic
+  
+  * Fixed sidebar pX positions
+  
+  * Sort Table of Contents 'post' and 'pre' on page number
+  
+  * Fixed references including :0  (e.g. MRK 4:0-6)
+  
+  * Introduced spacebefore/spaceafter for figs and sidebars (not yet in UI)
+  
+  * Handle unsupported \fp marker in footnotes (insert ' --- ' instead)
+  
+Bug fixes and improvements in 2.1.12 (29 Mar 2022)
+
+  * Add debug logging for style editing (known issue still lurking here!)
+  
+  * Footers are no longer placed in bottom margin area (but there is a
+    compatibility option to allow footers into the bottom margin area)
+  
+  * Added support for id:MAT| style prefixes 
+  
+  * Stop switching page dimensions with full page images
+
+  * Fixed after-paragraph image positions
+  
+  * Fixed ToCs (both RTL and LTR) to work properly again with leaders
+  
+  * Fixed known gridding issues with sidebars 
+    NB: If the linespacing is different to the main text, then it is the
+        *bottom* line that should be expected to be on-grid.
+
+  * Fixed the line spacing so that categories don't nobble it
+  
+  * Get sidebars back on the grid
+  
+  * Save/restore cutout parameters before/after a side-bar
+  
+  * Fixed top of page inline esb gridding, and quotes around image files
+
+  * Fixed tabs output
+  
+  * Auto-expand Paragraph settings twisty for table cell styles in editor
+  
+  * Fixed minor typo in 2.1.11
+  
+  * Update Text Script tooltip with list of complex scripts that have
+    additional script settings
+  
+Bug fixes and improvements in 2.1.10 (23 Mar 2022)
+
+  * Fixed \zfiga bug which meant pictures in non-scripture books were missing
+  
+  * Improved bridged hanging poetry numbers (to go vertical)
+  
+  * Improved stylesheet settings and updated tracing-s
+  
+  * Handle chapter ranges in references
+  
+  * Fixed localizing of $(REFs) for modules
+  
+  * Fixed various minor TeX macro issues
+  
+Bug fixes and improvements in 2.1.9 (19 Mar 2022)
+
+  * Added syllable based hyphenation for 5 Indic scripts: mlym taml telu knda orya
+  
+  * Ensure Archive contains all files in config
+  
+  * Fixed buglets in \input
+  
+  * Fixed bug in changing fontsize of p in sidebars
+  
+  * Improved error messages to show the most useful part of error log
+  
+  * Fixed notes settings styletype
+  
+  * Trigger files are TeX and Trigger groups are USFM
+  
+  * Fixed issues with lost and/or repeated footnotes
+  
+  * Change how // is handled (in colophon text)
+  
+  * Help sfm parser to better handle milestones
+  
+  * Added extra logging levels: 5 for full files, 7 for individual string changes
+  
+  * Improved tables, making them less horrible by default
+  
+  * Added extra figure option to scale relative to paper *width* rather than text width
+  
+  * Improved handling of wide table columns to be somewhat graceful
+  
+  * Fixed fontscale bug on fallback font
+  
+  * Improved handling on non-standard font\-names in fc-list
+  
+Bug fixes and improvements in 2.1.8 (12 Mar 2022)
+
+  * Get custom scripts working #629 and allow .py files to be run directly
+
+  * Fixed missing filepath tooltips on some key files
+  
+  * Fixed table columns for RTL and TOC
+  
+  * Fixed table leaders incl for RTL
+  
+  * Solve (most?) issues for tables with categories
+
+Bug fixes and improvements in 2.1.7 (9 Mar 2022)
+
+  * Allow reference chapter ranges like PSA 23 or JHN 2-4
+  
+  * Added option Show Strong's Numbers
+  
+  * Fixed Strong's reference issue specific to Windows encoding
+  
+  * Various TeX bug fixes
+
+Bug fixes and improvements in 2.1.6 (8 Mar 2022)
+
+  * Fixed RTL Table of Contents
+  
+  * Include referenced books in Module archive
+  
+  * Fix table column widths
+  
+  * Ensure Marginal Verses and Hanging Verses are not both enabled at the same time
+  
+  * Fix marginal verses
+  
+  * Fix setting table column widths
+  
+  * Add automatic name update on marker creation (in Styles)
+
+Bug fixes and improvements in 2.1.5 (3 Mar 2022)
+
+  * Enhanced book list which can also contain a list of references #76
+    (allows list of passages like: GEN 1:1-end PSA 23:1-end LUK 15:11-32 GLO)
+
+  * Added option to allow side column x-refs to align to the side of the text
+
+  * Use script-specific reference separators for Arabic script which fixes 
+    RTL marker causes printing a Bible Module to fail #618
+  
+  * Align marginal verses with the baseline
+  
+  * Cross-references in 2 cols now balance
+  
+  * Fixed table of contents widths and leaders #615, treat spacebefore=0 as autowidth
+  
+  * Fixed hang over missing verse numbers
+
+  * Fixed guide rules for centre notes
+  
+  * Fixed missing footnotes on final page #617
+  
+  * Minor improvements to tooltips
+  
+  * Multiple behind the scenes improvements to the TeX macros
+  
+Bug fixes and improvements in 2.1.4 (14 Feb 2022)
+
+  * Keep centre xref column the same height as the text blocks
+  
+  * Fixed final page single column footnotes #617
+  
+  * Fixed FileNotFoundError on generate final SFM #607
+  
+  * Fixed regular typeface doesn't always show in font chooser #609
+  
+  * Remove space leakage in marginal verses
+  
+  * Reduce threshold to actual rag
+  
+Bug fixes and improvements in 2.1.3 (13 Feb 2022)
+  
+  * Fixed typo in archive creation
+  
+  * Fixed cross ref files in archives
+  
+  * Fixed bad last page breaks
+  
+Bug fixes and improvements in 2.1.2 (12 Feb 2022)
+  
+  * Improved ending 2 cols to the minimum balanced height
+  
+  * Improved slop handling for cutouts
+
+  * Fixed shifting marginal verses
+  
+  * Fixed missing pictures
+  
+  * Fixed poor page breaking
+  
+  * Fixed gridding for bottom-aligned sidebar figures
+  
+Bug fixes and improvements in 2.1.1 (8 Feb 2022)
+  
+  * Fixed missing Table of Contents
+  
+  * Added KBS max page size as an option
+  
+  * Added after chapter/verse space factor controls on Advanced tab
+
+  * Ensure sidebar foreground and background images are also archived
+  
+  * Removed superfluous error message when deleting a config
+  
+Bug fixes and improvements in 2.1 (5 Feb 2022)
+
+  * Study Bible layouts are now supported (\ef, \ex, \esb, etc.)
+
+  * 2 columns give the best balance that has a line difference <= Unbalanced Lines setting
+  
+  * Added outer gutter setting to layout options (for journaling layouts)
+  
+  * Added Space beside parameter for cutouts/sidebars
+  
+  * Added vertical and horizontal padding controls to sidebar borders
+  
+  * Added \zlabel, \zpage, \zref milestones (for cross-referencing page numbers)
+
+  * Fixed centre column notes lines heights, and prevent them overfilling
+  
+  * Fixed above rule spaces
+  
+  * Fixed editing booklist from the keyboard
+  
+  * Fixed window can't be resized to fit the narrower content #605
+
+Bug fixes and improvements in 2.0.34 (24 Jan 2022)
+
+  * Added Delete button to Help tab to remove temporary folders
+  
+  * Fixed UI suddenly closing when interacting with Styles tab #608
+  
+  * Improved layout of Rule and Spacing options (fix for Indonesian)
+
+Bug fixes and improvements in 2.0.33 (21 Jan 2022)
+
+  * Added cat-esb UI elements in Styles area (not yet accessible)
+  
+  * Added Sidebar Images dialog (not yet accessible)
+
+  * Added column controls for study notes
+  
+  * Added rule options for Study Notes
+  
+  * Added UI for Stretch option in font dialog
+  
+  * Added Ornament boxes (mostly functioning)
+  
+  * Added -I option to commandline options to show widget identities
+
+  * Improved Cascading Styles in TeX macros
+  
+  * Improved xref and external xref list UI interaction
+  
+  * Improved handling of categories in tables (work in progress)
+  
+  * Improved appropriate single book default for new project
+  
+  * Make BorderHPadding work with plain and double-bordered boxes
+  
+  * No longer loads Default config when starting from command line
+  
+  * Modified fwd version changes to updates so can run on newer files
+  
+  * Fixed starting up with no config
+  
+  * Fixed footnote rules for study bibles
+  
+  * Fixed missing ToC leaders issue
+  
+  * Fixed xref handling of books with no xrefs
+
+  * Fixed booknames and the attribute naming mess
+  
+  * Fixed booknames inference from usfm files
+  
+  * Fixed buglet in handling books with no names
+  
+  * Fixed images in sidebars with GUI-prefered configuration
+  
+  * Fixed header styling bug
+  
+Bug fixes and improvements in 2.0.30 (12 Jan 2022)
+
+  * Override styles for \nd and \pn to NOT use underlining (on by default in usfm.sty)
+  
+  * Add basic support for \ef StudyNotes
+  
+  * Add Treasury of Scripture Knowledge data
+  
+  * Cache cross reference lists to run faster
+  
+  * Cross reference resizing fixes
+  
+  * Prettify Strong's numbers
+  
+  * Clear fontscale if set fontsize and vice versa (regain control over font sizes)
+
+  * Fix annoying notes wrapping bug. Resize final page with notes better
+  
+  * Fix diglot stylesheet loading in tex on windows
+  
+  * Fix single column cross references and study notes
+  
+  * Fix nested paragraphs in notes (e.g. \fp)
+  
+Bug fixes and improvements in 2.0.28 (13 Dec 2021)
+
+  * Various improvements to Strong's index UI and file creation (XXS book is default
+    (book for index, ragged column option, variables set within same dialog, option
+     to open index after creation, index automatically gets added to booklist)
+  
+  * Fixed column-balancing algorithm to better handle rounding errors of height calcs
+  
+  * Peripherals page tidied up so that variables can be edited aside from front matter
+  
+  * Fix not multi editing the same settings file
+  
+  * Fix missing Cancel + Apply buttons in Mini and Basic views
+  
+Bug fixes and improvements in 2.0.24 (11 Dec 2021)
+
+  * Removed all references to SSL which had a cryptography dependency which seems to
+    have been triggering a false positive virus warning* on some (bitdefender) systems
+    * 13/11 - This is still an ongoing issue on systems with bitdefender anti-virus
+
+  * Fixed: Reference allrefs handles non scripture books
+
+  * Fixed: Default internet access off while there is no user config
+
+  * Fixed: Books indexing from 0 rather than 1. Recalculate books available
+
+Bug fixes and improvements in 2.0.22 (10 Dec 2021)
+
+  * Rolled back recent changes to foundational TeX macros to maintain stability
+    (Revert "Merge branch 'fix576')
+
+  * Patched \pipe warning/error in ruby glossing
+
+Bug fixes and improvements in 2.0.21 (9 Dec 2021)
+
+  * Click to Download Updated version button now works
+  
+  * Fixed: changes to locked config were being saved when a config was changes
+  
+  * Fixed: Pictures weren't showing up when config was saved with a new name
+
+Bug fixes and improvements in 2.0.20 (7 Dec 2021)
+
+  * First public release through recently updated TeamCity build server
+
+  * Remove extraneous spaces from TOC entry processing #595 (\toc1 marks cause 
+    the following paragraph to have incorrect justification)
+  
+  * Ensure \cl marker is applied to all books/chapters when enabled (affects XX* songbook)
+  
+  * Updated code for generated batch file script to just work without first changing path
+  
+  * Turn on page numbers by default at the start of a new book
+  
+  * Fix styleditor to not show standalones and fix up naming in the tree view
+  
+  * Add smarter links to style editor for Strong's dialog
+  
+  * Remove leaking space in RTL page layout
+  
+ (* Click to Download Updated version button is still broken - SSL library issue)
+  
+Bug fixes and improvements in 2.0.17 (4 Dec 2021)
+
+  * Added Strong's Numbers cross-reference system along with a powerful, configurable
+    localized Strong's Index generator - hiding under 'External Cross-reference Settings'
+    tab of the Notes+Refs page. It generates an XXA/B.../G file to be included in booklist.
+
+  * Added configuration-specific PrintDraftChanges (changes.txt is now for config-specific 
+    changes, while project-wide changes remain in PrintDraftChanges.txt) #587
+
+  * Various improvements to View/Edit page:
+    - preserve edits when switching between tabs
+    - blank lines are no longer hidden/invisible in tabs (Front Matter, AdjList, Final SFM)
+    - two tabs available for editing settings (making it easier to edit commonly used files)
+
+  * Enhanced Style editor to handle Vertical Position for table \tc markers
+  
+  * Copy Configuration dialog now shows projects horizontally in alphabetical order
+  
+  * Added option to suppress insertion of a blank (even) page after front matter
+
+  * Fixed: Footnotes on final page of book missing
+
+  * Fixed: Marginal verse column shift leaking into introductions #594
+
+  * Fixed: Update button on status bar (now shows up if a newer version is available)
+
+  * Fixed: Generated AdjList for diglot publications are faulty #581
+
+  * Fixed: stylesheet handling making an incorrect assumption #577
+  
+  * Fixed: Footnotes Style Control for Paragraph Indention not working #560
+  
+  * Fixed: FirstIndent for footnotes, improved book name calculations and note columns
+
+Bug fixes and improvements in 2.0.15 (19 Nov 2021)
+
+  * Fixed: Now respects \nopagenums for front matter pages of diglot publications
+  
+  * Fixed: Verse numbers in header of diglots sometimes innaccurate
+  
+  * Note: setting \MarkTriggerPointstrue helps identify paragraphs in intro matter
+
+Bug fixes and improvements in 2.0.14 (18 Nov 2021)
+
+  * Fixed: Alignment of page numbers on title page footers
+  
+  * Improved compliance with PDF/X-1a (which bans /Actions)
+  
+  * Fixed: Diglot on-grid alignment
+
+Bug fixes and improvements in 2.0.13 (17 Nov 2021)
+
+  * Fixed: Missing initial Table of Contents line for Primary diglot table
+  
+  * Fixed: ptxprint.sty file was getting excluded for non-diglot projects
+  
+Bug fixes and improvements in 2.0.11 (14 Nov 2021)
+
+  * Fixed: Refresh captions now works and also updates diglot captions as advertised
+  
+  * Fixed: Front matter fonts and styling in diglots now follow primary settings
+  
+Bug fixes and improvements in 2.0.10 (13 Nov 2021)
+
+  * Fixed: unwanted diglot pagebreak after mt
+  
+  * Fixed: Ch:Vs separator selection not being remembered
+  
+  * Fixed: PicList table kept switching to wrong view
+  
+Bug fixes and improvements in 2.0.9 (11 Nov 2021)
+
+  * Table of Contents for Diglot publications can specify L (Pri) or R (Sec) filters
+  
+  * Fixed: Diglots failed to print with .doc error
+  
+Bug fixes and improvements in 2.0.6 (10 Nov 2021)
+
+  * Picture captions can now be refreshed from Paratext USFM files #435
+  
+  * Allow switching 1->2 cols for specific books (previously only 2->1 was possible)
+  
+  * Improved tooltip to help prevent error if you enter # in a header string. #551
+  
+  * Slow run warning for CMYK picture conversion (affects non-"Digital" outputs)
+  
+  * Allow negative fake italic slant
+  
+  * Handle badly formed USFM files better
+  
+  * View/Edit button changes according to context #554
+ 
+  * Show full name rather than truncating '.pdf' from filenames in peripherals
+  
+  * Added include "Filename" support to PrintDraftChange
+  
+  * Handle standalone markers in parser
+
+  * Fixed: crash if a faulty xdv is generated, e.g. bad font. 
+  
+  * Fixed: Bug in ToC when two \toc1 markers occur on a single page #569
+  
+  * Fixed: Module behavior differs between Paratext and PTXprint #571
+  
+  * Fixed: Trying to manually add an image to PicList failed #563
+  
+  * Fixed: picture associated with poetry won't output #573
+  
+  * Fixed: glyph metrics warning when returning from diglot #542
+  
+  * Fixed: page growth when blank page inserted
+  
+  * Fixed: Warning re compatibility settings - don't show to new users #553
+  
+Bug fixes and improvements in 2.0.5 (27 Oct 2021)
+
+  * Fixed: Rendering issue with some Devanagari conjuncts if letter spacing is on #561
+
+  * Fixed: Creating an Archive fails (sometimes) #562
+  
+  * Fixed: After creating a new configuration, trying to open output folder location failed #564
+  
+  * Fixed: Spurious space in marginal verses
+  
+  * Fixed: Only pad certain images (don't pad when creating cutouts)
+
+  * Fixed: Chapter label \cl handling was being overriden
+  
+  * Improved: Keep book number together with book name "1 Kings", "2 Samuel" within \xt
+  
+  * Improved: Allow non paragraphed footnotes to rag
+  
+  * Improved: Seemingly 'erroneous error messages' now give more information to track them down #552
+
+  * Added: \zglm marker to format font, size, colour, position of glossary *marks* #565
+
+  * Added: Support for Creative Commons license logos with CMYK using \zccimg for front matter or colophon
+    e.g. \zccimg by-nc-nd|size="col" pgpos="pc" scale="0.15"\*
+
+Bug fixes in 2.0.4 (21 Oct 2021)
+
+  * Fixed spaces in the caller area of the footnotes #557
+  
+  * Fixed font codes leaving a space in footnotes (v2.0.2) #556
+  
+  * Fixed repetitive use of PTXprint (for >3 hours?) causes a ValueError #555
+  
+  * Fixed (?) Glossary Words Markup Style selector not working
+  
+  * Fixed PicList blanks out when config name is edited but not changed
+  
+Bug fixes in 2.0.2 (20 Oct 2021)
+
+  * Fixed erroneous error message #552
+  
+  * Added missing eng.vrs file for referencing to work properly
+  
+  * Fixed style editor issues when adding new markers
+  
+  * Handle 'at REF' change specification better for bridged verses
+
+Bug fixes in 2.0.1 (19 Oct 2021)
+
+  * Fixed Odd changes in v2.0 - Base Paragraph Indent gone wrong #550
+
+Bug fixes and Improvements in 2.0 (18 Oct 2021)
+
+  * https://software.sil.org/ptxprint/whats-new-in-version-2-0/ reflects changes made since 1.0
+
+  * Increase dead cycles from 75 to 100 to prevent giving up with pictures in diglot prematurely 
+  
+  * Fixed crash on trying to delete one or more rows from PicList
+  
+  * Fixed faulty usfm and usfmerge not breaking nb in diglots
+  
+  * Fixed fn/xr callers/callees in headings and diglots not respecting font settings #541
+  
+Bug fixes and Improvements in 1.9.7 (16 Oct 2021)
+
+  * Allow better control over Dual Captions in diglots (and show in PicList table)
+  
+  * Fixed wrong folder location displayed after creating Archive #545
+  
+  * Don't allow changing font size, line spacing of \p marker (use Layout tab instead)
+  
+  * Fixed 'at' rules from wrongly targeting other chapters (\c 2 was matching \c 20 etc.)
+  
+  * Fixed bugs in 'Add/Edit Style'
+  
+  * Fixed \wh ...\wh* and \wg ... \wg*  to handle runs of RTL and LTR text better
+  
+Bug fixes and Improvements in 1.9.6.2 (13 Oct 2021)
+  * Note: Compatibility settings on Advanced page get reset by this version
+    (and an informative message is displayed - which most people can safely ignore)
+
+  * Improved UI resizing behaviour on Pictures page
+  
+  * Fixed Chapter numbers are sometimes missing #538
+  
+  * Fixed 'Hide empty verses' still leaving empty whitespace in PDF #540
+  
+  * Fixed Notes/Xrefs missing when 'Start each on new line' was set
+  
+  * Fixed Crash on 1st startup if never been run before on machine
+  
+  * Fixed bug where config-specific PicLists were being overwritten by Default PicList
+  
+  * Fixed missing icons
+  
+Bug fixes and Improvements in 1.9.6 (8 Oct 2021)
+
+  * Added ability for selection and editing of multiple pictures #479
+  
+  * Illustrations in diglots can now have multiple captions #511
+  
+  * Moved digit mapping to be part of the font definition within the font chooser #433
+    (This allows different styles to use the same font but with different digit mappings.)
+
+  * Added greater flexibility for positioning lines for footnotes and cross-refs #527
+  
+  * Added most-recently used functionality to booklist #521
+
+  * Added a 3-tier view (Mini, Basic, Full) system for UI to replace Basic and Advanced
+  
+  * Improved wording of mysterious error messages for markers #536
+  
+  * Improved logic for AdjList creation (specifically, overwrite y/n behaves now)
+
+  * Fixed multiple PicInfo.txt files found in a project #512
+    (Renamed publication specific picInfo.txt to picChecks.txt)
+	
+  * Fixed diglot merging of \cl chapter label issues #485
+  
+  * Fixed RTL books don't have correct binding side #525
+  
+  * Fixed error on attempting to Select Page Border (or any other PDFs) #535
+  
+  * Fixed multiple diglot merge issues (inc. primary text repeats leaving gaps #532)
+
+  * Fixed footnotes from getting lost on 2->1 and 1->2 col transition #533
+  
+  * Fixed outputting footnotes at end of singlecolumn books
+  
+  * Fixed side-bar width issue, and zgap after a rem
+
+Bug fixes and Improvements in 1.9.5 (19 Sep 2021)
+
+  * Added option to allow for unbalanced columns (Bottom Rag on Layout page)
+  
+  * Added ability to suppress, re-enable and reset page numbers (esp. for FRT matter)
+      using codes: \nopagenums, \dopagenums, \resetpagenums N   (if N<0: i, ii, iii)
+  
+  * Added support for Paratext's traditional manual line break (i.e. // = \u2028)
+
+  * Added "A4 with crop marks" as an optimum paper size for local printing and binding
+  
+  * Remember folder location of previously selected PDF when selecting a new file #520, #188
+  
+  * Provide an alternative way to format Table of Contents entries #73  
+  
+  * Improved logic for "Prevent Orphan Words" to only force shorter words
+
+  * Improved logic for calculating adjust lists (indicating grow and shrink options) #493
+
+  * Fixed odd empty line at bottom of page #489
+  
+  * Fixed Full-page picture vertical alignment issues #505
+  
+  * Fixed Hide Empty Verses affecting the output of a change rule (\pagebreak missing) #522
+
+  * Fixed Adding a new style doesn't always work the 1st time around #513  
+  
+  * Fixed intro matter jumping off grid causing misalignment
+  
+Bug fixes and Improvements in 1.9.4 (11 Sep 2021)
+
+  * Added option to have the header in a second language/script #500
+  
+  * Added an alternative way to format Table of Contents entries (cat:toc|tr etc.) #73
+  
+  * Added option to have Leaders in Table of Contents #490
+  
+  * Added ability to create "Reader layout" with verse numbers in center gutter (beta)
+  
+  * Make it obvious that VALUES need to be filled in on the variable list #492
+  
+  * Fixed PTXprint doesn't start after installing #516
+  
+  * Fixed Adding a new style doesn't always work the first time around #513
+  
+  * Fixed Creating FRT matter often fails when starting off #514
+  
+  * Fixed bug of "Hide Empty Verses" having a dependency on "Auto-Correct USFM" in UI #502
+  
+  * Add / verify "start chapter 1 on new page" support in diglots #429
+  
+  * Added \zgap and \zrule as configurable milestones #488
+	e.g.  \zgap|9em plus 2em\*     or     \zgap|0.7in\*
+          \zrule|align="c" width="0.75" thick="0.5pt"\*    or   just \zrule \*
+
+  * Fixed full-page picture vertical alignment issues #505
+  
+  * Fixed 1-line diglot footnotes get a footnoterule going through them #508
+  
+Bug fixes and Improvements in 1.9.3 (30 Aug 2021)
+  
+  * CHANGED: output location from "<projID>\PrintDraft" to "<projID>\local\ptxprint" folder
+	* All temporary files are hidden away in sub-folders of this target folder
+  
+  * Added Peripherals tab to UI for better handling of config-specific front matter
+	* Added feature to create config-specific front matter with variables
+	* Added feature to import Paratext PDFs as part of front matter
+	* Added feature to import Paratext FRT periph sections as part of front matter
+	* Improved table of contents, including various options to categorize and sort
+  
+  * Added feature to copy configs to other Paratext projects #480
+  
+  * Improved 'Hide Empty Verses' and added option to show ellipsis #478
+
+  * Typing new configuration name no longer selects similar configuration instead #468
+  
+  * Improved 'Column of xRefs' feature to also work with single-column layout
+  
+  * Added warning for lack of EL compliance if 'SIL' found in copyright statement
+  
+  * Non-English UI web links (to USFM help) are routed through translate.Google.com
+	* and 'Only use English Links' option added to prevent the new behaviour if needed
+  
+  * Added advanced option 'Disable ALL internet use' - especially for sensitive locations
+
+  * Fixed Multi Credit Overlays to work with verbose picture filenames
+  
+  * #475 Preserve notes on 1->2 and 2->1 column transitions
+
+  * #483 fix ptxprint-mod.sty not being included from secondary diglot text 
+  
+  * #486 fix --book fails to select book(s) to print on command line 
+  
+Bug fixes and Improvements in 1.9.2 (29 Jul 2021) 
+
+  * Temporarily removed "Update Available" feature due to current Python SSL bug
+  
+Bug fixes and Improvements in 1.9.1 (28 Jul 2021) 
+
+  * Added Update button to status bar (shows if a newer version is available)
+  
+  * Diglot should obey nobreaks after headings better now
+  
+  * Added diglot copyright default (enabling info from both projects to be displayed)
+  
+  * Fixed bug to support \zimagecopyrights with no lang be formatted with non \pc markers
+  
+  * Fixed bug of files missing from archive
+  
+  * Fixed missing missing page number on even Intro pages (NoVevenfooter)
+  
+  * Improved hiding of Intro matter and Intro-Outlines to be more reliable
+  
+Bug fixes and Improvements in 1.9 (6 Jul 2021) 
+
+  * Added button to Return to primary project when configuring secondary project of diglot
+  
+  * Fixed USFM parser heirarchy recovery
+  
+  * Fixed AdjList creation bug, and introduced better error message reporting
+  
+  * Hopefully prevent pagebreak mid-cutout for raised chapter labels
+  
+  * Fixed wrapping marginal verses
+  
+  * Improved functionality of 'at' changes so that this is now also possible:
+        at ROM 1:3 '\\v 3' > '\\v 3-4'
+        at ROM 1:4 '\\v 4 ' > '' 
+  
+  * Fixed and improved mymr syllable breaking
+  
+Bug fixes and Improvements in 1.8.9.1 (25 Jun 2021) 
+
+  * Added option to Omit Captions for illustrations
+  
+  * Added PDF Output Format option for PDF standards conformance (Advanced page)
+    (Digital=RGB, Print=CYMK, Transparency, and Archive)
+  
+  * Allow PDFs to be used as illustrations
+  
+  * Updated wording and graphics on the Layout page
+  
+  * Changed hard-to-find Adv/Basic mode slider to a Show More/Less button
+  
+  * Added hook to allow triggering of caller reset on chapter breaks
+  
+  * Fixed bug in auto-numbered callers and enable 
+  
+  * Fixed chapter number cutouts for \nb (no-break para over chapter boundary)
+
+  * Fixed calculation for 'Space above header' on Layout page
+  
+  * Fixed error with picture positioning set for 'After Paragraph'
+  
+  * Fixed position of final major line in graph-paper
+
+  * Fixed page break \pb or \pagebreak support in diglots
+
+Bug fixes and Improvements in 1.8.3 (11 Jun 2021)
 
 NOTE: The child markers of \f and \x now follow the settings of their parent marker styles.
       As a result there may be changes in the way footnotes and cross-references appear.
 	  It is recommended that you RESET these styles to use the default settings prior
 	  to trying to remedy settings manually.
 	  
-Bug fixes and Improvements in 1.8.2
+  * Fix handling of Grk/Hbr embedded within RTL/LTR text e.g. \wh Hebrew\wh*
+  
+  * Fix bug in style editor affecting the setting of bold italic etc.
+  
+  * Fix diglot gridlines
+  
+  * Polyglot support now available in TeX macros (but not yet in PTXprint user-interface)
+
+  * Fixed AdjList generation
+  
+  * Fixed interlinear alignment issues
+  
+  * Allow PrintDraftChanges.txt to do location-specific changes using keyword 'at'
+    e.g.  at GAL 3:16 "yesukrist" > "yesu krist"  (only make this change in one verse)
+	or    at JHN "kurpa" > "permata daya"         (only make this change in one book)
+
+Bug fixes and Improvements in 1.8.2 (2 Jun 2021)
 
   * Fixed module handling (again) to be more flexible with references
   
@@ -18,7 +1417,7 @@ Bug fixes and Improvements in 1.8.2
   
   * #459 Hide/Exclude Contents of Marker fixed for all markers
   
-Bug fixes and Improvements in 1.8.1
+Bug fixes and Improvements in 1.8.1 (29 May 2021)
 
   * Fixed Paratext module processing to be more robust
   
@@ -34,7 +1433,7 @@ Bug fixes and Improvements in 1.8.1
   
   * Fix strange colophon behaviour
   
-Bug fixes and Improvements in 1.8
+Bug fixes and Improvements in 1.8 (24 May 2021)
 
   * Added new feature to include cross-references from external lists in centre column
   
@@ -48,7 +1447,7 @@ Bug fixes and Improvements in 1.8
   
   * Ensure .triggers files are included in .zip archives
 
-Bug fixes and Improvements in 1.7.9
+Bug fixes and Improvements in 1.7.9 (20 May 2021)
 
   * Show flattened module in Final SFM tab when typesetting a module
   
@@ -68,15 +1467,15 @@ NOTE: For those previously using various Border and Grid PDFs as watermarks:
 	 various Border and Grid PDFs have been removed from the Watermark PDFassets.
 	 Also note that the 'Crop Marks' option still exists, but on the Advanced tab.
 
-Bug fixes in 1.7.2
+Bug fixes in 1.7.2 (15? May 2021)
 
   * Fix bug in PicList generation for USFM3 files
 
-Bug fixes in 1.7.1
+Bug fixes in 1.7.1 (11 May 2021)
 
   * TypeError bug fix for Style editor
 
-Bug fixes and Improvements in 1.7
+Bug fixes and Improvements in 1.7 (30 Apr 2021)
 
   * Added UI localisation for Indonesian (tooltips yet to be done) - thanks to DC & RN
   
@@ -98,7 +1497,7 @@ Bug fixes and Improvements in 1.7
   
   * #438 Pictures now work more predictably in non-scripture books (FRT, BAK etc.)
   
-Bug fixes and Improvements in 1.6.9
+Bug fixes and Improvements in 1.6.9 (23 Apr 2021)
 
   * Added option to include Guides (rules and baselines) and/or custom Grid behind text
   
@@ -116,13 +1515,13 @@ Bug fixes and Improvements in 1.6.9
   
   * Generate Table of Contents no longer crashes when Letter Spacing is enabled
 
-Bug fixes and Improvements in 1.6.1.1
+Bug fixes and Improvements in 1.6.1.1 (16 Apr 2021)
 
   * Fix TeX macro which was causing a crash when 'Minus'/'Plus' occured after a verse number
   
   * Various minor improvements to TeX macros
 
-Bug fixes and Improvements in 1.6.1
+Bug fixes and Improvements in 1.6.1 (13 Apr 2021)
 
   * Add "End-of-Ayah" option for verse decorator on the Tabs+Border tab 
   
@@ -146,7 +1545,7 @@ Bug fixes and Improvements in 1.6.1
   
   * Fixed Preferred image type handling to follow the list of extensions strictly
   
-Bug fixes and Improvements in 1.6.0.4
+Bug fixes and Improvements in 1.6.0.4 (1 Apr 2021)
 
   * Added Decorative Section Heading graphic for 2-col layouts
   
@@ -160,11 +1559,11 @@ Bug fixes and Improvements in 1.6.0.4
   
   * Turn off image copyrights for colophon if pictures are not enabled
 
-Bug fixes and Improvements in 1.6.0.3
+Bug fixes and Improvements in 1.6.0.3 (26 Mar 2021)
 
   * Fixed Adjust Lists for diglots (again!)
 
-Bug fixes and Improvements in 1.6.0.2
+Bug fixes and Improvements in 1.6.0.2 (25 Mar 2021)
 
   * Paragraphed endnotes are now working
   
@@ -188,7 +1587,7 @@ Bug fixes and Improvements in 1.6.0.2
     This is probably triggered when a footnote is the reason for a heading to be moved onto the next page, so
 	a good workaround is to use the AdjList to jiggle the text at that point until it resolves.
 
-Improvements in 1.6
+Improvements in 1.6 (19 Mar 2021)
 
   * Diglot code has been re-written to be more robust and adaptable to structural differences between texts
 
@@ -238,7 +1637,7 @@ Improvements in 1.6
 
   * Dozens of other minor bug fixes since 1.5 
 
-Bug Fixes in 1.5.22
+Bug Fixes in 1.5.22 (18 Mar 2021)
 
   * Fix: Unable to print after creating archive
 
@@ -246,7 +1645,7 @@ Bug Fixes in 1.5.22
   
   * Fix note spacing problems
     
-Bug Fixes and Improvements in 1.5.21
+Bug Fixes and Improvements in 1.5.21 (17 Mar 2021)
 
   * Major review and update to tooltips
   
@@ -262,7 +1661,7 @@ Bug Fixes and Improvements in 1.5.21
   
   * Note that the option to "Combine PDFs" has been removed - it is now always the default
 
-Bug Fixes and Improvements in 1.5.18
+Bug Fixes and Improvements in 1.5.18 (12 Mar 2021)
 
   * Pictures in peripheral books now work and can be manipulated via the PicList settings 
     Notes: you will need to regenerate the PicList for those peripheral books
@@ -278,7 +1677,7 @@ Bug Fixes and Improvements in 1.5.18
   
   * Installer shows the Release Notes BEFORE installation (giving you a chance to back out if needed)
   
-Bug Fixes and Improvements in 1.5.17
+Bug Fixes and Improvements in 1.5.17 (10 Mar 2021)
 
   * Bug fix: Media permission tooltip (in Pictures, Details) works now - was broken since localization was introduced
   
@@ -290,7 +1689,7 @@ Bug Fixes and Improvements in 1.5.17
 
   * Bug fix: false assumption that Andika is installed (changed tracing font to Arial)
 
-Bug Fixes and Improvements in 1.5.16
+Bug Fixes and Improvements in 1.5.16 (6 Mar 2021)
 
   * Allow \zimagecopyrights and following language code to be case-insensitive
   
@@ -302,7 +1701,7 @@ Bug Fixes and Improvements in 1.5.16
   
   * Credit Overlays can be applied to multiple pictures
   
-Bug Fixes and Improvements in 1.5.15
+Bug Fixes and Improvements in 1.5.15 (4 Mar 2021)
 
   * Fixed a bunch of bugs that new users would encounter when starting to use PTXprint
   
@@ -324,7 +1723,7 @@ Bug Fixes and Improvements in 1.5.15
   
   * Fixed issues with \toc3, thumbtabs and ToC
 
-Bug Fixes and Improvements in 1.5.14.4
+Bug Fixes and Improvements in 1.5.14.4 (25 Feb 2021)
 
   * Fix module loading
 
@@ -332,7 +1731,7 @@ Bug Fixes and Improvements in 1.5.14.4
 
   * Fix Linux PPA building
 
-Bug Fixes and Improvements in 1.5.14.1
+Bug Fixes and Improvements in 1.5.14.1 (22 Feb 2021)
 
   * Fix fatal (Faux) error when trying to switch UI languages
   
@@ -352,7 +1751,7 @@ Bug Fixes and Improvements in 1.5.14.1
   
   * Fix #406 regexes for excluding intro materials
   
-Bug Fixes and Improvements in 1.5.13
+Bug Fixes and Improvements in 1.5.13 (21 Feb 2021)
 
   * Allow \zimagecopyrights to be localized by adding language code to end of marker
   
@@ -372,7 +1771,7 @@ Bug Fixes and Improvements in 1.5.13
   
   * Prevent letter spacing from messing up page breaks
   
-Bug Fixes and Improvements in 1.5.12
+Bug Fixes and Improvements in 1.5.12 (15 Feb 2021)
 
   * Added missing margin graphics files to installer
   
@@ -380,7 +1779,7 @@ Bug Fixes and Improvements in 1.5.12
   
   * Added missing icon(s): Clear edit, Selected Checkmark
 
-Bug Fixes and Improvements in 1.5.11
+Bug Fixes and Improvements in 1.5.11 (15 Feb 2021)
 
   * Font Size Factor now has a label displaying the (actual) calculated point size
 
@@ -397,7 +1796,7 @@ Bug Fixes and Improvements in 1.5.11
   
   * #390 Saving edits to a named project
   
-Bug Fixes and Improvements in 1.5.10
+Bug Fixes and Improvements in 1.5.10 (8 Feb 2021)
 
   * Font Size Factor on Styles tab is now exactly that - rather than a point size
     (Note: we still need to add a label/tooltip displaying the actual calculated point size)
@@ -426,13 +1825,13 @@ Bug Fixes and Improvements in 1.5.10
 
   * Prevent crash from occurring if you hit print with an empty Settings page open (in View+Edit)
   
-Bug Fixes and Improvements in 1.5.9.3
+Bug Fixes and Improvements in 1.5.9.3 (3 Feb 2021)
 
   * Fix non-starting PTXprint due to lack of lang code in user config
   
   * Get rtl and ttb working again
 
-Bug Fixes and Improvements in 1.5.9.1
+Bug Fixes and Improvements in 1.5.9.1 (3 Feb 2021)
 
   * #368 Added Localization selection from within PTXPrint
   
@@ -444,7 +1843,7 @@ Bug Fixes and Improvements in 1.5.9.1
   
   * Show subset of Fonts+Script tab settings for basic users
   
-Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
+Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6) (2 Feb 2021)
 
   * Ensure settings are actually reset when reverting to default values in Style editor
   
@@ -460,7 +1859,7 @@ Bug Fixes and Improvements in 1.5.9 (RC for ver 1.6)
   
   * Various refinements to underlying XeTeX macros
 
-Bug Fixes and Improvements in 1.5.8.4
+Bug Fixes and Improvements in 1.5.8.4 (28 Jan 2021)
 
   * Localization of UI is now available through Crowdin - contributions welcome! https://crowdin.com/project/ptxprint
     (aiming to release several languages for ver 1.6)
@@ -479,7 +1878,7 @@ Bug Fixes and Improvements in 1.5.8.4
   
   * PTXprint will prompt for a folder with the (Paratext) Project Data if Paratext isn't installed 
   
-Bug Fixes and Improvements in 1.5.7
+Bug Fixes and Improvements in 1.5.7 (25 Jan 2021)
 
   * Allow configurations to be reloaded, and Default config to be "Deleted" (or re-initialized)
   
@@ -491,7 +1890,7 @@ Bug Fixes and Improvements in 1.5.7
   
   * Note that Colophon display has a known issue - spreads over multiple pages - (to be resolved next week)
 
-Bug Fixes and Improvements in 1.5.6
+Bug Fixes and Improvements in 1.5.6 (21 Jan 2021)
 
   * Fixed issue with saving/naming configurations
   
@@ -503,11 +1902,11 @@ Bug Fixes and Improvements in 1.5.6
   
   * Updated help in several Tooltips to reflect addition of Styles editor
 
-Bug Fixes and Improvements in 1.5.5
+Bug Fixes and Improvements in 1.5.5 (20 Jan 2021)
 
   * Fix exception generated from multi-threading
 
-Bug Fixes and Improvements in 1.5.4
+Bug Fixes and Improvements in 1.5.4 (18 Jan 2021)
 
   * Enable searching for Styles
   
@@ -515,7 +1914,7 @@ Bug Fixes and Improvements in 1.5.4
   
   * Change some default values (poetry left aligned instead of justified; custom.sty is OFF by default)
 
-Bug Fixes and Improvements in 1.5.3
+Bug Fixes and Improvements in 1.5.3 (14 Jan 2021)
 
   * Several PicList bugs fixed - especially relating to diglot illustrations
   
@@ -523,13 +1922,11 @@ Bug Fixes and Improvements in 1.5.3
   
   * Fixed broken ImageCredits in colophon
   
-Bug Fixes and Improvements in 1.5.2
+Bug Fixes and Improvements in 1.5.2 (12 Jan 2021)
 
   * Pictures tab: Enable/Disable Details and Checklist tabs when Show/Hide Advanced features is clicked
   
   * Fix pictures not displaying without section headings present
-
-Bug Fixes and Improvements in 1.5.1
 
   * Font feature editor added to Font Selection dialog
   
@@ -541,7 +1938,7 @@ Bug Fixes and Improvements in 1.5.1
   
   #339 - Xref callers problem fixed
   
-Bug Fixes and Improvements in 1.5
+Bug Fixes and Improvements in 1.5 (23 Dec 2020)
 
   * Interlinear/Ruby glossing is now possible (for early testing and feedback)
   
@@ -553,7 +1950,7 @@ Bug Fixes and Improvements in 1.5
   
   * Printing possible from a DBL bundle (minimally tested, work in progress) 
 
-Bug Fixes and Improvements in 1.4.3
+Bug Fixes and Improvements in 1.4.3 (3 Dec 2020)
 
   * Switch \LineSpacing to be a multiple of base line spacing. 1.0 means base line spacing.
 
@@ -565,7 +1962,7 @@ Bug Fixes and Improvements in 1.4.3
 
   * Give visual traceback for errors in archive creation
 
-Bug Fixes and Improvements in 1.4.2
+Bug Fixes and Improvements in 1.4.2 (1 Dec 2020)
 
   * Eliminate the need for NestedStyles.sty (this file can now be deleted permanently)
   
@@ -585,7 +1982,7 @@ Bug Fixes and Improvements in 1.4.2
 
   * Moved "Variable Line Spacing" to Advanced tab [currently still broken] 
   
-Bug Fixes and Improvements in 1.3.8
+Bug Fixes and Improvements in 1.3.8 (19 Nov 2020)
 
   * Re-arrange Pictures UI items and fix multiple bugs relating to picture handling
 
@@ -599,7 +1996,7 @@ Bug Fixes and Improvements in 1.3.8
   
   * #291 Add filter for Checking Status of Pictures
 
-Bug Fixes and Improvements in 1.3.3
+Bug Fixes and Improvements in 1.3.3 (14 Nov 2020)
 
   * Localized UI for Spanish (es) added - thanks to Phil Leckrone and team
 
@@ -611,7 +2008,7 @@ Bug Fixes and Improvements in 1.3.3
   
   * Prevent PTXprint locking up completely after failed outputs
   
-Bug Fixes in 1.3.2
+Bug Fixes in 1.3.2 (11 Nov 2020)
 
   * Localized references now display properly in Modules
   
@@ -621,7 +2018,7 @@ Bug Fixes in 1.3.2
 
   * Linux: Fixed description and icon entry
   
-Bug Fixes and Improvements in 1.3.1
+Bug Fixes and Improvements in 1.3.1 (5 Nov 2020)
 
   * Endnotes should now display at the end of each book
   
@@ -645,7 +2042,7 @@ Bug Fixes and Improvements in 1.3.1
 
   * Fixed: #275 Selecting "Letter spacing" prevents printing
   
-Bug Fixes and Improvements in 1.3
+Bug Fixes and Improvements in 1.3 (23 Oct 2020)
 
   * Stylesheet editor
   
@@ -667,7 +2064,7 @@ Bug Fixes and Improvements in 1.3
   
   * Fixed file-naming issues when creating new config
   
-Significant Improvements in 1.2
+Significant Improvements in 1.2 (3 Oxt 2020)
 
   * Interface is now localizable (ask for details if you want to contribute a translated interface)
   
@@ -693,7 +2090,7 @@ Significant Improvements in 1.2
 
   * Auto-update PicList and other config filenames to now be based on new file naming system which includes the config name
   
-Bug Fixes since version 1.1
+Bug Fixes since version 1.1 (3 Oxt 2020)
    
   * Ensure captions in PicList display in the right font for the project
   
@@ -725,7 +2122,7 @@ Bug Fixes since version 1.1
 
   * Fix certificate (again!) so no warnings are issued during installation
   
-Bug Fixes and Improvements in: 1.1
+Bug Fixes and Improvements in: 1.1 (21 Sep 2020)
 
   * Last-used Project name and Config settings are now preserved between sessions
   
@@ -749,7 +2146,7 @@ Bug Fixes and Improvements in: 1.1
   
   * Fix installer certificate
 
-First Public Release: 1.0
+First Public Release: 1.0 - (13 Aug 2020)
 
   * Minor UI adjustments
   

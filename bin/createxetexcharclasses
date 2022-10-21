@@ -1,0 +1,35 @@
+#!/usr/bin/python3
+
+from palaso.unicode.ucd import get_ucd, find_ucd
+import argparse
+
+mn = set(find_ucd("gc", "Mn"))
+mc = set(find_ucd("gc", "Mc"))
+#cf = set(find_ucd("gc", "Cf"))
+invis = set(find_ucd("InSC", "Invisible_Stacker"))
+vir = set(find_ucd("InSC", "Virama"))
+# zs = set(find_ucd("gc", "Zs"))
+
+hdr=r"""
+\XeTeXinterchartokenstate=1
+\newXeTeXintercharclass\KclassCM
+\newXeTeXintercharclass\KclassVir
+"""
+final=r"""
+\XeTeXinterchartoks 0 0{\intercharspace}
+\XeTeXinterchartoks \KclassCM 0{\intercharspace}
+\XeTeXinterchartokenstate=0
+"""
+res = [hdr]
+allvir = vir | invis
+allmn = (mn | mc) - allvir
+res += [r'\XeTeXcharclass"{:04X}=\KclassVir'.format(c) for c in sorted(allvir)]
+res += [r'\XeTeXcharclass"{:04X}=\KclassCM'.format(c) for c in sorted(allmn)]
+res += [final]
+
+parser = argparse.ArgumentParser()
+parser.add_argument("outfile")
+args = parser.parse_args()
+
+with open(args.outfile, "w") as outf:
+    outf.write("\n".join(res))

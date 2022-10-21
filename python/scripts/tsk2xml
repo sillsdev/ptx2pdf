@@ -1,0 +1,57 @@
+#!/usr/bin/python3
+
+from ptxprint.reference import RefList, Reference, BaseBooks
+from ptxprint.utils import allbooks
+import argparse
+
+class TSKBooks(BaseBooks):
+    bookNames = {"ge": "GEN", "ex": "EXO", "le": "LEV", "nu": "NUM", "de": "DEU",
+        "jos": "JOS", "jud": "JDG", "ru": "RUT", "1sa": "1SA", "2sa": "2SA", "1ki": "1KI",
+        "2ki": "2KI", "1ch": "1CH", "2ch": "2CH", "ezr": "EZR", "ne": "NEH", "es": "EST",
+        "job": "JOB", "ps": "PSA", "pr": "PRO", "ec": "ECC", "so": "SNG", "isa": "ISA",
+        "jer": "JER", "la": "LAM", "eze": "EZE", "da": "DAN", "ho": "HOS", "joe": "JOL",
+        "am": "AMO", "ob": "OBA", "jon": "JON", "mic": "MIC", "na": "NAM", "hab": "HAB",
+        "zec": "ZEC", "mal": "MAL",
+        "mt": "MAT", "mr": "MRK", "lu": "LUK", "joh": "JHN", "ac": "ACT", "ro": "ROM",
+        "1co": "1CO", "2co": "2CO", "ga": "GAL", "eph": "EPH", "php": "PHP", "col": "COL",
+        "1th": "1TH", "2th": "2TH", "1ti": "1TI", "2ti": "2TI", "tit": "TIT", "phm": "PHM",
+        "heb": "HEB", "jas": "JAS", "1pe": "1PE", "2pe": "2PE", "1jo": "1JN", "2jo": "2JN",
+        "3jo": "3JN", "jude": "JUD", "re": "REV"}
+    bookStrs = {v: [k]*3 for k, v in bookNames.items()}
+
+    @classmethod
+    def getBook(cls, s):
+        return cls.bookNames.get(s.lower(), s.upper())
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile", help="Input tsk.txt file")
+parser.add_argument("outfile", help="Output tsk.xml file")
+args = parser.parse_args()
+
+results = {}
+with open(args.infile, encoding="latin-1") as inf:
+    for l in inf.readlines():
+        b = l.strip().split("\t")
+        bn = int(b[0])
+        ref = Reference(allbooks[bn - (1 if bn < 40 else 0)], int(b[1]), int(b[2]))
+        rl = RefList.fromStr(b[5], context=TSKBooks)
+        rl.simplify()
+        results.setdefault(ref, []).append(rl)
+
+with open(args.outfile, "w", encoding="utf-8") as outf:
+    outf.write("""<?xml version='1.0' encoding='utf-8'?>
+<cross-references>
+""")
+    for k, v in sorted(results.items(), key=lambda x: x[0].asint()):
+        outf.write('    <xref ref="{}">\n'.format(k))
+        for l in v:
+            if len(l) > 1:
+                outf.write('''        <refgroup>
+            <ref>{}</ref>
+        </refgroup>
+'''.format(l))
+            else:
+                outf.write('        <ref>{}</ref>\n'.format(l))
+        outf.write('    </xref>\n')
+    outf.write('</cross-references>\n')
+

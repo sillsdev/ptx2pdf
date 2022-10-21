@@ -1,36 +1,47 @@
 \id DIG Introduction
 \imt Diglot book of Galatians
 \is1 Introduction
-\ip This is a demonstration of diglot setting. The intention is to stretch the code 
+\ip This is a demonstration of polyglot setting. The intention is to stretch the code 
 and show what it can and can't do in different configurations: very different numbers of 
 characters per verse, different fonts, footnotes, etc.
 It's rather a challenging demonstration because the right-hand text (An annotated
 version of the Wycliffe Bible) has a number in-text annotations, the left-had text has 
-footnotes and cross-references.
+footnotes and cross-references. The centre text is of course in greek.
 
 \ip The text is has been set twice, the first time, this is done respecting the
 paragraphing of the WEB. (i.e.  a paragraph from the WEB should start at the
 same vertical position as the Wycliffe text).
 In this version, the footnotes are restricted to their respective columns. 
 
-\ip The text is then set with one-verse per paragraph. This may look better in the sense 
-that the gaps on the page are smaller, but it is removing the vaulable insights 
-provided by paragraphing. 
+\zglot| R\*
+
+\ip The text is then set with one-verse per paragraph.  This may look better in
+the sense that the gaps on the page are smaller, but it is removing the
+vaulable insights provided by paragraphing. 
 In this version, as there are no footnotes in this Wycliffe text, the option
-was chosen to not separate them.  Had there been footnotes in both texts, they
-would have been (unpredictably?) mingled.
+was chosen to not separate them.  Had there been footnotes in more than one of
+the texts, they would have been (unpredictably?) mingled.
 
 \vfill
 \is Copyright Statements
+\zglot |L\*
 \is2 English: Wycliffe's Bible Modern Spelling (Enhanced) 
 
 \ip Copyright © 2001,2010,2011,2012,2013,2015 Terry Noble
 \ip Language: English
 \ip Dialect: Archaic
 \ip Translation by: Terry Noble
-\ip Creative Commons Attribution-Noncommercial-No Derivatives license 4.0
+\ip License: Creative Commons Attribution-Noncommercial-No Derivatives license 4.0
 \ip \bd Source:\bd* https://ebible.org/find/details.php?id=engwyc2018
 
+\zglot |A \*
 \is2 The World English Bible
 \ip The World English Bible is in the Public Domain. That means that it is not copyrighted. However, "World English Bible" is a Trademark of eBible.org.
 \ip \bd Source:\bd* https://ebible.org/find/details.php?id=engwebp
+
+\zglot| R\*
+\is2  OpenGNT
+\ip Open Greek New Testament Project by Eliran Wong
+\ip License: Creative Commons Attribution-ShareAlike 4.0 International License.
+\ip \bd Source:\bd* https://github.com/eliranwong/OpenGNT
+

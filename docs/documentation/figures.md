@@ -32,7 +32,7 @@ the `loc` attribute it says "a list of verses where it might be inserted", and
 for size it offers only 'span' and 'col'. The ptx2pdf XeTeX macros give better
 control on both of these, offering multiple positioning options and if you want
 a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see
-a later discusion also). They also add the extra sizes 'page' and 'full'. 
+a later discusion also). They also add the extra sizes 'width', 'page' and 'full'. 
 'Full' suppresses headers and footers.
 
 ## Attributes
@@ -134,23 +134,32 @@ Notes:
     or fully on the next. A negative number (e.g. cr-1) will raise the image and
     cut-out, but while this can raise the image into the preceeding paragraph, 
     it  cannot make the cutout begin earlier than the paragraph containing the anchor.
+    A fractional number (e.g. cr0.2) will adjust the image by a fractional
+    amount within the cutout. i.e. cr1.9 will be 0.1 lines higher than cr2. 
+    cr1.5 is treated as cr2 (two full-width lines before the image) with an
+    adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
 [7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
 [8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
+    If a vertical alignment is specified, then the image will be the only image
+    on the page, even if another image would also fit. If no vertical
+    alignment is specified, then the image will be centred vertically,
+    but an additional image or images may be fitted onto the page if there is space.
 [9] If the image is not the same aspect ratio as the page, or a scaling factor is used, 
     there may be some space. For this reason, the alignment options are available.
-    Full page images have no header or footer, there is no attempt made to keep
-    the caption on the page.  Alignment actively attempts to get the picture to the
+    Full page images have no header or footer, and using a caption with them 
+    is normally a mistake leading to part of the image or caption. 
+    Alignment actively attempts to get the picture/caption to the
     specified edge of the page. ```\FullPageFudgeFactor``` (normally defined to
-    be -2pt) is available for tweaking if top alignment does not actually coincide 
-    with the image. 
+    be 0pt) is available for tweaking if top alignment does not actually coincide 
+    with the top of the image. 
 
 #### Restrictions  / notes on certain picture positions
 - p : The delayed picture is saved until the end of the Nth paragraph in a
-  certain 'box'. There is no code to have either an adjustable stack of boxes 
-  or multiple images in the box. (But diglots have a second box for the
-  right/outer text).  If an attempt is made to put a second picture into the
-  box while it still contains the first, the first picture will be lost.
+  certain 'box'. There is no code to have an adjustable stack of boxes 
+  but multiple images can now be put into the same after-paragraph box 
+  (code for this added in late March 2022).
+  Diglots have a second box for the right/outer text.
 - F : 
   -  If a caption is used, this will normally be off the page. It may,
      however, still affect the alignment of the image, preventing top / bottom alignment from 
@@ -179,21 +188,35 @@ Notes:
 #### ```\setCutoutSlop``` - defining cutout offset permission.
 
 The TeX code allows a small amount of hysterisis (slop) in the positioning of
-cutouts.  (1 line higher for chapter numbers, +/- 2 relative to 'perfect' for other cutouts).
-This might mean, for instance, that if run 1 calculated that an
-in-cutout image should ideally start at line 14 in a given paragraph, if on 
-the next run  it finds the anchor-point has moved and the cutout should now be
-on line 13 or 15 the code considers this acceptable.  Rather than adjusting the
-shape of the paragraph again (which risks moving the anchor point again), an annotation 
-is made to the `.parlocs` file that the image is to raised or lowered relative to the 
-anchor point to fit into the cutout.
-The following allows `droppic4` (image number 4, in a cutout analagous to
-a drop-cap)  to accept being raised by 3 lines or lowered by two.
+cutouts that cannot be placed immediately.  (The default slop is 1 line higher
+for chapter numbers, +/- 2 relative to 'perfect' for most other cutouts).  This
+might mean, for instance, that if run 1 calculated that an in-cutout image
+should ideally start at line 14 in a given paragraph, if on the next run  it
+finds the anchor-point has moved and the cutout should now be on line 13 or 15
+the code considers this acceptable.  Rather than adjusting the shape of the
+paragraph again (which risks moving the anchor point again), an annotation is
+made to the `.delayed` file that the image is to raised or lowered relative to
+the anchor point to fit into the cutout.  The following command allows
+`droppic4` (image number 4, in a cutout analagous to a drop-cap)  to accept
+being raised by 3 lines or lowered by two.
 
 ```
 \setCutoutSlop{droppic4}{3}{2}
 ```
 
+It is not recommended to try to guess the image count by counting images, 
+as sidebars may also increase the number. Futhermore, some numbers may  
+be skipped. Instead, the `.delayed` file could be inspected. It will have a 
+format similar to this, with only the items which might be subject to these
+slop calculations included. The first item after '\DelayedItem` is the 
+name that should be supplied to `\setCutoutSlop`.
+
+```
+\DelayedItem{dropsidebarBox1}{GEN1.5}{2}{(95.354ptx12@2)R}
+\DelayedItem{dropgraphicInSidebar2}{GEN2.12}{1}{(53.677ptx3@1)R}
+\RaiseItem{droppic6}{TST1.7-preverse}{2}
+\DelayedItem{droppic6}{TST1.7-preverse}{11}{(58.91803ptx8@-4)R}
+```
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending
@@ -213,6 +236,13 @@ images in cutouts.
 
 ### size Attribute
 
+Valid values for this attribute are:
+- full: the entire size of the paper, a page reserved for images.
+- page: the normal printed area of the page, on a page reserved for images.
+- col: the width of the current column (only valid for 2 column text or diglot).
+- span: the width of the normal printed area of the page.
+- width: the full width of the paper 
+
 The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
 1.0 being the unity scaling. For example in a piclist:
@@ -231,8 +261,30 @@ the scale factor into its own `scale` attribute. This value is a multipler that
 scales an image after its size has been established via the `size` attribute. A
 value of `1.0` implies no size change.
 
-### x-xetex Attribute - Rotation control
+### x-spacebeside Attribute - cutout spacing
 
+An image in a cutout needs some space beside it, so that the text does not touch the image.
+This can be controlled globally by puting a different distance in the the configuration 
+parameter `\def\DefaultSpaceBeside{10pt}` If a particular figure needs a different value,
+this can be controlled by setting the x-spacebeside USFM3 attribute. e.g.
+`x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts.
+Sidebars in cutouts may set the `\SpaceBeside` value in the appropriate
+stylesheet. Note that the code currently assumes no one will have a cutout
+'foreground' image in a sidebar that is itself in a cutout, and uses
+`\SpaceBeside` for both cutouts.
+
+### x-spacebefore and x-spaceafter Attributes - Additional whitespace
+Figures by default have a small amount of space  above or below them (0.3 and
+0.5 of the main lineskip respectively), depending where the caption is (the space 
+taking the place of the caption). Additionally they may have additional
+whitespace before and after them. This is controlled by the 
+USFM-3 parameters `x-spacebefore` and `x-spaceafter`. Alternatively, the
+stylesheet parameters `\SpaceBefore` and `\SpaceAfter` will alter the 
+default value for all figures inserted via the `\fig` mechanism (including figures 
+from piclists). Sidebars similarly have these stylesheet parameters.
+
+### x-xetex Attribute - Rotation control and PDF page selection 
+#### Rotation
 To allow further transforming of images when inserting into the publication,
 ptxprint and the ptx macros support an optional 7th column in a USFM2 `\fig`
 element, which corresponds to the `x-xetex` USFM3 attribute. It consists of a
@@ -248,6 +300,9 @@ otherwise it is passed on to the ```\XeTeXpicFile``` or ```\XeTeXpdfFile```
 For example, in the piclist entry from the previous section, the image is rotated anticlockwise by 3 degrees.
 
 As yet, there is no mechanism to rotate the caption with the picture.
+
+#### PDF page selection
+The `x-xetex` attribute can also be used to select which page of a multipage PDF file is chosen to provide an image. It can be combined with rotation  E.g.  `x-xetex="rotate=binding page=2"`  would select the second page of the PDF and rotate it so the image 'up' is at the binding.
 
 ### media Attribute
 
@@ -384,29 +439,40 @@ the combinations do not trigger an unprintable page.
   while processing either column, and the user has no preference about
   which font, etc. are used (normally `L` will match it first, but this is not guaranteed).
 - The anchor for a key term (e.g. ```\k This (Odd) Term\k*```) is the book and
-  the exact text (including punctuation) between `\k` and `\k*`, but excluding
+  the exact text (including punctuation) between `\k` and ```\k*```, but excluding
   any spaces. (i.e.  in the above example it will be ```_bk_ This(Odd)Term```
 - The anchor for a stand-alone milestones is the book and the ```id```
   attribute for that marker e.g. ```\zfiga |id="rabbit123\*``` will trigger piclist 
   entries starting ```_bk_ rabbit123```  If ```id``` is the default attribute
-  (as it is for ```\zfiga```, the shorter form ```\zfiga|rabbit123``` may also be used 
+  (as it is for ```\zfiga```, the shorter form ```\zfiga|rabbit123\*``` may also be used 
   in the USFM. Note that at present only stand-alone milestones trigger figure 
-  inclusion.
-- A second or subsequent paragraph within a verse or keyterm entry may be referenced 
-  by appending a separator (by default an equals sign) and a number. e.g. ```_bk_ 1.2=3``` will 
-  trigger on the third paragraph within verse 2 of chapter 1. The following should be noted: 
+  inclusion, but there is nothing particularly magic about `\zfiga`, it's just a 'neutral' 
+  stand-alone milestone.
+- The anchor for the beginning of a book is ```_bk_ bookstart``` This anchor point was added to 
+  allow the placement of whole-page images before any content of the book.
+- A second or subsequent paragraph within a verse or keyterm entry, or after a stand-alone 
+  milestone may be referenced  by appending a separator (by default an equals
+  sign) and a number. e.g. ```_bk_ 1.2=3``` will trigger on the third paragraph
+  within verse 2 of chapter 1. The following should be noted: 
   - There is only one paragraph counter which is reset at each change of
     trigger. Thus the above example *will not* trigger if there
     is no 3rd paragraph before the next verse number, nor will it trigger if some other
-    potential marker occurs.  
+    potential anchor occurs.
   - As the first paragraph of the verse / key term is the one containing  that
-    item, a suffix of ```=1``` is an invalid trigger point and will never match.
+    item, a suffix of ```=1``` is normally an invalid trigger point and will never match.
+    The exception to this is when a *stand-alone milestone* **immediately** follows a paragraph break. 
+    In that case the trigger will activate just before the first piece of actual text after the milestone, assuming there is some.
   - The code assumes that *any* occurance of the separator in the piclist reference 
     means that what follows is a paragraph number. Using some other separator is now 
     supported, with the restriction that (a) it sould not be expected to occur 
     in normal text of a type that might crop up in a key term. (b) it must not contain characters 
     with a special meaning within TeX (e.g. `#`, `$`, `%`, `{`, `}`). Multiple character separators 
-    are permissible. The command  below (to be included in the `.tex` file before any piclists, etc. are loaded) sets the separator to be the sequence `=@=`, in case a simple = sign is used in the text of a keyword. Piclists would then need to specify paragraphs in form ```_bk_ 1.2=@=3```
+    are permissible. The command  below (to be included in the `.tex` file
+    before any piclists, etc. are loaded) sets the separator to be the sequence
+    `=@=`, in case a simple = sign is used in the text of a keyword. Piclists would
+    then need to specify paragraphs in form ```_bk_ 1.2=@=3``` A sequence of rare
+    letters, such as `zqz` could also be used, provided none of these letters has been 
+    declared active, e.g. by declaring that they should use the fallback font.
 ```
 \SetTriggerParagraphSeparator{=@=}
 ```
@@ -460,4 +526,9 @@ other paragraphing style elements.
 As noted above, caption styling is controled via the `fig` marker in the stylesheet. Font-related styles can be selected in the normal manner.
 For multi-line captions, the line spacing may be controlled by modification of `\LineSpacing` (in the same scaleable units as parameter `\FontSize`) or 
 `\BaseLine` (units must be supplied).
+
+### No Captions and references at all
+```
+\DoCaptionsfalse
+```
 

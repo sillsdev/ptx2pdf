@@ -8,7 +8,7 @@ import os, re, random, sys
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
-             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos"]
+             "x-credit", "x-creditrot", "x-creditbox", "x-creditpos", "captionR", "refR"]
 
 _defaults = {
     'scale':    "1.000"
@@ -19,7 +19,7 @@ _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti])
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", f)
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
     if cl:
         return cl[0].lower()
     else:
@@ -40,7 +40,8 @@ _checks = {
 
 class PicChecks:
 
-    fname = "picInfo.txt"
+    sharedfname = "picInfo.txt"
+    pubfname = "picChecks.txt"
 
     def __init__(self, parent):
         self.cfgShared = configparser.ConfigParser()
@@ -58,9 +59,9 @@ class PicChecks:
     def init(self, basepath, configid):
         if basepath is None or configid is None:
             return
-        self.cfgShared.read(os.path.join(basepath, self.fname), encoding="utf-8")
+        self.cfgShared.read(os.path.join(basepath, self.sharedfname), encoding="utf-8")
         self._init_default(self.cfgShared, "pic")
-        self.cfgProject.read(os.path.join(basepath, configid, self.fname), encoding="utf-8")
+        self.cfgProject.read(os.path.join(basepath, configid, self.pubfname), encoding="utf-8")
         self._init_default(self.cfgProject, "pub")
 
     def writeCfg(self, basepath, configid):
@@ -68,11 +69,11 @@ class PicChecks:
             return
         self.savepic()
         basep = os.path.join(basepath, "shared", "ptxprint")
-        for a in (configid, None):
-            p = os.path.join(basep, a) if a else basep
+        for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
+            p = os.path.join(basep, a[0]) if a[0] else basep
             os.makedirs(p, exist_ok=True)
-            with open(os.path.join(p, self.fname), "w", encoding="utf-8") as outf:
-                self.cfgShared.write(outf)
+            with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
+                a[2].write(outf)
 
     def loadpic(self, src):
         if self.src == newBase(src):
@@ -84,7 +85,7 @@ class PicChecks:
                 val = "OK"
             self.parent.set(k, val)
         # MH - this doesn't seem to be working
-        self.parent.set("tb_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
+        self.parent.set("txbf_picNotes", self.cfgProject.get(self.src, "notes", fallback=""))
         for cfg in (self.cfgShared, self.cfgProject):
             if cfg.getboolean(self.src, "approved", fallback=False):
                 self.parent.set("t_pubInits", cfg.get(self.src, "approved_by", fallback=""))
@@ -118,7 +119,7 @@ class PicChecks:
         else:
             cfg.set(self.src, "approved", "false")
         ocfg.set(self.src, "approved", "false")
-        self.cfgProject.set(self.src, "notes", self.parent.get("tb_picNotes"))
+        self.cfgProject.set(self.src, "notes", self.parent.get("txbf_picNotes"))
 
     def filter(self, src, filt):
         if filt == 0:       # All
@@ -166,14 +167,17 @@ class PicChecks:
         # return set(list(self.cfgShared.keys()) + list(self.cfgProject.keys()))
         
     def setMultiCreditOverlays(self, srcs, crdtxt, crdtbox, copysrc):
-        for k in srcs:
-            if k is not None and k[:3].lower() == copysrc.lower():
-                k = newBase(k)
-                if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
-                    if not self.cfgShared.has_section(k):
-                        self.cfgShared.add_section(k)
-                    self.cfgShared.set(k, 'piccredit', crdtxt)
-                    self.cfgShared.set(k, 'piccreditbox', crdtbox)
+        srcseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", copysrc)
+        if len(srcseries):
+            for k in srcs:
+                kseries = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?", k)
+                if len(kseries) and kseries[0][:3].lower() == srcseries[0][:3].lower():
+                    k = newBase(k)
+                    if self.parent.get('c_plCreditOverwrite') or not self.cfgShared.get(k, 'piccredit', fallback=''):
+                        if not self.cfgShared.has_section(k):
+                            self.cfgShared.add_section(k)
+                        self.cfgShared.set(k, 'piccredit', crdtxt)
+                        self.cfgShared.set(k, 'piccreditbox', crdtbox)
 
 class PicInfo(dict):
 
@@ -184,6 +188,7 @@ class PicInfo(dict):
         self.clear(model)
         self.inthread = False
         self.keycounter = 0
+        self.mode = None
 
     def clear(self, model=None):
         super().clear()
@@ -194,21 +199,18 @@ class PicInfo(dict):
                 self.basedir = self.model.settings_dir
             else:
                 self.basedir = os.path.join(self.model.settings_dir, model.prjid)
-            self.config = model.configId
+            self.config = model.configName()
         self.loaded = False
         self.srchlist = []
 
-    def load_files(self, parent, suffix="", prjdir=None, prj=None, cfg=None):
+    def load_files(self, parent, suffix=""):
         if self.inthread:
             return False
         else:
             self.thread = None
-        if prjdir is None:
-            prjdir = self.basedir
-        if prj is None:
-            prj = self.prj
-        if cfg is None:
-            cfg = self.config
+        prjdir = self.basedir
+        prj = self.prj
+        cfg = self.config
         if prjdir is None or prj is None or cfg is None:
             return False
         preferred = os.path.join(prjdir, "shared/ptxprint/{1}/{0}-{1}.piclist".format(prj, cfg))
@@ -233,17 +235,39 @@ class PicInfo(dict):
             self.threadUsfms(parent, suffix)
             # self.thread = Thread(target=self.threadUsfms, args=(suffix,))
             return False
-        else:
-            self.model.savePics()
         return True
 
-    def threadUsfms(self, parent, suffix):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None):
+        ''' Used for merging piclists from diglots into the main piclist'''
+        if indat is None:
+            indat = self
+        if captionpre is None:
+            captionpre = srcpre
+        tgts = {}
+        for k, v in self.items():
+            if v['anchor'][3:].startswith(tgtpre):
+                tgts.setdefault(v['anchor'][:3] + ("" if bkanchors else v['anchor'][3+len(tgtpre):]), []).append(v)
+        for k, v in list(indat.items()):
+            if v['anchor'][3:].startswith(srcpre):
+                a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
+                if mergeCaptions:
+                    for s in tgts.get(a, []):
+                        if s.get('src', '') == v.get('src', ''):
+                            if v.get('caption', '') != '':
+                                s['caption'+captionpre] = v.get('caption', '')
+                            if v.get('ref', '') != '':
+                                s['ref'+captionpre] = v['ref']
+                            break
+                del indat[k]
+
+    def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
             if os.path.exists(bkp):
                 self.read_sfm(bk, bkp, parent, suffix=suffix)
         self.set_positions(cols=2, randomize=True, suffix=suffix)
-        self.model.savePics()
+        if not nosave:
+            self.model.savePics()
         self.inthread = False
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
@@ -277,6 +301,8 @@ class PicInfo(dict):
                     continue
                 m = l.split("|")
                 r = m[0].split(maxsplit=2)
+                if not len(r):  # no id, what to do? Ignore entry? Create an id?
+                    continue    # skip the entry. Pretty radical.
                 if suffix.startswith("B"):
                     s = r[0][3:4] or suffix[1:]
                 else:
@@ -297,57 +323,54 @@ class PicInfo(dict):
                         pic[d[0]] = d[1]
         self.rmdups()
 
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
+        m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt)
+        if len(m):
+            # print("usfm2:", lastv, m)
+            for i, f in enumerate(m):     # usfm 2
+                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                r = "{}{} {}{}{}".format(bk, suffix, *a)
+                pic = {'anchor': r, 'caption':f[5].strip()}
+                key = self.newkey(suffix)
+                self[key] = pic
+                for i, v in enumerate(f):
+                    pic[posparms[i]] = v
+                self._fixPicinfo(pic)
+        m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt)
+        if len(m):
+            # print("usfm3:", lastv, m)
+            for i, f in enumerate(m):     # usfm 3
+                # lastv = f[0] or lastv
+                if "|" in f[1]:
+                    break
+                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                r = "{}{} {}{}{}".format(bk, suffix, *a)
+                pic = {'caption':f[0].strip(), 'anchor': r}
+                key = self.newkey(suffix)
+                self[key] = pic
+                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
+                for l in labelParams:
+                    k,v = l.split("=")
+                    pic[k.strip()] = v.strip('"')
+                if 'media' not in pic:
+                    default, limit = parent.picMedia(pic.get('src', ''))
+                    pic['media'] = 'paw' if default is None else default
+
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in TexModel._peripheralBooks
         with universalopen(fname) as inf:
             dat = inf.read()
-            blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
-            for c, t in zip(blocks[0::2], blocks[1::2]):
-                if isperiph:
-                    m = re.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(col|span)[^|]*\|([^\\]+?)?\\fig\*", dat)
-                    if len(m):
-                        for i, f in enumerate(m):
-                            r = "{}{} p{:03d}".format(bk, suffix, i+1)
-                            pic = {'anchor': r, 'caption':f[0].strip(), 'src': f[1], 'size': f[2]}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                    continue
-                for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
-                    lastv = v[0]
-                    s = v[1]
-                    key = None
-                    m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                                   r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", s)
-                    if len(m):
-                        # print("usfm2:", lastv, m)
-                        for f in m:     # usfm 2
-                            r = "{}{} {}.{}".format(bk, suffix, c, lastv)
-                            pic = {'anchor': r, 'caption':f[5].strip()}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                            for i, v in enumerate(f):
-                                pic[posparms[i]] = v
-                            self._fixPicinfo(pic)
-                    m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', s)
-                    if len(m):
-                        # print("usfm3:", lastv, m)
-                        for i, f in enumerate(m):     # usfm 3
-                            # lastv = f[0] or lastv
-                            if "|" in f[1]:
-                                break
-                            a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                            r = "{}{} {}{}{}".format(bk, suffix, *a)
-                            pic = {'caption':f[0].strip(), 'anchor': r}
-                            key = self.newkey(suffix)
-                            self[key] = pic
-                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
-                            for l in labelParams:
-                                k,v = l.split("=")
-                                pic[k.strip()] = v.strip('"')
-                            if 'media' not in pic:
-                                default, limit = parent.picMedia(pic.get('src', ''))
-                                pic['media'] = 'paw' if default is None else default
-                                    
+            if isperiph:
+                self._readpics(dat, bk, suffix, 0, None, isperiph, parent)
+            else:
+                blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
+                for c, t in zip(blocks[0::2], blocks[1::2]):
+                    for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
+                        lastv = v[0]
+                        s = v[1]
+                        key = None
+                        self._readpics(s, bk, suffix, c, lastv, isperiph, parent)
 
     def out(self, fpath, bks=[], skipkey=None, usedest=False, media=None, checks=None):
         ''' Generate a picinfo file, with given date.
@@ -412,6 +435,7 @@ class PicInfo(dict):
             os.unlink(fpath)
 
     def rmdups(self): # MH {checking I understand this right} Does this assume we can't have 2 pics with the same anchor?
+        ''' Makes sure there are not two entries with the same anchor and same image source'''
         allkeys = {}
         for k,v in self.items():
             allkeys.setdefault(self.stripsp_re.sub(r"\1", v['anchor']), []).append(k)
@@ -456,7 +480,7 @@ class PicInfo(dict):
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
                 
 
-    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None):
+    def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None, mode=None):
         ''' Add source filename information to each figinfo, stored with the key '''
         if data is None:
             data = self
@@ -477,7 +501,7 @@ class PicInfo(dict):
             if exclusive:
                 search = [(srchdir, [], os.listdir(srchdir))]
             else:
-                search = os.walk(srchdir)
+                search = os.walk(srchdir, followlinks=True, topdown=True)
             for subdir, dirs, files in search:
                 for f in files:
                     doti = f.rfind(".")
@@ -490,7 +514,10 @@ class PicInfo(dict):
                         continue
                     for k in newfigs[nB]:
                         if 'dest file' in data[k]:
-                            continue
+                            if mode == self.mode:
+                                continue
+                            else:
+                                del data[k]['dest file']
                         if key in data[k]:
                             old = self.extensions.get(os.path.splitext(data[k][key])[1].lower()[1:], 10000)
                             new = self.extensions.get(os.path.splitext(filepath)[1].lower()[1:], 10000)
@@ -501,6 +528,7 @@ class PicInfo(dict):
                                 data[k][key] = filepath
                         else:
                             data[k][key] = filepath
+        self.mode = mode
         return data
 
     def set_positions(self, cols=1, randomize=False, suffix="", isBoth=False):

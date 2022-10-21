@@ -1,0 +1,25 @@
+\id OTH
+\periph Spine|id="spine" rotation="right" align="top" width="4mm"
+\pc The Test Case Bible
+\periph cover|id="cover"
+\nopagenums
+\rem BACK COVER
+\esb \cat backcover\cat*
+\vfill \rem vfill is infinintely expandable space
+\ip
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+\pc 500 copies, Klingon-Esperanto
+\esbe
+\rem FRONT COVER
+\esb \cat frontcover\cat*
+\esb \cat TitleBox\cat*
+\mt3 The 
+\mt1 Test-case Bible
+\esbe
+\vfill \rem vfill is infinintely expandable space
+\esb \cat footbox\cat*
+\pc \sc Printed\sc* 2022
+\esbe
+\esbe

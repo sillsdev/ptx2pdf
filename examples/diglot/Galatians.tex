@@ -1,36 +1,55 @@
 \input paratext2.tex
 %\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
 %\VisTracetrue% Every chunk joined, mark with the current trace number
-%\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
+\diglotDbgJoinboxes=6876 % And if that's not enough, assuming trace entry 1246
+%\nonstopmode
+%\scrollmode
 %is from joinboxes (which pastes 2 left or 2 right columns together) show the
 %boxes joined.
-%\showboxdepth=100 %.... In all their gory detail
-%\showboxbreadth=100
+\showboxdepth=100 %.... In all their gory detail
+\showboxbreadth=100
 %\tracingifs=1
-
+%\tracingoutput=1
 %\diglotInnerOutertrue
+\XeTeXuseglyphmetrics=0
+\ColumnGutterRuletrue
+%\def\BelowFootNoteRuleSpace{5pt}
+\AboveNoteSpace=15pt
+\JoinGutterRuletrue
+\NoteGutterRuletrue
+%\diglotDebugFollowContentstrue %create 500k debug lines...
+
 \input Galatians-setup.tex
-\iffalse
- \tracing{H}
+\iftrue
+% \tracing{H}
  \tracing{d}
- \tracing{F}
- \tracing{dP}
- \tracing{s}
+ %\tracing{dP}
+ %\tracing{F}
+% \tracing{dP}
+% \tracing{s}
  \tracing{n}
- \tracing{sC}
+ \tracing{V}
+ %\tracing{S}
+% \tracing{sC}
  \VisTracetrue
- \tracing{D}
+ %\VisTraceExtratrue
+ %\tracing{D}
 \fi
 
-\def\LineSpacingFactorL{1.2}
-\def\LineSpacingFactorR{1.1}
+\XeTeXuseglyphmetrics=0
+\def\LineSpaceBase{12}
+\def\LineSpacingFactorL{1.15}
+\ParallelNoteNumbering{f}
+\FontSizeUnitL=.85pt
+\FontSizeUnitR=.85pt
+\def\LineSpacingFactorR{1.15}
 \pageno=-1
 %\tracing{s}\tracing{S}
 %\uselanguage{british}
 \diglotfalse
 \singlecolumn
 \ptxfile{intro.usfm}
-
+\def\doLines{\doGridLines}
 \def\OKbk{\penalty 2}
 \def\tighter{\looseness=-1}
 \pageno=1
@@ -40,6 +59,8 @@
 %\addToRightHooks{\RTLtrue}
 \diglotSepNotestrue
 \diglotBalNotestrue
+\ParallelNoteNumbering{f}
+%\DistinctNoteNumbering{f}
 \ptxfile{mergedGal.usfm}
 \diglotcolumns
 \diglotSepNotesfalse

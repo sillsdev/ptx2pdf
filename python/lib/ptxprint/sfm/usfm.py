@@ -31,11 +31,12 @@ import os
 import pickle
 import re
 import site
+from ptxprint.utils import pycodedir
 
 _PALASO_DATA = os.path.join(
     site.getuserbase(),
-    'palaso-python', 'sfm')
-_package_dir = os.path.dirname(__file__)
+    'ptxprint', 'sfm')
+_package_dir = os.path.join(pycodedir(), 'sfm')
 
 
 def _check_paths(pred, paths):
@@ -303,16 +304,22 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
-                 tag_escapes=r"\\",
+                 tag_escapes=r"[\\+%!@#$^&()=-_`/]",
+                 debug=False,
                  *args, **kwds):
         if not canonicalise_footnotes:
             self._canonicalise_footnote = lambda x: x
 
         stylesheet = self.__synthesise_private_meta(stylesheet, default_meta)
+        for m in stylesheet.values():
+            if m['StyleType'] == 'Milestone':
+                m.update(Endmarker='*')
         super().__init__(source,
                          stylesheet,
                          default_meta,
                          private_prefix='z',
+                         tag_escapes=tag_escapes,
+                         debug=debug,
                          *args, **kwds)
 
     @classmethod
@@ -340,19 +347,19 @@ class parser(sfm.parser):
             return False
         if 'NoteText' in parent.meta.get('TextType', []) \
                      or parent.meta.get('StyleType', None) == 'Character':
-            self._error(ErrorLevel.Note,
-                        'implicit end marker before {token}: \\{0.name} '
-                        '(line {0.pos.line},{0.pos.col}) '
-                        'should be closed with \\{1}', tok, parent,
-                        parent.meta['Endmarker'])
+            #self._error(ErrorLevel.Note,
+            #            'implicit end marker before {token}: \\{0.name} '
+            #            '(line {0.pos.line},{0.pos.col}) '
+            #            'should be closed with \\{1}', tok, parent,
+            #            parent.meta['Endmarker'])
             return False
         meta = self.__get_style(tag.name)
         occurs = meta['OccursUnder']
-        stype = meta['StyleType'].lower()
+        stype = (meta['StyleType'] or '').lower()
         ptype = parent.meta['StyleType'].lower()
         pttype = parent.meta['TextType'].lower()
         if (stype == 'character' and ptype == 'paragraph') \
-                or (style == 'paragraph' and (pttype in ('chapternumber', 'notetext')
+                or (stype in ('paragraph', '') and (pttype in ('chapternumber', 'notetext', 'other')
                                               or parent.name == "id")):
             if len(occurs) and parent.name not in occurs:
                 p = parent.parent
@@ -360,6 +367,8 @@ class parser(sfm.parser):
                     if p.name in occurs:
                         return False
                     p = p.parent
+            return True
+        elif self._escaped_tag.match(str(tok)):
             return True
         super()._force_close(parent, tok, tag)
         return False
@@ -460,6 +469,10 @@ class parser(sfm.parser):
 
         return self._canonicalise_footnote(self._default_(parent))
     _notetext_ = _NoteText_
+
+    def _Milestone_(self, parent):
+        return tuple()
+    _milestone = _Milestone_
 
     def _Unspecified_(self, parent):
         orig_name = parent.name

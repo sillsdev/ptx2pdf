@@ -3,6 +3,9 @@ import struct, re, os, sys
 # from gi.repository import Pango
 from pathlib import Path
 from threading import Thread
+import logging
+
+logger = logging.getLogger(__name__)
 
 fontconfig_template = """<?xml version="1.0"?>
 <fontconfig>
@@ -25,7 +28,7 @@ def writefontsconf(archivedir=None):
     if archivedir is not None or not sys.platform.startswith("win"):
         dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
-    dirs.append("../shared/fonts")
+    dirs.append("../../../shared/fonts")
     if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
         for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
@@ -36,7 +39,7 @@ def writefontsconf(archivedir=None):
         else:
             dirs.append(os.path.abspath('fonts'))
     os.makedirs(os.path.dirname(fname), exist_ok=True)
-    inf['fontsdirs'] = "\n    ".join("<dir>{}</dir>".format(d) for d in dirs)
+    inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
     res = fontconfig_template.format(**inf)
     if archivedir is not None:
         return res
@@ -75,13 +78,20 @@ def parseFeatString(featstring, defaults={}, langfeats={}):
     lang = None
     base = defaults
     if featstring is not None and featstring:
-        for l in re.split(r'\s*[,;:]\s*|\s+', featstring):
-            k, v = l.split("=")
-            if k.lower() == "language":
-                lang = v.strip()
-                base = langfeats.get(lang, base)
-            else:
-                feats[k.strip()] = v.strip()
+        logging.debug(f"Parsing feature string {featstring}")
+        words = list(re.split(r'\s*[,;:]\s*|\s+', featstring))
+        if '=' in featstring:
+            for l in words:
+                k, v = l.split("=")
+                if k.lower() == "language":
+                    lang = v.strip()
+                    base = langfeats.get(lang, base)
+                else:
+                    feats[k.strip()] = v.strip()
+        else:
+            for k, v in zip(words[::2], words[1::2]):
+                key = k.strip('"')
+                feats[key] = v
     res = base.copy()
     res.update(feats)
     return (lang, res)
@@ -100,11 +110,14 @@ class TTFontCache:
 
     def wait(self):
         if self.busy:
-            self.thread.wait()
+            logger.debug("Waiting for fonts thread")
+            self.thread.join()
+            logger.debug("Fonts initialised")
 
     def loadFcList(self):
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
+            logger.log(8, f"fc-list: {f}")
             if ": " not in f:
                 continue
             try:
@@ -114,6 +127,7 @@ class TTFontCache:
                 else:
                     name = full
                     style = ""
+                name = re.sub(r"\\([-])", r"\1", name)
                 if "," in name:
                     names = name.split(",")
                 else:
@@ -149,7 +163,9 @@ class TTFontCache:
             self.addFontDir(p, noadd=True)
         
     def addFontDir(self, path, noadd=False):
+        logger.debug("add Font Path: {}, {}".format(path, noadd))
         if not noadd:
+            logger.debug(f"Add font path: {path}")
             self.fontpaths.append(path)
         for fname in os.listdir(path):
             if fname.lower().endswith(".ttf"):
@@ -159,7 +175,9 @@ class TTFontCache:
                 self.cache.setdefault(f.family, {})[f.style] = fpath
 
     def removeFontDir(self, path):
+        logger.debug("add Font Path: {}".format(path))
         self.fontpaths.remove(path)
+        logger.debug(f"Remove font path: {path}")
         allitems = list(self.cache.items())
         for f, c in allitems:
             theseitems = list(c.items())
@@ -184,7 +202,7 @@ class TTFontCache:
         if v is None:
             return
         for k in sorted(v.keys(), key=lambda k:(styles_order.get(k, len(styles_order)), k)):
-            cbs.append([k])
+            cbs.append(["Regular" if k in (None, "") else k])
 
     def get(self, name, style=None):
         if self.busy:
@@ -216,7 +234,6 @@ def initFontCache(nofclist=False):
     if fontcache is None:
         fontcache = TTFontCache(nofclist=nofclist)
     return fontcache
-    # print(sorted(fontcache.cache.items()))
 
 def cachepath(p, nofclist=False):
     global fontcache
@@ -240,9 +257,77 @@ def getfontcache():
 
 OTFeatNames = {
     "aalt": "All Alternates",
+    "afrc": "Alternative Fractions",
+    "case": "Case-Sensitive Forms",
+    "cpct": "Centred CJK Punctuation",
+    "cpsp": "Capital Spacing",
+    "cswh": "Contextual Swash",
+    "c2pc": "Petite Capitals From Capitals",
+    "c2sc": "Small Capitals From Capitals",
+    "dlig": "Discretionary Ligatures",
+    "dtls": "Dotless Forms",
+    "expt": "Expert Forms",
+    "halt": "Alternate Half Widths",
+    "hist": "Historical Forms",
+    "hkna": "Horizontal Kana Alternates",
+    "hlig": "Historical Ligatures",
+    "hojo": "Hojo Kanji Forms",
+    "ital": "Italics",
+    "jalt": "Justification Alternates",
+    "jp78": "JIS78 Forms",
+    "jp83": "JIS83 Forms",
+    "jp90": "JIS90 Forms",
+    "jp04": "JIS2004 Forms",
+    "kern": "Kerning",
+    "lnum": "Lining Figures",
+    "mgrk": "Mathematical Greek",
+    "nalt": "Alternate Annotation Forms",
+    "nlck": "NLC Kanji Forms",
+    "onum": "Oldstyle Figures",
+    "ordn": "Ordinals",
+    "ornm": "Ornaments",
+    "palt": "Propotionarl Alternate Widths",
+    "pcap": "Petite Capitals",
+    "pkna": "Proportional Kana",
+    "pnum": "Proportional Figures",
+    "pwid": "Proportional Widths",
+    "qwid": "Quarter Widths",
+    "ruby": "Ruby Notation Forms",
+    "rvrn": "Required Variation Alternates",
+    "salt": "Stylistic Alternates",
+    "sinf": "Scientific Inferiors",
+    "size": "Optical Size",
     "smcp": "Small Caps",
+    "smpl": "Simplified Forms",
+    "ssty": "Math Script Style Alternates",
+    "stch": "Stretching Glyph Decomposition",
+    "subs": "Subscript",
+    "sups": "Superscript",
+    "swsh": "Swash",
+    "titl": "Titling",
+    "tjmo": "Trailing Jamo Forms",
+    "tnam": "Traditional Name Forms",
+    "tnum": "Tabular Figures",
+    "trad": "Traditional Forms",
+    "twid": "Third Widths",
+    "unic": "Unicase",
+    "valt": "Alternate Vertical Metrics",
+    "vchw": "Vertical Contextual Half-width Spacing",
+    "vhal": "Alternate Vertical Half Metrics",
+    "vkna": "Vertical Kana Alternates",
+    "vkrn": "Vertical Kerning",
+    "vpal": "Proportional Alternate Vertical Metrics",
+    "vrt2": "Vertical Alternates and Rotation",
+    "vrtr": "Vertical Alternates for Rotation",
+    "zero": "Slashed Zero"
 }
-OTInternalFeats = {"ccmp", "kern", "locl", "mark", "mkmk", "rlig"}
+
+OTInternalFeats = { "abvf", "abvm", "abvs", "akhn", "blwf", "blwm", "blws", "calt", "ccmp",
+                    "cfar", "chws", "cjct", "clig", "curs", "dnom", "dist", "falt", "fin2", "fin3",
+                    "fina", "flac", "frac", "fwid", "half", "haln", "hngl", "hwid", "init",
+                    "isol", "lfbd", "liga", "locl", "ltra", "ltrm", "mark", "med2", "medi",
+                    "mkmk", "mset", "nukt", "numr", "opbd", "pref", "pres", "pstf", "psts",
+                    "rand", "rclt", "rlig", "rphf", "rtbd", "rtla", "rtlm", "vatu", "vjmo"}
 
 OTLangs = {
   "aa": "AFR", "aae": "SQI", "aao": "ARA", "aat": "SQI", "ab": "ABK", "abh": "ARA",
@@ -504,7 +589,6 @@ class TTFont:
                 self.filename = None
         else:
             self.dict = {}
-        # print([name, self.family, self.style, self.filename])
         k = "{}|{}".format(self.family, self.style)
         if k not in TTFont.cache:
             TTFont.cache[k] = self
@@ -710,7 +794,10 @@ class TTFont:
 
     def testcmap(self, chars):
         self.loadttfont()
-        cmap = self.ttfont['cmap']
+        try:
+            cmap = self.ttfont['cmap']
+        except KeyError:
+            return []
         b=cmap.getBestCmap()
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
 
@@ -730,14 +817,28 @@ FontRef = None
 class FontRef:
     def __init__(self, name, style, isGraphite=False, isCtxtSpace=False, feats=None, lang=None):
         self.name = name
-        self.style = style
+        bits = style.split(" ") if style is not None else []
+        for a in ("Bold", "Italic"):
+            if a in bits:
+                i = bits.index(a)
+                setattr(self, f"is{a}", True)
+                bits.remove(a)
+            else:
+                setattr(self, f"is{a}", False)
+        if "Regular" in bits:
+            bits.remove("Regular")
+        self.style = " ".join(bits)
         self.isGraphite = isGraphite
         self.isCtxtSpace = isCtxtSpace
         self.feats = feats.copy() if feats is not None else {}
         self.lang = lang
+        logger.debug(repr(self) + " Created")
 
     def __repr__(self):
         return str(type(self)) + self.asConfig()
+
+    def __str__(self):
+        return self.asConfig()
 
     def _iseq(self, other, ignorestyle=False):
         if id(self) == id(other):
@@ -757,12 +858,12 @@ class FontRef:
     @classmethod
     def fromConfig(cls, txt):
         bits = txt.split("|")
-        isCtxtSpace = "False"
+        isCtxtSpace = "false"
         if len(bits) < 4:
             (name, styles, isGraphite) = bits
         else:
             (name, styles, isGraphite) = bits[:3]
-            if bits[3] not in ('True', 'False'):
+            if bits[3] not in ('true', 'false'):
                 featlist = bits[3:]
             else:
                 isCtxtSpace = bits[3]
@@ -771,22 +872,29 @@ class FontRef:
         lang = None
         if len(featlist):
             for s in featlist:
-                if len(s):
+                if len(s) and '=' in s:
                     k, v = s.split("=")
                     if k == "language":
                         lang = v
                     else:
                         feats[k] = v
-        return cls(name, styles, isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
+        return cls(name, styles.strip(), isGraphite.lower()=="true", isCtxtSpace.lower()=="true", feats, lang)
 
     @classmethod
-    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi):
+    def fromDialog(cls, name, style, isGraphite, isCtxtSpace, featstring, bi, fontextend, fontdigits):
         res = cls(name, style, isGraphite, isCtxtSpace)
         res.updateFeats(featstring)
         if bi is not None:
             for i, a in enumerate(("embolden", "slant")):
-                if float(bi[i]) > 0.0001:
+                if bi[i] != "0":
                     res.feats[a] = bi[i]
+        if fontextend != "1":
+            res.feats['extend'] = fontextend
+        else:
+            res.feats.pop('extend', None)
+        if fontdigits and fontdigits.lower() != "default":
+            res.feats['mapping']='mappings/{}{}'.format(fontdigits.lower(), "digits" if fontdigits[0].upper() == fontdigits[0] else "")
+        logger.debug(f"fromDialog {res=}")
         return res
 
     @classmethod
@@ -801,11 +909,17 @@ class FontRef:
             name = f.family
         styles = []
         res = cls(name.strip(), " ".join(styles), isCtxtSpace=(style.get("ztexFontGrSpace", "0")!="0"))
-        res.updateTeXFeats(style.get("ztexFontFeatures", ""))
+        ztffeats = style.get("ztexFontFeatures", "")
+        res.updateTeXFeats(ztffeats)
+        for a in ("Bold", "Italic"):
+            v = style.get(a, None)
+            setattr(res, "is"+a, v)
         return res
 
     def copy(self, cls=None):
         res = (cls or FontRef)(self.name, self.style, self.isGraphite, self.isCtxtSpace, self.feats)
+        res.isItalic = self.isItalic
+        res.isBold = self.isBold
         return res
 
     def updateFeats(self, featstring, keep=False):
@@ -824,9 +938,14 @@ class FontRef:
             return
         while len(featstring) and featstring[0] == "/":
             m = re.match("/([^:;,/]+)", featstring)
-            if m.group(1).lower() == "gr":
+            s = m.group(1).lower()
+            if s == "gr":
                 self.isGraphite = True
-            featstring = featstring[m.endpos:]
+            if "b" in s:
+                self.isBold = True
+            if "i" in s:
+                self.isItalic = True
+            featstring = featstring[m.end(1):]
         if not featstring:
             return
         f = TTFont(self.name, self.style)
@@ -857,7 +976,6 @@ class FontRef:
             newstyle.append("Regular")
         s = " ".join(newstyle)
         f = fontcache.get(self.name, s)
-        # print(f"fromStyle: {self}, {s}, {f}")
         if f is not None:
             return FontRef(self.name, s, self.isGraphite, self.isCtxtSpace, self.feats)
         res = self.copy()
@@ -884,7 +1002,6 @@ class FontRef:
                     del res.feats['slant']
                 return res
         f = fontcache.get(self.name)
-        # print(f"restyling: {self.name}")
         if f is None:
             return None
         res.style = None
@@ -911,7 +1028,7 @@ class FontRef:
         f.iscore = True
         if f.filename is not None and not f.iscore:
             if inarchive:
-                fname = f"../shared/fonts/{f.filename.name}"
+                fname = f"../../../shared/fonts/{f.filename.name}"
             elif root is not None:
                 fname = os.path.relpath(f.filename, root)
             else:
@@ -923,15 +1040,17 @@ class FontRef:
             name = self.name + (" "+self.style if s is None else "")
         else:
             name = self.name
-        if not s and not len(self.feats) and not self.isGraphite:
-            return (name, [], [])
 
         sfeats = [] if s is None else [s]
         if self.isGraphite:
             sfeats.append("/GR")
+        if self.isBold:
+            sfeats.append("/B")
+        if self.isItalic:
+            sfeats.append("/I")
         feats = []
         for k, v in self.feats.items():
-            if k in ('embolden', 'slant'):
+            if k in ('embolden', 'slant', 'mapping', 'extend', 'color', 'letterspace'):
                 feats.append((k, v))
                 continue
             if self.isGraphite:
@@ -940,25 +1059,25 @@ class FontRef:
                 feats.append(("+"+k, v))
         return (name, sfeats, feats)
 
-    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False):
+    def updateTeXStyle(self, style, regular=None, inArchive=False, rootpath=None, force=False, noStyles=False):
         res = []
         # only use of main regular fonts use the \Bold etc.
         if not force and regular is not None and self._iseq(regular, ignorestyle=True):
             for a in ('FontName', 'ztexFontFeatures', 'ztexFontGrSpace'):
                 if a in style:
                     del style[a]
-            for a in ("Bold", "Italic"):
-                x = a in (regular.style or ())
-                y = a in (self.style or ())
-                if x and not y:
-                    style[a] = "-"
-                elif y and not x:
-                    style[a] = ""
-                elif x:     # implies: and y
-                    del style[a]
+            if not noStyles:
+                for a in ("Bold", "Italic"):
+                    x = getattr(regular, "is"+a, False)
+                    y = getattr(self, "is"+a, False)
+                    if x and not y:
+                        style[a] = "-"
+                    elif y and not x:
+                        style[a] = ""
+                    elif x:     # implies: and y
+                        del style[a]
         # All other non-main fonts use /B, etc.
         else:
-            # print(f"updateTeXStyle: {name}, {sfeats}, {feats}")
             (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
             style['FontName'] = self.name
             if len(feats) or len(sfeats):
@@ -979,8 +1098,12 @@ class FontRef:
                 style["ztexFontGrSpace"] = "2"
             else:
                 style.pop("ztexFontGrSpace", None)
-            for a in ("Bold", "Italic"):
-                del style[a]
+            if not noStyles:
+                for a in ("Bold", "Italic"):
+                    if getattr(self, "is"+a, False):
+                        style[a] = ""
+                    else:
+                        del style[a]
 
     def asTeXFont(self, inarchive=False):
         (name, sfeats, feats) = self._getTeXComponents(inarchive)
@@ -996,20 +1119,39 @@ class FontRef:
             featstr = "|".join("{}={}".format(k, v) for k, v in self.feats.items())
         else:
             featstr = ""
-        res = [self.name, self.style or "", ("true" if self.isGraphite else "false"), featstr]
+        res = [self.name, self._getstyle(), ("true" if self.isGraphite else "false"), ("true" if self.isCtxtSpace else "false"), featstr]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return "|".join(res)
 
+    def _getstyle(self):
+        if self.style is None:
+            return ""
+        bits = self.style.split(" ")
+        for a in ("Italic", "Bold"):
+            if getattr(self, "is"+a, False):
+                bits.append(a)
+        return " ".join(bits)
+
     def asFeatStr(self):
-        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant")]
+        res = ["{}={}".format(k, v) for k, v in self.feats.items() if k not in ("embolden", "slant", "mapping", "extend")]
         if self.lang is not None:
             res.append("language={}".format(self.lang))
         return ", ".join(res)
 
+    def getMapping(self):
+        v = self.feats.get("mapping", None)
+        if v is not None:
+            m = re.match("^mappings/(.*?)digits", v)
+            if m:
+                return re.sub(r"(^|[\-])([a-z])", lambda n: n.group(1) + n.group(2).upper(), m.group(1))
+            elif m.startswith("mappings/"):
+                return m[9:]
+        return "Default"
+
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
-        res = "{}{} {}".format(self.name, fb, self.style)
+        res = "{}{} {}".format(self.name, fb, self._getstyle())
         return res + (" "+size if size is not None else "")
 
     

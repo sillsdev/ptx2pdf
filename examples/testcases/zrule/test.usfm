@@ -1,0 +1,38 @@
+\id FRT Test file
+\h small test file
+\zgap|9em \*
+\mt Test of rules and such like
+\c 1 
+\p
+\v 1 This is just some random text. Something is on page \zpage|Opt(io\*
+\p
+\zrule|width="0.3" align="l" thick="5pt"\*
+\p 
+\v 2 That rule should have been 0.3 of the page. 
+\v 3 Alias sed et est est vel et. Sint facilis illum sed est nihil fugiat. Minima quaerat eius quae et animi tenetur hic exercitationem. Iusto non consequatur voluptatum velit et vitae veritatis consectetur. 
+
+\zrule\*
+\p
+\v 4  Default rule.
+\p
+\v 5 \zlabel|Opt(io\* Optio aut consequatur recusandae rerum assumenda optio.
+\v 6 Ab nostrum nulla maiores quas sed sed. Debitis et dolor molestiae voluptate molestiae id nobis illum.\f + \ft This is some random note\zlabel|random\*\f* 
+
+\zrule|0.7\*
+\p 0.7 of page.
+\v 6 Ad repudiandae est maxime sunt quis. Odit aut beatae debitis. Reiciendis ex aspernatur dolorem repudiandae dicta aliquid ea ex. Quae consequatur enim qui et molestias ut quam. Quia quibusdam molestiae accusantium. \
+\v 7 Aut nostrum tenetur sint ea temporibus.
+
+\zgap|9em plus 10em\*
+\p
+\zrule|align="r"\*
+\p Right aligned, default width.
+Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero voluptatem. Dolor beatae dolor voluptas quis sequi molestiae harum dolorem. Qui similique molestiae dignissimos. Rerum ex dolor quisquam consequatur. Earum quibusdam quis quasi.
+\pb 
+\zgap|100pt plus 10em\*
+\vfill
+\zrule\*
+\zgap|100pt plus 10em\*
+\vfill
+The paragraph starting "Optio aut" is on page \zpage|Opt(io\*. See also note on \zref|label="random" show="b_c:v " \*
+\pb

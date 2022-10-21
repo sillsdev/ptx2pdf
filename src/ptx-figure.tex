@@ -32,13 +32,16 @@
 % \fig handling code, originally from paratext2.tex
 
 % Inserts
+%\newinsert\topins is already defined in plainTeX
 \count\topins=1000 \dimen\topins=\maxdimen \skip\topins=0pt
 \newinsert\bottomins \count\bottomins=1000 \dimen\bottomins=\maxdimen
-\newinsert\verybottomins \count\verybottomins=1000 \dimen\verybottomins=\maxdimen
+\newinsert\verybottomins \count\verybottomins=0 \dimen\verybottomins=\maxdimen
 \newinsert\topleftins \count\topleftins=0 \dimen\topleftins=\maxdimen
 \newinsert\toprightins \count\toprightins=0 \dimen\toprightins=\maxdimen
 \newinsert\bottomleftins \count\bottomleftins=0 \dimen\bottomleftins=\maxdimen
 \newinsert\bottomrightins\count\bottomrightins=0 \dimen\bottomrightins=\maxdimen
+\newcount\tmpcountB
+\newbox\c@ptionbox
 \def\colinsert@name#1{colinsert@#1}
 \let\colinsert@tL\topleftins
 \let\colinsert@bL\bottomleftins
@@ -78,6 +81,22 @@
 } 
 
 
+% Helper function for figure parameters which might come from the fig line, a stylesheet, or a default.
+\def\setf@gval#1#2#3{\let#1\empty
+  \ifcsname figparam-x-#2\endcsname
+    \x@\let\x@#1\csname figparam-x-#2\endcsname
+  \else
+    \getp@ram{#2}{fig}{fig}%
+    \ifx\p@ram\relax
+      \edef#1{#3}%
+    \else
+      \let#1\p@ram
+    \fi
+  \fi
+  \ifx#1\empty
+    \edef#1{#3}%
+  \fi
+} 
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
@@ -98,11 +117,11 @@
   \ifnum \p@ramnumber<0 
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
-    \ifnum \p@ramnumber>16 \global\morep@ramsfalse\fi
+    \ifnum \p@ramnumber>19 \global\morep@ramsfalse\fi
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
         scale\or media\or pgpos\or x-credit\or x-creditpos\or
-	x-creditrot\or x-creditbox\else UNK-\the\p@ramnumber\fi}%
+	x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -165,9 +184,9 @@
 
 %+cfig_parsesize
 \def\p@rsesize#1*#2*#3\end{%
-  \def\size@ption{#1}%
+  \global\def\size@ption{#1}%
   \edef\tmp{#2}%
-  \if\tmp\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
+  \if\tmp\relax\relax\else\def\sizem@ltiple{#2}\trace{g}{Setting scale to #2}\fi% empty if not provided
 }
 %-cfig_parsesize
 
@@ -176,6 +195,7 @@
  
 % These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
 % 
+
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
   \ifx\t\empty \edef\t{#1}%
     \ifx\t\empty\else
@@ -200,7 +220,17 @@
           \fi
         \fi
       \fi
-    \else \message{Unexpected key #1=#2. Expected key "rotate"}\fi
+    \else
+      \ifx\key\keyP@GE
+	\ifx\picfilecomm@nd\XeTeXpdffile
+	  \edef\picp@ge{page \val}%
+        \else
+	  \message{Not a PDF file, page=... only supported on PDFs}%
+	\fi
+      \else
+	\message{Unexpected key #1=#2. Expected key "rotate"}%
+      \fi
+    \fi
   \fi
 }
 \def\p@rsextr@#1 #2\relax{%                                                     %(2)
@@ -212,9 +242,10 @@
 }
 \def\p@rsextra#1{%                                                              %(1)
   \trace{g}{Parsing #1}%
+  \edef\@rg{#1 }%Space is needed!
   \def\xtraremains{}\let\n@xt=\p@rsextr@
   \edef\t{#1}\ifx\t\empty\let\n@xt=\relax\fi
-  \x@\n@xt#1 \relax
+  \x@\n@xt\@rg  \relax
 }
 %-cfig_parsextra
 
@@ -235,11 +266,10 @@
 \def\p@rsePicXtra#1#2\end{% Parse optional new picture options, and remember them
   \xdef\l@cspec@b{#1}\xdef\l@cspec@c{#2}%
 }
-\def\gr@phic{graphic}
 \def\p@rseLoc#1#2\end{% Parse the new picture options, and remember them
   \edef\l@cspec@a{#1}\edef\l@cspec@b{#2}%
   \ifx\l@cspec@b\empty\let\l@cspec@c=\l@cspec@b\else\x@\p@rsePicXtra\l@cspec@b\end\fi
-  \trace{g}{p@rseLoc: #1 \l@cspec@b \l@cspec@c}%
+  \trace{g}{p@rseLoc: #1 \l@cspec@b|\l@cspec@c}%
   % inner/outer support for everything
   \tempfalse
   %Switch relative (inner/outer) to absolute (left/right) depending on page number for this image.
@@ -247,18 +277,36 @@
   \ifx\l@cspec@b\@lignInner\temptrue\ifodd\whichp@ge\let\l@cspec@b=\@lignLeft\else\let\l@cspec@b=\@lignRight\fi\fi
 }
 
-\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them
+%NB THIS IS ONLY for page-based items, not for e.g. captions. 
+\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them. 
   \x@\p@rseLoc#1\end % sets \l@cspec@a, \l@cspec@b, \l@cspec@c to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
     \trace{g}{Page \the\whichp@ge, defined #1 to \l@cspec@a, \l@cspec@b, \l@cspec@c}%
-    \tempfalse
-    \ifx\l@cspec@a\loc@T\temptrue\fi
-    \ifx\l@cspec@a\loc@B\temptrue\fi
+  \fi
+  \tempfalse
+  \ifx\l@cspec@a\loc@T\temptrue\fi
+  \ifx\l@cspec@a\loc@B\temptrue\fi
+  \iftemp
+    \ifx\l@cspec@b\empty\else 
+      \ifnum\c@rrentcols>1\else
+        \tempfalse %Can't do it.
+      \fi
+    \fi
+    %redefine loc@ption
     \iftemp
-      %redefine loc@ption
       \xdef\loc@ption{\l@cspec@a\l@cspec@b}%
-  \fi\fi
+    \else
+      \let\l@cspec@b\empty
+      \x@\let\x@\tmp\csname \w@tsit @warning\endcsname
+      \ifx\tmp\relax
+        \picw@rning{#1}{\l@cspec@a\l@cspec@b}%
+      \else 
+        \tmp{#1}{\l@cspec@a\l@cspec@b}%
+      \fi
+      \xdef\loc@ption{\l@cspec@a}%
+    \fi
+  \fi
   % new options
   \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
@@ -271,6 +319,7 @@
     \xdef\l@cspec{\l@cspec@b}%
     \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
     \trace{g}{Experimental \w@tsit in cutout, after \c@tskip lines}%
+    \x@\c@tskipparse\c@tskip...\E %split c@tskip into whole and fractional parts.
   \fi
   \ifx\l@cspec@a\loc@Par
     \global\let\picl@c=\loc@Par\p@cinswid=\hsize\trace{g}{Experimental after-paragraph \w@tsit}%
@@ -281,11 +330,11 @@
   \fi
   % full-page options
   \tempfalse
-  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Pag\global\picUsesInsfalse\p@cinswid=\PaperWidth\temptrue\fi
-  \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue\fi
+  \ifx\l@cspec@a\loc@Page\global\let\picl@c=\loc@Page\global\picUsesInsfalse\temptrue\fi
+  \ifx\l@cspec@a\loc@Full\global\let\picl@c=\loc@Full\global\picUsesInsfalse\temptrue \p@cinswid=\PaperWidth\fi
   \iftemp
-    \trace{g}{Experimental page / full-page \w@tsit}%
     \xdef\pic@lign{\l@cspec@b}\xdef\picV@lign{\l@cspec@c}%
+    \trace{g}{Experimental page / full-page \w@tsit (\pic@lign|\picV@lign)}%
   \fi
 }
 %-cfig_parsepicuse
@@ -311,38 +360,59 @@
     \ifx\cpt@mp\empty\else\setLRspecific\fi
     \edef\@@r@f{\ifx\@r@f\empty\else\DecorateRef{\@r@f\unskip}\fi}%
     \t@xtfragment{fig}{%
-      \s@tfont{fig}%
+      \s@tfont{fig}{fig}%
       \ifCaptionRefFirst\@@r@f\nobreak\ \fi
       \c@ption\unskip
       \ifCaptionRefFirst\else\nobreak\ \@@r@f\fi}%
     \egroup
   \fi
-}    
+}
+
+\newif\ifDoCaptions
+\DoCaptionstrue
+\newif\iffigh@scaption\figh@scaptionfalse
 
 \def\d@caption{% 
-  \xdef\r@f{\csname figparam-ref\endcsname}% get reference
-  \d@c@ption{}%Normal monoglot caption.
-  \ifdiglot 
-    \bgroup %Alternative captions
-      \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
-      \x@\each@col\diglot@list\E
-    \egroup
+  %\ifhmode\endgraf\fi
+  \unvbox\c@ptionbox
+}
+
+\def\setc@ptionbox{%
+ \setbox\c@ptionbox\vbox{%
+  \ifDoCaptions
+    \ifCaptionFirst\else \prevdepth=0pt\fi %Interline glue above a low caption
+    \ifpicNarrow
+      \hsize=\sizem@ltiple\p@cwidth
+    \else
+      \hsize=\p@cinswid
+    \fi
+    \xdef\r@f{\csname figparam-ref\endcsname}% get reference
+    \d@c@ption{}%Normal monoglot caption.
+    \ifdiglot 
+      \bgroup %Alternative captions
+        \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
+        \x@\each@col\diglot@list\E
+      \egroup
+    \fi
+    \vskip.5\onel@neunit
   \fi
-  \vskip.5\baselineskip
+ }%
 }
 
 \def\t@xtfragment#1#2{\bgroup\everypar={}\let\par\endgraf
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
-    \getp@ram{justification}{#1}%
+    \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\r@ght\rightskip=0pt\fi
     \ifx\p@ram\l@ft\leftskip=0pt\fi
-    \getp@ram{leftmargin}{#1}%
+    \getp@ram{leftmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
-    \getp@ram{rightmargin}{#1}%
+    \getp@ram{rightmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
+    \ifRTL\beginR\fi
     \linepenalty=1000
-    \s@tbaseline{#1}%
+    \s@tbaseline{#1}{#1}%
     \noindent\leavevmode #2\par
+    \ifRTL\endR\fi
     \egroup
 }
 %-cfig_docaption
@@ -406,7 +476,7 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}\cr@dit}%
+  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
@@ -438,7 +508,7 @@
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@dit@col\empty
-      \getp@ram{background}{\cr@ditstyle}%
+      \getp@ram{background}{\cr@ditstyle}{\cr@ditstyle}%
       \ifx\p@ram\relax
         \edef\cr@dit@col{1 1 1} 
       \else
@@ -446,9 +516,7 @@
           \edef\cr@dit@col{\p@ram}%
 	\else
           \trace{g}{decoding \p@ram}%
-          \tracingmacros=1
           \x@\checkh@x \p@ram\end
-          \tracingmacros=0
           \let\cr@dit@col\rgb@out
           \trace{g}{ result: \cr@dit@col}%
           %\edef\cr@dit@col{\p@ram}%
@@ -484,10 +552,10 @@
 }
 %-cfig_addcredit
 %+cfig_hex
-\def\@x@{x}
 \def\checkh@x #1#2\end{%
   \def\t@mp{#1}%
-  \ifx \t@mp\@x@\x@\h@xsixtotripple #1#2\end\else\def\rgb@out{#1#2}\fi}
+  \uppercase{\edef\t@@mp{#1#2}}\ifx\t@@mp\fill@none\let\rgb@out\fill@none\else
+  \ifx \t@mp\@x@\x@\h@xsixtotripple #1#2\end\else\def\rgb@out{#1#2}\fi\fi}
 
 \def\h@xsixtotripple x#1#2#3#4#5#6\end{%
  \uppercase\x@{\def\rgb@out{%
@@ -500,31 +568,48 @@
 
 \def\m@kepl@ceholder#1#2#3{%
 \vbox to #2{\offinterlineskip
+  \trace{g}{makeplaceholder #3}%
   \hrule height .2pt \kern-.2pt
   \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
   \kern-.2pt \hrule height .2pt}}
 
-\def\ins@rtpic#1#2#3#4#5#6{%
- \trace{g}{ins@rtpic #1 #2 #3 #4 #5 #6}%
- \openin\t@stread="#1"
-   \ifeof\t@stread\dimen0=\ifdim #3>#4\relax #4\else #3\fi
-     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: \csname figparam-src\endcsname}%
-   \else \closein\t@stread \picfilecomm@nd #1 #2 #3 #5 #6\fi
+\def\ins@rtpic#1#2#3#4#5#6#7{%
+ \edef\tmpfile{\mapinputfile{#1}}%
+ \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
+ \openin\t@stread=#1
+   \ifeof\t@stread
+     \dimen0=\ifdim #3>#4 #4\else #3\fi
+     \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
+   \else \closein\t@stread
+     \message{INPUTFILE: #1 -> \tmpfile}%
+     \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6
+   \fi
 }
 
+\oddc@tcodes%NO SPACES until |normalc@tcodes is called.
+|def|ch@ckpathfwd#1/#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}
+|def|ch@ckpathback#1\#2|E{|edef|t@mp{#2}|ifx|t@mp|empty|else|global|temptrue|fi}%
+|def|ch@ckpath#1{|global|tempfalse|ch@ckpathfwd#1/|E|ch@ckpathback#1\|E}%
+|normalc@tcodes%
 %+cfig_dofigure_intro
+
+\gdef\pr@penalty{10}\gdef\p@stpenalty{10}%
 \def\d@figure#1{%
+ \trace{g}{d@figure entered IncludeFigures\ifIncludeFigures true\else false\fi}%
  \ifIncludeFigures
   \ifdim\hsize=0pt
     \hsize=\colwidth
   \fi
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
   \rotimagefalse
+  \figh@scaptionfalse
+  \def\pr@penalty{10}\def\p@stpenalty{10}%
   \edef\hs@ze{\the\hsize}% Current col size
   \gdef\p@rams{#1|}% ensure there is a trailing | separator
   % place parts of text into \param-1, \param-2, ...
   \global\p@ramnumber=1
+  % Set all parameters to empty
   \loop
     \morep@ramstrue
     \s@tp@ramid% Sets morep@ramsfalse if off the end.
@@ -556,7 +641,6 @@
     \fi 
   \fi
   % get location
-  %\lowercase{
   \edef\loc@ption{\csname figparam-pgpos\endcsname}%%
 %-cfig_dofigure_intro
   %
@@ -566,10 +650,21 @@
 	   \def\loc@ption{t}% if size is SPAN default to top
 	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
+  \ifDoCaptions
+    \t@mpfalse
+    \x@\ifx\csname figparam-caption\endcsname\empty
+      \ifdiglot
+        \def\col@do##1{\ifcsname figparam-caption##1\endcsname \x@\ifx\csname figparam-caption##1\endcsname\empty\else\figh@scaptiontrue\fi\fi}%
+        \x@\each@col\diglot@list\E
+      \fi
+    \else
+      \figh@scaptiontrue
+    \fi
+  \fi 
   % set width to column width or span width and other default parameters
   \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift
   \p@cheight=\textheight
-  \advance\p@cheight by -4\baselineskip % there should be text on the page too - allow for caption+space+2 lines of text!
+  \advance\p@cheight by -2\onel@neunit % there should be text on the page too - allow for caption+space+2 lines of text!
   \picUsesInstrue \picNarrowfalse                                               %(1)
   \gdef\pic@lign{c}% How does the picture align within the box?
   \gdef\picV@lign{c}% How does the picture align vertically on the page (Page/Full only)
@@ -578,17 +673,19 @@
   \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
   \ifx\size@ption\size@COL \p@cwidth=\hsize
   \else\ifx\size@ption\size@SPAN
-    \else\ifx\size@ption\size@PAGE
+    \else\ifx\size@ption\size@WIDTH
+      \p@cwidth=\PaperWidth
+     \else\ifx\size@ption\size@PAGE
         \global\let\picl@c=\loc@Page
         \picUsesInsfalse
         \p@cheight=\textheight % without text
-        \advance\p@cheight by -2\baselineskip
       \else\ifx\size@ption\size@FULL
           \global\let\picl@c=\loc@Full
           \picUsesInsfalse
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
+          \p@cinswid=\PaperWidth
         \else
-           \errmessage{Unknown picture size "\size@ption", expected "col", "span", "page" or "full"}\fi\fi\fi\fi
+           \errmessage{Unknown picture size "\size@ption", expected "col", "span", "width", "page" or "full"}\fi\fi\fi\fi\fi
   \let\p@cins=\relax
 %-cfig_dofigure_1
   % --------- Parse the location option -----------
@@ -622,9 +719,9 @@
         \fi
       \fi
       \ifnum\c@rrentcols>1
-        \ifx\l@cspec@b\loc@T
+        \ifx\l@cspec@a\loc@T
           \p@cinswid=\hsize
-        \else\ifx\l@cspec@b\loc@B
+        \else\ifx\l@cspec@a\loc@B
           \p@cinswid=\hsize
         \fi\fi
       \else
@@ -659,13 +756,21 @@
     \fi
   \fi
   \ifdiglot\else\otherinsht=0pt \fi %Nothing to subtract if not diglot
+  \iffigh@scaption
+    \setc@ptionbox
+    \advance\p@cheight by -\ht\c@ptionbox
+  \fi
   \ifdim\p@cinswid<\p@cwidth
     \message{*** Picture \the\p@cwidth\space wide in  \the\p@cinswid\space space. \ifx\size@ption\size@SPAN Did you mean to use col, instead of span?\fi}%
   \fi
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
+  \setf@gval{\sp@cebeside}{spacebeside}{\DefaultSpaceBeside}%
+  \setf@gval{\sp@cebefore}{spacebefore}{0}%
+  \setf@gval{\sp@ceafter}{spaceafter}{0}%
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
+  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}% 
   \setbox0=\vbox{%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -673,19 +778,25 @@
     \else
       \hsize=\p@cinswid
     \fi
-    \ifx\picl@c\loc@Inl
-       %\vskip0.5\baselineskip
-    \fi
+    \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
     \ifCaptionFirst\d@caption\else
-       \vskip0.3\baselineskip
+      \tempfalse
+      %\ifpicUsesIns\temptrue\fi
+      \ifx\picl@c\loc@Inl\temptrue\fi
+      \ifx\picl@c\loc@Par\temptrue\fi
+      \ifx\picl@c\loc@Cut\temptrue\fi
+      \iftemp 
+        \vskip0.3\baselineskip
+      \fi
     \fi
 	% insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname figparam-src\endcsname}%
     \edef\mirr@r{\csname figparam-mirror\endcsname}%
     \def\xtra{}\def\xtraremains{}%
-    \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     \expandafter\ch@ckpdf\f@lename..\endf@lename
+    \let\picp@ge\empty
+    \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     %what are we scaling on the image? Width or height?
     \ifrotimage
       %If there's rotation, fit the image height to width instead of the normal way:
@@ -694,19 +805,28 @@
       \def\picdim@n{width}\def\picaltdim@n{height}%Normal
     \fi
     % First, try to set it at the requested dimension:
-    \setbox\newpicb@x=\hbox{%
-      \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}}%
+    \tempfalse
+    \x@\ch@ckpath\x@{\f@lename}
+    \iftemp
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\csname figparam-src\endcsname"}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \else
+      \setbox\newpicb@x=\hbox{%
+        \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
+                     {\picdim@n}{\the\dimexpr\sizem@ltiple\p@cwidth\relax}{\the\dimexpr\p@cheight\relax}{\xtra}{\xtraremains}{\picp@ge}}%
+    \fi
     \ifdim\ht\newpicb@x>\p@cheight
       %It doesn't fit. Scale to other dimension:
       \trace{g}{Picture too big set with \picdim@n=\sizem@ltiple\space\the\p@cwidth}%
       \setbox\newpicb@x=\hbox{%
         \ins@rtpic{"\the\PicPath\csname figparam-src\endcsname"}%
-                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}}%
+                     {\picaltdim@n}{\p@cheight}{\sizem@ltiple}{\xtra}{\xtraremains}{\picp@ge}}%
     \fi
     \ifFigurePlaceholders % replace graphic with a frame and the file name
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
+    \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
     \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
       \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
       \x@\writefigp@gelog\x@{\l@gstring}%
@@ -739,12 +859,14 @@
 	\add@credit%
     \fi
     %Align image left/right or centre
+    \trace{g}{Object aligned into hbox \the\p@cinswid}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
       \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
-    \ifCaptionFirst\vskip 0.5\baselineskip\else\d@caption\fi
+    \ifCaptionFirst\vskip 0.5\onel@neunit\else\d@caption\fi
+    \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
   }% END of box0
   \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
 %-cfig_dofigure_4
@@ -762,13 +884,25 @@
         \ht0=-\otherinsht
       \fi
     \fi
-    \trace{g}{Picture now \the\ht0}%
-    \insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
+    \trace{g}{Picture now \the\ht0 \space into insert box \the\p@cins}%
+    \ifinextended\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
+      \ifdoingt@ble\edef\@wrap{\global\setbox\t@blenotes=\vbox\bgroup\unvbox\t@blenotes}\else%
+        \ifhe@dings\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}\else
+          \let\@wrap\empty
+        \fi
+      \fi
+    \fi%
+    \@wrap\insert\p@cins{\penalty10000 % make sure this picture does not float away to another page
       \splittopskip\z@skip
       \splitmaxdepth\maxdimen \floatingpenalty20000 % was zero
-      \headingtopspace=0pt
+      \headingtopspace=0pt%
+      \penalty10000
+      \pdfsavepos\penalty10000
+      \write\p@rlocs{\noexpand\@nontextstart{\the\pdflastxpos}{\the\pdflastypos}}\penalty10000%
       \gridp@ctrue\gridb@x0\gridp@cfalse% make sure we align to the page grid
-    }%
+      \pdfsavepos
+      \write\p@rlocs{\noexpand\@nontextstop{\the\pdflastxpos}{\the\pdflastypos}}%
+    }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
 %+cfig_dofigure_6
   \else
@@ -781,70 +915,103 @@
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
     \ifx\picl@c\loc@Inl
-      \d@figureInl0%
+      \headingtopspace=0pt
+      \d@figureInl 0%
     \fi
     %
     \ifx\picl@c\loc@Par
-      \d@figurePar0%
+      \d@figurePar 0%
     \fi
     %
     \ifx\picl@c\loc@Page
-      \d@figurePage0%
+      \d@figurePage 0%
     \fi
     \ifx\picl@c\loc@Full
-      \d@figureFull0%
+      \d@figureFull 0%
     \fi
     \ifx\picl@c\loc@Cut
-      \d@figureCut0%
+      \d@figureCut 0%
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
-    \ifvoid0\else\message{Placement for \the\im@gecount could not be understood. Image Lost!}\fi
+    \ifvoid0\else\message{Placement for image \the\im@gecount (at \c@rref) could not be understood. Image Lost!}\fi
    \fi
  \fi% end \ifIncludeFigures
 }
 
+
+\def\@lignpic#1{%Align pic (or whatever) according to pic@lign
+  \def\l@ftedge{\hss}\def\r@ghtedge{\hss}%
+  \ifx\pic@lign\@lignLeft\def\l@ftedge{}\fi
+  \ifx\pic@lign\@lignRight\def\r@ghtedge{}\fi
+  \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
+  \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
+}
 \def\d@figureInl#1{%
-  \trace{g}{\w@tsit is inline \ifhmode in HMODE\fi}%
-  \penalty10 % Allow the page to break
+  \trace{g}{\w@tsit\space is inline, \the\hsize \ifhmode , in HMODE\fi \ifpicNarrow , narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
+  \penalty\pr@penalty % Allow the page to break
   \ifpicNarrow
-    \ifx\pic@lign\@lignLeft
-      \setbox#1\vbox{\hbox to \colwidth{\box#1\hss}}\else\setbox#1\vbox{\hbox to \colwidth{\hss\box#1}}%
-    \fi
+    \@lignpic{#1}%
   \fi
   %\splittopskip\baselineskip
+  \tempfalse
+  \ifhmode \temptrue\fi
+  \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
     \gridp@cfalse% Not true! It's not floating.
-      \headingtopspace=0pt
-    \gridb@x#1 
-    \ifx\w@tsit\gr@phic
+    \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
+    %\lastdepth=0pt
+    %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
+    \gridb@x#1%
+    \iftemp
       \dimen9=\lastdepth \kern\dimen9
       \trace{g}{gridbox dp=\the\dimen9}%Figs have a skip at the bottom of the box, but somehow the depth is kept. Need to kill it. sidebars don't have this issue.
     \fi
-  \penalty10}%
+  \penalty\p@stpenalty}%
   \ifvmode \picc@ntents
   \else\vadjust pre{\picc@ntents}\fi
 }
 
-
+\newif\ifearlyeotpskip
 \def\d@figurePar#1{%
-  \trace{g}{\w@tsit is post-paragraph}%
+  \trace{g}{\w@tsit is post-paragraph, \the\hsize/\the\p@cinswid \ifpicNarrow , narrow\fi}%
   \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
-  \global\setbox\picb@@x\box#1
   \ifpicNarrow
-    \ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
-    \else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
-    \fi
+    \@lignpic{#1}%
+    %\ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
+    %\else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
+    %\fi
+    %\showbox\picb@@x
   \fi
+  \earlyeotpskipfalse
+  \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
+  \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
+      \gridp@ctrue% TRUE. Out of band like a floating image.
+      \prevdepth=0pt
+      \headingtopspace=0pt
+      \gridb@x#1
+      \lastdepth=0pt
+      %\kern 0pt
+      \ifearlyeotpskip\kern -1sp\kern 1sp\fi
+    }%
   \edef\eotpn@me{at@ndofthispar\c@rrdstat}% Which at@ndofthispar macro?\emspace
   \trace{g}{\eotpn@me\space defined}%
   \x@\gdef\csname \eotpn@me\endcsname{%
+    \trace{s}{eotp: \eotpn@me. st@k:\styst@k, cref:\c@rref}%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
+    \ifhmode\edef\eotpprevdepth{0pt}\else\edef\eotpprevdepth{\the\prevdepth}%
+      \prevdepth=0pt 
+    \fi%
+    \lastdepth=0pt  % prevdepth accounted for...
+    \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
+    \setbox0\vbox{\unvbox\picb@@x \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\global\earlyeotpskiptrue\fi}%
+    \trace{g}{Box flagged for early skip? \ifearlyeotpskip true\else false\fi}%
+    \ifearlyeotpskip \vskip-\eotpprevdepth\relax\fi
     \penalty10 % Allow the page to break
-    %\gridp@cfalse% Not true. Not a floating image.
-      \headingtopspace=0pt
-    \gridb@x\picb@@x
-       %\vskip-\prevdepth
+    \edef\b@xdepth{\the\dp\picb@@x}%
+    \unvbox0
+    \dimen0=\lastkern\ifdim\dimen0=1sp \unkern\fi
     \penalty10
+    \ifearlyeotpskip\else \vskip-\eotpprevdepth\relax\fi
    }%
    \def\temp{}%
    \ifnum\c@tskip>1 \count255=\c@tskip
@@ -852,7 +1019,7 @@
        \edef\temp{D|\temp}\advance\count255 by -1
      \repeat
    \fi
-   \trace{g}{Delay for \eotpn@me set to \temp}%
+   \trace{g}{Delay for \eotpn@me set to '\temp'}%
    \x@\xdef\csname \eotpn@me Delay\endcsname{\temp}%
    \relax\relax
 }
@@ -860,32 +1027,72 @@
 %+cfig_dofigure_7
 
 \def\d@figurePage#1{%
-  \trace{g}{\w@tsit is page, \the\ht#1, \the\wd#1}%
-  \ifx\picV@lign\@lignTop \setbox#1\vtop to \textheight{\box#1\vskip 0pt plus 1fill}\fi%CHECKME
-  \ifx\picV@lign\@lignBot \setbox#1\vbox to \textheight{\vskip 0pt plus 1fill \box#1}\fi%CHECKME
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty11}% magic number
+  \d@figurep@ge{#1}{page}{\textheight}{11}{0pt}%
 }
-
 \def\d@figureFull#1{%
-  \trace{g}{\w@tsit\space is full-page, \the\ht#1, \the\wd#1,}%
-  %Page is not positioned absolutely. Calculate offset
-  \dimen0=\bottomm@rgin\advance\dimen0 by -\topm@rgin
+  \d@figurep@ge{#1}{full-page}{\PaperHeight}{9}{\FullPageFudgeFactor}%
+  %\showbox\wholepagepic
+}
+
+% #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
+\def\d@figurep@ge#1#2#3#4#5{%
+  \trace{g}{\w@tsit\space is #2, \the\ht#1, \the\wd#1}%
+  \dimen0=#3 \advance\dimen0 by -\ht#1
+  \advance\dimen0 by -\dp#1
   \divide\dimen0 by 2
-  \advance\dimen0 by \FullPageFudgeFactor % apply user-tweakable Fudge factor (-2pt)
-  \ifx\picV@lign\@lignTop \setbox#1\vtop to \PaperHeight{\kern\dimen0\box#1\vss}\fi%CHECKME
-  \ifx\picV@lign\@lignBot \setbox#1\vbox to \PaperHeight{\vss\box#1}\fi%CHECKME
-  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\box#1\penalty9}% magic number
+  \ifx\picV@lign\@lignTop \trace{g}{V alignment: top}\setbox#1\vbox{\vbox to #3{\kern#5\box#1\vss}}\else
+    \ifx\picV@lign\@lignBot \trace{g}{V alignment: bottom}\setbox#1\vbox{\vbox to #3{\vss\box#1}}\else
+      \ifx\picV@lign\@lignCent \trace{g}{V alignment: center}\setbox#1\vbox{\vbox to #3{\vss\box#1\vss}}\else
+        \trace{g}{V alignment: none}\setbox#1\vbox{\vskip 0pt plus \the\dimen0 \penalty10000\box#1\penalty10000\vskip 0pt plus \dimen0}%
+    \fi\fi\fi
+  \tempfalse
+  \trace{g}{pagetotal=\the\pagetotal}%
+  \ifhmode\temptrue\else
+    \ifdim\pagetotal=0pt\else\temptrue\fi
+  \fi
+  \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
+  \iftemp\else
+    %\def\pagecontents{\vss\box#1\vss}\plainoutput
+    \trace{g}{Can proceess immediately}%
+    \dofigp@ge
+  \fi
 }
 
 
-\def\d@figureCut#1{% Expects: count255=number of lines gap, dimen0=size of wotsit, \c@tskip=delay
+\def\DefaultSpaceBeside{10pt}
+\def\c@tskipparse#1.#2.#3\E{%
+  \def\t@mp{#2}\ifx\t@mp\empty
+    \gdef\c@tskipfrac{#1}%
+  \else
+    \xdef\c@tskipfrac{#1.#2}%
+    \ifnum #2 < 5
+      \xdef\c@tskip{#1}%
+    \else
+      \ifnum #1<0 
+        \xdef\c@tskip{\the\numexpr #1  -1\relax}%
+      \else
+        \xdef\c@tskip{\the\numexpr #1  +1\relax}%
+      \fi
+    \fi
+  \fi
+  \trace{g}{cut skip is \c@tskip (\c@tskipfrac)}%
+}
+
+\def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
   \mkstr@t
-  \dimen0=\ht#1
+  \dimen0=\ht#1%
   \ifx\w@tsit\gr@phic 
    \edef\dr@pthingid{droppic\the\im@gecount}%
   \else
-   \advance\notim@gecount by 1
+   \global\advance\notim@gecount by 1
    \edef\dr@pthingid{drop\w@tsit\the\notim@gecount}%
+   \x@\ifx\csname thisw@tsitslop\endcsname\relax\else
+     \@@getCutoutSlop{\dr@pthingid}%
+     \ifx\r@iselimit\relax
+       \x@\setCutoutSlop\x@{\x@\dr@pthingid\x@}\thisw@tsitslop
+     \fi
+     \let\thisw@tsitslop\relax
+   \fi
   \fi
   \trace{g}{\w@tsit\space\dr@pthingid\space is in a cutout. \the\count255 x \the\baselineskip.}%
   %\setbox#1=\hbox{\vrule height\dimen0\kern 0.5pt\box#1}%TESTING.
@@ -909,9 +1116,9 @@
      \tmpcount=0
   \fi
   %\advance\dimen1 by \baselineskip
-  \advance\dimen1 by \c@tskip\baselineskip
-  \dimen2=\wd#1\advance\dimen2 by 10pt\dimen3=\hs@ze \advance\dimen3 by -\dimen2
-  \ifdim\dimen3<5em\message{*** \w@tsit specification of \size@ption \sizem@ltiple (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \advance\dimen1 by \c@tskipfrac\baselineskip
+  \dimen2=\wd#1\advance\dimen2 by \sp@cebeside\relax\dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \ifdim\dimen3<5em\message{*** \w@tsit specification of \csname size@ption\endcsname \csname sizem@ltiple\endcsname (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \raise@test{\dr@pthingid}%
   \ifx\t@str@ise\relax\else
     \advance\dimen1 by -\t@str@ise\baselineskip
@@ -978,45 +1185,16 @@
 \CaptionRefFirstfalse
 \newif\ifCaptionFirst % Does the caption come before the image or after?
 \CaptionFirstfalse
-\def\FullPageFudgeFactor{-2pt} % How much does a full page top-aligned picture miss the top of the page by?
+\def\FullPageFudgeFactor{0pt} % How much does a full page top-aligned picture miss the top of the page by?
 %+cfig_checkpdf
 \def\ch@ckpdf#1.#2.#3\endf@lename{\lowercase{\edef\@xt{#2}}%
   \ifx\@xt\@pdf \let\picfilecomm@nd\XeTeXpdffile \fi}
 %-cfig_checkpdf
-\def\@pdf{pdf}
 
 %+cfig_declare
 \def\picw@rning#1#2{\msg{converted picture placement "#1" to "#2" in single-column layout}}
+\x@\let\csname \gr@phic @warning\endcsname\picw@rning
 
-\def\size@COL{col}
-\def\size@SPAN{span}
-\def\size@PAGE{page}% a page, within the margins
-\def\size@FULL{full}% the paper size
-% tA,bA  etc are reserved for the top and bottom of polyglot column A
-\def\loc@T{t}
-\def\loc@B{b}
-\def\loc@VB{B}
-\def\loc@TL{tl}
-\def\loc@TR{tr}
-\def\loc@BL{bl}
-\def\loc@BR{br}
-\def\loc@Inl{h}% In-line graphic, not a float.
-\def\loc@Cut{c}% cutout
-\def\loc@Par{p}% post-paragrpah
-\def\loc@Page{P}% Page (with headers/footers)
-\def\loc@Page{F}% FullPage (no headers/footers)
-\def\@lignInner{i}
-\def\@lignOuter{o}
-\def\@lignLeft{l}
-\def\@lignRight{r}
-\def\@lignTop{t}
-\def\@lignBot{b}
-\def\keyR@TATE{rotate}
-\def\val@dd{odd}
-\def\val@ven{even}
-\def\valb@th{both}
-\def\val@BIND{binding}
-\def\val@EDGE{edge}
 \def\alias@inserts{%
   \x@\let\csname ins-\loc@TL\endcsname\topleftins
   \x@\let\csname ins-\loc@TR\endcsname\toprightins
@@ -1071,6 +1249,7 @@
      \trace{g}{Number of images has changed}%
    \fi
    \let\figonpage=\checkfigpage
+   \let\labelonpage=\checklabelpage
    \inputpicp@ges "#1"
    \iftemp\message{}\message{*** Figures have changed. It may be necessary to re-run the job}\fi%
 }
@@ -1102,29 +1281,72 @@
   \fi
   \edef\ch@ck{#1}%
   \x@\ifx\csname fig#2p@ge\endcsname\ch@ck\else\trace{g}{Figure #2 page changed from \ch@ck \space to \csname fig#2p@ge\endcsname}\temptrue\fi
+  \x@\let\x@\ch@ck\csname fig#2occurrences\endcsname
+  \ifx\ch@ck\relax\x@\edef\csname fig#2occurrences\endcsname{#1}\else
+    \message{*** Figure #2 on page #1, but previously seen on \ch@ck. Work-around is to move the anchor to a different verse or alter the size/placement.}%
+    \x@\edef\csname fig#2occurrences\endcsname{\ch@ck, #1}%
+  \fi
 }
 %-cfig_openpicpages
-
+%
 %+cfig_dofigpage
 \def\dofigp@ge{%
   \ifvoid\wholepagepic\else
     \trace{g}{wholepagepic is \the\ht\wholepagepic high}%
+    %\tracingassigns=1
+    \savingvdiscards=1
+    %\nonstopmode\showbox\wholepagepic
+    \setbox2=\copy\wholepagepic
     \setbox0=\vsplit\wholepagepic to \PaperHeight
-    \setbox0=\vbox{\unvbox 0\global\tmpcount=\lastpenalty}%
-    \trace{g}{lp:\t box0 is \the\ht0\space high, th:\the\textheight}%
-    \ifnum\tmpcount=11
-      \def\pagecontents{%
-        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins}%
-        \box0%
-        }%
-      \plainoutput
-    \else% expected values: 9 (full page) or 10000 (too big)
-      \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
-      \shipwithcr@pmarks{\box0}%
-      \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
-      \advancepageno
+    \tmpcountB=\badness
+    \tempfalse
+    \ifnum\tmpcountB>200 % Overstretch or understretch
+      \temptrue
+    \fi
+    \setbox3=\vbox{\splitdiscards}%
+    \setbox1=\vbox{\unvcopy3\unpenalty\unskip\unpenalty\global\tmpcount=\lastkern}%
+    \global\setbox\wholepagepic=\vbox{\unvbox\wholepagepic}%
+    \trace{g}{After split (\the\tmpcountB)  wholepagepic \the\ht\wholepagepic+\the\dp\wholepagepic}%
+    \ifdim\ht\wholepagepic>0pt
+      %\showbox3 \showbox\wholepagepic
+      \global\setbox\wholepagepic=\vbox{\unvcopy1\unvbox\wholepagepic}%
+    \else 
+      \global\setbox\wholepagepic\box\voidb@x
+    \fi
+    %\showboxdepth=99
+    %\showboxbreadth=99
+    %\showbox\wholepagepic
+    %\showbox1
+    %\showbox0
+    \setbox0=\vbox{\unvbox 0\unpenalty\global\tmpcountB=\lastkern}% MUST do this unconditionally
+    \trace{g}{lp: box0 is \the\ht0\space high, penalty:\the\tmpcount, \the\tmpcountB, th:\the\textheight, ph:\the\PaperHeight}%
+    \ifnum\tmpcountB=0\else\tmpcount=\tmpcountB\fi % Because if processing in a box gets surprising.
+    %\showbox0
+    \ifdim\ht0>0pt
+      \ifnum\tmpcount=11% expected values: 11 (normal-sized page)
+        \def\pagecontents{%
+          \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset}%
+          \vbox to \textheight{\par\unvbox0}%
+          }%
+        \plainoutput
+      \else% Full page, past margins (9) or 0 
+        \dimen8=\pdfpagewidth \dimen9=\pdfpageheight
+        %\showbox 0
+        \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset, PaperHeight=\the\PaperHeight, pdfpageheight=\the\pdfpageheight}%
+        \setbox0\vbox to \PaperHeight{\unvbox0}%  
+        \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
+        \shipcompletep@gewithcr@pmarks{\box0}
+        \pdfpagewidth=\dimen8 \pdfpageheight=\dimen9
+        \advancepageno
+      \fi
     \fi
   \fi
+  %\tracingassigns=0
+  \let\n@xt\relax
+  \ifdim\ht\wholepagepic>0pt
+    \let\n@xt\dofigp@ge
+  \fi
+  \n@xt
 }
 \newtoks\onship@ut 
 \def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}

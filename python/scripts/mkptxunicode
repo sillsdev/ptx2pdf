@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+
+import argparse
+from ptxprint.sfm.ucd import find_ucd
+
+parser = argparse.ArgumentParser()
+parser.add_argument("outfile",nargs="?",default="ptx-unicode.tex",help="Output TeX file")
+args = parser.parse_args()
+
+classes = {
+    "Vir":  [("InSC", ["Invisible_Stacker", "Virama", "Joiner", "Non_Joiner"])],
+    "CM":   [("gc", ["Mc", "Mn"]), ("InSC", ["Top"])],
+    "Num":  [("bc", ["ES", "EN", "ET", "AN", "CS", "BN"])],
+}
+
+pairs = [ (0, 0), ("\\KclassCM", 0), ("\\KclassNum", 0), (0, "\\KclassNum"),
+          ("\\KclassCM", "\\KclassNum") ]
+
+extras = {
+    0x0E33: 'CM'
+}
+
+classdat = {}
+for k, b in classes.items():
+    dat = set()
+    for v in b:
+        for val in v[1]:
+            dat.update(find_ucd(v[0], val))
+    if "Vir" in classdat:
+        dat -= classdat["Vir"]
+    classdat[k] = dat
+
+for k, v in extras.items():
+    classdat[v].add(k)
+
+with open(args.outfile, "w", encoding="utf-8") as outf:
+    outf.write("\\XeTeXinterchartokenstate=1\n")
+    for k in classes.keys():
+        outf.write("\\newXeTeXintercharclass\\Kclass{}\n".format(k))
+    for k, v in classdat.items():
+        outf.write("\n")
+        for c in sorted(v):
+            if 0x20 <= c < 0xE0000:
+                outf.write('\\XeTeXcharclass"{:04X}=\\Kclass{}\n'.format(c, k))
+    outf.write("\n% Interclass rules\n")
+    for p in pairs:
+        outf.write("\\XeTeXinterchartoks {} {}{{\\intercharspace}}\n".format(*p))
+    outf.write("\\XeTeXinterchartokenstate=0\n")

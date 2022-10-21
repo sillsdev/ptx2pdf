@@ -1,13 +1,13 @@
 \id TST Test file
 \h small test file
 \c 1
-\s This is a title
+\s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
 \v 1 This is normal text.\f + \fr 1:1 \ft A footnote\f* 
 \nd NDtext and other character styles can cross a milestone boundary like this -> \qt-s\* 
 now inside an unattributed  qt-s..qt-e block \nd* The end of the ND style returns to what it was before the ND started,
 if it doesn't call setfont.
-\p The paragraph break 
+\p The paragraph break  (praise the \nd Lord!\nd*)
 \v 2 sets\f + \fr 1:2 \ft in the case that setfont fails\f*  things back to what they 
 ought to be before the end of the block ->
 \qt-e\* And now out of the unattributed nd block again. Everything ought to be normal\f + \fr 1:2 
@@ -16,21 +16,60 @@ ought to be before the end of the block ->
 \qt-s| James  sid="123"\*
 this bit is attributed to James
 \qt-e|eid="234"\*
-So is this bit, after a non-mathcing break.
+So is this bit, after a non-matching break.
 \qt-e|eid="123"\*
 
 
-\p  We're outside the clever stuff and ought to be back to normal now. But let's do some nesting.
-\v 3 James said \qt1-s|James\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
+\p  We're \rb outside|above\rb* the clever stuff and ought to be back to normal now. But let's do some nesting.
+\v 3 James said \qt1-s|who="James"\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
 said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"\qt-e\*, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, nisi ut aliquid ex ea commodi
 consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui \w dolorem\w* eum fugiat quo voluptas nulla pariatur?
 \p
 \s A test \w foo|demo\w* of word attributes
 \p
+\v 3b Now here is a \w link|link-href="Http://localhost"\w* and this isn't.
+\p
 \v 4 At vero eos \bd et \+w gratuitous slash-w|akkumulator\+w* et iusto odio \bd*
-dignissimos ducimus \w qui \w* blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
-\v 5 \qt-s Nam \qt-e libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
+\v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
+\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't.
+
+\s \zmine-s\* A test of a custom milestone
+\p 
+\v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
+\v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
+
+
+\ts-s|zwho="Alice"\*
+\p Jesus said, <<\qt-s|Jesus\* It is written, \+bd <You shall not put the \+nd Lord\+nd*... \+bd* \qt-e\*
+
+
+\c 3
+\p
+\v  1 There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:
+\v  2 The same came to Jesus by night, and said unto him, Rabbi, we know that
+thou art a teacher come from God: for no man can do these miracles that thou
+doest, except God be with him.
+\p
+\v  3 Jesus answered and said unto him, \qt-s|Jesus\* \+bd Verily, verily,\+bd* I say unto thee, Except a
+man be born again, he cannot see the kingdom of God.\qt-e\*
+\v  4 Nicodemus saith unto him, How can a man be born when he is old? can he
+enter the second time into his mother's womb, and be born?
+\v  5 Jesus answered,
+\qt-s|Jesus\*
+\p  Verily, verily, I say unto thee, Except a man be born of
+water and of the Spirit, he cannot enter into the kingdom of God.
+\v  6 That which is born of the flesh is flesh; and that which is born of the
+Spirit is spirit.
+\v  7 Marvel not that I said unto thee, Ye must be born again.
+\v  8 The wind bloweth where it listeth, and thou hearest the sound thereof, but
+canst not tell whence it cometh, and whither it goeth: so is every one that is
+born of the Spirit.\qt-e\*
+\p
+\v  9 Nicodemus answered and said unto him, How can these things be?
+
+\ts-e|\*

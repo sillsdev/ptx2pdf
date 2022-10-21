@@ -6,20 +6,30 @@
 %\input "ptxplus-marginalverses.tex"
 \showboxdepth=99\showboxbreadth=99
 \catcode`\@=12
+\LogFontstrue
 \stylesheet{usfm_sb.sty}
+\def\doLines{\doGridLines}
+%\stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
-\stylesheet{test.sty}
 \tracing{sc}
 \tracing{sC}
+\stylesheet{test.sty}
 \tracing{C}
 \tracing{e}
+\tracing{eb}
 \tracing{A}
 \tracing{m}
 \tracing{eb}
 \tracing{s}
+\tracing{sP}
 \tracing{g}
+\tracing{et}
+\tracing{h}
+\tracing{V}
+\tracing{sko}
 %\tracingmacros=1
 %\tracingassigns=1
+\tracingoutput=1
 \categorysheet{mycats.sty}
 %\unbalancedfalse
 \unbalancedtrue
@@ -43,6 +53,7 @@
 %\sethook{after}{m}{\kern .5pt \hrule width 10em height .2pt \kern 1pt \hrule width 10em height .2pt}
 %\sethook{start}{m}{\beginadd\beginadd}
 %\sethook{end}{m}{\endadd\endadd}
+\sethook{start}{cat:testpar|cat}{\tracingparagraphs=1}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
 \sethook{start}{add}{\beginadd}
@@ -51,5 +62,9 @@
 \sethook{end}{cat:foo|cat}{foo_hook>>}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
+%\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
+\nonstopmode
+\def\DebugBorderCat{top}
+\ptxfile{cover.usfm}
 \ptxfile{test.usfm}
 \bye

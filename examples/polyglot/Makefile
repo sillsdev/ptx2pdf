@@ -5,6 +5,7 @@ SCRIPTDIR:=$(shell dirname `find ../..  -name polyglot_merge.pl | grep -v bisect
 
 .tex.pdf:
 	TEXINPUTS=.:../../src time xetex $< < /dev/null
+	while grep Rerun $(subst .tex,.log,$<) ; do TEXINPUTS=.:../../src time xetex $< < /dev/null ; done
 	#TEXINPUTS=.:../../src xetex $<
 
 Galatians.pdf: Galatians.tex Galatians-setup.tex intro.usfm mergedGal.usfm mergedGal.usfm.piclist mergedGalV.usfm ../../src/*.tex *.sty 
@@ -57,5 +58,7 @@ autogal:
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians.pdf ; done </dev/null
 autogal2:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians2.pdf ; done </dev/null
+autogal3:	
+	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make Galatians3.pdf ; done </dev/null
 autojhn:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make John.pdf ; done </dev/null

@@ -1,0 +1,14 @@
+linestretch: 1.2
+papersize: a4
+margin-left: 0.8in
+margin-right: 0.8in
+margin-top: 0.8in
+margin-bottom: 0.8in
+fontsize: 11pt
+fontfamily: DejaVuSerif
+sansfont: DejaVuSans
+monofont: DejaVuSansMono
+header-includes:
+ - \usepackage{fvextra}
+ - \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+

@@ -1,5 +1,5 @@
-import os, sys, re, subprocess
-from PIL import Image
+import os, sys, re, subprocess, time
+from PIL import Image, ImageChops, ImageEnhance
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
@@ -9,16 +9,21 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.utils import _, universalopen, print_traceback
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax
+from ptxprint.pdf.fixcol import fixpdffile, compress
+from ptxprint.pdf.pdfsig import make_signatures
+from ptxprint.pdfrw import PdfReader, PdfWriter
+from ptxprint.pdfrw.errors import PdfError
+from ptxprint.pdfrw.objects import PdfDict, PdfString
+from ptxprint.toc import TOC, generateTex
+from ptxprint.unicode.ducet import tailored
+from ptxprint.reference import RefList
+import numpy as np
 from datetime import datetime
+import logging
 
-# "*** WARNING: Sidebar or colophon might not print on page": \
-                                         # _("The colophon seems to be too big for the page.\n" +\
-                                           # "Try shortening it, or move it all to the FRT book."),
-# "\zcolophon":                            _("This may be caused by an improperly defined Colophon.\n\n" +\
-                                           # "Try turning off the Include Colophon setting on Header+Footer page.\n" +\
-                                           # "If that works, then try to fix the colophon (maybe \imagecopyrights\n" +\
-                                           # "localization has not been defined) and try again."),
+logger = logging.getLogger(__name__)
+
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! TeX capacity exceeded, sorry":        _("Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact support."),
@@ -29,13 +34,14 @@ _errmsghelp = {
                                            "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
                                            "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
+"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \Color definition, not a color name. (e.g. \Color xff7f7f)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
-                                           "Try 'Run Basic Checks' in Paratext"),
+                                           "Try running 'Basic Checks' in Paratext to validate markers."),
 "! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
-"! File ended while scanning use of":    _("Try turning off PrintDraftChanges.txt and both Stylesheets on Advanced tab."),
+"! File ended while scanning use of":    _("Try turning off various settings on the Advanced tab."),
 "! Output loop---25 consecutive dead cycles.":  _("Sorry! XeTeX was unable to complete the typesetting.\n" +\
                                            "* If creating a Diglot, ensure both texts can print successfully\n" +\
                                            "  before merging them as a Diglot print. And ensure that there\n" +\
@@ -53,20 +59,31 @@ _errmsghelp = {
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
                                           "the selected font has not been installed for all users. See FAQ."),
+"! Improper `at' size":                  _("Font size setting issue. Check to see if the font size in a style\n" +\
+                                          "in or near the reference below is incorrect (maybe it is set to 0.00)."),
 "! Too many }'s":                        _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! This can't happen (page)":            _("Possibly a TeX macro issue - contact support, or post a bug report"),
 "! I can't find file `paratext2.tex'.":  _("Possibly a faulty installation."),
 "! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
-"Runaway argument?":                     _("Unknown issue. Maybe related to Right-aligned tabbed leaders\n" +\
-                                           "Try turning off PrintDraftChanges.txt and both Stylesheets"),
-"Unknown":                               _("Sorry, there is no diagnostic help for this error.\n" +\
-                                           "Try using Paratext's 'Run Basic Checks' to uncover any Marker errors.")
+"Runaway argument?":                     _("Unknown issue. Possibly related to Right-aligned tabbed leaders. " +\
+                                           "Try turning off various settings on the Advanced Tab."),
+"Unknown":                               _("Oops! Something unexpected happened causing this error.\n" +\
+                                           "If you are unable to solve this issue yourself, use the 'Create Archive...' button\n" +\
+                                           "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n" +\
+                                           "for further assistance. Please include a description of the problem, and if\n" +\
+                                           "known, tell us which setting was changed since it last worked.")
 }
-# \def\LineSpacingFactor{{{paragraph/linespacingfactor}}}
-# \def\VerticalSpaceFactor{{1.0}}
-# \baselineskip={paragraph/linespacing}pt {paragraph/varlinespacing} {paragraph/linemax} {paragraph/linemin}
-# \XeTeXinterwordspaceshaping = {document/spacecntxtlztn}
-# %\extrafont  %% This will be replaced by code for the fallback fonts to be used for special/missing characters
+
+_pdfmodes = {
+    'rgb': ("Screen", "Digital"),
+    'cmyk': ("CMYK", "Transparency")
+}
+
+_unitpts = {
+    'mm': 2.845275591,
+    'in': 72.27,
+    'pt': 1
+}
 
 def base(fpath):
     doti = fpath.rfind(".")
@@ -74,7 +91,7 @@ def base(fpath):
 
 # https://sites.google.com/a/lci-india.org/typesetting/home/illustrations/where-to-find-illustrations
 def codeLower(fpath):
-    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?$", base(fpath))
+    cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", base(fpath))
     if cl:
         return cl[0].lower()
     else:
@@ -87,22 +104,35 @@ def newBase(fpath):
     else:
         return re.sub('[()&+,.;: ]', '_', base(fpath).lower())
 
+_diglotprinter = {
+"_diglotcustomsty":         "c_useCustomSty",
+"_diglotmodsty":            "c_useModsSty",
+"_diglotincludefn":         "c_includeFootnotes",
+"_diglotincludexr":         "c_includeXrefs"
+}
+
 _diglot = {
 "ifusediglotcustomsty_":    "project/ifusecustomsty",
 "ifusediglotmodsty_":       "project/ifusemodssty",
 "ifdiglotincludefootnotes_":"notes/includefootnotes",
 "ifdiglotincludexrefs_":    "notes/includexrefs",
 
-"diglot/colorfonts" :       "document/ifcolorfonts",
+# "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
-"diglot/ifomitsinglechnum": "document/ifomitsinglechnum",
+"diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
 "diglot/fontfactor" :       "paper/fontfactor",
 "diglot/linespacingfactor": "paragraph/linespacingfactor",
+"diglot/afterchapterspace": "document/afterchapterspace",
+"diglot/afterversespace":   "document/afterversespace",
 "diglot/iflinebreakon" :    "document/iflinebreakon",
 "diglot/linebreaklocale" :  "document/linebreaklocale",
 
+"diglot/ifletter":          "document/ifletter",
+"diglot/letterstretch":     "document/letterstretch",
+"diglot/lettershrink":      "document/lettershrink",
+
 "diglot/docscript" :        "document/script",
-"diglot/docdigitmapping" :  "document/digitmapping",
+# "diglot/docdigitmapping" :  "document/digitmapping",
 "diglot/interlinear":       "project/interlinear",
                             
 "diglot/fontregular" :      "document/fontregular",
@@ -111,6 +141,11 @@ _diglot = {
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
 "diglot/xrlocation" :       "notes/xrlocation",
+
+"diglot/copyright":         "project/copyright",
+"diglot/license":           "project/license",
+"diglot/ptxprintstyfile_":  "project/ptxprintstyfile_",
+
 "diglotfancy/versedecorator":       "fancy/versedecorator",
 "diglotfancy/versedecoratorpdf":    "fancy/versedecoratorpdf",
 "diglotfancy/versedecoratorshift":  "fancy/versedecoratorshift",
@@ -118,10 +153,10 @@ _diglot = {
 "diglotfancy/versedecoratorisfile": "fancy/versedecoratorisfile",
 "diglotfancy/versedecoratorisayah": "fancy/versedecoratorisayah",
 "diglotfancy/endayah":              "fancy/endayah",
-"diglotfancy/sectionheader":    "fancy/sectionheader",
+"diglotfancy/sectionheader":        "fancy/sectionheader",
 "diglotfancy/sectionheadershift":   "fancy/sectionheadershift",
 "diglotfancy/sectionheaderscale":   "fancy/sectionheaderscale",
-"diglotfancy/sectionheaderpdf": "fancy/sectionheaderpdf",
+"diglotfancy/sectionheaderpdf":     "fancy/sectionheaderpdf",
 }
 
 _joblock = None
@@ -154,9 +189,15 @@ class RunJob:
         self.res = 0
         self.thread = None
         self.busy = False
-        self.ispdfxa = False
+        self.ispdfxa = "Screen"
         self.inArchive = inArchive
         self.noview = False
+        self.nothreads = False
+        # self.oldversions = 1
+        self.docreatediff = False
+        # self.onlydiffs = True
+        # self.diffPdf = None
+        self.rerunReasons = []
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -176,14 +217,26 @@ class RunJob:
         info.debug = self.args.debug
         self.tempFiles = []
         self.prjid = info.dict["project/id"]
+        configid = info.dict["config/name"]
         self.prjdir = os.path.join(self.args.paratext, self.prjid)
         if self.prjid is None or not len(self.prjid):     # can't print no project
             return
-        self.tmpdir = os.path.join(self.prjdir, 'PrintDraft') if info.asBool("project/useprintdraftfolder") \
-                                                                 or self.args.directory is None else self.args.directory
+        self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
         os.makedirs(self.tmpdir, exist_ok=True)
-        jobs = self.printer.getBooks(files=True)
+        bks = self.printer.getBooks(files=True)
+        jobs = []
+        if self.printer.bookrefs is None:
+            jobs = [(b, False) for b in bks]
+        else:
+            lastbook = None
+            for r in self.printer.bookrefs:
+                if r.first.book != lastbook:
+                    jobs.append((RefList((r, )), True))
+                    lastbook = r.first.book
+                else:
+                    jobs[-1][0].append(r)
 
+        logger.debug(f"{jobs=}")
         reasons = info.prePrintChecks()
         if len(reasons):
             self.fail(", ".join(reasons))
@@ -194,13 +247,15 @@ class RunJob:
         self.books = []
         self.maxRuns = 1 if self.printer.get("c_quickRun") else (self.args.runs or 5)
         self.changes = None
+        # set values based on UI components
+        self.ispdfxa = self.printer.get("fcb_outputFormat") or "Screen"
+        self.docreatediff = self.printer.docreatediff
         if not self.inArchive:
             self.checkForMissingDecorations(info)
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
             self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
-        self.ispdfxa = self.printer.get("c_PDFx1aOutput")
         
         if True: # info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -221,9 +276,9 @@ class RunJob:
             digbooks = self.printer.diglotView.getAllBooks()
             badbooks = set()
             for j in joblist:
-                allj = set(j)
-                j[:] = [b for b in j if b in digbooks]
-                badbooks.update(allj - set(j))
+                allj = set(r[0][0].first.book for r in j if r[1])
+                j[:] = [b for b in j if b[1] and b[0][0].first.book in digbooks]
+                badbooks.update(allj - set(r[0][0].first.book for r in j if r[1]))
             if len(badbooks):
                 self.printer.doError("These books are not available in the secondary diglot project", " ".join(sorted(badbooks)),
                                      show=not self.printer.get("c_quickRun"))
@@ -235,23 +290,41 @@ class RunJob:
         else: # Normal (non-diglot)
             self.texfiles += sum((self.dojob(j, info) for j in joblist), [])
         self.printer.tempFiles = self.texfiles  # Always do this now - regardless!
+        return self.res
 
-    def done_job(self, outfname, info):
+    def done_job(self, outfname, pdfname, info):
         # Work out what the resulting PDF was called
+        logger.debug(f"done_job: {outfname}, {pdfname}, {self.res=}")
         cfgname = info['config/name']
         if cfgname is not None and cfgname != "":
             cfgname = "-"+cfgname
         else:
             cfgname = ""
-        pdfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".pdf"))
-        print(pdfname)
+        if pdfname is not None:
+            print(pdfname)
         if self.res == 0:
-            if not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
+            if self.printer.docreatediff:
+                basename = self.printer.get("btn_selectDiffPDF")
+                if basename == _("Previous PDF (_1)"):
+                    basename = None
+                diffcolor = self.printer.get("col_diffColor")
+                onlydiffs = self.printer.get("c_onlyDiffs")
+                # import pdb; pdb.set_trace()
+                logger.debug(f"diffing from: {basename=} {pdfname=}")
+                if basename is None or len(basename):
+                    diffname = self.createDiff(pdfname, info, basename, diffcolor, onlydiffs)
+                    # print(f"{diffname=}")
+                    if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
+                        if sys.platform == "win32":
+                            os.startfile(diffname)
+                        elif sys.platform == "linux":
+                            subprocess.call(('xdg-open', diffname))
+                self.printer.docreatediff = False
+            elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
                     os.startfile(pdfname)
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', pdfname))
-                # Only delete the temp files if the PDF was created AND the user did NOT select to keep them
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -267,23 +340,24 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
+        elif self.res == 3:
+            pass
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
-            self.printer.doError(_("Failed to create: ")+re.sub(r".+[\\/](.+\.pdf)",r"\1",pdfname),
-                    secondary="".join(finalLogLines[-20:]), title="PTXprint [{}] - Error!".format(VersionStr),
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         else:
             self.printer.set("l_statusLine", "")
-        # if info.asBool("project/keeptempfiles"):
-            # self.printer.tempFiles = self.texfiles
-        # else:
-            # self.removeTempFiles(self.texfiles)
         self.printer.finished()
         self.busy = False
+        logger.debug("done_job: Finishing thread")
         unlockme()
+        if not self.noview and not self.args.print:
+            self.printer.builder.get_object("t_find").set_placeholder_text("Search for settings")
 
     def parselog(self, fname, rerunp=False, lines=20):
         loglines = []
@@ -312,26 +386,30 @@ class RunJob:
 
     def parseLogLines(self):
         # it did NOT finish successfully, so help them troubleshoot what might have gone wrong:
-        for i in range(1, 30):
+        l = len(self.loglines)
+        s = 40 if l > 40 else l
+        e = 0
+        for i in range(1, s):
             if self.loglines[-i].startswith("Here is how much of TeX's memory you used:"):
-                break
-        else:
-            i = 0
-        finalLogLines = self.loglines[-i-20:-i]
+                e = i
+            if self.loglines[-i].startswith("!"):
+                s = i
+        finalLogLines = []
+        for l in self.loglines[-s:-e]:
+            if len(l.strip()):
+                finalLogLines.append(l.replace("   ", " "))
         foundmsg = False
         finalLogLines.append("-"*90+"\n")
         for l in reversed(finalLogLines):
-            if not foundmsg: # l[:1] == "!" and 
-                # for m in _errmsghelp.keys():
+            # if l[:1] == "!" and not foundmsg:
+            if not foundmsg:
                 for m in sorted(_errmsghelp.keys(),key=len, reverse=True):
                     if m in l or l.startswith(m):
-                        if l[:-1] != m:
-                            finalLogLines.append("{}\n".format(m))
                         finalLogLines.append(_errmsghelp[m]+"\n")
                         foundmsg = True
                         break
         if not foundmsg:
-            finalLogLines.append(_errmsghelp["Unknown"]+"\n")
+            finalLogLines.append(_errmsghelp["Unknown"])
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])
@@ -339,26 +417,29 @@ class RunJob:
             book = ""
         refs = re.findall(r"([1-9]\d{0,2}[.:][1-9]\d{0,2}[^0-9])", "".join(finalLogLines))
         if len(refs):
-            finalLogLines.append("\nReferences to check{}: {}".format(book, " ".join(refs)))
+            finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\\box", "\\hbox", "\\vbox", "\else", "\\book", "\\par",
-                     "\\edef", "\\gdef", "\\dimen" "\\hsize", "\\relax"]
+        texmrkrs = [r"\fi", "\if", "\ifx", "\box", "\hbox", "\vbox", "\else", "\book", "\par",
+                     "\edef", "\gdef", "\dimen" "\hsize", "\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
-            if "\ef" in mrkrs or "\ex" in mrkrs:
-                finalLogLines.append("Sorry, Study Bible Markup (\ef \ex etc.) is not yet supported!")
+            if len(set(mrkrs) & set([r"\ef", "\ex", "\cat", "\esb"])):
+                finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
         if len(files):
-            finalLogLines.append("\nFile(s) to check: {}".format(", ".join(files)))
+            finalLogLines.append("File(s) to check: {}".format(", ".join(files)))
         return finalLogLines
 
     def dojob(self, jobs, info):
         donebooks = []
-        for b in jobs:
+        # import pdb; pdb.set_trace()
+        for j in jobs:
+            b = j[0][0].first.book if j[1] else j[0]
+            logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
-                out = info.convertBook(b, None, self.tmpdir, self.prjdir)
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -378,7 +459,7 @@ class RunJob:
             unlockme()
             return []
         self.books += donebooks
-        info["project/bookids"] = jobs
+        info["project/bookids"] = [r[0][0].first.book if r[1] else "MOD" for r in jobs]
         info["project/books"] = donebooks
         res = self.sharedjob(jobs, info)
         if info['notes/ifxrexternalist']:
@@ -396,27 +477,35 @@ class RunJob:
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
                            "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
-                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifomitsinglechnum"]
-        diginfo["project/bookids"] = jobs
+                           "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
+        diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         diginfo["project/books"] = digdonebooks
         diginfo["document/ifdiglot"] = "%"
         diginfo["footer/ftrcenter"] = "-empty-"
         diginfo["footer/ifftrtitlepagenum"] = "%"
         diginfo["fancy/pageborder"] = "%"
-        diginfo["document/clsinglecol"] = False
+        diginfo["document/diffcolayout"] = False
         diginfo["snippets/diglot"] = False
-        docdir = os.path.join(info["/ptxpath"], info["project/id"], "PrintDraft")
+        docdir = os.path.join(info["/ptxpath"], info["project/id"], "local", "ptxprint", info["config/name"])
         for k in _digSecSettings:
             diginfo[k]=info[k]
         syntaxErrors = []
-        if len(jobs) == 1 and info["project/bookscope"] == "single":
-            chaprange = (int(info["document/chapfrom"]), int(info["document/chapto"]))
-        else:
-            chaprange = (-1, -1)
-        for b in jobs:
+
+        # create differential ptxprint.sty
+        cfgname = info['config/name']
+        outstyname = os.path.join(self.tmpdir, "diglot.sty")
+        with open(outstyname, "w", encoding="utf-8") as outf:
+            diginfo.printer.styleEditor.output_diffile(outf, basesheet=info.printer.styleEditor.asStyle(None),
+                                                       sheet=diginfo.printer.styleEditor.asStyle(None))
+        diginfo["project/ptxprintstyfile_"] = outstyname.replace("\\", "/")
+
+        logger.debug('Diglot processing jobs: {}'.format(jobs))
+        for j in jobs:
+            b = j[0][0].first.book if j[1] else j[0]
+            logger.debug(f"Diglot({b}): f{self.tmpdir} from f{self.prjdir}")
             try:
-                out = info.convertBook(b, chaprange, self.tmpdir, self.prjdir)
-                digout = diginfo.convertBook(b, chaprange, self.tmpdir, digprjdir)
+                out = info.convertBook(b, j[0], self.tmpdir, self.prjdir, j[1])
+                digout = diginfo.convertBook(b, j[0], self.tmpdir, digprjdir, j[1])
             except FileNotFoundError as e:
                 self.printer.doError(str(e))
                 out = None
@@ -437,6 +526,7 @@ class RunJob:
 
             sheetsa = info.printer.getStyleSheets()
             sheetsb = diginfo.printer.getStyleSheets()
+            logger.debug(f"usfmerge2({left}, {right})")
             try:
                 usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
             except SyntaxError as e:
@@ -452,18 +542,21 @@ class RunJob:
             return []
 
         if len(syntaxErrors):
+            prtDrft = _("And check if a faulty rule in PrintDraftChanges.txt has caused the error(s).") if info["project/usechangesfile"] else ""
             self.printer.doError(_("Failed to merge texts due to a Syntax Error:"),
-                                 secondary="\n".join(syntaxErrors)+_("\n\nIf original USFM text is correct, then check "+ \
-                                                                     "if PrintDraftChanges.txt has caused the error(s)."),
-                                 title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
+                secondary="\n".join(syntaxErrors)+"\n\n"+_("Run the Basic Checks in Paratext to ensure there are no Marker errors "+ \
+                "in either of the diglot projects. If this error persists, try running the Schema Check in Paratext as well.") + " " + prtDrft,
+                title=_("PTXprint [{}] - Diglot Merge Error!").format(VersionStr), copy2clip=True)
 
-        info["project/bookids"] = jobs
+        info["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
         info["project/books"] = donebooks
         self.books += digdonebooks
 
         # Pass all the needed parameters for the snippet from diginfo to info
         for k,v in _diglot.items():
             info[k]=diginfo[v]
+        for k,v in _diglotprinter.items():
+            info.printer.set(k, diginfo.printer.get(v))
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot")
@@ -471,6 +564,7 @@ class RunJob:
         return texfiles
 
     def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
+        genfiles = []
         if prjid is None:
             prjid = self.prjid
         if prjdir is None:
@@ -480,15 +574,22 @@ class RunJob:
             cfgname = ""
         else:
             cfgname = "-" + cfgname
-        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".tex"
+        outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         info.update()
+        if info['project/iffrontmatter'] != '%':
+            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
+            info.createFrontMatter(frtfname)
+            genfiles.append(frtfname)
+        logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
+        genfiles += [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
         if self.inArchive:
-            return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
-        os.putenv("hyph_size", "32749")     # always run with maximum hyphenated words size (xetex is still tiny ~200MB resident)
+            return genfiles
+        os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
+        os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
         ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
@@ -498,32 +599,61 @@ class RunJob:
                 if os.path.exists(ptxmacrospath):
                     break
 
-        pathjoin = (";" if sys.platform=="win32" else ":").join
+        pathjoiner = (";" if sys.platform=="win32" else ":")
         envtexinputs = os.getenv("TEXINPUTS")
-        texinputs = [envtexinputs] if envtexinputs is not None and len(envtexinputs) else []
-        texinputs += [os.path.abspath(self.tmpdir), ptxmacrospath]
-        # print("TEXINPUTS=",os.getenv('TEXINPUTS'))
-        miscfonts = getfontcache().fontpaths
+        texinputs = envtexinputs.split(pathjoiner) if envtexinputs is not None and len(envtexinputs) else []
+        for a in (os.path.abspath(self.tmpdir), ptxmacrospath):
+            if a not in texinputs:
+                texinputs.append(a+"//")
+        miscfonts = getfontcache().fontpaths[:]
         if sys.platform != "win32":
-            texinputs += ["/usr/share/ptx2pdf/texmacros"]
+            a = "/usr/share/ptx2pdf/texmacros"
+            if a not in texinputs:
+                texinputs.append(a)
             miscfonts.append("/usr/share/ptx2pdf/texmacros")
         miscfonts.append(ptxmacrospath)
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
-            os.putenv("MISCFONTS", pathjoin(miscfonts))
-        # print(f"{pathjoin(miscfonts)=}")
-        os.putenv('TEXINPUTS', pathjoin(texinputs))
-        self.thread = Thread(target=self.run_xetex, args=(outfname, info))
-        self.busy = True
-        self.thread.start()
-        return [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
+            os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+        logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
+        logger.debug(f"{pathjoiner.join(miscfonts)=}")
+        os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
+        os.chdir(self.tmpdir)
+        outpath = os.path.join(self.tmpdir, outfname[:-4])
+        if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
+            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
+        else:
+            pdffile = outpath + ".pdf"
+        logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
+        oldversions = int(self.printer.get('s_keepVersions', '0'))
+        if oldversions > 0:
+            for c in range(oldversions, 0, -1):
+                opdffile = pdffile[:-4] + "_{}.pdf".format(c)
+                ipdffile = pdffile[:-4] + "_{}.pdf".format(c-1) if c > 1 else pdffile
+                if os.path.exists(opdffile):
+                    os.remove(opdffile)
+                if os.path.exists(ipdffile):
+                    logger.debug(f"Rename {ipdffile} to {opdffile}")
+                    os.rename(ipdffile, opdffile)
+        if self.nothreads:
+            self.run_xetex(outfname, pdffile, info)
+        else:
+            self.thread = Thread(target=self.run_xetex, args=(outfname, pdffile, info))
+            self.busy = True
+            logger.debug("sharedjob: Starting thread to run xetex")
+            self.thread.start()
+            info.printer.waitThread(self.thread)
+        self.done_job(outfname, pdffile, info)
+        return genfiles
 
     def wait(self):
+        logger.debug("Waiting for thread: {}, {}".format(self.busy, isLocked()))
         if self.busy:
             self.thread.join()
+        unlockme()
         return self.res
 
-    def run_xetex(self, outfname, info):
+    def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
         cacheexts = {"toc":     (_("table of contents"), True), 
@@ -540,10 +670,16 @@ class RunJob:
                     "run="+str(numruns)])
             cmd = ["xetex", "-halt-on-error", "-interaction=nonstopmode",
                    '-output-comment="'+commentstr+'"', "-no-pdf"]
-            runner = call(cmd + [outfname], cwd=self.tmpdir)
+            if self.forcedlooseness is None:
+                action = outfname
+            else:
+                action = r"\def\ForcedLooseness{{{}}}\input {}".format(self.forcedlooseness, outfname)
+            logger.debug(f"Running: {cmd} {action}")
+            runner = call(cmd + [action], cwd=self.tmpdir)
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
-                    runner.wait(self.args.timeout)
+                    #runner.wait(self.args.timeout)
+                    runner.wait()
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                 self.res = runner.returncode
@@ -555,41 +691,211 @@ class RunJob:
             info.printer.editFile_delayed(logfname, "wrk", "scroll_XeTeXlog", False)
             numruns += 1
             self.rerunReasons = []
+            tocfname = os.path.join(self.tmpdir, outfname.replace(".tex", ".toc"))
+            if self.res > 0:
+                rerun = False
+                if os.path.exists(tocfname):
+                    os.remove(tocfname)
+                break
             rererun = rerun
             for a in cacheexts.keys():
                 testdata = cachedata[a]
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
                 cachedata[a] = self.readfile(fpath)
                 if testdata != cachedata[a]:
-                    if a == "delayed" and len(testdata) and numruns < self.maxRuns:
-                        os.remove(fpath)
-                        cachedata[a] = ""
+                    #if a == "delayed" and len(testdata) and numruns < self.maxRuns:
+                    #    os.remove(fpath)
+                    #    cachedata[a] = ""
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
                         print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
                         rererun = True
                         break
+            if os.path.exists(tocfname):
+                tailoring = self.printer.ptsettings.getCollation()
+                ducet = tailored(tailoring.text) if tailoring else None
+                bklist = self.printer.getBooks()
+                toc = TOC(tocfname)
+                newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
+                with open(tocfname, "w", encoding="utf-8") as outf:
+                    outf.write(newtoc)
             if not rererun:
                 break
+
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
-            cmd = ["xdvipdfmx", "-E"]
-            if self.printer.get("c_PDFx1aOutput"):
-                cmd += ["-z", "0"]
-            if self.args.extras & 1:
-                cmd += ["-vv"]
+            tmppdf = self.procpdfFile(outfname, pdffile, info)
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-o", tmppdf]
+            #if self.ispdfxa == "PDF/A-1":
+            #    cmd += ["-z", "0"]
+            cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
             runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
+            logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")
             if isinstance(runner, subprocess.Popen) and runner is not None:
                 try:
-                    runner.wait(self.args.timeout)
+                    runner.wait()
+                    #runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
+            if not self.procpdf(outfname, pdffile, info):
+                self.res = 3
         print("Done")
-        self.done_job(outfname, info)
+
+    def procpdfFile(self, outfname, pdffile, info):
+        opath = outfname.replace(".tex", ".prepress.pdf")
+        if self.ispdfxa != "Screen":
+            return opath
+        elif info['finishing/pgsperspread'] is not None and int(info['finishing/pgsperspread']) > 1:
+            return opath
+        elif info['finishing/inclsettings']:
+            return opath
+        return pdffile
+
+    def procpdf(self, outfname, pdffile, info):
+        opath = outfname.replace(".tex", ".prepress.pdf")
+        outpdf = None
+        colour = None
+        params = {}
+        if self.ispdfxa == "Spot":
+            colour = "spot"
+            params = {'color': coltoonemax(info['finishing/spotcolor']),
+                      'range': float(info['finishing/spottolerance']) / 100.}
+        elif self.ispdfxa == "Screen":
+            pass
+        elif self.ispdfxa in _pdfmodes['rgb']:
+            colour = "rgbx4"
+        else:
+            colour = self.ispdfxa.lower()
+        if colour is not None:
+            outpdf = fixpdffile(opath, None,
+                            colour=colour,
+                            parlocs = outfname.replace(".tex", ".parlocs"), **params)
+        nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
+        if nums > 1:
+            psize = info['finishing/sheetsize'].split(",")
+            paper = []
+            for p in psize:
+                m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
+                if m:
+                    paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
+                else:
+                    paper.append(0.)
+            sigsheets = int(info['finishing/sheetsinsigntr'])
+            foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
+            try:
+                outpdf = make_signatures((outpdf._trailer if outpdf else opath),
+                                     paper[0], paper[1], nums,
+                                     sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
+                                     info['finishing/foldfirst'])
+            except OverflowError as e:
+                info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
+                                     title=_("Paper Size Error"), secondary=str(e), threaded=True)
+                return False
+        if info['finishing/inclsettings']:
+            zio = cStringIO()
+            z = info.printer.createSettingsZip(zio)
+            z.close()
+            if outpdf is None:
+                outpdf = PdfWriter(None, trailer=PdfReader(opath))
+            if outpdf.trailer.Root.PieceInfo is None:
+                p = PdfDict()
+                outpdf.trailer.Root.PieceInfo = p
+            else:
+                p = output.trailer.Root.PieceInfo
+            pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
+            pdict.Private = PdfDict()
+            pdict.Private.stream = zio.getvalue()
+            pdict.Private.Binary = True
+            p.ptxprint = pdict
+            zio.close()
+
+        if outpdf is not None:
+            outpdf.fname = pdffile
+            outpdf.compress = True
+            outpdf.do_compress = compress
+            outpdf.write()
+            os.remove(opath)
+        return True
+
+    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False):
+        outname = pdfname[:-4] + "_diff.pdf"
+        othername = basename or pdfname[:-4] + "_1.pdf"
+        if color is None:
+            color = (240, 0, 0)
+        logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
+        if not os.path.exists(othername):
+            self.res = 2
+            return None
+        try:
+            ingen = self.pdfimages(pdfname)
+            ogen = self.pdfimages(othername)
+        except ImportError:
+            return None
+        results = []
+        hasdiffs = False
+        for iimg in ingen:
+            oimg = next(ogen, None)
+            if oimg is None:
+                break
+            dmask = ImageChops.difference(oimg, iimg).convert("L")
+            if not dmask.getbbox():
+                if onlydiffs:
+                    continue
+            elif dmask.size != iimg.size:
+                info.printer.doError(_("Page sizes differ between output and base. Cannot create a difference."),
+                    threaded=True, title=_("Difference Error"))
+                return
+            else:
+                hasdiffs = True
+            if maxdiff:
+                dmask = dmask.point(lambda x: 255 if x else 0)
+            translucent = Image.new("RGB", iimg.size, color)
+            enhancec = ImageEnhance.Contrast(iimg)
+            enhanceb = ImageEnhance.Brightness(enhancec.enhance(0.7))
+            nimg = enhanceb.enhance(1.5)
+            nimg.paste(translucent, (0, 0), dmask)
+            results.append(nimg)
+        if hasdiffs and len(results):
+            results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
+            return outname
+        elif os.path.exists(outname):
+            try:
+                os.remove(outname)
+            except PermissionError:
+                info.printer.doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),
+                                     title=_("{} could not be deleted").format(outname), secondary=str(e), threaded=True)
+                pass
+
+    def pdfimages(self, infile):
+        import gi
+        gi.require_version('Poppler', '0.18')
+        from gi.repository import Poppler, GLib
+        import cairo
+        uri = GLib.filename_to_uri(infile, None)
+        logger.debug(f"Poppler load '{uri}'")
+        doc = Poppler.Document.new_from_file(uri, None)
+        numpages = doc.get_n_pages()
+        for i in range(numpages):
+            page = doc.get_page(i)
+            w, h = (int(x*3) for x in page.get_size())
+            surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
+            ctx = cairo.Context(surface)
+            ctx.scale(3., 3.)
+            ctx.set_source_rgba(1., 1., 1., 1.)
+            ctx.rectangle(0, 0, w, h)
+            ctx.fill()
+            try:
+                page.render(ctx)
+                imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
+                b, g, r, a = imgr.split()
+                img = Image.merge('RGB', (r, g, b))
+            except MemoryError:
+                return
+            yield img
 
     def checkForMissingDecorations(self, info):
         deco = {"pageborder" :     "Page Border",
@@ -600,56 +906,62 @@ class RunJob:
         if info.asBool("fancy/enableborders"):
             for k,v in deco.items():
                 if info.asBool("fancy/"+k):
-                    f = info.dict["fancy/{}pdf".format(k)] or ""
-                    if not os.path.exists(f):
-                        warnings += ["{} Decorator\n{}\n\n".format(v, f)]
-            if len(warnings):
-                self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
-                        secondary="\n".join(warnings))
+                    ftype = "fancy/{}type".format(k)
+                    if ftype not in info.dict or info[ftype] == "file":
+                        f = info.dict["fancy/{}pdf".format(k)] or ""
+                        if not os.path.exists(f):
+                            warnings += ["{} Decorator\n{}\n\n".format(v, f)]
+        if info.asBool("paper/ifwatermark"):
+            f = info["paper/watermarkpdf"]
+            if not os.path.exists(f):
+                warnings += ["Watermark\n{}\n\n".format(f)]
+        if len(warnings):
+            self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
+                    secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder):
+        logger.debug("Gathering illustrations")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
         if not os.path.exists(tmpPicpath):
             os.makedirs(tmpPicpath)
         folderList = ["tmpPics", "tmpPicLists"] 
-        #try:
-        #    self.removeTmpFolders(self.printer.working_dir, folderList, mkdirs=True)
-        #except PermissionError:
-        #    print("Warning: Couldn't Remove Temporary Folders - is a temp file open?")
         cropme = info['document/iffigcrop']
         def carefulCopy(p, src, tgt):
-            ratio = pageRatios[0 if p['size'].startswith("span") else 1]
+            ratio = pageRatios[0 if p['size'].startswith("span") else 1] if p.get('pgpos', 'N') in 'tbhp' else None
+            logger.debug(f"carefulcopy {src} -> {tgt} @ {ratio}")
             return self.carefulCopy(ratio, src, tgt, cropme)
         missingPics = []
         if info['document/ifinclfigs'] == 'false':
             # print("NoFigs")
             return []
         picinfos.build_searchlist()
-        for j in jobs:
-            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"))
+        books = [r[0][0].first.book if r[1] else r[0] for r in jobs] + ["FRT"]
+        for j in books:
+            picinfos.getFigureSources(keys=j, exclusive=self.printer.get("c_exclusiveFiguresFolder"), mode=self.ispdfxa)
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
-        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in jobs and 'dest file' not in v and 'src' in v]
+        missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
-        outfname = info.printer.baseTeXPDFnames(jobs)[0] + ".piclist"
+        outfname = info.printer.baseTeXPDFnames(books)[0] + ".piclist"
         for k, v in list(picinfos.items()):
             m = v.get('media', '')
             if m and 'p' not in m:
                 del picinfos[k]
-        picinfos.out(os.path.join(self.tmpdir, outfname), bks=jobs, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        picinfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 
         if len(missingPics):
             print(missingPics)
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
-            self.printer.set("l_missingPictureCount", "({} Missing)".format(len(set(missingPics))))
-            self.printer.set("l_missingPictureString", "Missing Pictures: {}".format("\n".join(missingPicList)))
+            self.printer.set("l_missingPictureCount", _("({} Missing)").format(len(set(missingPics))))
+            self.printer.set("l_missingPictureString", _("Missing Pictures: {}").format("\n".join(missingPicList)))
         else:
-            self.printer.set("l_missingPictureCount", "(0 Missing)")
+            self.printer.set("l_missingPictureCount", _("(0 Missing)"))
             self.printer.set("l_missingPictureString", "")
         self.printer.incrementProgress()
+        logger.debug("Illustrations gathered")
         return res
 
     def getBorder(self, box, start, end, fn):
@@ -681,12 +993,9 @@ class RunJob:
         return im
 
     def convertToJPGandResize(self, ratio, infile, outfile, cropme):
-        if self.ispdfxa:
-            white = (0, 0, 0, 0)
-            fmt = fmta = "CMYK"
+        if self.ispdfxa in _pdfmodes['cmyk'] and not self.printer.get("c_figplaceholders"):
+            fmt = "CMYK"
         else:
-            white = (255, 255, 255, 255)
-            fmta = "RGBA"
             fmt = "RGB"
         with open(infile,"rb") as inf:
             rawdata = inf.read()
@@ -695,25 +1004,64 @@ class RunJob:
         if cropme:
             im = self.cropBorder(im)
         p = im.load()
-        onlyRGBAimage = im.convert(fmta)
         iw = im.size[0]
         ih = im.size[1]
-        if iw/ih < ratio:
+        if ratio is not None and iw/ih < ratio:
+            onlyRGBAimage = im.convert("RGBA")
             newWidth = int(ih * ratio)
-            newimg = Image.new(fmta, (newWidth, ih), color=white)
-            newimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
-            iw = newimg.size[0]
-            ih = newimg.size[1]
-            onlyRGBimage = newimg.convert(fmt)
-            onlyRGBimage.save(outfile)
+            compimg = Image.new("RGBA", (newWidth, ih), color=(255, 255, 255, 255))
+            compimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
+            iw = compimg.size[0]
+            ih = compimg.size[1]
+            newimage = compimg.convert(fmt)
+        elif im.mode != fmt:
+            newimage = im.convert(fmt)
         else:
-            onlyRGBimage = onlyRGBAimage.convert(fmt)
-            onlyRGBimage.save(outfile)
+            newimage = im
+        if fmt == "CMYK":
+            newimage = self.cmytocmyk(newimage)
+        newimage.save(outfile)
         return True
+
+    def cmytocmyk(self, im):
+        #for y in range(im.height):
+        #    for x in range(im.width):
+        #        im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
+        #return im
+        #import pdb; pdb.set_trace()
+        img = np.asarray(im).copy()
+        if img.shape[-1] == 3:
+            z = np.zeros((img.shape[0], img.shape[1], 1), dtype=np.uint8)
+            img.concatenate((img, z), axis=3)
+            return im
+        dk = img.min(axis=2, where = [True, True, True, False], initial=255)
+        dko = 255 - dk
+        newk = img[:,:,3] + dk
+        bigmask = newk[:,:] > 255
+        dk[bigmask] = dko[bigmask]
+        newk[bigmask] = 255
+        img[:,:,3] = newk
+        for i in range(3):
+            img[:,:,i] -= dk 
+        res = Image.fromarray(img.astype(np.uint8), 'CMYK')
+        return res
+
+    @staticmethod
+    def _cmytocmyk(c, m, y, k):
+        dk = min(c, m, y)
+        if dk + k > 255:
+            dk = 255 - k
+            k = 255
+        else:
+            k += dk
+        return (c - dk, m - dk, y - dk, k)
 
     def carefulCopy(self, ratio, srcpath, tgtfile, cropme):
         tmpPicPath = os.path.join(self.printer.working_dir, "tmpPics")
         tgtpath = os.path.join(tmpPicPath, tgtfile)
+        if os.path.splitext(srcpath)[1].lower().startswith(".pdf"):
+            copyfile(srcpath, tgtpath)
+            return os.path.basename(tgtpath)
         try:
             im = Image.open(srcpath)
             iw = im.size[0]
@@ -722,13 +1070,14 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa or iw/ih < ratio or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+        if cropme or self.ispdfxa != "Screen" or (ratio is not None and iw/ih < ratio) \
+                  or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
-            try:
-                self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
-            except: # MH: Which exception should I try to catch?
-                print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
-                return os.path.basename(tgtpath)
+            #try:
+            self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)
+            #except: # MH: Which exception should I try to catch?
+            #    print(_("Error: Unable to convert/resize image!\nImage skipped:"), srcpath)
+            #    return os.path.basename(tgtpath)
         else:
             try:
                 copyfile(srcpath, tgtpath)
@@ -736,50 +1085,6 @@ class RunJob:
                 print(_("Error: Unable to copy {}\n       image to {} in tmpPics folder"), srcpath, tgtpath)
                 return os.path.basename(tgtpath)
         return os.path.basename(tgtpath)
-
-    def removeTempFiles(self, texfiles):
-        notDeleted = []
-        # MH: Should we try to remove the generated Nested files (now that they are stored along with the config)?
-        # What impact does that have on Paratext's S/R (cluttering)
-        # n = os.path.join(self.tmpdir, "NestedStyles.sty")
-        # if os.path.exists(n):
-            # try:
-                # os.remove(n)
-            # except:
-                # notDeleted += [n]
-        for extn in ('delayed','parlocs', 'notepages', 'SFM', 'sfm', 'xdv', 'tex', 'log'):
-            for t in set(texfiles):
-                delfname = os.path.join(self.tmpdir, t.replace(".tex", "."+extn))
-                if os.path.exists(delfname):
-                    try:
-                        os.remove(delfname)
-                    except OSError:
-                        notDeleted += [delfname]
-        for f in self.books:
-            delfname = os.path.join(self.tmpdir, f)
-            if os.path.exists(delfname):
-                try:
-                    os.remove(delfname)
-                except OSError:
-                    notDeleted += [delfname]
-        #folderList = ["tmpPics", "tmpPicLists"] 
-        #notDeleted += self.removeTmpFolders(self.tmpdir, folderList)
-        if len(notDeleted):
-            self.printer.doError(_("Warning: Could not delete\ntemporary file(s) or folder(s):"),
-                    secondary="\n".join(set(notDeleted)))
-
-    def removeTmpFolders(self, base, delFolders, mkdirs=False):
-        notDeleted = []
-        for p in delFolders:
-            path2del = os.path.join(base, p)
-            if os.path.exists(path2del):
-                try:
-                    rmtree(path2del)
-                except OSError:
-                    notDeleted += [path2del]
-            if mkdirs:
-                os.makedirs(path2del)
-        return notDeleted
 
     def usablePageRatios(self, info):
         pageHeight = self.convert2mm(info.dict["paper/height"])

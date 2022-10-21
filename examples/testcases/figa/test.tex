@@ -2,7 +2,8 @@
 %\tracingassigns=1
 %\tracinggroups=1
 \input "paratext2.tex"
-\stylesheet{usfm.sty}
+\input "ptx-ptxprint.tex"
+\stylesheet{usfm_sb.sty}
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
@@ -27,5 +28,6 @@
 \def\addmtlqutewd{1.5pt}
 \def\addmtlqutelw{0.2pt}
 \csname ColorFontstrue\endcsname
+\ptxfile{frt.usfm}
 \ptxfile{test.usfm}
 \bye

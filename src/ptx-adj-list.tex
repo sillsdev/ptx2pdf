@@ -39,9 +39,9 @@
 %
 % The reference of the adjustment to be applied is stored in \@djref, and the actual adjustment in \@djustment.
 %
-\def\parse@djline #1 #2.#3 #4[#5]#6\end{%
- \uppercase{\xdef\@djref{\detokenize{#1#2.#3}}}\gdef\@djustment{#4}%
- \global\@djparindex=0#5 \ifnum\@djparindex=0 \global\@djparindex=1 \fi}
+\def\parse@djline #1 #2 #3[#4]#5\end{%
+ \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}\gdef\@djustment{#3}%
+ \global\@djparindex=0#4 \ifnum\@djparindex=0 \global\@djparindex=1 \fi}
 \newcount\@djparindex
 
 % Perform the current adjustment, and read the next line, if any
@@ -106,7 +106,8 @@
    \edef\adjc@rref{\x@\detokenize\x@{\c@rref}}%
  \fi
  \ifx\adjc@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
- \else \global\curr@djpar=1 \fi
+ \else \global\curr@djpar=\ifhmode 1 \else 0\fi\fi
+ %\ifMarkTriggerPoints\trigg@rmark{AP}\fi
  \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
  \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex \ifx\adjc@rref\@djref MATCH FOUND\fi}%
  \ifdiglot

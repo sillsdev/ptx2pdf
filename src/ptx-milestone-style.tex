@@ -29,6 +29,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
+\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.                                         
+\def\ch@ckislocation#1{\keeptriggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi}
+
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
  \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
@@ -45,6 +48,7 @@
  \def\domst@nestyle{% here, \n@xt has been \let to the next character after the marker
   \mst@nestyletrue
   \initmil@stone%
+  \deactiv@tecustomch@rs
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \ifx\n@xt\h@phen\let\n@xt@\startmst@nestyle@minus\else
@@ -59,6 +63,7 @@
  \def\startmst@nestyle@spc~{\startmst@nestyle}%                                             
  \def\startmst@nestyle@nl_{\startmst@nestyle}%
 }
+
 \def\startmst@nestyle@pipe|{\trace{m}{Immediate start of attributes}\in@ttribtrue\startmst@nestyle\@ttrSlash}%
 \def\startmst@nestyle@minus-#1{%
   \def\milestoneOp{#1}%
@@ -75,43 +80,54 @@
   \edef\attrid{\milestoneOp id}% id / sid / eid, depending.
 }
 
-\def\@ttrSlash#1\*{\trace{m}{@ttrSlash}\xdef\attrib@rgs{#1}\message{Attr:\attrib@rgs}\in@ttribtrue\*}
+\def\@ttrSlash{\in@ttribtrue
+  \trace{m}{Starting attribute collection}%
+  \catcode`\/=12\relax % FIXME Other active chars too?
+  \@ttrSl@sh}
+% using #1#2 eats initial spaces. This means  #1#2 nicely ignores annoying initial spaces, but it also crashes on a spaces-only arg, so check for that.
+\def\@ttrSl@sh #1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\else\x@\@@ttrSlash #1\relax\relax\fi}
+\def\@@ttrSlash #1#2\relax{\xdef\attrib@rgs{#1#2}\trace{m}{@ttrSlash: Attr:\attrib@rgs}\*}
 
 \def\*{%This might end a + style (c)  or a normal style character style(C), or a milestone style
   \trace{m}{slash *}%
-  \proc@ttribs
-  \get@ttribute{\thisdefault@ttrkey}%
-  \ifx\attr@b\relax\else
-    \let\thismil@stoneKey\thisdefault@ttrkey
-    \let\thismil@stoneVal\attr@b
-  \fi
-  \ifmst@nestyle\else
-    \ifx \ss@ChrP\stylet@pe
-      \endch@rstylepls*
-    \else
-      \endch@rstyle*
+  \ifmst@nestyle
+    \proc@ttribs
+    \get@ttribute{\thisdefault@ttrkey}%
+    \ifx\attr@b\relax\else
+      \let\thismil@stoneKey\thisdefault@ttrkey
+      \let\thismil@stoneVal\attr@b
     \fi
-  \fi
-  \mst@nestylefalse
-  \processmil@stone}% USFM3 'self closing marker' milestone
+  %  \ifmst@nestyle\else
+  %    \ifx \ss@ChrP\stylet@pe
+  %      \endch@rstylepls*
+  %    \else
+  %      \endch@rstyle*
+  %    \fi
+  %  \fi
+    \mst@nestylefalse
+    \processmil@stone
+  \else{*}%
+  \fi}% USFM3 'self closing marker' milestone
 
 \let\milestoneOp\empty
 \let\thismil@stone\empty
+\let\thisattrmil@stone\empty
 \newif\ifmst@nestyle \mst@nestylefalse
 
 \def\processmil@stone{\trace{m}{Milestone \thismil@stone (\milestoneOp), \csname thisch@rstyle\endcsname}%
   \ifx\milestoneOp\empty
-    \st@ndalonemilestone\else 
+    \st@ndalonemilestone
+  \else 
     \if\milestoneOp s\relax\st@rtmilestone\else
       \if\milestoneOp e\relax\@ndmilestone\else
       \st@ndalonemilestone\fi 
     \fi
   \fi
-   \let\milestoneOp\empty
    %\xdef\thisch@rstyle{\mcpeek}%
-   \def\d@##1+##2\E{\def\tmp{##2}\csname d@code-##1\endcsname\edef\thisch@rstyle{\tmp}}\mctop
-   \trace{m}{Milestone style is \thisch@rstyle}%
-   \s@tfont{\thisch@rstyle}% set up font attributes
+   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\edef\thisch@rstyle{\tmp}}\mctop
+   \trace{m}{\if e\milestoneOp After-\fi Milestone style is \thisch@rstyle, stystack is: \styst@k }%
+   \global\let\milestoneOp\empty
+   \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
 }
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
@@ -120,10 +136,10 @@
    \csname init@ttribs\endcsname
 }
 
-\def\dr@pmilest@ne#1+#2\E{% This itterates the stack to kills the TOP matching milestone 
+\def\dr@pmilest@ne#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\empty
-    \let\d@=\cstackrelax %permanent change
+    \let\d@=\cstackrelax %Stop processing (permanent change)
   \else
     \ifx\ss@Mstn\MSt@mp\relax %It's a milestone
       \x@\pars@msid #2;;;\E
@@ -142,9 +158,9 @@
     \ifx\d@\empty
       %Two possible actions here: clear all matching milestones or only the top one.
       %standard is vague about nesting/cancellation. Current implementation 
-      %keeps going down if there's no sid/eid to match.
+      %keeps going down if there's no sid/eid to match. 
       %\ifx\MSch@ckid\empty
-        \let\d@=\dr@pmilest@ne % Keep tracking down.
+        \let\d@=\dr@pmilest@neB % Keep tracking down, to build \@ut, but no more testing.
       %\else
         %\let\d@=\cstackrelax %Top match only.  permanent change
       %\fi
@@ -157,6 +173,18 @@
   \trace{m}{dr@pmilest@ne: \@ut}%
 }
 
+\def\dr@pmilest@neB#1+#2+#3\E{% This itterates the stack to kills the TOP matching milestone 
+  \edef\MSt@mp{#1}%
+  \ifx\MSt@mp\empty
+    \let\d@=\cstackrelax %Stop processing 
+  \else
+    \ifx\@ut\empty \xdef\@ut{#1+#2}\else
+      \xdef\@ut{\@ut,#1+#2}%
+    \fi
+  \fi
+  \trace{m}{dr@pmilest@neB: \@ut}%
+}
+
 \def\dr@pmilestone#1#2{%Kill a milestone that might be burried in the stack, and might be nested.
   \trace{m}{Dropping milestone #1 from \mcstack}% 
   \edef\MSch@cking{#1}%
@@ -165,40 +193,68 @@
   \let\@ut=\empty
   \let\d@=\dr@pmilest@ne
   \mcdown
+  \xdef\mcstack{\mcstack@mpty}%
   \ifx\@ut\empty
-    \xdef\mcstack{\mcstack@mpty}%
+    \s@tstyst@k
   \else
-    \xdef\mcstack{\@ut,\mcstack@mpty}%
+    \rebuild@mcstack{\@ut,}%
+    %\xdef\mcstack{\@ut,\mcstack@mpty}%
   \fi
-  \trace{m}{Stack now: \mcstack}%
+  \trace{m}{Stack now: \mcstack, stystack:\styst@k}%
   \iftemp
-    \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or more open milestones, but no match on the id was
-    found, sid and eid must match exactly}%
+    \message{End-milestone of class '\MSch@cking', id '\MSch@ckid' partially matched one or 
+      more open milestones, but no match on the id was found, sid and eid must match exactly}%
   \fi
 }
 %+csty_milestone
 % Operations on the current milestone(s)
+\def\zapres@rved#1{%
+    \edef\smst@mp{\zap@space #1 \empty}%
+    \edef\smst@mp{\expandafter\zap@comma \smst@mp,\empty}%
+    \edef\smst@mp{\expandafter\zap@plus \smst@mp+\empty}%
+} 
+
+% If there is '\s \qt-s\*' in the input, should the qt-s have effect on the paragraph style? If the boolean is true, 
+% then it does not, and the paragaph starts differently to '\qt-s\* \s'. Note that this does not trigger any extra paragraph break,
+% all it does is ensure that a parargaph waiting to start *is* safely started.
+\newif\ifDefineParBeforeMilestone
+\DefineParBeforeMilestonetrue 
+
 \def\st@rtmilestone{%
-  % There may multiple milestones of a given type (can't sensibly have both \qt+s |Jesus\* and 
-  % \qt+s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
+  % There may multiple milestones of a given type (can't sensibly have both \qt-s |Jesus\* and 
+  % \qt-s |Pilate\* active at the same time (except quote in quote), but in some cases it might make sense to do something similar.)
+  \deactiv@tecustomch@rs
   \get@ttribute{\attrid}\ifx\attr@b\relax %if sid is set, sid/eid must match, and may contain letters,numbers,underscore.
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal}%
-    \trace{m}{Milestone without ID stacked}%
+    \x@\zapres@rved\x@{\thismil@stoneVal}%
+    \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
+    \def\smst@mp{without ID}%
   \else
-    \mcpush{\ss@Mstn+\thismil@stone;\thismil@stoneVal;\attr@b}%
-    \trace{m}{Milestone with \attrid =\attr@b\space stacked}%
+    \x@\zapres@rved\x@{\thismil@stoneVal;\attr@b}%
+    \xdef\thisattrmil@stone{\thismil@stone;\smst@mp}%
+    \def\smst@mp{with \attrid =\attr@b\space}%
   \fi
+  \ifDefineParBeforeMilestone\leavevmode\fi
+  \mcpush{\ss@Mstn}{\thisattrmil@stone}%
+  \trace{m}{Milestone \smst@mp\space stacked, \mcstack}%
+  \let\tmp\thisattrmil@stone
+  \csname d@code-m\endcsname
+  \global\let\thisattrmil@stone\tmp
   \upd@teMsPrefix
   \let\styst@k=\empty
-  \s@tstyst@k{\thismil@stone}%
+  \s@tstyst@k%
+  \@ttrMilestonefalse
+  \ifx\thismil@stoneVal\empty\else
+    \@ttrMilestonetrue
+  \fi
   \kill@PossParamCache
   \trace{m}{Style stack now: \mcstack}%
   \op@ninghooks{start}{\thismil@stone}%
 }
+
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
   \cl@singhooks{end}{\thismil@stone}%
-  \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@trrtibs)
+  \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@ttribs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
   \else
@@ -207,27 +263,79 @@
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
-  \let\attr@b\empty\let\attrid\empty
+  \global\let\attr@b\empty\global\let\attrid\empty
+  \global\let\thismil@stone\empty
+  \global\let\thisattrmil@stone\empty
 }
+
 \def\figmil@stone{zfiga}
 
 \def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
-  \trace{m}{st@ndalonemilestone (\attrid)}%
   \ifx\attrid\empty
     \let\attr@b\relax
   \else 
     \get@ttribute{\attrid}%
   \fi
+  \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
+  \t@stpublishability{\thismil@stone}%
+  \ifx\p@ram\relax
+    \trace{m}{Properties not defined, assuming standalone milestone has no publishable text}%
+    \n@npublishabletrue
+  \fi
+  \ifn@npublishable\else
+    \mcpush{\ss@Mstn}{\thismil@stone}%
+    \trace{m}{Milestone stacked, \mcstack}%
+  \fi
+  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
+  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
+  \ifx\p@ram\empty\else\leavevmode\fi
+  \op@ninghooks{start}{\thismil@stone}%
+  \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
+  %\tracingmacros=1
+  %\tracingassigns=1
+  \ifx\attr@b\relax\else
+    \edef\@@tmp{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+    \trace{m}{Checking for  \@@tmp}%
+    \keeptriggertrue %By default keep ms: type triggers.
+    \ifcsname \@@tmp\endcsname
+      \trace{mx}{Running \@@tmp (\x@\meaning\csname\@@tmp\endcsname)}%
+      \bgroup
+       \csname \@@tmp\endcsname 
+      \egroup
+      \ifkeeptrigger\else 
+        \trace{m}{Destroying \@@tmp}%
+        \x@\global\x@\let\csname \@@tmp\endcsname\undefined
+      \fi
+    \else
+      \trace{m}{No \@@tmp defined}%
+  \fi\fi
+  %\tracingassigns=0
+  %\tracingmacros=0
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
-    \runtrigg@rs{\mkp@cref{\id@@@}{\attr@b}}%
-    \runtrigg@rs{ms:\thismil@stone=\attr@b}%
-    \xdef\c@rref{\id@@@\attr@b}%
-    \ifx\v@rse\empty\global\p@rnum=1\fi
+    \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
+    \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+    \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
+    \ifkeeptrigger% Not a location, leave c@rref what it used to be
+      \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
+    \else% This milestone is a named location 
+      \xdef\c@rref{\id@@@\attr@b}%
+      \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+       \ch@ckadjustments
+      \fi
+    \fi
+  \fi
+  \cl@singhooks{end}{\thismil@stone}%\
+  \ifn@npublishable
+    \n@npublishablefalse %restore to publishable
+  \else
+    \dr@pmilestone{\thismil@stone}{}%
   \fi
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
+  \let\thismil@stone\empty
 }%
+
 \def\upd@teMsPrefix{%Build a prefix based on all currently-in-force milestones.
   \trace{m}{upd@teMsPrefix}%
   \xdef\mspr@fix{}\let\d@=\mil@st@necheck\mcup
@@ -240,7 +348,7 @@
   \x@\pars@msid \tmp;;;\E
   \edef\tmp{\ifx\k@yv@al\empty\else\k@yv@al|\fi\MStyp@}%
 }
-\def\mil@st@necheck#1+#2\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
+\def\mil@st@necheck#1+#2+#3\E{%The milestone has a key value and possibly an ID field. Ignore the id for building the prefix
   \edef\MSt@mp{#1}%
   \ifx\MSt@mp\ss@Mstn
     \x@\pars@msid #2;;;\E
@@ -249,13 +357,11 @@
  
 \newtoks\tmpt@ks
 \def\exp@ndmspr@fix#1{%for each potential prefix, call #1 with \@lso defined
-   %\tracingmacros=1
-   %\tracingassigns=1
    \tmpt@ks{#1}%
    \trace{m}{Expanding \mspr@fix}%
    \def\D@IT##1{\edef\@lso{ms:##1|}\trace{m}{adding option \@lso to styles}\the\tmpt@ks}%
    \it@mcount=0
-   \x@\@xp@ndmspr@fix \mspr@fix
+   \x@\@xp@ndmspr@fix \mspr@fix\E
    %\ifnum \it@mcount>1
      %\let\@lso\mspr@fix \the\tmpt@ks
    %\fi
@@ -278,5 +384,172 @@
 }
 %-csty_milestone
 \def\attrid{}
+\notlocation{zvar}
+%\notlocation{zuseperiph}
+\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
+\def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
+\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{ #2}}
+\x@\def\csname start-zrule\endcsname{%
+  \endgraf
+  \bgroup
+    \get@ttribute{cat}%
+    \ifx\attr@b\relax\else\s@tc@tprefix{\attr@b}\fi
+    \get@ttribute{width}%A
+    \ifx\attr@b\relax
+      \s@tsideskips{zrule}%
+      \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
+    \else
+      \m@kenumber{\attr@b}%
+      \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}
+    \fi
+    \get@ttribute{thick}%A
+    \ifx\attr@b\relax
+      \getp@ram{borderwidth}{zrule}{\styst@k}%
+      \ifx\p@ram\relax
+        \def\rule@thk{0.5pt}%
+      \else
+        \edef\rule@thk{\the\dimexpr \p@ram\FontSizeUnit\relax}%
+        %\def\rule@thk{0.5pt}%
+      \fi
+    \else
+      \m@kenumber{\attr@b}%
+      \let\rule@thk\@@result%
+    \fi
+    \getp@ram{raise}{zrule}{\styst@k}%
+    \ifx\p@ram\relax
+      \edef\rule@adjust{0pt}%
+    \else
+      \edef\rule@adjust{\p@ram\FontSizeUnit}%
+    \fi
+    \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \ifx\p@ram\relax
+      \def\rule@style{plain}%
+    \else
+      \ifcsname drawzrule-\p@ram\endcsname
+        \let\rule@style\p@ram
+      \else
+        \def\rule@style{plain}%
+        \message{unrecognised rule style '\attr@b' near \c@rref}%
+      \fi
+    \fi
+    \get@ttribute{align}%
+    \ifx\attr@b\relax
+      \def\rule@pos{c}%
+    \else
+      \let\rule@pos\attr@b
+    \fi
+    \trace{m}{Rule \rule@wid, thick \rule@thk,  style \rule@style}%
+    \csname drawzrule-\rule@style\endcsname
+  \egroup 
+}
+
+\x@\def\csname drawzrule-plain\endcsname{%
+  \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \vrule height \rule@thk depth 0pt width \rule@wid 
+    \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
+}
+
+\x@\def\csname start-zgap\endcsname{%
+  \endlastp@rstyle{zgap}%
+  \endgraf
+  \get@ttribute{dimension}%A
+  \ifx\attr@b\relax
+    \let\gap@dim\baselineskip%
+  \else
+    \m@kenumber{\attr@b}%
+    \let\gap@dim\@@result%
+  \fi
+  \trace{m}{zgap \gap@dim}%
+  \vbox{}\penalty10000\vskip\gap@dim\relax%
+}
 
 
+\x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
+\x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
+
+%ISBN and barcode routines
+%
+% First, barcode generating code from 
+%http://tex.stackexchange.com/questions/6895/is-there-a-good-latex-package-for-generating-barcodes
+%
+\def\b@rheight{10ex}
+
+\def\barcode#1#2#3#4#5#6#7{\begingroup%
+  \dimen0=0.1em
+  \def\stack##1##2{\oalign{##1\cr\hidewidth##2\hidewidth}}%
+  \def\0##1{\kern##1\dimen0}%
+  \def\1##1{\vrule height\b@rheight width##1\dimen0}%
+  \def\L##1{\ifcase##1\bc3211##1\or\bc2221##1\or\bc2122##1\or\bc1411##1%
+    \or\bc1132##1\or\bc1231##1\or\bc1114##1\or\bc1312##1\or\bc1213##1%
+    \or\bc3112##1\fi}%
+  \def\R##1{\bgroup\let\next\1\let\1\0\let\0\next\L##1\egroup}%
+  \def\G##1{\bgroup\let\bc\bcg\L##1\egroup}% reverse
+  \def\bc##1##2##3##4##5{\stack{\0##1\1##2\0##3\1##4}##5}%
+  \def\bcg##1##2##3##4##5{\stack{\0##4\1##3\0##2\1##1}##5}%
+  \def\bcR##1##2##3##4##5##6{\R##1\R##2\R##3\R##4\R##5\R##6\11\01\11\09 %
+    \endgroup}%
+  \stack{\09}#1\11\01\11\L#2%
+  \ifcase#1\L#3\L#4\L#5\L#6\L#7\or\L#3\G#4\L#5\G#6\G#7%
+    \or\L#3\G#4\G#5\L#6\G#7\or\L#3\G#4\G#5\G#6\L#7%
+    \or\G#3\L#4\L#5\G#6\G#7\or\G#3\G#4\L#5\L#6\G#7%
+    \or\G#3\G#4\G#5\L#6\L#7\or\G#3\L#4\G#5\L#6\G#7%
+    \or\G#3\L#4\G#5\G#6\L#7\or\G#3\G#4\L#5\G#6\L#7%
+  \fi\01\11\01\11\01\bcR}
+
+%\barcode 9789731650937
+%ISBNs use minuses to separate number groups. There seems no guaranteed pattern
+%  Call barcode using stripped down version
+\def\bcode#1-{\lineskip=10pt \lineskiplimit=0pt \barcode#1}
+% strip off minuses one by one. There's probably a more efficient way, but this seems to work
+% Call with \isbn _code_-\emptything-
+\def\emptything{}
+\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
+%
+%A beautiful ISBN has "ISBN 123-435-763-124" above the top exactly matching the
+%width of the barcode. Do some maths to get it right.  Adding up numbers above,
+%the barcode seems like it should be 12*.7+.4+.5+.4=9.7em wide. It actually
+%seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
+\newdimen\ISBNfontdim
+\ISBNfontdim=10pt
+\def\ISBN#1{\leavevmode\font\belowISBN="Andika" at \ISBNfontdim
+\trace{m}{ISBN barcode for \attr@b}%
+\bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
+%I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
+\font\aboveISBN="Andika" at 0.02\dimen0
+\belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
+%\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
+\hbox{\expandafter\isbn#1--}}\egroup}
+
+
+%\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
+\x@\def\csname start-zISBNbarcode\endcsname{%
+  \bgroup
+  \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
+  \get@ttribute{isbn}%
+  \bgroup\m@kedigitsother\let\tmp\attr@b\xdef\tmp{\x@\scantokens\x@{\tmp\noexpand}}%
+  \egroup\hbox{\ISBN{\tmp}}\egroup}
+
+\def\proc@strong#1{%
+  \get@ttribute{align}%
+  \ifx\attr@b\relax \let\al@gn\@lignLeft\else\let\al@gn\attr@b\fi
+  \get@ttribute{strong}%
+  \trace{m}{Got strongs \attr@b}%
+  \ifx\attr@b\relax \else\edef\tmpz{#1}%
+    \x@\dostr@ngs\x@{\x@\tmpz\x@}\x@{\x@\al@gn\x@}\attr@b+++\E
+  \fi
+}
+\def\dostr@ngs#1#2#3#4#5#6#7\E{%
+% #1 style, #2 align, #3 #4 #5 #6 4 digits, #7 dummy
+ \ifn@npublishable\else
+  \trace{m}{dostr@ngs #1, #2, #3, #4, #5, #6, #7}%
+  \bgroup\s@tfont{#1}{#1}%
+    \setbox0=\hbox{\if #4+\relax #3\else\if #6+\relax #3\else #3#4\fi\fi}%
+    \setbox1=\hbox{\if #4+\relax\else\if #5+\relax #4\else\if #6+\relax #4#5\else #5#6\fi\fi\fi}%
+    \dimen0=\ifdim\wd0>\wd1 \wd0\else\wd1\fi
+    \getp@r@m{raise}{#1}\ifx\p@ram\relax\else\dimen1=\p@ram\trace{m}{raising by \the\dimen1, from \p@ram}\raise\dimen1\fi
+    \vbox{\s@tbaseline{#1}{#1}\trace{m}{dostr@ngs #1 baselineskip=\the\baselineskip}%
+                          \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox0\if#2l\relax\hfil\fi}%
+                          \hbox to \dimen0{\if#2r\relax\hfil\fi\unhbox1\if#2l\relax\hfil\fi}%
+    }\egroup
+ \fi
+}

@@ -1,15 +1,19 @@
 
-import re
+import re, os
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s
+from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
-                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace')}
+                'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
+                'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImagePos', 'BgImageLow',
+                'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
+                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding', 
+                'BoxVPadding', 'BoxHPadding', 'NonJustifiedFill')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
@@ -54,7 +58,7 @@ def asFloatPts(self, s, mrk=None, model=None):
         except (ValueError, TypeError):
             return 0.
 
-def toFloatPts(self, v, mrk=None, model=None):
+def toFloatPts(self, v, mrk=None, model=None, parm=None):
     return "{} pt".format(f2s(float(v)))
 
 def fromFloat(self, s, mrk=None, model=None):
@@ -63,7 +67,7 @@ def fromFloat(self, s, mrk=None, model=None):
     except (ValueError, TypeError):
         return 0.
 
-def toFloat(self, v, mrk=None, model=None):
+def toFloat(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v))
 
 def from12(self, s, mrk=None, model=None):
@@ -72,13 +76,13 @@ def from12(self, s, mrk=None, model=None):
     except (TypeError, ValueError):
         return 0.
 
-def to12(self, v, mrk=None, model=None):
+def to12(self, v, mrk=None, model=None, parm=None):
     return f2s(float(v) * 12.)
 
 def fromBool(self, s, mrk=None, model=None):
     return not(s is None or s is False or s == "-")
 
-def toBool(self, v, mrk=None, model=None):
+def toBool(self, v, mrk=None, model=None, parm=None):
     return "" if v else "-"
 
 def fromSet(self, s, mrk=None, model=None):
@@ -86,7 +90,7 @@ def fromSet(self, s, mrk=None, model=None):
         return s
     return set(s.split())
 
-def toSet(self, s, mrk=None, model=None):
+def toSet(self, s, mrk=None, model=None, parm=None):
     if isinstance(s, set):
         return " ".join(s)
     return s
@@ -102,7 +106,7 @@ def fromFont(self, s, mrk=None, model=None):
             return self.getval(mrk, key, default)
     return FontRef.fromTeXStyle(Shim())
 
-def toFont(self, v, mrk=None, model=None):
+def toFont(self, v, mrk=None, model=None, parm=None):
     if v is None:
         return
     if mrk is None:
@@ -121,70 +125,107 @@ def toFont(self, v, mrk=None, model=None):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
     oldfont = self.basesheet.get(mrk, {}).get("FontName", None)
-    return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None)
+    return v.updateTeXStyle(Shim(), regular=regularfont, force=oldfont is not None, noStyles=(parm is not None))
+
+def fromOneMax(self, v, mrk=None, model=None):
+    res = coltotex(textocol(v))
+    # print(f"FROM: {mrk=} {v=} {res=}")
+    return res
+
+def toOneMax(self, v, mrk=None, model=None, parm=None):
+    res = " ".join("{:.2f}".format(x) for x in coltoonemax(textocol(v)))
+    # print(f"TO: {mrk=} {v=} {res=}")
+    return res
+
+def fromFileName(self, v, mrk=None, model=None):
+    if model is not None:
+        rpath = model.configPath()
+        return os.path.abspath(os.path.relpath(v, rpath))
+    else:
+        return v
+
+def toFileName(self, v, mrk=None, model=None, parm=None):
+    return v
 
 _fieldmap = {
-    'Bold':             (fromBool, toBool),
-    'Italic':           (fromBool, toBool),
-    'Superscript':      (fromBool, toBool),
-    'SmallCaps':        (fromBool, toBool),
-    'FirstLineIndent':  (fromFloat, toFloat),
-    'LeftMargin':       (fromFloat, toFloat),
-    'RightMargin':      (fromFloat, toFloat),
-    'LineSpacing':      (fromFloat, toFloat),
-    'Raise':            (asFloatPts, toFloatPts),
-    'BaseLine':         (asFloatPts, toFloatPts),
-    'CallerRaise':      (asFloatPts, toFloatPts),
-    'NoteCallerRaise':  (asFloatPts, toFloatPts),
-    'FontSize':         (from12, to12),
-    'SpaceBefore':      (from12, to12),
-    'SpaceAfter':       (from12, to12),
-    'FontName':         (fromFont, toFont),
-    'TextProperties':   (fromSet, toSet)
-# color?
+    'bold':             (fromBool, toBool, None),
+    'italic':           (fromBool, toBool, None),
+    'superscript':      (fromBool, toBool, None),
+    'smallcaps':        (fromBool, toBool, None),
+    'firstlineindent':  (fromFloat, toFloat, 0.),
+    'leftmargin':       (fromFloat, toFloat, 0.),
+    'rightmargin':      (fromFloat, toFloat, 0.),
+    'nonjustifiedfill': (fromFloat, toFloat, 0.25),
+    'linespacing':      (fromFloat, toFloat, 0.),
+    'raise':            (asFloatPts, toFloatPts, None),
+    'baseline':         (asFloatPts, toFloatPts, None),
+    'callerraise':      (asFloatPts, toFloatPts, None),
+    'notecallerraise':  (asFloatPts, toFloatPts, None),
+    'fontsize':         (from12, to12, 0),
+    'spacebefore':      (from12, to12, 0),
+    'spaceafter':       (from12, to12, 0),
+    'fontname':         (fromFont, toFont, None),
+    'textproperties':   (fromSet, toSet, None),
+    'occursunder':      (fromSet, toSet, None),
+    'bordercolor':      (fromOneMax, toOneMax, None),
+    'bgimagecolor':     (fromOneMax, toOneMax, None),
+    'bgcolor':          (fromOneMax, toOneMax, None),
+    'bgimage':          (fromFileName, toFileName, None),
+    'fgimage':          (fromFileName, toFileName, None)
 }
 
 class StyleEditor:
 
     def __init__(self, model):
         self.model = model
-        self.sheet = None
-        self.basesheet = None
+        self.sheet = {}
+        self.basesheet = {}
         self.marker = None
         self.registers = {}
 
+    def copy(self):
+        res = self.__class__(self.model)
+        res.sheet = Sheets(base=self.sheet)
+        res.basesheet = Sheets(base=self.basesheet)
+        res.marker = self.marker
+        res.registers = dict(self.registers)
+        return res
+
     def allStyles(self):
-        if self.sheet is None:
-            return {}
         res = set(self.basesheet.keys())
         res.update(self.sheet.keys())
         return res
 
+    def allValueKeys(self, m):
+        res = set(self.basesheet.get(m, {}).keys())
+        res.update(self.sheet.get(m, {}).keys())
+        return res
+
     def asStyle(self, m):
-        res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
-        res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+        if m is None:
+            res = {}
+            for m in self.allStyles():
+                res[m] = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
+                res[m].update({str(k):v for k, v in self.sheet.get(m, {}).items()})
+        else:
+            res = {str(k):v for k, v in self.basesheet.get(m, {}).items()}
+            res.update({str(k):v for k, v in self.sheet.get(m, {}).items()})
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        if self.sheet is None:
-            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         res = self.sheet.get(mrk, {}).get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
             res = self.basesheet.get(mrk, {}).get(key, default)
-        if key in _fieldmap and res is not None:
-            return _fieldmap[key][0](self, res, mrk=mrk, model=self.model)
+        if key.lower() in _fieldmap and res is not None:
+            res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
-    def setval(self, mrk, key, val, ifunchanged=False):
-        if self.sheet is None:
-            raise KeyError(f"{mrk} + {key}")
+    def setval(self, mrk, key, val, ifunchanged=False, parm=None):
         if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
                 self.sheet.get(mrk, {}).get(key, None):
             return
-        if val is not None and key in _fieldmap:
-            newval = _fieldmap[key][1](self, val, mrk=mrk, model=self.model)
-            if key == "FontName":
-                print(f"{mrk}{key}{val}{newval}")
+        if val is not None and key.lower() in _fieldmap:
+            newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
             if newval is None and val is not None:
                 return      # Probably a font which has edited the object for us
             else:
@@ -192,14 +233,12 @@ class StyleEditor:
         if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
             del self.sheet[mrk][key]
             return
-        elif self.basesheet.get(mrk, {}).get(key, None) != val:
+        elif self.basesheet.get(mrk, {}).get(key, None) != val and val is not None:
             self.sheet.setdefault(mrk, {})[key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
     def haskey(self, mrk, key):
-        if self.sheet is None:
-            raise KeyError(f"stylesheet missing: {mrk} + {key}")
         if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):
             return True
         return False
@@ -230,6 +269,7 @@ class StyleEditor:
         if key.lower() in absolutes:
             fa = asFloatPts(self, str(a))
             fb = asFloatPts(self, str(b))
+            return fa == fb
         else:
             try:
                 fa = float(a)
@@ -245,7 +285,7 @@ class StyleEditor:
     def _str_val(self, v, key=""):
         if isinstance(v, (set, list)):
             if key.lower() == "textproperties":
-                res = " ".join(x.lower().title() if x else "" for x in sorted(v))
+                res = " ".join(x.lower() if x else "" for x in sorted(v))
             else:
                 res = " ".join(self._str_val(x, key) for x in sorted(v))
         elif isinstance(v, float):
@@ -254,28 +294,48 @@ class StyleEditor:
             res = str(v)
         return res
 
-    def output_diffile(self, outfh, regular=None, inArchive=False, root=None):
+    def output_diffile(self, outfh, inArchive=False, sheet=None, basesheet=None):
         def normmkr(s):
             x = s.lower().title()
             return mkrexceptions.get(x, x)
+        if basesheet is None:
+            basesheet = self.basesheet
+        if sheet is None:
+            sheet = self.sheet
         for m in sorted(self.allStyles()):
             markerout = False
             if m in aliases:
                 sm = self.asStyle(m+"1")
             elif inArchive:
-                sm = self.sheet.get(m, {}).copy()
+                sm = sheet.get(m, {}).copy()
             else:
-                sm = self.sheet.get(m, {})
-            om = self.basesheet.get(m, {})
+                sm = sheet.get(m, {})
+            om = basesheet.get(m, {})
             if 'zDerived' in om or 'zDerived' in sm:
                 continue
-            for k,v in sm.items():
+            for k, v in sm.items():
                 if k.startswith(" "):
                     continue
+                if k == "Name":
+                    v = self.getval(m, k, v)
                 other = om.get(k, None)
-                if not self._eq_val(other, v, key=k):
+                defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
+                if not self._eq_val(other, v, key=k) and not self._eq_val(defaultval, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True
                     outfh.write("\\{} {}\n".format(normmkr(k), self._str_val(v, k)))
 
+    def merge(self, basese, newse):
+        for m in newse.sheet.keys():
+            allkeys = newse.allValueKeys(m)
+            allkeys.update(basese.allValueKeys(m))
+            allkeys.update(self.allValueKeys(m))
+            for k in allkeys:
+                nv = newse.getval(m, k)
+                bv = basese.getval(m, k)
+                sv = self.getval(m, k)
+                if sv != bv:
+                    continue
+                if nv != bv:
+                    self.setval(m, k, nv)

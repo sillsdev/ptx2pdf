@@ -1,0 +1,88 @@
+\id TST Test file
+\h small test file
+\mt Testing Long Footnotes
+\is1 This is an introductory title\f + \ft And a footnote on an introductory title
+Cupiditate ab architecto eos nihil eaque commodi ut sequi. Qui doloremque distinctio quas facere fuga nulla. Facilis blanditiis consequatur officiis esse est ut ea. Optio ab harum fugit et blanditiis ullam ut. Odio cupiditate saepe non corrupti. Omnis quia praesentium molestias aperiam.  
+\f*
+\ip And this is an introductory paragraph\f + \ft With a footnote on it
+Repellat pariatur possimus veniam quo rerum sequi repellendus cupiditate. Eum dicta ea velit aliquam nostrum provident. Sunt ipsa occaecati debitis aliquid autem animi et nostrum.
+\f*
+\c 1
+\s This is a title\f + \ft And this is a footnote on a title
+Aut illo mollitia quos similique iure quia. Possimus consequuntur cumque sed quis. Dignissimos nobis odit fuga iste distinctio omnis quo. Nemo quidem eaque odio saepe eos cupiditate est commodi. Nemo voluptatem quia cupiditate ut eligendi soluta. Non vel molestias atque similique perferendis quis nesciunt.
+\f*
+\p
+\v 1 This is normal text.\f + \fr 1:1 \ft Supposedly Quo voluptatem dolorem corrupti voluptates et aut. Mollitia unde iste aut ut accusantium. Ut omnis voluptas incidunt. Aut vel consequuntur earum et nostrum sint aut.
+\f*  There are 4 hook positions: before, start, end,
+after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
+\p
+\esb
+\cat endnotes\cat*
+\p
+\zplaceallnotes
+\zpostendnoterule
+\esbe
+\p
+\v 2 Endnotes should\fe + \ft normally\fe*  appear
+after the text in the page\fe + \ft Unless they are
+manually
+inserted\fe* with a centred line above them.
+The grid spacing relative to other line items ought to be preserved.
+Thereforewe need some lorem ispum. There's a nice perl package for generating
+that. 
+\p
+\v 3
+Iure accusamus dolorem ea sunt unde voluptate voluptatem quod. Reiciendis ipsum est voluptates itaque at veritatis ut atque. Esse adipisci id sunt. Id beatae est et ratione omnis ab eaque qui. Voluptas ad est laboriosam distinctio. Voluptates nihil quisquam maxime facere sit quae.
+
+\p
+\v 4
+Nobis ipsam est veritatis enim nihil debitis. Qui delectus possimus eveniet architecto sint veniam neque. Laborum esse possimus consectetur. Fuga modi et quia eius. Vel illum beatae perspiciatis et ducimus. Sit vero est aut laboriosam.
+
+\p
+Omnis laboriosam molestiae corrupti. Explicabo cumque quo eos. Quas quisquam et beatae perspiciatis inventore. Accusamus dolore repellendus vero autem eum est id corporis.
+
+\p
+\v 5
+Voluptate quo consectetur perferendis.\f + \ft 
+Assumenda in nesciunt eum eaque rerum voluptates. Totam tempore magnam quia. Quibusdam possimus libero ut consectetur id omnis minima dolor. Rerum amet nemo est. Omnis temporibus atque sequi eum veritatis provident consectetur.
+\f* Ex illum cum dolorem facilis itaque doloribus repudiandae\f + \ft 
+Excepturi tenetur asperiores quasi nesciunt nostrum sit veritatis. Laudantium doloribus unde voluptas deserunt possimus ut qui ea. Dolor rerum suscipit repellat. Nulla earum et saepe iure libero.
+\f*  voluptatem. Officiis unde dolores enim.\f + \ft 
+Omnis odio vel ipsa unde in officiis ratione impedit. Asperiores animi eum omnis fugit aut delectus. Excepturi dolor ducimus ipsum hic minima. Eum praesentium tempora molestias dolor est sit corporis. Alias quisquam quia quaerat placeat odit.
+\f* Doloremque hic vel quis et quia et libero.\f + \ft 
+Cupiditate distinctio nam ipsa autem expedita vel exercitationem error. Ut et soluta tempore. Esse sed hic nostrum aut atque est consequuntur beatae. Commodi odio inventore et iste dolorem natus. Corporis veritatis distinctio adipisci repellat temporibus.
+\f* Distinctio voluptatum ratione amet atque voluptas sunt quam voluptatem.
+\f + \ft 
+Harum accusamus qui cumque dignissimos est aspernatur. Atque asperiores in est architecto et eligendi rerum voluptate. Delectus quam velit quasi voluptates quia. Accusamus doloribus est fugiat.
+\f* Voluptatum nemo sunt soluta quia iure.
+This should generate a warning:
+
+\zplacenotes-f
+
+\p
+\v 6
+Nostrum eaque repellat assumenda nesciunt est non alias. Earum nemo laborum eos recusandae atque. Rerum aliquam dolor fuga impedit. Blanditiis ullam asperiores est enim ullam cupiditate. Fugiat id nam recusandae sequi illo enim occaecati.
+Et voluptatem laborum vel tempore quis voluptatem illo aut. Ut blanditiis aut suscipit. Nam est et et rerum quasi minus id maiores. Sed aut velit quam recusandae distinctio. Minus ratione tenetur itaque qui impedit ducimus. Fugit ipsa expedita aliquam et inventore quisquam.
+\v 7 
+Deleniti eveniet sunt magni quasi aspernatur. Hic nisi enim velit accusamus. Doloribus voluptatem voluptas voluptatem quisquam repellendus sequi exercitationem dolorum.
+\v 8 
+Est quia deleniti ipsa id atque. Dolores corporis laborum incidunt quae et at nemo sunt. Occaecati doloribus sint blanditiis culpa id ut. Maxime culpa praesentium libero. Consequatur et voluptas recusandae consequuntur ducimus in. Voluptatibus ea deleniti soluta velit.
+\p
+\v 9
+Voluptas ducimus quo sint facilis rerum. Expedita sit exercitationem ex quasi reprehenderit facilis sunt. Libero sapiente dolorem impedit. Rerum quam dolorem voluptatum laborum aliquid est error vero.
+\v 10
+Ipsam aut velit dolor at quo. Sequi et consequatur ab nobis debitis. Quis cum aut qui praesentium accusamus fugiat sunt. Quidem enim neque quo soluta fugit distinctio. Velit commodi voluptatum aut atque. Beatae corporis id in ut.
+\v 11
+Exercitationem corporis quia aut velit. Soluta dolores dignissimos laboriosam quia. Odit adipisci ut accusantium qui rerum itaque.
+\v 12
+Possimus hic eveniet autem rerum dolorum molestiae dolores. Qui quos adipisci consequatur quibusdam facere rem. Perspiciatis repellat voluptas et labore eius. Fugit expedita eos culpa non nam et suscipit et. Ut qui dolores quae velit animi.
+
+Veritatis itaque est veniam non doloribus. Est quo necessitatibus ratione magni et incidunt repudiandae. Error amet omnis eum ducimus. Atque officia eum aliquid libero magnam. Aut praesentium consequuntur corporis et. Optio odio mollitia nisi consequuntur dolorem commodi.
+
+Quo necessitatibus qui culpa dolorum ratione. Dolores voluptatem a minus qui ad dolor voluptatibus eum. Id consequatur nisi fugiat dolor. Atque\f + Bluble\f* excepturi hic accusantium a. Et praesentium aspernatur beatae sint eius cupiditate aut reiciendis. Rerum consequuntur voluptatem ullam sint consequatur ut doloremque.
+\is Outroduction
+\ip This is another intro paragraph\f + \ft An uninformative note Officia natus
+voluptate veniam dignissimos. Quaerat atque voluptas provident. Hic officiis
+beatae voluptas ea earum voluptatem.
+\f*. I need to make it long enough so we can see how wide it is.
+

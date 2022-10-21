@@ -1,9 +1,12 @@
 
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
 from ptxprint.piclist import newBase
-from ptxprint.utils import refKey, getlang, _, f2s
-from gi.repository import Gtk, GdkPixbuf, GObject, Gdk
+from ptxprint.utils import refKey, getlang, _, f2s, pycodedir
+from gi.repository import Gtk, GdkPixbuf, GObject, Gdk, GLib
 import os, re
+import logging
+
+logger = logging.getLogger(__name__)
 
 _form_structure = {
     'anchor':   't_plAnchor',
@@ -20,11 +23,14 @@ _form_structure = {
     'nlines':   's_plLines',
     'medP':     'c_plMediaP',
     'medA':     'c_plMediaA',
-    'medW':     'c_plMediaW'
+    'medW':     'c_plMediaW',
+    'x-xetex':  't_picXetex'
 }
 
-_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", 
-                  "disabled", "cleardest", "key", "media"]
+_singlefields = ("anchor", "caption", "src", "ref", "alt", "x-xetex")
+
+_piclistfields = ["anchor", "caption", "src", "size", "scale", "pgpos", "ref", "alt", "copy", "mirror", "captionR",
+                  "disabled", "cleardest", "key", "media", "x-xetex"]
 _pickeys = {k:i for i, k in enumerate(_piclistfields)}
 
 _comblist = ['pgpos', 'hpos', 'nlines']
@@ -48,7 +54,7 @@ class PicList:
         self.picinfo = None
         self.selection = view.get_selection()
         self.picrect = None
-        self.currow = None
+        self.currows = []
         self.curriter = None
         self.bookfilters = None
         sel = self.view.get_selection()
@@ -63,7 +69,7 @@ class PicList:
             elif v.startswith("c_"):
                 sig = "clicked"
             w.connect(sig, self.item_changed, k)
-        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(os.path.dirname(__file__), "picLocationPreviews.png"))
+        self.previewBuf = GdkPixbuf.Pixbuf.new_from_file(os.path.join(pycodedir(), "picLocationPreviews.png"))
         self.clear()
         self.loading = False
 
@@ -88,8 +94,9 @@ class PicList:
         self.model.refilter()
 
     def modify_font(self, p):
-        w = self.builder.get_object("cr_caption")
-        w.set_property("font-desc", p)
+        for a in ["cr_caption", "cr_caption2"]:
+            w = self.builder.get_object(a)
+            w.set_property("font-desc", p)
 
     def isEmpty(self):
         return len(self.model) == 0
@@ -122,6 +129,8 @@ class PicList:
                         val = False
                     elif e == "disabled":
                         val = v.get(e, False)
+                    elif e == 'captionR':
+                        val = v.get(e, v.get('captionL', ""))
                     # elif e == "media":
                         # val = v.get(e, None)
                         # if val is None:
@@ -149,8 +158,8 @@ class PicList:
         allkeys = set()
         for row in self.model:
             k = row[_pickeys['key']]
-            if k.startswith("row"):
-                print(f"{k} added")
+            # if k.startswith("row"):
+                # print(f"{k} added")
             p = picinfos.setdefault(k, {})
             for i, e in enumerate(_piclistfields):
                 if e == 'key':
@@ -187,10 +196,12 @@ class PicList:
                     continue
 
     def row_select(self, selection): # Populate the form from the model
-        model, it = selection.get_selected()
-        if self.loading or selection.count_selected_rows() != 1:
+        if self.loading or selection.count_selected_rows() == 0:
             return
-        if self.currow is not None:
+        if self.currows:
+            if not self.currows[-1][_pickeys['anchor']]:
+                self.parent.doError(_("Empty Anchor"), _("You must set an anchor"))
+                return
             for k, s in ((k, x) for k,x in _form_structure.items() if x.startswith("s_")):
                 w = self.builder.get_object(s)
                 if w.has_focus():
@@ -198,18 +209,20 @@ class PicList:
                     e.window = w
                     e.send_event = True
                     w.emit("focus-out-event", e)
-        model, it = selection.get_selected()
-        path = model.get_path(it)
-        cpath = model.convert_path_to_child_path(path)
-        cit = self.model.get_iter(cpath)
-        s = self.view.get_selection()
-        if self.curriter != cit:
-            self.parent.savePicChecks()
-            if not self.model.do_visible(self.model, self.model.get_model(), cit):
-                return
-        self.currow = self.model[cit][:]    # copy it so that any edits don't mess with the model if the iterator moves
-        self.curriter = cit
-        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', self.currow[_pickeys['pgpos']])
+        model, paths = selection.get_selected_rows()
+        self.currows = []
+        for i, path in enumerate(paths):
+            cpath = model.convert_path_to_child_path(path)
+            cit = self.model.get_iter(cpath)
+            if i == 0 and self.curriter != cit:
+                self.parent.savePicChecks()
+                if not self.model.do_visible(self.model, self.model.get_model(), cit):
+                    return
+                self.curriter = cit
+            self.currows.append(self.model[cit][:])    # copy it so that any edits don't mess with the model if the iterator moves
+            self.currows[-1].append(cit)
+        currow = self.currows[0]
+        pgpos = re.sub(r'^([PF])([lcr])([tb])', r'\1\3\2', currow[_pickeys['pgpos']])
         self.parent.pause_logging()
         self.loading = True
         for j, (k, v) in enumerate(_form_structure.items()): # relies on ordered dict
@@ -217,7 +230,7 @@ class PicList:
             if k == 'pgpos':
                 val = pgpos[:2] if pgpos[0:1] in "PF" else (pgpos[0:1] or "t")
             elif k == 'hpos':
-                if self.currow[_pickeys['size']] == "span":
+                if currow[_pickeys['size']] == "span":
                     val = "-"
                 elif pgpos[0:1] in "PF":
                     val = pgpos[2:] or "c"
@@ -230,27 +243,29 @@ class PicList:
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
-                val = v[-1].lower() in (self.currow[_pickeys['media']] or "paw")
+                val = v[-1].lower() in (currow[_pickeys['media']] or "paw")
             elif k == 'mirror':
-                val = self.currow[j] or "None"
+                val = currow[j] or "None"
             elif k == 'copy': # If we already have the copyright information, then don't let them enter it unnecessarily
-                val = self.currow[j]
-                figname = self.currow[_pickeys['src']]
+                val = currow[j]
+                figname = currow[_pickeys['src']]
                 status = True if len(re.findall(r"(?i)_?((?=cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abc]?", figname)) else False
                 self.builder.get_object('l_autoCopyAttrib').set_visible(status)
                 self.builder.get_object(v).set_visible(not status)
             else:
                 try:
-                    val = self.currow[j]
+                    val = currow[j]
                 except IndexError: 
                     print("k, j:", k, j)
             w = self.builder.get_object(v)
+            if k in _singlefields:
+                w.set_sensitive(len(self.currows) == 1)
             try:
                 setWidgetVal(v, w, val)
             except (ValueError, TypeError):
                 print(v, w, val)
             
-        self.mask_media(self.currow)
+        self.mask_media(currow)
         self.parent.unpause_logging()
         self.loading = False
 
@@ -276,8 +291,8 @@ class PicList:
         if not self.get("c_plMediaP"):
             locnKey = "1" if cols == 1 else "2"
         else:
-            frSize = self.currow[_pickeys['size']]
-            pgposLocn = self.currow[_pickeys['pgpos']]
+            frSize = self.currows[0][_pickeys['size']]
+            pgposLocn = self.currows[0][_pickeys['pgpos']]
             locnKey = "{}-{}-{}".format(cols, frSize, pgposLocn)
             locnKey = re.sub(r'^\d\-(page|full)\-.+', r'\1', locnKey)
             locnKey = re.sub(r'^1\-(col|span)\-', '1-', locnKey)
@@ -350,12 +365,12 @@ class PicList:
             key = "media"
         else:
             val = self.get(key)
-        if self.currow is not None:
+        for i, currow in enumerate(self.currows):
             fieldi = _piclistfields.index(key)
-            oldval = self.currow[fieldi]
-            self.currow[fieldi] = val
+            oldval = currow[fieldi]
+            currow[fieldi] = val
             r_image = self.parent.get("r_image", default="preview")
-            if r_image == "location":
+            if i == 0 and r_image == "location":
                 locKey = self.getLocnKey()
                 pic = self.dispLocPreview(locKey)
                 self.setPreview(pic)
@@ -364,29 +379,33 @@ class PicList:
                     fpath = None
                     if self.picinfo is not None:
                         dat = self.picinfo.getFigureSources(data={'1': {'src': val}},
-                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"))
+                                    key='path', exclusive=self.parent.get("c_exclusiveFiguresFolder"),
+                                    mode=self.picinfo.mode)
                         fpath = dat['1'].get('path', None)
                     if fpath is not None and os.path.exists(fpath):
                         if self.picrect is None:
                             picframe = self.builder.get_object("fr_picPreview")
                             self.picrect = picframe.get_allocation()
                         if self.picrect.width > 10 and self.picrect.height > 10:
-                            pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                            try:
+                                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(fpath, self.picrect.width - 6, self.picrect.height - 6)
+                            except GLib.GError:
+                                pixbuf = None
                             self.setPreview(pixbuf, tooltip=fpath)
                         else:
                             self.setPreview(None)
                     else:
                         self.setPreview(None)
                 self.parent.updatePicChecks(val)       # only update checks if src exists
-                self.mask_media(self.currow)
+                self.mask_media(currow)
                 if val != oldval: # New source implies new destination file
-                    self.currow[_piclistfields.index('cleardest')] = True
+                    currow[_piclistfields.index('cleardest')] = True
             elif key == "size" and val != oldval: # Trigger a new copy of the image, since ratio may change
-                self.currow[_piclistfields.index('cleardest')] = True
+                currow[_piclistfields.index('cleardest')] = True
             elif key == "mirror" and val == "None":
-                self.currow[fieldi] = ""
+                currow[fieldi] = ""
             if not self.loading:
-                self.model.set_value(self.curriter, fieldi, self.currow[fieldi])
+                self.model.set_value(currow[-1], fieldi, currow[fieldi])
 
     def setPreview(self, pixbuf, tooltip=None):
         pic = self.builder.get_object("img_picPreview")
@@ -426,26 +445,34 @@ class PicList:
 
     def add_row(self):
         global newrowcounter
-        if len(self.model) > 0:
-            row = self.model[self.selection.get_selected()[1]][:]
+        model, sel = self.selection.get_selected_rows()
+        if sel is not None and len(sel):
+            sel = model.convert_path_to_child_path(sel[0])
+        if sel is not None and len(self.model) > 0:
+            row = self.model[self.model.get_iter(sel)][:]
         else:
             row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
-        print(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
+        logger.debug(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
         newrowcounter += 1
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
 
     def del_row(self):
-        model, i = self.selection.get_selected()
-        ci = model.convert_iter_to_child_iter(i)
-        del self.coremodel[ci]
-        ind = model.get_path(i)
-        if ind is None:
+        model, paths = self.selection.get_selected_rows()
+        inds = [model.convert_path_to_child_path(i) for i in paths]
+        for i in reversed(sorted(inds)):
+            ci = self.coremodel.get_iter(i)
+            del self.coremodel[ci]
+        if not len(inds):
             indt = model.get_iter_first()
             if indt is not None:
                 ind = model.get_path(indt)
-        if ind is not None:         # otherwise we have an empty list
+            else:
+                ind = None
+        else:
+            ind = inds[0]
+        if ind is not None:  # otherwise we have an empty list
             self.select_row(ind.get_indices()[0])
 
     def set_src(self, src):
@@ -456,3 +483,5 @@ class PicList:
     def clearSrcPaths(self):
         self.picinfo.clearSrcPaths()
 
+    def multiSelected(self, ismulti=False):
+        pass

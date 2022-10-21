@@ -1,0 +1,13 @@
+[DEFAULT]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+
+[cn01656]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+approved = false
+

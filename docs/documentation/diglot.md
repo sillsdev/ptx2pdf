@@ -77,20 +77,40 @@ and the right column will use:
 ## Configuration items to go in foo-setup.tex (or main .tex file)
 
 ### Extra columns
-`\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers.
+`\newPolyglotCol A` This specifies that just `L` and `R` are a bit boring, and you wish to use another column (`A`) as well. The perl program to merge files uses L,R,A,B,C.... as column identifiers. So far there is no python code to cope with polyglots.
 
-
-###True/false options
-
-- ```\diglottrue```
-If there is diglot material this **must be set true** (i.e. ```\diglottrue```), **before** the style sheet is loaded (default: ```\diglotfalse```).
-
+### Footnote control
 - ```\diglotSepNotestrue```
 If the footnotes from the 2 languages should be split (true) or merged together (false) (default: ```\diglotSepNotestrue```). Merging footnotes is almost certainly not a wise choice if both texts have footnotes, but if only one side has notes then it probably makes a lot of sense. The exact order of the footnotes is probably complicated and may even be unpredictable.
 
 - ```\diglotBalNotesfalse```
 If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
 
+- `\DistinctNoteNumbering{f}` (default)
+- `\ParallelNoteNumbering{f}`
+If the command `\ParallelNoteNumbering{f}` is given, then `\f` footnotes will
+have two parallel counts, so that left and right texts will be numbered (or picked from the callers list) 
+separately. The default keeps a single count, so each footnote/cross-reference is numbered  distinctly. This setting is ignored if merged footnotes are active, to avoid confusion.
+
+The writers of hooks or control files that reset note numbering at chapters,
+sections etc,  might want to use one of these options as appropriate:
+- `\resetautonum{f}` Reset numbering for note `f`, in the present column
+- `\resetSpecAutonum{fL}` Reset numbering for note `f`, column `L`
+- `\resetAllAutonum{f}` Reset numbering for note `f` in all columns
+ 
+###True/false options
+
+- ```\diglottrue```
+If there is diglot material this **must be set true** (i.e. ```\diglottrue```), **before** the style sheet is loaded (default: ```\diglotfalse```).
+
+
+
+
+- ```\OmitChapterNumberLtrue``` , ```\OmitChapterNumberLfalse``` and ```\OmitChapterNumberLdefault```
+- ```\OmitChapterNumberRtrue``` , ```\OmitChapterNumberRfalse``` and ```\OmitChapterNumberRdefault```
+- ```\OmitVerseNumberOneLtrue``` , ```\OmitVerseNumberOneLfalse``` and ```\OmitVerseNumberOneLdefault```
+- ```\OmitVerseNumberOneRtrue``` , ```\OmitVerseNumberOneRfalse``` and ```\OmitVerseNumberOneRdefault```
+Column-specific control over chapter and verse numbers. The 'third state' of this boolean (which is the default) permits the 'global' boolean (without the `L` or 'R') to have control.
 
 
 - ```\VisTracetrue``` 
@@ -101,23 +121,31 @@ Debugging options for really sticky problems; see end of this document.
 - ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefL,R,A``` and ```\lastrefL,R,A```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheet(s) (```\Marker h```, ```hL``` and ```hR```, as above).
 
 ### Page layout options
+
 - ```\def\ColumnGutterFactor{15}``` 
 Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two column mode.
+- ```\ColumnGutterRuletrue``` There should be a vertical rule(line) between columns of text.
+- ```\FigGutterRuletrue``` There should be a vertical rule between column-figures if there is one between the columns of text
+- ```\NoteGutterRuletrue``` There should be a vertical rule between footnotes if there is one between the columns of text
+- ```\JoinGutterRuletrue``` There should be no gap in the vertical rule between the one for the text body and the one for the notes. If false, there is no vertical rule in the gap controlled by `\AboveNoteSpace`.
 
 - ```\def\DiglotLFraction{0.55}```  
 Fraction of the space that is used by column L.  Similarly `\DiglotRFraction`, `\DiglotAFraction` etc. Unless multiple page layout (experimental)
-is used, the sum of all the fractions should be  1.0. No automatic verification of this is currently done, you'll just get ugly results.
+is used, the sum of all the fractions should be  1.0. If mulpiple pages layout is used, the sum of all fractions on their respective pages should be 1.0. 
+No automatic verification of this is currently done, you'll just get ugly results.
 
 -  ```\def\DiglotLeftFraction{0.5}``` ```\def\DiglotRightFraction{0.5}``` 
-Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..goltRFraction...`
+Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..glotRFraction...`
 
 Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
 
-### Column-dependent configuration parameters
-The following may be defined with a column-dependent suffix (`L`, `R`, `A`, ...).
- `AdornVerseNumber`, `VerticalSpaceFactor`, `LineSpacingFactor`, `regular`, `bold`, `italic`, `bolditalic`, `SpaceStretchFactor`, `SpaceShrinkFactor`
+### Column-specific configuration parameters
+The following may be defined with a column-specific suffix (`L`, `R`, `A`, ...).
+ `AdornVerseNumber`, `VerticalSpaceFactor`, `LineSpacingFactor`, `regular`, `bold`, `italic`, `bolditalic`, `SpaceStretchFactor`, `SpaceShrinkFactor`, `MakeChapterLabel`
 
 These dimensions can similarly have column-specific values: `FontSizeUnit`, `IndentUnit`
+
+If the column-specific value is not defined, then the 'global' (not-specific) value will apply.
 
 ###Deprecated true/false options
 - ```\useLeftMarkstrue```
@@ -147,24 +175,41 @@ will apply the ```\hangversenumber``` only for the left column.
 
 ### Mixing diglot and monoglot text
 
-The font-switching code requires that ```\diglottrue``` is specified before 
-any style sheets are loaded. 
-If ```\diglottrue``` has been specified, then any usfm code text is set in the left column (L) until a ```\righttext``` is encountered. 
-If ```\diglotfalse``` is in force, then the non-diglot parameters will take effect, e.g.:
+The font-switching code requires that ```\diglottrue``` must be specified before 
+any style sheets are loaded. However, it is now possible to have
+language-switching without the diglot layout:
+
 ```
-\TitleColumns=1 
-\IntroColumns=1  
-\BodyColumns=2
+\zglot|L\*
+\monoglotcolumn L
 ```
-A .usfm file cannot (easily) redefine those values (as numbers are not treated as numbers within the .usfm code, otherwise ```\s2``` would be treated by XeTeX as ```\s``` followed by 
-parameter ```2```. However, ```\singlecolumn```, ```\doublecolumns``` and ```\diglotcolumns``` will probably work. These are internal commands and their use hasn't been tested recently. It may be 
-necesary to specify \diglotfalse before switching.
+These (equivalent) commands performs all the font switching etc. that might be expected for a diglot text, but *without* 
+any of the column switching code being activated. 
+The shorter milestone-like format is preferred as it is USFM-compliant, but the longer form works.
+The expectation is that this
+will be used in front-matter and back-matter books, etc. where  a single or dual-column layout 
+is best but font (and stylesheet) switching is still desired. 
+
+Although this switches on `\diglottrue`, so that font switching functions
+correctly, it should be used in a USFM file that was started in single or dual
+column mode (`\singlecolumn \diglotfalse`). It will probably cause
+unpredictable results if used in a normal diglot (or polyglot) file.
+
+Hybrid files, which contain a mixture of diglot and monoglot (including
+serial-monoglot text as with `\monoglotcolumn`) material are possible, but 
+they are basically untested.
+
+`\diglotfalse\singlecolumn` and `\diglotfalse\doublecolumns` will switch to monoglot text, 
+and `\diglotcolumns` will switch to diglot text.
 
 
 ### Other settings
 - ```\Alternative```
   The PDF bookmarks are produced (by default) with a ```/``` separating the chapter name. The slash is actually produced by ```\Alternative```, in case 
 slash not the correct symbol to use. 
+
+- ```\def\KeepMyBrokenAdjList{}```
+If this is defined, then old-stlye (broken) paragraph numbering for adjust lists and triggers.
 
 
 ## Easy solutions to common problems
@@ -230,9 +275,11 @@ A debugging option to help match the numbers from the log file with position in 
 This command adds even more markers, but the markers may alter what appears on which page. 
 
 - ```\diglotDbgJoinboxes=132```
-At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spaceing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called.  If the number is set to 0, and the command ```\tracing{d}``` has not been given, then every single call to joinboxes will result in a ```\showbox```.  **You almost certainly don't want to do this!** 
+At various points in the process, boxes (see later) get joined together, by a macro called ```\joinboxes```. This is a debugging option to help check that what's happening there is what ought to be happening.  XeTeX has a debugging command ```\showbox```, which stops processing and writes information about a given box (in the case here, a box is the stack of lines separated by spacing).  This command fires the ```\showbox```  command if the number given is the current debug message number when joinboxes is called (and various other places).   Note that ```\showboxbreadth=99` and ```\showboxdepth=99``` control how much detail is shown before truncation.
 
 - ```\def\diglotDbgeachcol{134}```
 - ```\def\diglotDbgdiglotDbgupdtPtl{213}```
 Trigger detailed debugging code for a particular occurance of the (frequently met) `\each@col` and `\upd@tep@rtial` macros.
 
+- ```\diglotDebugFollowContentstrue```
+This is the extreme version of `\diglotDbgJoinboxes` above. Rather than just showing boxes at a single point in the code, this will show the box contents at most points of potential interest. Combined with `\tracing{d}\tracing{D}`, log files on the order of 10Mbytes per page are to be expected.

@@ -9,11 +9,11 @@
 %\PaperWidth=105mm
 %\PaperHeight=148.5mm
 % Dimensions of A5 paper
-%\PaperWidth=148.5mm
-%\PaperHeight=210mm
+\PaperWidth=148.5mm
+\PaperHeight=210mm
 % Dimensions of A4 paper
-\PaperHeight=296.9mm
-\PaperWidth=210mm
+%\PaperHeight=296.9mm
+%\PaperWidth=210mm
 % A4 landscape
 %\PaperHeight=210mm
 %\PaperWidth=296.9mm
@@ -63,13 +63,13 @@
 %   \lastref = reference of the last verse on the page)
 %   \pagenumber = the page number
 %   \empty = print nothing in this position
-\def\RHoddleft{\rangerefL}
-\def\RHoddcenter{\pagenumber}
-\def\RHoddright{\rangerefB}
-
-\def\RHevenleft{\rangerefR}
+\def\RHevenleft{\rangerefL}
 \def\RHevencenter{\pagenumber}
-\def\RHevenright{\rangerefC}
+\def\RHevenright{\rangerefB}
+
+\def\RHoddleft{\rangerefR}
+\def\RHoddcenter{\pagenumber}
+\def\RHoddright{\rangerefC}
 
 \def\RHtitleleft{\empty}
 \def\RHtitlecenter{\empty}

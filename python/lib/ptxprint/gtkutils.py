@@ -1,5 +1,8 @@
+import gi
+gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
 from ptxprint.utils import _, f2s
+from PIL import Image
 
 def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
     v = None
@@ -16,7 +19,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         v = w.get_active_id()
     elif wid.startswith("t_"):
         v = w.get_text()
-    elif wid.startswith("tb_"):
+    elif wid.startswith("txbf_"):
         v = w.get_text(w.get_start_iter(), w.get_end_iter(), True)
     # elif wid.startswith("f_"):
         # v = w.get_font_name()
@@ -40,7 +43,7 @@ def getWidgetVal(wid, w, default=None, asstr=False, sub=0):
         return default
     return v
 
-def setWidgetVal(wid, w, value, noui=False):
+def setWidgetVal(wid, w, value, noui=False, useMarkup=False):
     try:
         if wid.startswith("ecb_"):
             model = w.get_model()
@@ -55,9 +58,9 @@ def setWidgetVal(wid, w, value, noui=False):
         elif wid.startswith("fcb_"):
             w.set_active_id(value)
         elif wid.startswith("t_"):
-            w.set_text(value)
-        elif wid.startswith("tb_"):
-            w.set_text(value)
+            w.set_text(value or "")
+        elif wid.startswith("txbf_"):
+            w.set_text(value or "")
         elif wid.startswith("f_"):
             w.set_font_name(value)
             # w.emit("font-set")
@@ -68,13 +71,16 @@ def setWidgetVal(wid, w, value, noui=False):
         elif wid.startswith("s_"):
             w.set_value(float(value or 0))
         elif wid.startswith("btn_"):
-            w.set_tooltip_text(value)
+            w.set_tooltip_text(value or "")
         elif wid.startswith("bl_"):
             setFontButton(w, value or None)
         elif wid.startswith("lb_"):
-            w.set_label(value)
+            w.set_label(value or "")
         elif wid.startswith("l_"):
-            w.set_text(value)
+            if useMarkup:
+                w.set_markup(value or "")
+            else:
+                w.set_text(value or "")
         elif wid.startswith("col_"):
             c = Gdk.RGBA()
             c.parse(value)
@@ -96,6 +102,10 @@ def setFontButton(btn, value):
             styles.append("(bold)")
         if "slant" in value.feats:
             styles.append("(italic)")
+        if value.isBold:
+            styles.append("Bold")
+        if value.isItalic:
+            styles.append("Italic")
         style = " ".join(styles)
     btn.set_label("{}\n{}".format(value.name, style))
 
@@ -104,3 +114,30 @@ def makeSpinButton(mini, maxi, start, step=1, page=1):
     res = Gtk.SpinButton()
     res.set_adjustment(adj)
     return res
+
+class HelpTextViewWindow(Gtk.Window):
+    def __init__(self):
+        Gtk.Window.__init__(self, title="PTXPrint help")
+        self.set_default_size(580, 740)
+        #self.vb = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        #self.add(self.vb)
+        self.connect("destroy", Gtk.main_quit)
+        self.create_textview()
+        
+    def create_textview(self):
+        sw = Gtk.ScrolledWindow()
+        sw.set_hexpand(True)
+        sw.set_vexpand(True)
+        self.add(sw)
+        #self.vb.attach(sw)
+
+        self.tv = Gtk.TextView()
+        self.tv.set_monospace(True)
+        self.tv.set_wrap_mode(Gtk.WrapMode.WORD)
+        self.tb = self.tv.get_buffer()
+        sw.add(self.tv)
+
+    def print_message(self, message):
+        self.tb.set_text(message, -1)
+        self.show_all()
+        Gtk.main()

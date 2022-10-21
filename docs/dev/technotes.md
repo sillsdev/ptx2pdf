@@ -91,3 +91,9 @@ This expands to:
 
 In both cases, the filename (without the .tex) should exactly match the plugin name, otherwise the automatic inclusion by `\plugins@needed` will fail.
 
+Stylesheet macros that depend on a plugin should be registered like this, e.g. included in ptx-plugins.
+```
+\PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
+```
+Each one of the sylesheet macros listed in the second argument will (if not defined) become code that will produce a warning or attempt to load the necessary plugin. That activity is controlled by the switch `\ifpluginjustwarn`
+At present, only the ornaments plugin uses this functionality. 

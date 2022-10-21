@@ -1,0 +1,69 @@
+\def\pluginlist{polyglot-simplecols,ornaments} % probably built in, but futureproofing.
+\input paratext2.tex
+%\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
+%\VisTracetrue% Every chunk joined, mark with the current trace number
+%\diglotDbgJoinboxes=1246 % And if that's not enough, assuming trace entry 1246
+%is from joinboxes (which pastes 2 left or 2 right columns together) show the
+%boxes joined.
+%\showboxdepth=100 %.... In all their gory detail
+%\showboxbreadth=100
+%\tracingifs=1
+
+%\diglotInnerOutertrue
+\def\DiglotLFraction{0.3} % In case texts fit better with unequal columns
+\def\DiglotRFraction{0.26} 
+\def\DiglotAFraction{0.44} 
+
+\newPolyglotCol A
+
+\input Galatians-setup.tex
+\iftrue
+\CropMarkstrue
+ \tracing{H}
+ \tracing{d}
+ \tracing{g}
+ \tracing{F}
+ \tracing{dP}
+ \tracing{s}
+ \tracing{n}
+ \tracing{sC}
+ \VisTracetrue
+ \tracing{D}
+ \tracing{Dh}
+ \tracing{et}
+\fi
+
+\def\LineSpacingFactorL{1.2}
+\def\LineSpacingFactorR{1.1}
+\pageno=-1
+%\tracing{s}\tracing{S}
+%\uselanguage{british}
+\diglotfalse
+\singlecolumn
+\ptxfile{intro.usfm}
+
+\def\OKbk{\penalty 2}
+\def\tighter{\looseness=-1}
+\pageno=1
+%\tracingmacros 1
+\diglotcolumns
+%\addToLeftHooks{\RTLfalse}
+%\addToRightHooks{\RTLtrue}
+\diglotSepNotestrue
+\diglotBalNotestrue
+\stylesheet{standardborders.sty}
+\stylesheet{Galatians3.sty}
+\ptxfile{mergedGal.usfm}
+\diglotcolumns
+\diglotSepNotesfalse
+\ptxfile{mergedGalV.usfm}
+
+%\shipout\vbox{\hbox{partial}\unvbox\partial}
+%\shipout\vbox{\hbox{partialL}\unvbox\partialL}
+%\shipout\vbox{\hbox{partialR}\unvbox\partialR}
+%\shipout\vbox{\hbox{excessL}\unvbox\excessL}
+%\shipout\vbox{\hbox{excessR}\unvbox\excessR}
+%\output={\unvbox\partial\shipout\box255}
+%\pagebreak
+%\tracingall
+\end

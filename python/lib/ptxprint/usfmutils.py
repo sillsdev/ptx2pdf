@@ -6,7 +6,9 @@ from collections import namedtuple
 from itertools import groupby
 from functools import reduce
 from copy import deepcopy
-import regex
+import regex, time, logging
+
+logger = logging.getLogger(__name__)
 
 def isScriptureText(e):
     if 'nonvernacular' in e.meta.get('TextProperties', []):
@@ -15,7 +17,7 @@ def isScriptureText(e):
         return True
     if e.meta.get('TextType', "").lower() == "other" and e.name.startswith("i"):
         return True
-    if e.name in ("h", "id", "mt", "toc1", "toc2", "toc3"):
+    if e.name in ("h", "h1", "id", "mt", "toc1", "toc2", "toc3"):
         return False
     return True
 
@@ -27,11 +29,12 @@ space_cats = { 'Zs', 'Zl', 'Zp', 'Cf' }
 class _Reference(sfm.Position):
     def __new__(cls, pos, ref):
         p = super().__new__(cls, *pos[:2])
-        p.ref = RefList.fromStr("{} {}:{}".format(*ref))[0]
+        refs = RefList.fromStr("{} {}:{}".format(*ref))
+        p.ref = refs.simplify(sort=False)[0]
         return p
 
     def __str__(self):
-        return f"{self.book} {self.chapter}:{self.verse} line {self.line},{self.col}"
+        return f"{self.ref.book} {self.ref.chap}:{self.ref.verse} line {self.line},{self.col}"
 
 
 class Sheets(dict):
@@ -76,19 +79,22 @@ class UsfmCollection:
         self.basedir = basedir
         self.sheets = sheets
         self.books = {}
+        self.times = {}
         self.tocs = []
         self.booknames = None
 
     def get(self, bk):
-        if bk not in self.books:
-            bkfile = self.bkmapper(bk)
-            if bkfile is None:
-                return None
-            bkfile = os.path.join(self.basedir, bkfile)
-            if not os.path.exists(bkfile):
-                return None
+        bkfile = self.bkmapper(bk)
+        if bkfile is None:
+            return None
+        bkfile = os.path.join(self.basedir, bkfile)
+        if not os.path.exists(bkfile):
+            return None
+        mtime = os.stat(bkfile).st_mtime
+        if mtime > self.times.get(bk, 0):
             with open(bkfile, encoding="utf-8") as inf:
                 self.books[bk] = Usfm(inf, self.sheets)
+            self.times[bk] = time.time()
         return self.books[bk]
 
     def makeBookNames(self):
@@ -101,34 +107,48 @@ class UsfmCollection:
         else:
             tocre = re.compile(r"^\\toc(\d)\s+(.*)\s*$")
             for bk in list(self.booknames.bookStrs.keys()):
-                tocs = [None]*3
+                tocs = [""] * 3
                 bkfile = self.bkmapper(bk)
-                if bkfile is None:
+                if bkfile is None or not len(bkfile):
                     continue
                 bkfile = os.path.join(self.basedir, bkfile)
                 if not os.path.exists(bkfile):
                     continue
+                nochap = True
                 with open(bkfile, encoding="utf-8") as inf:
-                    for i in range(20):
+                    while nochap:
                         l = inf.readline()
                         m = tocre.match(l)
                         if m:
                             r = int(m.group(1))
-                            if r < len(tocs):
-                                tocs[r] = m.group(2)
-                tocs = reversed([x or tocs[i-1:i] for i,x in enumerate(tocs)])
+                            if r <= len(tocs):
+                                tocs[r-1] = m.group(2)
+                        elif '\\c ' in l:
+                            nochap = False
+                for i in range(len(tocs)-2,-1, -1):
+                    if tocs[i] == "":
+                        tocs[i] = tocs[i+1]
                 self.booknames.addBookName(bk, *tocs)
+
+    def get_markers(self, bks):
+        ''' returns a list of all markers used in the corpus '''
+        res = set()
+        for bk in bks:
+            mkrs = self.get(bk).getmarkers()
+            res.update(mkrs)
+        return res
 
 class Usfm:
     def __init__(self, iterable, sheets):
-        tag_escapes = r"[^0-9A-Za-z]"
+        #tag_escapes = r"[^0-9A-Za-z]"
         self.doc = None
         self.sheets = sheets
-        with warnings.catch_warnings(record=True) as self.warnings:
-            self.doc = list(usfm.parser(iterable, stylesheet=sheets,
-                                canonicalise_footnotes=False,
-                                error_level=sfm.ErrorLevel.Unrecoverable,
-                                tag_escapes=tag_escapes))
+        if iterable is not None:
+            with warnings.catch_warnings(record=True) as self.warnings:
+                self.doc = list(usfm.parser(iterable, stylesheet=sheets,
+                                    canonicalise_footnotes=False,
+                                    error_level=sfm.ErrorLevel.Unrecoverable))
+                                    #tag_escapes=tag_escapes))
         # self.warnings is a list of Exception type errors use print(w.message)
         self.cvaddorned = False
         self.tocs = []
@@ -136,20 +156,28 @@ class Usfm:
     def __str__(self):
         return sfm.generate(self.doc)
 
+    def copy(self, newdoc=None):
+        res = self.__class__(None, self.sheets)
+        res.doc = newdoc
+        res.cvaddorned = False
+        res.tocs = []
+        return res
+
     def addorncv(self):
         if self.cvaddorned:
             return
         ispara = sfm.text_properties('paragraph')
         self.chapters = []
+        self.bridges = {}
         ref = ["", "0", "0"]
         pending = []
 
         def isHeading(e):
             if not isinstance(e, sfm.Element):
                 return False
-            if e.meta.get('StyleType', '').lower() != 'paragraph':
+            if (getattr(e, "meta", {}).get('StyleType', '') or "").lower() != 'paragraph':
                 return False
-            if e.meta.get('TextType', '').lower() == 'section':
+            if (getattr(e, "meta", {}).get('TextType', '') or "").lower() == 'section':
                 return True
             return False
 
@@ -171,17 +199,26 @@ class Usfm:
                     ref[2] = e.args[0]
                     for t in pending:
                         t.pos = _Reference(t.pos, ref)
+                        if t.pos.ref.first != t.pos.ref.last and t.pos.ref.last.verse < 200 and t.pos.ref.first not in self.bridges:
+                            for r in t.pos.ref.allrefs():
+                                self.bridges[r] = t.pos.ref
                     pending.clear()
                 elif ref[2] != "0":
                     if isHeading(e) or len(pending):
                         pending.append(e)
                 e.pos = _Reference(e.pos, ref)
+                if e.pos.ref.first != e.pos.ref.last and e.pos.ref.last.verse < 200 and e.pos.ref.first not in self.bridges:
+                    for r in e.pos.ref.allrefs():
+                        self.bridges[r] = e.pos.ref
                 reduce(_g, e, None)
             else:
                 if len(pending):
                     pending.append(e)
                 else:
                     e.pos = _Reference(e.pos, ref)
+                    if e.pos.ref.first != e.pos.ref.last and e.pos.ref.last.verse < 200 and e.pos.ref.first not in self.bridges:
+                        for r in e.pos.ref.allrefs():
+                            self.bridges[r] = e.pos.ref
         reduce(_g, self.doc, None)
         self.cvaddorned = True
 
@@ -205,7 +242,8 @@ class Usfm:
         ''' Counts words found in the document. If constrain then is a set or
             list that contains words to count, ignoring all others. Returns
             a dict of words: counts. '''
-        wre = re.compile(r"(\w+)")
+        # wre = re.compile(r"(\w+)")
+        wre = regex.compile(r"([\p{L}\p{M}\p{Cf}]+)")
         if init is None:
             init = {}
         def addwords(s, a):
@@ -220,36 +258,75 @@ class Usfm:
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
-    def subdoc(self, refrange, removes={}, strippara=False):
+    def getmarkers(self):
+        ''' Return a set of all markers in the doc '''
+        res = set()
+        def _g(a, e):
+            if isinstance(e, sfm.Element):
+                a.add(e.name)
+                reduce(_g, e, a)
+            return a
+        reduce(_g, self.doc[0], res)
+        return res
+
+
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False):
         ''' Creates a document consisting of only the text covered by the reference
-            ranges. ref is a tuple in the form:
-                (fromc, fromv, toc, tov)
-            The list must include overlapping ranges'''
+            ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
+        if not isinstance(refranges, list):
+            refranges = [refranges]
         ispara = sfm.text_properties('paragraph')
-        chaps = self.chapters[refrange.first.chap:refrange.last.chap+1]
-        def pred(e):
-            if isinstance(e.pos, _Reference) and e.pos.ref in refrange:
+        last = (0, -1)
+        chaps = []
+        for i, r in enumerate(refranges):
+            if r.first.chap > last[1] or r.first.chap < last[0]:
+                chaps.append((self.chapters[r.first.chap:r.last.chap+1], [i]))
+                last = (r.first.chap, r.last.chap)
+            elif r.first.chap >= last[0] and r.last.chap <= last[1]:
+                chaps[-1][1].append(i)
+            else:
+                chaps[-1][0].extend(self.chapters[last[1]+1:r.last.chap+1])
+                chaps[-1][1].append(i)
+                last = (last[0], r.last.chap)
+        def pred(e, rlist):
+            if isinstance(e.pos, _Reference) and any(e.pos.ref in refranges[i] for i in rlist):
                 if strippara and isinstance(e, sfm.Element) and ispara(e):
                     return False
                 return True
             return False
 
-        def _g(a, e):
+        def _g(a, r):
+            e, rlist = r
             if isinstance(e, sfm.Text):
-                if pred(e):
+                if pred(e, rlist):
                     a.append(sfm.Text(e, e.pos, a or None))
                 return a
-            if e.name in removes:
+            if e is None or e.name in removes:
                 return a
             e_ = sfm.Element(e.name, e.pos, e.args, parent=a or None, meta=e.meta)
-            reduce(_g, e, e_)
-            if pred(e):
+            reduce(_g, [(x, rlist) for x in e], e_)
+            if pred(e, rlist) or (keepchap and e.name == "cl"):
                 a.append(e_)
             elif len(e_):
                 a.extend(e_[:])
             return a
-        return reduce(_g, chaps, [])
+        res = []
+        for c in chaps:
+            for chap in c[0]:
+                _g(res, (chap, c[1]))
+        return res
+
+    def getsubbook(self, refrange, removes={}):
+        # refrange.reify()
+        d = self.doc[0]
+        res = sfm.Element(d.name, d.pos, d.args, None, meta=d.meta)
+        for c in d:
+            if isinstance(c, sfm.Element) and c.name == "c":
+                break
+            res.append(c)
+        res.extend(self.subdoc(refrange, removes=removes, keepchap=True))
+        return self.copy([res])
 
     def iter(self, e):
         def iterfn(el):
@@ -260,16 +337,22 @@ class Usfm:
                         yield c1
         return iterfn(e)
 
-    def iiterel(self, i, e):
+    def iiterel(self, i, e, endfn=None):
         def iterfn(il, el):
             if isinstance(el, sfm.Element):
                 yield (il, el)
                 for il, c in list(enumerate(el)):
                     yield from iterfn(il, c)
+                if endfn is not None:
+                    endfn(el)
         return iterfn(i, e)
 
     def iterVerse(self, chap, verse):
+        if chap >= len(self.chapters):
+            return
         start = self.chapters[chap]
+        if start is None:
+            return
         it = self.iter(start)
         for e in it:
             if not isinstance(e, sfm.Element):
@@ -419,9 +502,10 @@ class Usfm:
             if not e.parent or not isScriptureText(e.parent):
                 return e
             done = False
-            lastspace = True
+            lastspace = id(e.parent[0]) != id(e)
+
             res = []
-            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats):
+            for (islet, c) in groupby(str(e), key=lambda x:get_ucd(ord(x), "gc") in takslc_cats and x != "|"):
                 chars = "".join(c)
                 # print("{} = {}".format(chars, islet))
                 if not len(chars):
@@ -431,7 +515,9 @@ class Usfm:
                     done = True
                 else:
                     res.append(chars)
-                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS")
+                lastspace = get_ucd(ord(chars[-1]), "InSC") in ("Invisible_Stacker", "Virama") \
+                            or get_ucd(ord(chars[-1]), "gc") in ("Cf", "WS") \
+                            or chars[-1] in (r"\|")                
             return sfm.Text("".join(res), e.pos, e.parent) if done else e
         if self.doc is None or not len(self.doc):
                return            
@@ -456,6 +542,137 @@ class Usfm:
         def _gt(e, a):
             return None
         sreduce(_ge, _gt, self.doc, None)
+        
+    def stripIntro(self, noIntro=True, noOutline=True):
+        newdoc = []
+        if not isinstance(self.doc[0], sfm.Element):
+            return
+        for e in self.doc[0]:
+            if not isinstance(e, sfm.Element):
+                newdoc.append(e)
+                continue
+            if noOutline and e.name.startswith("io"):
+                continue
+            if noIntro and e.name.startswith("i") and not e.name.startswith("io"):
+                continue
+            newdoc.append(e)
+        self.doc[0][:] = newdoc
+
+    def stripEmptyChVs(self, ellipsis=False):
+        def iterfn(el, top=False):
+            if isinstance(el, sfm.Element):
+                lastv = None
+                predels = []
+                for c in el[:]:
+                    if not isinstance(c, sfm.Element) or c.name != "v":
+                        if iterfn(c):           # False if deletable ~> empty
+                            if len(predels):
+                                if isinstance(predels[-1], sfm.Element) \
+                                                 and predels[-1].name == "p" \
+                                                 and len(predels[-1]) == 1 \
+                                                 and str(predels[-1][0]).strip() == "...":
+                                    predels.pop(-1)
+                                for p in predels:
+                                    if isinstance(p, sfm.Element):
+                                        p.parent.remove(p)
+                            lastv = None
+                            predels = []
+                        elif c is not None:
+                            predels.append(c)
+                    elif isinstance(c, sfm.Element) and c.name == "v":
+                        if lastv is not None:
+                            for p in predels:
+                                p.parent.remove(p)
+                            predels = []
+                            if ellipsis:
+                                i = lastv.parent.index(lastv)
+                                ell = sfm.Text("...", parent=lastv.parent)
+                                lastv.parent.insert(i, ell)
+                                predels.append(ell)
+                                lastv.parent.pop(i+1)
+                            else:
+                                lastv.parent.remove(lastv)
+                        lastv = c
+                if lastv is not None:
+                    lastv.parent.remove(lastv)
+                res = len(el) != 0
+                nonemptypredels = [p for p in predels if isinstance(p, sfm.Element) or not re.match(r"^\s*$", str(p))]
+                ell = None
+                if len(nonemptypredels):
+                    if ellipsis:
+                        p = nonemptypredels[0]
+                        i = p.parent.index(p)
+                        st = p.parent.meta.get("styletype", "")
+                        if st is None or st.lower() == "paragraph":
+                            ell = sfm.Text("...", parent=p.parent)
+                        else:
+                            ell = sfm.Element('p', parent=p.parent, meta=self.sheets['p'])
+                            ell.append(sfm.Text("...\n", parent=ell))
+                        p.parent.insert(i, ell)
+                for p in predels:
+                    try:
+                        p.parent.remove(p)
+                    except (AttributeError, ValueError):
+                        pass
+                predels = [ell] if ell is not None else []
+                st = el.meta.get("styletype", "") 
+                if (st is None or st.lower() == "paragraph") and len(el) == len(predels):
+                    # el.parent.remove(el)
+                    return True if st is None else False  # To handle empty markers like \pagebreak 
+            elif re.match(r"^\s*$", str(el)) or re.match(r"\.{3}\s*$", str(el)):
+                return False
+            return True
+        iterfn(self.doc[0], top=True)
+
+    def addStrongs(self, strongs, showall):
+        self.addorncv()
+        self.currstate = [None, set()]
+        def iterfn(el, silent=False, base=None):
+            if isinstance(el, sfm.Element):
+                styletype = el.meta["StyleType"]
+                issilent = styletype.lower() == "note" or el.name.startswith("s") or silent
+                if el.meta.get("Attributes", None) is not None:
+                    base = el
+                for c in tuple(el):      # in case of insertions
+                    iterfn(c, silent=issilent, base=base)
+                return
+            if not isinstance(el.pos, _Reference) or silent:
+                return
+            r = el.pos.ref
+            newstr = str(el)
+            if r != self.currstate[0]:
+                self.currstate = [r, set(strongs.getstrongs(r))]
+            for st in list(self.currstate[1]):
+                if st not in strongs.regexes:
+                    regs = strongs.addregexes(st)
+                else:
+                    regs = strongs.regexes[st]
+                if not len(regs):
+                    self.currstate[1].remove(st)
+                    continue
+                matched = False
+                if base is not None:
+                    if regex.search(regs, newstr):
+                        newelement = sfm.Text('\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
+                        i = base.parent.index(base)
+                        base.parent.insert(i, newelement)
+                        matched = True
+                        if not showall:
+                            self.currstate[1].remove(st)
+                else:
+                    #newstr = regex.sub(regs,
+                    newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
+                            '\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
+                            newstr, count=0 if showall else 1)
+                    if newstr_diff != newstr:
+                        newstr = newstr_diff
+                        matched = True
+                        if not showall:
+                            self.currstate[1].remove(st)
+                logger.log(6, f"{r}{'*' if matched else ''} {regs=} {st=}")
+            el.data = newstr
+        iterfn(self.doc[0])
+
 
 def read_module(inf, sheets):
     lines = inf.readlines()
@@ -464,21 +681,23 @@ def read_module(inf, sheets):
     return Usfm(lines, sheets)
 
 exclusionmap = {
-    'v': ['v'],
-    'x': ['x'],
-    'f': ['f'],
-    's': ['s', 's1', 's2'],
-    'p': ['fig']
+    'v': (['v'], "document/ifshowversenums"),
+    'x': (['x'], None),
+    'f': (['f'], "notes/includefootnotes"),
+    's': (['s', 's1', 's2'], "document/sectionheads"),
+    'p': (['fig'], None)
 }
 
 class Module:
 
-    localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+:[^)\s]+)\s*\)")
+    #localise_re = re.compile(r"\$([asl]?)\(\s*(\S+\s+\d+(?::[^)\s]+)?\s*(?:-\s*\d+(?::[^)*\s]+)*)*)\)")
+    localise_re = re.compile(r"\$([asl]?)\((.*?)\)")
     localcodes = {'a': 0, 's': 1, 'l': 2}
 
-    def __init__(self, fname, usfms):
+    def __init__(self, fname, usfms, model, usfm=None):
         self.fname = fname
         self.usfms = usfms
+        self.model = model
         self.usfms.makeBookNames()
         self.sheets = self.usfms.sheets.copy()
         modinfo = { 'OccursUnder': {'id'}, 'TextType': 'Other', 'EndMarker': None, 'StyleType': 'Paragraph'}
@@ -487,13 +706,31 @@ class Module:
         for k, v in self.sheets.items():
             if 'OccursUnder' in v and 'c' in v['OccursUnder']:
                 v['OccursUnder'].add('id')
-        with open(fname, encoding="utf-8") as inf:
-            self.doc = read_module(inf, self.sheets)
+        if usfm is not None:
+            self.doc = usfm
+        else:
+            with open(fname, encoding="utf-8") as inf:
+                self.doc = read_module(inf, self.sheets)
+
+    def getBookRefs(self):
+        books = set()
+        def _e(e, a, ca):
+            if e.name == "ref" or e.name == "refnp":
+                for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
+                    a.add(r.first.book)
+            else:
+                a.update(ca)
+            return a
+        def _t(e, a):
+            return a
+        res = sreduce(_e, _t, self.doc.doc, books)
+        return res
 
     def parse(self):
         if self.doc.doc is None:
             return []
-        self.removes = set()
+        #self.removes = set()
+        self.removes = set((sum((e[0] for e in exclusionmap.values()), [])))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
@@ -516,7 +753,7 @@ class Module:
             curr = e.parent.index(e)
             while curr + 1 < len(e.parent):
                 rep = e.parent[curr+1]
-                if rep.name != "rep":
+                if not isinstance(rep, sfm.Element) or rep.name != "rep":
                     break
                 # parse rep
                 m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
@@ -534,7 +771,6 @@ class Module:
                                 p[0:i] = [self.new_element(e, "p1" if isidparent else "p", p[0:i])]
                             break
                     else:
-
                         p = [self.new_element(e, "p1" if isidparent else "p", p)]
                 res.extend(p)
             if len(reps):
@@ -543,12 +779,13 @@ class Module:
         elif e.name == 'inc':
             s = "".join(map(str, e)).strip()
             for c in s:
+                einfo = exclusionmap.get(c, ([], None))
                 if c == "-":
-                    self.removes = set(sum(exclusionmap.values(), []))
-                else:
-                    self.removes.difference_update(exclusionmap.get(c, []))
+                    self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
+                elif einfo[1] is None or (self.model is not None and not self.model[einfo[1]]):
+                    self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
-            mod = Module(e[0].strip(), self.usfms)
+            mod = Module(e[0].strip(), self.usfms, self.model)
             return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), [])
@@ -556,6 +793,8 @@ class Module:
         return [e]
 
     def get_passage(self, ref, removes={}, strippara=False):
+        if ref.first.book is None:
+            return []
         book = self.usfms.get(ref.first.book.upper())
         if book is None:
             return []

@@ -28,7 +28,7 @@ def pytest_generate_tests(metafunc):
         if b.startswith(".") or not os.path.exists(bbase):
             continue
         for c in os.listdir(bbase):
-            if c.startswith("."):
+            if c.startswith(".") or c.startswith("_"):
                 continue
             if c == "ptxprint.cfg":
                 jobs.append((b, None))

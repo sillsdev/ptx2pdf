@@ -48,10 +48,11 @@
 \newif\ifnewcl@ss
 
 % new note class: append to the list in \n@tecl@sses, and allocate an \insert number
-\def\allocatecl@ss#1{
+\def\allocatecl@ss#1{%
   \x@\n@tecl@sses\x@{\the\n@tecl@sses \\{#1}}%
-  \ifcsname zplacenotes-#1\endcsname\else
-    \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}
+  \ifcsname zplacenotes-#1\endcsname\else% zplacenotes-#1 is an endnote macro. (as is ztestnotes-#1) Trigger a warning rather than leave an undefined macro.
+    \x@\gdef\csname zplacenotes-#1\endcsname{\write1{WARNING: p.\the\pageno: zplacenotes-#1 used in text when #1 is a footnote, not an endnote.}}%
+    \x@\gdef\csname ztestnotes-#1\endcsname{\write1{WARNING: p.\the\pageno: ztestnotes-#1 used in text when #1 is a footnote, not an endnote.}\@ndnotesfoundfalse}%
   \fi
   \relax%
   \ifdiglot%
@@ -62,6 +63,7 @@
   \fi%
 }
 \def\n@wnoteins@rt#1{
+    \trace{n}{Creating note class #1}%
 	\x@\n@winsert\csname note-#1\endcsname
 	\x@\newb@x\csname notesave1-#1\endcsname
 	\x@\newb@x\csname notesave2-#1\endcsname
@@ -79,7 +81,6 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  %% !!!FIXME!!! This guesses p@ranotes take half a line each. There are better ways. 
   \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
@@ -87,13 +88,14 @@
 \newdimen\AboveNoteSpace \AboveNoteSpace=\medskipamount
 \newdimen\InterNoteSpace \InterNoteSpace=3.5pt
 \newdimen\NoteCallerWidth %Now set in 1timesetup \NoteCallerWidth=1.1ex %Minimum width for callers/callees, helps alignment.
+\newdimen\NoteCallerSpace \NoteCallerSpace=.2em
 %-cnote_initnotes
 
 %
 % Each USFM note marker is defined to call \n@testyle, with the marker name as parameter
 %
 %+cnote_notestyle
-\def\n@testyle#1{\trace{n}{n@testyle:#1}%
+\def\n@testyle#1{\trace{n}{n@testyle:#1 \c@rrdstat}%
  \def\newn@testyle{#1}%
  \catcode32=12\relax % look ahead to see if space or * follows (like char styles)
  \futurelet\n@xt\don@testyle}
@@ -118,14 +120,14 @@
 %+cnote_startnote
   \else
     \leavevmode
-    \getp@ram{notebase}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
+    \getp@ram{notebase}{\newn@testyle}{\newn@testyle}\edef\n@tebase{\ifx\p@ram\relax\newn@testyle\else\p@ram\fi}%
     \csname before-\newn@testyle\endcsname
     \def\t@st{#1}%
     \ifx\t@st\pl@s % if it is + then generate an auto-numbering caller
       \inc@utonum{\newn@testyle}%
       \x@\gen@utonum\x@{\newn@testyle}%
     \else\ifx\t@st\min@s \def\them@rk{}% if it is - then there is no caller
-    \else \trace{s}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
+    \else \trace{n}{the note parameter is \t@st \space and is \ifx\t@st\-\else not\fi\space \- \space catcode - is \the\catcode`\-}\def\them@rk{#1}% otherwise the caller is the parameter
     \fi\fi
     \begingroup
     \x@\let\x@\aftern@te\csname after-\newn@testyle\endcsname
@@ -133,24 +135,25 @@
     \resetp@rstyle                                                              %(1)
     \m@kenote{\n@tebase}{\newn@testyle}{%
         \everypar={}\cancelcutouts % begin a note insertion in the given style
-        \getp@ram{callerstyle}{\newn@testyle}% see if a caller style was defined
+        \getp@ram{callerstyle}{\newn@testyle}{\newn@testyle}% see if a caller style was defined
         \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
-        \ifx\them@rk\empty \setbox0=\box\voidb@x \else
-          \trace{s}{Note main caller}%
+        \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
+          \trace{n}{note main caller}%
           \setbox0=\hbox{\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*}\ht0=0pt\dp0=0pt
+          \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
-        \getp@ram{callerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+        \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
           \x@\x@\x@\write-1\x@{\n@tetxt}%
         \fi
-      }{\getp@ram{notecallerstyle}{\newn@testyle}\ifx\p@ram\relax\else
+      }{\getp@ram{notecallerstyle}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\else
           \edef\c@llerstyle{\p@ram}%
-          \ifx\them@rk\empty \setbox0=\box\voidb@x \else
-            \trace{s}{Note caller}%
+          \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
+            \trace{n}{note caller}%
             \setbox0=\hbox{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}\ht0=0pt\dp0=0pt
           \fi
-          \getp@ram{notecallerraise}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
+          \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
         \fi}\bgroup
     \global\n@tenesting=1\relax
     \trace{b}{BALANCE note: style=\newn@testyle}%
@@ -162,14 +165,13 @@
 %-cnote_startnote
 
 %+cnote_endnote
-\def\endn@testyle*{\TRACE{endn@testyle}%
- \trace{f}{endn@testyle}%
+\def\endn@testyle*{\trace{f}{endn@testyle}%
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
  \fi
- \egroup \ifhe@dings\egroup\fi% end the insert (started in \m@kenote) or skip-box
- \ifinextended\egroup\fi%
+ \egroup % end the insert (started in \m@kenote) 
+ \ifx\@wrap\empty\else\egroup\let\@wrap\empty\fi%\@wrap would have started a box
  \global\inn@tefalse
  \global\n@tenesting=0 
  \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one
@@ -181,16 +183,22 @@
 %-cnote_endnote
 
 %+cnote_autonum
-\def\inc@utonum#1{\count255=0\csname autonum #1\endcsname % increment note counter for class #1
- \advance\count255 by 1 \x@\xdef\csname autonum #1\endcsname{\number\count255}}
+\def\inc@utonum#1{\set@utonum{#1}\count255=0\csname \@utonum\endcsname\relax % increment note counter for class #1
+ \advance\count255 by 1 \x@\xdef\csname \@utonum\endcsname{\number\count255}}
 
 %% overridden by ptx-callers.tex
 \ifx\gen@utonum\undefined
  \def\gen@utonum#1{%
-  \count255=0\csname autonum #1\endcsname
+  \set@utonum{#1}%
+  \count255=0\csname \@utonum \endcsname
   \loop \ifnum\count255>26 \advance\count255 by -26 \repeat
   \advance\count255 by 96 \edef\them@rk{\char\count255}}
 \fi
+
+\def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % reset the current note counter (f)
+\def\resetSpecAutonum#1{\x@\xdef\csname autonum #1\endcsname{0}} % reset the exact note counter f / fL / R
+\def\resetAllAutonum#1{\def\col@do##1{\ifcsname autonum#1##1\endcsname\resetSpecAutonum{#1##1}\fi}%
+   \x@\each@col\diglot@list\E} %reset all note counters.
 %-cnote_autonum
 
 %+cnote_declare

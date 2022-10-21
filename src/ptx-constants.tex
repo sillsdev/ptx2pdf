@@ -1,0 +1,133 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2021 by SIL International
+% Pulled from other files and extended by David Gardner
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% ptx-constants.tex
+% Mostly, 'user-interface' constants, like top={t} Other contstants go at the bottom.
+% Figure  and alignment definitions
+\def\size@COL{col}
+\def\size@SPAN{span}
+\def\size@WIDTH{width}% Full width of page
+\def\size@PAGE{page}% a page, within the margins
+\def\size@FULL{full}% the paper size
+% tA,bA  etc are reserved for the top and bottom of polyglot column A
+\def\loc@T{t}
+\def\loc@B{b}
+\def\loc@VB{B}
+\def\loc@TL{tl}
+\def\loc@TR{tr}
+\def\loc@BL{bl}
+\def\loc@BR{br}
+\def\loc@Inl{h}% In-line graphic, not a float.
+\def\loc@Cut{c}% cutout
+\def\loc@Par{p}% post-paragrpah
+\def\loc@Page{P}% Page (with headers/footers)
+\def\loc@Full{F}% FullPage (no headers/footers)
+\def\@lignInner{i}
+\def\@lignOuter{o}
+\def\@lignLeft{l}
+\def\@lignRight{r}
+\def\@lignTop{t}
+\def\@lignBot{b}
+\def\@lignCent{c}
+\def\@lignGCent{g} %Gridded centre alignment, used in tables for centre-alignment of text but on-grid.
+\def\keyR@TATE{rotate}
+\def\keyP@GE{page}
+\def\val@dd{odd}
+\def\val@ven{even}
+\def\valb@th{both}
+\def\val@BIND{binding}
+\def\val@EDGE{edge}
+\def\@x@{x}
+\def\@pdf{pdf}
+\def\gr@phic{graphic}
+\def\fill@none{NONE}
+
+% Table-constants
+\def\cell@r{r}
+\def\cell@c{c}
+\def\cell@l{l}
+
+% from ptx-extended
+\def\sb@rb@x{sidebarBox}%one word
+\def\tr@e{T}
+\def\false{F}
+\def\Img@Shrink{shrink}
+\def\Img@Distort{distort}
+\def\Img@Crop{crop}
+\def\pos@Side{s}
+
+%+cpar_strings
+% strings for testing against stylesheet parameters
+\def\v@rsetext{versetext}
+\def\c@nter{center}
+\def\l@ft{left}
+\def\r@ght{right}
+\def\t@tle{title}
+\def\s@ction{section}
+\def\oth@r{other}
+%-cpar_strings
+
+% Style sheet
+\def\N@nPublish@ble{nonpublishable}
+\def\P@ra{paragraph}
+\def\Ch@r{character}
+\def\N@te{note}
+\def\MSt@ne{milestone}
+\def\h@phen{-} % for matching
+{\catcode`+=11 
+ \catcode`-=11
+ \gdef\pl@sLtr{+}
+ \gdef\m@nusLtr{-}
+}
+\def\c@lon{:}
+\def\equ@ls{=}
+\def\tru@{true}% for matching
+
+%style stack
+\def\ss@Para{P}%
+\def\ss@Char{C}% Basic \foo char style
+\def\ss@ChrP{c}% Stacking \+foo char style
+\def\ss@Note{N}%
+\def\ss@MstnS{M}% Static milestones (unused)
+\def\ss@Mstn{m}% Floating milestones (always above a par style)
+\def\ss@Ctgy{t}%Category
+\def\ss@ParCtgy{T}% A category attached to (ended by) a paragraph style
+\def\ss@Sbar{s}%
+\def\ss@Tbl{b}% table 
+
+%Barcode
+\def\bc@short{short}
+\def\bc@medium{medium}
+
+
+
+% Functional constants
+\gdef\mcstack@mpty{++,} 
+\def\cstackempty{,}

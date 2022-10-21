@@ -1,10 +1,17 @@
 import gettext
 import locale, codecs, traceback
-import os, sys, re
+import os, sys, re, pathlib
 import xml.etree.ElementTree as et
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
+from subprocess import check_output
+import logging
+
+logger = logging.getLogger(__name__)
+
+# Bump this number up in order to reset everyone's Cached files
+DataVersion = 4
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -21,21 +28,56 @@ _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2S
         MAT|28 MRK|16 LUK|24 JHN|21 ACT|28 ROM|16 1CO|16 2CO|13 GAL|6 EPH|6 PHP|4 COL|4
         1TH|5 2TH|3 1TI|6 2TI|4 TIT|3 PHM|1 HEB|13 JAS|5 1PE|5 2PE|3 1JN|5 2JN|1 3JN|1 JUD|1 REV|22
         TOB|14 JDT|16 ESG|10 WIS|19 SIR|51 BAR|6 LJE|1 S3Y|1 SUS|1 BEL|1 1MA|16 2MA|15 3MA|7 4MA|18 1ES|9 2ES|16 MAN|1 PS2|1
-        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|999 BAK|999 OTH|999 ZZZ|0 ZZZ|0 
+        ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 XXA|999 XXB|999 XXC|999 XXD|999 XXE|999 XXF|999 XXG|999 FRT|0 BAK|999 OTH|999 XXS|0 ZZZ|0 
         ZZZ|0 ZZZ|0 INT|999 CNC|999 GLO|999 TDX|999 NDX|999 DAG|14 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 ZZZ|0 LAO|1"""
         
-_endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9', 'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3'}
+_hebOrder = ["GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "1SA", "2SA", "1KI", "2KI", "ISA", "JER", "EZK", "HOS", "JOL", "AMO",
+             "OBA", "JON", "MIC", "NAM", "HAB", "ZEP", "HAG", "ZEC", "MAL", "PSA", "PRO", "JOB", "SNG", "RUT", "LAM", "ECC", "EST", 
+             "DAN", "EZR", "NEH", "1CH", "2CH"]
+             
+_endBkCodes = {'XXG':'100', 'FRT':'A0', 'BAK':'A1', 'OTH':'A2', 'INT':'A7', 'CNC':'A8', 'GLO':'A9',
+               'TDX':'B0', 'NDX':'B1', 'DAG':'B2', 'LAO':'C3', 'XXS': '101'} 
+
+_allbooks = ["FRT", "INT", 
+            "GEN", "EXO", "LEV", "NUM", "DEU", "JOS", "JDG", "RUT", "1SA", "2SA", "1KI", "2KI", "1CH", "2CH", "EZR", "NEH", "EST",
+            "JOB", "PSA", "PRO", "ECC", "SNG", "ISA", "JER", "LAM", "EZK", "DAN", "HOS", "JOL", "AMO", "OBA", "JON", "MIC", "NAM",
+            "HAB", "ZEP", "HAG", "ZEC", "MAL", 
+            "TOB", "JDT", "ESG", "WIS", "SIR", "BAR", "LJE", "S3Y", "SUS", "BEL", 
+            "1MA", "2MA", "3MA", "4MA", "1ES", "2ES", "MAN", "PS2", "DAG", "LAO",
+            "MAT", "MRK", "LUK", "JHN", "ACT", "ROM", "1CO", "2CO", "GAL", "EPH", "PHP", "COL", "1TH", "2TH", "1TI", "2TI", "TIT",
+            "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
+            "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
+            "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
+
+def booknum(bookcode):
+    if len(bookcode):
+        if bookcode[0] in "ABC":
+            return int(bookcode[1:]) + (ord(bookcode[0])-64) * 10 + 100
+        else:
+            return int(bookcode)
+    else:
+        return 0
+
+_allbkmap = {k: i for i, k in enumerate(_allbooks)} 
 
 allbooks = [b.split("|")[0] for b in _bookslist.split()] # if b != "ZZZ|0"]
-books = dict((b.split("|")[0], i+1) for i, b in enumerate(_bookslist.split()) if b != "ZZZ|0")
-bookcodes = dict((b.split("|")[0], "{:02d}".format(i+1)) for i, b in enumerate(_bookslist.split()[:99]) if b != "ZZZ|0")
+books = dict((b.split("|")[0], i) for i, b in enumerate(_bookslist.split()) if b[-2:] != "|0")
+bookcodes = dict((b.split("|")[0], "{:02d}".format(i+1)) for i, b in enumerate(_bookslist.split()[:99]) if b[-2:] != "|0")
 bookcodes.update(_endBkCodes)
+booknumbers = {k: booknum(v) for k, v in bookcodes.items()}
 chaps = dict(b.split("|") for b in _bookslist.split())
 oneChbooks = [b.split("|")[0] for b in _bookslist.split() if b[-2:] == "|1"]
 
 APP = 'ptxprint'
 
+chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
+# Other generic project-wide changes can be specified in PrintDraftChanges.txt).
+# Note that the 'inlcude' statement on the next line imports those (legacy/generic) project-wide changes.
+include "../../../PrintDraftChanges.txt"
+"""
+
 _ = gettext.gettext
+__file__ = os.path.abspath(__file__)
 
 lang = None
 
@@ -84,12 +126,19 @@ def f_(s):
     frame = currentframe().f_back
     return eval("f'{}'".format(_(s)), frame.f_locals, frame.f_globals)
 
+def getcaller(count=0):
+    frame = currentframe().f_back.f_back
+    for i in range(count):
+        frame = frame.f_back
+    return f"{frame.f_code.co_name}({frame.f_code.co_filename}:{frame.f_lineno})"
+
 def refKey(r, info=""):
     m = re.match(r"^(\d?\D+)?\s*(\d*)\.?(\d*)(\S*?)(\s+.*)?$", r)
     if m:
-        return (books.get(m.group(1)[:3], 100), int(m.group(2) or 0), int(m.group(3) or 0), m.group(1)[3:], info, m.group(4))
+        bkid = m.group(1) or ""
+        return (books.get(bkid[:3], 99)+1, int(m.group(2) or 0), int(m.group(3) or 0), bkid[3:], info, m.group(4), m.group(5) or "")
     else:
-        return (100, 0, 0, r, info, "")
+        return (100, 0, 0, r, info, "", "")
 
 def coltotex(s):
     vals = s[s.find("(")+1:-1].split(",")
@@ -100,10 +149,15 @@ def coltotex(s):
 
 def coltoonemax(s):
     try:
-        return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+        if "," in s:
+            return [float(x)/256. for x in s[s.find("(")+1:-1].split(",")]
+        elif " " in s:
+            return [float(x) for x in s.split(" ")]
+        else:
+            return [0.8, 0.8, 0.8]
     except (ValueError, TypeError):
         return [0.8, 0.8, 0.8]
-
+        
 def textocol(s):
     if s is None:
         vals = [0, 0, 0]
@@ -112,6 +166,10 @@ def textocol(s):
             vals = [int(s[1:3], 16), int(s[3:5], 16), int(s[5:7], 16)]
         except (ValueError, TypeError):
             vals = [0, 0, 0]
+    elif " " in s:
+        vals = [int(float(x) * 255) for x in s.split(" ")]
+    elif "rgb" in s:
+        vals = [float(x) for x in s[s.find("(")+1:-1].split(",")]
     else:
         try:
             v = int(s)
@@ -221,6 +279,9 @@ elif sys.platform == "win32":
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
+def pycodedir():
+    return os.path.abspath(os.path.dirname(__file__))
+
 def pt_bindir():
     res = getattr(sys, '_MEIPASS', os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', '..')))
     return res
@@ -239,11 +300,45 @@ def get_ptsettings():
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
 
+def get_gitver(gitdir=None, version=None):
+    if gitdir is None:
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            return version
+        gitdir = os.path.join(os.path.dirname(__file__), '..', '..', '..', '.git')
+        if not os.path.exists(gitdir):
+            return version
+    with open(os.path.join(gitdir, 'HEAD')) as inf:
+        l = inf.readline()
+        try:
+            ref = l[l.index(":")+1:].strip()
+        except ValueError:
+            return version
+    refpath = os.path.join(gitdir, *ref.split("/"))
+    if not os.path.exists(refpath):
+        packedrefsfile = os.path.join(gitdir, "packed-refs")
+        if not os.path.exists(packedrefsfile):
+            return version
+        with open(packedrefsfile) as inf:
+            for l in inf.readlines():
+                if l.startswith("#"):
+                    continue
+                b = l.strip().split(" ")
+                if b[1] == ref:
+                    return b[0][:8]
+        return version
+    with open(refpath) as inf:
+        res = inf.readline().strip()[:8]
+    if version is not None:
+        res = f"{version}-g{res}"
+    return res
+
 headermappings = {
     "First Reference":           r"\firstref",
     "Last Reference":            r"\lastref",
     "Reference Range":           r"\rangeref",
     "Page Number":               r"\pagenumber",
+    r"Book (\h)":                r"\book",
+    r"Book Alt (\h1)":           r"\bookalt",
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
     "-empty-":                   r"\empty"
@@ -255,6 +350,8 @@ def localhdrmappings():
         _("Last Reference"):            r"\lastref",
         _("Reference Range"):           r"\rangeref",
         _("Page Number"):               r"\pagenumber",
+        _(r"Book (\h)"):                r"\book",
+        _(r"Book Alt (\h1)"):           r"\bookalt",
         _("Time (HH:MM)"):              r"\hrsmins",
         _("Date (YYYY-MM-DD)"):         r"\isodate",
         _("-empty-"):                   r"\empty"
@@ -317,14 +414,71 @@ def f2s(x, dp=3) :
     res = ("{:." + str(dp) + "f}").format(x)
     if res.endswith("." + ("0" * dp)) :
         return res[:-dp-1]
-    return re.sub(r"0*$", "", res)
+    res = re.sub(r"0*$", "", res)
+    if res == "":
+        res = "0"
+    return res
+
+def runChanges(changes, bk, dat):
+    def wrap(t):
+        def proc(m):
+            res = m.expand(t) if isinstance(t, str) else t(m)
+            logger.log(5, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+            return res
+        return proc
+    for c in changes:
+        #import pdb; pdb.set_trace()
+        if bk is not None:
+            logger.debug("Change: {}".format(c))
+        if c[0] is None:
+            dat = c[1].sub(wrap(c[2]), dat)
+        elif isinstance(c[0], str):
+            if c[0] == bk:
+                dat = c[1].sub(wrap(c[2]), dat)
+        else:
+            def simple(s):
+                return c[1].sub(wrap(c[2]), s)
+            dat = c[0](simple, bk, dat)
+    return dat
+
+_htmlentities = {
+    '&': 'amp',
+    '<': 'lt',
+    '>': 'gt',
+    "'": 'apos',
+    '"': 'quot',
+}
+
+def htmlprotect(s):
+    sc = '([' + "".join(_htmlentities.keys()) + '])'
+    return re.sub(sc, lambda m: "&"+_htmlentities[m.group(1)]+";", s)
+
+wfreg = "\\p{L}\\p{M}\\p{Sk}\\-\u200C\u200D"
+special_regexes = {
+    'ba': f'(?=[^{wfreg}])',
+    'BA': f'(?=[{wfreg})',
+    'bb': f'(?<=[^{wfreg}])',
+    'BB': f'(?<=[{wfreg}])',
+    'w': f'[{wfreg}]',
+    'W': f'[^{wfreg}]'
+}
+
+def regex_localiser(r):
+    specials = "|".join(special_regexes.keys())
+    return re.sub(r"\\({})".format(specials), lambda m:special_regexes.get(m.group(1), "\\"+m.group(1)), r)
 
 def cachedData(filepath, fn):
-    cfgfilepath = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), os.path.basename(filepath+".pickle.gz"))
+    cfgdir = appdirs.user_cache_dir("ptxprint", "SIL")
+    os.makedirs(cfgdir, exist_ok=True)
+    cfgfilepath = os.path.join(cfgdir, os.path.basename("{}.pickle_{}.gz".format(filepath, DataVersion)))
     if os.path.exists(cfgfilepath):
         with contextlib.closing(gzip.open(cfgfilepath, "rb")) as inf:
             return pickle.load(inf)
-    with open(filepath, "r") as inf:
+    testbase = os.path.basename("{}.pickle".format(filepath))
+    for l in os.listdir(cfgdir):
+        if l.startswith(testbase):
+            os.unlink(os.path.join(cfgdir, l))
+    with open(filepath, "r", encoding="utf8") as inf:
         res = fn(inf)
     with contextlib.closing(gzip.open(cfgfilepath, "wb")) as outf:
         pickle.dump(res, outf)
@@ -342,6 +496,49 @@ def xdvigetpages(xdv):
         dat = inf.read(5)
         res = unpack(">I", dat[1:])[0]
     return res
+
+varpaths = (
+    ('prjdir', ('settings_dir', 'prjid')),
+    ('settingsdir', ('settings_dir',)),
+    ('workingdir', ('working_dir',)),
+)
+
+class Path(pathlib.Path):
+
+    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+
+    @staticmethod
+    def create_varlib(aView):
+        res = {}
+        for k, v in varpaths:
+            res[k] = pathlib.Path(*[getattr(aView, x) for x in v])
+        res['pdfassets'] = pathlib.Path(pycodedir(), 'PDFassets')
+        return res
+
+    def __new__(cls, txt, view=None):
+        if not isinstance(txt, str):
+            return txt
+        if view is None or not txt.startswith("${"):
+            return pathlib.Path.__new__(cls, txt)
+        varlib = cls.create_varlib(view)
+        k = txt[2:txt.find("}")]
+        return pathlib.Path.__new__(cls, varlib[k], txt[len(k)+4:])
+
+    def withvars(self, aView):
+        varlib = self.create_varlib(aView)
+        bestl = len(str(self))
+        bestk = None
+        for k, v in varlib.items():
+            try:
+                rpath = self.relative_to(v)
+            except ValueError:
+                continue
+            if len(str(rpath)) < bestl:
+                bestk = k
+        if bestk is not None:
+            return "${"+bestk+"}/"+rpath.as_posix()
+        else:
+            return self.as_posix()
 
 def brent(left, right, mid, fn, tol, log=None, maxiter=20):
     '''Brent method, see Numerical Recipes in C Ed. 2 p404'''
@@ -412,7 +609,6 @@ def mlcs(strings):
     """Return a long common subsequence of the strings.
     Uses a greedy algorithm, so the result is not necessarily the
     longest common subsequence.
-
     """
     if not strings:
         raise ValueError("mlcs() argument is an empty sequence")

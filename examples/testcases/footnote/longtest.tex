@@ -1,0 +1,27 @@
+% Test the 'hook' code.
+\input "paratext2.tex"
+\stylesheet{usfm.sty}
+\stylesheet{default-custom.sty}
+\stylesheet{test.sty}
+\input "usfmTex-settings.tex"
+%\input "usfmTex-ext.tex"
+%\input "hooks.tex"
+%\tracingmacros=1
+%\tracingassigns=1
+\tracing{f}
+\tracing{i}
+\tracing{n}
+\tracing{o}
+\tracing{nS}
+%\ParagraphedNotes{fe}
+\AutoCallers{fe}{A,B,C,D,E}
+\scrollmode
+% Set added material in desired form
+\def\addmtlquteht{2pt}
+\def\addmtlqutewd{1.5pt}
+\def\addmtlqutelw{0.2pt}
+\csname ColorFontstrue\endcsname
+\ptxfile{longtest.usfm}
+%\ParagraphedNotes{fe}
+%\ptxfile{longtest.usfm}
+\bye
