@@ -63,6 +63,15 @@ chapter title.
 "(\\c \d+)" > "\\pb\n\1\n\\zrule|\\*"
 ```
 
+## Force a blank page at the end of the entire NT
+
+Sometimes you just need a blank page after the final text. Change the 'Amen.' to whatever
+the last word in Revelation is.
+
+```perl
+at REV 22:21 "Amen." >  "\1\n\\pb\n\\p \\bd ~\\bd*"
+```
+
 ## Fancy book separators from Heading information
 
 Use the Header text for a book's title page along with a language-specific sub-heading.
