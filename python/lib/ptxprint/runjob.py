@@ -450,8 +450,10 @@ class RunJob:
             triggers = {}
             if info["notes/ifxrexternalist"]:
                 triggers = info.createXrefTriggers(b, self.prjdir, triggers)
-            if info.dict.get("notes/transcel", False):
-                triggers = transcel(triggers, b, self.prjdir, info.dict.get("notes/transcellang", ""))
+            #if info.dict.get("notes/transcel", False):
+            if info.dict.get("notes/transcel", True):
+                triggers = transcel(triggers, b, self.prjdir, info.dict.get("notes/transcellang", "en-US"),
+                                    usfm=self.printer.get_usfms().get(b))
             if len(triggers):
                 outtriggers(triggers, b, outpath+".triggers")
             else:
