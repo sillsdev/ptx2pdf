@@ -1825,7 +1825,7 @@ class TexModel:
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
 
-    def createXrefTriggers(self, bk, prjdir, outpath):
+    def createXrefTriggers(self, bk, prjdir, triggers):
         if self.xrefs is None:
             cfilter = self.dict['notes/xrfilterbooks']
             if cfilter == "pub":
@@ -1852,9 +1852,9 @@ class TexModel:
                 xrsrc = xrsrc[:-2]
             else:
                 listsize = 0
-            logger.debug(f"Create Xrefs: {bk=} {xrsrc=}, {localfile=}, {outpath=}")
+            logger.debug(f"Create Xrefs: {bk=} {xrsrc=}, {localfile=}")
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
                     listsize, xrsrc, localfile, self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
-        self.xrefs.process(bk, outpath, usfm=self.printer.get_usfms().get(bk))
+        return self.xrefs.process(bk, triggers, usfm=self.printer.get_usfms().get(bk))
 

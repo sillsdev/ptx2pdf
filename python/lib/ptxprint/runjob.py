@@ -18,6 +18,7 @@ from ptxprint.pdfrw.objects import PdfDict, PdfString
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
+from ptxprint.transcel import transcel, outtriggers
 import numpy as np
 from datetime import datetime
 import logging
@@ -446,11 +447,15 @@ class RunJob:
             if out is None:
                 continue
             outpath = os.path.join(self.tmpdir, out)
+            triggers = {}
             if info["notes/ifxrexternalist"]:
-                info.createXrefTriggers(b, self.prjdir, outpath)
+                triggers = info.createXrefTriggers(b, self.prjdir, triggers)
+            if info.dict.get("notes/transcel", False):
+                triggers = transcel(triggers, b, self.prjdir, info.dict.get("notes/transcellang", ""))
+            if len(triggers):
+                outtriggers(triggers, b, outpath+".triggers")
             else:
                 try:
-                    # print(f"Removing {outpath}.triggers")
                     os.remove(outpath+".triggers")
                 except FileNotFoundError:
                     pass

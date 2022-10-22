@@ -23,7 +23,7 @@ def usfmmark(ref, txt):
     return (ref.mark or "") + txt
 
 class BaseXrefs:
-    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+    template = "\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*"
     addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
     dotsep = RefSeparators(cv=".", onechap=True)
 
@@ -70,7 +70,7 @@ class XrefFileXrefs(BaseXrefs):
                 results[ra] = acc
                 logger.debug(f"{ra=} {acc=}")
 
-    def process(self, bk, outpath, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
             outl = v[0]
@@ -80,21 +80,19 @@ class XrefFileXrefs(BaseXrefs):
         if usfm is not None:
             self._addranges(results, usfm)
         if len(results):
-            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-                for k, v in sorted(results.items()):
-                    if self.filters is not None:
-                        v.filterBooks(self.filters)
-                    v.simplify()
-                    if not len(v):
-                        continue
-                    shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
-                    info = {
-                        "book":         k.first.book,
-                        "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
-                        "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
-                    }
-                    outf.write(self.template.format(**info))
+            for k, v in sorted(results.items()):
+                if self.filters is not None:
+                    v.filterBooks(self.filters)
+                v.simplify()
+                if not len(v):
+                    continue
+                shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
+                info = {
+                    "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
+                    "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
+                }
+                triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+        return triggers
 
 
 class StandardXrefs(XrefFileXrefs):
@@ -210,27 +208,25 @@ class XMLXrefs(BaseXrefs):
                     a.append(s + self._procnested(e[2], baseref))
         return r"\space ".join(a)
 
-    def process(self, bk, outpath, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
             #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
-            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-                for k, v in xmldat.items():
-                    res = self._procnested(v, k)
-                    shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
-                    #kref = usfm.bridges.get(k, k) if usfm is not None else k
-                    if len(res):
-                        info = {
-                            "book":         k.first.book,
-                            "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                            "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
-                            "refs":         res,
-                            "brtl":         r"\beginR" if self.rtl else "",
-                            "ertl":         r"\endR" if self.rtl else ""
-                        }
-                        outf.write(self.template.format(**info))
+            for k, v in xmldat.items():
+                res = self._procnested(v, k)
+                shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
+                #kref = usfm.bridges.get(k, k) if usfm is not None else k
+                if len(res):
+                    info = {
+                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
+                        "refs":         res,
+                        "brtl":         r"\beginR" if self.rtl else "",
+                        "ertl":         r"\endR" if self.rtl else ""
+                    }
+                    triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+        return triggers
 
 
 components = [
@@ -451,9 +447,10 @@ class Xrefs:
                         listsize=listsize, rtl=rtl, shortrefs=shortrefs) if t is not None else None
         gc.collect()
 
-    def process(self, bk, outpath, usfm=None):
+    def process(self, bk, triggers, usfm=None):
         if usfm is not None:
             usfm.addorncv()
         if self.xrefs is not None:
-            self.xrefs.process(bk, outpath, self, usfm=usfm)
+            return self.xrefs.process(bk, triggers, self, usfm=usfm)
+        return triggers
 
