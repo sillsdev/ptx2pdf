@@ -451,14 +451,15 @@
   %
   %\trace{g}{Parse credit box}%
   \let\cr@dit@col\empty
-  \edef\cr@ditstyle{x-credit|fig}%
+  \edef\cr@ditstyle{x-credit}%
+  \edef\cr@ditlist{x-credit|fig,x-credit}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@ditbox\tru@\else
       \expandafter\p@rseCreditBox \cr@ditbox - - - \end\relax%
     \fi
     \ifx\cr@ditbox\tru@
     \else
-      \edef\cr@ditstyle{x-credit:box=\cr@ditbox|fig,\cr@ditstyle}%
+      \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
   % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a 
@@ -476,7 +477,8 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
+  \setbox0=\hbox{\s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+    \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
