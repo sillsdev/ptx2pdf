@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.2.34"
 GitVersionStr = "2.2.34"
-ConfigVersion = "2.10"
+ConfigVersion = "2.11"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1043,6 +1043,19 @@ class ViewModel:
                     if v is not None:
                         self.styleEditor.setval(a+b, 'FontSize', None)
                         self.styleEditor.setval(a+b, 'FontScale', v)
+        elif version < 2.11:
+            xre = re.compile(r"^x-credit:box=(.*?)(\|fig)?$")
+            for k in self.styleEditor.allStyles():
+                if k is not None and k.startswith("x-credit:"):
+                    t = xre.sub(r"\1", str(k))
+                    if t is None:
+                        newk = "x-credit"
+                    else:
+                        newk = "{}|x-credit".format(t)
+                    for s in (self.styleEditor.basesheet, self.styleEditor.sheet):
+                        if k in s:
+                            s[newk] = s[k]
+                            del s[k]
 
         if self.get('r_xrpos') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')

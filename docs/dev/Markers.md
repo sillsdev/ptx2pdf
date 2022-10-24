@@ -7,22 +7,20 @@ to describe styles associated with markers.
 The proposed marker syntax for use within a stylesheet is:
 
 ```
-marker:     '\' markerexp ('+' markerexp)*
-markerexp:  (constraints '|')? tag
-constraints: categories | msattrs | attrs | creditbox | periph | id
-categories: category (':' category)* ('|' (msattrs | attrs))?
-msattrs:    msattribute (':' msattribute)* ('|' attrs)?
-attrs:      attribute (':' attribute)*
+marker:     '\' markerexp ('+' (tag | ms))*
+markerexp:  (constraints '|')? tag | ms
+constraints: categories | periph | id | creditbox 
+categories: category (':' category)*
 category: 'cat:' catval
-msattribute: 'ms:' attkey ('=' attval)?
-attribute: 'att:' attkey
+ms: (defaultval '|')? tag
 creditbox: 'x-credit:box=' catval
-periph: 'periph:' catval ('|' (categories | msattrs | attrs))?
-id:     'id:' catval ('|' (periph | categories | msattrs | attrs))?
+periph: 'periph:' catval ('|' categories)?
+id:     'id:' catval ('|' (periph | categories))?
 tag: idchar+
 catval: idchar+
 attkey: idchar+
 attval: uniwdchar*
+defaultval: uniwdchar*
 idchar: [a-zA-Z0-9_] | '-'
 uniwdchar : [^\s"|+]
 ```
@@ -37,11 +35,14 @@ In a marker sequence the order is child `+` parent.
 usfmarker: '\' '+'? tag '*'?
 ```
 
-Consider in a diglot context `cat:inl|ms:qt|p` this might expand to try all of
-cat:inl|ms:qt|pR,cat:inl|ms:qt|p,cat:inl|pR,cat:inl|p,ms:qt|pR,ms:qt|p,pR,p
+treat ms as character styles which get carried into the paragraph (and can also
+be used on the paragraph)
 
 `id:` tests for the id of the book (`MAT`, `XXS`, etc.).
 
 `periph:` specifies which peripheral the marker occurs in.
+
+x-credit:box=Dark|fig becomes Dark|x-credit
+
 
 
