@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-20 15:56+0700\n"
-"PO-Revision-Date: 2022-10-20 08:59\n"
+"PO-Revision-Date: 2022-10-25 08:11\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -1385,7 +1385,9 @@ msgstr "Ada beberapa gabungan DBL yang tersedia di\n"
 msgid "PTXprint is built with Python & PyGTK4, using Glade for\n"
 "the user-interface. The PDFs are produced by enhanced \n"
 "XeTeX macros (ptx2pdf) with a long and reliable history."
-msgstr ""
+msgstr "PTXprint dibangun dengan Python & PyGTK4, menggunakan Glade\n"
+"untuk antarmuka pengguna. PDF diproduksi oleh XeTeX macro \n"
+"(ptx2pdf) dengan sejarah yang panjang dan dapat diandalkan."
 
 #: temp.glade:1709
 msgid "PTXprint Homepage"
@@ -7277,7 +7279,7 @@ msgstr "Jika suatu kata tertentu muncul lebih dari sekali\n"
 
 #: temp.glade:15907
 msgid "Click to edit the Strong's 4 digit cell number properties on the Styles tab."
-msgstr ""
+msgstr "Klik untuk mengubah ciri-ciri nomor entri kamus Strong pada tab Gaya."
 
 #: temp.glade:15933
 msgid "Strong's References"
@@ -10309,7 +10311,8 @@ msgstr "Gaya: Faktor ukuran font"
 #: temp.glade:23801
 msgid "Scale Relative \n"
 "to Parent"
-msgstr ""
+msgstr "Skala Relatif Terhadap \n"
+"Ukuran Dasar"
 
 #: temp.glade:23803
 msgid "Styles: Scale relative to parent"
@@ -10429,12 +10432,18 @@ msgid "Calculated absolute point size \n"
 "The (↑Ascender ↓Descender) values \n"
 "from the base line for this font are \n"
 "provided for reference."
-msgstr ""
+msgstr "Ukuran titik absolut yang dihitung \n"
+"berdasarkan Ukuran Font Dasar saat \n"
+"ini (yang diatur pada tab Tata Letak).\n\n"
+"Nilai (↑Kepala ↓Ekor) dari garis \n"
+"dasar untuk font ini disediakan \n"
+"sebagai referensi."
 
 #: temp.glade:24069
 msgid "<span foreground=\"blue\">11.7pt\n"
 "(↑6.6 ↓2.2)</span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">11.7pt\n"
+"(↑6.6 ↓2.2)</span>"
 
 #: temp.glade:24083
 msgid "If any modifications to the typeface\n"
@@ -10449,7 +10458,8 @@ msgstr ""
 #: temp.glade:24094
 msgid "<span foreground=\"blue\">GR stretch=95%\n"
 "<b>bold=1.8</b> <i>ital=0.15</i></span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">GR stretch=95%\n"
+"<b>bold=1.8</b> <i>ital=0.15</i></span>"
 
 #: temp.glade:24119
 msgid "Character Settings"
@@ -10611,7 +10621,20 @@ msgid "How much of the column-width can be\n"
 "Discretionary breaks (//) will be ignored if \n"
 "breaking there would leave more than this \n"
 "much space."
-msgstr ""
+msgstr "Berapa banyak lebar kolom yang boleh \n"
+"menjadi ruang kosong di tepi yang tidak rata? \n"
+"Ini mempengaruhi pemutusan baris di \n"
+"pertengahan paragraf dan dapat menyebabkan \n"
+"peregangan jarak antara huruf jika baris harus \n"
+"diregang. Pengaturang ini tidak membuat baris \n"
+"terakhir pada paragraf menjadi panjang.\n\n"
+"Nilai ini ditetapkan sebagai proporsi lebar \n"
+"kolom, dengan nilai yang masuk akal berkisar \n"
+"antara 0,20 hingga 0,75 (di mana 1,00 mewakili \n"
+"seluruh lebar kolom).\n"
+"Tanda pemutusan baris (//) akan diabaikan jika \n"
+"pemutusan baris di tempat itu akan mengakibatkan \n"
+"adanya lebih banyak ruang dari nilai ini."
 
 #: temp.glade:24630
 msgid "Maximum\n"
