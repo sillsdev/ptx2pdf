@@ -26,7 +26,8 @@ Notice that the description of a marker here is not the same as is used in USFM
 text itself. A usfm marker is much simpler, although including milestones makes
 it non trivial.
 
-defaultval above is the content of the default argument of a ranged milestone, without any spaces.
+defaultval above is the value of the default argument of a ranged milestone, 
+with any spaces removed. e.g. `\qt-s|who="Pontius Pilate"\*` would be styled as `PontiusPilate|qt-s`
 
 In a marker sequence the order is (grandchild `+`) child `+` parent. The uppermost parent is a paragraph or note style,
 i.e. there is no distinction in styling between those originating from a `\q1` and those  from a `\s1`
@@ -48,13 +49,14 @@ category values and milestone values have whitespace removed. Should category
 values have whitespace? Instead treat them as an unordered space separated list.
 
 How milestones interact with other markers is interesting. For example, consider
-placing a \\strong-s\\* milestone at the start of a file. Then we could style a
-\\wg within that using strong-s+wg. But for a \li, we would use li+strong-s.
+placing a `\strong-s\*` milestone at the start of a file. Then we could style a
+`\wg` within that using `wg+strong-s` (wg is the child of strong-s).
+ But for a \li, we would use `strong-s+li`.
 The reason is that the strong-s is treated as a character style within a
-paragraph (it propagates from paragraph to paragraph automatically). Thus we
-style the paragraph using the character style within it, since all content is in
-that 'character style', even if we then give that character style paragraph
-properties. 
+paragraph (with a special property that it propagates from paragraph to
+paragraph automatically). Thus we style the paragraph using the character style
+within it, since all content is in that 'character style', even if we then give
+that character style paragraph properties. 
 
 
 
