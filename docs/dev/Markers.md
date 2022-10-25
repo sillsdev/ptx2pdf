@@ -7,7 +7,7 @@ to describe styles associated with markers.
 The proposed marker syntax for use within a stylesheet is:
 
 ```
-marker:     '\' markerexp ('+' (tag | ms))*
+marker:      markerexp ('+' (tag | ms))*
 markerexp:  (constraints '|')? tag | ms
 constraints: id | periph | categories
 id:     'id:' catval ('|' (periph | categories))?
@@ -50,7 +50,7 @@ values have whitespace? Instead treat them as an unordered space separated list.
 
 How milestones interact with other markers is interesting. For example, consider
 placing a `\strong-s\*` milestone at the start of a file. Then we could style a
-`\wg` within that using `wg+strong-s` (wg is the child of strong-s).
+`\wg` within that using `wg+strong-s` (character style `\wg` is the child of `\strong-s`).
  But for a \li, we would use `strong-s+li`.
 The reason is that the strong-s is treated as a character style within a
 paragraph (with a special property that it propagates from paragraph to
@@ -58,5 +58,14 @@ paragraph automatically). Thus we style the paragraph using the character style
 within it, since all content is in that 'character style', even if we then give
 that character style paragraph properties. 
 
+Note that the paragraph properties in force at the *end* of the paragraph are the ones that 
+hold sway. This can lead to unexpected results at present:
 
+```
+\p I want paragraph 1 as a normal pargraph
+\zright-s\*
+\p I want paragraph 2 as a right-justified paragraph
+\zright-e\*
+\p I want paragraph 3 as a normal pargraph
+```
 

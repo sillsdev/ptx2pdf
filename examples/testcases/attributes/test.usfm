@@ -49,8 +49,10 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
 \v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't.
-\zmine-s\*
-\s  A test of a custom milestone
+\p
+\zmine-s\* 
+\s T 
+A test of a custom milestone
 \p 
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
 \v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
@@ -84,4 +86,16 @@ born of the Spirit.\qt-e\*
 \p
 \v  9 Nicodemus answered and said unto him, How can these things be?
 
-\ts-e|\*
+\ts-e \*
+
+\p Getting things wrong:
+
+\p I want paragraph 1 as a normal pargraph
+
+\zright-s\*
+\p 
+I want paragraph 2 as a right-justified paragraph
+\p I want paragraph 3 as a normal pargraph
+\zright-e\*
+\p I want paragraph 4 as a normal pargraph
+
