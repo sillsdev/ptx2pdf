@@ -29,7 +29,10 @@ Notice that the description of a marker here is not the same as is used in USFM
 text itself. A usfm marker is much simpler, although including milestones makes
 it non trivial.
 
-In a marker sequence the order is child `+` parent.
+defaultval above is the content of the default argument of a ranged milestone, without any spaces.
+
+In a marker sequence the order is (grandchild `+`) child `+` parent. The uppermost parent is a paragraph or note style,
+i.e. there is no distinction in styling between those originating from a `\q1` and those  from a `\s1`
 
 ```
 usfmarker: '\' '+'? tag '*'?
