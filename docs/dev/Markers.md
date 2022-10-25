@@ -9,17 +9,14 @@ The proposed marker syntax for use within a stylesheet is:
 ```
 marker:     '\' markerexp ('+' (tag | ms))*
 markerexp:  (constraints '|')? tag | ms
-constraints: categories | periph | id | creditbox 
+constraints: id | periph | categories
+id:     'id:' catval ('|' (periph | categories))?
+periph: 'periph:' catval ('|' categories)?
 categories: category (':' category)*
 category: 'cat:' catval
 ms: (defaultval '|')? tag
-creditbox: 'x-credit:box=' catval
-periph: 'periph:' catval ('|' categories)?
-id:     'id:' catval ('|' (periph | categories))?
 tag: idchar+
 catval: idchar+
-attkey: idchar+
-attval: uniwdchar*
 defaultval: uniwdchar*
 idchar: [a-zA-Z0-9_] | '-'
 uniwdchar : [^\s"|+]
@@ -43,6 +40,18 @@ be used on the paragraph)
 `periph:` specifies which peripheral the marker occurs in.
 
 x-credit:box=Dark|fig becomes Dark|x-credit
+
+category values and milestone values have whitespace removed. Should category
+values have whitespace? Instead treat them as an unordered space separated list.
+
+How milestones interact with other markers is interesting. For example, consider
+placing a \\strong-s\\* milestone at the start of a file. Then we could style a
+\\wg within that using strong-s+wg. But for a \li, we would use li+strong-s.
+The reason is that the strong-s is treated as a character style within a
+paragraph (it propagates from paragraph to paragraph automatically). Thus we
+style the paragraph using the character style within it, since all content is in
+that 'character style', even if we then give that character style paragraph
+properties. 
 
 
 
