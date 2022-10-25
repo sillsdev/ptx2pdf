@@ -8,8 +8,25 @@ Bug fixes and improvements in 2.2.35 (25 Oct 2022)
   * Added option (\versehyphenfalse) to not insert hyphen between adjacent 
     bridged marginal verses
 
-  *
+  * Added RLE,LRE,PDF to turn off interchar spacing
 
+  * Added support for including Transcelerator questions (now awaiting UI)
+
+  * Refactored description of full marker
+
+  * Refactored x-credit:box=Dark|fig to Dark|x-credit
+
+  * Fixed deleting a style
+
+  * Correct accidental inversion of child/parent
+
+  * Grid partial to main paragraph baseline
+  
+  * Added a couple of changes.txt examples to snippets.md 
+  
+  * Fixed colophon vertical position (an empty footer box is not void. 
+    Change to test for height.
+  
 Bug fixes and improvements in 2.2.34 (20 Oct 2022)
   
   * Updated Crowdin localization strings
