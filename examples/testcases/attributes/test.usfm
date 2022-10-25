@@ -25,13 +25,15 @@ So is this bit, after a non-matching break.
 
 
 \p  We're \rb outside|above\rb* the clever stuff and ought to be back to normal now. But let's do some nesting.
-\esb\cat testing\cat*
+\esb\cat testing this\cat*
 \s A sidebar
 \qt3-s|Jim\*
 \p
 \v 3 James said \qt1-s|who="James"\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
 said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"\qt-e\*, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \qt3-e\*
+\p \cat insb\cat* This is a categorized paragraph in a sidebar\f + \fr 1:3 \ft What about footnotes?\f*
+\p This is a normal paragraph in a sidebar
 \esbe
 \p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, nisi ut aliquid ex ea commodi
 consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui \w dolorem\w* eum fugiat quo voluptas nulla pariatur?
