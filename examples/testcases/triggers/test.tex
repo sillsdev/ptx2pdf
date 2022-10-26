@@ -54,11 +54,13 @@
 %\sethook{end}{m}{\endadd\endadd}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
-\sethook{after}{id:TST|add}{|}
+\sethook{before}{id:TST|add}{->}
+\sethook{after}{id:TST|add}{<-}
 \sethook{start}{add}{\beginadd}
 \sethook{end}{add}{\endadd}
-\sethook{start}{cat:foo|cat}{}
 \sethook{end}{cat:foo|cat}{foo_hook>>}
+\sethook{start}{cat:foo|cat}{<<foo_hook}
+\sethook{start}{cat:foo|cat}{}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 \relax
