@@ -450,8 +450,8 @@ class RunJob:
             triggers = {}
             if info["notes/ifxrexternalist"]:
                 triggers = info.createXrefTriggers(b, self.prjdir, triggers)
-            #if info.dict.get("notes/transcel", False):
-            if info.dict.get("notes/transcel", True):
+            if info.dict.get("notes/transcel", False):
+            # if info.dict.get("notes/transcel", True):
                 triggers = transcel(triggers, b, self.prjdir, info.dict.get("notes/transcellang", "en-US"),
                                     usfm=self.printer.get_usfms().get(b))
             if len(triggers):
@@ -872,7 +872,7 @@ class RunJob:
         elif os.path.exists(outname):
             try:
                 os.remove(outname)
-            except PermissionError:
+            except PermissionError as e:
                 info.printer.doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),
                                      title=_("{} could not be deleted").format(outname), secondary=str(e), threaded=True)
                 pass

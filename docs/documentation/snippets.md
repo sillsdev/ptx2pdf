@@ -62,6 +62,33 @@ chapter title.
 ```perl
 "(\\c \d+)" > "\\pb\n\1\n\\zrule|\\*"
 ```
+## Mark headers with 3-letter book codes (temporarily)
+
+When working with a script that you cannot read, it is very helpful to place the book code in
+the header (using the Alt book name) so that you can navigate easily within the entire NT. But
+remember to comment out this expression before your final.
+
+```perl
+"(\\id (...).*\n)" > "\1\\h1 \2\r\n"
+```
+
+### Implementation
+
+We grab 2 capture groups:
+- the entire \id line
+- the 3-letter book code
+
+Then we put the 1st group back in and follow it with a new marker \h1 and the 
+2nd group (which is the book code) and finally a new line code.
+
+## Force a blank page at the end of the entire NT
+
+Sometimes you just need a blank page after the final text. Change the 'Amen.' to whatever
+the last word in Revelation is.
+
+```perl
+at REV 22:21 "Amen." >  "\1\n\\pb\n\\p \\bd ~\\bd*"
+```
 
 ## Fancy book separators from Heading information
 

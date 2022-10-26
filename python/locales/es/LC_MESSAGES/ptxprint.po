@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-10-20 15:56+0700\n"
-"PO-Revision-Date: 2022-10-20 08:59\n"
+"PO-Revision-Date: 2022-10-25 08:11\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -1387,7 +1387,9 @@ msgstr "Hay varios paquetes de DBL disponibles en\n"
 msgid "PTXprint is built with Python & PyGTK4, using Glade for\n"
 "the user-interface. The PDFs are produced by enhanced \n"
 "XeTeX macros (ptx2pdf) with a long and reliable history."
-msgstr ""
+msgstr "PTXprint está construido con Python y PyGTK4, utilizando Glade para\n"
+"la interfaz de usuario. Los PDFs son producidos por macros XeTeX mejorados de \n"
+"(ptx2pdf) con una larga y confiable historia."
 
 #: temp.glade:1709
 msgid "PTXprint Homepage"
@@ -7277,7 +7279,7 @@ msgstr "\n"
 
 #: temp.glade:15907
 msgid "Click to edit the Strong's 4 digit cell number properties on the Styles tab."
-msgstr ""
+msgstr "Haga clic para editar las propiedades del número de celda de 4 dígitos de Strong en la pestaña Estilos."
 
 #: temp.glade:15933
 msgid "Strong's References"
@@ -10292,7 +10294,8 @@ msgstr "Estilos: Factor de tamaño de letra"
 #: temp.glade:23801
 msgid "Scale Relative \n"
 "to Parent"
-msgstr ""
+msgstr "Escala relativa\n"
+"al padre"
 
 #: temp.glade:23803
 msgid "Styles: Scale relative to parent"
@@ -10416,7 +10419,8 @@ msgstr ""
 #: temp.glade:24069
 msgid "<span foreground=\"blue\">11.7pt\n"
 "(↑6.6 ↓2.2)</span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">11.7pt\n"
+"(↑6.6 ↓2.2)</span>"
 
 #: temp.glade:24083
 msgid "If any modifications to the typeface\n"
@@ -10431,7 +10435,8 @@ msgstr ""
 #: temp.glade:24094
 msgid "<span foreground=\"blue\">GR stretch=95%\n"
 "<b>bold=1.8</b> <i>ital=0.15</i></span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">GR stretch=95%\n"
+"<b>bold=1.8</b> <i>ital=0.15</i></span>"
 
 #: temp.glade:24119
 msgid "Character Settings"

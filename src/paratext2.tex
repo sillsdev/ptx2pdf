@@ -854,7 +854,7 @@
         \fi\fi
         \hbox to \ExtraRMargin{}}%
       \p@geendcontent
-      \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -1132,7 +1132,7 @@
     }%
     \ifdim\ht\partial>0.5\baselineskip
       \dimen1=\ht\partial %\advance\dimen1\dp\partial
-      \dimen0=\baselineskip
+      \s@tbaseline{p}{p}\dimen0=\baselineskip
       \m@d\advance\dimen1 by -\ht\partial\ifdim\dimen1 < -0.01pt
         \dimen1=\ht\partial \advance\dimen1\dimen0
         \trace{o}{Adjusting single partial ht from \the\ht\partial \space to \the\dimen1 with baselineskip=\the\baselineskip}%
@@ -1154,7 +1154,7 @@
         \doTextB@rder{\partial}%
         \box\partial\vfil
         \p@geendcontent
-        \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
     \fi
     \fin@lverybottom
@@ -1959,7 +1959,7 @@
       \doTextB@rder{\colA}%
       \box\colA
       \p@geendcontent
-      \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
     \global\partialfr@medfalse
     \global\setbox255=\box\voidb@x                                          %(+)
@@ -2158,7 +2158,7 @@
       \setbox0=\vsplit\verybottomins to \textheight
       \setbox15=\copy14
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}%
-         \ifvoid14\else\ifnoinkinmargin\vfil\box14\fi\fi}
+         \ifdim\ht14>0pt \ifnoinkinmargin\vfil\box14\fi\fi}
       \plainoutput\trace{plainoutput for fin@lverybottom}%
       \s@tpage
       \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\setbox14=\copy15\repeat
@@ -2411,10 +2411,10 @@
 \catcode"2064=\active \def^^^^2064{\pr@tect\BADBREAK}
 \lccode"2010="2010
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
-\catcode`\@=12
 \catcode"202A=\active \def^^^^202a{\pr@tect\LRE}
 \catcode"202B=\active \def^^^^202b{\pr@tect\RLE}
 \catcode"202C=\active \def^^^^202c{\pr@tect\PDF}
+\catcode`\@=12
 
 \def\asterisk{*}
 \catcode`\%=12 \def\percent{%}\catcode`\%=14
