@@ -249,16 +249,18 @@ be specified more like a .sty file, within TeX. Notice that each value is
 delimited by `\relax` and that the `\Marker` is necessary to know which style
 marker we are setting attributes one.
 
-## Tabbed indent for glossary or index
+## Tabbed indent for glossary or Strong's index
 
 When typesetting an indented list, such as a glossary or Strongs index, it looks
 neater if the main body starts at the same indent position as the rest of the 
 paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
-we can add a 'tab' after the Strongs number to make things line up neatly.
+we can add a 'tab' after the Strongs number to make things line up neatly. 
+Note that the \setbookhook restricts this change to just the 'XXS' book.
 
 ```tex
-\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
-\sethook{end}{bd}{\hfil\egroup}
+\setbookhook{start}{XXS}{
+ \sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
+ \sethook{end}{bd}{\hfil\egroup}}
 ```
 
 ## Display paragraph markers next to each paragraph
@@ -354,12 +356,15 @@ referred to as Marginal verses.
 
 Sometimes, where there is a short verse, two verse numbers appear in the same
 line. This causes a crash between the two marginal verse numbers. One way around
-this is to tell the ptx macros to bridge two verses. This can be done using, for
-example:
+this is to tell the ptx macros to bridge two verses and depending on the horizontal
+space available may cause the verses to stack vertically. This can be done using, 
+for example:
 
 ```tex
-\bridgeVerses ROM3.17-18.
-
+\bridgeVerses ACT13.30-31.
+\bridgeVerses ACT23.26-27.
+\bridgeVerses ROM1.22-23.
+\bridgeVerses ROM3.15-16.
 ```
 
 The structure of this command is very precise. The book must be the 3 letter
@@ -369,6 +374,31 @@ hyphen must be the next verse after the first verse and there must be a final
 period to complete the specification. Apart from all that, this is a very
 convenient way to bridge verses without having to edit the source text. It may
 also be used not in a marginal verses context.
+
+Also note that if you want to suppress the hyphen that normally comes between 
+bridged verses, you can turn off the verse hyphen in this context with this
+line which should be placed before the \bridgeVerses lines:
+
+```tex
+\versehyphenfalse
+```
+
+## Change Strong's numbers from the 4-digit cell into a 4-in-a-line number
+
+The 4-digit cell numbers for Strong's cross-references are a very handy and compact
+form, but these are not searchable in the PDF. If you want to see the 'unpacked'
+version of these numbers then add a new style \\myxts which can be styled as needed
+and add this snippet.
+
+```tex
+\catcode`\@=11
+\def\mystrong#1{\get@ttribute{strong}\ifx\attr@b\relax\else\cstyle{#1}{\attr@b}\fi}
+\sethook{start}{xts}{\ifinn@te\proc@strong{xts}\else\mystrong{myxts}\fi}
+
+% or use this sethook instead if you want ALL Strong's numbers to 
+% be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).
+%\sethook{start}{xts}{\mystrong{myxts}}
+```
 
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
