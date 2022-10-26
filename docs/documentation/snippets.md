@@ -356,12 +356,15 @@ referred to as Marginal verses.
 
 Sometimes, where there is a short verse, two verse numbers appear in the same
 line. This causes a crash between the two marginal verse numbers. One way around
-this is to tell the ptx macros to bridge two verses. This can be done using, for
-example:
+this is to tell the ptx macros to bridge two verses and depending on the horizontal
+space available may cause the verses to stack vertically. This can be done using, 
+for example:
 
 ```tex
-\bridgeVerses ROM3.17-18.
-
+\bridgeVerses ACT13.30-31.
+\bridgeVerses ACT23.26-27.
+\bridgeVerses ROM1.22-23.
+\bridgeVerses ROM3.15-16.
 ```
 
 The structure of this command is very precise. The book must be the 3 letter
@@ -371,6 +374,14 @@ hyphen must be the next verse after the first verse and there must be a final
 period to complete the specification. Apart from all that, this is a very
 convenient way to bridge verses without having to edit the source text. It may
 also be used not in a marginal verses context.
+
+Also note that if you want to suppress the hyphen that normally comes between 
+bridged verses, you can turn off the verse hyphen in this context with this
+line which should be placed before the \bridgeVerses lines:
+
+```tex
+\versehyphenfalse
+```
 
 ## Change Strong's numbers from the 4-digit cell into a 4-in-a-line number
 
