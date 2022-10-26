@@ -1083,6 +1083,8 @@
  \catcode`8=\tw@lve \catcode`9=\tw@lve \catcode`-=\tw@lve \relax}
 \def\el@ven{11}
 \def\tw@lve{12}
+\def\makeatletter{\catcode`\@=\el@ven\relax}
+\def\makeatother{\catcode`\@=\tw@lve\relax}
 %-csty_fndigits
 
 \let\book\relax

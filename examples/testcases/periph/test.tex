@@ -54,9 +54,23 @@
 \tracingoutput=1
 %\nonstopmode
 \singlecolumn
+\def\thelord{\nd The Lord\nd*}
+\def\zitems#1 #2{→ #1 \bd #2\bd*}
+
+\sethook{before}{q1}{\widdowpenalty=500 \clubpenalty=500}
+\sethook{after}{q1}{\widdowpenalty=10000 \clubpenalty=500}
+
+\sethook{before}{is1}{↓}
+\sethook{after}{is1}{↑}
+\sethook{start}{is1}{→}
+\sethook{end}{is1}{←}
+
 \ptxfile{cover.usfm}
 \ptxfile{int.usfm}
 %\tracingassigns=1
-%\ptxfile{test.usfm}
+\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intbible\* \unprepusfm}
+\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intnt\* \unprepusfm\vskip 10pt}
+
+\ptxfile{test.usfm}
 \tracingstats=1
 \bye

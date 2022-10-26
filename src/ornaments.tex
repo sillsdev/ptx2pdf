@@ -30,7 +30,6 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\def\makeatletter{\catcode`\@=11}% Used by external code
 \makeatletter
 
 \plugin@startif{ornaments}
@@ -38,7 +37,6 @@
 
 % 
 \def\MSG#1{\immediate\write -1{#1}}
-\def\makeatother{\catcode`\@=12}% Used by external code
 \newdimen\pdf@xunit
 \newdimen\pdf@yunit
 

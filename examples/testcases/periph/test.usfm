@@ -1,11 +1,10 @@
 \id TST Test file
 \h small test file
-\zgetperiph|intbible\*
-\zgetperiph|intbible\*
+\mt Genesis
 \c 1
 \s2 This is a title
 \p
-\v 1 This is normal text.  Dolorem
+\v 1 In the beginning \thelord\ said. This is normal text.  Dolorem
 ad ducimus quia ducimus
 minima aperiam ab saepe qui
 \v 2 I didn't put a paragraph break after the pic. I wonder what happens. 
@@ -14,7 +13,7 @@ minima aperiam ab saepe qui
 \p
 \v 4 Et sed nemo sadiente quaerat necessitatibus. Enim illum id enim cumque expedita iure. Quis vitae tempora aliquid sint quisquam facilis voluptatum cupiditate. 
 
-\StorePeriphfalse
+\StorePeriphtrue
 \periph Intro to the letters|intletters
 \is1 A test
 \ip This is peripheral material in a very strange place, to check that the python code ought to be able to insert it, get it formatted propperly, and not cause a disaster.
