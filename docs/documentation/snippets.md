@@ -249,16 +249,18 @@ be specified more like a .sty file, within TeX. Notice that each value is
 delimited by `\relax` and that the `\Marker` is necessary to know which style
 marker we are setting attributes one.
 
-## Tabbed indent for glossary or index
+## Tabbed indent for glossary or Strong's index
 
 When typesetting an indented list, such as a glossary or Strongs index, it looks
 neater if the main body starts at the same indent position as the rest of the 
 paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
-we can add a 'tab' after the Strongs number to make things line up neatly.
+we can add a 'tab' after the Strongs number to make things line up neatly. 
+Note that the \setbookhook restricts this change to just the 'XXS' book.
 
 ```tex
-\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
-\sethook{end}{bd}{\hfil\egroup}
+\setbookhook{start}{XXS}{
+ \sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
+ \sethook{end}{bd}{\hfil\egroup}}
 ```
 
 ## Display paragraph markers next to each paragraph
@@ -369,6 +371,23 @@ hyphen must be the next verse after the first verse and there must be a final
 period to complete the specification. Apart from all that, this is a very
 convenient way to bridge verses without having to edit the source text. It may
 also be used not in a marginal verses context.
+
+## Change Strong's numbers from the 4-digit cell into a 4-in-a-line number
+
+The 4-digit cell numbers for Strong's cross-references are a very handy and compact
+form, but these are not searchable in the PDF. If you want to see the 'unpacked'
+version of these numbers then add a new style \\myxts which can be styled as needed
+and add this snippet.
+
+```tex
+\catcode`\@=11
+\def\mystrong#1{\get@ttribute{strong}\ifx\attr@b\relax\else\cstyle{#1}{\attr@b}\fi}
+\sethook{start}{xts}{\ifinn@te\proc@strong{xts}\else\mystrong{myxts}\fi}
+
+% or use this sethook instead if you want ALL Strong's numbers to 
+% be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).
+%\sethook{start}{xts}{\mystrong{myxts}}
+```
 
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
