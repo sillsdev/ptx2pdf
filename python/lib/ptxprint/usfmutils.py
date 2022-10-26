@@ -630,7 +630,7 @@ class Usfm:
         def iterfn(el, silent=False, base=None):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
-                issilent = styletype.lower() == "note" or el.name.startswith("s") or silent
+                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s") or silent
                 if el.meta.get("Attributes", None) is not None:
                     base = el
                 for c in tuple(el):      # in case of insertions

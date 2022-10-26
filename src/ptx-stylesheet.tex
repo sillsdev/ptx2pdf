@@ -1056,10 +1056,9 @@
 \def\AfterVerseSpaceFactor{2}
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
-\lowercase{
-\def\simpleprintv@rse{\ch@rstylepls{v}~\plainv@rse\ch@rstylepls{v}*%
-     \kern\AfterVerseSpaceFactor\FontSizeUnit}
-}
+\catcode`\~=12 \lccode`\~=32 \lowercase{\gdef\cstyle#1#2{\ch@rstylepls{#1}~#2\ch@rstylepls{#1}*}}
+
+\def\simpleprintv@rse{\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit}
 \def\plainv@rse{\AdornVerseNumber{\v@rsefrom}\ifx\v@rsefrom\v@rseto       %(2)
                  \else\endash\AdornVerseNumber{\v@rseto}\fi}
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
@@ -1068,18 +1067,16 @@
 \def\hangprintverse{\llap\defaultprintverse}
 \def\adornv#1{\AdornVerseNumber{#1}}
 \def\ssf{\SuperscriptFactor}
-\lowercase{
 \def\h@ngprintv@rse#1{%
     \s@tbaseline{v}{\styst@k}%
     %\getp@ram{baseline}{v}\baselineskip=\ifx\p@ram\relax\baselineskip\else\p@ram\fi
     \dimen0=\ssf\baselineskip \advance\dimen0 by -\baselineskip
-    \setbox1=\hbox{\ch@rstylepls{v}~\adornv{\v@rseto}\ch@rstylepls{v}*}%
-    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\ch@rstylepls{v}~\endash\ch@rstylepls{v}*}%
-                                 \vbox{\hbox to \wd1{\hskip\leftskip\ch@rstylepls{v}~\adornv{\v@rsefrom}\ch@rstylepls{v}*\hskip\rightskip}%
+    \setbox1=\hbox{\cstyle{v}{\adornv{\v@rseto}}}%
+    \global\setbox#1=\vbox to \ht1{\s@tbaseline{v}{v}\vtop{\rightskip=0pt\leftskip=0pt\hbox{\llap{\cstyle{v}{\endash}}%
+                                 \vbox{\hbox to \wd1{\hskip\leftskip\cstyle{v}{\adornv{\v@rsefrom}}\hskip\rightskip}%
                                        %\kern\dimen0
                                         \box1}}}}%
-    \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}%
-}
+    \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}
 \let\defaultprintverse=\simpleprintv@rse
 \let\printverse=\defaultprintverse                                               %(1)
 \def\@ne{1}

@@ -139,7 +139,7 @@
         \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
           \trace{n}{note main caller}%
-          \setbox0=\hbox{\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*}\ht0=0pt\dp0=0pt
+          \setbox0=\hbox{\x@\cstyle\x@{\c@llerstyle}{\them@rk}}\ht0=0pt\dp0=0pt
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
         \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
@@ -151,7 +151,7 @@
           \edef\c@llerstyle{\p@ram}%
           \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
             \trace{n}{note caller}%
-            \setbox0=\hbox{\hss\x@\ch@rstylepls\x@{\c@llerstyle}~\them@rk\x@\ch@rstylepls\x@{\c@llerstyle}*\hss}\ht0=0pt\dp0=0pt
+            \setbox0=\hbox{\hss\x@\cstyle\x@{\c@llerstyle}{\them@rk}\hss}\ht0=0pt\dp0=0pt
           \fi
           \getp@ram{notecallerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi
         \fi}\bgroup
