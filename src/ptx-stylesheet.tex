@@ -40,7 +40,9 @@
 \def\ds@ffix{} % diglot suffix (L/R)
 \def\m@rker{} % The currently being defined \Marker
 \let\prev@rsemode\empty
-\def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\ds@ffix\endcsname{t}}
+\def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\endcsname{t}}
+\def\rememberhook@xists#1{\x@\xdef\csname h@@kexists-#1\endcsname{t}}
+\def\forgethook@xists#1{\x@\global\x@\let\csname h@@kexists-#1\ds@ffix\endcsname\undefined}
 \def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi}
 \def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
   \trace{sC}{Remembering that #1 exists as a marker}%
@@ -345,10 +347,14 @@
   \edef\p@ssParams{\@ut}%
   \trace{sk}{2. Checking list: \p@ssParams}%
   \let\@ut\empty
+  \let\d@=\cscheckHook@xist\x@\cstackdown \p@ssParams,\E
+  \global\let\p@ssHooks=\@ut
+  \trace{sk}{3a. Hook list: \p@ssHooks}%
+  \let\@ut\empty
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
-  \let\d@=\tmpd@
   \global\let\p@ssParams=\@ut
-  \trace{sa}{3. Shrunk list: \p@ssParams}%
+  \let\d@=\tmpd@
+  \trace{sa}{3b. Shrunk list: \p@ssParams}%
 }
 
 % Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
@@ -383,6 +389,12 @@
   \fi
 }
 
+\def\s@tph@name#1{%
+   \xdef\ph@name{pHook-\c@tprefix\mspr@fix#1}%
+}
+\def\setph@name#1{%
+   \s@tph@name{#1\ifdiglot\c@rrdstat\fi}%
+}
 \def\s@tpp@name#1{%
    \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1}%
 }
@@ -392,18 +404,24 @@
 
 \def\setpossParams#1#2{%
   \setpp@name{#2}%
+  \setph@name{#2}%
   \x@\let\x@\g@tp@tmp\csname \pp@name\endcsname
   \ifx\g@tp@tmp\relax
     \s@tpossParams{#1}{#2}\x@\global\x@\let\csname \pp@name\endcsname\p@ssParams
+    \x@\global\x@\let\csname \ph@name\endcsname\p@ssHooks
     \ifx\p@ssParamCached\empty
       \xdef\p@ssParamCached{\pp@name}%
     \else
       \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
     \fi
     \trace{s}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
+    \trace{s}{\ph@name\space defined as '\p@ssHooks'}%
   \else
     \global\let\p@ssParams\g@tp@tmp
+    \x@\let\x@\g@th@tmp\csname \ph@name\endcsname
+    \global\let\p@ssHooks\g@th@tmp
     \trace{s}{\pp@name\space exists: '\p@ssParams'}%
+    \trace{s}{\ph@name\space exists: '\p@ssHooks'}%
   \fi
 }
 
@@ -467,8 +485,12 @@
 % like cspr@pend, but also record unprepended item.
 \def\cs@lsolist#1\E{\trace{sa}{expanding #1->\@lso#1,#1}\ifx\@ut\empty\xdef\@ut{\@lso#1,#1}\else\xdef\@ut{\@ut,\@lso#1,#1}\fi}
 \def\cscheck@xist#1\E{\ifcsname m@rkerexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
+\def\cscheckHook@xist#1\E{\ifcsname h@@kexists-#1\endcsname\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi\fi}
 \def\cs@ppend#1\E{\ifx\@ut\empty\xdef\@ut{#1\@lso}\else\xdef\@ut{\@ut,#1\@lso}\fi}
-
+% Check a comma separated list for existing hooks, and append into \afterh@@ks:
+\def\csex@cHook#1\E{\ifcsname \@lso-#1\endcsname
+    \x@\x@\x@\global\x@\x@\x@\afterh@@ks\x@\x@\x@{\x@\the\x@\afterh@@ks\x@\csname \@lso-#1\endcsname}%
+ \fi}
 %-csty_getparam
 
 %+csty_getmcparam
@@ -754,8 +776,8 @@
 %+csty_sethook
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
-\def\sethook#1#2#3{\x@\gdef\csname #1-#2\endcsname{#3}}
-\def\setbookhook#1#2#3{\x@\gdef\csname book#1-#2\endcsname{#3}}
+\def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#2}\else\rememberhook@xists{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
+\def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#2}\else\rememberhook@xists{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
 %-csty_sethook
 
 %+csty_testpublishability
@@ -1869,59 +1891,34 @@
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
    \trace{sh}{op@ninghooks #1 #2}%
-   \ifcsname #1-#2\endcsname
-     \trace{sh}{#1-#2 exists}%
-     \csname #1-#2\endcsname
-   \fi
-   \ifx\c@tegory\empty\else
-      \ifcsname #1-\c@tprefix#2\endcsname
-        \csname #1-\c@tprefix#2\endcsname
-      \fi
-   \fi
-   \ifdiglot\setsid@ % \MSG{start-\thisch@rstyle\sid@}%
-     \ifcsname #1-#2\sid@\endcsname\relax 
-       \csname #1-#2\sid@\endcsname\relax % handle side-specific <before> hook
-     \fi
-     \ifx\c@tegory\empty\else
-        \ifcsname #1-\c@tprefix#2\sid@\endcsname
-          \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
-        \fi
-     \fi
-   \fi
+   \@@fillhooks{#1}{#2}{\cstackup}%
+   \the\afterh@@ks
+   \global\afterh@@ks{}%
 }
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
-  \trace{sa}{cl@singhooks #1 #2}%
-  \global\let\n@xt\relax
-  \global\let\n@@xt\relax
-  \global\let\n@@@xt\relax
-  \global\let\n@@@@xt\relax
-  %\global\afterh@@ks{}%
-  %\tracingassigns=1
-  \ifdiglot\setsid@ % \MSG{end-\thisch@rstyle\sid@}%
-    \ifx\c@tegory\empty\else
-      \x@\global\x@\let\x@\n@xt
-        \csname #1-\c@tprefix#2\sid@\endcsname %side-specific and category-specific
-      \x@\global\afterh@@ks{\n@xt}%
-    \fi
-    \x@\global\x@\let\x@\n@@xt
-      \csname #1-#2\sid@\endcsname % handle side-specific <end> hook
-    \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@xt}%
-  \fi
-  \ifx\c@tegory\empty\else
-    \x@\global\x@\let\x@\n@@@xt
-      \csname #1-\c@tprefix#2\endcsname
-    \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@@xt}%
-  \fi
-  \x@\global\x@\let\x@\n@@@@xt
-    \csname #1-#2\endcsname%
-  \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\n@@@@xt\global\afterh@@ks{}}% Notice the self-clearing %(1)
-  %\showthe\afterh@@ks
+  \trace{sh}{cl@singhooks #1 #2}%
+  \@@fillhooks{#1}{#2}{\cstackdown}%
+  \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\global\afterh@@ks{}}% Notice the self-clearing %(1)
   \edef\@@@a{#1}%                                                  %(2)
   \ifx\@@@a\@fter\else\the\afterh@@ks\fi
 }
 \edef\@fter{after}
+
+\def\@@fillhooks#1#2#3{%
+   \setpossParams{#2}{\styst@k}%
+   \global\afterh@@ks{}%
+   \ifx\p@ssHooks\empty\else
+     \trace{sh}{possiblehooks:\p@ssHooks}%
+     %\tracingassigns=2\tracingrestores=1\tracingmacros=1
+     \def\@lso{#1}%
+     \let\d@\csex@cHook
+     \x@#3\p@ssHooks,\E
+     %\tracingassigns=0\tracingrestores=0\tracingmacros=0
+   \fi
+}
+
 %-csty_hooks
 % Create registers to hold configuration information, set defaults
 \newdimen\FontSizeUnit		\FontSizeUnit=1bp % units for font sizes in Paratext stylesheet

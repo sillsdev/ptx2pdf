@@ -10,6 +10,8 @@
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
+\tracing{sk}
+\tracing{sh}
 %\tracing{sc}
 %\tracing{sC}
 %\tracing{C}
@@ -52,6 +54,7 @@
 %\sethook{end}{m}{\endadd\endadd}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
+\sethook{after}{id:TST|add}{|}
 \sethook{start}{add}{\beginadd}
 \sethook{end}{add}{\endadd}
 \sethook{start}{cat:foo|cat}{}
