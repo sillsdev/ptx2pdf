@@ -853,9 +853,11 @@
   \fi
 }
 
+\lowercase{\edef\msl@sh{|}}
 % Category file parsing 
 \def\Category   #1\relax{%Store name of current category and defaults
   \S@tCat{#1}%
+  \message{[\msl@sh Category #1}%
   \xdef\m@rker{esb}%
 }
 

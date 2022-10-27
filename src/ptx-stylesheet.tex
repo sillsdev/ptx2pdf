@@ -73,6 +73,7 @@
 \def \Marker         #1\relax{
   \m@kedigitsletters%
   \xdef\m@rker{\scantokens{#1\noexpand}}%
+  \lowercase{\message{[|#1}}%
   \m@kedigitsother
   \remember@xists{\m@rker}% store name of marker currently being defined
   \ifx\c@tprefix\empty\else
@@ -757,14 +758,14 @@
 %-csty_getmcfontsize
 
 %+csty_makestyle
-\def\m@kestyle{{\uccode`\|=`\\\uppercase{\message{|\m@rker}}}
+\def\m@kestyle{%
  \x@\let\csname font<\m@rker>\endcsname=\relax 
  \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
  \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
  \else\ifx\styl@type\N@te \x@\defn@testyle\x@{\m@rker}
  \else\ifx\styl@type\MSt@ne \x@\defmst@nestyle\m@rker\E
- \else \message{unknown style type '\styl@type'}
- \fi\fi\fi\fi}
+ \else\ifx\styl@type\St@lone\else \message{unknown style type '\styl@type'}\fi
+ \fi\fi\fi\fi\message{]}}
 
 %:
 % \def*style: define a USFM marker as a paragraph, character or note style marker
