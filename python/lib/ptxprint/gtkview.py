@@ -2367,7 +2367,7 @@ class GtkViewModel(ViewModel):
             extend = None
             isCtxtSpace = False
             mapping = "Default"
-            name = None
+            name = self.get("bl_fontR").name
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:

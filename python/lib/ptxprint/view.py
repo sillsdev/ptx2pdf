@@ -581,6 +581,15 @@ class ViewModel:
                             Sheets(self.getStyleSheets()))
         return self.usfms
 
+    def get_usfm(self, bk):
+        self.get_usfms()
+        try:
+            res = self.usfms.get(bk)
+        except SyntaxError as e:
+            self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
+            return None
+        return res
+
     def getDialogTitle(self):
         prjid = self.get("fcb_project")
         if prjid is None:
@@ -1215,7 +1224,9 @@ class ViewModel:
             acc = {}
             usfms = self.get_usfms()
             for bk in self.getBooks():
-                u = usfms.get(bk)
+                u = self.get_usfm(bk)
+                if u is None:
+                    continue
                 u.getwords(init=acc)
             if inbooks: # cut the list down to only include words that are actually in the text
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]

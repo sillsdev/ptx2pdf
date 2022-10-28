@@ -795,7 +795,10 @@ class Module:
     def get_passage(self, ref, removes={}, strippara=False):
         if ref.first.book is None:
             return []
-        book = self.usfms.get(ref.first.book.upper())
+        try:
+            book = self.usfms.get(ref.first.book.upper())
+        except SyntaxError:
+            book = None
         if book is None:
             return []
         return book.subdoc(ref, removes=removes, strippara=strippara)

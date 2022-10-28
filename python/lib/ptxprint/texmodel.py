@@ -1856,5 +1856,5 @@ class TexModel:
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
                     listsize, xrsrc, localfile, self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
-        return self.xrefs.process(bk, triggers, usfm=self.printer.get_usfms().get(bk))
+        return self.xrefs.process(bk, triggers, usfm=self.printer.get_usfm(bk))
 
