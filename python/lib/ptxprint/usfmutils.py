@@ -652,7 +652,11 @@ class Usfm:
                     continue
                 matched = False
                 if base is not None:
-                    if regex.search(regs, newstr):
+                    try:
+                        regre = regex.compile(regs)
+                    except regex._regex_core.error as e:
+                        raise SyntaxError(f"Faulty regex in {regs}: {e}")
+                    if regre.search(newstr):
                         newelement = sfm.Text('\u200B\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
@@ -660,9 +664,12 @@ class Usfm:
                         if not showall:
                             self.currstate[1].remove(st)
                 else:
-                    newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
-                            '\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
-                            newstr, count=0 if showall else 1)
+                    try:
+                        newm = regex.compile(("(?<!\u200A)" if not showall else "")+regs)
+                    except regex._regex_core.error as e:
+                        raise SyntaxError(f"Faulty regex in {regs}: {e}")
+                    newstr_diff = newm.sub('\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(
+                                           st.lstrip("GH")), newstr, count=0 if showall else 1)
                     if newstr_diff != newstr:
                         newstr = newstr_diff
                         matched = True
