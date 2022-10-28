@@ -72,10 +72,16 @@ and the reverse order for the closing markers (end and after).
 * and so on.
 
 Thus each of the four points could potentially have several hooks associated with
-it, with the more specific hooks able to undo or override changes made by less
-specific ones. The code for the opening and closing hooks has been merged, into
-`\fillh@@ks` which fills a tokslist using the `\p@ssHooks` list starting at the
-csstackup or csstackdown routines appropriately.
+it. 
+[=csty_hooks]::
+
+The code for the opening and closing hooks has been merged, into
+`\fillh@@ks` which fills a tokslist using the `\p@ssHooks` list.
+Following the historic pattern, it used to be that starting hooks ran fillh@@ks with 
+csstackup (most general first) and closing hooks used csstackdown .
+In an ammendment to the code in Oct 2022, rather than running all these items,
+only the *most* specific existant hook is executed.
+
 For opening hooks (`\op@ninghooks`), the task is simply to executes this token
 list and empty it. 
 For the closing hooks (`\cl@singhooks`) the situation is a bit more complex. `after` 
@@ -86,8 +92,6 @@ The final addition to this token list (1) ensures the list is emptied, again glo
 The code (2) checks to see if the token list has actually been necessary (i.e. is 
 this an `after` hook) and if not executes the token list, thus keeping code in 
 other parts of the macros a little cleaner.
-
-[=csty_hooks]::
 
 ### Declarations
 

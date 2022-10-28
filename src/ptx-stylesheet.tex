@@ -42,7 +42,9 @@
 \let\prev@rsemode\empty
 \def\remember@xists#1{\x@\xdef\csname m@rkerexists-#1\endcsname{t}}
 \def\rememberhook@xists#1#2{\x@\let\x@\tmp\csname h@@kexists-#2\endcsname\ifx\tmp\relax\let\tmp\empty\else\xdef\tmp{\tmp,}\fi\x@\xdef\csname h@@kexists-#2\endcsname{\tmp#1}}
-\def\csfilterout#1\E{\ifx\cstack@tmp\tmp\else\cs@pushout{#1}\fi} % driven by cstack down (or up}, which defines cstack@tmp
+\def\csfilt@rout#1\E{\ifx\cstack@tmp\tmp\else\cs@pushout{#1}\fi} % driven by cstack down (or up}, which defines cstack@tmp
+\def\csfilt@rall#1\E{\s@tt@mp{#1}\ift@mp\cs@pushout{#1}\fi} % driven by cstack down (or up}, s@tt@mp must set ift@mp
+
 \def\forgethook@xists#1#2{%
   \x@\let\x@\t@mp\csname h@@kexists-#2\endcsname
   \trace{sh}{forgethook@xists: #2 entry: '\t@mp'}%
@@ -50,7 +52,7 @@
   \else
     %Need to (possibly)remove entries from the list 
     \edef\tmp{#1}\let\@ut\empty
-    \let\d@\csfilterout
+    \let\d@\csfilt@rout
     \x@\cstackdown \t@mp,\E
     \trace{sh}{forgethook@xists: #2 exit: '\@ut'}%
     \x@\ifx\@ut\empty
@@ -372,7 +374,7 @@
   \let\d@=\cscheck@xist\x@\cstackdown \p@ssParams,\E
   \global\let\p@ssParams=\@ut
   \let\d@=\tmpd@
-  \trace{sa}{3b. Shrunk list: \p@ssParams}%
+  \trace{sk}{3b. Shrunk list: \p@ssParams}%
 }
 
 % Should a milestone with a defined attribute (e.g. \qt-s|Jesus\*) match the
@@ -1924,6 +1926,12 @@
 }
 \edef\@fter{after}
 
+\def\s@tupstringf@lter#1{\edef\f@lterval{#1}\x@\@s@tupstringf@lter\x@{\tmp}}\def\@s@tupstringf@lter#1{%
+  % Define a piece of code that matches: id:GEN|cat:foo|ft or ft+f  or b+ft  or b+ft+f
+  \gdef\s@tt@mp##1{\trace{sh}{Comparing ##1 with #1}\t@mpfalse\ifx\f@lterval\cstack@tmp\t@mptrue\else \@s@tt@mp##1|\E \@@s@tt@mp##1+\E\fi}%
+  \gdef\@s@tt@mp##1|##2\E{\edef\tmp{##1}\trace{sh}{\meaning\tmp=\meaning\f@lterval?}\ifx\f@lterval\tmp\trace{sh}{yes}\t@mptrue\else\ifx\tmp\empty\else\@s@tt@mp ##2|\E\fi\fi}%
+  \gdef\@@s@tt@mp##1+##2\E{\edef\tmp{##2}\ifx\f@lterval\tmp\t@mptrue\else\@s@tt@mp##1|\E \if\tmp\empty\else\@@s@tt@mp ##2+\E\fi\fi}%
+}
 \def\@@fillhooks#1#2#3{%
   % TODO: 
   % * Filtering: 
@@ -1932,7 +1940,18 @@
    \setpossParams{#2}{\styst@k}%
    \global\afterh@@ks{}%
    \ifx\p@ssHooks\empty\else
+     \let\@ut\empty
      \trace{sh}{possiblehooks:\p@ssHooks}%
+     %\tracingmacros=1 \tracingassigns=1
+     \edef\tmp{#2}\ifx\tmp\empty\else
+       \s@tupstringf@lter{#2}%
+       \let\d@\csfilt@rall
+       \x@\cstackdown\p@ssHooks,\E
+       \let\p@ssHooks\@ut
+     \fi
+     %\tracingmacros=0 \tracingassigns=0
+     \let\@ut\empty
+     \trace{sh}{relevant hooks:\p@ssHooks}%
      %\tracingassigns=2\tracingrestores=1\tracingmacros=1
      \def\@lso{#1}%
      \let\d@\csex@cHook
