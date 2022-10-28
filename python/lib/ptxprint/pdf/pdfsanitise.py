@@ -22,7 +22,7 @@ def sanitise(trailer, opath=None, forced=True):
     if isinstance(trailer, str):
         trailer = PdfReader(trailer)
     changed = ensure_contents(trailer)
-    if (changed or force) and opath is not None:
+    if (changed or forced) and opath is not None:
         outpdf = PdfWriter(None, trailer=trailer)
         outpdf.fname = opath
         outpdf.write()
