@@ -946,8 +946,8 @@
   \after@this
 }
 
-\def\ztmon{\tracingmacros=1}
-\def\ztmoff{\tracingmacros=0}
+\def\ztmon{\tracingmacros=1 \tracingmacros=1}
+\def\ztmoff{\tracingmacros=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
