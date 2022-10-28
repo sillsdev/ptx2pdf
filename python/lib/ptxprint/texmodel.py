@@ -1265,8 +1265,11 @@ class TexModel:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")
-            doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
-            
+            try:
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
+            except SyntaxError as e:
+                self.printer.doError("Processing Strongs", secondary=str(e))
+
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
             logger.log(5, "Unparsing text to run local changes\n"+dat)
