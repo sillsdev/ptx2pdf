@@ -1909,7 +1909,7 @@
 %Hook-runners for paragraph and character styles
 \def\op@ninghooks#1#2{% for <start> and <before> hooks
    \trace{sh}{op@ninghooks #1 #2}%
-   \@@fillhooks{#1}{#2}{\cstackup}%
+   \@@fillhooks{#1}{#2}{\cstacktop}%
    \the\afterh@@ks
    \global\afterh@@ks{}%
 }
@@ -1917,7 +1917,7 @@
 \newtoks\afterh@@ks
 \def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
   \trace{sh}{cl@singhooks #1 #2}%
-  \@@fillhooks{#1}{#2}{\cstackdown}%
+  \@@fillhooks{#1}{#2}{\cstacktop}%
   \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\global\afterh@@ks{}}% Notice the self-clearing %(1)
   \edef\@@@a{#1}%                                                  %(2)
   \ifx\@@@a\@fter\else\the\afterh@@ks\fi
@@ -1925,6 +1925,10 @@
 \edef\@fter{after}
 
 \def\@@fillhooks#1#2#3{%
+  % TODO: 
+  % * Filtering: 
+  % * only run hooks that include the #2 marker get included!
+  % * only run the most specific 
    \setpossParams{#2}{\styst@k}%
    \global\afterh@@ks{}%
    \ifx\p@ssHooks\empty\else

@@ -282,13 +282,13 @@
     \trace{m}{Properties not defined, assuming standalone milestone has no publishable text}%
     \n@npublishabletrue
   \fi
+  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
+  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
+  \ifx\p@ram\empty\else\leavevmode\fi
   \ifn@npublishable\else
     \mcpush{\ss@Mstn}{\thismil@stone}%
     \trace{m}{Milestone stacked, \mcstack}%
   \fi
-  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
-  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
-  \ifx\p@ram\empty\else\leavevmode\fi
   \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
