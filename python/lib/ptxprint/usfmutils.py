@@ -660,7 +660,6 @@ class Usfm:
                         if not showall:
                             self.currstate[1].remove(st)
                 else:
-                    #newstr = regex.sub(regs,
                     newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
                             '\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
                             newstr, count=0 if showall else 1)

@@ -18,7 +18,7 @@ def ensure_contents(trailer):
             p.Contents = c
     return changed
 
-def sanitise(trailer, opath=None, force=True):
+def sanitise(trailer, opath=None, forced=True):
     if isinstance(trailer, str):
         trailer = PdfReader(trailer)
     changed = ensure_contents(trailer)

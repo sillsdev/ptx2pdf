@@ -1581,13 +1581,13 @@ class TexModel:
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wh\s[^\\]*)(\p{sc=Hebr}.*?)"
-                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Hebr}\p{sc=Zyyy}\p{sc=Zinh}]))", 
-                                          flags=regex.M), r"\\+wh \1\\+wh*"))
+                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][{hchar}\s]*"
+                                          rf"[\p{{sc=Hebr}}][{hchar}\s]*\b)", flags=regex.M), r"\1\\+wh \2\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wg\s[^\\]*)(\p{sc=Grek}.*?)"
-                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Grek}\p{sc=Zyyy}\p{sc=Zinh}]))", 
-                                          flags=regex.M), r"\\+wg \1\\+wg*"))
+                gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][{gchar}\s]*"
+                                          rf"[\p{{sc=Grek}}][{gchar}\s]*\b)", flags=regex.M), r"\1\\+wg \2\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
@@ -1621,7 +1621,7 @@ class TexModel:
 
         ## Final tweaks
         # Strip out any spaces either side of an en-quad 
-        self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
+        self.localChanges.append((None, regex.compile(r"(?<!\\\S+)\s?\u2000\s?", flags=regex.M), r"\u2000")) 
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Remove any spaces before the \ior*
