@@ -330,6 +330,7 @@ class StrongsXrefs(XMLXrefs):
             reg.append(r)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res)
+        logger.debug(f"strongs regexes {st} = {res}")
         self.regexes[st] = res
         return res
 
