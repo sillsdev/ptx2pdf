@@ -1,3 +1,9 @@
+ptxprint (2.2.36-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 2.2.36
+
+ -- Martin Hosken <martin_hosken@sil.org>  Sat, 29 Oct 2022 22:51:10 +1300
+
 ptxprint (2.2.35-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.2.35
