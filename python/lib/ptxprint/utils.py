@@ -419,6 +419,11 @@ def f2s(x, dp=3) :
         res = "0"
     return res
 
+def ustr(x):
+    res = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), x)
+    res = re.sub(r"\\U([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), res)
+    return res
+
 def runChanges(changes, bk, dat):
     def wrap(t):
         def proc(m):
