@@ -1,5 +1,5 @@
 import os, sys, re, subprocess, time
-from PIL import Image, ImageChops, ImageEnhance
+from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
@@ -308,12 +308,13 @@ class RunJob:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
                     basename = None
-                diffcolor = self.printer.get("col_diffColor")
+                ndiffcolor = self.printer.get("col_ndiffColor")
+                odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, info, basename, diffcolor, onlydiffs)
+                    diffname = self.createDiff(pdfname, info, basename, ndiffcolor, onlydiffs, oldcolor=odiffcolor)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":
@@ -828,11 +829,13 @@ class RunJob:
             os.remove(opath)
         return True
 
-    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False):
+    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False, oldcolor=None):
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
             color = (240, 0, 0)
+        if oldcolor is None:
+            oldcolor = (0, 0, 240)
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
         if not os.path.exists(othername):
             self.res = 2
@@ -860,11 +863,13 @@ class RunJob:
                 hasdiffs = True
             if maxdiff:
                 dmask = dmask.point(lambda x: 255 if x else 0)
-            translucent = Image.new("RGB", iimg.size, color)
+            diffimg = ImageChops.subtract(oimg, iimg, scale=0.5, offset=127).convert("L")    # old - new
+            overlay = ImageOps.colorize(diffimg, color, oldcolor, mid=(255, 255, 255))
+            #translucent = Image.new("RGB", iimg.size, color)
             enhancec = ImageEnhance.Contrast(iimg)
             enhanceb = ImageEnhance.Brightness(enhancec.enhance(0.7))
             nimg = enhanceb.enhance(1.5)
-            nimg.paste(translucent, (0, 0), dmask)
+            nimg.paste(overlay, (0, 0), dmask)
             results.append(nimg)
         if hasdiffs and len(results):
             results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])

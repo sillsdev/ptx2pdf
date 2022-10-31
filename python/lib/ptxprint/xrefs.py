@@ -375,7 +375,7 @@ class StrongsXrefs(XMLXrefs):
                         if bits[-1][-1] == ";":
                             bits[-1] = bits[-1][:-1]
                         outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", **v) + "\n")
-            if len(self.revwds) and view.get("c_strongsNdx"):
+            if self.revwds is not None and len(self.revwds) and view.get("c_strongsNdx"):
                 tailoring = self.context.getCollation()
                 ducet = tailored(tailoring.text) if tailoring else None
                 ldmlindices = self.context.getIndexList()

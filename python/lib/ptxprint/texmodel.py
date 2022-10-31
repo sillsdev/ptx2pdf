@@ -271,7 +271,8 @@ ModelMap = {
     "document/pagefullfactor":     ("s_pageFullFactor", lambda w,v: float(v or "0.65")),
     
     "document/onlyshowdiffs":   ("c_onlyDiffs", None),
-    "document/diffcolor":       ("col_diffColor", None),
+    "document/ndiffcolor":      ("col_ndiffColor", None),
+    "document/odiffcolor":      ("col_odiffColor", None),
     "document/diffpdf":         ("btn_selectDiffPDF", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/printarchive":    ("c_printArchive", None),
@@ -1584,13 +1585,13 @@ class TexModel:
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}"
-                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][{hchar}\s]*"
-                                          rf"[\p{{sc=Hebr}}][{hchar}\s]*\b)", flags=regex.M), r"\1\\+wh \2\\+wh*"))
+                hchar = r"[\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}]-[\\]"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][\\s{hchar}]*"
+                                          rf"[\p{{sc=Hebr}}][\s{hchar}]*\b)", flags=regex.M), "\\1\\+wh \\2\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
-                gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}"
-                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][{gchar}\s]*"
-                                          rf"[\p{{sc=Grek}}][{gchar}\s]*\b)", flags=regex.M), r"\1\\+wg \2\\+wg*"))
+                gchar = r"[\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}]-[\\]"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][\s{gchar}]*"
+                                          rf"[\p{{sc=Grek}}][\s{gchar}]*\b)", flags=regex.M), "\\1\\+wg \\2\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book

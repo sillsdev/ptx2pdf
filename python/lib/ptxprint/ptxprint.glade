@@ -28911,7 +28911,7 @@ options allow plenty of scope.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=6 n-rows=2 -->
+                              <!-- n-columns=7 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -28957,34 +28957,7 @@ default to _1).</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkCheckButton" id="c_onlyDiffs">
-                                    <property name="label" translatable="yes">Only Show Pages
-With Differences</property>
-                                    <property name="name">Compare PDFs: Only show pages with differences</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">When comparing two PDF files the
-resulting "Diff" PDF can get rather
-large. This option reduces the size
-of the PDF by not including any
-identical pages. This also saves
-time as you don't need to search
-through a lengthy PDF to find
-out what might have changed.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">20</property>
-                                    <property name="active">True</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29010,6 +28983,23 @@ a Previous PDF:</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Select a color to highlight the
+differences between the PDFs.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">20</property>
+                                    <property name="label" translatable="yes">Color to Highlight
+Differences With:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="btn_createDiff">
                                     <property name="label" translatable="yes">Create "Diff" PDF</property>
                                     <property name="name">Compare PDFs: Create 'diff' PDF</property>
@@ -29029,12 +29019,39 @@ Shortcut: Ctrl-D</property>
                                     <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                                   </object>
                                   <packing>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_onlyDiffs">
+                                    <property name="label" translatable="yes">Only Show Pages
+With Differences</property>
+                                    <property name="name">Compare PDFs: Only show pages with differences</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">When comparing two PDF files the
+resulting "Diff" PDF can get rather
+large. This option reduces the size
+of the PDF by not including any
+identical pages. This also saves
+time as you don't need to search
+through a lengthy PDF to find
+out what might have changed.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">20</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
                                     <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkColorButton" id="col_diffColor">
+                                  <object class="GtkColorButton" id="col_ndiffColor">
                                     <property name="name">Compare PDFs: </property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -29043,7 +29060,18 @@ Shortcut: Ctrl-D</property>
 differences between the PDFs.</property>
                                     <property name="halign">start</property>
                                     <property name="title" translatable="yes">Color to Highlight Differences</property>
-                                    <property name="rgba">rgb(240,0,0)</property>
+                                    <property name="rgba">rgb(26,95,180)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="label" translatable="yes">New changes:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
@@ -29054,18 +29082,30 @@ differences between the PDFs.</property>
                                   <object class="GtkLabel">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select a color to highlight the
-differences between the PDFs.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">20</property>
-                                    <property name="label" translatable="yes">Color to Highlight
-Differences With:</property>
+                                    <property name="label" translatable="yes">Old Changes:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkColorButton" id="col_odiffColor">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="rgba">rgb(204,0,0)</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>

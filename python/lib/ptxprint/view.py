@@ -5,7 +5,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges
+                            get_gitver, getcaller, runChanges, coltoonemax
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.2.36"
 GitVersionStr = "2.2.36"
-ConfigVersion = "2.11"
+ConfigVersion = "2.12"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -936,6 +936,11 @@ class ViewModel:
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
             self._configset(config, "document/marginalposn", "left")
+        if v < 2.12:
+            if (x := config.get("document", "diffColor", fallback=None)) is not None:
+                self._configset(config, "document/ndiffcolor", x)
+                y = coltoonemax(x)
+                self._configset(config, "document/odiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
