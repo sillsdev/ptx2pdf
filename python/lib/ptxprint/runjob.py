@@ -314,7 +314,7 @@ class RunJob:
                 # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, info, basename, ndiffcolor, onlydiffs, oldcolor=odiffcolor)
+                    diffname = self.createDiff(pdfname, info, basename, odiffcolor, onlydiffs, oldcolor=ndiffcolor)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":

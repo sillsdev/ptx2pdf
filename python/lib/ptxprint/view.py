@@ -938,9 +938,9 @@ class ViewModel:
             self._configset(config, "document/marginalposn", "left")
         if v < 2.12:
             if (x := config.get("document", "diffColor", fallback=None)) is not None:
-                self._configset(config, "document/ndiffcolor", x)
+                self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
-                self._configset(config, "document/odiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
+                self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
