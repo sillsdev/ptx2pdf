@@ -31,7 +31,7 @@
 \def\labelp@ge#1{%
     \write\picp@ges{\string\labelonpage{\folio}#1}%
 }
-\x@\def\csname start-zlabel\endcsname{%
+\x@\def\csname MS:zlabel\endcsname{%
   \get@ttribute{id}%
   \trace{m}{zlabel: \attr@b}%
   \ifx\attr@b\relax
@@ -44,7 +44,8 @@
     \x@\labelp@ge\x@{\l@gstring}%
   \fi
 }
-\x@\def\csname start-zpage\endcsname{%
+
+\x@\def\csname MS:zpage\endcsname{%
   \get@ttribute{label}%
   \ifx\attr@b\relax\else
     \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
@@ -55,7 +56,8 @@
     \fi
   \fi
 }
-\x@\def\csname start-zref\endcsname{%
+
+\x@\def\csname MS:zref\endcsname{%
   \get@ttribute{label}%
   \ifx\attr@b\relax\else
     \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%

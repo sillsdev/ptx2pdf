@@ -1939,7 +1939,9 @@
   % * only run the most specific 
    \setpossParams{#2}{\styst@k}%
    \global\afterh@@ks{}%
-   \ifx\p@ssHooks\empty\else
+   \ifx\p@ssHooks\empty
+     \trace{sh}{possiblehooks:none}%
+   \else
      \let\@ut\empty
      \trace{sh}{possiblehooks:\p@ssHooks}%
      %\tracingmacros=1 \tracingassigns=1

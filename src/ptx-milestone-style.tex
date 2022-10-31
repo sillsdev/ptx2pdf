@@ -270,26 +270,30 @@
 
 \def\figmil@stone{zfiga}
 
-\def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
+% Stand alone milestones are mainly triggers for other code, figure insertion or similar things.
+% trigger-ms:\thismil@stone and trigger-ms:\thismil@stone=attrib  are user-supplied triggers, and are expected to be USFM. They self-destruct
+% ms:\thismil@stone=attrib is defined by e.g. setzvar and is expected to be simple text. They may self-destruct
+% MS:\thismilestone is TeX code to generate zgaps, zrules etc. They never self-destruct.
+
+\def\st@ndalonemilestone{% 
   \ifx\attrid\empty
     \let\attr@b\relax
   \else 
     \get@ttribute{\attrid}%
   \fi
   \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
+  \mcpush{\ss@Mstn}{\thismil@stone}%
+  \trace{m}{Milestone stacked, \mcstack}%
   \t@stpublishability{\thismil@stone}%
-  \ifx\p@ram\relax
-    \trace{m}{Properties not defined, assuming standalone milestone has no publishable text}%
-    \n@npublishabletrue
-  \fi
   \getp@ram{type}{\thismil@stone}{\thismil@stone}%
-  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
-  \ifx\p@ram\empty\else\leavevmode\fi
-  \ifn@npublishable\else
-    \mcpush{\ss@Mstn}{\thismil@stone}%
-    \trace{m}{Milestone stacked, \mcstack}%
+  \ifx\p@ram\relax\let\p@ram\empty\fi
+  \ifx\p@ram\empty\else
+    \leavevmode
+    \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
   \fi
-  \op@ninghooks{start}{\thismil@stone}%
+  \ifn@npublishable\else
+    \op@ninghooks{start}{\thismil@stone}%
+  \fi
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
   %\tracingassigns=1
@@ -311,6 +315,8 @@
   \fi\fi
   %\tracingassigns=0
   %\tracingmacros=0
+  % execute any standard code for this milestone.
+  \ifcsname MS:\thismil@stone\endcsname \csname MS:\thismil@stone\endcsname\fi 
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
@@ -326,12 +332,12 @@
       \fi
     \fi
   \fi
-  \cl@singhooks{end}{\thismil@stone}%\
   \ifn@npublishable
     \n@npublishablefalse %restore to publishable
   \else
-    \dr@pmilestone{\thismil@stone}{}%
+    \cl@singhooks{end}{\thismil@stone}%\
   \fi
+  \dr@pmilestone{\thismil@stone}{}%
   \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
   \let\thismil@stone\empty
 }%
@@ -389,7 +395,7 @@
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
 \def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{ #2}}
-\x@\def\csname start-zrule\endcsname{%
+\x@\def\csname MS:zrule\endcsname{%
   \endgraf
   \bgroup
     \get@ttribute{cat}%
@@ -449,7 +455,7 @@
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
-\x@\def\csname start-zgap\endcsname{%
+\x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
   \endgraf
   \get@ttribute{dimension}%A
@@ -522,7 +528,7 @@
 
 
 %\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
-\x@\def\csname start-zISBNbarcode\endcsname{%
+\x@\def\csname MS:zISBNbarcode\endcsname{%
   \bgroup
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
