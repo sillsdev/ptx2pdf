@@ -1585,11 +1585,11 @@ class TexModel:
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                hchar = r"[\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}]-[\\]"
+                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
                 self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][\\s{hchar}]*"
                                           rf"[\p{{sc=Hebr}}][\s{hchar}]*\b)", flags=regex.M), "\\1\\+wh \\2\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
-                gchar = r"[\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}]-[\\]"
+                gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
                 self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][\s{gchar}]*"
                                           rf"[\p{{sc=Grek}}][\s{gchar}]*\b)", flags=regex.M), "\\1\\+wg \\2\\+wg*"))
 
