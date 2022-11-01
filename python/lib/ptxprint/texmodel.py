@@ -1587,11 +1587,11 @@ class TexModel:
             if self.dict["document/script"][8:].lower() != "hebr":
                 hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
                 self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][\\s{hchar}]*"
-                                          rf"[\p{{sc=Hebr}}][\s{hchar}]*\b)", flags=regex.M), "\\1\\+wh \\2\\+wh*"))
+                                          rf"[\p{{sc=Hebr}}][\s{hchar}]*\b)", flags=regex.M | regex.V1), "\\1\\+wh \\2\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
                 gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
                 self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][\s{gchar}]*"
-                                          rf"[\p{{sc=Grek}}][\s{gchar}]*\b)", flags=regex.M), "\\1\\+wg \\2\\+wg*"))
+                                          rf"[\p{{sc=Grek}}][\s{gchar}]*\b)", flags=regex.M | regex.V1), "\\1\\+wg \\2\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
