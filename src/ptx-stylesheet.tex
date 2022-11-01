@@ -918,7 +918,7 @@
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
    \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
    \global\let\print@bleverse=\v@rse
-   \op@ninghooks{start}{c}%
+   \op@ninghooks{start}{c}{\styst@k}%
    \m@kedigitsletters
     % If omitting chapter number, skip this. 
     % We would have to set \OmitChapterNumbertrue on a book by book basis
@@ -1337,8 +1337,8 @@
 \def\itp@psstore{}
 \def\endit@c{\endch@rstylepls*}
 \def\endit@C{\endch@rstyle*}
-\def\endit@T{\cl@singhooks{end}{cat}\par\mcpopsimple\egroup\@ndc@t\s@tc@tpr@fix} %Must call closing hooks before end of group, Must call mcpopsimple.
-\def\endit@t{\cl@singhooks{end}{cat}\mcpopsimple\s@tc@tpr@fix}
+\def\endit@T{\cl@singhooks{end}{cat}{\styst@k}\par\mcpopsimple\egroup\@ndc@t\s@tc@tpr@fix} %Must call closing hooks before end of group, Must call mcpopsimple.
+\def\endit@t{\cl@singhooks{end}{cat}{\styst@k}\mcpopsimple\s@tc@tpr@fix}
 
 \def\whileitp@ps#1+#2+#3\E{% This almost does the same as \end@llcharstyle, but uses the new mechanism
   \global\p@ppingtrue
@@ -1350,7 +1350,7 @@
   \fi
   \trace{sa}{whileitp@ps result:\tmp}%
   \if S\tmp\relax % Store it?
-     \xdef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the stystak
+     \xdef\itp@psstore{#1+#2,\itp@psstore}%only store the marker and type, restacking will recaclulate the styst@k
      \mcpopsimple
   \else
     \if Y\tmp\relax  %end it and pop it
@@ -1830,6 +1830,7 @@
 \def\endc@tmarker{t*}
 \def\@ndc@t{%
   \trace{sc}{@ndc@t(\c@tegory) \ifp@pping[popping]\fi}%
+  \global\let\h@@kstyst@k\styst@k
   \ifx\c@tegory\empty
     \trace{sc}{@ndc@t called with empty category. Eh?}%
   \else
@@ -1844,7 +1845,7 @@
       \ifn@npublishable\global\n@npublishablec@ttrue\else\global\n@npublishablec@tfalse\fi
       \iftemp\n@npublishabletrue\else\n@npublishablefalse\fi
       \endgroup %End the group started between the cat groups     %(3)
-      \cl@singhooks{after}{cat}%
+      \cl@singhooks{after}{cat}{\h@@kstyst@k}%
       \s@tc@tprefix{}%
       \the\afterh@@ks
       \egroup % End the group from the containing code.             %(4)
@@ -1859,9 +1860,9 @@
     \trace{sc}{Odd situation: two cat commands in one group or nested categories? Assuming nesting.}%
     \end@llpoppedstyles{\ss@Ctgy}%pop styles closed by a start of t, in case this IS 2 cat commands
     % Assume nesting and don't run any endhooks. Otherwise we'd do this:
-    %\op@ninghooks{end}{cat}% 
+    %\op@ninghooks{end}{cat}{\styst@k}% 
     %\endgroup %End the group started between the cat groups  
-    %\cl@singhooks{after}{cat}%
+    %\cl@singhooks{after}{cat}{\styst@k}%
   \fi
   \ifx\stylet@pe\ss@Para
     %NOTE To potential vandals: This bit of code should ONLY be reached from a 
@@ -1875,11 +1876,11 @@
   \edef\tmp{\nofin@lspace #1 \E}%Ensure full expansion 
   \x@\s@tc@tprefix\x@{\tmp}%
   \the\c@th@@ks% Run anythingthe enclosing code wants
-  \op@ninghooks{before}{cat}% 
+  \op@ninghooks{before}{cat}{cat\ifx\styst@k\empty\else+\styst@k\fi}% 
   \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
   \trace{sk}{docat: Pushing '#1' onto \mcstack}%
   \mcpush{\stylet@pe}{#1}%
-  \op@ninghooks{start}{cat}%
+  \op@ninghooks{start}{cat}{\styst@k}%
   \let\styst@k=\empty
   \s@tstyst@k%
   %\n@npublishablefalse\getmcp@ram{properties}%
@@ -1909,17 +1910,17 @@
 
 %+csty_hooks
 %Hook-runners for paragraph and character styles
-\def\op@ninghooks#1#2{% for <start> and <before> hooks
+\def\op@ninghooks#1#2#3{% for <start> and <before> hooks
    \trace{sh}{op@ninghooks #1 #2}%
-   \@@fillhooks{#1}{#2}{\cstacktop}%
+   \@@fillhooks{#1}{#2}{#3}{\cstacktop}%
    \the\afterh@@ks
    \global\afterh@@ks{}%
 }
 \newtoks\c@th@@ks
 \newtoks\afterh@@ks
-\def\cl@singhooks#1#2{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
-  \trace{sh}{cl@singhooks #1 #2}%
-  \@@fillhooks{#1}{#2}{\cstacktop}%
+\def\cl@singhooks#1#2#3{% for <end> and <after> hooks. For <after> hooks, it's necessary to end the group after these are defined 
+  \trace{sh}{cl@singhooks #1 #2 (#3)}%
+  \@@fillhooks{#1}{#2}{#3}{\cstacktop}%
   \x@\global\x@\afterh@@ks\x@{\the\afterh@@ks\global\afterh@@ks{}}% Notice the self-clearing %(1)
   \edef\@@@a{#1}%                                                  %(2)
   \ifx\@@@a\@fter\else\the\afterh@@ks\fi
@@ -1927,17 +1928,17 @@
 \edef\@fter{after}
 
 \def\s@tupstringf@lter#1{\edef\f@lterval{#1}\x@\@s@tupstringf@lter\x@{\tmp}}\def\@s@tupstringf@lter#1{%
-  % Define a piece of code that matches: id:GEN|cat:foo|ft or ft+f  or b+ft  or b+ft+f
+  % Define a piece of code that matches ft in: id:GEN|cat:foo|ft or ft+f  or b+ft  or b+ft+f
   \gdef\s@tt@mp##1{\trace{sh}{Comparing ##1 with #1}\t@mpfalse\ifx\f@lterval\cstack@tmp\t@mptrue\else \@s@tt@mp##1|\E \@@s@tt@mp##1+\E\fi}%
   \gdef\@s@tt@mp##1|##2\E{\edef\tmp{##1}\trace{sh}{\meaning\tmp=\meaning\f@lterval?}\ifx\f@lterval\tmp\trace{sh}{yes}\t@mptrue\else\ifx\tmp\empty\else\@s@tt@mp ##2|\E\fi\fi}%
   \gdef\@@s@tt@mp##1+##2\E{\edef\tmp{##2}\ifx\f@lterval\tmp\t@mptrue\else\@s@tt@mp##1|\E \if\tmp\empty\else\@@s@tt@mp ##2+\E\fi\fi}%
 }
-\def\@@fillhooks#1#2#3{%
-  % TODO: 
+\def\@@fillhooks#1#2#3#4{%
+   \trace{sh}{@@fillhooks: #2 \styst@k, \csname styl@type-#2\endcsname}%
   % * Filtering: 
   % * only run hooks that include the #2 marker get included!
   % * only run the most specific 
-   \setpossParams{#2}{\styst@k}%
+   \setpossParams{#2}{#3}%
    \global\afterh@@ks{}%
    \ifx\p@ssHooks\empty
      \trace{sh}{possiblehooks:none}%
@@ -1957,7 +1958,7 @@
      %\tracingassigns=2\tracingrestores=1\tracingmacros=1
      \def\@lso{#1}%
      \let\d@\csex@cHook
-     \x@#3\p@ssHooks,\E
+     \x@#4\p@ssHooks,\E
      %\tracingassigns=0\tracingrestores=0\tracingmacros=0
    \fi
 }

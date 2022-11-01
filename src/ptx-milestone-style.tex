@@ -132,7 +132,7 @@
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
-   \op@ninghooks{before}{\thismil@stone}%
+   \op@ninghooks{before}{\thismil@stone}{\styst@k}%
    \csname init@ttribs\endcsname
 }
 
@@ -248,12 +248,13 @@
   \fi
   \kill@PossParamCache
   \trace{m}{Style stack now: \mcstack}%
-  \op@ninghooks{start}{\thismil@stone}%
+  \op@ninghooks{start}{\thismil@stone}{\styst@k}%
 }
 
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
-  \cl@singhooks{end}{\thismil@stone}%
+  \let\h@@kstyst@k\styst@k
+  \cl@singhooks{end}{\thismil@stone}{\h@@kstyst@k}%
   \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@ttribs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
@@ -262,7 +263,7 @@
   \fi
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
-  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
+  \cl@singhooks{after}{\thismil@stone}{\h@@kstyst@k}\the\afterh@@ks
   \global\let\attr@b\empty\global\let\attrid\empty
   \global\let\thismil@stone\empty
   \global\let\thisattrmil@stone\empty
@@ -292,7 +293,7 @@
     \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
   \fi
   \ifn@npublishable\else
-    \op@ninghooks{start}{\thismil@stone}%
+    \op@ninghooks{start}{\thismil@stone}{\styst@k}%
   \fi
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
@@ -332,13 +333,14 @@
       \fi
     \fi
   \fi
+  \let\h@@kstyst@k\styst@k
   \ifn@npublishable
     \n@npublishablefalse %restore to publishable
   \else
-    \cl@singhooks{end}{\thismil@stone}%\
+    \cl@singhooks{end}{\thismil@stone}{\h@@kstyst@k}%\
   \fi
   \dr@pmilestone{\thismil@stone}{}%
-  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
+  \cl@singhooks{after}{\thismil@stone}{\h@@kstyst@k}\the\afterh@@ks\relax
   \let\thismil@stone\empty
 }%
 

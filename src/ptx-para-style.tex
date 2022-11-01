@@ -197,7 +197,7 @@
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
    \makecutouts
-   \cl@singhooks{end}{\m@rker}%
+   \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
    \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
    \ifdoingt@ble\else
@@ -322,12 +322,13 @@
  \ifdebugthisparearly\global\debugthisparearlyfalse\showlists\fi
  \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the  style active when the last paragraph ended.
  \global\let\spaceafterp@ram\p@ram
+ \global\let\h@@kstyst@k\styst@k
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
  \ifdebugthispar\global\debugthisparfalse\showlists\fi
- \trace{s}{endlastp@rstyle #1 stack=\mcstack, stys@k:\styst@k}%
+ \trace{s}{endlastp@rstyle #1 stack=\mcstack, styst@k:\styst@k}%
  \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
  \toplevelp@rtrue
  \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
@@ -352,7 +353,7 @@
   
     %\mctop \mcpop                                                                 %(2)
   %\fi
-  \cl@singhooks{after}{\m@rker}%
+  \cl@singhooks{after}{\m@rker}{\h@@kstyst@k}%
   \the\afterh@@ks
  \fi
 }
@@ -396,7 +397,7 @@
   \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
-  \op@ninghooks{before}{\m@rker}%
+  \op@ninghooks{before}{\m@rker}{\styst@k}%
 %-cpar_parstyle_after
   %
   % now we check what kind of marker this is: intro? title? section? other?
@@ -604,7 +605,7 @@
    \global\p@ranesting=1
    \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
    \tmpn@xtparstart
-   \op@ninghooks{start}{\m@rker}%handle <start> hook
+   \op@ninghooks{start}{\m@rker}{\styst@k}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
    \startparafalse\first@fterheadingfalse
