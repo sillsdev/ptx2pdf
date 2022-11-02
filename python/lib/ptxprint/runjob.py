@@ -851,26 +851,18 @@ class RunJob:
             oimg = next(ogen, None)
             if oimg is None:
                 break
-            dmask = ImageChops.difference(oimg, iimg).convert("L")
-            if not dmask.getbbox():
-                if onlydiffs:
-                    continue
-            elif dmask.size != iimg.size:
-                info.printer.doError(_("Page sizes differ between output and base. Cannot create a difference."),
-                    threaded=True, title=_("Difference Error"))
-                return
-            else:
-                hasdiffs = True
-            if maxdiff:
-                dmask = dmask.point(lambda x: 255 if x else 0)
             diffimg = ImageChops.subtract(oimg, iimg, scale=0.5, offset=127).convert("L")    # old - new
             npi = np.array(diffimg)
-            if not np.any(npi):
+            npd = npi.copy()
+            npt = abs(npi - 127)
+            npd[npt > 4] = 255
+            npd[npt < 5] = 0
+            if not npd.any():
                 continue
-            npt = npi > 127
-            npi[npt] = 255
-            npt = npi < 127
-            npi[npt] = 0
+            hasdiffs = True
+            npi[npi > 127] = 255
+            npi[npi < 127] = 0
+            dmask = Image.fromarray(npd)
             diffimg = Image.fromarray(npi)
             overlay = ImageOps.colorize(diffimg, color, oldcolor, mid=(255, 255, 255))
             #translucent = Image.new("RGB", iimg.size, color)
