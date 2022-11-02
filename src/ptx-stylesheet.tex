@@ -1185,7 +1185,7 @@
  \let\nb=\ptx@nb% \nb is a special code that suppresses a paragraph break across \c
  \global\let\@k=\k
  \def\tr@ceT{\trace{T}}
- \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}}
+ \def\setkr@f##1{\edef\kr@f{\zap@space ##1 \empty}\x@\deslash\x@{\kr@f}\let\kr@f\tmp}
  %\catcode`\~=12 \lccode`\~=32\lowercase{
  \def\@@k##1\k*{%\k processing 2nd half
     \let\v@rse=\empty % Normally verses and keywords don't co-occur

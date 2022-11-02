@@ -246,6 +246,8 @@
 }
 \oddc@tcodes%NO SPACES until |normalc@tcodes is called.
 |gdef|isitslash{|let|c@ntinue|store@ttributes|if|nxt\|let|c@ntinue|startp@stattribcmd|normalc@tcodes|fi|c@ntinue}%
+|def|zap@slash#1\#2{#1|ifx#2|empty|else|expandafter|zap@slash|fi#2}%
+|def|deslash#1{|edef|tmp{|zap@slash#1\|empty}}%
 |normalc@tcodes%
 %
 %
@@ -326,6 +328,7 @@
   #1%
   \ifx#2\empty\else\expandafter\zap@comma\fi
   #2}
+
 
 \def\geton@item #1 #2\E{% Parse space separated list
   \edef\it@m{#1}%
