@@ -263,6 +263,9 @@
                 "es": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "fr": "de_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International."
             },
+            "sensitive": {
+                "en": "by_Carolyn_Dyk, ©_2001_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License."
+            },
             "media": {
                 "default": "paw",
                 "limit": "paw",
@@ -278,6 +281,9 @@
                 "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+            },
+            "sensitive": {
+                "en": "by_Gordon_Thompson ©_2012_WBT_Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -295,6 +301,9 @@
                 "es": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_David_Healey ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
             },
+            "sensitive": {
+                "en": "by_David_Healey ©_2012_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
+            },
             "media": {
                 "default": "paw",
                 "limit": "paw",
@@ -310,6 +319,9 @@
                 "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "fr": "de_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. et autorisé sous la_licence Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia."
+            },
+            "sensitive": {
+                "en": "by_Michael_Harrar ©_2012_WBT_Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License."
             },
             "media": {
                 "default": "paw",
@@ -343,6 +355,9 @@
                 "es": "por_Graham_Wade, ©_United Bible Societies, 1989.",
                 "fr": "de_Graham_Wade, ©_United Bible Societies, 1989."
             },
+            "sensitive": {
+                "en": "©_UBS,_1989."
+            },
             "media": {
                 "default": "p",
                 "limit": "p",
@@ -360,6 +375,9 @@
                 "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "es": "por_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "fr": "de_Darwin_Dunham, ©_United Bible Societies, 1989."
+            },
+            "sensitive": {
+                "en": "©_UBS,_1989."
             },
             "media": {
                 "default": "p",
