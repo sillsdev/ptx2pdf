@@ -1934,7 +1934,7 @@
   \gdef\@@s@tt@mp##1+##2\E{\edef\tmp{##2}\ifx\f@lterval\tmp\t@mptrue\else\@s@tt@mp##1|\E \if\tmp\empty\else\@@s@tt@mp ##2+\E\fi\fi}%
 }
 \def\@@fillhooks#1#2#3#4{%
-   \trace{sh}{@@fillhooks: #2 \styst@k, \csname styl@type-#2\endcsname}%
+   \trace{sh}{@@fillhooks: #2 \styst@k, \csname stylet@pe-#2\endcsname}%
   % * Filtering: 
   % * only run hooks that include the #2 marker get included!
   % * only run the most specific 
