@@ -855,13 +855,13 @@ class RunJob:
             npi = np.array(diffimg)
             npd = npi.copy()
             npt = abs(npi - 127)
-            npd[npt > 4] = 255 - npt[npt > 4] * 2
-            npd[npt < 5] = 255
-            if not np.any(npd != 255):
+            npd[npt > 4] = 255
+            npd[npt < 5] = 0
+            if not npd.any():
                 continue
             hasdiffs = True
-            #npi[npi > 127] = 255
-            #npi[npi < 127] = 0
+            npi[npi > 127] = 255
+            npi[npi < 127] = 0
             dmask = Image.fromarray(npd)
             diffimg = Image.fromarray(npi)
             overlay = ImageOps.colorize(diffimg, color, oldcolor, mid=(255, 255, 255))
