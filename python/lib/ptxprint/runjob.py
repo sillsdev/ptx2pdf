@@ -864,6 +864,14 @@ class RunJob:
             if maxdiff:
                 dmask = dmask.point(lambda x: 255 if x else 0)
             diffimg = ImageChops.subtract(oimg, iimg, scale=0.5, offset=127).convert("L")    # old - new
+            npi = np.array(diffimg)
+            if not np.any(npi):
+                continue
+            npt = npi > 127
+            npi[npt] = 255
+            npt = npi < 127
+            npi[npt] = 0
+            diffimg = Image.fromarray(npi)
             overlay = ImageOps.colorize(diffimg, color, oldcolor, mid=(255, 255, 255))
             #translucent = Image.new("RGB", iimg.size, color)
             enhancec = ImageEnhance.Contrast(iimg)
