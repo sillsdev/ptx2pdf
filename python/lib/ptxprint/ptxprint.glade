@@ -14947,7 +14947,7 @@ Footnotes and xRefs (pt):</property>
                                 <property name="orientation">vertical</property>
                                 <child>
                                   <!-- n-columns=4 n-rows=6 -->
-                                  <object class="GtkGrid" id="gr_xrefs">
+                                  <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
