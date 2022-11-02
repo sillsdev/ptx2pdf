@@ -829,7 +829,7 @@ class RunJob:
             os.remove(opath)
         return True
 
-    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False, oldcolor=None):
+    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=True, oldcolor=None):
         outname = pdfname[:-4] + "_diff.pdf"
         othername = basename or pdfname[:-4] + "_1.pdf"
         if color is None:
