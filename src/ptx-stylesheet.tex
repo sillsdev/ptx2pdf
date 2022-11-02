@@ -1144,6 +1144,7 @@
 \def\n@xtparstart{}
 \def\print@bleverse{}
 %+csty_addspecialhooks
+\newif\ifr@gurgitated % \k processing and maybe some other things end up with 'regurgitating' markers. This can mess up space detection.
 \begingroup
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
@@ -1194,7 +1195,9 @@
     \tr@ceT{keyword: \kr@f}%
     \runtrigg@rsother{k.\kr@f}%
     \activ@tecustomch@rs%   no CR here
+    \r@gurgitatedtrue
     \x@\@k\scantokens{ ##1\ignorespaces}\endch@rstylen*%
+    \r@gurgitatedfalse
     \runtrigg@rs{\id@@@ k.\kr@f}%
   }%}
  \def\k{%\k processing
