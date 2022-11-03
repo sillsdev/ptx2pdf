@@ -118,7 +118,7 @@ class TTFontCache:
         files = checkoutput(["fc-list", ":file"], path="xetex")
         for f in files.split("\n"):
             logger.log(8, f"fc-list: {f}")
-            if ": " not in f:
+            if ": " not in f or f.endswith(": "):
                 continue
             try:
                 (path, full) = f.strip().split(": ")
@@ -176,13 +176,20 @@ class TTFontCache:
 
     def removeFontDir(self, path):
         logger.debug("add Font Path: {}".format(path))
-        self.fontpaths.remove(path)
+        try:
+            self.fontpaths.remove(path)
+        except ValueError:
+            pass
         logger.debug(f"Remove font path: {path}")
         allitems = list(self.cache.items())
         for f, c in allitems:
             theseitems = list(c.items())
             for k, v in theseitems:
-                if "/" not in os.path.relpath(v, path).replace("\\", "/"):
+                try:
+                    rp = os.path.relpath(v, path)
+                except ValueError:
+                    rp = v
+                if "/" not in rp.replace("\\", "/"):
                     if f not in self.fccache or k not in self.fccache[f]:
                         del c[k]
                     else:

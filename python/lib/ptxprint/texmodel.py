@@ -939,6 +939,12 @@ class TexModel:
                 self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
+        if self.dict['project/plugins']:
+            p = self.dict['project/plugins']
+            if p.startswith("\\"):
+                res.append(p)
+            else:
+                res.append("\\def\\pluginlist{{{}}}".format(p))
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
