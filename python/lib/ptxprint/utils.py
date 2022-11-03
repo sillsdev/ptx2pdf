@@ -290,12 +290,28 @@ def get_ptsettings():
     pt_settings = None
     ptob = openkey("Paratext/8")
     if ptob is None:
-        tempstr = ("C:\\My Paratext {} Projects" if sys.platform == "win32" else
-                    os.path.expanduser("~/Paratext{}Projects"))
+        logger.debug(f"No registry key found for Paratext. Searching for data folder...")
         for v in ('9', '8'):
-            path = tempstr.format(v)
-            if os.path.exists(path):
-                pt_settings = path
+            if sys.platform == "win32":
+                for d in map(chr, range(ord('C'), ord('Z')+1)):
+                    if os.path.exists("{}:\\".format(d)):
+                        tempstr = "{}:\\My Paratext {} Projects"
+                        path = tempstr.format(d,v)
+                        if os.path.exists(path):
+                            pt_settings = path
+                            logger.debug(f"Found Paratext data folder: {path}")
+                            break
+                else:
+                    continue
+                break
+            else:
+                tempstr = os.path.expanduser("~/Paratext{}Projects")
+                path = tempstr.format(v)
+                if os.path.exists(path):
+                    pt_settings = path
+                    logger.debug(f"Found Paratext data folder: {path}")
+                    break
+        logger.debug(f"ERROR: Unable to find a Paratext data folder! Searched C,D,E,...,Z drives")
     else:
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
