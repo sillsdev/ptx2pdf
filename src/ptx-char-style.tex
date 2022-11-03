@@ -95,17 +95,22 @@
 \lowercase{
 %-cchar_docharstyle_intro
 %+cchar_docharstyle
+ \let\@@st@risk*
+ \let\@@spc~
+ \let\@@nl_
+ \let\@@min-
  \def\startch@rstyle@misc{\startch@rstyle \relax}%
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker    %(1)
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   %\tracingassigns=1
-  \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
+  %\trace{ct}{n@xt: '\meaning\n@xt'= \meaning\@st@risk?}%
+  \ifx\n@xt\@@st@risk \let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else
     \temptrue
-    \if\n@xt~\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle, after \thisch@rstyle}\else
-      \if\n@xt_\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
-        \if\n@xt-\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
+    \ifx\n@xt\@@spc\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle, after \thisch@rstyle}\else
+      \ifx\n@xt\@@nl\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
+        \ifx\n@xt\@@min\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
 	  \let\n@xt@\startch@rstyle@misc\trace{ss}{misc delimiter for \newch@rstyle}\fi\fi\fi
     \iftemp
       \end@llpoppedstyles{\ss@Char}%a char style closes all other char styles, milestones do not.e
@@ -121,14 +126,14 @@
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \trace{sa}{charstyleplus}%
   %\tracingassigns=1
-  \if\n@xt*\let\n@xt@\endch@rstylepls % check for "*", if so then we need to end the style
-  \else\if\n@xt~\trace{ss}{space delimiter for +\newch@rstyle, after \thisch@rstyle}%
+  \ifx\n@xt\@@st@risk\let\n@xt@\endch@rstylepls % check for "*", if so then we need to end the style
+  \else\ifx\n@xt\@@spc\trace{ss}{space delimiter for +\newch@rstyle, after \thisch@rstyle}%
       \ifr@gurgitated %has this bit of input been detokenized and retokenized? that adds spaces.
         \ifx\thisch@rstyle\newch@rstyle\let\n@xt@\retrych@rstylepls\else\let\n@xt@\startch@rstyle@spc\fi
       \else\let\n@xt@\startch@rstyle@spc
       \fi
-    \else\if\n@xt_\trace{ss}{nl delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startch@rstyle@nl
-      \else\if\n@xt-\trace{ss}{minus delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\else
+    \else\ifx\n@xt\@@nl\trace{ss}{nl delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startch@rstyle@nl
+      \else\ifx\n@xt\@@min\trace{ss}{minus delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\else
         \let\n@xt\startch@rstyle
     \fi\fi\fi
   \fi % else we need to start it
