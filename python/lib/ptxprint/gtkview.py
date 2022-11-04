@@ -263,6 +263,7 @@ _sensitivities = {
     "c_strongs2cols":          ["l_strongRag", "s_strongRag"],
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
+    "c_txlQuestionsInclude":   ["gr_txlQuestions"],
     "c_filterCats":            ["gr_filterCats"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],

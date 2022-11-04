@@ -11,7 +11,7 @@ class NoBook:
     def getLocalBook(cls, s, level=0):
         return ""
 
-def transcel(triggers, bk, prjdir, lang, usfm=None):
+def transcel(triggers, bk, prjdir, lang, overview=False, numberedQuestions=True, usfm=None):
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
     logger.debug(f"Importing transcelerator data from {tfile}")
@@ -20,7 +20,10 @@ def transcel(triggers, bk, prjdir, lang, usfm=None):
     if usfm is not None:
         usfm.addorncv()
     tdoc = et.parse(tfile)
+    n = 0
     for q in tdoc.findall('.//Question'):
+        if not overview and q.get("overview", "") == "true":
+            continue
         ref = Reference(bk, int(q.get("startChapter", 0)), int(q.get("startVerse", 0)))
         ev = int(q.get("endVerse", 0))
         if ev != 0:
@@ -29,7 +32,9 @@ def transcel(triggers, bk, prjdir, lang, usfm=None):
             ref = usfm.bridges.get(ref.first, ref.first)
         txt = q.findtext('./Q/StringAlt[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
         if txt is not None and len(txt):
-            entry = "\\ef - \\fr {} \\ft {}\\ef*".format(ref.str(context=NoBook), txt)
+            n += 1
+            refr = ref.str(context=NoBook) if not numberedQuestions else "{}.".format(n)
+            entry = "\\ef - \\fr {} \\ft {}\\ef*".format(refr, txt)
             triggers[ref] = triggers.get(ref.first, "") + entry
     return triggers
 

@@ -387,6 +387,12 @@ ModelMap = {
     "studynotes/colgutteroffset": ("s_ef_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
   # "studynotes/bottomrag":       ("s_ef_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
     "studynotes/includesidebar":  ("c_sidebars", None),
+    "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
+    "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
+    "studynotes/txldetail":       ("c_txlQuestionsDetail", None),
+    "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 
+    # "studynotes/txllangtag":      ("t_txlQuestionsLang", lambda w,v: v if len(v) 
+                                        # else w.ptsettings.get('LanguageIsoCode', "en-US")),
     "studynotes/filtercats":      ("c_filterCats", None),
 
     "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),

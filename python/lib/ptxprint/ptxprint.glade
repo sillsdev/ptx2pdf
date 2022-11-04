@@ -16630,6 +16630,7 @@ and Parameters:</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">start</property>
+                                <property name="valign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="margin-top">6</property>
@@ -16697,7 +16698,6 @@ the text of the two columns
 the text of the two columns.</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
-                                                <property name="margin-left">12</property>
                                                 <property name="margin-start">12</property>
                                                 <property name="label" translatable="yes">Gutter 
 Width (mm):</property>
@@ -16808,10 +16808,8 @@ Between Notes:</property>
 line between the two columns.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
-                                                <property name="margin-left">8</property>
                                                 <property name="margin-top">6</property>
                                                 <property name="margin-bottom">6</property>
-                                                <property name="xalign">0</property>
                                                 <property name="draw-indicator">True</property>
                                                 <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                               </object>
@@ -16890,10 +16888,8 @@ Note that currently only a,b,c...x,y,z callers are
 possible for this option.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
-                                                <property name="margin-left">8</property>
                                                 <property name="margin-top">6</property>
                                                 <property name="margin-bottom">6</property>
-                                                <property name="xalign">0</property>
                                                 <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
@@ -17328,18 +17324,17 @@ larger blocks of topic-specific information. </property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkFrame" id="fr_filterCats">
+                                  <object class="GtkFrame" id="fr_txlQuestions">
                                     <property name="width-request">480</property>
                                     <property name="visible">True</property>
-                                    <property name="sensitive">False</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=6 -->
-                                      <object class="GtkGrid" id="gr_filterCats">
+                                      <!-- n-columns=3 n-rows=3 -->
+                                      <object class="GtkGrid" id="gr_txlQuestions">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">start</property>
@@ -17347,178 +17342,93 @@ larger blocks of topic-specific information. </property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">12</property>
                                         <property name="margin-bottom">6</property>
-                                        <property name="row-spacing">6</property>
+                                        <property name="row-spacing">5</property>
                                         <property name="column-spacing">6</property>
                                         <child>
-                                          <object class="GtkViewport">
-                                            <property name="width-request">380</property>
+                                          <object class="GtkEntry" id="t_txlQuestionsLang">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="hexpand">True</property>
-                                            <property name="vexpand">True</property>
-                                            <child>
-                                              <object class="GtkScrolledWindow" id="scr_sbCatList">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="hexpand">True</property>
-                                                <property name="vexpand">True</property>
-                                                <property name="shadow-type">in</property>
-                                                <property name="overlay-scrolling">False</property>
-                                                <child>
-                                                  <object class="GtkTreeView" id="tv_sbCatEdit">
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="vexpand">True</property>
-                                                    <property name="hadjustment">a_zvarListadjustment1</property>
-                                                    <property name="vadjustment">a_zvarListadjustment2</property>
-                                                    <property name="vscroll-policy">natural</property>
-                                                    <property name="model">ls_sbCatList</property>
-                                                    <property name="reorderable">True</property>
-                                                    <property name="enable-search">False</property>
-                                                    <property name="search-column">0</property>
-                                                    <property name="fixed-height-mode">True</property>
-                                                    <property name="show-expanders">False</property>
-                                                    <child internal-child="selection">
-                                                      <object class="GtkTreeSelection"/>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkTreeViewColumn" id="col_sbCatList_name">
-                                                        <property name="resizable">True</property>
-                                                        <property name="spacing">2</property>
-                                                        <property name="sizing">fixed</property>
-                                                        <property name="fixed-width">110</property>
-                                                        <property name="title" translatable="yes">Category</property>
-                                                        <property name="clickable">True</property>
-                                                        <property name="reorderable">True</property>
-                                                        <property name="sort-indicator">True</property>
-                                                        <property name="sort-column-id">0</property>
-                                                        <child>
-                                                          <object class="GtkCellRendererText" id="cr_sbCatList_name"/>
-                                                          <attributes>
-                                                            <attribute name="text">0</attribute>
-                                                          </attributes>
-                                                        </child>
-                                                      </object>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkTreeViewColumn" id="col_sbCatListEF_value">
-                                                        <property name="spacing">2</property>
-                                                        <property name="sizing">fixed</property>
-                                                        <property name="fixed-width">150</property>
-                                                        <property name="title" translatable="yes">Extended Footnote (\ef)</property>
-                                                        <property name="sort-column-id">1</property>
-                                                        <child>
-                                                          <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value">
-                                                            <signal name="toggled" handler="onCatEFtoggled" swapped="no"/>
-                                                          </object>
-                                                          <attributes>
-                                                            <attribute name="active">1</attribute>
-                                                          </attributes>
-                                                        </child>
-                                                      </object>
-                                                    </child>
-                                                    <child>
-                                                      <object class="GtkTreeViewColumn" id="col_sbCatListEF_value1">
-                                                        <property name="spacing">2</property>
-                                                        <property name="sizing">fixed</property>
-                                                        <property name="fixed-width">100</property>
-                                                        <property name="title" translatable="yes">Sidebar (\esb)</property>
-                                                        <property name="sort-column-id">2</property>
-                                                        <child>
-                                                          <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value">
-                                                            <signal name="toggled" handler="onCatSBtoggled" swapped="no"/>
-                                                          </object>
-                                                          <attributes>
-                                                            <attribute name="active">2</attribute>
-                                                          </attributes>
-                                                        </child>
-                                                      </object>
-                                                    </child>
-                                                  </object>
-                                                </child>
-                                              </object>
-                                            </child>
+                                            <property name="can-focus">True</property>
+                                            <property name="tooltip-text" translatable="yes">Enter the language code for the questions
+to be included. Usually this will be a 3-letter
+Ethnologue code (but other language tags
+such as en-US, fr, es are also acceptable).</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">1</property>
+                                            <property name="margin-end">3</property>
+                                            <property name="width-chars">8</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
                                             <property name="top-attach">0</property>
-                                            <property name="height">6</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="b_sb_addcat">
-                                            <property name="label" translatable="yes">Add</property>
-                                            <property name="name">Add sidebar category to filter</property>
+                                          <object class="GtkLabel">
                                             <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Add a new Category.</property>
-                                            <property name="valign">center</property>
-                                            <property name="margin-start">6</property>
-                                            <signal name="clicked" handler="onCatListAdd" swapped="no"/>
+                                            <property name="can-focus">False</property>
+                                            <property name="tooltip-text" translatable="yes">Enter the language code for the questions
+to be included. Usually this will be a 3-letter
+Ethnologue code (but other language tags
+such as en-US, fr, es are also acceptable).</property>
+                                            <property name="label" translatable="yes">Language Code:</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">3</property>
+                                            <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="b_sb_delcat">
-                                            <property name="label" translatable="yes">Del</property>
-                                            <property name="name">Delete sidebar category from filter</property>
+                                          <object class="GtkLabel">
+                                            <property name="width-request">30</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_txlQuestionsOverview">
+                                            <property name="label" translatable="yes">Show Overview Questions</property>
+                                            <property name="name">Transcelerator: Show overview questions</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Delete the currently
-selected Category.</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Overview questions are designed to test
+the general understanding of the passage.</property>
+                                            <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-start">6</property>
-                                            <signal name="clicked" handler="onCatListDel" swapped="no"/>
+                                            <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">4</property>
+                                            <property name="top-attach">1</property>
+                                            <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkButton" id="btn_sb_rescanCats">
-                                            <property name="label">↺</property>
-                                            <property name="name">Rescan categories to filter sidebars</property>
+                                          <object class="GtkCheckButton" id="c_txlQuestionsNumbered">
+                                            <property name="label" translatable="yes">Number the Questions</property>
+                                            <property name="name">Transcelerator: Number the questions</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="receives-default">True</property>
-                                            <property name="tooltip-text" translatable="yes">Clicking this button will rescan 
-the project to add any Categories 
-missing from this list.</property>
-                                            <property name="halign">end</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">This option enables the questions to be
+numbered sequentially for each book.
+
+If unchecked, the ch:vs reference will
+be displayed instead with each question. </property>
+                                            <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <signal name="clicked" handler="onReScanCatList" swapped="no"/>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
-                                            <property name="top-attach">5</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">2</property>
                                           </packing>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -17529,19 +17439,22 @@ missing from this list.</property>
                                       </object>
                                     </child>
                                     <child type="label">
-                                      <object class="GtkCheckButton" id="c_filterCats">
-                                        <property name="label" translatable="yes">Filter Categories</property>
-                                        <property name="name">Filter study note sidebars</property>
+                                      <object class="GtkCheckButton" id="c_txlQuestionsInclude">
+                                        <property name="label" translatable="yes">Include Transcelerator Questions</property>
+                                        <property name="name">Include (Transcelerator) Checking Questions</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">Use this option to restrict certain categories of
-extended study notes and sidebars from being displayed. </property>
+                                        <property name="tooltip-text" translatable="yes">Use this option to include questions which
+have been created with SIL's Transcelerator
+tool for the purpose of comprehension testing.
+
+These will be displayed at the bottom of the page
+in the area normally used for Study Notes.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">2</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onFilterCatsClicked" swapped="no"/>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                     </child>
@@ -17549,11 +17462,248 @@ extended study notes and sidebars from being displayed. </property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">2</property>
+                                    <property name="position">3</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkExpander">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <child>
+                                      <object class="GtkFrame" id="fr_filterCats">
+                                        <property name="width-request">480</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="no-show-all">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="label-xalign">0.029999999329447746</property>
+                                        <child>
+                                          <!-- n-columns=3 n-rows=6 -->
+                                          <object class="GtkGrid" id="gr_filterCats">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="margin-top">12</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">6</property>
+                                            <property name="column-spacing">6</property>
+                                            <child>
+                                              <object class="GtkViewport">
+                                                <property name="width-request">380</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="hexpand">True</property>
+                                                <property name="vexpand">True</property>
+                                                <child>
+                                                  <object class="GtkScrolledWindow" id="scr_sbCatList">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="hexpand">True</property>
+                                                    <property name="vexpand">True</property>
+                                                    <property name="shadow-type">in</property>
+                                                    <property name="overlay-scrolling">False</property>
+                                                    <child>
+                                                      <object class="GtkTreeView" id="tv_sbCatEdit">
+                                                        <property name="visible">True</property>
+                                                        <property name="can-focus">True</property>
+                                                        <property name="vexpand">True</property>
+                                                        <property name="hadjustment">a_zvarListadjustment1</property>
+                                                        <property name="vadjustment">a_zvarListadjustment2</property>
+                                                        <property name="vscroll-policy">natural</property>
+                                                        <property name="model">ls_sbCatList</property>
+                                                        <property name="reorderable">True</property>
+                                                        <property name="enable-search">False</property>
+                                                        <property name="search-column">0</property>
+                                                        <property name="fixed-height-mode">True</property>
+                                                        <property name="show-expanders">False</property>
+                                                        <child>
+                                                          <object class="GtkTreeViewColumn" id="col_sbCatList_name">
+                                                            <property name="resizable">True</property>
+                                                            <property name="spacing">2</property>
+                                                            <property name="sizing">fixed</property>
+                                                            <property name="fixed-width">110</property>
+                                                            <property name="title" translatable="yes">Category</property>
+                                                            <property name="clickable">True</property>
+                                                            <property name="reorderable">True</property>
+                                                            <property name="sort-indicator">True</property>
+                                                            <property name="sort-column-id">0</property>
+                                                            <child>
+                                                            <object class="GtkCellRendererText" id="cr_sbCatList_name"/>
+                                                            <attributes>
+                                                            <attribute name="text">0</attribute>
+                                                            </attributes>
+                                                            </child>
+                                                          </object>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkTreeViewColumn" id="col_sbCatListEF_value">
+                                                            <property name="spacing">2</property>
+                                                            <property name="sizing">fixed</property>
+                                                            <property name="fixed-width">150</property>
+                                                            <property name="title" translatable="yes">Extended Footnote (\ef)</property>
+                                                            <property name="sort-column-id">1</property>
+                                                            <child>
+                                                            <object class="GtkCellRendererToggle" id="cr_sbCatListEF_value">
+                                                            <signal name="toggled" handler="onCatEFtoggled" swapped="no"/>
+                                                            </object>
+                                                            <attributes>
+                                                            <attribute name="active">1</attribute>
+                                                            </attributes>
+                                                            </child>
+                                                          </object>
+                                                        </child>
+                                                        <child>
+                                                          <object class="GtkTreeViewColumn" id="col_sbCatListEF_value1">
+                                                            <property name="spacing">2</property>
+                                                            <property name="sizing">fixed</property>
+                                                            <property name="fixed-width">100</property>
+                                                            <property name="title" translatable="yes">Sidebar (\esb)</property>
+                                                            <property name="sort-column-id">2</property>
+                                                            <child>
+                                                            <object class="GtkCellRendererToggle" id="cr_sbCatListSB_value">
+                                                            <signal name="toggled" handler="onCatSBtoggled" swapped="no"/>
+                                                            </object>
+                                                            <attributes>
+                                                            <attribute name="active">2</attribute>
+                                                            </attributes>
+                                                            </child>
+                                                          </object>
+                                                        </child>
+                                                      </object>
+                                                    </child>
+                                                  </object>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">2</property>
+                                                <property name="top-attach">0</property>
+                                                <property name="height">6</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="b_sb_addcat">
+                                                <property name="label" translatable="yes">Add</property>
+                                                <property name="name">Add sidebar category to filter</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Add a new Category.</property>
+                                                <property name="valign">center</property>
+                                                <property name="margin-start">6</property>
+                                                <signal name="clicked" handler="onCatListAdd" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">3</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="b_sb_delcat">
+                                                <property name="label" translatable="yes">Del</property>
+                                                <property name="name">Delete sidebar category from filter</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Delete the currently
+selected Category.</property>
+                                                <property name="valign">center</property>
+                                                <property name="margin-start">6</property>
+                                                <signal name="clicked" handler="onCatListDel" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">4</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_sb_rescanCats">
+                                                <property name="label">↺</property>
+                                                <property name="name">Rescan categories to filter sidebars</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Clicking this button will rescan 
+the project to add any Categories 
+missing from this list.</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onReScanCatList" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">5</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child type="label">
+                                          <object class="GtkCheckButton" id="c_filterCats">
+                                            <property name="label" translatable="yes">Filter Categories</property>
+                                            <property name="name">Filter study note sidebars</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Use this option to restrict certain categories of
+extended study notes and sidebars from being displayed. </property>
+                                            <property name="halign">end</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">2</property>
+                                            <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onFilterCatsClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <child type="label">
+                                      <object class="GtkLabel">
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="label" translatable="yes">Filter Categories</property>
+                                        <attributes>
+                                          <attribute name="weight" value="bold"/>
+                                          <attribute name="foreground" value="#72729f9dcfcf"/>
+                                        </attributes>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
                                 </child>
                               </object>
                               <packing>
