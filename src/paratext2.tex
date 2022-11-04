@@ -2298,7 +2298,7 @@
 \def\intercharspace{\hskip0pt}
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
-\def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
+\def\ZWSP{\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
@@ -2310,7 +2310,7 @@
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em plus .1em minus .1em}
-\def\HAIRSPACE{\hskip 0.042em\intercharspace} % 1/24 em
+\def\HAIRSPACE{\hskip 0.042em\nobreak\intercharspace} % 1/24 em
 \def\HYPHEN{\-}
 \def\LINESEP{\break}
 \def\GOODBREAK{\penalty-\OptionalBreakPenalty}
