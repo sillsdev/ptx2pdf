@@ -389,10 +389,8 @@ ModelMap = {
     "studynotes/includesidebar":  ("c_sidebars", None),
     "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
     "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
-    "studynotes/txldetail":       ("c_txlQuestionsDetail", None),
+    "studynotes/txlnumbered":     ("c_txlQuestionsNumbered", None),
     "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 
-    # "studynotes/txllangtag":      ("t_txlQuestionsLang", lambda w,v: v if len(v) 
-                                        # else w.ptsettings.get('LanguageIsoCode', "en-US")),
     "studynotes/filtercats":      ("c_filterCats", None),
 
     "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),

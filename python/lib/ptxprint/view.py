@@ -570,6 +570,13 @@ class ViewModel:
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.picinfos = None
             self.loadPics(mustLoad=False)
+            pts = self._getPtSettings()
+            if pts is not None:
+                # if self.get("t_copyrightStatement") == "":
+                    # self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+                lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
+                if self.get("t_txlQuestionsLang") == "":
+                    self.builder.get_object("t_txlQuestionsLang").set_text(lngCode)
             return oldVersion >= 0
         else:
             return True

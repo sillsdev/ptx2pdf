@@ -15,6 +15,9 @@ def transcel(triggers, bk, prjdir, lang, overview=False, numberedQuestions=True,
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
     logger.debug(f"Importing transcelerator data from {tfile}")
+    print(f"{lang=}")
+    print(f"{overview=}")
+    print(f"{numberedQuestions=}")
     if not os.path.exists(tfile):
         return triggers
     if usfm is not None:

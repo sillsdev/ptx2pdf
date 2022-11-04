@@ -17355,7 +17355,7 @@ such as en-US, fr, es are also acceptable).</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">1</property>
                                             <property name="margin-end">3</property>
-                                            <property name="width-chars">8</property>
+                                            <property name="width-chars">16</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -17520,6 +17520,9 @@ in the area normally used for Study Notes.</property>
                                                         <property name="search-column">0</property>
                                                         <property name="fixed-height-mode">True</property>
                                                         <property name="show-expanders">False</property>
+                                                        <child internal-child="selection">
+                                                          <object class="GtkTreeSelection"/>
+                                                        </child>
                                                         <child>
                                                           <object class="GtkTreeViewColumn" id="col_sbCatList_name">
                                                             <property name="resizable">True</property>
@@ -26890,7 +26893,21 @@ Font metrics gives more consistent results.</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <placeholder/>
+                                      <object class="GtkCheckButton" id="c_showTeXpertHacks">
+                                        <property name="label" translatable="yes">Show TeXpert Hacks Tab</property>
+                                        <property name="name">Show tab with expert level controls (TeXpert mode)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-top">38</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">0</property>
+                                        <property name="top-attach">3</property>
+                                      </packing>
                                     </child>
                                   </object>
                                 </child>
@@ -26939,6 +26956,135 @@ interlinear (&amp; ruby text) output.</property>
                   </object>
                   <packing>
                     <property name="position">10</property>
+                    <property name="tab-fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_Expert">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkNotebook" id="nbk_Expert">
+                        <property name="width-request">700</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">True</property>
+                        <child>
+                          <object class="GtkScrolledWindow" id="scroll_expStrongsRefs">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="shadow-type">in</property>
+                          </object>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="l_expStrongsRefs">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Strongs Refs</property>
+                          </object>
+                          <packing>
+                            <property name="tab-fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkScrolledWindow" id="scroll_expSettings">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="hexpand">False</property>
+                            <property name="vexpand">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="l_expSettings">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="tooltip-text" translatable="yes">To balance columns of text on a page it is possible
+to specify paragraphs adjustments (shrink or expand):
+
+A Paragraph Adjust List needs to be in this format:
+MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) 
+MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
+%MARK 4.14 +1   (ignore this line - treat it as a comment)   
+MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
+MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
+                              which contains MRK 6.23 e.g. a heading.)
+etc.
+Note that adjusting paragraphs needs to be done right at the
+end when all other settings have been finalized. Otherwise you
+are likely to have to re-do it all again.</property>
+                            <property name="label" translatable="yes">Misc Settings</property>
+                          </object>
+                          <packing>
+                            <property name="position">1</property>
+                            <property name="tab-fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">11</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="lb_Expert">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Adjust expert-level settings.</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">TeXpert Hacks</property>
+                  </object>
+                  <packing>
+                    <property name="position">11</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -27456,7 +27602,7 @@ are likely to have to re-do it all again.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">11</property>
+                    <property name="position">12</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -27471,7 +27617,7 @@ output and tweak adjust lists.</property>
                     <signal name="focus" handler="onRefreshViewerTextClicked" swapped="no"/>
                   </object>
                   <packing>
-                    <property name="position">11</property>
+                    <property name="position">12</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -28388,7 +28534,7 @@ file is selected, then these will appear in alphabetical order.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -28402,7 +28548,7 @@ main scripture pages.</property>
                     <property name="label" translatable="yes">Peripherals</property>
                   </object>
                   <packing>
-                    <property name="position">12</property>
+                    <property name="position">13</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -29584,7 +29730,7 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -29599,7 +29745,7 @@ output with a previous PDF.</property>
                   </object>
                   <packing>
                     <property name="menu-label">Finishing</property>
-                    <property name="position">13</property>
+                    <property name="position">14</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -30119,7 +30265,7 @@ by deleting unneeded files.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">14</property>
+                    <property name="position">15</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -30133,7 +30279,7 @@ obtain help from others.</property>
                     <property name="label" translatable="yes">Help</property>
                   </object>
                   <packing>
-                    <property name="position">14</property>
+                    <property name="position">15</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
@@ -30175,7 +30321,7 @@ obtain help from others.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="position">15</property>
+                    <property name="position">16</property>
                   </packing>
                 </child>
                 <child type="tab">
@@ -30188,7 +30334,7 @@ from XeTeX processing.</property>
                     <property name="label" translatable="yes">Log</property>
                   </object>
                   <packing>
-                    <property name="position">15</property>
+                    <property name="position">16</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>
