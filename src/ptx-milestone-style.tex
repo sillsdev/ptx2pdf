@@ -29,8 +29,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
-\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.                                         
-\def\ch@ckislocation#1{\keeptriggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi}
+\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.
+\def\NotTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\@ne} %Not all milestones with attributes represent trigger locations.
+\def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
+
+\NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
+\newif\ifsuppresstr@gger
+\def\ch@ckislocation#1{\keeptriggerfalse\suppresstr@ggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi\ifcsname n@tTrig@#1\endcsname\suppresstr@ggertrue\fi}
 
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
@@ -321,15 +326,17 @@
   \ifx\attr@b\relax
     \runtrigg@rs{ms:\thismil@stone}%
   \else
-    \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
-    \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
-    \ifkeeptrigger% Not a location, leave c@rref what it used to be
-      \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
-    \else% This milestone is a named location 
-      \xdef\c@rref{\id@@@\attr@b}%
-      \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
-       \ch@ckadjustments
+    \ifsuppresstr@gger\else
+      \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
+      \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+      \ifkeeptrigger% Not a location, leave c@rref what it used to be
+        \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
+      \else% This milestone is a named location 
+        \xdef\c@rref{\id@@@\attr@b}%
+        \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+         \ch@ckadjustments
+        \fi
       \fi
     \fi
   \fi
