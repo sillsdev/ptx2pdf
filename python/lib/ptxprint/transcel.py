@@ -11,7 +11,7 @@ class NoBook:
     def getLocalBook(cls, s, level=0):
         return ""
 
-def transcel(triggers, bk, prjdir, lang, overview, numberedQs, showRefs, usfm=None):
+def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRefs, usfm=None):
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
     logger.debug(f"Importing transcelerator data from {tfile}")
@@ -23,7 +23,8 @@ def transcel(triggers, bk, prjdir, lang, overview, numberedQs, showRefs, usfm=No
     tdoc = et.parse(tfile)
     n = 0
     for q in tdoc.findall('.//Question'):
-        if not overview and q.get("overview", "") == "true":
+        ovqs = q.get("overview", "") == "true"
+        if not overview and ovqs:
             continue
         ref = Reference(bk, int(q.get("startChapter", 0)), int(q.get("startVerse", 0)))
         ev = int(q.get("endVerse", 0))
@@ -37,6 +38,7 @@ def transcel(triggers, bk, prjdir, lang, overview, numberedQs, showRefs, usfm=No
         
         if txt is not None and len(txt):
             n += 1
+            txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
             r = ref.str(context=NoBook) 
             fr = ""
             if numberedQs and showRefs:

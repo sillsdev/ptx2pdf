@@ -264,6 +264,7 @@ _sensitivities = {
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
+    "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
@@ -4445,7 +4446,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Expert").set_visible(status)
         
     def onTxlOptionsChanged(self, btn):
-        ov = _("What did Mary say that God had done?")
+        o = _("What did Mary say that God had done?")
+        ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
         t1 = _("What does it means to bless someone?")
         t2 = _("What do you know about the high priest?")
         overview = self.get("c_txlQuestionsOverview")

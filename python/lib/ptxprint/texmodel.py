@@ -390,6 +390,7 @@ ModelMap = {
     "studynotes/includesidebar":  ("c_sidebars", None),
     "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
     "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
+    "studynotes/txlboldover":     ("c_txlBoldOverview", None),
     "studynotes/txlnumbered":     ("c_txlQuestionsNumbered", None),
     "studynotes/txlshowrefs":     ("c_txlQuestionsRefs", None),
     "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 

@@ -17333,7 +17333,7 @@ larger blocks of topic-specific information. </property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <!-- n-columns=5 n-rows=4 -->
+                                      <!-- n-columns=6 n-rows=4 -->
                                       <object class="GtkGrid" id="gr_txlQuestions">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -17354,13 +17354,12 @@ Ethnologue code (but other language tags
 such as en-US, fr, es are also acceptable).</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-start">1</property>
-                                            <property name="margin-end">3</property>
                                             <property name="width-chars">16</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
                                             <property name="top-attach">0</property>
+                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -17371,6 +17370,7 @@ such as en-US, fr, es are also acceptable).</property>
 to be included. Usually this will be a 3-letter
 Ethnologue code (but other language tags
 such as en-US, fr, es are also acceptable).</property>
+                                            <property name="halign">end</property>
                                             <property name="label" translatable="yes">Language Code:</property>
                                           </object>
                                           <packing>
@@ -17380,9 +17380,10 @@ such as en-US, fr, es are also acceptable).</property>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
-                                            <property name="width-request">30</property>
+                                            <property name="width-request">20</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -17401,6 +17402,7 @@ the general understanding of the passage.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                             <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
                                           </object>
                                           <packing>
@@ -17420,6 +17422,7 @@ the general understanding of the passage.</property>
 numbered sequentially for each book.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-top">3</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
@@ -17427,7 +17430,7 @@ numbered sequentially for each book.</property>
                                           <packing>
                                             <property name="left-attach">1</property>
                                             <property name="top-attach">2</property>
-                                            <property name="width">2</property>
+                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -17444,24 +17447,27 @@ If the questions are also being numbered
 then the reference will in parenthesis (ch:vs).</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-top">3</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
                                             <property name="top-attach">3</property>
-                                            <property name="width">2</property>
+                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
+                                            <property name="width-request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Example:</property>
+                                            <property name="label" translatable="yes">Example Questions:</property>
+                                            <property name="xalign">0</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">5</property>
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
@@ -17473,29 +17479,69 @@ then the reference will in parenthesis (ch:vs).</property>
                                             <property name="orientation">vertical</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">3</property>
+                                            <property name="left-attach">4</property>
                                             <property name="top-attach">1</property>
                                             <property name="height">3</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel" id="l_txlExample">
+                                            <property name="height-request">54</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="label" translatable="yes">13. (3:25) What does it means to bless someone?
 14. (4:6) What do you know about the high priest?</property>
+                                            <property name="use-markup">True</property>
+                                            <property name="xalign">0</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">4</property>
+                                            <property name="left-attach">5</property>
                                             <property name="top-attach">2</property>
                                             <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLinkButton" id="lb_style_ef">
+                                            <property name="label">\ef</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Click to edit the Extended Footnote
+properties on the Styles tab. 
+
+The line spacing factor will modify
+the space between the questions.</property>
+                                            <property name="halign">end</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to view the Styles tab</property>
+                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">5</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkCheckButton" id="c_txlBoldOverview">
+                                            <property name="label" translatable="yes">Bold</property>
+                                            <property name="name">Transcelerator: Show overview questions in Bold</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Overview questions are designed to test
+the general understanding of the passage.</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -17793,7 +17839,7 @@ extended study notes and sidebars from being displayed. </property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="hexpand">True</property>
-                                <property name="label" translatable="yes">Study Notes</property>
+                                <property name="label" translatable="yes">Study Notes + Questions</property>
                               </object>
                               <packing>
                                 <property name="position">2</property>
