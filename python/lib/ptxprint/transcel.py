@@ -38,7 +38,7 @@ def transcel(triggers, bk, prjdir, lang, overview=False, numberedQuestions=True,
             n += 1
             refr = ref.str(context=NoBook) if not numberedQuestions else "{}.".format(n)
             entry = "\\ef - \\fr {} \\ft {}\\ef*".format(refr, txt)
-            triggers[ref] = triggers.get(ref.first, "") + entry
+            triggers[ref] = triggers.get(ref, "") + triggers.get(ref.first, "") + entry
     return triggers
 
 def outtriggers(triggers, bk, outpath):
