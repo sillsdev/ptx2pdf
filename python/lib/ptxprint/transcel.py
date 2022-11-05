@@ -11,14 +11,12 @@ class NoBook:
     def getLocalBook(cls, s, level=0):
         return ""
 
-def transcel(triggers, bk, prjdir, lang, overview=False, numberedQuestions=True, usfm=None):
+def transcel(triggers, bk, prjdir, lang, overview, numberedQs, showRefs, usfm=None):
     tfile = os.path.join(prjdir, "pluginData", "Transcelerator", "Transcelerator",
                          "Translated Checking Questions for {}.xml".format(bk))
     logger.debug(f"Importing transcelerator data from {tfile}")
-    print(f"{lang=}")
-    print(f"{overview=}")
-    print(f"{numberedQuestions=}")
     if not os.path.exists(tfile):
+        logger.debug(f"Transcelerator file missing: {tfile}")
         return triggers
     if usfm is not None:
         usfm.addorncv()
@@ -29,15 +27,25 @@ def transcel(triggers, bk, prjdir, lang, overview=False, numberedQuestions=True,
             continue
         ref = Reference(bk, int(q.get("startChapter", 0)), int(q.get("startVerse", 0)))
         ev = int(q.get("endVerse", 0))
+        # print(f"{ev=}")
         if ev != 0:
             ref = RefRange(ref, Reference(ref.book, ref.chap, ev))
+        # print(f"{ref=}")
         if usfm is not None:
             ref = usfm.bridges.get(ref.first, ref.first)
         txt = q.findtext('./Q/StringAlt[@{{http://www.w3.org/XML/1998/namespace}}lang="{}"]'.format(lang))
+        
         if txt is not None and len(txt):
             n += 1
-            refr = ref.str(context=NoBook) if not numberedQuestions else "{}.".format(n)
-            entry = "\\ef - \\fr {} \\ft {}\\ef*".format(refr, txt)
+            r = ref.str(context=NoBook) 
+            fr = ""
+            if numberedQs and showRefs:
+                fr = f"\\fr {n}. ({r}) "
+            elif numberedQs:
+                fr = f"\\fr {n}. " if numberedQs else r
+            elif showRefs:
+                fr = f"\\fr {r} "
+            entry = f"\\ef - {fr}\\ft {txt}\\ef*"
             triggers[ref] = triggers.get(ref, "") + triggers.get(ref.first, "") + entry
     return triggers
 
@@ -46,5 +54,3 @@ def outtriggers(triggers, bk, outpath):
     with open(outpath, "w", encoding="utf-8") as outf:
         for k, v in [x for x in sorted(triggers.items()) if x[0].first.book == bk]:
             outf.write("\n\\AddTrigger {}{}\n{}\n\\EndTrigger\n".format(k.first.book, k.str(context=NoBook, addsep=dotsep), v))
-
-

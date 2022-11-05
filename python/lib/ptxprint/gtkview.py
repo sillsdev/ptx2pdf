@@ -681,6 +681,7 @@ class GtkViewModel(ViewModel):
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+        self.onExpertModeClicked(None)
         logger.debug("Project list loaded")
 
             # .mainnb {background-color: #d3d3d3;}
@@ -1483,6 +1484,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.updateMarginGraphics()
         self.onExtListSourceChanges(None)
+        self.onExpertModeClicked(None)
 
     def colorTabs(self):
         # col = "crimson"
@@ -2870,8 +2872,19 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
+        self.enableTXLoption()
         self.onBodyHeightChanged(None)
         logger.debug(f"Changed project to {prjid} {configName=}")
+
+    def enableTXLoption(self):
+        txlpath = os.path.join(self.settings_dir, self.prjid, 
+                               "pluginData", "Transcelerator", "Transcelerator")
+        w = "c_txlQuestionsInclude"
+        if os.path.exists(txlpath):
+            self.builder.get_object(w).set_sensitive(True)
+        else:
+            self.builder.get_object(w).set_sensitive(False)
+            self.set(w, False)
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configKeypressed:
@@ -4425,3 +4438,29 @@ class GtkViewModel(ViewModel):
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
+
+    def onExpertModeClicked(self, btn):
+        status = self.sensiVisible("c_showTeXpertHacks")
+        self.builder.get_object("tb_Expert").set_visible(status)
+        self.builder.get_object("lb_Expert").set_visible(status)
+        
+    def onTxlOptionsChanged(self, btn):
+        ov = _("What did Mary say that God had done?")
+        t1 = _("What does it means to bless someone?")
+        t2 = _("What do you know about the high priest?")
+        overview = self.get("c_txlQuestionsOverview")
+        numberedQs = self.get("c_txlQuestionsNumbered")
+        showRefs = self.get("c_txlQuestionsRefs")
+        if numberedQs and showRefs:
+            ex = f"13. (3:25) {t1}\n14. (4:6) {t2}"
+            l = f"12. (1:46-56) {ov}\n{ex}" if overview else ex
+        elif numberedQs:
+            ex = f"13. {t1}\n14. {t2}"
+            l = f"12. {ov}\n{ex}" if overview else ex
+        elif showRefs:
+            ex = f"3:25 {t1}\n4:6 {t2}"
+            l = f"1:46-56 {ov}\n{ex}" if overview else ex
+        else:
+            ex = f"{t1}\n{t2}"
+            l = f"{ov}\n{ex}" if overview else ex
+        self.builder.get_object("l_txlExample").set_label(l)

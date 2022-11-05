@@ -454,7 +454,8 @@ class RunJob:
             if info.dict.get("studynotes/txlinclquestions", False):
                 triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"),
                                     overview=info.dict.get("studynotes/txloverview", False),
-                                    numberedQuestions=info.dict.get("studynotes/txlnumbered", True),
+                                    numberedQs=info.dict.get("studynotes/txlnumbered", True),
+                                    showRefs=info.dict.get("studynotes/txlshowrefs", False),
                                     usfm=self.printer.get_usfms().get(b))
             if len(triggers):
                 outtriggers(triggers, b, outpath+".triggers")

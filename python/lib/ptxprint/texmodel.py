@@ -49,6 +49,7 @@ ModelMap = {
     "config/name":              ("_cfgid", None),
     "config/filterpics":        ("c_filterPicList", None),
     "config/autosave":          ("c_autoSave", None),
+    "config/texperthacks":      ("c_showTeXpertHacks", None),
 
     "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
@@ -390,6 +391,7 @@ ModelMap = {
     "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
     "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
     "studynotes/txlnumbered":     ("c_txlQuestionsNumbered", None),
+    "studynotes/txlshowrefs":     ("c_txlQuestionsRefs", None),
     "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 
     "studynotes/filtercats":      ("c_filterCats", None),
 

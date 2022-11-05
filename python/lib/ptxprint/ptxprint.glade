@@ -16639,7 +16639,7 @@ and Parameters:</property>
                                 <property name="spacing">12</property>
                                 <child>
                                   <object class="GtkFrame" id="fr_ef_Layout">
-                                    <property name="width-request">480</property>
+                                    <property name="width-request">600</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
@@ -17325,7 +17325,7 @@ larger blocks of topic-specific information. </property>
                                 </child>
                                 <child>
                                   <object class="GtkFrame" id="fr_txlQuestions">
-                                    <property name="width-request">480</property>
+                                    <property name="width-request">600</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
@@ -17333,7 +17333,7 @@ larger blocks of topic-specific information. </property>
                                     <property name="margin-bottom">6</property>
                                     <property name="label-xalign">0.029999999329447746</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=3 -->
+                                      <!-- n-columns=5 n-rows=4 -->
                                       <object class="GtkGrid" id="gr_txlQuestions">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -17352,6 +17352,7 @@ larger blocks of topic-specific information. </property>
 to be included. Usually this will be a 3-letter
 Ethnologue code (but other language tags
 such as en-US, fr, es are also acceptable).</property>
+                                            <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="margin-start">1</property>
                                             <property name="margin-end">3</property>
@@ -17400,6 +17401,7 @@ the general understanding of the passage.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
@@ -17415,20 +17417,88 @@ the general understanding of the passage.</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
                                             <property name="tooltip-text" translatable="yes">This option enables the questions to be
-numbered sequentially for each book.
-
-If unchecked, the ch:vs reference will
-be displayed instead with each question. </property>
+numbered sequentially for each book.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">1</property>
                                             <property name="top-attach">2</property>
                                             <property name="width">2</property>
                                           </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkCheckButton" id="c_txlQuestionsRefs">
+                                            <property name="label" translatable="yes">Include Chapter:Verse References</property>
+                                            <property name="name">Transcelerator: Include ch:vs references</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">This option enables the questions to
+include the chapter:verse numbers.
+
+If the questions are also being numbered
+then the reference will in parenthesis (ch:vs).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="draw-indicator">True</property>
+                                            <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">Example:</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">4</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSeparator">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">center</property>
+                                            <property name="orientation">vertical</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">3</property>
+                                            <property name="top-attach">1</property>
+                                            <property name="height">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="l_txlExample">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="label" translatable="yes">13. (3:25) What does it means to bless someone?
+14. (4:6) What do you know about the high priest?</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">4</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
+                                        </child>
+                                        <child>
+                                          <placeholder/>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -17450,7 +17520,11 @@ have been created with SIL's Transcelerator
 tool for the purpose of comprehension testing.
 
 These will be displayed at the bottom of the page
-in the area normally used for Study Notes.</property>
+in the area normally used for Study Notes.
+
+Note that this option is only made available if
+the Transcelerator plugin's data folder for the
+project can be located.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">2</property>
@@ -17755,8 +17829,8 @@ extended study notes and sidebars from being displayed. </property>
                   <object class="GtkLabel" id="lb_NotesRefs">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Control how Footnotes and
-Cross-references appear.</property>
+                    <property name="tooltip-text" translatable="yes">Control how Footnotes, Cross-references
+Study Notes and Questions should appear.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Notes+Refs</property>
                   </object>
@@ -26894,15 +26968,20 @@ Font metrics gives more consistent results.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_showTeXpertHacks">
-                                        <property name="label" translatable="yes">Show TeXpert Hacks Tab</property>
+                                        <property name="label" translatable="yes">Show TeXpert Hacks</property>
                                         <property name="name">Show tab with expert level controls (TeXpert mode)</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">An additional 'TeXpert Hacks' tab exists for
+those who are familiar with TeX and need to
+change the code or various other parameters.</property>
+                                        <property name="opacity">0.40</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-top">38</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onExpertModeClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
