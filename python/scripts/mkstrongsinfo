@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, json, os
+import argparse, json, os, bz2
 import xml.etree.ElementTree as et
 from math import log10
 import numpy as np
@@ -178,17 +178,21 @@ if args.bterms is None:
             args.bterms = p
 
 if args.input:
-    with open(args.input) as inf:
-        temp = json.load(inf)
-        res = temp['strongs']
-        allocs = {RefList.fromStr(k)[0]: v for k, v in temp['refs'].items()}
-        crefcount = 0
-        refcount = 0
-        skipcount = 0
-        allrefs = []
-        for k, v in res.items():
-            if 'btid' in v:
-                rev[v['btid']] = k
+    if args.input.endswith(".bz2"):
+        inf = bz2.open(args.input, "rb")
+    else:
+        inf = open(args.input)
+    temp = json.load(inf)
+    res = temp['strongs']
+    allocs = {RefList.fromStr(k)[0]: v for k, v in temp['refs'].items()}
+    crefcount = 0
+    refcount = 0
+    skipcount = 0
+    allrefs = []
+    for k, v in res.items():
+        if 'btid' in v:
+            rev[v['btid']] = k
+    inf.close()
 else:
     for f, p in ((args.ot, 'H'), (args.nt, 'G')):
         if f is not None:
