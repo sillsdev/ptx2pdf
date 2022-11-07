@@ -1526,7 +1526,7 @@
     \setbox\colA=\vbox{\unvbox\colA\unskip}%
     \setbox\colB=\vbox{\unvbox\colB\unskip}%
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
-      \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
+      \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern\unskip}
     \fi\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
