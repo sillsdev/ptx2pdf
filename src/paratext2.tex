@@ -208,6 +208,10 @@
     \else\ifx\p@ram\r@ght
      \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
     \fi\fi\fi
+    \getp@ram{leftmargin}{#1}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \getp@ram{rightmargin}{#1}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{f}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
@@ -220,13 +224,14 @@
     \fi
     \ifp@ranotes\else
       \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
-      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
-      \ifdim\dimen0<\baselineskip
-        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
-        \vskip\dimen1
-		\trace{f}{\reference : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
-        \prevdepth=-1000pt
-	\fi\fi
+%      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
+%      \ifdim\dimen0<\baselineskip
+%        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
+%        \vskip\dimen1
+%		\trace{f}{\reference : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
+%        \prevdepth=-1000pt
+%	  \fi
+    \fi
     \leavevmode % begin paragraph
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
@@ -2297,7 +2302,7 @@
 \def\intercharspace{\hskip0pt}
 \def\SFTHYPHEN{\-}
 \def\NBSP{\nobreak\space} % make Unicode NO-BREAK SPACE into a no-break space
-\def\ZWSP{\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
+\def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN

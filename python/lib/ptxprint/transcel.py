@@ -48,7 +48,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
             elif showRefs:
                 fr = f"\\fr {r} "
             entry = f"\\ef - {fr}\\ft {txt}\\ef*"
-            triggers[ref] = triggers.get(ref, "") + triggers.get(ref.first, "") + entry
+            triggers[ref] = triggers.get(ref, "") + entry
     return triggers
 
 def outtriggers(triggers, bk, outpath):
