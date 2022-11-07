@@ -526,14 +526,15 @@
 %seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
 \newdimen\ISBNfontdim
 \ISBNfontdim=10pt
-\def\ISBN#1{\leavevmode\font\belowISBN="Andika" at \ISBNfontdim
-\trace{m}{ISBN barcode for \attr@b}%
-\bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
-%I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
-\font\aboveISBN="Andika" at 0.02\dimen0
-\belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
+\def\ISBNfont{"Andika"}
+\def\ISBN#1{\leavevmode\font\belowISBN=\ISBNfont at \ISBNfontdim
+  \trace{m}{ISBN barcode for \attr@b}%
+  \bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
+  %I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
+  \font\aboveISBN="Andika" at 0.02\dimen0
+  \belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
 %\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
-\hbox{\expandafter\isbn#1--}}\egroup}
+  \hbox{\expandafter\isbn#1--}}\egroup}
 
 
 %\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn

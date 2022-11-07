@@ -709,7 +709,7 @@
         \m@ke@te@mp{#1}%
         \ifdim\ht0>0pt \hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
-      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen2\XrefSkip
+      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen1\XrefSkip
       \ifdim\ht1>0pt \global\setbox\xr@fbox=\vbox{\unvbox\xr@fbox\vskip\dimen1\unvbox1}\fi
     \else \ifvoid0\else\trace{o}{Unexpected 0 height box in m@kexrefbox}\fi\tempfalse
     \fi
@@ -2063,7 +2063,6 @@
   \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
   \hbox to \columnshift{}}
-\newif\ifColumnGutterRule
 %-c_makecolumngutter
 
 %+c_backingup
