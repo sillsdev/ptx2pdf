@@ -111,7 +111,7 @@ def getcross(res, key):
     results = []
     resk = res[key]
     for a in ('h', 'g'):
-        results.extend([s for s in resk[a] if not res.get(s, {}).get('skipme', False)])
+        results.extend([s for s in resk[a] if not res.get(s, {}).get('skipme', False) and len(res.get('reflist', [])) > 1])
     return results
 
 def createxml(res, allocs):
@@ -143,6 +143,7 @@ def createxml(res, allocs):
                 head = res[r]['head']
                 xr = et.SubElement(xgroup, 'ref', strongs=r, style='cross')
                 xr.text = str(head)
+        xref[:] = sorted(xref[:], key=lambda x:int(x.get('strongs', "H0")[1:]))
     return root
 
 parser = argparse.ArgumentParser()
@@ -356,81 +357,126 @@ for k, v in allocs.items():
     v['len'] = 0
     v['strongs'] = {}
 
-for k, v in res.items():
-    if v.get('skipme', False):
-        continue
-    # step 1. Allocate all single references
-    c = [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in v['reflist']]
-    if len(c) == 1:
-        crs = getcross(res, k)
-        allocs[c[0].first]['strongs'][k] = {'cross': crs}
-        allocs[c[0].first]['len'] += len(v['g']) + len(v['h'])
-    else:
-        for ac in c:
-            allocs[ac.first]['bids'][k] = c[:]
-            allocs[ac.first].setdefault('bidhistory', {})[k] = c
+if 0:
+    for k, v in res.items():
+        if v.get('skipme', False):
+            continue
+        # step 1. Allocate all single references
+        c = [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in v['reflist']]
+        if len(c) == 1:
+            crs = getcross(res, k)
+            allocs[c[0].first]['strongs'][k] = {'cross': crs}
+            allocs[c[0].first]['len'] += len(v['g']) + len(v['h'])
+        else:
+            for ac in c:
+                allocs[ac.first]['bids'][k] = c[:]
+                allocs[ac.first].setdefault('bidhistory', {})[k] = c
 
-# step 2. Allocate everything that fits and has no contenders
-changed = True
-while changed:
+    # step 2. Allocate everything that fits and has no contenders
     changed = True
     while changed:
-        changed = False
+        changed = True
+        while changed:
+            changed = False
+            for k, v in allocs.items():
+                # length one sets have no choice where they go. So they win if they fit.
+                if len(v['bids']) == 1:
+                    s, refs = list(v['bids'].items())[0]
+                    crs = getcross(res, s)
+                    res[s]['head'] = k
+                    fillhead(allocs, s, k, [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in refs], crs)
+                    changed = True
+                # length 2 cost 1 for both sides, choose which one gets the cross links
+                elif any(len(x) == 2 for x in v['bids'].values()):
+                    keys = [x for x, y in v['bids'].items() if len(y) == 2]
+                    arefs = [x.first for y in keys for x in v['bids'][y] if x.first != k]
+                    alens = [allocs[x].get('len', 0) for x in arefs]
+                    # calculate which strongs on which ref brings their list closest to 10
+                    jobs = [(abs(10 - alens[i] - len(allocs[arefs[i]]['bids']) - len(res[r]['h']) - len(res[r]['g'])), arefs[i], r, k) for i, r in enumerate(keys)] \
+                         + [(abs(10 - v['len'] - len(allocs[k]['bids']) - len(res[r]['h']) - len(res[r]['g'])), k, r, arefs[i]) for i, r in enumerate(keys)]
+                    score, newk, news, newo = min(jobs)
+                    # do the allocation for real
+                    res[news]['head'] = newk
+                    crs = getcross(res, news)
+                    fillhead(allocs, news, newk, [newk, newo], crs)
+                    changed = True
+        # step 3. Pick the first strongs in a verse and allocate it
         for k, v in allocs.items():
-            # length one sets have no choice where they go. So they win if they fit.
-            if len(v['bids']) == 1:
+            if len(v['bids']):
                 s, refs = list(v['bids'].items())[0]
                 crs = getcross(res, s)
                 res[s]['head'] = k
                 fillhead(allocs, s, k, [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in refs], crs)
                 changed = True
-            # length 2 cost 1 for both sides, choose which one gets the cross links
-            elif any(len(x) == 2 for x in v['bids'].values()):
-                keys = [x for x, y in v['bids'].items() if len(y) == 2]
-                arefs = [x.first for y in keys for x in v['bids'][y] if x.first != k]
-                alens = [allocs[x].get('len', 0) for x in arefs]
-                # calculate which strongs on which ref brings their list closest to 10
-                jobs = [(abs(10 - alens[i] - len(allocs[arefs[i]]['bids']) - len(res[r]['h']) - len(res[r]['g'])), arefs[i], r, k) for i, r in enumerate(keys)] \
-                     + [(abs(10 - v['len'] - len(allocs[k]['bids']) - len(res[r]['h']) - len(res[r]['g'])), k, r, arefs[i]) for i, r in enumerate(keys)]
-                score, newk, news, newo = min(jobs)
-                # do the allocation for real
-                res[news]['head'] = newk
-                crs = getcross(res, news)
-                fillhead(allocs, news, newk, [newk, newo], crs)
-                changed = True
-    # step 3. Pick the first strongs in a verse and allocate it
-    for k, v in allocs.items():
-        if len(v['bids']):
-            s, refs = list(v['bids'].items())[0]
-            crs = getcross(res, s)
-            res[s]['head'] = k
-            fillhead(allocs, s, k, [RefList.fromStr(x)[0] if isinstance(x, str) else x for x in refs], crs)
-            changed = True
 
-for k, v in allocs.items():
-    if 'strongs' not in v:
-        continue
-    for s, sv in v['strongs'].items():
-        head = res.get(s, {}).get('head', None)
-        if head is None:
-            if not res.get(s, {}).get('skipme', False) and len(sv.get('refs', [])):
-                print(f"Can't find head for {s}")
+    for k, v in allocs.items():
+        if 'strongs' not in v:
             continue
-        if head != k:
-            sv.setdefault('backrefs', []).append(head)
+        for s, sv in v['strongs'].items():
+            head = res.get(s, {}).get('head', None)
+            if head is None:
+                if not res.get(s, {}).get('skipme', False) and len(sv.get('refs', [])):
+                    print(f"Can't find head for {s}")
+                continue
+            if head != k:
+                sv.setdefault('backrefs', []).append(head)
+else:
+    # import pdb; pdb.set_trace()
+    extracount = 0
+    count = 0
+    strongcount = 0
+    for k, v in res.items():
+        if v.get('skipme', False):
+            continue
+        c = RefList([Reference.fromtag(x) for x in v['refs']])
+        c.sort()
+        c.simplify(minlength=2)
+        crs = getcross(res, k)
+        if len(c) > 1 or len(crs):
+            v['head'] = c[0].first
+            strongcount += 1
+        for i, r in enumerate(c):
+            if len(c) > 1:
+                allocs.setdefault(r.last, {'strongs': {}})['strongs'][k] = {'refs': [c[i+1 if i+1 < len(c) else 0].first]}
+                count += 1
+                if r.first != r.last:
+                    allocs.setdefault(r.first, {'strongs': {}})['strongs'][k] = {'refs': [r]}
+                    count += 1
+            for a in (10, 100, 1000):
+                if i % a == 0:
+                    if i + a < len(c):
+                        allocs[r.last]['strongs'][k]['refs'].append(c[i+a].first)
+                        extracount += 1
+                    if i - a >= 0:
+                        allocs[r.last]['strongs'][k]['refs'].append(c[i-a].first)
+                        extracount += 1
+            if i == 0:
+                allocs.setdefault(r.first, {'strongs': {}})['strongs'].setdefault(k, {})['cross'] = crs
+                extracount += len(crs)
+    print(f"{count=} + {extracount=} / {strongcount=}")
 
 if args.xml:
     xmlout = et.Element('strongs')
-    for s, sv in res.items():
-        if 'btid' not in sv or 'head' not in sv:
+    for s, sv in sorted(res.items(), key=lambda x:(x[0][0], int(x[0][1:]), x)):
+        if 'head' not in sv:
             continue
-        xref = et.SubElement(xmlout, 'strong', ref=s, btid=normalize('NFC', sv['btid']),
-                             lemma=sv['lemma'], head=sv['head'], translit=sv['translit'])
+        xref = et.SubElement(xmlout, 'strong', ref=s)
+        for a in ('lemma', 'translit'):
+            if a in sv:
+                xref.set(a, sv[a])
+        if 'btid' in sv:
+            xref.set('btid', normalize('NFC', sv['btid']))
+        if 'head' in sv:
+            xref.set('head', str(sv['head']))
         t = sv.get('localized', {})
-        for lk, lv in t.items():
-            lref = et.SubElement(xref, 'trans', {'xml:lang': lk, 'gloss': lv['gloss']})
-            if 'defn' in lv:
-                lref.text = lv['defn']
+        if len(t):
+            for lk, lv in t.items():
+                lref = et.SubElement(xref, 'trans', {'xml:lang': lk, 'gloss': lv['gloss']})
+                if 'defn' in lv:
+                    lref.text = lv['defn']
+        elif 'definition' in sv:
+            lref = et.SubElement(xref, 'trans', {'xml:lang': 'en'})
+            lref.text = sv['definition']
     et.indent(xmlout, space='    ')
     xmldoc = et.ElementTree(xmlout)
     xmldoc.write(args.xml, encoding="utf-8", xml_declaration=True)

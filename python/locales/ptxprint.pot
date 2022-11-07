@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-10-20 15:56+0700\n"
+"POT-Creation-Date: 2022-11-07 12:59+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -130,7 +130,7 @@ msgid "Milestones"
 msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:50 lib/ptxprint/gtkstyleditor.py:104
-#: temp.glade:18389 temp.glade:26652
+#: temp.glade:18662 temp.glade:26925
 msgid "Other"
 msgstr ""
 
@@ -139,7 +139,7 @@ msgstr ""
 msgid "Obsolete & Deprecated"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:183 temp.glade:24464
+#: lib/ptxprint/gtkstyleditor.py:183 temp.glade:24737
 msgid ""
 "Line Spacing\n"
 "Factor:"
@@ -149,7 +149,7 @@ msgstr ""
 msgid "Baseline:"
 msgstr ""
 
-#: lib/ptxprint/gtkstyleditor.py:184 temp.glade:23994
+#: lib/ptxprint/gtkstyleditor.py:184 temp.glade:24267
 msgid ""
 "Font Size\n"
 "Factor:"
@@ -160,7 +160,7 @@ msgid "Font Scale:"
 msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:198 lib/ptxprint/gtkstyleditor.py:499
-#: lib/ptxprint/gtkview.py:2763 temp.glade:817 temp.glade:6897 temp.glade:25256
+#: lib/ptxprint/gtkview.py:2767 temp.glade:817 temp.glade:6897 temp.glade:25529
 msgid "Color:"
 msgstr ""
 
@@ -172,56 +172,56 @@ msgstr ""
 msgid "Set Font..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:393
+#: lib/ptxprint/gtkview.py:395
 msgid ""
 "\n"
 "PTXprint Version {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:399
+#: lib/ptxprint/gtkview.py:401
 msgid "Please send to: ptxprint_support@sil.org"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:404 lib/ptxprint/gtkview.py:406
+#: lib/ptxprint/gtkview.py:406 lib/ptxprint/gtkview.py:408
 msgid "This message has been copied to the clipboard."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:427
+#: lib/ptxprint/gtkview.py:429
 msgid ""
 "Paratext is not installed on this system.\n"
 "Please locate the directory where your USFM projects\n"
 "are (or will be) stored. Or click cancel to exit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:741
+#: lib/ptxprint/gtkview.py:744
 msgid "No project set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:871
+#: lib/ptxprint/gtkview.py:874
 msgid "No matches found - try another search term"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1077
+#: lib/ptxprint/gtkview.py:1080
 msgid "Can't set {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1186
+#: lib/ptxprint/gtkview.py:1189
 msgid "Font(s) not set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1200
+#: lib/ptxprint/gtkview.py:1203
 msgid "Printing busy"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1204 lib/ptxprint/runjob.py:245
+#: lib/ptxprint/gtkview.py:1207 lib/ptxprint/runjob.py:246
 msgid "No books to print"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1207
+#: lib/ptxprint/gtkview.py:1210
 msgid "One of more fonts have not been set yet"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1231
+#: lib/ptxprint/gtkview.py:1234
 msgid ""
 "                   >>> PLEASE CLOSE the PDF <<<                     \n"
 "\n"
@@ -234,154 +234,154 @@ msgid ""
 "                        Do you want to try again?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1236
+#: lib/ptxprint/gtkview.py:1239
 msgid "The old PDF file is open!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1239
+#: lib/ptxprint/gtkview.py:1242
 msgid "Close the old PDF file before you try again."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1248
+#: lib/ptxprint/gtkview.py:1251
 msgid "Processing..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1263
+#: lib/ptxprint/gtkview.py:1266
 msgid ""
 "Note: It may take a while for the PDF to be produced due to including "
 "Strong's numbers in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1270
+#: lib/ptxprint/gtkview.py:1273
 msgid ""
 "Note: It may take a while for pictures to convert for selected PDF Output "
 "Format ({})."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1373
+#: lib/ptxprint/gtkview.py:1376
 msgid "And the ptxprint.sty stylesheet has been deleted."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1378
+#: lib/ptxprint/gtkview.py:1381
 msgid "But the ptxprint.sty stylesheet could not be deleted."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1381
+#: lib/ptxprint/gtkview.py:1384
 msgid "The 'Default' config settings have been reset."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1385
+#: lib/ptxprint/gtkview.py:1388
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1385 lib/ptxprint/gtkview.py:1390
-#: lib/ptxprint/gtkview.py:1393 lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1388 lib/ptxprint/gtkview.py:1393
+#: lib/ptxprint/gtkview.py:1396 lib/ptxprint/gtkview.py:1402
 msgid "Folder: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1390 lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1393 lib/ptxprint/gtkview.py:1402
 msgid "Cannot delete folder from disk!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1393
+#: lib/ptxprint/gtkview.py:1396
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1490
+#: lib/ptxprint/gtkview.py:1494
 msgid "Fonts"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1490
+#: lib/ptxprint/gtkview.py:1494
 msgid "Scripts"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1494 temp.glade:28252
+#: lib/ptxprint/gtkview.py:1498 temp.glade:28673
 msgid "Peripherals"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1497 temp.glade:21561
+#: lib/ptxprint/gtkview.py:1501 temp.glade:21834
 msgid "Pictures"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1500 temp.glade:22149
+#: lib/ptxprint/gtkview.py:1504 temp.glade:22422
 msgid "Diglot"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1503 temp.glade:29409
+#: lib/ptxprint/gtkview.py:1507 temp.glade:29869
 msgid "Finishing"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1506
+#: lib/ptxprint/gtkview.py:1510
 msgid "Notes+"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1506
+#: lib/ptxprint/gtkview.py:1510
 msgid "Refs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1507 temp.glade:16621
+#: lib/ptxprint/gtkview.py:1511 temp.glade:16621
 msgid "Cross-References"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1511 lib/ptxprint/gtkview.py:1512
+#: lib/ptxprint/gtkview.py:1515 lib/ptxprint/gtkview.py:1516
 msgid "Tabs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1513 lib/ptxprint/gtkview.py:1514
+#: lib/ptxprint/gtkview.py:1517 lib/ptxprint/gtkview.py:1518
 msgid "Borders"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1525 temp.glade:26787
+#: lib/ptxprint/gtkview.py:1529 temp.glade:27079
 msgid "Advanced"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1798
+#: lib/ptxprint/gtkview.py:1802
 msgid "The Book in focus is not within scope"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1799
+#: lib/ptxprint/gtkview.py:1803
 msgid ""
 "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1826
 msgid "No Secondary Project Set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1826
 msgid ""
 "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1840
+#: lib/ptxprint/gtkview.py:1844
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1841
+#: lib/ptxprint/gtkview.py:1845
 msgid ""
 "\n"
 "\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1955
+#: lib/ptxprint/gtkview.py:1959
 msgid ""
 "Click the Generate button (above) to start the process of creating Front "
 "Matter..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1994 lib/ptxprint/gtkview.py:2000
+#: lib/ptxprint/gtkview.py:1998 lib/ptxprint/gtkview.py:2004
 msgid "View Only..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2006
+#: lib/ptxprint/gtkview.py:2010
 msgid ""
 "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2027
+#: lib/ptxprint/gtkview.py:2031
 msgid ""
 "\n"
 "\n"
@@ -391,7 +391,7 @@ msgid ""
 "Click on View/Edit... button to see more."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2035
+#: lib/ptxprint/gtkview.py:2039
 msgid ""
 "This file doesn't exist yet.\n"
 "\n"
@@ -400,17 +400,17 @@ msgid ""
 "   * the 'Print' button to create the PDF first"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2616
+#: lib/ptxprint/gtkview.py:2620
 msgid "File not found"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2766
+#: lib/ptxprint/gtkview.py:2770
 msgid ""
 "'Enable Colored Text' has now been turned on.\n"
 "See Fonts+Script tab for details."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2974
+#: lib/ptxprint/gtkview.py:2989
 msgid ""
 "\n"
 "This file doesn't exist yet!\n"
@@ -418,48 +418,48 @@ msgid ""
 "Edit here and Click 'Save' to create it."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2990
+#: lib/ptxprint/gtkview.py:3005
 msgid "Save changes?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2990
+#: lib/ptxprint/gtkview.py:3005
 msgid "Do you wish to save the changes you made?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2991
+#: lib/ptxprint/gtkview.py:3006
 msgid "File: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3037
+#: lib/ptxprint/gtkview.py:3052
 msgid ""
 "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3044
+#: lib/ptxprint/gtkview.py:3059
 msgid ""
 "% This is the preprocessing .tex file specific for the {} project used by "
 "PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3110
+#: lib/ptxprint/gtkview.py:3125
 msgid "Select the location and name for the Archive file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3150
+#: lib/ptxprint/gtkview.py:3165
 msgid "Select the folder containing image files"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3199
+#: lib/ptxprint/gtkview.py:3214
 msgid "Select a PDF to import the settings from"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3206
+#: lib/ptxprint/gtkview.py:3221
 msgid "Overwite current Configuration?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3207
+#: lib/ptxprint/gtkview.py:3222
 msgid ""
 "WARNING: Importing the settings from the selected PDF will overwrite the "
 "current configuration.\n"
@@ -467,187 +467,199 @@ msgid ""
 "Do you wish to continue?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3210
+#: lib/ptxprint/gtkview.py:3225
 msgid "PDF Config Import Error"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3211
+#: lib/ptxprint/gtkview.py:3226
 msgid ""
 "Sorry - Can't find any settings to import from the selected PDF.\n"
 "\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3212
+#: lib/ptxprint/gtkview.py:3227
 msgid "Only PDFs created with PTXprint version 2.3 or later contain settings\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3213
+#: lib/ptxprint/gtkview.py:3228
 msgid "if created with 'Include Config Settings Within PDF' option enabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3218
+#: lib/ptxprint/gtkview.py:3233
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3223
+#: lib/ptxprint/gtkview.py:3238
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3228
+#: lib/ptxprint/gtkview.py:3243
 msgid "Select Watermark PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3233
+#: lib/ptxprint/gtkview.py:3248
 msgid "Select Page Border PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3238
+#: lib/ptxprint/gtkview.py:3253
 msgid "Select Section Header PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3243
+#: lib/ptxprint/gtkview.py:3258
 msgid "Select End of Book PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3248
+#: lib/ptxprint/gtkview.py:3263
 msgid "Select Verse Decorator PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3253
+#: lib/ptxprint/gtkview.py:3268
 msgid "Select a PDF file to compare with"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3257 lib/ptxprint/runjob.py:308 temp.glade:28954
+#: lib/ptxprint/gtkview.py:3272 lib/ptxprint/runjob.py:309 temp.glade:29375
 msgid "Previous PDF (_1)"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3358
+#: lib/ptxprint/gtkview.py:3373
 msgid ""
 "Switch to Other\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3360 temp.glade:30325
+#: lib/ptxprint/gtkview.py:3375 temp.glade:30785
 msgid "Print (Make PDF)"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3366
+#: lib/ptxprint/gtkview.py:3381
 msgid ""
 "Save & Return to\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3368
+#: lib/ptxprint/gtkview.py:3383
 msgid "Return to Primary"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3422
+#: lib/ptxprint/gtkview.py:3437
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3423
+#: lib/ptxprint/gtkview.py:3438
 msgid ""
 "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3645
+#: lib/ptxprint/gtkview.py:3660
 msgid ""
 "Warning! SIL's Executive Limitations do not permit SIL to publish scripture."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3646
+#: lib/ptxprint/gtkview.py:3661
 msgid ""
 "The reference to SIL in the project's copyright line has been removed. "
 "Contact your entity's Publishing Coordinator for advice regarding protocols."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3678
+#: lib/ptxprint/gtkview.py:3693
 msgid "USFM syntax error"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3678
+#: lib/ptxprint/gtkview.py:3693
 msgid "Syntax error: {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3711 lib/ptxprint/gtkview.py:4303
+#: lib/ptxprint/gtkview.py:3726 lib/ptxprint/gtkview.py:4318
 msgid "Choose Image"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3866
+#: lib/ptxprint/gtkview.py:3881
 msgid "Unsupported Locale"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3867
+#: lib/ptxprint/gtkview.py:3882
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4044
+#: lib/ptxprint/gtkview.py:4059
 msgid "Strong's Index generated in: {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4060
+#: lib/ptxprint/gtkview.py:4075
 msgid ""
 "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4092
+#: lib/ptxprint/gtkview.py:4107
 msgid ""
 "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4113
+#: lib/ptxprint/gtkview.py:4128
 msgid "Internet Access Disabled"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4113
+#: lib/ptxprint/gtkview.py:4128
 msgid ""
 "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4149
+#: lib/ptxprint/gtkview.py:4164
 msgid "<Type Value Here>"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4167
+#: lib/ptxprint/gtkview.py:4182
 msgid "Variable Name"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4233
+#: lib/ptxprint/gtkview.py:4248
 msgid "Category Name"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4318
+#: lib/ptxprint/gtkview.py:4333
 msgid ""
 "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:28 lib/ptxprint/runjob.py:55
+#: lib/ptxprint/gtkview.py:4449
+msgid "What did Mary say that God had done?"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4451
+msgid "What does it means to bless someone?"
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4452
+msgid "What do you know about the high priest?"
+msgstr ""
+
+#: lib/ptxprint/runjob.py:29 lib/ptxprint/runjob.py:56
 msgid "Probably a TeX macro problem - contact support, or post a bug report"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:29
+#: lib/ptxprint/runjob.py:30
 msgid ""
 "Uh oh! You've pushed TeX too far! Try turning Hyphenation off, or contact "
 "support."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:30
+#: lib/ptxprint/runjob.py:31
 msgid "Check if the stylesheet specified on the Advanced tab exists."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:31
+#: lib/ptxprint/runjob.py:32
 msgid ""
 "Check if picture file is located in 'Figures', 'local\\figures' or a\n"
 "specified folder. Also try the option 'Omit Missing Pictures'"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:33
+#: lib/ptxprint/runjob.py:34
 msgid ""
 "Check if image/PDF file is available on the system.\n"
 "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n"
@@ -655,28 +667,28 @@ msgid ""
 "tab)."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:36
+#: lib/ptxprint/runjob.py:37
 msgid ""
 "Fallback font probably being applied to text in a footnote (not permitted!)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:37
+#: lib/ptxprint/runjob.py:38
 msgid ""
 "Expecting a number for \\Color definition, not a color name. (e.g. \\Color "
 "xff7f7f)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:38
+#: lib/ptxprint/runjob.py:39
 msgid "Related to USFM3 illustration markup"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:39
+#: lib/ptxprint/runjob.py:40
 msgid ""
 "This might be related to a USFM marker error (using an unsupported marker).\n"
 "Try running 'Basic Checks' in Paratext to validate markers."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:41
+#: lib/ptxprint/runjob.py:42
 msgid ""
 "One of the settings in the Stylesheet may be missing the units.\n"
 "To confirm that this is a stylesheet issue, temporarily turn off "
@@ -685,11 +697,11 @@ msgid ""
 "again."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:44
+#: lib/ptxprint/runjob.py:45
 msgid "Try turning off various settings on the Advanced tab."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:45
+#: lib/ptxprint/runjob.py:46
 msgid ""
 "Sorry! XeTeX was unable to complete the typesetting.\n"
 "* If creating a Diglot, ensure both texts can print successfully\n"
@@ -700,55 +712,55 @@ msgid ""
 "  in blue if these features are currently enabled)."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:52
+#: lib/ptxprint/runjob.py:53
 msgid "Try turning off the ptxprint-mods stylesheet"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:53
+#: lib/ptxprint/runjob.py:54
 msgid ""
 "Problem with Formatting Intro Outline\n"
 "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:56
+#: lib/ptxprint/runjob.py:57
 msgid ""
 "Possible fault in the hyphenation file\n"
 "Try turning off Hyphenate option located on the Fonts+Scripts tab"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:58
+#: lib/ptxprint/runjob.py:59
 msgid ""
 "Fallback Font issue - set a font on the Fonts+Scripts tab.\n"
 "(Turn off the option 'Use Fallback Font' or specify a valid font)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:60
+#: lib/ptxprint/runjob.py:61
 msgid ""
 "Font related issue. The most likely reason for this error is that\n"
 "the selected font has not been installed for all users. See FAQ."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:62
+#: lib/ptxprint/runjob.py:63
 msgid ""
 "Font size setting issue. Check to see if the font size in a style\n"
 "in or near the reference below is incorrect (maybe it is set to 0.00)."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:64 lib/ptxprint/runjob.py:65
+#: lib/ptxprint/runjob.py:65 lib/ptxprint/runjob.py:66
 msgid "Possibly a TeX macro issue - contact support, or post a bug report"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:66 lib/ptxprint/runjob.py:67
+#: lib/ptxprint/runjob.py:67 lib/ptxprint/runjob.py:68
 msgid "Possibly a faulty installation."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:68
+#: lib/ptxprint/runjob.py:69
 msgid ""
 "Unknown issue. Possibly related to Right-aligned tabbed leaders. Try turning "
 "off various settings on the Advanced Tab."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:70
+#: lib/ptxprint/runjob.py:71
 msgid ""
 "Oops! Something unexpected happened causing this error.\n"
 "If you are unable to solve this issue yourself, use the 'Create Archive...' "
@@ -759,126 +771,126 @@ msgid ""
 "known, tell us which setting was changed since it last worked."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:214
+#: lib/ptxprint/runjob.py:215
 msgid "Illegal Project"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:336 lib/ptxprint/runjob.py:338
+#: lib/ptxprint/runjob.py:338 lib/ptxprint/runjob.py:340
 msgid "Layout problems were encountered on page(s): "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:337
+#: lib/ptxprint/runjob.py:339
 msgid "PDF was created BUT..."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:339
+#: lib/ptxprint/runjob.py:341
 msgid ""
 "\n"
 "\n"
 "Try changing the PicList and/or AdjList settings to solve issues."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:340
+#: lib/ptxprint/runjob.py:342
 msgid "PTXprint [{}] - Warning!"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:347
+#: lib/ptxprint/runjob.py:349
 msgid "Failed to create: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:352
+#: lib/ptxprint/runjob.py:354
 msgid "Rerun to fix: "
 msgstr ""
 
-#: lib/ptxprint/runjob.py:428
+#: lib/ptxprint/runjob.py:430
 msgid "There might be a marker issue in the Extended Study Notes"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:545
+#: lib/ptxprint/runjob.py:556
 msgid ""
 "And check if a faulty rule in PrintDraftChanges.txt has caused the error(s)."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:546
+#: lib/ptxprint/runjob.py:557
 msgid "Failed to merge texts due to a Syntax Error:"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:547 lib/ptxprint/texmodel.py:1328
+#: lib/ptxprint/runjob.py:558 lib/ptxprint/texmodel.py:1345
 msgid ""
 "Run the Basic Checks in Paratext to ensure there are no Marker errors in "
 "either of the diglot projects. If this error persists, try running the "
 "Schema Check in Paratext as well."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:549
+#: lib/ptxprint/runjob.py:560
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:659
+#: lib/ptxprint/runjob.py:670
 msgid "table of contents"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:660
+#: lib/ptxprint/runjob.py:671
 msgid "image copyrights"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:661
+#: lib/ptxprint/runjob.py:672
 msgid "chapter numbers"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:662
+#: lib/ptxprint/runjob.py:673
 msgid "chapter positions"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:712
+#: lib/ptxprint/runjob.py:723
 msgid "Rerunning because the {} changed"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:795
+#: lib/ptxprint/runjob.py:806
 msgid ""
 "Try adjusting the output paper size to account for the number of pages you "
 "want"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:796
+#: lib/ptxprint/runjob.py:807
 msgid "Paper Size Error"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:849
+#: lib/ptxprint/runjob.py:862
 msgid "Page sizes differ between output and base. Cannot create a difference."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:850
+#: lib/ptxprint/runjob.py:863
 msgid "Difference Error"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:869
+#: lib/ptxprint/runjob.py:884
 msgid ""
 "No changes were detected between the two PDFs, but the (old) _diff PDF "
 "appears to be open and so cannot be deleted."
 msgstr ""
 
-#: lib/ptxprint/runjob.py:870
+#: lib/ptxprint/runjob.py:885
 msgid "{} could not be deleted"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:919
+#: lib/ptxprint/runjob.py:934
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:958
+#: lib/ptxprint/runjob.py:973
 msgid "({} Missing)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:959
+#: lib/ptxprint/runjob.py:974
 msgid "Missing Pictures: {}"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:961 temp.glade:19476
+#: lib/ptxprint/runjob.py:976 temp.glade:19749
 msgid "(0 Missing)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:1085
+#: lib/ptxprint/runjob.py:1100
 msgid ""
 "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
@@ -896,72 +908,72 @@ msgstr ""
 msgid "First verse on left"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:769
+#: lib/ptxprint/texmodel.py:777
 msgid "Missing font ({})"
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1317
+#: lib/ptxprint/texmodel.py:1334
 msgid ""
 "Examine line {} in {} on the 'Final SFM' tab of the View+Edit page to "
 "determine the cause of this issue related to marker: {} as found in the "
 "markers: {}."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1320
+#: lib/ptxprint/texmodel.py:1337
 msgid ""
 "This warning was triggered due to 'Auto-Correct USFM' being enabled on the "
 "Advanced tab but is due to an orphaned marker. It means the marker does not "
 "belong in that position, or it is missing a valid parent marker."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1326
+#: lib/ptxprint/texmodel.py:1343
 msgid "And check if a faulty rule in changes.txt has caused the error(s)."
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1327
+#: lib/ptxprint/texmodel.py:1344
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1783
+#: lib/ptxprint/texmodel.py:1800
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
-#: lib/ptxprint/utils.py:349 temp.glade:17739 temp.glade:17793 temp.glade:17847
+#: lib/ptxprint/utils.py:365 temp.glade:18012 temp.glade:18066 temp.glade:18120
 msgid "First Reference"
 msgstr ""
 
-#: lib/ptxprint/utils.py:350 temp.glade:17740 temp.glade:17794 temp.glade:17848
+#: lib/ptxprint/utils.py:366 temp.glade:18013 temp.glade:18067 temp.glade:18121
 msgid "Last Reference"
 msgstr ""
 
-#: lib/ptxprint/utils.py:351 temp.glade:17741 temp.glade:17795 temp.glade:17849
-#: temp.glade:18454
+#: lib/ptxprint/utils.py:367 temp.glade:18014 temp.glade:18068 temp.glade:18122
+#: temp.glade:18727
 msgid "Reference Range"
 msgstr ""
 
-#: lib/ptxprint/utils.py:352 temp.glade:17738 temp.glade:17792 temp.glade:17846
-#: temp.glade:18453
+#: lib/ptxprint/utils.py:368 temp.glade:18011 temp.glade:18065 temp.glade:18119
+#: temp.glade:18726
 msgid "Page Number"
 msgstr ""
 
-#: lib/ptxprint/utils.py:353 temp.glade:17742 temp.glade:17796 temp.glade:17850
+#: lib/ptxprint/utils.py:369 temp.glade:18015 temp.glade:18069 temp.glade:18123
 msgid "Book (\\h)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:354 temp.glade:17743 temp.glade:17797 temp.glade:17851
+#: lib/ptxprint/utils.py:370 temp.glade:18016 temp.glade:18070 temp.glade:18124
 msgid "Book Alt (\\h1)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:355
+#: lib/ptxprint/utils.py:371
 msgid "Time (HH:MM)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:356
+#: lib/ptxprint/utils.py:372
 msgid "Date (YYYY-MM-DD)"
 msgstr ""
 
-#: lib/ptxprint/utils.py:357 temp.glade:17737 temp.glade:17791 temp.glade:17845
-#: temp.glade:18452
+#: lib/ptxprint/utils.py:373 temp.glade:18010 temp.glade:18064 temp.glade:18118
+#: temp.glade:18725
 msgid "-empty-"
 msgstr ""
 
@@ -977,33 +989,37 @@ msgid ""
 "View+Edit page."
 msgstr ""
 
-#: lib/ptxprint/view.py:587
+#: lib/ptxprint/view.py:596
+msgid "Syntax Error Warning"
+msgstr ""
+
+#: lib/ptxprint/view.py:603
 msgid "PTXprint {} - Bible Layout for Everyone!"
 msgstr ""
 
-#: lib/ptxprint/view.py:600
+#: lib/ptxprint/view.py:616
 msgid "No book selected!"
 msgstr ""
 
-#: lib/ptxprint/view.py:620
+#: lib/ptxprint/view.py:636
 msgid "Json parsing error in {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:621
+#: lib/ptxprint/view.py:637
 msgid "{} at line {} col {}"
 msgstr ""
 
-#: lib/ptxprint/view.py:1169
+#: lib/ptxprint/view.py:1203
 msgid "Failed to Generate Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:1170
+#: lib/ptxprint/view.py:1204
 msgid ""
 "{} Paratext Project's Hyphenation file not found:\n"
 "{}"
 msgstr ""
 
-#: lib/ptxprint/view.py:1213
+#: lib/ptxprint/view.py:1249
 msgid ""
 "\n"
 "\n"
@@ -1011,74 +1027,74 @@ msgid ""
 "active sources."
 msgstr ""
 
-#: lib/ptxprint/view.py:1234
+#: lib/ptxprint/view.py:1270
 msgid ""
 "\n"
 "{} additional words were added using syllable-based rules."
 msgstr ""
 
-#: lib/ptxprint/view.py:1235
+#: lib/ptxprint/view.py:1271
 msgid ""
 "\n"
 "Resulting in a total of {} words in the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:1242
+#: lib/ptxprint/view.py:1278
 msgid "Hyphenation List Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:1243
+#: lib/ptxprint/view.py:1279
 msgid "{} words were gathered from Paratext's hyphenation word list."
 msgstr ""
 
-#: lib/ptxprint/view.py:1245
+#: lib/ptxprint/view.py:1281
 msgid ""
 "\n"
 "\n"
 "Note: {} words containing non-Letters and non-Marks"
 msgstr ""
 
-#: lib/ptxprint/view.py:1246
+#: lib/ptxprint/view.py:1282
 msgid ""
 "\n"
 "(ZWJ, ZWNJ, etc.) have not been included in the hyphenation list."
 msgstr ""
 
-#: lib/ptxprint/view.py:1249
+#: lib/ptxprint/view.py:1285
 msgid "Hyphenation List was NOT Generated"
 msgstr ""
 
-#: lib/ptxprint/view.py:1250
+#: lib/ptxprint/view.py:1286
 msgid "No valid words were found in Paratext's Hyphenation List"
 msgstr ""
 
-#: lib/ptxprint/view.py:1293
+#: lib/ptxprint/view.py:1329
 msgid "The Fallback Font needs to be something other than the Regular Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1294 lib/ptxprint/view.py:1302
+#: lib/ptxprint/view.py:1330 lib/ptxprint/view.py:1338
 msgid "Please select a different Font."
 msgstr ""
 
-#: lib/ptxprint/view.py:1301
+#: lib/ptxprint/view.py:1337
 msgid ""
 "The Fallback Font just selected does NOT support all the missing characters "
 "listed."
 msgstr ""
 
-#: lib/ptxprint/view.py:1513
+#: lib/ptxprint/view.py:1549
 msgid "No Config found for Diglot"
 msgstr ""
 
-#: lib/ptxprint/view.py:1526
+#: lib/ptxprint/view.py:1562
 msgid "Error: Cannot create Archive!"
 msgstr ""
 
-#: lib/ptxprint/view.py:1526
+#: lib/ptxprint/view.py:1562
 msgid "The ZIP file seems to be open in another program."
 msgstr ""
 
-#: lib/ptxprint/view.py:1561
+#: lib/ptxprint/view.py:1597
 msgid "Warning: The print job failed, and so the archive is incomplete"
 msgstr ""
 
@@ -1148,11 +1164,11 @@ msgstr ""
 msgid "Borders dialog: Border thickness"
 msgstr ""
 
-#: temp.glade:759 temp.glade:14381 temp.glade:16451 temp.glade:17002
+#: temp.glade:759 temp.glade:14381 temp.glade:16451 temp.glade:16998
 msgid "The thickness of the rule."
 msgstr ""
 
-#: temp.glade:785 temp.glade:14458 temp.glade:16528 temp.glade:17079
+#: temp.glade:785 temp.glade:14458 temp.glade:16528 temp.glade:17075
 msgid "Thickness (pt)"
 msgstr ""
 
@@ -1336,7 +1352,7 @@ msgid ""
 "the name of an existing Project."
 msgstr ""
 
-#: temp.glade:1563 temp.glade:19960
+#: temp.glade:1563 temp.glade:20233
 msgid "Filename:"
 msgstr ""
 
@@ -1806,7 +1822,7 @@ msgstr ""
 msgid "Enter password for config"
 msgstr ""
 
-#: temp.glade:3411 temp.glade:29290 temp.glade:29308
+#: temp.glade:3411 temp.glade:29750 temp.glade:29768
 msgid ""
 "If a spot color is needed \n"
 "then select the closest hue\n"
@@ -1936,7 +1952,7 @@ msgstr ""
 
 #: temp.glade:4012 temp.glade:5410 temp.glade:5462 temp.glade:5874
 #: temp.glade:7161 temp.glade:8239 temp.glade:8319 temp.glade:8459
-#: temp.glade:17680
+#: temp.glade:17953
 msgid "Center"
 msgstr ""
 
@@ -2230,9 +2246,9 @@ msgid ""
 "the publication being printed."
 msgstr ""
 
-#: temp.glade:4864 temp.glade:6494 temp.glade:15583 temp.glade:22776
-#: temp.glade:22936 temp.glade:23057 temp.glade:23228 temp.glade:25642
-#: temp.glade:27380 temp.glade:28203 temp.glade:28927
+#: temp.glade:4864 temp.glade:6494 temp.glade:15583 temp.glade:23049
+#: temp.glade:23209 temp.glade:23330 temp.glade:23501 temp.glade:25915
+#: temp.glade:27801 temp.glade:28624 temp.glade:29348
 msgid "Select..."
 msgstr ""
 
@@ -2264,7 +2280,7 @@ msgstr ""
 msgid "Grid: Major line color"
 msgstr ""
 
-#: temp.glade:4974 temp.glade:4993 temp.glade:22262
+#: temp.glade:4974 temp.glade:4993 temp.glade:22535
 msgid ""
 "Thumb Tabs usually use a dark color for the Tab with a light (or white) text."
 msgstr ""
@@ -2432,7 +2448,7 @@ msgstr ""
 msgid "8"
 msgstr ""
 
-#: temp.glade:5380 temp.glade:6005 temp.glade:6031 temp.glade:20778
+#: temp.glade:5380 temp.glade:6005 temp.glade:6031 temp.glade:21051
 msgid "Unknown"
 msgstr ""
 
@@ -2460,7 +2476,7 @@ msgstr ""
 msgid "Illustration Credit Overlay"
 msgstr ""
 
-#: temp.glade:5548 temp.glade:20050 temp.glade:24971
+#: temp.glade:5548 temp.glade:20323 temp.glade:25244
 msgid ""
 "Vertical\n"
 "Position:"
@@ -2470,7 +2486,7 @@ msgstr ""
 msgid "Image credit dialog: Vertical position of text"
 msgstr ""
 
-#: temp.glade:5589 temp.glade:20176
+#: temp.glade:5589 temp.glade:20449
 msgid ""
 "Horizontal\n"
 "Position:"
@@ -2504,7 +2520,7 @@ msgstr ""
 msgid "Image credit dialog: Rotation of text"
 msgstr ""
 
-#: temp.glade:5690 temp.glade:28501
+#: temp.glade:5690 temp.glade:28922
 msgid ""
 "Sometimes the credit text needs\n"
 "to be rotated. \n"
@@ -2808,7 +2824,7 @@ msgstr ""
 msgid "Sidebar FG/BG: Select an image"
 msgstr ""
 
-#: temp.glade:6531 temp.glade:20597 temp.glade:22846 temp.glade:23299
+#: temp.glade:6531 temp.glade:20870 temp.glade:23119 temp.glade:23572
 msgid "Scale:"
 msgstr ""
 
@@ -2844,7 +2860,7 @@ msgstr ""
 msgid "Sidebar foreground image: Beside text options"
 msgstr ""
 
-#: temp.glade:6638 temp.glade:6722 temp.glade:25180
+#: temp.glade:6638 temp.glade:6722 temp.glade:25453
 msgid ""
 "Top: Above everything except the header line\n"
 "Bottom: Below all verse text\n"
@@ -3270,11 +3286,11 @@ msgstr ""
 msgid "Strong's index entry: How to handle wildcard* character"
 msgstr ""
 
-#: temp.glade:7949 temp.glade:27856
+#: temp.glade:7949 temp.glade:28277
 msgid "Name"
 msgstr ""
 
-#: temp.glade:7965 temp.glade:27875
+#: temp.glade:7965 temp.glade:28296
 msgid "Value"
 msgstr ""
 
@@ -3364,7 +3380,7 @@ msgstr ""
 msgid "Strong's index: Allow unbalanced lines"
 msgstr ""
 
-#: temp.glade:8161 temp.glade:16723 temp.glade:28325
+#: temp.glade:8161 temp.glade:16723 temp.glade:28746
 msgid "0"
 msgstr ""
 
@@ -3652,7 +3668,7 @@ msgid ""
 "chapter number to start at."
 msgstr ""
 
-#: temp.glade:9242 temp.glade:28828 temp.glade:29202
+#: temp.glade:9242 temp.glade:29249 temp.glade:29662
 msgid "1"
 msgstr ""
 
@@ -3671,15 +3687,15 @@ msgstr ""
 msgid "To:"
 msgstr ""
 
-#: temp.glade:9318 temp.glade:21838
+#: temp.glade:9318 temp.glade:22111
 msgid "DBL"
 msgstr ""
 
-#: temp.glade:9319 temp.glade:21839
+#: temp.glade:9319 temp.glade:22112
 msgid "Diglot: Get text from Digital Bible Library (DBL)"
 msgstr ""
 
-#: temp.glade:9323 temp.glade:21843
+#: temp.glade:9323 temp.glade:22116
 msgid ""
 "Click to add a DBL bundle to the list of\n"
 "available texts to print from. Note that the\n"
@@ -3976,7 +3992,7 @@ msgstr ""
 msgid "Page size setting"
 msgstr ""
 
-#: temp.glade:9995 temp.glade:28717
+#: temp.glade:9995 temp.glade:29138
 msgid "210mm, 297mm (A4)"
 msgstr ""
 
@@ -3988,7 +4004,7 @@ msgstr ""
 msgid "105mm, 148mm (A6)"
 msgstr ""
 
-#: temp.glade:9998 temp.glade:28723
+#: temp.glade:9998 temp.glade:29144
 msgid "176mm, 250mm (B5)"
 msgstr ""
 
@@ -4008,7 +4024,7 @@ msgstr ""
 msgid "105mm, 140mm (PA6)"
 msgstr ""
 
-#: temp.glade:10003 temp.glade:28720
+#: temp.glade:10003 temp.glade:29141
 msgid "8.5in, 11in (Letter)"
 msgstr ""
 
@@ -4052,7 +4068,7 @@ msgid ""
 "(default=1, min=0, max=4)"
 msgstr ""
 
-#: temp.glade:10086 temp.glade:10108 temp.glade:28477
+#: temp.glade:10086 temp.glade:10108 temp.glade:28898
 msgid ""
 "This is an approximate calculation of the\n"
 "most number of lines that will fit on a page.\n"
@@ -4225,7 +4241,7 @@ msgstr ""
 msgid "Gutter width for two column layout"
 msgstr ""
 
-#: temp.glade:10412 temp.glade:16671
+#: temp.glade:10412 temp.glade:16672
 msgid ""
 "This is the space between \n"
 "the text of the two columns \n"
@@ -4274,7 +4290,7 @@ msgid ""
 "manually balancing pages."
 msgstr ""
 
-#: temp.glade:10523 temp.glade:16696
+#: temp.glade:10523 temp.glade:16697
 msgid ""
 "This is the space (mm) between \n"
 "the text of the two columns."
@@ -4296,7 +4312,7 @@ msgid ""
 "Lines (max):"
 msgstr ""
 
-#: temp.glade:10587 temp.glade:16832
+#: temp.glade:10587 temp.glade:16830
 msgid ""
 "Adjust\n"
 "Top (pt):"
@@ -4497,7 +4513,7 @@ msgid ""
 "main body text begins."
 msgstr ""
 
-#: temp.glade:11347 temp.glade:22563 temp.glade:22576
+#: temp.glade:11347 temp.glade:22836 temp.glade:22849
 msgid " "
 msgstr ""
 
@@ -4599,7 +4615,7 @@ msgid ""
 msgstr ""
 
 #: temp.glade:11722 temp.glade:11743 temp.glade:11762 temp.glade:11781
-#: temp.glade:11954 temp.glade:23764
+#: temp.glade:11954 temp.glade:24037
 msgid "Select Font..."
 msgstr ""
 
@@ -4648,7 +4664,7 @@ msgid ""
 "locate the style and will fake the bold-italic style."
 msgstr ""
 
-#: temp.glade:11800 temp.glade:19070
+#: temp.glade:11800 temp.glade:19343
 msgid "↺"
 msgstr ""
 
@@ -5326,7 +5342,7 @@ msgid ""
 "in a style is subject to this setting."
 msgstr ""
 
-#: temp.glade:13092 temp.glade:22888
+#: temp.glade:13092 temp.glade:23161
 msgid "Section Headings"
 msgstr ""
 
@@ -5879,16 +5895,16 @@ msgstr ""
 msgid "Placement of Footnotes:"
 msgstr ""
 
-#: temp.glade:14187 temp.glade:16264 temp.glade:17167
+#: temp.glade:14187 temp.glade:16264 temp.glade:17163
 msgid "Space Below Rule (pt)"
 msgstr ""
 
-#: temp.glade:14204 temp.glade:16281 temp.glade:17184
+#: temp.glade:14204 temp.glade:16281 temp.glade:17180
 msgid "Space Above Rule (pt)"
 msgstr ""
 
 #: temp.glade:14219 temp.glade:14488 temp.glade:16317 temp.glade:16558
-#: temp.glade:17109 temp.glade:17199
+#: temp.glade:17105 temp.glade:17195
 msgid ""
 "The vertical space between the body text and the\n"
 "area containing footnotes and cross-references.\n"
@@ -5898,7 +5914,7 @@ msgid ""
 "plus the Space Below (the imaginary) Rule."
 msgstr ""
 
-#: temp.glade:14226 temp.glade:17206
+#: temp.glade:14226 temp.glade:17202
 msgid ""
 "Space Separating\n"
 "Text From Notes:"
@@ -5908,7 +5924,7 @@ msgstr ""
 msgid "Space above footnote rule"
 msgstr ""
 
-#: temp.glade:14239 temp.glade:17219
+#: temp.glade:14239 temp.glade:17215
 msgid ""
 "The vertical space between the main\n"
 "text body and the footnote rule.\n"
@@ -5924,7 +5940,7 @@ msgstr ""
 msgid "Space below footnote rule"
 msgstr ""
 
-#: temp.glade:14267 temp.glade:17247
+#: temp.glade:14267 temp.glade:17243
 msgid ""
 "This is the vertical space/gap (pts) between\n"
 "the rule and the footnotes."
@@ -5934,7 +5950,7 @@ msgstr ""
 msgid "Show Footnote Rule"
 msgstr ""
 
-#: temp.glade:14307 temp.glade:17148
+#: temp.glade:14307 temp.glade:17144
 msgid ""
 "This is the horizontal rule separating\n"
 "the body text from the footnote area."
@@ -5944,7 +5960,7 @@ msgstr ""
 msgid "Footnote rule: Indent"
 msgstr ""
 
-#: temp.glade:14339 temp.glade:16409 temp.glade:16960
+#: temp.glade:14339 temp.glade:16409 temp.glade:16956
 msgid "This is the amount to indent the rule."
 msgstr ""
 
@@ -5952,7 +5968,7 @@ msgstr ""
 msgid "Footnote rule: Length"
 msgstr ""
 
-#: temp.glade:14359 temp.glade:16429 temp.glade:16980
+#: temp.glade:14359 temp.glade:16429 temp.glade:16976
 msgid ""
 "The length of the rule as a percentage\n"
 "of the column/page width."
@@ -5966,26 +5982,26 @@ msgstr ""
 msgid "Footnote rule: Horizontal position"
 msgstr ""
 
-#: temp.glade:14425 temp.glade:16495 temp.glade:17046
+#: temp.glade:14425 temp.glade:16495 temp.glade:17042
 msgid "Indent (mm)"
 msgstr ""
 
-#: temp.glade:14442 temp.glade:16512 temp.glade:17063
+#: temp.glade:14442 temp.glade:16512 temp.glade:17059
 #, python-format
 msgid "Length (% of col)"
 msgstr ""
 
-#: temp.glade:14474 temp.glade:16544 temp.glade:17095
+#: temp.glade:14474 temp.glade:16544 temp.glade:17091
 msgid "Horizontal Position"
 msgstr ""
 
-#: temp.glade:14495 temp.glade:16565 temp.glade:17116
+#: temp.glade:14495 temp.glade:16565 temp.glade:17112
 msgid ""
 "Rule Positioning\n"
 "and Parameters:"
 msgstr ""
 
-#: temp.glade:14526 temp.glade:16596 temp.glade:17270
+#: temp.glade:14526 temp.glade:16596 temp.glade:17266
 msgid "Rule and Space Settings"
 msgstr ""
 
@@ -6796,7 +6812,7 @@ msgstr ""
 msgid "Cross-reference rule: Horizontal position"
 msgstr ""
 
-#: temp.glade:16668
+#: temp.glade:16669
 msgid "Gutter width between columns of extended notes"
 msgstr ""
 
@@ -6835,28 +6851,28 @@ msgstr ""
 msgid "Vertical rule in study notes area gutter"
 msgstr ""
 
-#: temp.glade:16828
+#: temp.glade:16826
 msgid ""
 "This setting raises (using a negative value) or \n"
 "lowers (using a positive value) the starting \n"
 "point of the vertical rule between columns."
 msgstr ""
 
-#: temp.glade:16844
+#: temp.glade:16842
 msgid ""
 "This setting can raise (if -ve) or lower (if +ve) the starting point of the "
 "vertical rule between columns. (Value is pts)."
 msgstr ""
 
-#: temp.glade:16878
+#: temp.glade:16876
 msgid "Show Note Callers"
 msgstr ""
 
-#: temp.glade:16879
+#: temp.glade:16877
 msgid "Show study note callers in notes area"
 msgstr ""
 
-#: temp.glade:16883
+#: temp.glade:16881
 msgid ""
 "A \"Note Caller\" in the text alerts the reader\n"
 "that there is further information (in this case\n"
@@ -6868,47 +6884,47 @@ msgid ""
 "possible for this option."
 msgstr ""
 
-#: temp.glade:16957
+#: temp.glade:16953
 msgid "Study note rule: Indent"
 msgstr ""
 
-#: temp.glade:16977
+#: temp.glade:16973
 msgid "Study note rule: Length"
 msgstr ""
 
-#: temp.glade:16999
+#: temp.glade:16995
 msgid "Study note rule: Thickness"
 msgstr ""
 
-#: temp.glade:17021
+#: temp.glade:17017
 msgid "Study note rule: Horizontal position"
 msgstr ""
 
-#: temp.glade:17143
+#: temp.glade:17139
 msgid "Show Study Note Rule"
 msgstr ""
 
-#: temp.glade:17144
+#: temp.glade:17140
 msgid "Show study note rule"
 msgstr ""
 
-#: temp.glade:17216
+#: temp.glade:17212
 msgid "Space above study note rule"
 msgstr ""
 
-#: temp.glade:17244
+#: temp.glade:17240
 msgid "Space below study note rule"
 msgstr ""
 
-#: temp.glade:17288
+#: temp.glade:17284
 msgid "Extended Footnotes (\\ef)"
 msgstr ""
 
-#: temp.glade:17289
+#: temp.glade:17285
 msgid "Use extended/study footnotes"
 msgstr ""
 
-#: temp.glade:17293
+#: temp.glade:17289
 msgid ""
 "Extended Footnotes are the primary means for\n"
 "displaying study notes. These are similar to \n"
@@ -6916,110 +6932,216 @@ msgid ""
 "block at the end of each page. "
 msgstr ""
 
-#: temp.glade:17313
+#: temp.glade:17309
 msgid "Sidebars (\\esb ... \\esbe)"
 msgstr ""
 
-#: temp.glade:17314
+#: temp.glade:17310
 msgid "Include study note sidebars (\\esb)"
 msgstr ""
 
-#: temp.glade:17318
+#: temp.glade:17314
 msgid ""
 "Sidebars (\\esb ... \\esbe) are used to contain \n"
 "larger blocks of topic-specific information. "
 msgstr ""
 
-#: temp.glade:17390
+#: temp.glade:17351 temp.glade:17369
+msgid ""
+"Enter the language code for the questions\n"
+"to be included. Usually this will be a 3-letter\n"
+"Ethnologue code (but other language tags\n"
+"such as en-US, fr, es are also acceptable)."
+msgstr ""
+
+#: temp.glade:17374
+msgid "Language Code:"
+msgstr ""
+
+#: temp.glade:17395
+msgid "Show Overview Questions"
+msgstr ""
+
+#: temp.glade:17396
+msgid "Transcelerator: Show overview questions"
+msgstr ""
+
+#: temp.glade:17400 temp.glade:17533
+msgid ""
+"Overview questions are designed to test\n"
+"the general understanding of the passage."
+msgstr ""
+
+#: temp.glade:17416
+msgid "Number the Questions"
+msgstr ""
+
+#: temp.glade:17417
+msgid "Transcelerator: Number the questions"
+msgstr ""
+
+#: temp.glade:17421
+msgid ""
+"This option enables the questions to be\n"
+"numbered sequentially for each book."
+msgstr ""
+
+#: temp.glade:17438
+msgid "Include Chapter:Verse References"
+msgstr ""
+
+#: temp.glade:17439
+msgid "Transcelerator: Include ch:vs references"
+msgstr ""
+
+#: temp.glade:17443
+msgid ""
+"This option enables the questions to\n"
+"include the chapter:verse numbers.\n"
+"\n"
+"If the questions are also being numbered\n"
+"then the reference will in parenthesis (ch:vs)."
+msgstr ""
+
+#: temp.glade:17466
+msgid "Example Questions:"
+msgstr ""
+
+#: temp.glade:17492
+msgid ""
+"13. (3:25) What does it means to bless someone?\n"
+"14. (4:6) What do you know about the high priest?"
+msgstr ""
+
+#: temp.glade:17510
+msgid ""
+"Click to edit the Extended Footnote\n"
+"properties on the Styles tab. \n"
+"\n"
+"The line spacing factor will modify\n"
+"the space between the questions."
+msgstr ""
+
+#: temp.glade:17528 temp.glade:24095
+msgid "Bold"
+msgstr ""
+
+#: temp.glade:17529
+msgid "Transcelerator: Show overview questions in Bold"
+msgstr ""
+
+#: temp.glade:17559
+msgid "Include Transcelerator Questions"
+msgstr ""
+
+#: temp.glade:17560
+msgid "Include (Transcelerator) Checking Questions"
+msgstr ""
+
+#: temp.glade:17564
+msgid ""
+"Use this option to include questions which\n"
+"have been created with SIL's Transcelerator\n"
+"tool for the purpose of comprehension testing.\n"
+"\n"
+"These will be displayed at the bottom of the page\n"
+"in the area normally used for Study Notes.\n"
+"\n"
+"Note that this option is only made available if\n"
+"the Transcelerator plugin's data folder for the\n"
+"project can be located."
+msgstr ""
+
+#: temp.glade:17652
 msgid "Category"
 msgstr ""
 
-#: temp.glade:17408
+#: temp.glade:17670
 msgid "Extended Footnote (\\ef)"
 msgstr ""
 
-#: temp.glade:17425
+#: temp.glade:17687
 msgid "Sidebar (\\esb)"
 msgstr ""
 
-#: temp.glade:17450 temp.glade:18928 temp.glade:23650 temp.glade:27922
+#: temp.glade:17712 temp.glade:19201 temp.glade:23923 temp.glade:28343
 msgid "Add"
 msgstr ""
 
-#: temp.glade:17451
+#: temp.glade:17713
 msgid "Add sidebar category to filter"
 msgstr ""
 
-#: temp.glade:17455
+#: temp.glade:17717
 msgid "Add a new Category."
 msgstr ""
 
-#: temp.glade:17467 temp.glade:18868 temp.glade:23664 temp.glade:27903
+#: temp.glade:17729 temp.glade:19141 temp.glade:23937 temp.glade:28324
 msgid "Del"
 msgstr ""
 
-#: temp.glade:17468
+#: temp.glade:17730
 msgid "Delete sidebar category from filter"
 msgstr ""
 
-#: temp.glade:17472
+#: temp.glade:17734
 msgid ""
 "Delete the currently\n"
 "selected Category."
 msgstr ""
 
-#: temp.glade:17486
+#: temp.glade:17748
 msgid "Rescan categories to filter sidebars"
 msgstr ""
 
-#: temp.glade:17490
+#: temp.glade:17752
 msgid ""
 "Clicking this button will rescan \n"
 "the project to add any Categories \n"
 "missing from this list."
 msgstr ""
 
-#: temp.glade:17533
+#: temp.glade:17795 temp.glade:17817
 msgid "Filter Categories"
 msgstr ""
 
-#: temp.glade:17534
+#: temp.glade:17796
 msgid "Filter study note sidebars"
 msgstr ""
 
-#: temp.glade:17538
+#: temp.glade:17800
 msgid ""
 "Use this option to restrict certain categories of\n"
 "extended study notes and sidebars from being displayed. "
 msgstr ""
 
-#: temp.glade:17569
-msgid "Study Notes"
+#: temp.glade:17842
+msgid "Study Notes + Questions"
 msgstr ""
 
-#: temp.glade:17605
+#: temp.glade:17878
 msgid ""
-"Control how Footnotes and\n"
-"Cross-references appear."
+"Control how Footnotes, Cross-references\n"
+"Study Notes and Questions should appear."
 msgstr ""
 
-#: temp.glade:17608
+#: temp.glade:17881
 msgid "Notes+Refs"
 msgstr ""
 
-#: temp.glade:17664
+#: temp.glade:17937
 msgid "Inner (Left)"
 msgstr ""
 
-#: temp.glade:17696
+#: temp.glade:17969
 msgid "Outer (Right)"
 msgstr ""
 
-#: temp.glade:17708
+#: temp.glade:17981
 msgid "Center page header settings"
 msgstr ""
 
-#: temp.glade:17712
+#: temp.glade:17985
 msgid ""
 "The header line on each page can contain the page number, \n"
 "and/or reference(s) in various forms. Select a preset option,\n"
@@ -7040,11 +7162,11 @@ msgid ""
 "     This\\ is\\ page\\ \\#\\pagenumber"
 msgstr ""
 
-#: temp.glade:17762
+#: temp.glade:18035
 msgid "Outer (right) page header settings"
 msgstr ""
 
-#: temp.glade:17766 temp.glade:17820
+#: temp.glade:18039 temp.glade:18093
 msgid ""
 "The header line on each page can contain the page number, \n"
 "and/or reference(s) in various forms. Select a preset option,\n"
@@ -7065,20 +7187,20 @@ msgid ""
 "     This\\ is\\ page\\ \\#\\pagenumber"
 msgstr ""
 
-#: temp.glade:17816
+#: temp.glade:18089
 msgid "Inner (left) page header settings"
 msgstr ""
 
-#: temp.glade:17869 temp.glade:17923 temp.glade:17950 temp.glade:18524
+#: temp.glade:18142 temp.glade:18196 temp.glade:18223 temp.glade:18797
 msgid "Pri"
 msgstr ""
 
-#: temp.glade:17870
+#: temp.glade:18143
 msgid "Use formatting from primary project (inner header)"
 msgstr ""
 
-#: temp.glade:17874 temp.glade:17901 temp.glade:17928 temp.glade:17955
-#: temp.glade:17982 temp.glade:18009
+#: temp.glade:18147 temp.glade:18174 temp.glade:18201 temp.glade:18228
+#: temp.glade:18255 temp.glade:18282
 msgid ""
 "If setting the header for a diglot\n"
 "you will need to specify whether\n"
@@ -7090,31 +7212,31 @@ msgid ""
 "setting, you must first enable Diglot."
 msgstr ""
 
-#: temp.glade:17896 temp.glade:17977 temp.glade:18004 temp.glade:18499
+#: temp.glade:18169 temp.glade:18250 temp.glade:18277 temp.glade:18772
 msgid "Sec"
 msgstr ""
 
-#: temp.glade:17897
+#: temp.glade:18170
 msgid "Use formatting from secondary project (inner header)"
 msgstr ""
 
-#: temp.glade:17924
+#: temp.glade:18197
 msgid "Use formatting from primary project (center header)"
 msgstr ""
 
-#: temp.glade:17951 temp.glade:18005
+#: temp.glade:18224 temp.glade:18278
 msgid "Use formatting from primary project (outer header)"
 msgstr ""
 
-#: temp.glade:17978
+#: temp.glade:18251
 msgid "Use formatting from secondary project (center header)"
 msgstr ""
 
-#: temp.glade:18072
+#: temp.glade:18345
 msgid "Chapter"
 msgstr ""
 
-#: temp.glade:18076
+#: temp.glade:18349
 msgid ""
 "By default, the chapter number will be included\n"
 "in any references in the header line. If you prefer\n"
@@ -7122,11 +7244,11 @@ msgid ""
 "then uncheck this option."
 msgstr ""
 
-#: temp.glade:18096
+#: temp.glade:18369
 msgid "Verse"
 msgstr ""
 
-#: temp.glade:18100
+#: temp.glade:18373
 msgid ""
 "By default only the Book and Chapter number\n"
 "is included in the Header. If you also want to\n"
@@ -7137,37 +7259,37 @@ msgid ""
 "flicking through pages to find the right chapter."
 msgstr ""
 
-#: temp.glade:18126
+#: temp.glade:18399
 msgid "Colon (ch:vs)"
 msgstr ""
 
-#: temp.glade:18130
+#: temp.glade:18403
 msgid ""
 "Use a colon (:) to separate\n"
 "chapter & verse numbers\n"
 "in the header reference."
 msgstr ""
 
-#: temp.glade:18148
+#: temp.glade:18421
 msgid "Period (ch.vs)"
 msgstr ""
 
-#: temp.glade:18152
+#: temp.glade:18425
 msgid ""
 "Use a period (.) to separate\n"
 "chapter & verse numbers\n"
 "in the header reference."
 msgstr ""
 
-#: temp.glade:18178
+#: temp.glade:18451
 msgid "Include in References:"
 msgstr ""
 
-#: temp.glade:18187
+#: temp.glade:18460
 msgid "Book"
 msgstr ""
 
-#: temp.glade:18191
+#: temp.glade:18464
 msgid ""
 "By default, the book name will be included\n"
 "in any references in the header line. But if you\n"
@@ -7176,15 +7298,15 @@ msgid ""
 "uncheck this option."
 msgstr ""
 
-#: temp.glade:18213
+#: temp.glade:18486
 msgid "Chapter-Verse Separator:"
 msgstr ""
 
-#: temp.glade:18237
+#: temp.glade:18510
 msgid "Header"
 msgstr ""
 
-#: temp.glade:18276 temp.glade:18302
+#: temp.glade:18549 temp.glade:18575
 msgid ""
 "If the document you are creating needs\n"
 "to be appended to another, you can\n"
@@ -7200,25 +7322,25 @@ msgid ""
 "soon as the first scripture book is encountered."
 msgstr ""
 
-#: temp.glade:18289
+#: temp.glade:18562
 msgid ""
 "Starting Page Number\n"
 "(for Scripture Books):"
 msgstr ""
 
-#: temp.glade:18299
+#: temp.glade:18572
 msgid "Start numbering scripture books from page N"
 msgstr ""
 
-#: temp.glade:18334
+#: temp.glade:18607
 msgid "Print Page Number at Bottom of Intro Page(s)"
 msgstr ""
 
-#: temp.glade:18335
+#: temp.glade:18608
 msgid "Print page number at each book's Intro page footer"
 msgstr ""
 
-#: temp.glade:18339
+#: temp.glade:18612
 msgid ""
 "By default there is no page number on the\n"
 "Title Page of each book. Check this option\n"
@@ -7227,15 +7349,15 @@ msgid ""
 "the scripture text begins)."
 msgstr ""
 
-#: temp.glade:18356
+#: temp.glade:18629
 msgid "Print Name of Saved Config on Intro Page(s)"
 msgstr ""
 
-#: temp.glade:18357
+#: temp.glade:18630
 msgid "Print the name of the config on Intro pages' footer"
 msgstr ""
 
-#: temp.glade:18361
+#: temp.glade:18634
 msgid ""
 "It may be helpful to print the Name of\n"
 "the Saved Configuration on the first\n"
@@ -7244,11 +7366,11 @@ msgid ""
 "to produce the PDF."
 msgstr ""
 
-#: temp.glade:18424
+#: temp.glade:18697
 msgid "Center page footer settings"
 msgstr ""
 
-#: temp.glade:18428
+#: temp.glade:18701
 msgid ""
 "It is not considered best-practice to include \n"
 "information in a footer for scripture publications.\n"
@@ -7269,11 +7391,11 @@ msgid ""
 "these can be set in the ptxprint-mods.tex file."
 msgstr ""
 
-#: temp.glade:18455
+#: temp.glade:18728
 msgid "DRAFT"
 msgstr ""
 
-#: temp.glade:18477
+#: temp.glade:18750
 msgid ""
 "It is not considered best-practice to include \n"
 "information in a footer for scripture publications.\n"
@@ -7288,15 +7410,15 @@ msgid ""
 "these can be set in the ptxprint-mods.tex file."
 msgstr ""
 
-#: temp.glade:18489
+#: temp.glade:18762
 msgid "Center Footer:"
 msgstr ""
 
-#: temp.glade:18500
+#: temp.glade:18773
 msgid "Use formatting from secondary project (center footer)"
 msgstr ""
 
-#: temp.glade:18504 temp.glade:18529
+#: temp.glade:18777 temp.glade:18802
 msgid ""
 "If setting the footer for a diglot\n"
 "you will need to specify whether\n"
@@ -7305,101 +7427,101 @@ msgid ""
 "header, or the Secondary format."
 msgstr ""
 
-#: temp.glade:18525
+#: temp.glade:18798
 msgid "Use formatting from primary project (center footer)"
 msgstr ""
 
-#: temp.glade:18548
+#: temp.glade:18821
 msgid "No Ink in Footer Area"
 msgstr ""
 
-#: temp.glade:18549
+#: temp.glade:18822
 msgid "[Unused: No ink in the footer area]"
 msgstr ""
 
-#: temp.glade:18554
+#: temp.glade:18827
 msgid ""
 "This option will prevent the descenders of footnotes \n"
 "and cross-references from going into the footer area."
 msgstr ""
 
-#: temp.glade:18574
+#: temp.glade:18847
 msgid "Footer"
 msgstr ""
 
-#: temp.glade:18593
+#: temp.glade:18866
 msgid ""
 "Adjust the content of \n"
 "headers and footers."
 msgstr ""
 
-#: temp.glade:18596
+#: temp.glade:18869
 msgid "Header+Footer"
 msgstr ""
 
-#: temp.glade:18664
+#: temp.glade:18937
 msgid "Anchor Ref"
 msgstr ""
 
-#: temp.glade:18682
+#: temp.glade:18955
 msgid "Caption"
 msgstr ""
 
-#: temp.glade:18697
+#: temp.glade:18970
 msgid "File"
 msgstr ""
 
-#: temp.glade:18712
+#: temp.glade:18985
 msgid "Frame"
 msgstr ""
 
-#: temp.glade:18726
+#: temp.glade:18999
 msgid "Scale"
 msgstr ""
 
-#: temp.glade:18740
+#: temp.glade:19013
 msgid "Posn"
 msgstr ""
 
-#: temp.glade:18755
+#: temp.glade:19028
 msgid "Ref"
 msgstr ""
 
-#: temp.glade:18769
+#: temp.glade:19042
 msgid "Mirror"
 msgstr ""
 
-#: temp.glade:18784
+#: temp.glade:19057
 msgid "Description"
 msgstr ""
 
-#: temp.glade:18799
+#: temp.glade:19072
 msgid "Copyright"
 msgstr ""
 
-#: temp.glade:18813
+#: temp.glade:19086
 msgid "Media"
 msgstr ""
 
-#: temp.glade:18829
+#: temp.glade:19102
 msgid "Sec.Caption"
 msgstr ""
 
-#: temp.glade:18869
+#: temp.glade:19142
 msgid "Delete picture(s) from PicList"
 msgstr ""
 
-#: temp.glade:18873
+#: temp.glade:19146
 msgid ""
 "Click to immediately delete the currently highligted\n"
 "picture. No confirmation will be asked for!"
 msgstr ""
 
-#: temp.glade:18887
+#: temp.glade:19160
 msgid "Save the PicList"
 msgstr ""
 
-#: temp.glade:18891
+#: temp.glade:19164
 msgid ""
 "PTXprint will save the PicList when you click\n"
 "on Print, but if you are doing a lot of work to\n"
@@ -7408,15 +7530,15 @@ msgid ""
 "from time to time.   Shortcut key: <Ctrl-S>"
 msgstr ""
 
-#: temp.glade:18908
+#: temp.glade:19181
 msgid "Generate..."
 msgstr ""
 
-#: temp.glade:18909
+#: temp.glade:19182
 msgid "Generate the PicList"
 msgstr ""
 
-#: temp.glade:18913
+#: temp.glade:19186
 msgid ""
 "This button will (re-)generate the PicList\n"
 "from the USFM \\fig ... \\fig* definitions.\n"
@@ -7426,57 +7548,57 @@ msgid ""
 "the Basic tab."
 msgstr ""
 
-#: temp.glade:18929
+#: temp.glade:19202
 msgid "Add picture to PicList"
 msgstr ""
 
-#: temp.glade:18933
+#: temp.glade:19206
 msgid ""
 "Click to add another picture to the PicList. You\n"
 "will need to fill in all the details in the area below."
 msgstr ""
 
-#: temp.glade:18976
+#: temp.glade:19249
 msgid "Filter pictures for checklist"
 msgstr ""
 
-#: temp.glade:18980
+#: temp.glade:19253
 msgid ""
 "The list of pictures can be \n"
 "filtered according to the \n"
 "status of the checking values."
 msgstr ""
 
-#: temp.glade:18999
+#: temp.glade:19272
 msgid "Exclude Matched"
 msgstr ""
 
-#: temp.glade:19000
+#: temp.glade:19273
 msgid "Exclude (don't show) pictures that match filter"
 msgstr ""
 
-#: temp.glade:19004
+#: temp.glade:19277
 msgid ""
 "Flip the results of the\n"
 "filtered list to exclude\n"
 "any items that match."
 msgstr ""
 
-#: temp.glade:19026
+#: temp.glade:19299
 msgid "Filter Checklist"
 msgstr ""
 
-#: temp.glade:19043
+#: temp.glade:19316
 msgid ""
 "Only Show\n"
 "Active Books"
 msgstr ""
 
-#: temp.glade:19045
+#: temp.glade:19318
 msgid "Only show pictures in the active books"
 msgstr ""
 
-#: temp.glade:19049
+#: temp.glade:19322
 msgid ""
 "The details of ALL the pictures are stored in a single list.\n"
 "Select this option to only display the pictures from the\n"
@@ -7488,11 +7610,11 @@ msgid ""
 "the PicList details just for *that* book."
 msgstr ""
 
-#: temp.glade:19071
+#: temp.glade:19344
 msgid "Refresh (reload) picture captions from Paratext"
 msgstr ""
 
-#: temp.glade:19075
+#: temp.glade:19348
 msgid ""
 "Refresh Captions:\n"
 "If you have edited the picture captions\n"
@@ -7505,30 +7627,30 @@ msgid ""
 "settings will remain unchanged."
 msgstr ""
 
-#: temp.glade:19124
+#: temp.glade:19397
 msgid "Image"
 msgstr ""
 
-#: temp.glade:19125
+#: temp.glade:19398
 msgid "Show preview of pictures"
 msgstr ""
 
-#: temp.glade:19129
+#: temp.glade:19402
 msgid ""
 "Display the picture currently in focus.\n"
 "Note that this is dependent on the image\n"
 "being located in the specified folder(s)."
 msgstr ""
 
-#: temp.glade:19146
+#: temp.glade:19419
 msgid "Position"
 msgstr ""
 
-#: temp.glade:19147
+#: temp.glade:19420
 msgid "Show position of picture on page"
 msgstr ""
 
-#: temp.glade:19151
+#: temp.glade:19424
 msgid ""
 "Show the relative position of the picture\n"
 "on the page. When Inner/Outer is used,\n"
@@ -7536,17 +7658,17 @@ msgid ""
 "odd/right-hand page of a spread."
 msgstr ""
 
-#: temp.glade:19236
+#: temp.glade:19509
 msgid ""
 "Low Resolution\n"
 "(Smaller File)"
 msgstr ""
 
-#: temp.glade:19238
+#: temp.glade:19511
 msgid "Use low-resolution pictures"
 msgstr ""
 
-#: temp.glade:19242
+#: temp.glade:19515
 msgid ""
 "Paratext stores low resolution .JPG versions of\n"
 "illustrations in the project's \"Figures\" folder. If\n"
@@ -7555,17 +7677,17 @@ msgid ""
 "share, but the image quality will be low."
 msgstr ""
 
-#: temp.glade:19261
+#: temp.glade:19534
 msgid ""
 "Only Show Empty Place-holders\n"
 "(Smallest File)"
 msgstr ""
 
-#: temp.glade:19263
+#: temp.glade:19536
 msgid "Pictures: Only show empty place-holders"
 msgstr ""
 
-#: temp.glade:19267
+#: temp.glade:19540
 msgid ""
 "Use this option to include an empty box wherever\n"
 "illustrations would be placed in the final PDF. \n"
@@ -7577,17 +7699,17 @@ msgid ""
 "without illustrations."
 msgstr ""
 
-#: temp.glade:19287
+#: temp.glade:19560
 msgid ""
 "High Resolution\n"
 "(Larger File)"
 msgstr ""
 
-#: temp.glade:19289
+#: temp.glade:19562
 msgid "Use high-resolution pictures"
 msgstr ""
 
-#: temp.glade:19293
+#: temp.glade:19566
 msgid ""
 "If this option is selected, it will first search \n"
 "for PDFs, then PNGs, and finally JPGs.\n"
@@ -7601,30 +7723,30 @@ msgid ""
 "the image quality will be as good as possible."
 msgstr ""
 
-#: temp.glade:19317
+#: temp.glade:19590
 msgid "Select Folder..."
 msgstr ""
 
-#: temp.glade:19318
+#: temp.glade:19591
 msgid "Select the folder which contains pictures"
 msgstr ""
 
-#: temp.glade:19323
+#: temp.glade:19596
 msgid ""
 "PTXprint will scan the selected folder \n"
 "(and all its sub-folders) looking for\n"
 "all the required illustrations."
 msgstr ""
 
-#: temp.glade:19336
+#: temp.glade:19609
 msgid "Omit Missing Pictures           ..."
 msgstr ""
 
-#: temp.glade:19337
+#: temp.glade:19610
 msgid "Omit Missing Pictures"
 msgstr ""
 
-#: temp.glade:19341
+#: temp.glade:19614
 msgid ""
 "Rather than aborting the PDF export process, pre-process\n"
 "the list of illustrations and skip/ignore/remove any which\n"
@@ -7634,17 +7756,17 @@ msgid ""
 "they will be listed in the section below."
 msgstr ""
 
-#: temp.glade:19360
+#: temp.glade:19633
 msgid ""
 "Use Pictures\n"
 "From Folder: "
 msgstr ""
 
-#: temp.glade:19362
+#: temp.glade:19635
 msgid "Use pictures from a particular folder"
 msgstr ""
 
-#: temp.glade:19366
+#: temp.glade:19639
 msgid ""
 "If this option is selected, PTXprint will scan \n"
 "the selected folder (and ALL its sub-folders)\n"
@@ -7654,7 +7776,7 @@ msgid ""
 "'Exclusively Use Selected Folder' option as well."
 msgstr ""
 
-#: temp.glade:19386
+#: temp.glade:19659
 msgid ""
 "You can specify your preference for which kinds\n"
 "of images are used. PTXprint will search multiple\n"
@@ -7668,15 +7790,15 @@ msgid ""
 "   tif > png > jpg > bmp > pdf   - for largest file size"
 msgstr ""
 
-#: temp.glade:19397
+#: temp.glade:19670
 msgid "Preferred Image Types:"
 msgstr ""
 
-#: temp.glade:19407
+#: temp.glade:19680
 msgid "Pictures: Preferred image types"
 msgstr ""
 
-#: temp.glade:19411
+#: temp.glade:19684
 msgid ""
 "If multiple versions of an image are located\n"
 "(hk12345B.jpg, hk12345C.png or hk12345B.tif)\n"
@@ -7702,15 +7824,15 @@ msgid ""
 "NOTE: TIF files are converted internally to hi-res JPGs."
 msgstr ""
 
-#: temp.glade:19443
+#: temp.glade:19716
 msgid "Exclusively Use Selected Folder:"
 msgstr ""
 
-#: temp.glade:19444
+#: temp.glade:19717
 msgid "Pictures: Exclusively Use Selected Folder"
 msgstr ""
 
-#: temp.glade:19448
+#: temp.glade:19721
 msgid ""
 "PTXprint normally searches in multiple locations\n"
 "to locate the needed illustrations (including \"figures\",\n"
@@ -7726,15 +7848,15 @@ msgid ""
 "found at all."
 msgstr ""
 
-#: temp.glade:19487
+#: temp.glade:19760
 msgid "Remove Image Borders"
 msgstr ""
 
-#: temp.glade:19488
+#: temp.glade:19761
 msgid "Pictures: Remove Image Borders"
 msgstr ""
 
-#: temp.glade:19492
+#: temp.glade:19765
 msgid ""
 "Some images have a thin line on\n"
 "one or more of the edges of the\n"
@@ -7745,11 +7867,11 @@ msgid ""
 "images, not just those with lines."
 msgstr ""
 
-#: temp.glade:19546 temp.glade:19547
+#: temp.glade:19819 temp.glade:19820
 msgid "Omit Pictures Only Meant for Web or App"
 msgstr ""
 
-#: temp.glade:19551
+#: temp.glade:19824
 msgid ""
 "Only allow illustrations with the 'P'rint attribute.\n"
 "\n"
@@ -7759,26 +7881,26 @@ msgid ""
 "attribute.  Note: w= web, a=app, p=print."
 msgstr ""
 
-#: temp.glade:19571
+#: temp.glade:19844
 msgid "How?"
 msgstr ""
 
-#: temp.glade:19599 temp.glade:19600
+#: temp.glade:19872 temp.glade:19873
 msgid "Omit Captions "
 msgstr ""
 
-#: temp.glade:19604
+#: temp.glade:19877
 msgid ""
 "If you want to suppress the picture\n"
 "captions from being displayed below\n"
 "the picture, then check this option."
 msgstr ""
 
-#: temp.glade:19621
+#: temp.glade:19894
 msgid "Omit References (ch:vs)"
 msgstr ""
 
-#: temp.glade:19625
+#: temp.glade:19898
 msgid ""
 "If you only want to suppress the \n"
 "reference part of the caption,\n"
@@ -7787,11 +7909,11 @@ msgid ""
 "references without the captions."
 msgstr ""
 
-#: temp.glade:19664 temp.glade:19665
+#: temp.glade:19937 temp.glade:19938
 msgid "Include Pictures (illustrations)"
 msgstr ""
 
-#: temp.glade:19669
+#: temp.glade:19942
 msgid ""
 "This setting enables/disables all the \n"
 "other settings relating to pictures.\n"
@@ -7804,15 +7926,15 @@ msgid ""
 "the Header+Footer tab for details).\n"
 msgstr ""
 
-#: temp.glade:19725
+#: temp.glade:19998
 msgid "Overview of the Pictures used in the publication."
 msgstr ""
 
-#: temp.glade:19726
+#: temp.glade:19999
 msgid "Global Options"
 msgstr ""
 
-#: temp.glade:19770 temp.glade:19809
+#: temp.glade:20043 temp.glade:20082
 msgid ""
 "The anchor specifies what page in a book a picture will appear on.\n"
 "It appears on the same page as its anchor in the text. You can alter \n"
@@ -7845,15 +7967,15 @@ msgid ""
 "PTXprint will automatically strip the spaces for you."
 msgstr ""
 
-#: temp.glade:19797
+#: temp.glade:20070
 msgid "Anchor Ref:"
 msgstr ""
 
-#: temp.glade:19806
+#: temp.glade:20079
 msgid "Picture: Anchor reference"
 msgstr ""
 
-#: temp.glade:19848
+#: temp.glade:20121
 msgid ""
 "By default the caption will appear below the picture.\n"
 "If you need the caption to come before the picture\n"
@@ -7861,11 +7983,11 @@ msgid ""
 "   \\CaptionFirsttrue"
 msgstr ""
 
-#: temp.glade:19853
+#: temp.glade:20126
 msgid "Caption:"
 msgstr ""
 
-#: temp.glade:19864
+#: temp.glade:20137
 msgid ""
 "By default, the caption will be followed by a Ch:Vs\n"
 "reference in parentheses ( ). \n"
@@ -7879,38 +8001,38 @@ msgid ""
 "    'Omit References (ch:vs) From Caption'"
 msgstr ""
 
-#: temp.glade:19877
+#: temp.glade:20150
 msgid ""
 "Caption\n"
 "Ref:"
 msgstr ""
 
-#: temp.glade:19889
+#: temp.glade:20162
 msgid "Picture: Caption reference"
 msgstr ""
 
-#: temp.glade:19893
+#: temp.glade:20166
 msgid ""
 "The reference in the caption can be a single Ch:Vs or \n"
 "a range of verses 6:17-29. This Caption Ref is different\n"
 "from and independent of the Anchor Ref setting.\n"
 msgstr ""
 
-#: temp.glade:19911
+#: temp.glade:20184
 msgid ""
 "Description:\n"
 "(Alt Text)"
 msgstr ""
 
-#: temp.glade:19922
+#: temp.glade:20195
 msgid "Picture: Description (alternative text)"
 msgstr ""
 
-#: temp.glade:19935
+#: temp.glade:20208
 msgid "Picture: Image filename"
 msgstr ""
 
-#: temp.glade:19939
+#: temp.glade:20212
 msgid ""
 "Note that any changes you make to the filename\n"
 "here will NOT automatically be updated in the\n"
@@ -7919,7 +8041,7 @@ msgid ""
 "things here in PTXprint."
 msgstr ""
 
-#: temp.glade:19973
+#: temp.glade:20246
 msgid ""
 "For commonly used series of illustrations, PTXprint\n"
 "can automatically generate the appropriate copyright\n"
@@ -7930,17 +8052,17 @@ msgid ""
 "   by Artist Name © Year, Entity Name and License Type."
 msgstr ""
 
-#: temp.glade:19981
+#: temp.glade:20254
 msgid ""
 "Copyright\n"
 "Attribution:"
 msgstr ""
 
-#: temp.glade:19992
+#: temp.glade:20265
 msgid "Picture: Copyright attribution"
 msgstr ""
 
-#: temp.glade:19995
+#: temp.glade:20268
 msgid ""
 "There are several shortcuts you can use:\n"
 "   (c) --> ©  the copyright sign\n"
@@ -7948,11 +8070,11 @@ msgid ""
 "   (tm) --> ™  to denote trademarks in general"
 msgstr ""
 
-#: temp.glade:20000
+#: temp.glade:20273
 msgid "by Artist Name © Year, Entity Name and License Type"
 msgstr ""
 
-#: temp.glade:20013
+#: temp.glade:20286
 msgid ""
 "The frame size determines how large the picture\n"
 "will appear on the page.\n"
@@ -7966,11 +8088,11 @@ msgid ""
 "difference between Column Width and Span Width."
 msgstr ""
 
-#: temp.glade:20024
+#: temp.glade:20297
 msgid "Frame Size:"
 msgstr ""
 
-#: temp.glade:20036 temp.glade:20088
+#: temp.glade:20309 temp.glade:20361
 msgid ""
 "Several options here are extensions to the normal USFM\n"
 "markup standard for illustrations and are not expected\n"
@@ -7987,11 +8109,11 @@ msgid ""
 "as: Left, Right, Center, no. of lines (up or down)."
 msgstr ""
 
-#: temp.glade:20061
+#: temp.glade:20334
 msgid "Picture: Scale"
 msgstr ""
 
-#: temp.glade:20064
+#: temp.glade:20337
 msgid ""
 "An image (illustration) can be scaled to the\n"
 "given size. This is particularly useful for\n"
@@ -7999,15 +8121,15 @@ msgid ""
 "taking up too much space within the text."
 msgstr ""
 
-#: temp.glade:20083
+#: temp.glade:20356
 msgid "Picture: Vertical position"
 msgstr ""
 
-#: temp.glade:20124
+#: temp.glade:20397
 msgid "Picture: Frame size"
 msgstr ""
 
-#: temp.glade:20129
+#: temp.glade:20402
 msgid ""
 "The frame size determines the boundaries of where the\n"
 "picture will appear on the page.\n"
@@ -8027,7 +8149,7 @@ msgid ""
 "Captions should not be used with 'Page (to Edge)' images."
 msgstr ""
 
-#: temp.glade:20170 temp.glade:20191
+#: temp.glade:20443 temp.glade:20464
 msgid ""
 "The options available here change based\n"
 "on the Frame Size and Vertical Position\n"
@@ -8036,11 +8158,11 @@ msgid ""
 "settings first."
 msgstr ""
 
-#: temp.glade:20187
+#: temp.glade:20460
 msgid "Picture: Horizontal position"
 msgstr ""
 
-#: temp.glade:20220
+#: temp.glade:20493
 msgid ""
 "It is good typesetting practice to make people\n"
 "look outwards from the gutter, so you can set\n"
@@ -8061,15 +8183,15 @@ msgid ""
 "the \"Never Mirror\" setting checked on the Checklist tab."
 msgstr ""
 
-#: temp.glade:20238
+#: temp.glade:20511
 msgid "Mirror:"
 msgstr ""
 
-#: temp.glade:20249
+#: temp.glade:20522
 msgid "Picture: Mirroring options"
 msgstr ""
 
-#: temp.glade:20253
+#: temp.glade:20526
 msgid ""
 "Never = The image will never be mirrored\n"
 "Odd = Mirrored only if image ends up on an odd page\n"
@@ -8081,7 +8203,7 @@ msgid ""
 "on the Checklist tab."
 msgstr ""
 
-#: temp.glade:20287 temp.glade:20309
+#: temp.glade:20560 temp.glade:20582
 msgid ""
 "Some vertical position options allow a picture\n"
 "to be moved up or down by a number of lines\n"
@@ -8091,45 +8213,45 @@ msgid ""
 "+Positive (plus) values specify to move DOWN."
 msgstr ""
 
-#: temp.glade:20294
+#: temp.glade:20567
 msgid ""
 "Number of\n"
 "Lines:"
 msgstr ""
 
-#: temp.glade:20306
+#: temp.glade:20579
 msgid "Picture: Lines to adjust vertically"
 msgstr ""
 
-#: temp.glade:20340
+#: temp.glade:20613
 msgid "Media:"
 msgstr ""
 
-#: temp.glade:20350 temp.glade:30265
+#: temp.glade:20623 temp.glade:30725
 msgid "Print"
 msgstr ""
 
-#: temp.glade:20354
+#: temp.glade:20627
 msgid "Can be used in Print/PDF publications. "
 msgstr ""
 
-#: temp.glade:20366
+#: temp.glade:20639
 msgid "App"
 msgstr ""
 
-#: temp.glade:20370
+#: temp.glade:20643
 msgid "Can be used in mobile phone Apps. "
 msgstr ""
 
-#: temp.glade:20382
+#: temp.glade:20655
 msgid "Web"
 msgstr ""
 
-#: temp.glade:20386
+#: temp.glade:20659
 msgid "Can be used on websites. "
 msgstr ""
 
-#: temp.glade:20407
+#: temp.glade:20680
 msgid ""
 "If the image is from the recognized\n"
 "set of pictures commonly used in\n"
@@ -8139,19 +8261,19 @@ msgid ""
 "generated automatically for you."
 msgstr ""
 
-#: temp.glade:20415
+#: temp.glade:20688
 msgid "Automatic"
 msgstr ""
 
-#: temp.glade:20427
+#: temp.glade:20700
 msgid "© ..."
 msgstr ""
 
-#: temp.glade:20428
+#: temp.glade:20701
 msgid "Picture: Credit overlay options"
 msgstr ""
 
-#: temp.glade:20432
+#: temp.glade:20705
 msgid ""
 "Credit Overlays...\n"
 "Some artists (e.g. David C Cook) require that\n"
@@ -8160,19 +8282,19 @@ msgid ""
 "be set here."
 msgstr ""
 
-#: temp.glade:20450
+#: temp.glade:20723
 msgid "Picture: Credit overlay position and style"
 msgstr ""
 
-#: temp.glade:20454
+#: temp.glade:20727
 msgid "Credit overlay position and style"
 msgstr ""
 
-#: temp.glade:20473
+#: temp.glade:20746
 msgid "Picture: Caption"
 msgstr ""
 
-#: temp.glade:20477
+#: temp.glade:20750
 msgid ""
 "By default the caption will appear below the picture.\n"
 "If you need the caption to come before the picture\n"
@@ -8183,11 +8305,11 @@ msgid ""
 "changes specified in the PrintDraftChanges.txt file."
 msgstr ""
 
-#: temp.glade:20500
+#: temp.glade:20773
 msgid "Click to edit the Figure Caption properties on the Styles tab."
 msgstr ""
 
-#: temp.glade:20525
+#: temp.glade:20798
 msgid ""
 "One or more optional (x-xetex) attributes \n"
 "can be applied for rotation and/or PDF page\n"
@@ -8201,15 +8323,15 @@ msgid ""
 "rotate=binding page=2"
 msgstr ""
 
-#: temp.glade:20536
+#: temp.glade:20809
 msgid "Extra:"
 msgstr ""
 
-#: temp.glade:20546
+#: temp.glade:20819
 msgid "Picture: Additional attributes"
 msgstr ""
 
-#: temp.glade:20550
+#: temp.glade:20823
 msgid ""
 "One or more optional (x-xetex) attributes \n"
 "can be applied for rotation and/or PDF page\n"
@@ -8223,7 +8345,7 @@ msgid ""
 "rotate=binding page=2"
 msgstr ""
 
-#: temp.glade:20644
+#: temp.glade:20917
 msgid ""
 "Use this tab to change the position, location, size \n"
 "or orientation of the images.\n"
@@ -8235,11 +8357,11 @@ msgid ""
 "in Paratext before regenerating the PicList here."
 msgstr ""
 
-#: temp.glade:20652
+#: temp.glade:20925
 msgid "Details"
 msgstr ""
 
-#: temp.glade:20713
+#: temp.glade:20986
 msgid ""
 "Is there anything confusing or misleading in this image that the reader "
 "might misunderstand if they look at this picture apart from the text? Yes "
@@ -8247,41 +8369,41 @@ msgid ""
 "alongside text in order to be understood."
 msgstr ""
 
-#: temp.glade:20715
+#: temp.glade:20988
 msgid "Is it clear what is happening in this image?"
 msgstr ""
 
-#: temp.glade:20726
+#: temp.glade:20999
 msgid ""
 "First consider whether this picture is appropriate and culturally acceptable "
 "in any publications for this project."
 msgstr ""
 
-#: temp.glade:20728
+#: temp.glade:21001
 msgid "Across Various Publications:"
 msgstr ""
 
-#: temp.glade:20742 temp.glade:21010 temp.glade:21064
+#: temp.glade:21015 temp.glade:21283 temp.glade:21337
 msgid "Yes"
 msgstr ""
 
-#: temp.glade:20743
+#: temp.glade:21016
 msgid "Picture checklist: What is happening is clear"
 msgstr ""
 
-#: temp.glade:20760 temp.glade:21028 temp.glade:21082
+#: temp.glade:21033 temp.glade:21301 temp.glade:21355
 msgid "No"
 msgstr ""
 
-#: temp.glade:20761
+#: temp.glade:21034
 msgid "Picture checklist: What is happening is NOT clear"
 msgstr ""
 
-#: temp.glade:20779
+#: temp.glade:21052
 msgid "Picture checklist: Not checked for clarity"
 msgstr ""
 
-#: temp.glade:20798
+#: temp.glade:21071
 msgid ""
 "Be sure that there is nothing offensive or inappropriate in this image. This "
 "could be the way people are clothed, what actions they are doing, how they "
@@ -8293,11 +8415,11 @@ msgid ""
 "being used in other publications."
 msgstr ""
 
-#: temp.glade:20800
+#: temp.glade:21073
 msgid "Is this image acceptable in your culture?"
 msgstr ""
 
-#: temp.glade:20811
+#: temp.glade:21084
 msgid ""
 "Sometimes mirroring (reversing) an image makes it\n"
 "acceptable since a left hand becomes a right hand, etc.\n"
@@ -8308,48 +8430,48 @@ msgid ""
 "a person using his left hand!"
 msgstr ""
 
-#: temp.glade:20819
+#: temp.glade:21092
 msgid ""
 "Would the image be culturally acceptable if \n"
 "the image was mirrored (left becomes right)?"
 msgstr ""
 
-#: temp.glade:20831 temp.glade:21153
+#: temp.glade:21104 temp.glade:21426
 msgid ""
 "Now consider whether there are any issues with using this picture in this "
 "particular publication (config-specific)."
 msgstr ""
 
-#: temp.glade:20833
+#: temp.glade:21106
 msgid "In This Publication:"
 msgstr ""
 
-#: temp.glade:20849
+#: temp.glade:21122
 msgid ""
 "Consider how this image is used alongside the text and what function it "
 "serves. Maybe it depicts a building or item from a biblical culture, or a "
 "scene from a story."
 msgstr ""
 
-#: temp.glade:20851
+#: temp.glade:21124
 msgid ""
 "Is this picture intended for: clarification,\n"
 "story enhancement, filler, unknown?"
 msgstr ""
 
-#: temp.glade:20863
+#: temp.glade:21136
 msgid ""
 "Does the image support what the text is saying? As they read the passage "
 "does the image help in their understanding?"
 msgstr ""
 
-#: temp.glade:20865
+#: temp.glade:21138
 msgid ""
 "In the context of this passage, is it clear \n"
 "what is happening in this image?"
 msgstr ""
 
-#: temp.glade:20877
+#: temp.glade:21150
 msgid ""
 "For example, do the colors have the same meaning in the local culture? Is "
 "there anything in the background that is distracting from the story? Are "
@@ -8358,77 +8480,77 @@ msgid ""
 "minaret in Bethlehem)?"
 msgstr ""
 
-#: temp.glade:20879
+#: temp.glade:21152
 msgid ""
 "Does the image communicate something \n"
 "that it should not in this particular context?"
 msgstr ""
 
-#: temp.glade:20891
+#: temp.glade:21164
 msgid ""
 "Do the images and their style fit with the type of publication, i.e. "
 "Scripture, children’s materials, lectionary, etc.? Are people and actions "
 "depicted in acceptable ways?"
 msgstr ""
 
-#: temp.glade:20893
+#: temp.glade:21166
 msgid "Is the image appropriate for the publication?"
 msgstr ""
 
-#: temp.glade:20902
+#: temp.glade:21175
 msgid "Picture checklist: Cultural acceptability"
 msgstr ""
 
-#: temp.glade:20906
+#: temp.glade:21179
 msgid ""
 "Select the level to which this illustration\n"
 "is acceptable in the receptor culture."
 msgstr ""
 
-#: temp.glade:20923
+#: temp.glade:21196
 msgid ""
 "OK to\n"
 "mirror"
 msgstr ""
 
-#: temp.glade:20925
+#: temp.glade:21198
 msgid "Picture checklist: Can mirror if needed"
 msgstr ""
 
-#: temp.glade:20929
+#: temp.glade:21202
 msgid ""
 "It is fine to mirror the image if needed. It would\n"
 "not change the impact or response of the readers."
 msgstr ""
 
-#: temp.glade:20944
+#: temp.glade:21217
 msgid ""
 "Never\n"
 "mirror"
 msgstr ""
 
-#: temp.glade:20946
+#: temp.glade:21219
 msgid "Picture checklist: Never mirror"
 msgstr ""
 
-#: temp.glade:20950
+#: temp.glade:21223
 msgid ""
 "Ensure that this image is always shown\n"
 "as currently depicted in the preview. Do\n"
 "NOT allow it to be mirrored (reversed)."
 msgstr ""
 
-#: temp.glade:20966
+#: temp.glade:21239
 msgid ""
 "Always\n"
 "mirror"
 msgstr ""
 
-#: temp.glade:20968
+#: temp.glade:21241
 msgid "Picture checklist: Always mirror"
 msgstr ""
 
-#: temp.glade:20972
+#: temp.glade:21245
 msgid ""
 "Ensure that this image is always mirrored from\n"
 "what is currently shown in the preview. Therefore\n"
@@ -8436,115 +8558,115 @@ msgid ""
 "being done with the right hand, and vice versa."
 msgstr ""
 
-#: temp.glade:20989
+#: temp.glade:21262
 msgid "Picture checklist: Purpose of illustration"
 msgstr ""
 
-#: temp.glade:20993
+#: temp.glade:21266
 msgid ""
 "Select the reason for including the\n"
 "illustration in this particular publication."
 msgstr ""
 
-#: temp.glade:21011
+#: temp.glade:21284
 msgid "Picture checklist: What is happening is clear in this context"
 msgstr ""
 
-#: temp.glade:21029
+#: temp.glade:21302
 msgid "Picture checklist: What is happening is NOT clear in this context"
 msgstr ""
 
-#: temp.glade:21046 temp.glade:21132
+#: temp.glade:21319 temp.glade:21405
 msgid "Unchecked"
 msgstr ""
 
-#: temp.glade:21047
+#: temp.glade:21320
 msgid "Picture checklist: Not checked for clarity in this context"
 msgstr ""
 
-#: temp.glade:21065
+#: temp.glade:21338
 msgid "Picture checklist: Carries wrong meaning in this context"
 msgstr ""
 
-#: temp.glade:21083
+#: temp.glade:21356
 msgid "Picture checklist: Carries expected meaning in this context"
 msgstr ""
 
-#: temp.glade:21100
+#: temp.glade:21373
 msgid "Picture checklist: Appropriateness of illustration"
 msgstr ""
 
-#: temp.glade:21104
+#: temp.glade:21377
 msgid ""
 "Select the appropriateness of the\n"
 "illustration within this publication."
 msgstr ""
 
-#: temp.glade:21133
+#: temp.glade:21406
 msgid "Picture checklist: Not checked if wrong meaning in this context"
 msgstr ""
 
-#: temp.glade:21155
+#: temp.glade:21428
 msgid "Consultant Approval:"
 msgstr ""
 
-#: temp.glade:21169
+#: temp.glade:21442
 msgid "Picture checklist: Approved by date"
 msgstr ""
 
-#: temp.glade:21172
+#: temp.glade:21445
 msgid ""
 "The most recent date that the\n"
 "consultant approval updated."
 msgstr ""
 
-#: temp.glade:21178
+#: temp.glade:21451
 msgid "Date"
 msgstr ""
 
-#: temp.glade:21188
+#: temp.glade:21461
 msgid "Picture checklist: Approved by initials"
 msgstr ""
 
-#: temp.glade:21195
+#: temp.glade:21468
 msgid "Initials"
 msgstr ""
 
-#: temp.glade:21209
+#: temp.glade:21482
 msgid "any publication"
 msgstr ""
 
-#: temp.glade:21210
+#: temp.glade:21483
 msgid "Picture checklist: Approved for use in ANY publication"
 msgstr ""
 
-#: temp.glade:21226
+#: temp.glade:21499
 msgid "this publication"
 msgstr ""
 
-#: temp.glade:21227
+#: temp.glade:21500
 msgid "Picture checklist: Approved for use in THIS publication"
 msgstr ""
 
-#: temp.glade:21243
+#: temp.glade:21516
 msgid ""
 "Approved to\n"
 "be used in:"
 msgstr ""
 
-#: temp.glade:21245
+#: temp.glade:21518
 msgid "Picture checklist: Approved for use"
 msgstr ""
 
-#: temp.glade:21262
+#: temp.glade:21535
 msgid "     "
 msgstr ""
 
-#: temp.glade:21275
+#: temp.glade:21548
 msgid "By:"
 msgstr ""
 
-#: temp.glade:21340
+#: temp.glade:21613
 msgid ""
 "Use the notes area below to record anything \n"
 "about this picture, or to dialog with the consultant.\n"
@@ -8552,11 +8674,11 @@ msgid ""
 "in ALL publications of this project (not just THIS one)."
 msgstr ""
 
-#: temp.glade:21345
+#: temp.glade:21618
 msgid "Notes About This Picture:"
 msgstr ""
 
-#: temp.glade:21425
+#: temp.glade:21698
 msgid ""
 "Pictures are best used in situations where:\n"
 "1. The physical situation is not understood, or not common in the target "
@@ -8568,22 +8690,22 @@ msgid ""
 "4. Where it entices the reader to read the passage."
 msgstr ""
 
-#: temp.glade:21430
+#: temp.glade:21703
 msgid "Questions to Consider"
 msgstr ""
 
-#: temp.glade:21458
+#: temp.glade:21731
 msgid ""
 "This tab encourages you to think through\n"
 "the appropriateness of the pictures used\n"
 "in this publication, as well as other contexts."
 msgstr ""
 
-#: temp.glade:21461
+#: temp.glade:21734
 msgid "Checklist"
 msgstr ""
 
-#: temp.glade:21556
+#: temp.glade:21829
 msgid ""
 "Manipulate the pictures to be used\n"
 "in the publication. Control everything\n"
@@ -8591,45 +8713,45 @@ msgid ""
 "to copyrights."
 msgstr ""
 
-#: temp.glade:21603
+#: temp.glade:21876
 msgid "Diglot: Proportion to be used by primary text"
 msgstr ""
 
-#: temp.glade:21606 temp.glade:21628
+#: temp.glade:21879 temp.glade:21901
 msgid ""
 "If you need the column widths to be different\n"
 "for the primary and secondary texts, then adjust\n"
 "the proportion here."
 msgstr ""
 
-#: temp.glade:21632
+#: temp.glade:21905
 msgid ""
 "Percentage of Page Width to \n"
 "be Used by Primary (Left) Text"
 msgstr ""
 
-#: temp.glade:21645 temp.glade:21704
+#: temp.glade:21918 temp.glade:21977
 msgid ""
 "Select the project for the other text\n"
 "to be printed. This will usually appear\n"
 "in the right-hand (or outer) column."
 msgstr ""
 
-#: temp.glade:21649
+#: temp.glade:21922
 msgid "Secondary (other) Project:"
 msgstr ""
 
-#: temp.glade:21662
+#: temp.glade:21935
 msgid ""
 "Use Saved Configuration\n"
 "(from Secondary Project):"
 msgstr ""
 
-#: temp.glade:21673
+#: temp.glade:21946
 msgid "Diglot: Secondary project configuration"
 msgstr ""
 
-#: temp.glade:21677
+#: temp.glade:21950
 msgid ""
 "Select a previously-saved/shared\n"
 "configuration to retrieve those settings.\n"
@@ -8638,23 +8760,23 @@ msgid ""
 "settings for the project)"
 msgstr ""
 
-#: temp.glade:21687
+#: temp.glade:21960
 msgid "(None)"
 msgstr ""
 
-#: temp.glade:21699
+#: temp.glade:21972
 msgid "Diglot: Secondary project name"
 msgstr ""
 
-#: temp.glade:21728
+#: temp.glade:22001
 msgid "Use Default Header Settings for Diglot"
 msgstr ""
 
-#: temp.glade:21729
+#: temp.glade:22002
 msgid "Diglot: Use default header settings"
 msgstr ""
 
-#: temp.glade:21733
+#: temp.glade:22006
 msgid ""
 "Checking this option will override\n"
 "the header settings and place the\n"
@@ -8662,15 +8784,15 @@ msgid ""
 "and Page Number in (or near) the middle."
 msgstr ""
 
-#: temp.glade:21749
+#: temp.glade:22022
 msgid "Secondary on Left (or Inner)"
 msgstr ""
 
-#: temp.glade:21750
+#: temp.glade:22023
 msgid "Diglot: Swap primary and secondary"
 msgstr ""
 
-#: temp.glade:21754
+#: temp.glade:22027
 msgid ""
 "Normally the Primary text is on the Left\n"
 "and the Secondary text is positioned on\n"
@@ -8682,15 +8804,15 @@ msgid ""
 "This is quite likely required for RTL languages."
 msgstr ""
 
-#: temp.glade:21776
+#: temp.glade:22049
 msgid "Adjust Center Header Based on Column Widths"
 msgstr ""
 
-#: temp.glade:21777
+#: temp.glade:22050
 msgid "Diglot: Adjust center header horizontal position"
 msgstr ""
 
-#: temp.glade:21781
+#: temp.glade:22054
 msgid ""
 "If the column widths of the two sides of the\n"
 "diglot are unequal, PTXprint can ensure that\n"
@@ -8699,7 +8821,7 @@ msgid ""
 "different columns)."
 msgstr ""
 
-#: temp.glade:21800 temp.glade:21987
+#: temp.glade:22073 temp.glade:22260
 msgid ""
 "When generating a PicList for a\n"
 "Diglot/DiScript publication, you\n"
@@ -8710,17 +8832,17 @@ msgid ""
 "inactive until Diglot is enabled."
 msgstr ""
 
-#: temp.glade:21808
+#: temp.glade:22081
 msgid ""
 "When Creating a PicList for \n"
 "a Diglot use Pictures from:"
 msgstr ""
 
-#: temp.glade:21819
+#: temp.glade:22092
 msgid "Auto-calculate optimum widths of diglot columns"
 msgstr ""
 
-#: temp.glade:21823
+#: temp.glade:22096
 msgid ""
 "Auto calculate primary percentage by trying to reduce the page count. This "
 "will run your print job up to 10 times or more, so choose a small book to "
@@ -8728,15 +8850,15 @@ msgid ""
 "the starting position of the slider."
 msgstr ""
 
-#: temp.glade:21860
+#: temp.glade:22133
 msgid "Alternate Merging"
 msgstr ""
 
-#: temp.glade:21861
+#: temp.glade:22134
 msgid "Diglot: Use alternative merging (alignment) method"
 msgstr ""
 
-#: temp.glade:21865
+#: temp.glade:22138
 msgid ""
 "This uses an alternative method for\n"
 "merging (or aligning) texts which\n"
@@ -8745,44 +8867,44 @@ msgid ""
 "paragraphs start in the same verse."
 msgstr ""
 
-#: temp.glade:21906
+#: temp.glade:22179
 msgid "Vertical Rule in Notes Area"
 msgstr ""
 
-#: temp.glade:21907
+#: temp.glade:22180
 msgid "Diglot: Vertical rule in notes area"
 msgstr ""
 
-#: temp.glade:21911
+#: temp.glade:22184
 msgid ""
 "Add a vertical rule between the two\n"
 "sides of the notes area of the diglot."
 msgstr ""
 
-#: temp.glade:21926
+#: temp.glade:22199
 msgid "Join with Rule Above"
 msgstr ""
 
-#: temp.glade:21927
+#: temp.glade:22200
 msgid "Diglot: Join notes rule with gutter rule"
 msgstr ""
 
-#: temp.glade:21931
+#: temp.glade:22204
 msgid ""
 "To prevent a small gap in the line\n"
 "allow the vertical line to extend\n"
 "down into the notes area."
 msgstr ""
 
-#: temp.glade:21950
+#: temp.glade:22223
 msgid "Separate Notes in Two Columns"
 msgstr ""
 
-#: temp.glade:21951
+#: temp.glade:22224
 msgid "Diglot: Keep notes in distinct columns"
 msgstr ""
 
-#: temp.glade:21955
+#: temp.glade:22228
 msgid ""
 "If this option is disabled, the footnotes from\n"
 "both sides of the diglot get merged together\n"
@@ -8793,19 +8915,19 @@ msgid ""
 "leave this option checked ON."
 msgstr ""
 
-#: temp.glade:21983
+#: temp.glade:22256
 msgid "Diglot: Source of illustrations for PicList creation "
 msgstr ""
 
-#: temp.glade:22010
+#: temp.glade:22283
 msgid "Dual Captions"
 msgstr ""
 
-#: temp.glade:22011
+#: temp.glade:22284
 msgid "Diglot: Dual captions"
 msgstr ""
 
-#: temp.glade:22015
+#: temp.glade:22288
 msgid ""
 "When creating the PicList for a diglot,\n"
 "if the pictures are set to be used from\n"
@@ -8823,58 +8945,58 @@ msgid ""
 "option does not apply at all."
 msgstr ""
 
-#: temp.glade:22080
+#: temp.glade:22353
 msgid "Diglot or Discript"
 msgstr ""
 
-#: temp.glade:22081
+#: temp.glade:22354
 msgid "Enable diglot or discript publication"
 msgstr ""
 
-#: temp.glade:22085
+#: temp.glade:22358
 msgid ""
 "A Diglot publication contains more than\n"
 "one language, or script, or text. Set the\n"
 "options here to create a Diglot or Didoc."
 msgstr ""
 
-#: temp.glade:22107
+#: temp.glade:22380
 msgid ""
 "Switch to Other\n"
 "  Diglot Project"
 msgstr ""
 
-#: temp.glade:22109
+#: temp.glade:22382
 msgid "Diglot: Switch to other project"
 msgstr ""
 
-#: temp.glade:22146
+#: temp.glade:22419
 msgid ""
 "Create a diglot publication by selecting \n"
 "a secondary project and configuration."
 msgstr ""
 
-#: temp.glade:22191 temp.glade:22327
+#: temp.glade:22464 temp.glade:22600
 msgid "The length of the Thumb Tab measured in millimeters (mm)."
 msgstr ""
 
-#: temp.glade:22193
+#: temp.glade:22466
 msgid "Length:"
 msgstr ""
 
-#: temp.glade:22205 temp.glade:22220
+#: temp.glade:22478 temp.glade:22493
 msgid "The height of the Thumb Tab measured in millimeters (mm)."
 msgstr ""
 
-#: temp.glade:22207
+#: temp.glade:22480
 msgid "Height:"
 msgstr ""
 
-#: temp.glade:22217
+#: temp.glade:22490
 msgid "Thumb tabs: Height"
 msgstr ""
 
-#: temp.glade:22240
+#: temp.glade:22513
 msgid ""
 "Thumb Tabs usually use a dark color\n"
 "for the background with a light color\n"
@@ -8885,34 +9007,34 @@ msgid ""
 "set by clicking the Edit Style link."
 msgstr ""
 
-#: temp.glade:22248
+#: temp.glade:22521
 msgid "Tab Color:"
 msgstr ""
 
-#: temp.glade:22257
+#: temp.glade:22530
 msgid "Thumb tabs: Tab color"
 msgstr ""
 
-#: temp.glade:22264
+#: temp.glade:22537
 msgid "Thumb Tab Background Color"
 msgstr ""
 
-#: temp.glade:22275
+#: temp.glade:22548
 msgid "Rotate Tabs:"
 msgstr ""
 
-#: temp.glade:22276
+#: temp.glade:22549
 msgid "Thumb tabs: Rotate tabs"
 msgstr ""
 
-#: temp.glade:22280
+#: temp.glade:22553
 msgid ""
 "Rotates the tabs so that the text runs along the edge of the page. This "
 "works well for narrow margins, but may result in fewer tab positions per "
 "page."
 msgstr ""
 
-#: temp.glade:22296
+#: temp.glade:22569
 msgid ""
 "How many tabs can there be down a page. This is automatically calculated "
 "from the Width, Height, Page size and Margins. If any of these change then "
@@ -8920,48 +9042,48 @@ msgid ""
 "spreads them apart."
 msgstr ""
 
-#: temp.glade:22298
+#: temp.glade:22571
 msgid ""
 "Number of\n"
 "Tab Positions:"
 msgstr ""
 
-#: temp.glade:22309
+#: temp.glade:22582
 msgid "Thumb tabs: Number of tab positions"
 msgstr ""
 
-#: temp.glade:22324
+#: temp.glade:22597
 msgid "Thumb tabs: Length"
 msgstr ""
 
-#: temp.glade:22351 temp.glade:22453
+#: temp.glade:22624 temp.glade:22726
 msgid ""
 "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  "
 "Vertical  </span>"
 msgstr ""
 
-#: temp.glade:22368 temp.glade:22484
+#: temp.glade:22641 temp.glade:22757
 msgid ""
 "<span background=\"black\" foreground=\"white\" font-weight=\"bold\">  "
 "Horizontal  </span>"
 msgstr ""
 
-#: temp.glade:22382
+#: temp.glade:22655
 msgid ""
 "When several shorter adjacent books occur, it is\n"
 "common to group them together to use the same\n"
 "tab position (but still have differently named tabs)."
 msgstr ""
 
-#: temp.glade:22387
+#: temp.glade:22660
 msgid "Grouped Tabs:"
 msgstr ""
 
-#: temp.glade:22397
+#: temp.glade:22670
 msgid "Thumb tabs: Tabs grouped by books"
 msgstr ""
 
-#: temp.glade:22400
+#: temp.glade:22673
 msgid ""
 "List book IDs of short books to be grouped together\n"
 "at the same tab position. Use spaces between book \n"
@@ -8972,59 +9094,59 @@ msgid ""
 "For example: PHM TIT; 1JN 2JN 3JN JUD"
 msgstr ""
 
-#: temp.glade:22417
+#: temp.glade:22690
 msgid "Thumb tabs: Rotate options"
 msgstr ""
 
-#: temp.glade:22422
+#: temp.glade:22695
 msgid ""
 "If you choose to Rotate the tabs, there are various options as to how these "
 "should be oriented. The preview (right) will show how these will appear on "
 "facing pages."
 msgstr ""
 
-#: temp.glade:22510
+#: temp.glade:22783
 msgid "Restart Tabs at MAT"
 msgstr ""
 
-#: temp.glade:22511
+#: temp.glade:22784
 msgid "Thumb tabs: Restart tabs at New Testament"
 msgstr ""
 
-#: temp.glade:22515
+#: temp.glade:22788
 msgid ""
 "Normally books will follow sequentially and if the next tab would be off the "
 "bottom of the page, then it will be set to the top for a new cycle of tabs. "
 "Setting this starts a new cycle at the start of the New Testament (Matthew)."
 msgstr ""
 
-#: temp.glade:22532
+#: temp.glade:22805
 msgid "ColorVal"
 msgstr ""
 
-#: temp.glade:22543
+#: temp.glade:22816
 msgid "Thumb tabs: Reload default book groups"
 msgstr ""
 
-#: temp.glade:22547
+#: temp.glade:22820
 msgid ""
 "Clicking this button will reload the\n"
 "default values for the Grouped Tabs."
 msgstr ""
 
-#: temp.glade:22607
+#: temp.glade:22880
 msgid "Tab Text:"
 msgstr ""
 
-#: temp.glade:22617
+#: temp.glade:22890
 msgid "\\toc3"
 msgstr ""
 
-#: temp.glade:22618 temp.glade:22644 temp.glade:23165
+#: temp.glade:22891 temp.glade:22917 temp.glade:23438
 msgid "Decorative verse numbers: Use end of Ayah"
 msgstr ""
 
-#: temp.glade:22622
+#: temp.glade:22895
 msgid ""
 "By default, Thumb Tabs use the content and styling of the \\toc3 marker.\n"
 "\n"
@@ -9036,11 +9158,11 @@ msgid ""
 "and include it in the Table of Contents. "
 msgstr ""
 
-#: temp.glade:22643
+#: temp.glade:22916
 msgid "\\zthumbtab"
 msgstr ""
 
-#: temp.glade:22648
+#: temp.glade:22921
 msgid ""
 "By default, Thumb Tabs use the content and styling of the \\toc3 marker.\n"
 "If you prefer different content and/or styling for the tabs, then this\n"
@@ -9064,11 +9186,11 @@ msgid ""
 "specifies that there should be no text in the thumbtab for that book."
 msgstr ""
 
-#: temp.glade:22678
+#: temp.glade:22951
 msgid "Edit Style"
 msgstr ""
 
-#: temp.glade:22683
+#: temp.glade:22956
 msgid ""
 "Click to jump to the appropriate\n"
 "(\\toc3 or \\zthumbtab) marker in\n"
@@ -9076,15 +9198,15 @@ msgid ""
 "formatting of the thumb tabs."
 msgstr ""
 
-#: temp.glade:22709
+#: temp.glade:22982
 msgid "Thumb Tabs"
 msgstr ""
 
-#: temp.glade:22710
+#: temp.glade:22983
 msgid "Enable thumb tabs"
 msgstr ""
 
-#: temp.glade:22714
+#: temp.glade:22987
 msgid ""
 "Thumb Tabs are sometimes used in longer publications to help the user find a "
 "scripture book easier. By default\n"
@@ -9094,35 +9216,35 @@ msgid ""
 "Tab relative to ALL the books listed in the multiple book list."
 msgstr ""
 
-#: temp.glade:22777
+#: temp.glade:23050
 msgid "Select decorative section headings "
 msgstr ""
 
-#: temp.glade:22813
+#: temp.glade:23086
 msgid "Vertical shift in pts of the section box downwards relative to the text"
 msgstr ""
 
-#: temp.glade:22815 temp.glade:23267
+#: temp.glade:23088 temp.glade:23540
 msgid "Shift:"
 msgstr ""
 
-#: temp.glade:22825
+#: temp.glade:23098
 msgid "Decorative section headings: Vertical shift"
 msgstr ""
 
-#: temp.glade:22843
+#: temp.glade:23116
 msgid "Scale section header image. 1.0 is unity."
 msgstr ""
 
-#: temp.glade:22855
+#: temp.glade:23128
 msgid "Decorative section headings: Scale"
 msgstr ""
 
-#: temp.glade:22889
+#: temp.glade:23162
 msgid "Enable decorative section headings "
 msgstr ""
 
-#: temp.glade:22893
+#: temp.glade:23166
 msgid ""
 "Section Headings may be adorned with\n"
 "a special graphic. Ensure that there is\n"
@@ -9130,33 +9252,33 @@ msgid ""
 "as vertical to make sure all headings fit."
 msgstr ""
 
-#: temp.glade:22937
+#: temp.glade:23210
 msgid "Select decorative borders "
 msgstr ""
 
-#: temp.glade:22952
+#: temp.glade:23225
 msgid "Full page"
 msgstr ""
 
-#: temp.glade:22953
+#: temp.glade:23226
 msgid "Decorative borders: Expand to fill page"
 msgstr ""
 
-#: temp.glade:22957
+#: temp.glade:23230
 msgid ""
 "If set, the border is expanded to the full page. Otherwise it is expanded "
 "only to the gutter margins."
 msgstr ""
 
-#: temp.glade:23006
+#: temp.glade:23279
 msgid "Page Border"
 msgstr ""
 
-#: temp.glade:23007
+#: temp.glade:23280
 msgid "Enable decorative borders "
 msgstr ""
 
-#: temp.glade:23011
+#: temp.glade:23284
 msgid ""
 "Select a PDF for the Border of the publication.\n"
 "Note that after setting this border, it is likely\n"
@@ -9164,43 +9286,43 @@ msgid ""
 "to make it fit. "
 msgstr ""
 
-#: temp.glade:23058
+#: temp.glade:23331
 msgid "Select end of book decoration"
 msgstr ""
 
-#: temp.glade:23120
+#: temp.glade:23393
 msgid "End of Book"
 msgstr ""
 
-#: temp.glade:23121
+#: temp.glade:23394
 msgid "Enable end of book decoration"
 msgstr ""
 
-#: temp.glade:23125
+#: temp.glade:23398
 msgid ""
 "The end of each book may be adorned \n"
 "with a special graphic."
 msgstr ""
 
-#: temp.glade:23164
+#: temp.glade:23437
 msgid "End of Ayah"
 msgstr ""
 
-#: temp.glade:23169
+#: temp.glade:23442
 msgid ""
 "Use the End of Ayah character in the\n"
 "font to decorate the verse number."
 msgstr ""
 
-#: temp.glade:23185
+#: temp.glade:23458
 msgid "Verse Border Graphic"
 msgstr ""
 
-#: temp.glade:23186
+#: temp.glade:23459
 msgid "Decorative verse numbers: Use verse border graphic"
 msgstr ""
 
-#: temp.glade:23190
+#: temp.glade:23463
 msgid ""
 "Use a PDF graphic to decorate the verse \n"
 "number. You may need to also adjust the\n"
@@ -9208,69 +9330,69 @@ msgid ""
 "fit within the graphic."
 msgstr ""
 
-#: temp.glade:23214
+#: temp.glade:23487
 msgid "Click to edit the \\v marker's properties on the Styles tab."
 msgstr ""
 
-#: temp.glade:23229
+#: temp.glade:23502
 msgid "Select verse border graphic"
 msgstr ""
 
-#: temp.glade:23265
+#: temp.glade:23538
 msgid ""
 "Vertical shift in pts of the verse decorator image upwards relative to the "
 "text."
 msgstr ""
 
-#: temp.glade:23278
+#: temp.glade:23551
 msgid "Verse border graphic: Vertical shift"
 msgstr ""
 
-#: temp.glade:23296
+#: temp.glade:23569
 msgid "Scale verse decorator image. 1.00 is unity."
 msgstr ""
 
-#: temp.glade:23308
+#: temp.glade:23581
 msgid "Verse border graphic: Scale"
 msgstr ""
 
-#: temp.glade:23326
+#: temp.glade:23599
 msgid "Move Ayah"
 msgstr ""
 
-#: temp.glade:23327
+#: temp.glade:23600
 msgid "Decorative verse numbers: Move Ayah to end of verse"
 msgstr ""
 
-#: temp.glade:23331
+#: temp.glade:23604
 msgid ""
 "This option moves the Ayah\n"
 "to the end of the verse. "
 msgstr ""
 
-#: temp.glade:23363
+#: temp.glade:23636
 msgid "Verse Number Decorator"
 msgstr ""
 
-#: temp.glade:23364
+#: temp.glade:23637
 msgid "Enable decorative verse numbers"
 msgstr ""
 
-#: temp.glade:23368
+#: temp.glade:23641
 msgid ""
 "Verse numbers can be decorated using\n"
 "either of the options shown below."
 msgstr ""
 
-#: temp.glade:23387
+#: temp.glade:23660
 msgid "Decorative Borders and Verses"
 msgstr ""
 
-#: temp.glade:23388
+#: temp.glade:23661
 msgid "Enable decorative borders and verses"
 msgstr ""
 
-#: temp.glade:23392
+#: temp.glade:23665
 msgid ""
 "Some cultures value ornamental or\n"
 "decorative features in their scripture\n"
@@ -9278,18 +9400,18 @@ msgid ""
 "to specify the settings for these."
 msgstr ""
 
-#: temp.glade:23417
+#: temp.glade:23690
 msgid ""
 "Settings for thumb-tabs and\n"
 "options to add decorative borders\n"
 "or embelishments to the text.\n"
 msgstr ""
 
-#: temp.glade:23422
+#: temp.glade:23695
 msgid "Tabs+Borders"
 msgstr ""
 
-#: temp.glade:23459 temp.glade:23476
+#: temp.glade:23732 temp.glade:23749
 msgid ""
 "If you are not sure which category\n"
 "your marker can be found under,\n"
@@ -9297,74 +9419,74 @@ msgid ""
 "the marker you need."
 msgstr ""
 
-#: temp.glade:23463
+#: temp.glade:23736
 msgid "Find:"
 msgstr ""
 
-#: temp.glade:23473
+#: temp.glade:23746
 msgid "Find style"
 msgstr ""
 
-#: temp.glade:23498
+#: temp.glade:23771
 msgid ""
 "Enable (or disable) the filter to\n"
 "only show markers that are in \n"
 "use in the current set of books."
 msgstr ""
 
-#: temp.glade:23607
+#: temp.glade:23880
 msgid "More Info..."
 msgstr ""
 
-#: temp.glade:23654
+#: temp.glade:23927
 msgid ""
 "Find a style within the appropriate section which is similar to the new "
 "style you wish to create. Then click this Add button to create a new style "
 "based on the currently selected style."
 msgstr ""
 
-#: temp.glade:23668
+#: temp.glade:23941
 msgid ""
 "Click to delete this style.\n"
 "Warning: There is no \n"
 "confirmation or undo!"
 msgstr ""
 
-#: temp.glade:23684
+#: temp.glade:23957
 msgid ""
 "Click to reset this style's\n"
 "settings to default values."
 msgstr ""
 
-#: temp.glade:23695
+#: temp.glade:23968
 msgid "Edit"
 msgstr ""
 
-#: temp.glade:23699
+#: temp.glade:23972
 msgid ""
 "Click to Edit additional  \n"
 "properties for this style."
 msgstr ""
 
-#: temp.glade:23749
+#: temp.glade:24022
 msgid "Styles: Select font"
 msgstr ""
 
-#: temp.glade:23778
+#: temp.glade:24051
 msgid "Styles: Font size factor"
 msgstr ""
 
-#: temp.glade:23801
+#: temp.glade:24074
 msgid ""
 "Scale Relative \n"
 "to Parent"
 msgstr ""
 
-#: temp.glade:23803
+#: temp.glade:24076
 msgid "Styles: Scale relative to parent"
 msgstr ""
 
-#: temp.glade:23808
+#: temp.glade:24081
 msgid ""
 "The Font Size is usually calculated as relative to the current Font Size "
 "Unit. If you prefer to specify an an amount relative to the underlying "
@@ -9372,31 +9494,27 @@ msgid ""
 "usfm.sty"
 msgstr ""
 
-#: temp.glade:23822
-msgid "Bold"
-msgstr ""
-
-#: temp.glade:23823
+#: temp.glade:24096
 msgid "Styles: Bold"
 msgstr ""
 
-#: temp.glade:23838
+#: temp.glade:24111
 msgid "Italic"
 msgstr ""
 
-#: temp.glade:23839
+#: temp.glade:24112
 msgid "Styles: Italic"
 msgstr ""
 
-#: temp.glade:23855
+#: temp.glade:24128
 msgid "Superscript"
 msgstr ""
 
-#: temp.glade:23856
+#: temp.glade:24129
 msgid "Styles: Superscript"
 msgstr ""
 
-#: temp.glade:23860
+#: temp.glade:24133
 msgid ""
 "The superscript option overrides these settings:\n"
 "   Font Size Factor is set to 0.75\n"
@@ -9404,58 +9522,58 @@ msgid ""
 "   defaults to 1/2 the ascent if not specified in the font)."
 msgstr ""
 
-#: temp.glade:23876
+#: temp.glade:24149
 msgid "SmallCaps"
 msgstr ""
 
-#: temp.glade:23877
+#: temp.glade:24150
 msgid "Styles: Smallcaps"
 msgstr ""
 
-#: temp.glade:23894
+#: temp.glade:24167
 msgid "Styles: Raise"
 msgstr ""
 
-#: temp.glade:23897 temp.glade:24015
+#: temp.glade:24170 temp.glade:24288
 msgid "How much to raise the text (in pts)."
 msgstr ""
 
-#: temp.glade:23919
+#: temp.glade:24192
 msgid "Styles: Color"
 msgstr ""
 
-#: temp.glade:23924
+#: temp.glade:24197
 msgid "Sets text color for text in this style."
 msgstr ""
 
-#: temp.glade:23926
+#: temp.glade:24199
 msgid "Text Color"
 msgstr ""
 
-#: temp.glade:23946
+#: temp.glade:24219
 msgid "Font:"
 msgstr ""
 
-#: temp.glade:23990
+#: temp.glade:24263
 msgid ""
 "This a factor or proportion of the base font size.\n"
 "So 1.0 is the same as the base font size from the \n"
 "Layout tab."
 msgstr ""
 
-#: temp.glade:24018
+#: temp.glade:24291
 msgid "Raise:"
 msgstr ""
 
-#: temp.glade:24032
+#: temp.glade:24305
 msgid "Underline"
 msgstr ""
 
-#: temp.glade:24033
+#: temp.glade:24306
 msgid "Styles: Underline"
 msgstr ""
 
-#: temp.glade:24039
+#: temp.glade:24312
 msgid ""
 "Underlining printed text is actively\n"
 "discouraged. If you have a strong\n"
@@ -9466,7 +9584,7 @@ msgid ""
 "Email: ptxprint_support@sil.org"
 msgstr ""
 
-#: temp.glade:24059
+#: temp.glade:24332
 msgid ""
 "Calculated absolute point size \n"
 "given the current Base Font Size\n"
@@ -9477,13 +9595,13 @@ msgid ""
 "provided for reference."
 msgstr ""
 
-#: temp.glade:24069
+#: temp.glade:24342
 msgid ""
 "<span foreground=\"blue\">11.7pt\n"
 "(↑6.6 ↓2.2)</span>"
 msgstr ""
 
-#: temp.glade:24083
+#: temp.glade:24356
 msgid ""
 "If any modifications to the typeface\n"
 "have been selected, then they will\n"
@@ -9495,60 +9613,60 @@ msgid ""
 "ital= slant value (faux italics)"
 msgstr ""
 
-#: temp.glade:24094
+#: temp.glade:24367
 msgid ""
 "<span foreground=\"blue\">GR stretch=95%\n"
 "<b>bold=1.8</b> <i>ital=0.15</i></span>"
 msgstr ""
 
-#: temp.glade:24119
+#: temp.glade:24392
 msgid "Character Settings"
 msgstr ""
 
-#: temp.glade:24149
+#: temp.glade:24422
 msgid "Styles: Paragraph alignment"
 msgstr ""
 
-#: temp.glade:24194
+#: temp.glade:24467
 msgid "Styles: Left indent"
 msgstr ""
 
-#: temp.glade:24217
+#: temp.glade:24490
 msgid "Styles: Right indent"
 msgstr ""
 
-#: temp.glade:24240
+#: temp.glade:24513
 msgid "Styles: Line spacing"
 msgstr ""
 
-#: temp.glade:24264
+#: temp.glade:24537
 msgid "Use Absolute Spacing (in pts)"
 msgstr ""
 
-#: temp.glade:24265
+#: temp.glade:24538
 msgid "Styles: Use absolute line spacing"
 msgstr ""
 
-#: temp.glade:24269
+#: temp.glade:24542
 msgid ""
 "The Line Spacing is usually calculated as a factor of the Font Size. If you "
 "prefer to specify an exact/absolute line spacing (in points), then enable "
 "this option."
 msgstr ""
 
-#: temp.glade:24282
+#: temp.glade:24555
 msgid "Styles: Space before"
 msgstr ""
 
-#: temp.glade:24305
+#: temp.glade:24578
 msgid "Styles: Space after"
 msgstr ""
 
-#: temp.glade:24328
+#: temp.glade:24601
 msgid "Styles: First line indent"
 msgstr ""
 
-#: temp.glade:24348
+#: temp.glade:24621
 msgid ""
 "If text is justified but Justify Paragraphs is turned off on the\n"
 "Body tab then an alignment of Justified here is treated as \n"
@@ -9559,24 +9677,24 @@ msgid ""
 "flow is treated as Left-to-Right."
 msgstr ""
 
-#: temp.glade:24355
+#: temp.glade:24628
 msgid "Alignment:"
 msgstr ""
 
-#: temp.glade:24376
+#: temp.glade:24649
 msgid ""
 "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
 "indentation amount."
 msgstr ""
 
-#: temp.glade:24381
+#: temp.glade:24654
 msgid ""
 "First Line\n"
 "Indent Factor:"
 msgstr ""
 
-#: temp.glade:24402
+#: temp.glade:24675
 msgid ""
 "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
@@ -9586,13 +9704,13 @@ msgid ""
 "the interpretation of Left and Right is swapped."
 msgstr ""
 
-#: temp.glade:24409
+#: temp.glade:24682
 msgid ""
 "Left Indent\n"
 "Factor:"
 msgstr ""
 
-#: temp.glade:24431
+#: temp.glade:24704
 msgid ""
 "This is multiplied by the Base Paragraph Indent\n"
 "value (specified on the Layout tab) to get the final\n"
@@ -9602,48 +9720,48 @@ msgid ""
 "the interpretation of Left and Right is swapped."
 msgstr ""
 
-#: temp.glade:24438
+#: temp.glade:24711
 msgid ""
 "Right Indent\n"
 "Factor:"
 msgstr ""
 
-#: temp.glade:24460
+#: temp.glade:24733
 msgid ""
 "This a proportion of the base line spacing.\n"
 "So 1.0 is the same as the base line spacing from the Layout tab.\n"
 "If Absolute Spacing is set, then this value is the line spacing in pts."
 msgstr ""
 
-#: temp.glade:24485
+#: temp.glade:24758
 msgid ""
 "Amount of space to insert before the paragraph. The actual space is this "
 "factor multiplied by the base line spacing from the Layout tab."
 msgstr ""
 
-#: temp.glade:24487
+#: temp.glade:24760
 msgid ""
 "Space Before\n"
 "Factor:"
 msgstr ""
 
-#: temp.glade:24508
+#: temp.glade:24781
 msgid ""
 "Amount of space to insert after the paragraph. The actual space is this "
 "factor multiplied by the base line spacing from the layout tab."
 msgstr ""
 
-#: temp.glade:24510
+#: temp.glade:24783
 msgid ""
 "Space After\n"
 "Factor:"
 msgstr ""
 
-#: temp.glade:24568
+#: temp.glade:24841
 msgid "Styles: Maximum ragged (fill) space"
 msgstr ""
 
-#: temp.glade:24571 temp.glade:24614
+#: temp.glade:24844 temp.glade:24887
 msgid ""
 "How much of the column-width can be\n"
 "empty space at a non-justified edge? This\n"
@@ -9662,75 +9780,75 @@ msgid ""
 "much space."
 msgstr ""
 
-#: temp.glade:24630
+#: temp.glade:24903
 msgid ""
 "Maximum\n"
 "Ragged Space:"
 msgstr ""
 
-#: temp.glade:24656
+#: temp.glade:24929
 msgid "Paragraph Settings"
 msgstr ""
 
-#: temp.glade:24696
+#: temp.glade:24969
 msgid "Note settings: Caller raise"
 msgstr ""
 
-#: temp.glade:24719 temp.glade:24883
+#: temp.glade:24992 temp.glade:25156
 msgid "Note settings: Note caller style"
 msgstr ""
 
-#: temp.glade:24749
+#: temp.glade:25022
 msgid ""
 "The style which is used to style the caller\n"
 "in the main text. If none is specified then\n"
 "\\v is used."
 msgstr ""
 
-#: temp.glade:24753
+#: temp.glade:25026
 msgid ""
 "Caller\n"
 "Style:"
 msgstr ""
 
-#: temp.glade:24774
+#: temp.glade:25047
 msgid ""
 "Raise the caller in the main text by\n"
 "this number of points."
 msgstr ""
 
-#: temp.glade:24777
+#: temp.glade:25050
 msgid ""
 "Caller\n"
 "Raise:"
 msgstr ""
 
-#: temp.glade:24797
+#: temp.glade:25070
 msgid ""
 "The style which is used to style the caller\n"
 "in the note itself. If none is specified then\n"
 "\\v is used."
 msgstr ""
 
-#: temp.glade:24801
+#: temp.glade:25074
 msgid ""
 "Note Caller\n"
 "Style:"
 msgstr ""
 
-#: temp.glade:24823
+#: temp.glade:25096
 msgid ""
 "Raise the caller in the note by\n"
 "this number of points."
 msgstr ""
 
-#: temp.glade:24826
+#: temp.glade:25099
 msgid ""
 "Note Caller\n"
 "Raise:"
 msgstr ""
 
-#: temp.glade:24848
+#: temp.glade:25121
 msgid ""
 "Insert the notes of the marker being defined\n"
 "into the collection of notes in the\n"
@@ -9741,158 +9859,158 @@ msgid ""
 "would be blended into the \\f footnotes."
 msgstr ""
 
-#: temp.glade:24856
+#: temp.glade:25129
 msgid ""
 "Note Blend\n"
 "Into Style:"
 msgstr ""
 
-#: temp.glade:24870
+#: temp.glade:25143
 msgid "Note settings: Caller style"
 msgstr ""
 
-#: temp.glade:24896
+#: temp.glade:25169
 msgid "Note settings: Note blend into style"
 msgstr ""
 
-#: temp.glade:24919
+#: temp.glade:25192
 msgid "Note Settings"
 msgstr ""
 
-#: temp.glade:24952
+#: temp.glade:25225
 msgid "\\tc Markers"
 msgstr ""
 
-#: temp.glade:24985
+#: temp.glade:25258
 msgid "Table settings: Vertical position of \\tc markers"
 msgstr ""
 
-#: temp.glade:25027
+#: temp.glade:25300
 msgid "Table Settings"
 msgstr ""
 
-#: temp.glade:25058
+#: temp.glade:25331
 msgid "Sidebar settings: Color"
 msgstr ""
 
-#: temp.glade:25062
+#: temp.glade:25335
 msgid "Sets the background color for sidebar."
 msgstr ""
 
-#: temp.glade:25064
+#: temp.glade:25337
 msgid "Background Color"
 msgstr ""
 
-#: temp.glade:25075
+#: temp.glade:25348
 msgid "Sidebar settings: Alpha (transparency)"
 msgstr ""
 
-#: temp.glade:25078 temp.glade:25275
+#: temp.glade:25351 temp.glade:25548
 msgid ""
 "The transparency or alpha value\n"
 "of the background colour: \n"
 "0 is transparent, 1 is solid."
 msgstr ""
 
-#: temp.glade:25100
+#: temp.glade:25373
 msgid "Sidebar settings: Width"
 msgstr ""
 
-#: temp.glade:25103 temp.glade:25233
+#: temp.glade:25376 temp.glade:25506
 msgid ""
 "Sidebar width as a percentage (%)\n"
 "of the column/page width."
 msgstr ""
 
-#: temp.glade:25124
+#: temp.glade:25397
 msgid "Borders..."
 msgstr ""
 
-#: temp.glade:25125
+#: temp.glade:25398
 msgid "Sidebar settings: Borders"
 msgstr ""
 
-#: temp.glade:25129
+#: temp.glade:25402
 msgid ""
 "Click for additional settings\n"
 "to control the look of borders\n"
 "for this category of sidebar."
 msgstr ""
 
-#: temp.glade:25142
+#: temp.glade:25415
 msgid "FG ..."
 msgstr ""
 
-#: temp.glade:25143
+#: temp.glade:25416
 msgid "Sidebar settings: Foreground image settings"
 msgstr ""
 
-#: temp.glade:25147
+#: temp.glade:25420
 msgid ""
 "Click for additional settings\n"
 "to use a foreground image\n"
 "for this category of sidebar."
 msgstr ""
 
-#: temp.glade:25159
+#: temp.glade:25432
 msgid "BG ..."
 msgstr ""
 
-#: temp.glade:25160
+#: temp.glade:25433
 msgid "Sidebar settings: Background image settings"
 msgstr ""
 
-#: temp.glade:25164
+#: temp.glade:25437
 msgid ""
 "Click for additional settings\n"
 "to use a background image\n"
 "for this category of sidebar."
 msgstr ""
 
-#: temp.glade:25176
+#: temp.glade:25449
 msgid "Sidebar settings: Position"
 msgstr ""
 
-#: temp.glade:25213
+#: temp.glade:25486
 msgid "Position of Sidebar on the page."
 msgstr ""
 
-#: temp.glade:25215
+#: temp.glade:25488
 msgid "Position:"
 msgstr ""
 
-#: temp.glade:25236
+#: temp.glade:25509
 msgid "Width:"
 msgstr ""
 
-#: temp.glade:25254
+#: temp.glade:25527
 msgid "Background shading color."
 msgstr ""
 
-#: temp.glade:25279
+#: temp.glade:25552
 msgid "Alpha:"
 msgstr ""
 
-#: temp.glade:25294
+#: temp.glade:25567
 msgid "Sidebar Settings"
 msgstr ""
 
-#: temp.glade:25314
+#: temp.glade:25587
 msgid "Other Settings"
 msgstr ""
 
-#: temp.glade:25352
+#: temp.glade:25625
 msgid ""
 "Hover over these help topics\n"
 "to gain a greater understanding\n"
 "about how the Styles editor works."
 msgstr ""
 
-#: temp.glade:25357
+#: temp.glade:25630
 msgid "Hover-help:"
 msgstr ""
 
-#: temp.glade:25369
+#: temp.glade:25642
 msgid ""
 "When a setting's name is in bold it indicates that \n"
 "the value is different from what is in the stylesheet.\n"
@@ -9901,15 +10019,15 @@ msgid ""
 "any parameter to RESET it to the stylesheet value."
 msgstr ""
 
-#: temp.glade:25374
+#: temp.glade:25647
 msgid "Why are some parameters bold?"
 msgstr ""
 
-#: temp.glade:25389
+#: temp.glade:25662
 msgid "   |   "
 msgstr ""
 
-#: temp.glade:25401
+#: temp.glade:25674
 msgid ""
 "Stylesheets are applied in this order with later settings overriding earlier "
 "settings:\n"
@@ -9930,73 +10048,73 @@ msgid ""
 "comes last, it takes priority.\n"
 msgstr ""
 
-#: temp.glade:25414
+#: temp.glade:25687
 msgid "How are Stylesheets applied?"
 msgstr ""
 
-#: temp.glade:25437
+#: temp.glade:25710
 msgid "Hide/Exclude Contents of Marker"
 msgstr ""
 
-#: temp.glade:25438
+#: temp.glade:25711
 msgid "Styles: Hide (or exclude) from output"
 msgstr ""
 
-#: temp.glade:25442
+#: temp.glade:25715
 msgid ""
 "If this option is checked, the marker becomes \n"
 "\"non-publishable\" and the contents of this \n"
 "marker will not be included in the output."
 msgstr ""
 
-#: temp.glade:25474
+#: temp.glade:25747
 msgid ""
 "Edit style information of\n"
 "markers without having to\n"
 "edit the USFM stylesheet files."
 msgstr ""
 
-#: temp.glade:25478
+#: temp.glade:25751
 msgid "Styles"
 msgstr ""
 
-#: temp.glade:25539
+#: temp.glade:25812
 msgid "Apply Customized Settings (ptxprint-mods.tex)"
 msgstr ""
 
-#: temp.glade:25540
+#: temp.glade:25813
 msgid "Apply customized TeX settings"
 msgstr ""
 
-#: temp.glade:25544
+#: temp.glade:25817
 msgid ""
 "This is the normal file for advanced users to \n"
 "configure TeX. This .tex file executes AFTER \n"
 "all the PTXprint settings. "
 msgstr ""
 
-#: temp.glade:25564
+#: temp.glade:25837
 msgid ""
 "Process Text With \n"
 "Custom Script at:"
 msgstr ""
 
-#: temp.glade:25566
+#: temp.glade:25839
 msgid "Process text with custom script"
 msgstr ""
 
-#: temp.glade:25570
+#: temp.glade:25843
 msgid ""
 "Processes the .usfm file through a program of your choosing. \n"
 "The program is run as `prog infile outfile` where infile is the \n"
 "source .usfm file and outfile the output .usfm that will then be typeset."
 msgstr ""
 
-#: temp.glade:25591
+#: temp.glade:25864
 msgid "start"
 msgstr ""
 
-#: temp.glade:25595
+#: temp.glade:25868
 msgid ""
 "Execute processing script BEFORE running \n"
 "any printdraftchanges, canonicalisation \n"
@@ -10004,11 +10122,11 @@ msgid ""
 "which are all specified below."
 msgstr ""
 
-#: temp.glade:25613
+#: temp.glade:25886
 msgid "end"
 msgstr ""
 
-#: temp.glade:25617
+#: temp.glade:25890
 msgid ""
 "Execute processing script AFTER running \n"
 "any printdraftchanges, canonicalisation \n"
@@ -10016,19 +10134,19 @@ msgid ""
 "which are all specified below."
 msgstr ""
 
-#: temp.glade:25643
+#: temp.glade:25916
 msgid "Select custom script"
 msgstr ""
 
-#: temp.glade:25667
+#: temp.glade:25940
 msgid "Apply Changes.txt (and PrintDraftChanges.txt)"
 msgstr ""
 
-#: temp.glade:25668
+#: temp.glade:25941
 msgid "Enable Changes.txt to be applied"
 msgstr ""
 
-#: temp.glade:25672
+#: temp.glade:25945
 msgid ""
 "If there are changes that you wish to\n"
 "apply to the USFM file(s) prior to\n"
@@ -10043,16 +10161,16 @@ msgid ""
 "'included' at the top of changes.txt"
 msgstr ""
 
-#: temp.glade:25696 temp.glade:25720 temp.glade:25742 temp.glade:25812
-#: temp.glade:25834 temp.glade:25852 temp.glade:27698
+#: temp.glade:25969 temp.glade:25993 temp.glade:26015 temp.glade:26085
+#: temp.glade:26107 temp.glade:26125 temp.glade:28119
 msgid "Edit..."
 msgstr ""
 
-#: temp.glade:25697
+#: temp.glade:25970
 msgid "Edit changes files"
 msgstr ""
 
-#: temp.glade:25701
+#: temp.glade:25974
 msgid ""
 "Switch to the View+Edit tab to\n"
 "show the Changes.txt file in\n"
@@ -10062,11 +10180,11 @@ msgid ""
 "Shortcut: Shift-Ctrl-C"
 msgstr ""
 
-#: temp.glade:25721
+#: temp.glade:25994
 msgid "Edit customized TeX settings"
 msgstr ""
 
-#: temp.glade:25725
+#: temp.glade:25998
 msgid ""
 "Switch to the View+Edit tab to\n"
 "show the ptxprint-mods.tex file.\n"
@@ -10074,11 +10192,11 @@ msgid ""
 "Shortcut: Shift-Ctrl-T"
 msgstr ""
 
-#: temp.glade:25743
+#: temp.glade:26016
 msgid "Edit stylesheet overrides"
 msgstr ""
 
-#: temp.glade:25747
+#: temp.glade:26020
 msgid ""
 "Switch to the View+Edit tab to\n"
 "show the ptxprint-mods.sty file.\n"
@@ -10086,15 +10204,15 @@ msgid ""
 "Shortcut: Shift-Ctrl-S"
 msgstr ""
 
-#: temp.glade:25764
+#: temp.glade:26037
 msgid "Apply Stylesheet Overrides (ptxprint-mods.sty)"
 msgstr ""
 
-#: temp.glade:25765
+#: temp.glade:26038
 msgid "Apply stylesheet overrides"
 msgstr ""
 
-#: temp.glade:25769
+#: temp.glade:26042
 msgid ""
 "It is recommended to leave \n"
 "this option unchecked (off)\n"
@@ -10104,15 +10222,15 @@ msgid ""
 "wish for these to be used by PTXprint."
 msgstr ""
 
-#: temp.glade:25788
+#: temp.glade:26061
 msgid "Apply Customized Styles (custom.sty)"
 msgstr ""
 
-#: temp.glade:25789
+#: temp.glade:26062
 msgid "Apply custom styles"
 msgstr ""
 
-#: temp.glade:25793
+#: temp.glade:26066
 msgid ""
 "It is recommended to leave \n"
 "this option unchecked (off)\n"
@@ -10122,11 +10240,11 @@ msgid ""
 "for these to be used by PTXprint."
 msgstr ""
 
-#: temp.glade:25813
+#: temp.glade:26086
 msgid "Edit custom styles"
 msgstr ""
 
-#: temp.glade:25817
+#: temp.glade:26090
 msgid ""
 "Switch to the View+Edit tab to\n"
 "show the custom.sty file.\n"
@@ -10134,19 +10252,19 @@ msgid ""
 "Shortcut: Shift-Ctrl-M"
 msgstr ""
 
-#: temp.glade:25835
+#: temp.glade:26108
 msgid "Edit custom script"
 msgstr ""
 
-#: temp.glade:25839
+#: temp.glade:26112
 msgid "Edit the processing script"
 msgstr ""
 
-#: temp.glade:25853
+#: temp.glade:26126
 msgid "Edit initial TeX settings"
 msgstr ""
 
-#: temp.glade:25857
+#: temp.glade:26130
 msgid ""
 "Switch to the View+Edit tab to\n"
 "show the ptxprint-premods.tex file.\n"
@@ -10154,39 +10272,39 @@ msgid ""
 "Shortcut: Shift-Ctrl-P"
 msgstr ""
 
-#: temp.glade:25872
+#: temp.glade:26145
 msgid "Apply Initial Settings (ptxprint-premods.tex)"
 msgstr ""
 
-#: temp.glade:25873
+#: temp.glade:26146
 msgid "Apply initial TeX settings"
 msgstr ""
 
-#: temp.glade:25877
+#: temp.glade:26150
 msgid ""
 "This .tex file is executed BEFORE any stylesheets of \n"
 "other settings are applied. This file is rarely used."
 msgstr ""
 
-#: temp.glade:25898
+#: temp.glade:26171
 msgid "Text Processing & Stylesheets"
 msgstr ""
 
-#: temp.glade:25937
+#: temp.glade:26210
 msgid "Space beside cutouts or sidebars"
 msgstr ""
 
-#: temp.glade:25940 temp.glade:26203
+#: temp.glade:26213 temp.glade:26476
 msgid ""
 "This sets the default gap (pt) between the body \n"
 "text and the side of a figure/sidebar in a cutout."
 msgstr ""
 
-#: temp.glade:25960
+#: temp.glade:26233
 msgid "Space after verse numbers"
 msgstr ""
 
-#: temp.glade:25963 temp.glade:26179
+#: temp.glade:26236 temp.glade:26452
 msgid ""
 "This sets the gap between the verse \n"
 "number and the text following. The\n"
@@ -10194,11 +10312,11 @@ msgid ""
 "body text size as specified in layout."
 msgstr ""
 
-#: temp.glade:25988
+#: temp.glade:26261
 msgid "Space after chapter numbers"
 msgstr ""
 
-#: temp.glade:25991 temp.glade:26155
+#: temp.glade:26264 temp.glade:26428
 msgid ""
 "This sets the gap between the chapter \n"
 "number and the text following. The\n"
@@ -10206,21 +10324,21 @@ msgid ""
 "body text size as specified in layout."
 msgstr ""
 
-#: temp.glade:26016
+#: temp.glade:26289
 msgid "Underline thickness"
 msgstr ""
 
-#: temp.glade:26019
+#: temp.glade:26292
 msgid ""
 "This sets the thickness \n"
 "(in ems) of the underline."
 msgstr ""
 
-#: temp.glade:26042
+#: temp.glade:26315
 msgid "Underline vertical position (raise or lower)"
 msgstr ""
 
-#: temp.glade:26045
+#: temp.glade:26318
 msgid ""
 "This sets the vertical position\n"
 "(in ems) of the underline. \n"
@@ -10228,22 +10346,22 @@ msgid ""
 "Positive values move it up."
 msgstr ""
 
-#: temp.glade:26070
+#: temp.glade:26343
 msgid "Start new page threshold (page full factor)"
 msgstr ""
 
-#: temp.glade:26073 temp.glade:26132
+#: temp.glade:26346 temp.glade:26405
 msgid ""
 "This setting is related to how full\n"
 "a page needs to be to force the\n"
 "next book to start on a new page."
 msgstr ""
 
-#: temp.glade:26097
+#: temp.glade:26370
 msgid "Rule (line) Thickness"
 msgstr ""
 
-#: temp.glade:26100 temp.glade:26272
+#: temp.glade:26373 temp.glade:26545
 msgid ""
 "This sets the thickness (pt) of rules (lines)\n"
 "in the document. This includes the\n"
@@ -10252,44 +10370,44 @@ msgid ""
 "rule and the study notes inter-column rule."
 msgstr ""
 
-#: temp.glade:26136
+#: temp.glade:26409
 msgid ""
 "Page Full\n"
 "Factor:"
 msgstr ""
 
-#: temp.glade:26160
+#: temp.glade:26433
 msgid ""
 "After Chapter\n"
 "Space Factor:"
 msgstr ""
 
-#: temp.glade:26184
+#: temp.glade:26457
 msgid ""
 "After Verse\n"
 "Space Factor:"
 msgstr ""
 
-#: temp.glade:26206
+#: temp.glade:26479
 msgid ""
 "Space (pt) Beside\n"
 "Cutout/Sidebar:"
 msgstr ""
 
-#: temp.glade:26225
+#: temp.glade:26498
 msgid ""
 "This sets the thickness\n"
 "of the text underline,\n"
 "(measured in ems)."
 msgstr ""
 
-#: temp.glade:26229
+#: temp.glade:26502
 msgid ""
 "Underline\n"
 "Thickness (em):"
 msgstr ""
 
-#: temp.glade:26248
+#: temp.glade:26521
 msgid ""
 "This sets the vertical position\n"
 "(in ems) of the text underline. \n"
@@ -10297,29 +10415,29 @@ msgid ""
 "Positive values move it up."
 msgstr ""
 
-#: temp.glade:26253
+#: temp.glade:26526
 msgid ""
 "Underline Vertical\n"
 "Position (em):"
 msgstr ""
 
-#: temp.glade:26278
+#: temp.glade:26551
 msgid "Rule Thickness (pt):"
 msgstr ""
 
-#: temp.glade:26293
+#: temp.glade:26566
 msgid "Misc Refinement Settings"
 msgstr ""
 
-#: temp.glade:26342
+#: temp.glade:26615
 msgid "Sensitive Project"
 msgstr ""
 
-#: temp.glade:26343
+#: temp.glade:26616
 msgid "Sensitive project"
 msgstr ""
 
-#: temp.glade:26347
+#: temp.glade:26620
 msgid ""
 "In sensitive locations the illustration copyright\n"
 "statement(s) can just contain the appropriate\n"
@@ -10329,15 +10447,15 @@ msgid ""
 "sensitive project-specific data."
 msgstr ""
 
-#: temp.glade:26365
+#: temp.glade:26638
 msgid "Auto-Correct USFM"
 msgstr ""
 
-#: temp.glade:26366
+#: temp.glade:26639
 msgid "Auto-correct common USFM syntax errors"
 msgstr ""
 
-#: temp.glade:26370
+#: temp.glade:26643
 msgid ""
 "PTXprint can analyze the USFM files and\n"
 "automatically correct some common \n"
@@ -10348,15 +10466,15 @@ msgid ""
 "to print."
 msgstr ""
 
-#: temp.glade:26395
+#: temp.glade:26668
 msgid "Interlinear  &  Code:"
 msgstr ""
 
-#: temp.glade:26396
+#: temp.glade:26669
 msgid "Interlinear settings"
 msgstr ""
 
-#: temp.glade:26400
+#: temp.glade:26673
 msgid ""
 "Convert Paratext's interlinear data\n"
 "text to ruby (glossing) so that an\n"
@@ -10373,7 +10491,7 @@ msgid ""
 "settings are mutually exclusive."
 msgstr ""
 
-#: temp.glade:26427
+#: temp.glade:26700
 msgid ""
 "Interlinear language code to use.\n"
 "To find which code to use, look \n"
@@ -10385,15 +10503,15 @@ msgid ""
 "the code would be \"en\"."
 msgstr ""
 
-#: temp.glade:26448
+#: temp.glade:26721
 msgid "Ruby Text Above"
 msgstr ""
 
-#: temp.glade:26449
+#: temp.glade:26722
 msgid "Place Ruby text above words "
 msgstr ""
 
-#: temp.glade:26453
+#: temp.glade:26726
 msgid ""
 "Treat ruby text as ruby rather than \n"
 "interlinear text by placing it above \n"
@@ -10407,14 +10525,14 @@ msgid ""
 "to locate those styles in the editor."
 msgstr ""
 
-#: temp.glade:26481
+#: temp.glade:26754
 msgid ""
 "Click to jump to the \\rb marker in\n"
 "the style editor to change the\n"
 "formatting of the ruby text."
 msgstr ""
 
-#: temp.glade:26502
+#: temp.glade:26775
 msgid ""
 "Click to jump to the \\gloss|rb \n"
 "marker in the style editor to \n"
@@ -10422,15 +10540,15 @@ msgid ""
 "glosses for interlinear/ruby text."
 msgstr ""
 
-#: temp.glade:26526
+#: temp.glade:26799
 msgid "Only Use English Links"
 msgstr ""
 
-#: temp.glade:26527
+#: temp.glade:26800
 msgid "Only use English links (do not G-translate)"
 msgstr ""
 
-#: temp.glade:26531
+#: temp.glade:26804
 msgid ""
 "When using a non-English interface (such as French,\n"
 "Spanish, Hindi, etc.) most links to external websites get\n"
@@ -10442,15 +10560,15 @@ msgid ""
 "or you simply prefer to read the original page in English."
 msgstr ""
 
-#: temp.glade:26553
+#: temp.glade:26826
 msgid "Disable ALL Internet Use"
 msgstr ""
 
-#: temp.glade:26554
+#: temp.glade:26827
 msgid "Disable internet use"
 msgstr ""
 
-#: temp.glade:26558
+#: temp.glade:26831
 msgid ""
 "PTXprint checks for program updates and also\n"
 "contains links to external sites (mainly from \n"
@@ -10459,7 +10577,7 @@ msgid ""
 "PTXprint from accessing the internet."
 msgstr ""
 
-#: temp.glade:26586 temp.glade:26603
+#: temp.glade:26859 temp.glade:26876
 msgid ""
 "Some advanced features load extra code\n"
 "that is not normally needed. List them\n"
@@ -10467,25 +10585,25 @@ msgid ""
 "e.g. polyglot-simplepages, ornaments"
 msgstr ""
 
-#: temp.glade:26590
+#: temp.glade:26863
 msgid "Plugins:"
 msgstr ""
 
-#: temp.glade:26600
+#: temp.glade:26873
 msgid "List of plugins"
 msgstr ""
 
-#: temp.glade:26624
+#: temp.glade:26897
 msgid ""
 "Auto-tag Hebrew words with \\wh ... \\wh* and Greek words with  \\wg ... "
 "\\wg*"
 msgstr ""
 
-#: temp.glade:26625
+#: temp.glade:26898
 msgid "Auto-tag Hebrew and Greek words"
 msgstr ""
 
-#: temp.glade:26629
+#: temp.glade:26902
 msgid ""
 "PTXprint can automatically tag all\n"
 "source language words (Hebrew and\n"
@@ -10494,51 +10612,66 @@ msgid ""
 "font and direction for that script."
 msgstr ""
 
-#: temp.glade:26687
+#: temp.glade:26960
 msgid "Legacy 1/14 LineSpacing"
 msgstr ""
 
-#: temp.glade:26688
+#: temp.glade:26961
 msgid "Enable legacy 1/14 line spacing"
 msgstr ""
 
-#: temp.glade:26692
+#: temp.glade:26965
 msgid ""
 "In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the "
 "base line spacing. This has changed so they are now in units of 1/12 of the "
 "base line spacing. Enabling this compatibility reverts the units."
 msgstr ""
 
-#: temp.glade:26705
+#: temp.glade:26978
 msgid "Debug Tracing"
 msgstr ""
 
-#: temp.glade:26706
+#: temp.glade:26979
 msgid "Enable debug tracing"
 msgstr ""
 
-#: temp.glade:26710
+#: temp.glade:26983
 msgid ""
 "This advanced feature is for\n"
 "troubleshooting use only."
 msgstr ""
 
-#: temp.glade:26725 temp.glade:26726
+#: temp.glade:26998 temp.glade:26999
 msgid "Use glyph metrics"
 msgstr ""
 
-#: temp.glade:26730
+#: temp.glade:27003
 msgid ""
 "ptxprint can use either the actual glyph metrics in a line or the font "
 "metrics to calculate line heights and depths.\n"
 "Font metrics gives more consistent results."
 msgstr ""
 
-#: temp.glade:26753
+#: temp.glade:27017
+msgid "Show TeXpert Hacks"
+msgstr ""
+
+#: temp.glade:27018
+msgid "Show tab with expert level controls (TeXpert mode)"
+msgstr ""
+
+#: temp.glade:27022
+msgid ""
+"An additional 'TeXpert Hacks' tab exists for\n"
+"those who are familiar with TeX and need to\n"
+"change the code or various other parameters."
+msgstr ""
+
+#: temp.glade:27045
 msgid "Compatibility"
 msgstr ""
 
-#: temp.glade:26780
+#: temp.glade:27072
 msgid ""
 "Define stylesheets, tex macros,\n"
 "front and back matter PDFs, \n"
@@ -10547,11 +10680,45 @@ msgid ""
 "interlinear (& ruby text) output."
 msgstr ""
 
-#: temp.glade:26820
+#: temp.glade:27115
+msgid "Strongs Refs"
+msgstr ""
+
+#: temp.glade:27140 temp.glade:27565
+msgid ""
+"To balance columns of text on a page it is possible\n"
+"to specify paragraphs adjustments (shrink or expand):\n"
+"\n"
+"A Paragraph Adjust List needs to be in this format:\n"
+"MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) \n"
+"MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)\n"
+"%MARK 4.14 +1   (ignore this line - treat it as a comment)   \n"
+"MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)\n"
+"MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph \n"
+"                              which contains MRK 6.23 e.g. a heading.)\n"
+"etc.\n"
+"Note that adjusting paragraphs needs to be done right at the\n"
+"end when all other settings have been finalized. Otherwise you\n"
+"are likely to have to re-do it all again."
+msgstr ""
+
+#: temp.glade:27154
+msgid "Misc Settings"
+msgstr ""
+
+#: temp.glade:27207
+msgid "Adjust expert-level settings."
+msgstr ""
+
+#: temp.glade:27209
+msgid "TeXpert Hacks"
+msgstr ""
+
+#: temp.glade:27241
 msgid "Reload current file in view from saved version"
 msgstr ""
 
-#: temp.glade:26825
+#: temp.glade:27246
 msgid ""
 "Discard any changes that have \n"
 "been made and restore the contents\n"
@@ -10560,32 +10727,32 @@ msgid ""
 "Shortcut: F5"
 msgstr ""
 
-#: temp.glade:26849
+#: temp.glade:27270
 msgid ""
 "Book in\n"
 "Focus:"
 msgstr ""
 
-#: temp.glade:26859
+#: temp.glade:27280
 msgid "Book in focus for editor (or viewer)"
 msgstr ""
 
-#: temp.glade:26862
+#: temp.glade:27283
 msgid ""
 "Choose any book (including\n"
 "those which are not currently\n"
 "in the list to be printed.)"
 msgstr ""
 
-#: temp.glade:26891
+#: temp.glade:27312
 msgid "Generate"
 msgstr ""
 
-#: temp.glade:26892
+#: temp.glade:27313
 msgid "Generate ... (context sensitive)"
 msgstr ""
 
-#: temp.glade:26896
+#: temp.glade:27317
 msgid ""
 "This button will (re-)generate content for \n"
 "Front Matter, AdjList(s) and Final SFM.\n"
@@ -10598,15 +10765,15 @@ msgid ""
 "Shortcut: Ctrl-G"
 msgstr ""
 
-#: temp.glade:26918
+#: temp.glade:27339
 msgid "View/Edit..."
 msgstr ""
 
-#: temp.glade:26919
+#: temp.glade:27340
 msgid "View (or edit) file in external editor"
 msgstr ""
 
-#: temp.glade:26924
+#: temp.glade:27345
 msgid ""
 "You may view (and in some cases edit) \n"
 "the file in your system's text Editor.\n"
@@ -10629,15 +10796,15 @@ msgid ""
 "Shortcut: Ctrl-E"
 msgstr ""
 
-#: temp.glade:26957
+#: temp.glade:27378
 msgid "Edit Variables..."
 msgstr ""
 
-#: temp.glade:26958
+#: temp.glade:27379
 msgid "Edit peripheral variables"
 msgstr ""
 
-#: temp.glade:26963
+#: temp.glade:27384
 msgid ""
 "If you have used \\zvar_variable names\n"
 "in the front matter template, these may\n"
@@ -10645,15 +10812,15 @@ msgid ""
 "this button to show that tab."
 msgstr ""
 
-#: temp.glade:26978
+#: temp.glade:27399
 msgid "Remove +0's"
 msgstr ""
 
-#: temp.glade:26979
+#: temp.glade:27400
 msgid "Remove redundant lines from AdjList"
 msgstr ""
 
-#: temp.glade:26984
+#: temp.glade:27405
 msgid ""
 "When you generate an AdjList with all the\n"
 "possible paragraph adjustment positions, it\n"
@@ -10666,7 +10833,7 @@ msgid ""
 "more clearly where changes are being made."
 msgstr ""
 
-#: temp.glade:27019
+#: temp.glade:27440
 msgid ""
 "Use the following codes to include special text in front matter:\n"
 "\n"
@@ -10705,78 +10872,60 @@ msgid ""
 "  \\mt2 \\zvar|subtitle\\*"
 msgstr ""
 
-#: temp.glade:27072
+#: temp.glade:27493
 msgid "Autosave"
 msgstr ""
 
-#: temp.glade:27077
+#: temp.glade:27498
 msgid ""
 "Save any changes made below\n"
 "without a confirmation check."
 msgstr ""
 
-#: temp.glade:27119
+#: temp.glade:27540
 msgid "Front Matter"
 msgstr ""
 
-#: temp.glade:27144
-msgid ""
-"To balance columns of text on a page it is possible\n"
-"to specify paragraphs adjustments (shrink or expand):\n"
-"\n"
-"A Paragraph Adjust List needs to be in this format:\n"
-"MRK 2.7 +1    (i.e. expand the para at Mark 2.7 by one line) \n"
-"MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)\n"
-"%MARK 4.14 +1   (ignore this line - treat it as a comment)   \n"
-"MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)\n"
-"MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph \n"
-"                              which contains MRK 6.23 e.g. a heading.)\n"
-"etc.\n"
-"Note that adjusting paragraphs needs to be done right at the\n"
-"end when all other settings have been finalized. Otherwise you\n"
-"are likely to have to re-do it all again."
-msgstr ""
-
-#: temp.glade:27158
+#: temp.glade:27579
 msgid "Adj List"
 msgstr ""
 
-#: temp.glade:27189
+#: temp.glade:27610
 msgid "Final SFM"
 msgstr ""
 
-#: temp.glade:27215
+#: temp.glade:27636
 msgid ".tex file"
 msgstr ""
 
-#: temp.glade:27241
+#: temp.glade:27662
 msgid "XeTeX Log"
 msgstr ""
 
-#: temp.glade:27267 temp.glade:27293
+#: temp.glade:27688 temp.glade:27714
 msgid "Settings"
 msgstr ""
 
-#: temp.glade:27316
+#: temp.glade:27737
 msgid ""
 "View and edit various control\n"
 "and log files. Examine final SFM\n"
 "output and tweak adjust lists."
 msgstr ""
 
-#: temp.glade:27320
+#: temp.glade:27741
 msgid "View+Edit"
 msgstr ""
 
-#: temp.glade:27353
+#: temp.glade:27774
 msgid "Front Matter PDF(s)"
 msgstr ""
 
-#: temp.glade:27354
+#: temp.glade:27775
 msgid "Enable import of front matter PDF(s)"
 msgstr ""
 
-#: temp.glade:27359
+#: temp.glade:27780
 msgid ""
 "One or more previously created PDF file(s) can be included \n"
 "BEFORE the scripture material being typeset. If more than one\n"
@@ -10787,19 +10936,19 @@ msgid ""
 "cover using the online Canva.com tool (link provided)."
 msgstr ""
 
-#: temp.glade:27381
+#: temp.glade:27802
 msgid "Select front matter PDF(s) to import"
 msgstr ""
 
-#: temp.glade:27429
+#: temp.glade:27850
 msgid "Table of Contents   Title:"
 msgstr ""
 
-#: temp.glade:27430
+#: temp.glade:27851
 msgid "Enable table of contents"
 msgstr ""
 
-#: temp.glade:27435
+#: temp.glade:27856
 msgid ""
 "This will automatically generate the Table of Contents\n"
 "for all the books included in the publication using one\n"
@@ -10815,71 +10964,71 @@ msgid ""
 "final run."
 msgstr ""
 
-#: temp.glade:27462
+#: temp.glade:27883
 msgid "Table of contents title"
 msgstr ""
 
-#: temp.glade:27466
+#: temp.glade:27887
 msgid ""
 "A file called \"combined.toc\" will be created \n"
 "with the outline of the Table of Contents and\n"
 "automatically prepended to the output PDF."
 msgstr ""
 
-#: temp.glade:27471
+#: temp.glade:27892
 msgid "Table of Contents Title"
 msgstr ""
 
-#: temp.glade:27488
+#: temp.glade:27909
 msgid "Table of contents: Use \\toc1"
 msgstr ""
 
-#: temp.glade:27493 temp.glade:27550 temp.glade:27570
+#: temp.glade:27914 temp.glade:27971 temp.glade:27991
 msgid ""
 "Select which of the \\toc markers\n"
 "should be included in the\n"
 "generated Table of Contents."
 msgstr ""
 
-#: temp.glade:27545
+#: temp.glade:27966
 msgid "Table of contents: Use \\toc2"
 msgstr ""
 
-#: temp.glade:27565
+#: temp.glade:27986
 msgid "Table of contents: Use \\toc3"
 msgstr ""
 
-#: temp.glade:27606
+#: temp.glade:28027
 msgid ""
 "To be listed\n"
 "in the Table\n"
 "of Contents"
 msgstr ""
 
-#: temp.glade:27625
+#: temp.glade:28046
 msgid "Leaders:"
 msgstr ""
 
-#: temp.glade:27635
+#: temp.glade:28056
 msgid "Style of leaders for table of contents"
 msgstr ""
 
-#: temp.glade:27639
+#: temp.glade:28060
 msgid ""
 "Leaders display dots or a line between\n"
 "the text and the page number. Select\n"
 "the style of leader you wish to apply."
 msgstr ""
 
-#: temp.glade:27672
+#: temp.glade:28093
 msgid "Local Front Matter"
 msgstr ""
 
-#: temp.glade:27673
+#: temp.glade:28094
 msgid "Enable (local) front matter"
 msgstr ""
 
-#: temp.glade:27678
+#: temp.glade:28099
 msgid ""
 "PTXprint does not directly typeset the FRT\n"
 "book from Paratext. Instead, it uses a \"local\"\n"
@@ -10889,38 +11038,38 @@ msgid ""
 "Information button."
 msgstr ""
 
-#: temp.glade:27699
+#: temp.glade:28120
 msgid "View (or edit) front matter"
 msgstr ""
 
-#: temp.glade:27715
+#: temp.glade:28136
 msgid ""
 "Force Page Break \n"
 "at each Periph"
 msgstr ""
 
-#: temp.glade:27717
+#: temp.glade:28138
 msgid "Front matter: Force page break at each periph section"
 msgstr ""
 
-#: temp.glade:27721
+#: temp.glade:28142
 msgid ""
 "This option is normally checked so that each\n"
 "different section of the front matter will begin\n"
 "on a new page."
 msgstr ""
 
-#: temp.glade:27739
+#: temp.glade:28160
 msgid ""
 "Suppress Blank Page\n"
 "Before Scripture Text"
 msgstr ""
 
-#: temp.glade:27741
+#: temp.glade:28162
 msgid "Front matter: Suppress blank page at start of scripture text"
 msgstr ""
 
-#: temp.glade:27745
+#: temp.glade:28166
 msgid ""
 "By default, the main body of scripture always starts\n"
 "on an odd (right-hand-side) page. PTXprint will\n"
@@ -10930,11 +11079,11 @@ msgid ""
 "after any front matter material)."
 msgstr ""
 
-#: temp.glade:27799
+#: temp.glade:28220
 msgid "Rescan peripheral variables"
 msgstr ""
 
-#: temp.glade:27803
+#: temp.glade:28224
 msgid ""
 "Clicking this button will rescan the\n"
 "Front Matter for any \\zvar|variables\\*\n"
@@ -10942,25 +11091,25 @@ msgid ""
 "table of variable names and values."
 msgstr ""
 
-#: temp.glade:27904
+#: temp.glade:28325
 msgid "Delete a peripheral variable"
 msgstr ""
 
-#: temp.glade:27909
+#: temp.glade:28330
 msgid ""
 "Delete the currently\n"
 "selected variable(s)."
 msgstr ""
 
-#: temp.glade:27923
+#: temp.glade:28344
 msgid "Add a peripheral variable"
 msgstr ""
 
-#: temp.glade:27928
+#: temp.glade:28349
 msgid "Add a new variable."
 msgstr ""
 
-#: temp.glade:27955
+#: temp.glade:28376
 msgid ""
 "This table lists the standard set of \\zvar|variables\\* which\n"
 "can be used as part of front matter and/or colophon. \n"
@@ -10976,11 +11125,11 @@ msgid ""
 "as they might vary from one publication to another."
 msgstr ""
 
-#: temp.glade:27967
+#: temp.glade:28388
 msgid "Variables and Values"
 msgstr ""
 
-#: temp.glade:28003
+#: temp.glade:28424
 msgid ""
 "Enter your Colophon text here - using standard\n"
 "USFM codes for formatting. You may want to\n"
@@ -11012,15 +11161,15 @@ msgid ""
 "in order to get accurate Image Copyright Attribution."
 msgstr ""
 
-#: temp.glade:28032
+#: temp.glade:28453
 msgid "Colophon Text:"
 msgstr ""
 
-#: temp.glade:28058
+#: temp.glade:28479
 msgid "Colophon text entry"
 msgstr ""
 
-#: temp.glade:28061
+#: temp.glade:28482
 msgid ""
 "Note: There are several shortcuts you can use:\n"
 "   (c) --> ©  the copyright sign\n"
@@ -11033,7 +11182,7 @@ msgid ""
 "but :// used in URLs will still be preserved"
 msgstr ""
 
-#: temp.glade:28091
+#: temp.glade:28512
 msgid ""
 "Clicking this button will reload the \n"
 "default Colophon text markers which\n"
@@ -11042,17 +11191,17 @@ msgid ""
 "Illustration credits tag."
 msgstr ""
 
-#: temp.glade:28107
+#: temp.glade:28528
 msgid ""
 "Force Page Break \n"
 "Before Colophon"
 msgstr ""
 
-#: temp.glade:28109
+#: temp.glade:28530
 msgid "Force page break before colophon"
 msgstr ""
 
-#: temp.glade:28114
+#: temp.glade:28535
 msgid ""
 "Normally the colophon is inserted at the end\n"
 "of the last page of the last book. If this option\n"
@@ -11063,15 +11212,15 @@ msgid ""
 "on its own page - regardless of this setting. "
 msgstr ""
 
-#: temp.glade:28135
+#: temp.glade:28556
 msgid "Colophon at End of Publication"
 msgstr ""
 
-#: temp.glade:28136
+#: temp.glade:28557
 msgid "Enable colophon at end of publication"
 msgstr ""
 
-#: temp.glade:28140
+#: temp.glade:28561
 msgid ""
 "What is a Colophon?\n"
 "A brief statement containing information\n"
@@ -11086,33 +11235,33 @@ msgid ""
 "on subsequent runs."
 msgstr ""
 
-#: temp.glade:28180
+#: temp.glade:28601
 msgid "Back Matter PDF(s)"
 msgstr ""
 
-#: temp.glade:28181
+#: temp.glade:28602
 msgid "Enable import of back matter PDF(s)"
 msgstr ""
 
-#: temp.glade:28186
+#: temp.glade:28607
 msgid ""
 "One or more previously created PDF file(s) can be included\n"
 "AFTER the scripture material being typeset. If more than one\n"
 "file is selected, then these will appear in alphabetical order."
 msgstr ""
 
-#: temp.glade:28204
+#: temp.glade:28625
 msgid "Select back matter PDF(s) to import"
 msgstr ""
 
-#: temp.glade:28248
+#: temp.glade:28669
 msgid ""
 "Define what material should be\n"
 "placed before and/or after the\n"
 "main scripture pages."
 msgstr ""
 
-#: temp.glade:28299 temp.glade:28317
+#: temp.glade:28720 temp.glade:28738
 msgid ""
 "Weight of the paper being\n"
 "used to print the publication.\n"
@@ -11121,19 +11270,19 @@ msgid ""
 "paper is around 70-80 GSM."
 msgstr ""
 
-#: temp.glade:28305
+#: temp.glade:28726
 msgid "Paper:"
 msgstr ""
 
-#: temp.glade:28314
+#: temp.glade:28735
 msgid "Publication paper weight (GSM)"
 msgstr ""
 
-#: temp.glade:28338
+#: temp.glade:28759
 msgid "Publication paper thickness (microns)"
 msgstr ""
 
-#: temp.glade:28341 temp.glade:28546
+#: temp.glade:28762 temp.glade:28967
 msgid ""
 "To be more precise in the calculation\n"
 "of the spine thickness, the precise\n"
@@ -11141,22 +11290,22 @@ msgid ""
 "micons) rather than relying on GSM."
 msgstr ""
 
-#: temp.glade:28348
+#: temp.glade:28769
 msgid "70"
 msgstr ""
 
-#: temp.glade:28363
+#: temp.glade:28784
 msgid ""
 "The total number of pages in the\n"
 "book will automatically be filled\n"
 "in after the PDF has been created."
 msgstr ""
 
-#: temp.glade:28368
+#: temp.glade:28789
 msgid "Pages"
 msgstr ""
 
-#: temp.glade:28382 temp.glade:28406 temp.glade:28566
+#: temp.glade:28803 temp.glade:28827 temp.glade:28987
 msgid ""
 "The width of the spine (mm) will\n"
 "be automatically calculated using\n"
@@ -11168,63 +11317,63 @@ msgid ""
 "the cover around the binding."
 msgstr ""
 
-#: temp.glade:28393
+#: temp.glade:28814
 msgid ""
 "Spine\n"
 "(mm):"
 msgstr ""
 
-#: temp.glade:28403
+#: temp.glade:28824
 msgid "Spine thickness"
 msgstr ""
 
-#: temp.glade:28432
+#: temp.glade:28853
 msgid "Cover Design..."
 msgstr ""
 
-#: temp.glade:28433
+#: temp.glade:28854
 msgid "Select cover design"
 msgstr ""
 
-#: temp.glade:28448
+#: temp.glade:28869
 msgid "Spine Design..."
 msgstr ""
 
-#: temp.glade:28449
+#: temp.glade:28870
 msgid "Select spine design"
 msgstr ""
 
-#: temp.glade:28466
+#: temp.glade:28887
 msgid "OR"
 msgstr ""
 
-#: temp.glade:28484
+#: temp.glade:28905
 msgid "777"
 msgstr ""
 
-#: temp.glade:28496
+#: temp.glade:28917
 msgid "Rotate spine"
 msgstr ""
 
-#: temp.glade:28532
+#: temp.glade:28953
 msgid "Weight (GSM)"
 msgstr ""
 
-#: temp.glade:28552
+#: temp.glade:28973
 msgid "Thickness (microns)"
 msgstr ""
 
-#: temp.glade:28578
+#: temp.glade:28999
 msgid ""
 "Rotate\n"
 "Spine:"
 msgstr ""
 
-#: temp.glade:28606
+#: temp.glade:29027
 msgid "Cover & Spine"
 msgstr ""
 
-#: temp.glade:28647 temp.glade:28745
+#: temp.glade:29068 temp.glade:29166
 msgid ""
 "How many pages will be printed on\n"
 "one side of the physical paper?\n"
@@ -11234,11 +11383,11 @@ msgid ""
 "total of 4 pages on a single sheet."
 msgstr ""
 
-#: temp.glade:28654
+#: temp.glade:29075
 msgid "Pages Per Spread:"
 msgstr ""
 
-#: temp.glade:28665
+#: temp.glade:29086
 msgid ""
 "This is the actual size of the sheet of\n"
 "paper on which multiple pages will\n"
@@ -11249,11 +11398,11 @@ msgid ""
 "A4-sized sheet of paper."
 msgstr ""
 
-#: temp.glade:28674
+#: temp.glade:29095
 msgid "Physical Paper Size:"
 msgstr ""
 
-#: temp.glade:28686 temp.glade:28819
+#: temp.glade:29107 temp.glade:29240
 msgid ""
 "A signature is a collection of pages folded\n"
 "and bound together as a unit. A signature\n"
@@ -11264,15 +11413,15 @@ msgid ""
 "using separate signatures."
 msgstr ""
 
-#: temp.glade:28694
+#: temp.glade:29115
 msgid "Sheets Per Signature:"
 msgstr ""
 
-#: temp.glade:28703
+#: temp.glade:29124
 msgid "Pagination: Physical paper size"
 msgstr ""
 
-#: temp.glade:28706
+#: temp.glade:29127
 msgid ""
 "If the required size is not displayed, then \n"
 "just type the required page width and \n"
@@ -11281,43 +11430,43 @@ msgid ""
 "For example: 203mm, 330mm (Foolscap)"
 msgstr ""
 
-#: temp.glade:28715
+#: temp.glade:29136
 msgid "420mm, 594mm (A2)"
 msgstr ""
 
-#: temp.glade:28716
+#: temp.glade:29137
 msgid "297mm, 420mm (A3)"
 msgstr ""
 
-#: temp.glade:28718
+#: temp.glade:29139
 msgid "17in, 22in (ANSI C)"
 msgstr ""
 
-#: temp.glade:28719
+#: temp.glade:29140
 msgid "11in, 17in (ANSI B)"
 msgstr ""
 
-#: temp.glade:28721
+#: temp.glade:29142
 msgid "353mm, 500mm (B3)"
 msgstr ""
 
-#: temp.glade:28722
+#: temp.glade:29143
 msgid "250mm, 353mm (B4)"
 msgstr ""
 
-#: temp.glade:28740
+#: temp.glade:29161
 msgid "Pagination: Pages per spread (booklet printing)"
 msgstr ""
 
-#: temp.glade:28776
+#: temp.glade:29197
 msgid "Scale to fit*"
 msgstr ""
 
-#: temp.glade:28777
+#: temp.glade:29198
 msgid "Pagination: Scale to fit"
 msgstr ""
 
-#: temp.glade:28782
+#: temp.glade:29203
 msgid ""
 "(Coming soon...)\n"
 "Enable this option if it is acceptable\n"
@@ -11327,36 +11476,36 @@ msgid ""
 "per Spread (both set on this tab)."
 msgstr ""
 
-#: temp.glade:28801 temp.glade:28842
+#: temp.glade:29222 temp.glade:29263
 msgid ""
 "The width of the area to be cut\n"
 "after folding of the signature.\n"
 "Measured in millimeters (mm)."
 msgstr ""
 
-#: temp.glade:28806
+#: temp.glade:29227
 msgid ""
 "Minimum Fold \n"
 "Cut Margin (mm):"
 msgstr ""
 
-#: temp.glade:28816
+#: temp.glade:29237
 msgid "Pagination: Sheets per signature (pages per form)"
 msgstr ""
 
-#: temp.glade:28839
+#: temp.glade:29260
 msgid "Pagination: Minimum fold cut margin"
 msgstr ""
 
-#: temp.glade:28859
+#: temp.glade:29280
 msgid "Fold First"
 msgstr ""
 
-#: temp.glade:28860
+#: temp.glade:29281
 msgid "Pagination: Fold First"
 msgstr ""
 
-#: temp.glade:28864
+#: temp.glade:29285
 msgid ""
 "If you are imposing for a printer with a folding machine, \n"
 "then you want to fold first and then cut. This, for example\n"
@@ -11364,22 +11513,22 @@ msgid ""
 "two sets of sequential pages."
 msgstr ""
 
-#: temp.glade:28884
+#: temp.glade:29305
 msgid ""
 "Whether you need a simple booklet\n"
 "or a more complex signature, these\n"
 "options allow plenty of scope."
 msgstr ""
 
-#: temp.glade:28887
+#: temp.glade:29308
 msgid "Booklet Pagination"
 msgstr ""
 
-#: temp.glade:28928
+#: temp.glade:29349
 msgid "Compare PDFs: Select previous PDF to compare with"
 msgstr ""
 
-#: temp.glade:28932 temp.glade:28995
+#: temp.glade:29353 temp.glade:29389
 msgid ""
 "Select a particular PDF file to be compared \n"
 "against the current output PDF. If you just \n"
@@ -11389,17 +11538,42 @@ msgid ""
 "default to _1)."
 msgstr ""
 
-#: temp.glade:28965
+#: temp.glade:29397
+msgid ""
+"Compare With \n"
+"a Previous PDF:"
+msgstr ""
+
+#: temp.glade:29408
+msgid "Create \"Diff\" PDF"
+msgstr ""
+
+#: temp.glade:29409
+msgid "Compare PDFs: Create 'diff' PDF"
+msgstr ""
+
+#: temp.glade:29413
+msgid ""
+"Click to print and generate a PDF\n"
+"showing the differences between\n"
+"the current PDF and the selected \n"
+"previous version. It should open\n"
+"in the default PDF viewer.\n"
+"\n"
+"Shortcut: Ctrl-D"
+msgstr ""
+
+#: temp.glade:29432
 msgid ""
 "Only Show Pages\n"
 "With Differences"
 msgstr ""
 
-#: temp.glade:28967
+#: temp.glade:29434
 msgid "Compare PDFs: Only show pages with differences"
 msgstr ""
 
-#: temp.glade:28971
+#: temp.glade:29438
 msgid ""
 "When comparing two PDF files the\n"
 "resulting \"Diff\" PDF can get rather\n"
@@ -11411,67 +11585,78 @@ msgid ""
 "out what might have changed."
 msgstr ""
 
-#: temp.glade:29003
-msgid ""
-"Compare With \n"
-"a Previous PDF:"
-msgstr ""
-
-#: temp.glade:29014
-msgid "Create \"Diff\" PDF"
-msgstr ""
-
-#: temp.glade:29015
-msgid "Compare PDFs: Create 'diff' PDF"
-msgstr ""
-
-#: temp.glade:29019
-msgid ""
-"Click to print and generate a PDF\n"
-"showing the differences between\n"
-"the current PDF and the selected \n"
-"previous version. It should open\n"
-"in the default PDF viewer.\n"
-"\n"
-"Shortcut: Ctrl-D"
-msgstr ""
-
-#: temp.glade:29038
+#: temp.glade:29459
 msgid "Compare PDFs: "
 msgstr ""
 
-#: temp.glade:29042 temp.glade:29057
+#: temp.glade:29463
 msgid ""
-"Select a color to highlight the\n"
-"differences between the PDFs."
+"Use this color to show anything\n"
+"that has been added (or moved to\n"
+"the current location) in the new PDF."
 msgstr ""
 
-#: temp.glade:29045
+#: temp.glade:29467
 msgid "Color to Highlight Differences"
 msgstr ""
 
-#: temp.glade:29062
+#: temp.glade:29479
 msgid ""
-"Color to Highlight\n"
-"Differences With:"
+"Set the color to use when\n"
+"differences are found between\n"
+"the old and the new PDFs.\n"
+"\n"
+"Use this color to show anything\n"
+"that has been added (or moved to\n"
+"the current location) in the new PDF."
 msgstr ""
 
-#: temp.glade:29081
+#: temp.glade:29487
+msgid ""
+"Show New Text\n"
+"or Position in:"
+msgstr ""
+
+#: temp.glade:29499
+msgid ""
+"Set the color to use when\n"
+"differences are found between\n"
+"the old and the new PDFs.\n"
+"\n"
+"Use this color to show anything\n"
+"that has been deleted (or moved from\n"
+"the previous location) in the old PDF."
+msgstr ""
+
+#: temp.glade:29507
+msgid ""
+"Show Old Text\n"
+"or Position in:"
+msgstr ""
+
+#: temp.glade:29520
+msgid ""
+"Use this color to show anything\n"
+"that has been deleted (or moved from\n"
+"the previous location) in the old PDF."
+msgstr ""
+
+#: temp.glade:29541
 msgid ""
 "This tool allows you to compare 2 different\n"
 "PDFs to highlight what has changed between\n"
 "runs."
 msgstr ""
 
-#: temp.glade:29084
+#: temp.glade:29544
 msgid "Compare PDFs"
 msgstr ""
 
-#: temp.glade:29119
+#: temp.glade:29579
 msgid "PDF output format"
 msgstr ""
 
-#: temp.glade:29124
+#: temp.glade:29584
 msgid ""
 "Select the appropriate standard \n"
 "for the output format to optimize\n"
@@ -11484,7 +11669,7 @@ msgid ""
 "Note: Digital and Print comply with archive standard PDF/A-1b."
 msgstr ""
 
-#: temp.glade:29153
+#: temp.glade:29613
 msgid ""
 "Select the appropriate standard \n"
 "for the output format to optimize\n"
@@ -11498,37 +11683,37 @@ msgid ""
 "Note: All comply with archive standard PDF/A-1b."
 msgstr ""
 
-#: temp.glade:29166
+#: temp.glade:29626
 msgid "PDF Output Format:"
 msgstr ""
 
-#: temp.glade:29175
+#: temp.glade:29635
 msgid "Crop Marks"
 msgstr ""
 
-#: temp.glade:29176
+#: temp.glade:29636
 msgid "Enable crop marks"
 msgstr ""
 
-#: temp.glade:29180
+#: temp.glade:29640
 msgid ""
 "Some printers require crop marks\n"
 "on the PDF to show where the page\n"
 "should be trimmed after binding."
 msgstr ""
 
-#: temp.glade:29194
+#: temp.glade:29654
 msgid "Number of previous PDFs to be kept"
 msgstr ""
 
-#: temp.glade:29197
+#: temp.glade:29657
 msgid ""
 "By default, PTXprint only keeps\n"
 "one previous PDF. But up to 20 \n"
 "previous versions can be kept."
 msgstr ""
 
-#: temp.glade:29216
+#: temp.glade:29676
 msgid ""
 "By keeping previous versions of the\n"
 "PDF, it is possible to compare the\n"
@@ -11541,21 +11726,21 @@ msgid ""
 "later date."
 msgstr ""
 
-#: temp.glade:29227
+#: temp.glade:29687
 msgid ""
 "Number of Previous\n"
 "PDFs to be Kept:"
 msgstr ""
 
-#: temp.glade:29238
+#: temp.glade:29698
 msgid "Include Config Settings Within PDF"
 msgstr ""
 
-#: temp.glade:29239
+#: temp.glade:29699
 msgid "Include config settings within PDF"
 msgstr ""
 
-#: temp.glade:29243
+#: temp.glade:29703
 msgid ""
 "All the configuration settings (including\n"
 "the PTXprint styles, AdjLists, changes.txt,\n"
@@ -11569,38 +11754,38 @@ msgid ""
 "share config settings with other users."
 msgstr ""
 
-#: temp.glade:29267
+#: temp.glade:29727
 msgid "Archive (PDF/A-1a)"
 msgstr ""
 
-#: temp.glade:29268
+#: temp.glade:29728
 msgid "Include unicode text within PDF (to help with archiving)"
 msgstr ""
 
-#: temp.glade:29272
+#: temp.glade:29732
 msgid ""
 "Check this option to include the Unicode\n"
 "text in the PDF which is a good practice\n"
 "for final print and long-term archiving."
 msgstr ""
 
-#: temp.glade:29286
+#: temp.glade:29746
 msgid "Spot color hue"
 msgstr ""
 
-#: temp.glade:29296
+#: temp.glade:29756
 msgid "Spot Color Hue"
 msgstr ""
 
-#: temp.glade:29315
+#: temp.glade:29775
 msgid "Color Hue:"
 msgstr ""
 
-#: temp.glade:29324
+#: temp.glade:29784
 msgid "Spot color tolerance"
 msgstr ""
 
-#: temp.glade:29327 temp.glade:29361
+#: temp.glade:29787 temp.glade:29821
 msgid ""
 "To match the Spot Color Hue exactly, set this\n"
 "to 0%. If text in similar colors are also to be\n"
@@ -11611,30 +11796,30 @@ msgid ""
 "side (e.g. -15% to +15%) of the selected hue."
 msgstr ""
 
-#: temp.glade:29371
+#: temp.glade:29831
 msgid "Tolerance (%):"
 msgstr ""
 
-#: temp.glade:29386
+#: temp.glade:29846
 msgid "PDF Details"
 msgstr ""
 
-#: temp.glade:29405
+#: temp.glade:29865
 msgid ""
 "Options to control pagination,\n"
 "PDF output format and compare\n"
 "output with a previous PDF."
 msgstr ""
 
-#: temp.glade:29456
+#: temp.glade:29916
 msgid "Current Project Path:"
 msgstr ""
 
-#: temp.glade:29473
+#: temp.glade:29933
 msgid "Configuration Settings:"
 msgstr ""
 
-#: temp.glade:29486
+#: temp.glade:29946
 msgid ""
 "The PDF file created is stored in this\n"
 "folder (but should automatically open\n"
@@ -11646,11 +11831,11 @@ msgid ""
 "included in Paratext's Send/Recv data."
 msgstr ""
 
-#: temp.glade:29497
+#: temp.glade:29957
 msgid "Output PDF Location:"
 msgstr ""
 
-#: temp.glade:29510
+#: temp.glade:29970
 msgid ""
 "To use PTXprint effectively you need a good PDF viewer\n"
 "which allows the PDF file to be refreshed (reloaded)\n"
@@ -11664,19 +11849,19 @@ msgid ""
 "for best results."
 msgstr ""
 
-#: temp.glade:29521
+#: temp.glade:29981
 msgid "Recommended PDF Viewer:"
 msgstr ""
 
-#: temp.glade:29532
+#: temp.glade:29992
 msgid "Visit SumatraPDF Download Page"
 msgstr ""
 
-#: temp.glade:29533
+#: temp.glade:29993
 msgid "Link to SumatraPDF home page"
 msgstr ""
 
-#: temp.glade:29553
+#: temp.glade:30013
 msgid ""
 "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the User-Interface. The PDFs are produced by recently\n"
@@ -11686,27 +11871,27 @@ msgid ""
 "an issue using this link."
 msgstr ""
 
-#: temp.glade:29560
+#: temp.glade:30020
 msgid "Report a Bug:"
 msgstr ""
 
-#: temp.glade:29571
+#: temp.glade:30031
 msgid "Report an Issue via GitHub"
 msgstr ""
 
-#: temp.glade:29572
+#: temp.glade:30032
 msgid "Link to report an issue with PTXprint"
 msgstr ""
 
-#: temp.glade:29590
+#: temp.glade:30050
 msgid "Documentation | FAQs | Gallery | Support | Download"
 msgstr ""
 
-#: temp.glade:29591
+#: temp.glade:30051
 msgid "Link to PTXprint home page"
 msgstr ""
 
-#: temp.glade:29611
+#: temp.glade:30071
 msgid ""
 "PTXprint does not have an auto-updating\n"
 "feature, so you are encouraged to check\n"
@@ -11715,11 +11900,11 @@ msgid ""
 "version before reporting an issue."
 msgstr ""
 
-#: temp.glade:29617
+#: temp.glade:30077
 msgid "PTXprint Home Page:"
 msgstr ""
 
-#: temp.glade:29645
+#: temp.glade:30105
 msgid ""
 "There are many additional capabilities\n"
 "within the software which cannot be\n"
@@ -11729,19 +11914,19 @@ msgid ""
 "file or the Changes.txt file as appropriate."
 msgstr ""
 
-#: temp.glade:29652
+#: temp.glade:30112
 msgid "Further Documentation:"
 msgstr ""
 
-#: temp.glade:29663
+#: temp.glade:30123
 msgid "View Advanced Technical Documentation"
 msgstr ""
 
-#: temp.glade:29664
+#: temp.glade:30124
 msgid "Link to deeper technical help"
 msgstr ""
 
-#: temp.glade:29684
+#: temp.glade:30144
 msgid ""
 "Among other things, this folder contains:\n"
 "* ReleaseNotes.txt\n"
@@ -11749,32 +11934,32 @@ msgid ""
 "* MIT License.txt"
 msgstr ""
 
-#: temp.glade:29691
+#: temp.glade:30151
 msgid "PTXprint Program Path:"
 msgstr ""
 
-#: temp.glade:29704
+#: temp.glade:30164
 msgid ""
 "In order to keep the size of the file to a minimum\n"
 "you are encouraged to turn off features (pictures?)\n"
 "that don't affect the issue being reported."
 msgstr ""
 
-#: temp.glade:29710
+#: temp.glade:30170
 msgid ""
 "For technical support, create an archive\n"
 "and send it to ptxprint_support@sil.org"
 msgstr ""
 
-#: temp.glade:29723
+#: temp.glade:30183
 msgid "Create Archive..."
 msgstr ""
 
-#: temp.glade:29724
+#: temp.glade:30184
 msgid "Create archive..."
 msgstr ""
 
-#: temp.glade:29729
+#: temp.glade:30189
 msgid ""
 "Create a ZIPped archive of all the files\n"
 "required to replicate this configuration.\n"
@@ -11785,37 +11970,37 @@ msgid ""
 "ptxprint_support@sil.org"
 msgstr ""
 
-#: temp.glade:29748
+#: temp.glade:30208
 msgid "Get help from other PTXprint users"
 msgstr ""
 
-#: temp.glade:29749
+#: temp.glade:30209
 msgid "Link to PTXprint user community site"
 msgstr ""
 
-#: temp.glade:29769
+#: temp.glade:30229
 msgid ""
 "Scripture Software Community site where you can \n"
 "interact with other PTXprint users and the developers."
 msgstr ""
 
-#: temp.glade:29772
+#: temp.glade:30232
 msgid "User Community:"
 msgstr ""
 
-#: temp.glade:29784
+#: temp.glade:30244
 msgid "About PTXprint"
 msgstr ""
 
-#: temp.glade:29788
+#: temp.glade:30248
 msgid "Discover more about PTXprint."
 msgstr ""
 
-#: temp.glade:29805
+#: temp.glade:30265
 msgid "Delete temporary files and folders"
 msgstr ""
 
-#: temp.glade:29809
+#: temp.glade:30269
 msgid ""
 "Delete all the TEMPORARY \n"
 "files and subfolders in the\n"
@@ -11825,40 +12010,40 @@ msgid ""
 "by deleting unneeded files."
 msgstr ""
 
-#: temp.glade:29921
+#: temp.glade:30381
 msgid "Links and Help"
 msgstr ""
 
-#: temp.glade:29940
+#: temp.glade:30400
 msgid ""
 "Links to useful folders and\n"
 "online resources. Where to\n"
 "obtain help from others."
 msgstr ""
 
-#: temp.glade:29944
+#: temp.glade:30404
 msgid "Help"
 msgstr ""
 
-#: temp.glade:29996
+#: temp.glade:30456
 msgid ""
 "Display the output log \n"
 "from XeTeX processing."
 msgstr ""
 
-#: temp.glade:29999
+#: temp.glade:30459
 msgid "Log"
 msgstr ""
 
-#: temp.glade:30059
+#: temp.glade:30519
 msgid "Dismiss"
 msgstr ""
 
-#: temp.glade:30091
+#: temp.glade:30551
 msgid "Mini, Basic or Advanced View option"
 msgstr ""
 
-#: temp.glade:30096
+#: temp.glade:30556
 msgid ""
 "Set the most appropriate\n"
 "user interface mode as needed.\n"
@@ -11866,11 +12051,11 @@ msgid ""
 "depending on the level set here."
 msgstr ""
 
-#: temp.glade:30121
+#: temp.glade:30581
 msgid "User interface language"
 msgstr ""
 
-#: temp.glade:30124
+#: temp.glade:30584
 msgid ""
 "Several PTXprint interface languages are \n"
 "available. On selecting a language, the\n"
@@ -11878,28 +12063,28 @@ msgid ""
 "chosen language."
 msgstr ""
 
-#: temp.glade:30148
+#: temp.glade:30608
 msgid "Check for updates..."
 msgstr ""
 
-#: temp.glade:30152
+#: temp.glade:30612
 msgid ""
 "A newer version of PTXprint is available.\n"
 "Click to visit download page on the website."
 msgstr ""
 
-#: temp.glade:30174
+#: temp.glade:30634
 msgid ""
 "The PDF file created is stored in this\n"
 "folder (but should automatically open\n"
 "in your system's PDF viewer anyway)."
 msgstr ""
 
-#: temp.glade:30193
+#: temp.glade:30653
 msgid "Find help"
 msgstr ""
 
-#: temp.glade:30196
+#: temp.glade:30656
 msgid ""
 "Type in a word to search for a setting \n"
 "that you can't locate. A short list of \n"
@@ -11910,19 +12095,19 @@ msgid ""
 "Shortcut: Ctrl-F"
 msgstr ""
 
-#: temp.glade:30209
+#: temp.glade:30669
 msgid "Search for settings"
 msgstr ""
 
-#: temp.glade:30234
+#: temp.glade:30694
 msgid "Quick Run"
 msgstr ""
 
-#: temp.glade:30235
+#: temp.glade:30695
 msgid "Quick run (to speed up process)"
 msgstr ""
 
-#: temp.glade:30239
+#: temp.glade:30699
 msgid ""
 "Enabling this option will give quicker \n"
 "output, but it may be less refined.\n"
@@ -11935,7 +12120,7 @@ msgid ""
 "Shortcut: Ctrl-Q"
 msgstr ""
 
-#: temp.glade:30269
+#: temp.glade:30729
 msgid ""
 "The configuration displayed now is for the \n"
 "secondary project of the Diglot. You can \n"
@@ -11948,11 +12133,11 @@ msgid ""
 "print a diglot with both texts."
 msgstr ""
 
-#: temp.glade:30297
+#: temp.glade:30757
 msgid "Save configuration"
 msgstr ""
 
-#: temp.glade:30301
+#: temp.glade:30761
 msgid ""
 "Save current settings in \n"
 "named Configuration\n"
@@ -11961,7 +12146,7 @@ msgid ""
 "Shortcut: Ctrl-S"
 msgstr ""
 
-#: temp.glade:30332
+#: temp.glade:30792
 msgid ""
 "Create the PDF as specified\n"
 "(automatically saves settings).\n"
@@ -11969,7 +12154,7 @@ msgid ""
 "Shortcut: Ctrl-P"
 msgstr ""
 
-#: temp.glade:30358
+#: temp.glade:30818
 msgid ""
 "Close PTXprint\n"
 "without saving.\n"
