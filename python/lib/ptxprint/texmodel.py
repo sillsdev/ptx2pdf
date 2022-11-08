@@ -1159,8 +1159,8 @@ class TexModel:
                         exec(scriptf.read())
                         sys.argv = sys._argv
                         hasrun = True
-                if not hasrun:
-                    checkoutput(cmd) # dont't pass cmd as list when shell=True
+            if not hasrun:
+                checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
