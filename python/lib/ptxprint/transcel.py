@@ -38,7 +38,7 @@ def transcel(triggers, bk, prjdir, lang, overview, boldover, numberedQs, showRef
         
         if txt is not None and len(txt):
             n += 1
-            txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
+            # txt = "\\bd " + txt + "\\bd*" if ovqs and boldover else txt
             r = ref.str(context=NoBook) 
             fr = ""
             if numberedQs and showRefs:

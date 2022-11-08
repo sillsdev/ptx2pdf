@@ -166,7 +166,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR")
 
@@ -264,7 +264,7 @@ _sensitivities = {
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
-    "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
+    # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
@@ -682,7 +682,7 @@ class GtkViewModel(ViewModel):
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
-        self.onExpertModeClicked(None)
+        # self.onExpertModeClicked(None)
         logger.debug("Project list loaded")
 
             # .mainnb {background-color: #d3d3d3;}
@@ -1485,7 +1485,7 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.updateMarginGraphics()
         self.onExtListSourceChanges(None)
-        self.onExpertModeClicked(None)
+        # self.onExpertModeClicked(None)
 
     def colorTabs(self):
         # col = "crimson"
@@ -4445,13 +4445,15 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(status)
 
     def onExpertModeClicked(self, btn):
-        status = self.sensiVisible("c_showTeXpertHacks")
+        # status = self.sensiVisible("c_showTeXpertHacks")
+        status = False
         self.builder.get_object("tb_Expert").set_visible(status)
         self.builder.get_object("lb_Expert").set_visible(status)
         
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
-        ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
+        # ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
+        ov = o
         t1 = _("What does it means to bless someone?")
         t2 = _("What do you know about the high priest?")
         overview = self.get("c_txlQuestionsOverview")

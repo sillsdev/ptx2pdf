@@ -390,7 +390,7 @@ ModelMap = {
     "studynotes/includesidebar":  ("c_sidebars", None),
     "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
     "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
-    "studynotes/txlboldover":     ("c_txlBoldOverview", None),
+    # "studynotes/txlboldover":     ("c_txlBoldOverview", None),
     "studynotes/txlnumbered":     ("c_txlQuestionsNumbered", None),
     "studynotes/txlshowrefs":     ("c_txlQuestionsRefs", None),
     "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 
@@ -1298,7 +1298,6 @@ class TexModel:
         else:
             bn = os.path.basename(outfpath)
 
-        self.printer.incrementProgress(True)
         if '-conv' in bn:
             newname = re.sub(r"(\{}\-conv|\-conv\{}|\-conv)".format(draft, draft), draft, bn)
             copyfile(os.path.join(outdir, bn), os.path.join(outdir, newname))

@@ -214,6 +214,7 @@ class RunJob:
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
             return
+        self.printer.incrementProgress(True)
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []

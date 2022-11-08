@@ -17408,7 +17408,7 @@ the general understanding of the passage.</property>
                                           <packing>
                                             <property name="left-attach">1</property>
                                             <property name="top-attach">1</property>
-                                            <property name="width">2</property>
+                                            <property name="width">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -17521,26 +17521,6 @@ the space between the questions.</property>
                                           <packing>
                                             <property name="left-attach">5</property>
                                             <property name="top-attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkCheckButton" id="c_txlBoldOverview">
-                                            <property name="label" translatable="yes">Bold</property>
-                                            <property name="name">Transcelerator: Show overview questions in Bold</property>
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">True</property>
-                                            <property name="receives-default">False</property>
-                                            <property name="tooltip-text" translatable="yes">Overview questions are designed to test
-the general understanding of the passage.</property>
-                                            <property name="halign">start</property>
-                                            <property name="valign">center</property>
-                                            <property name="active">True</property>
-                                            <property name="draw-indicator">True</property>
-                                            <signal name="clicked" handler="onTxlOptionsChanged" swapped="no"/>
-                                          </object>
-                                          <packing>
-                                            <property name="left-attach">3</property>
-                                            <property name="top-attach">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -27017,12 +26997,12 @@ Font metrics gives more consistent results.</property>
                                         <property name="label" translatable="yes">Show TeXpert Hacks</property>
                                         <property name="name">Show tab with expert level controls (TeXpert mode)</property>
                                         <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
                                         <property name="tooltip-text" translatable="yes">An additional 'TeXpert Hacks' tab exists for
 those who are familiar with TeX and need to
 change the code or various other parameters.</property>
-                                        <property name="opacity">0.40</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="margin-top">38</property>
@@ -27086,8 +27066,8 @@ interlinear (&amp; ruby text) output.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Expert">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="no-show-all">True</property>
                     <property name="halign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
@@ -27202,8 +27182,8 @@ are likely to have to re-do it all again.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Expert">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Adjust expert-level settings.</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">TeXpert Hacks</property>

@@ -1,7 +1,41 @@
 PTXprint 2.2.37 Release Notes
-2 Nov 2022
+8 Nov 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.38 (8 Nov 2022)
+  
+  * Added UI for Transcelerator checking questions (Notes+Refs > Study Notes+Questions)
+
+  * Bring xrefs back in Basic view mode (#767)
+  
+  * Handle cross drive font issues
+
+  * Be smarter finding Paratext data folder if no registry entry located
+
+  * Don't break between multiple spaces. Allow any break before a ZWSP
+
+  * Refactor hardwired penalties in M/NQUAD to use BADBREAK
+
+  * Pull out ISBN font so that it can be specified
+  
+  * Remove slashes from \k...\k* reference (related to #766)
+  
+  * Fix issue with regurgitated char styles (#766)
+
+  * Remove struts from notes. 
+  
+  * Fix note indent.
+  
+  * Update Strong's databases (better linkage between cross-references and index)
+  
+  * Fix balancing colnotes overflow with page
+  
+  * Fix accidental new lines around keyterms
+  
+  * Make the files generation part of printing more interactive
+  
+  * Get external processing scripts to run if not .py
 
 Bug fixes and improvements in 2.2.37 (2 Nov 2022)
   
