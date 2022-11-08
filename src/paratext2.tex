@@ -781,7 +781,7 @@
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
-  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
   \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
@@ -826,7 +826,7 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins, botmark=\splitbotmark}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%

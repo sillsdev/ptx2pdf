@@ -192,6 +192,42 @@
 \edef\sb@leftshift{0pt}\edef\sb@rightshift{0pt}%
 
 \newdimen\sb@rwidth
+\def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into
+  \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
+  %we need to distingiush between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
+  \x@\let\csname sb@onlypure-t\endcsname\tr@e
+  \x@\let\csname sb@onlypure-b\endcsname\tr@e
+  \let\@t@st\tempc
+  \ifcsname sb@onlypure-\tempc\endcsname
+    \x@\ifx\csname sb@onlypure-\tempc\endcsname\tr@e
+      \ifx\relax\tempd\else
+        \edef\@t@st{\tempc\tempd}%
+      \fi
+    \fi
+  \fi
+  \trace{sc}{Initial width set to \the\dimen1 '\@t@st' (\tempd)}%
+  \x@\let\csname sb@width-t\endcsname\textwidth
+  \x@\let\csname sb@width-b\endcsname\textwidth
+  \x@\let\csname sb@width-B\endcsname\textwidth
+  \x@\let\csname sb@width-P\endcsname\textwidth
+  \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
+  \ifcsname sb@width-\@t@st\endcsname
+    \x@\dimen1\csname sb@width-\@t@st\endcsname
+    \trace{sc}{Revised width set to \the\dimen1}%
+  \else
+    \temptrue
+    \ifnum\c@rrentcols>1\else
+      \tempfalse
+    \fi
+    \iftemp
+      \if\tempc t\relax\dimen1=\colwidth\else
+        \if\tempc b\relax\dimen1=\colwidth
+      \fi\fi
+    \fi
+  \fi
+  \p@cinswid=\dimen1
+}
+
 \def\s@tsb@rwidth{%Set default / specific width of esb box
   %h*,c*,p* take the current page width as their base
   %tX,bX take the column width 
@@ -232,41 +268,9 @@
   \getsbp@ramNoInh{w@dth}% Width must NOT be inherited.
   \global\let\fgfig@cutout\false
   \ifx\cp@ram\relax
-    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end
-    \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
-    %Which of these do we need to distingiush between t, tl, tr, etc (and don't have sub-specifications)?
-    \x@\let\csname sb@onlypure-t\endcsname\tr@e
-    \x@\let\csname sb@onlypure-b\endcsname\tr@e
-    \let\@t@st\tempc
-    \ifcsname sb@onlypure-\tempc\endcsname
-      \x@\ifx\csname sb@onlypure-\tempc\endcsname\tr@e
-        \ifx\relax\tempd\else
-          \edef\@t@st{\tempc\tempd}%
-        \fi
-      \fi
-    \fi
-    \trace{sc}{Initial width set to \the\dimen1 '\@t@st' (\tempd)}%
-    \x@\let\csname sb@width-t\endcsname\textwidth
-    \x@\let\csname sb@width-b\endcsname\textwidth
-    \x@\let\csname sb@width-B\endcsname\textwidth
-    \x@\let\csname sb@width-P\endcsname\textwidth
-    \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
-    \ifcsname sb@width-\@t@st\endcsname
-      \x@\dimen1\csname sb@width-\@t@st\endcsname
-      \trace{sc}{Revised width set to \the\dimen1}%
-    \else
-      \temptrue
-      \ifnum\c@rrentcols>1\else
-        \tempfalse
-      \fi
-      \iftemp
-        \if\tempc t\relax\dimen1=\colwidth\else
-          \if\tempc b\relax\dimen1=\colwidth
-        \fi\fi
-      \fi
-    \fi
-   % Now apply scale..
-    \p@cinswid=\dimen1
+    \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
+    \@@setsbp@cinswid% sets p@cinswid
+    % Now apply scale..
     \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
     \fi
@@ -378,16 +382,18 @@
         \fi
       \fi
     \fi  
- \else
+  \else
    \dimen1=\cp@ram
- \fi
- \trace{e}{Box width is \the\dimen1}%
- \hsize=\dimen1
+  \fi
+  \trace{e}{Box width is \the\dimen1}%
+  \hsize=\dimen1
 }
+
 % Sidebar 
 \def\@sb{\let\oldc@tegory\c@tegory\let\oldc@prefix\c@tprefix
   \@@sbar{esb}%
 }
+
 \def\@@sbar#1{%
   \trace{e}{Starting side bar (\sb@rmarker) from \m@rker, \the\lastdepth}%
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
@@ -419,12 +425,12 @@
 \newdimen\sb@rus@dheightl
 \newdimen\sb@rus@dheightr
 \def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
- \c@th@@ks{}%Once per box is enough!
- \s@tsb@rwidth
- \trace{e}{startESB \the\dimen1}%
- \kill@PossParamCache
- \sb@rchunkh@ight=\maxdimen
- \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
+  \c@th@@ks{}%Once per box is enough!
+  \s@tsb@rwidth
+  \trace{e}{startESB \the\dimen1}%
+  \kill@PossParamCache
+  \sb@rchunkh@ight=\maxdimen
+  \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
    \trace{e}{break:\cp@ram}%
    \ifx\cp@ram\tr@e
      \sb@rchunkh@ight=0.2\textheight
@@ -432,9 +438,9 @@
      \sb@rchunkh@ight=\cp@ram\textheight\relax
    \fi
    \floatingpenalty=500\insertpenalties=0
- \fi\fi
- %\egroup\setbox\extb@x\vbox\bgroup
- \sb@rtopedge%\ifhmode\endgraf\fi
+  \fi\fi
+  %\egroup\setbox\extb@x\vbox\bgroup
+  \sb@rtopedge%\ifhmode\endgraf\fi
 }
 \newif\ifdoIntskip % Skip should be applied in the text area, not 
 
@@ -534,7 +540,7 @@
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
   \global\p@ppingfalse%suppress another end@llpoppedstyles
-  \trace{e}{ESBE \sb@rchunkheight}%
+  \trace{e}{ESBE, chunking every \sb@rchunkheight}%
   \ifx\fgfig@cutout\tr@e
     \cancelcutouts
   \fi
@@ -542,7 +548,9 @@
   \def\prepenalty{10}%recover value from group
   \let\c@tegory=\c@t@gory %recover value from group, without making global changes.
   \s@tc@tpr@fix
-  \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x)}%
+  \x@\minip@rs@two\sb@rpos\end % Parse the location, ready to get the size of this sidebar's container
+  \@@setsbp@cinswid 
+  \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x) in \sb@rpos: wd=\the\p@cinswid}%
   %\showbox\extb@x
   %\inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
@@ -677,7 +685,7 @@
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{%
         \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
-    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x)}%
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in \the\p@cinswid}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
     \ifx\cp@ram\relax
