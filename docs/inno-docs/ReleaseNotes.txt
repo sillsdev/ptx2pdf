@@ -3,7 +3,7 @@ PTXprint 2.2.38 Release Notes
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.2.38 (8 Nov 2022)
+Bug fixes and improvements in 2.2.39 (8 Nov 2022)
   
   * Added UI for Transcelerator checking questions (Notes+Refs > Study Notes+Questions)
 
