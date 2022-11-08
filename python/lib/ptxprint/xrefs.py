@@ -186,7 +186,7 @@ class XMLXrefs(BaseXrefs):
 
     def _procnested(self, xr, baseref):
         a = []
-        for e in xr:
+        for e in sorted(xr, key=lambda n:("", 0, []) if n is None or n[0] is None else (n[0][0], int(n[0][1:]), n)):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue

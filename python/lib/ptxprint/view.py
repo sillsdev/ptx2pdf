@@ -1351,7 +1351,7 @@ class ViewModel:
     def finished(self):
         pass
 
-    def incrementProgress(self, val=None):
+    def incrementProgress(self, inproc=False):
         pass
 
     def getStyleSheets(self, cfgname=None, generated=False, prjid=None, subdir=""):

@@ -3472,10 +3472,14 @@ class GtkViewModel(ViewModel):
         wid = self.builder.get_object("t_find")
         if val is None:
             val = wid.get_progress_fraction()
-            val = 0.20 if val < 0.1 else (1. + val) * 0.5
+            val = 0.20 if val < 0.1 else (1. + 8 * val) / 9
         wid.set_progress_fraction(val)
 
-    def incrementProgress(self):
+    def incrementProgress(self, inproc=False):
+        if inproc:
+            self._incrementProgress()
+            while (Gtk.events_pending()):
+                Gtk.main_iteration_do(False)
         GLib.idle_add(self._incrementProgress)
 
     def onIdle(self, fn, *args):
