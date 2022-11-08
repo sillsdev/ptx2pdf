@@ -437,7 +437,9 @@ class RunJob:
     def dojob(self, jobs, info):
         donebooks = []
         # import pdb; pdb.set_trace()
-        for j in jobs:
+        for i, j in enumerate(jobs):
+            if i % (len(jobs) // 5) == 0:
+                info.printer.incrementProgress(True)
             b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:

@@ -1212,7 +1212,6 @@ class TexModel:
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
 
-        self.printer.incrementProgress(True)
         doc = None
         if chaprange is None and self.dict["project/bookscope"] == "single":
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
@@ -1228,7 +1227,6 @@ class TexModel:
             if doc is not None:
                 doc = doc.getsubbook(chaprange)
 
-        self.printer.incrementProgress(True)
         if self.interlinear is not None:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
@@ -1248,7 +1246,6 @@ class TexModel:
             if doc is not None:
                 doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
-        self.printer.incrementProgress(True)
         if self.changes is not None and len(self.changes):
             if doc is not None:
                 dat = str(doc)
@@ -1257,7 +1254,6 @@ class TexModel:
             dat = runChanges(self.changes, bk, dat)
             #self.analyzeImageCopyrights(dat)
 
-        self.printer.incrementProgress(True)
         if self.dict['project/canonicalise'] \
                     or not self.asBool("document/bookintro") \
                     or not self.asBool("document/introoutline")\
@@ -1278,7 +1274,6 @@ class TexModel:
             logger.debug("versesToEnd")
             doc.versesToEnd()
 
-        self.printer.incrementProgress(True)
         if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
                     and self.dict["notes/ifxrexternalist"] and isCanon:
             if doc is None:
@@ -1289,7 +1284,6 @@ class TexModel:
             except SyntaxError as e:
                 self.printer.doError("Processing Strongs", secondary=str(e))
 
-        self.printer.incrementProgress(True)
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
             logger.log(5, "Unparsing text to run local changes\n"+dat)
