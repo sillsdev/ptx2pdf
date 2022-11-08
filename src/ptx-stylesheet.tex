@@ -805,7 +805,7 @@
 %+csty_testpublishability
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
- \getp@ram{properties}{#1}{#1}%Should not deceend!
+ \getp@ram{properties}{#1}{#1}%Should not decend, but can have specific version
  \x@\t@stnonpub\p@ram nonpublishable!}
 \def\t@stnonpub #1nonpublishable#2!{%
  \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}

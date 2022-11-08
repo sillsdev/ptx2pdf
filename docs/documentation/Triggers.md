@@ -65,6 +65,20 @@ tolerate either well. Either may be used to trigger, say, a side-bar that does
 not appear inline, and if the original pararaphing is to be interrupted then
 blocks can occur in either.  See later for *inappropriate* uses.
 
+## Milestones and triggers
+A stand-alone milestone can normally serves as a trigger point. However, for
+some stand-alone milestones that really makes no sense. An example would be the
+`\xts` milestone used for Strong's numbers. To suppress the milestone-calling for that 
+milestone, the code includes `\NotTriggerPoint{xts}`. Other milestones can be
+similary skipped.
+To revert to previous behaviour, `\IsTriggerPoint{xts}` can be specified.
+
+The test to skip triggers *only* affects milestones with their default attribute set. 
+Stand-alone milestones with no attribute set always call their triggers. Note that skipping the 
+trigger test *also* avoids changing the reference point. I.e. it is not possible to skip 
+trigger points on keywords but trigger on the N'th paragraph after a given keyword.
+
+```
 
 ## Trigger points expecting blocks (if at start of paragraph) or words
 * ```REV20.14-preverse``` Triggers before the verse number. 
