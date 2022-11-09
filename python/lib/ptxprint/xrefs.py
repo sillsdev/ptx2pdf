@@ -12,6 +12,56 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class WordForm:
+    def __init__(self, stem, prefix, suffix):
+        self.stem = stem
+        self.prefices = prefix if prefix is None else set([prefix])
+        self.suffices = suffix if suffix is None else set([suffix])
+
+    def __str__(self):
+        res = []
+        if self.prefices is not None:
+            res.append("("+"|".join(sorted(self.prefices, key=len))+")")
+        res.append(self.stem)
+        if self.suffices is not None:
+            res.append("("+"|".join(sorted(self.suffices, key=len))+")")
+        return "".join(res)
+
+    def merge(self, stem, prefix, suffix):
+        if self.stem != stem:
+            return False
+        matchpref = (prefix is None and self.prefices is None) or (prefix in self.prefices)
+        matchsuff = (suffix is None and self.suffix is None) or (suffix in self.suffixes)
+        if matchpref and not matchsuff:
+            if suffix is not None:
+                self.suffices.add(suffix)
+                return True
+        elif not matchpref and matchsuff:
+            if prefix is not None:
+                self.prefices.add(prefix)
+                return True
+        elif matchpref and matchsuff:
+            return True
+        return False
+
+class WordForms:
+    def __init__(self, stem):
+        self.stem = stem
+        self.forms = []
+
+    def __str__(self):
+        return "("+"|".join(self.forms + [self.stem])+ ")"
+
+    def merge(self, stem, prefix, suffix):
+        if prefix is None and suffix is None:
+            return True
+        for f in self.forms:
+            if f.merge(stem, prefix, suffix):
+                break
+        else:
+            self.forms.append(WordForm(stem, prefix, suffix))
+
+
 class NoBook:
     @classmethod
     def getLocalBook(cls, s, level=0):
@@ -247,6 +297,7 @@ class StrongsXrefs(XMLXrefs):
         self.revwds = None
         self.strongs = None
         self.lang = None
+        self.wfi = {}
         if localfile is not None:
             self.loadlocal(localfile, addfilter=True)
             logger.debug("strongsfilter="+str(self.strongsfilter))
@@ -284,6 +335,22 @@ class StrongsXrefs(XMLXrefs):
                 self.strongs[sref]['def'] = None
                 self.strongs[sref]['trans'] = ""
 
+    def _readWordAnalysis(self, fname):
+        self.wfi = {}
+        doc = et.parse(fname)
+        for e in doc.findall(".//Analysis"):
+            d = {}
+            for l in e.findall("Lexeme"):
+                (t, v) = l.text.split(":")
+                d.setdefault(t, []).append(v)
+            stem = "".join(d['Stem']) or None
+            prefix = "".join(d['Prefix']) or None
+            suffix = "".join(d['Suffix']) or None
+            if stem is not None:
+                if stem not in self.wfi:
+                    self.wfi[stem] = WordForms(stem)
+                self.wfi[stem].merge(stem, suffix, prefix)
+
     def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, addfilter=False):
         if addfilter:
             self.strongsfilter = set()
@@ -301,12 +368,14 @@ class StrongsXrefs(XMLXrefs):
                 for w in strongs[st][key]:
                     revwds.setdefault(w.lower(), set()).add(st)
 
-    def loadlocal(self, localfile, addfilter=False):
+    def loadlocal(self, localfile, addfilter=False, wordanalysisfile=None):
         self.loadinfo(self.lang)
         if self.revwds is not None:
             return
         self.revwds = {}
         self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
+        if wordanalysisfile is not None:
+            self._readWordAnalysis(wordanalysisfile)
 
     def addregexes(self, st):
         if self.strongs is None:
@@ -314,20 +383,30 @@ class StrongsXrefs(XMLXrefs):
         wds = self.strongs.get(st,{}).get('local', [])
         reg = []
         for w in wds:
-            w = re.sub(r"\(.*?\)", "", w).strip()
-            if " ** " in w:
-                continue
-            r = ""
-            if w.startswith("*"):
-                w = w[1:]
-                r = r"\bb.*?"
-            else:
-                r = r"\bb"
-            if w.endswith("*"):
-                r += w[:-1]
-            else:
-                r += w + r"\ba"
-            reg.append(r)
+            for i, b in enumerate(re.sub(r"\(.*?\)", "", w).split()):
+                t = b.strip()
+                p = ""
+                r = ""
+                s = ""
+                if t == "**":
+                    reg.append(r"(?:\s+\w+)+")
+                    continue
+                elif t == "*":
+                    reg.append(r"(?:\s+\w+)")
+                    continue
+                if not t.startswith("*"):
+                    r = r"\bb"
+                else:
+                    t = t[1:]
+                if not t.endswith("*"):
+                    p = r"\ba"
+                else:
+                    t = t[:-1]
+                if i == 0 and t in self.wfids:
+                    s = str(self.wfids[t])
+                else:
+                    s = t
+                reg.append(r + s + p)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res)
         logger.debug(f"strongs regexes {st} = {res}")
