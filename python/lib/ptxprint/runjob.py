@@ -178,9 +178,10 @@ def isLocked():
 
 class RunJob:
 
-    def __init__(self, printer, scriptsdir, args, inArchive=False):
+    def __init__(self, printer, scriptsdir, macrosdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
         self.printer = printer
+        self.macrosdir = macrosdir
         self.tempFiles = []
         self.picfiles = []
         self.tmpdir = "."
@@ -604,7 +605,9 @@ class RunJob:
         os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
-        ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
+        ptxmacrospath = os.path.abspath(self.macrosdir)
+        if not os.path.exists(ptxmacrospath):
+            ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
