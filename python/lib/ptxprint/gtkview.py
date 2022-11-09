@@ -334,6 +334,31 @@ _selcols = {
     "checklist": ["anchor", "caption", "file", "desc"]
 } 
 
+_texpertOptions = {
+    "versehyphen":        [_("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?"), True],
+    "notesEachBook":      [_("Endnotes at Each Book"), _("Output endnotes at the end of each book"), True],
+    "FinalNotesDown":     [_("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page"), False],
+    "MarkTriggerPoints":  [_("Mark Trigger Points"), _("Display trigger points in output"), False],
+    "MidPageFootnotes":   [_("Mid-Page Footnotes"), _("Should footnotes go before a single-double column transition"), False],
+    "squashgridbox":      [_("No Top Space"), _("Don’t insert space above headings at the start of a column"), True],
+    "IndentAtChapter":    [_("Allow Indent Para with Cutouts"), _("Allow indented paragraphs at chapter start with cutouts"), False],
+    "IndentAfterHeading": [_("Allow Indent Para After Heading"), _("Allow indented paragraphs following a heading"), True],
+    "DropActions":        [_("No PDF Bookmarks"), _("Don’t output PDF bookmarks"), False],
+    "Actions":            [_("Allow Active Links in PDF"), _("Make links active inside PDF"), True],
+    "refbookmarks":       [_("Use Book Codes in PDF Bookmarks"), _("Use book codes instead of book names in bookmarks"), False],
+    "NotTransparency":    [_("Disable Transparency in PDF"), _("Disable transparency output in PDF"), False],
+    "figlocleft":         [_("Default Figures Top Left"), _("Default figure positions to top left"), True],
+    "CaptionRefFirst":    [_("Ref Before Caption"), _("Output reference before caption"), False],
+    "CaptionFirst":       [_("Show Caption Before Image"), _("Output caption before image"), False],
+    "TOCthreetab":        [_("Use \\toc3 for Tab Text"), _("Use \\toc3 for tab text if no \\zthumbtab"), True],
+    "VisTrace":           [_("Show Diglot Trace Marks"), _("Insert visible trace marks in diglot output"), False],
+    "VistTraceExtra":     [_("Extra Trace Mark Info"), _("Add extra information to diglot trace marks"), False],
+    "UnderlineSpaces":    [_("Underline Spaces"), _("Underline spaces in underlined runs"), True],
+    "AttrMilestoneMatchesUnattr": [_("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*."), False],
+    "CalcChapSize":       [_("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size"), True],
+    "tildenbsp":          [_("Tilde is No Break Space"), _("Treat ~ as non breaking space"), True]
+}
+
 _availableColophons = ("fr", "es") # update when .json file gets expanded
 _defaultColophon = r"""\pc \zcopyright
 \pc \zlicense
@@ -2549,6 +2574,46 @@ class GtkViewModel(ViewModel):
     def onFontIsGraphiteClicked(self, btn):
         self.onSimpleClicked(btn)
         self.set("t_fontFeatures", "")
+
+    def onTexOptionsClicked(self, btn):
+    # this is copied from 'onFontFeaturesClicked' in order to do something similar with TeXpert options
+
+    # Dict looks like this:
+#          "notesEachBook": ["Endnotes at Each Book", "Output endnotes at the end of each book", True],
+    # Results need to look like this:
+#          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
+
+        dialog = self.builder.get_object("dlg_texoptions")
+        texopts = self.builder.get_object("box_texoptions")
+        numrows = len(_texpertOptions)
+        for i, (k, v) in enumerate(_texpertOptions.items()):
+            texopts.insert_row(i)
+            l = Gtk.Label(label=v[0]+":")
+            l.set_halign(Gtk.Align.END)
+            l.set_tooltip_text(f"\if{k}:\t[{v[2]}]\n\n{v[1]}")
+            texopts.attach(l, 0, i, 1, 1)
+            l.show()
+            obj = Gtk.CheckButton()
+            obj.set_tooltip_text(f"\if{k}:\t[{v[2]}]\n\n{v[1]}")
+            obj.set_active(v[2])
+            obj.set_halign(Gtk.Align.START)
+            texopts.attach(obj, 1, i, 1, 1)
+            obj.show()
+        dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            results = []
+            for i, (k, v) in enumerate(_texpertOptions.items()):
+                obj = texopts.get_child_at(1, i)
+                if isinstance(obj, Gtk.CheckButton):
+                    val = 1 if obj.get_active() else 0
+                # if val is not None and ((self.currdefaults is not None and str(self.currdefaults.get(k, 0)) != str(val))\
+                                        # or (self.currdefaults is None and str(val) != "0")):
+                    # results.append("{}={}".format(k, val))
+        for i in range(numrows-1, -1, -1):
+            texopts.remove_row(i)
+        dialog.set_keep_above(False)
+        dialog.hide()
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
