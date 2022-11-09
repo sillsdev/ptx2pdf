@@ -204,7 +204,9 @@ else:
 logging.debug(f"project id={args.pid}, config={args.config}, directory={args.directory}")
 
 scriptsdir = getattr(sys, '_MEIPASS', os.path.abspath(os.path.dirname(__file__)))
-if os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
+if args.macros:
+    macrosdir = args.macros
+elif os.path.exists("/usr/share/ptx2pdf") and not os.path.exists(os.path.join(scriptsdir, "..", "..", "src")):
     scriptsdir = "/usr/share/ptx2pdf"
     macrosdir = "/usr/share/ptx2pdf/texmacros"
 elif getattr(sys, 'frozen', False):
