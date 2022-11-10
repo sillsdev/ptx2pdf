@@ -22,7 +22,7 @@ texpertOptions = {
     "CaptionFirst":       ["captfirst", False, "", _("Show Caption Before Image"), _("Output caption before image")],
     "TOCthreetab":        ["tocthreetab", True, "", _("Use \\toc3 for Tab Text"), _("Use \\toc3 for tab text if no \\zthumbtab")],
     "VisTrace":           ["vistrace", False, "", _("Show Diglot Trace Marks"), _("Insert visible trace marks in diglot output")],
-    "VistTraceExtra":     ["vistracex", False, "", _("Extra Trace Mark Info"), _("Add extra information to diglot trace marks")],
+    "VisTraceExtra":     ["vistracex", False, "", _("Extra Trace Mark Info"), _("Add extra information to diglot trace marks")],
     "UnderlineSpaces":    ["underlnsp", True, "", _("Underline Spaces"), _("Underline spaces in underlined runs")],
     # "AttrMilestoneMatchesUnattr": ["attrmsmatchunattr", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")],
     "CalcChapSize":       ["calcchapsize", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")],
@@ -70,10 +70,10 @@ class TeXpert:
             v = view.get(n)
             logger.debug(f"TeXpert({n})={v} was {opt[1]}")
             if n.startswith("c_"):
-                if opt[1] != v:
+                if v is not None and opt[1] != v:
                     res.append(f'\\{k}{"true" if v else "false"}')
             elif n.startswith("s_"):
-                if float(v) != opt[1]:
+                if v is not None and float(v) != opt[1]:
                     res.append(opt[2].format("\\"+k, v))
         return "\n".join(res)
 

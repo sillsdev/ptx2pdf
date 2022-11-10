@@ -289,7 +289,7 @@ components = [
 
 class StrongsXrefs(XMLXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
-                 context=None, shownums=True, rtl=False, shortrefs=False):
+                 context=None, shownums=True, rtl=False, shortrefs=False, wanal=None):
         super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, separators=separators,
                  context=context, shownums=shownums, rtl=rtl, shortrefs=shortrefs)
         self.regexes = {}
@@ -298,8 +298,8 @@ class StrongsXrefs(XMLXrefs):
         self.strongs = None
         self.lang = None
         self.wfi = {}
-        if localfile is not None:
-            self.loadlocal(localfile, addfilter=True)
+        if localfile is not None or wanal is not None:
+            self.loadlocal(localfile, addfilter=True, wordanalysisfile=wanal)
             logger.debug("strongsfilter="+str(self.strongsfilter))
         else:
             self.strongsfilter = None
@@ -373,7 +373,8 @@ class StrongsXrefs(XMLXrefs):
         if self.revwds is not None:
             return
         self.revwds = {}
-        self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
+        if localfile is not None:
+            self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
         if wordanalysisfile is not None:
             self._readWordAnalysis(wordanalysisfile)
 

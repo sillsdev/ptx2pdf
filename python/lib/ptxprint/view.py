@@ -1771,8 +1771,15 @@ set stack_size=32768""".format(self.configName())
         seps = self.getScriptSnippet().getrefseps(self)
         seps['verseonly'] = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
+        wanal = None
+        if ptsettings.get('MatchBaseOnStems', 'F') == 'T':
+            wanal = os.path.join(self.settings_dir, self.prjid, 'WordAnalyses.xml')
+            if not os.path.exists(wanal):
+                wanal = None
         self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
-                    None, localfile, ptsettings, seps, ptsettings, self.get("c_strongsShowNums"),
-                    self.get("fcb_textDirection") == "rtl", self.get("c_xoVerseOnly"))
+                    None, localfile=localfile, ptsettings=ptsettings, separators=seps,
+                    context=ptsettings, shownums=self.get("c_strongsShowNums"),
+                    rtl=self.get("fcb_textDirection") == "rtl", shortrefs=self.get("c_xoVerseOnly"),
+                    wanal=wanal)
         return self.strongs
 

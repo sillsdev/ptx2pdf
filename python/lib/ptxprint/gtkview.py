@@ -2569,14 +2569,13 @@ class GtkViewModel(ViewModel):
             texopts.insert_row(i)
             l = Gtk.Label(label=opt[3]+":")
             l.set_halign(Gtk.Align.END)
-            tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
-            l.set_tooltip_text(tiptext)
             texopts.attach(l, 0, i, 1, 1)
             l.show()
             if wname.startswith("c_"):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
                 v = opt[1]
+                tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             elif wname.startswith("s_"):
                 if len(opt) < 6:
                     base = opt[1]
@@ -2597,6 +2596,8 @@ class GtkViewModel(ViewModel):
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
                 v = str(opt[1])
+                tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+            l.set_tooltip_text(tiptext)
             obj.set_tooltip_text(tiptext)
             obj.set_halign(Gtk.Align.START)
             texopts.attach(obj, 1, i, 1, 1)
