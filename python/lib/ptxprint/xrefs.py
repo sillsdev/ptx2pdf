@@ -408,8 +408,8 @@ class StrongsXrefs(XMLXrefs):
                     t = a
                 else:
                     a = None
-                if i == 0 and t in self.wfids:  # test for word forms
-                    s = str(self.wfids[t])
+                if i == 0 and t in self.wfi:  # test for word forms
+                    s = str(self.wfi[t])
                 else:
                     s = t.replace("*", r"\w*")
                 if a is not None:
