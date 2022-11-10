@@ -14,7 +14,7 @@ setup(
     package_dir={'': 'python/lib'},  # indicate packages are under lib
     include_package_data=True,  # include everything in MANIFEST.in
     package_data={'ptxprint': ['*.*']},
-    scripts=["python/scripts/ptxprint", "python/scripts/xdvitype"],
+    scripts=["python/scripts/ptxprint", "python/scripts/xdvitype", "python/scripts/pdfdiff"],
     install_requires=["regex", "pygobject", "fonttools", "pycairo", "appdirs", "Pillow"], #, "ssl"],
     zip_safe=False,
     license="MIT",
