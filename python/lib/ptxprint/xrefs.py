@@ -390,10 +390,10 @@ class StrongsXrefs(XMLXrefs):
                 r = ""
                 s = ""
                 if t == "**":
-                    reg.append(r"(?:\s+\w+)+")
+                    reg.append(r"(?:\s+\w+)*")
                     continue
                 elif t == "*":
-                    reg.append(r"(?:\s+\w+)")
+                    reg.append(r"(?:\s+\w+)?")
                     continue
                 if not t.startswith("*"):
                     r = r"\bb"
@@ -403,10 +403,20 @@ class StrongsXrefs(XMLXrefs):
                     p = r"\ba"
                 else:
                     t = t[:-1]
-                if i == 0 and t in self.wfids:
+                if "/" in t:            # allows two words in either order
+                    (a, b) = t.split("/")
+                    t = a
+                else:
+                    a = None
+                if i == 0 and t in self.wfids:  # test for word forms
                     s = str(self.wfids[t])
                 else:
-                    s = t
+                    s = t.replace("*", r"\w*")
+                if a is not None:
+                    a = s
+                    s += r"\s+" + b
+                    b = s + "r\s+" + a
+                    reg.append(r + b + p)
                 reg.append(r + s + p)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res)
