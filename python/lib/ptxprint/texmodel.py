@@ -17,6 +17,7 @@ from ptxprint.interlinear import Interlinear
 from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
 from ptxprint.xrefs import Xrefs
 from ptxprint.pdf.pdfsanitise import sanitise
+from ptxprint.texpert import TeXpert
 import logging
 
 logger = logging.getLogger(__name__)
@@ -1056,6 +1057,7 @@ class TexModel:
                     if "diglot/copyright" in self.dict:
                         res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
                     res.append("\\unprepusfm")
+                    res.append(TeXpert.generateTeX(self.printer))
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))

@@ -151,6 +151,10 @@ class StyleEditorView(StyleEditor):
     def __init__(self, model):
         super().__init__(model)
         self.mrkrlist = []
+        self.stylediverts = {
+            "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
+            "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
+        }
         self.builder = model.builder
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
@@ -179,10 +183,6 @@ class StyleEditorView(StyleEditor):
             # if v[0].startswith("s_"):
             #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
-        self.stylediverts = {
-            "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
-            "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
-        }
 
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):

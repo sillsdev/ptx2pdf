@@ -13,6 +13,7 @@ from ptxprint.xrefs import StrongsXrefs
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
+from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -777,6 +778,7 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
+        TeXpert.saveConfig(config, self)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -1036,6 +1038,7 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
+        TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:
