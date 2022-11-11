@@ -156,7 +156,7 @@
 }
 
 \let\mkb@rder@plain\mkb@rder
-\def\mkb@rder@double{%
+\def\d@ublesetup{%
   \ifx\b@drcol\relax
     \def\bc@l{}\def\endbc@l{}%
   \else
@@ -178,6 +178,31 @@
     \def\fc@l{\special{color push rgb \b@drfillcolour}}\def\endfc@l{\special{color pop}}%
   \else \def\fc@l{}\def\endfc@l{}%
   \fi
+}
+\x@\def\csname drawzrule-double\endcsname{%
+  \getp@ram{borderfillcolour}{zrule}{\styst@k}\let\b@drfillcolour\p@ram
+  \getp@ram{borderlinewidth}{zrule}{\styst@k}\let\b@drlinewidth\p@ram
+  \ifx\b@drfillcolour\relax
+    \let\b@drfillcolour\fill@none
+  \fi
+  \ifx\b@drlinewidth\undefined
+    \let\b@drlinewidth\relax
+  \fi
+  \edef\b@drwidth{\strip@pt{\dimexpr \rule@thk\relax}}%
+  %\tracingassigns=1
+  \d@ublesetup
+  %\tracingassigns=0
+  \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
+    \vbox{\baselineskip=0pt \lineskiplimit=0pt \hbox{\bc@l\vrule height \b@drlinewidth pt  depth 0pt width \rule@wid \endbc@l}%
+      \ifx\b@drfillcolour\fill@none\vskip\b@drfillwidth pt\else
+        \hbox{\fc@l\vrule height \b@drfillwidth pt depth 0pt width \rule@wid \endfc@l}%
+      \fi%
+      \hbox{\bc@l\vrule height \b@drlinewidth  pt depth 0pt width \rule@wid \endbc@l}}%
+    \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
+    %\showbox0
+}
+\def\mkb@rder@double{%
+  \d@ublesetup
   \dimen0=\b@rderbox@height \advance\dimen0 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Inner vertical
   \dimen1=\dimen0 \advance\dimen1 by \dimexpr -\b@drfillwidth pt  * \b@drvsides\relax %Fill vertical
   \dimen2=\dimen1 \advance\dimen2 by \dimexpr -\b@drlinewidth pt  * \b@drvsides\relax %Outer vertical

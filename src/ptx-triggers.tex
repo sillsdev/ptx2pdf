@@ -58,7 +58,12 @@
 \def\trigg@rmark@selectA{\adjc@rref,\the\curr@djpar}
 \def\trigg@rmark@select#1#2\E{\csname trigg@rmark@select#1\endcsname}%
 \def\trigg@rmark#1{%
-  \llap{\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
+  \ifhmode
+    \llap{\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
+  \else
+    %If anything is put in vmode, then empty paragraphs are not skipped. Better to do nothiing
+    %\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\vbox to 0pt{\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}\penalty10000 }%
+  \fi
 }
 
 \def\runtrigg@rscv{%after the verse number
@@ -129,6 +134,7 @@
   \def\c@rref{#1}%
   \ifdiglot\def\dc@rref{#1\g@tdstat}\fi%
   \trace{T}{running triggers \c@rref}%
+    \ifMarkTriggerPoints\trigg@rmark{TV}\fi
   \the\trigg@rchecks
 }
 \def\settrign@me#1{\edef\trign@me{trigger-#1}}

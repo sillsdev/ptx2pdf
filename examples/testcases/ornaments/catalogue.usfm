@@ -25,7 +25,7 @@ scripture where images of plants and animals are not permitted...
 \p
 \p \testornamentsh
 \pb
-\s Predefined zrules at 0.5 width and 0.9
+\s Predefined zrules at 0.5 width and 0.7
 \p Notice how some of the rules contain optional elements, and other distort.  
 \p
 \boxornfalse
@@ -81,6 +81,16 @@ VectorianRule88
 \zrule|cat="VectorianRule88" width="0.7"\*
 VectorianRule89
 \zrule|cat="VectorianRule89" width="0.7"\*
+
+HanRule62
+\zrule|cat="HanRule62" width="0.5" \* 
+HanRule62v
+\zrule|cat="HanRule62v" width="0.5" \* 
+HanRule35
+\zrule|cat="HanRule35" width="0.5" \* 
+HanRule47
+\zrule|cat="HanRule47" width="0.5" \* 
+
 \singlecolumnvert
 \pb
 
@@ -123,13 +133,19 @@ edge-fill parts.\E
 \p The vXX  family are simpler.\E
 \demoborder v88r|a5 \E
 \demoborder v88c|a5 \E
-\demoborder v88out|a5 \E
+\demoborder v88out|a5
+\b
+\p Notice the border here is outside the colour-fill area.
+That's what the 'out' in the naming scheme means.
+\E
 \demoborder v86c|a5 \E
-\demoborder v86out|a5 \E
+\demoborder v86out|a5 
+\E
 \pb
 \demoborder v85|a5 \E
 \demoborder v85r|a5 \E
-\demoborder v85out|a5 \E
+\demoborder v85out|a5
+\E
 \demoborder Han1|a5 
 \b\p Han1 uses solid-filled border elements, in contrast to the 'just lines' used in Han2.\E
 \demoborder Han2|a5 \E
@@ -153,8 +169,12 @@ include half- and quarter-values.
 
 \demoborder Han5|a5  \E
 
+\demoborder Han6|a5  \E
+
 \esb\cat fullpage\cat*
-\p Test
+\s1 Full Sized Test
+\p
+This page is mainly to demonstrate the border at full scale.
 \esbe
 
 

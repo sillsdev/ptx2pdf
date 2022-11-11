@@ -324,7 +324,10 @@
   % execute any standard code for this milestone.
   \ifcsname MS:\thismil@stone\endcsname \csname MS:\thismil@stone\endcsname\fi 
   \ifx\attr@b\relax
-    \runtrigg@rs{ms:\thismil@stone}%
+    \ch@ckislocation{\thismil@stone}% 
+    \ifsuppresstr@gger\else
+      \runtrigg@rs{ms:\thismil@stone}%
+    \fi
   \else
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
     \ifsuppresstr@gger\else
@@ -417,6 +420,7 @@
       \m@kenumber{\attr@b}%
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}
     \fi
+    \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
     \get@ttribute{thick}%A
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
@@ -436,7 +440,12 @@
     \else
       \edef\rule@adjust{\p@ram\FontSizeUnit}%
     \fi
-    \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \get@ttribute{style}%A
+    \ifx\attr@b\relax
+      \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \else     
+      \let\p@ram\attr@b
+    \fi
     \ifx\p@ram\relax
       \def\rule@style{plain}%
     \else
@@ -459,10 +468,16 @@
 }
 
 \x@\def\csname drawzrule-plain\endcsname{%
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
   \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
-    \vrule height \rule@thk depth 0pt width \rule@wid 
+    \bc@l\vrule height \rule@thk depth 0pt width \rule@wid \endbc@l
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
+
 
 \x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
@@ -527,7 +542,7 @@
 \newdimen\ISBNfontdim
 \ISBNfontdim=10pt
 \def\ISBNfont{"Andika"}
-\def\ISBN#1{\leavevmode\font\belowISBN=\ISBNfont at \ISBNfontdim
+\def\ISBN#1{\leavevmode\font\belowISBN="\ISBNfont" at \ISBNfontdim
   \trace{m}{ISBN barcode for \attr@b}%
   \bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
   %I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.

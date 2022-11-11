@@ -107,7 +107,7 @@
  \fi
  \ifx\adjc@rref\pr@vref \if@dvance@dj \global\advance\curr@djpar by 1 \fi
  \else \global\curr@djpar=\ifhmode 1 \else 0\fi\fi
- %\ifMarkTriggerPoints\trigg@rmark{AP}\fi
+ %\ifMarkTriggerPoints\trigg@rmark{AP}\fi %This makes the page hard to read
  \trace{b}{BALANCE paradj: ref=\adjc@rref: para=\the\curr@djpar: baselineskip=\the\baselineskip}%
  \trace{j}{checkadjustments: curref=\meaning\adjc@rref , prevref=\meaning\pr@vref , adjref=\meaning\@djref , curradjpar=\the\curr@djpar , adjparindex=\the\@djparindex \ifx\adjc@rref\@djref MATCH FOUND\fi}%
  \ifdiglot

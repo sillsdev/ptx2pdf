@@ -23,11 +23,15 @@
 \v 6 Ad repudiandae est maxime sunt quis. Odit aut beatae debitis. Reiciendis ex aspernatur dolorem repudiandae dicta aliquid ea ex. Quae consequatur enim qui et molestias ut quam. Quia quibusdam molestiae accusantium. \
 \v 7 Aut nostrum tenetur sint ea temporibus.
 
-\zgap|9em plus 10em\*
+\zgap|1\baselineskip\*
 \p
-\zrule|align="r"\*
-\p Right aligned, default width.
-Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero voluptatem. Dolor beatae dolor voluptas quis sequi molestiae harum dolorem. Qui similique molestiae dignissimos. Rerum ex dolor quisquam consequatur. Earum quibusdam quis quasi.
+\zrule|align="r" width="0.5"\*
+\p Right aligned, half width.
+Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero voluptatem. Dolor beatae dolor voluptas quis sequi molestiae harum dolorem. Qui similique dignissimos. Rerum ex dolor quisquam consequatur. Earum quibusdam quis quasi.
+
+\zrule|style="double" thick="10pt" width="0.5"\*
+\p
+\zrule|cat="double" thick="10pt" width="0.5"\*
 \pb 
 \zgap|100pt plus 10em\*
 \vfill
@@ -35,4 +39,9 @@ Impedit aut dolorem ab quia quae. Enim nostrum amet error voluptatem vero volupt
 \zgap|100pt plus 10em\*
 \vfill
 The paragraph starting "Optio aut" is on page \zpage|Opt(io\*. See also note on \zref|label="random" show="b_c:v " \*
+
+\esb\cat double\cat*
+This sidebar has the same category as this zrule:
+\zrule|width="0.5"\*
+\esbe
 \pb
