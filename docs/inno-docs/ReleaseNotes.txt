@@ -1,7 +1,21 @@
 PTXprint 2.2.39 Release Notes
-8 Nov 2022
+12 Nov 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.40 (12 Nov 2022)
+  
+  * Get commandline -m working (Integrate macros dir into the job)
+  
+  * Fixed faulty 0.0 AdjList references
+  
+  * Added UI for global (layout-altering) misc settings
+  
+  * Refactor createDiff to enable a separate app pdfdiff
+  
+  * First cut at stemmed strongs cross references
+  
+  * Double rule zrules and testing that sidebars in sidebars work
 
 Bug fixes and improvements in 2.2.39 (8 Nov 2022)
   
