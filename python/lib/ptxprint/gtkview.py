@@ -2562,7 +2562,6 @@ class GtkViewModel(ViewModel):
 #          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
 
     def setupTeXOptions(self):
-        dialog = self.builder.get_object("dlg_texoptions")
         texopts = self.builder.get_object("box_texoptions")
         for i, (k, opt, wname) in enumerate(TeXpert.opts()):
             lasti = i
@@ -2605,15 +2604,6 @@ class GtkViewModel(ViewModel):
             self.set(wname, v)
             self.allControls.append(wname)
             obj.show()
-
-    def onTexOptionsClicked(self, btn):
-        if self.loadingConfig:
-            return
-        dialog = self.builder.get_object("dlg_texoptions")
-        dialog.set_keep_above(True)
-        response = dialog.run()
-        dialog.set_keep_above(False)
-        dialog.hide()
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
@@ -4511,8 +4501,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(status)
 
     def onExpertModeClicked(self, btn):
-        # status = self.sensiVisible("c_showTeXpertHacks")
-        status = False
+        status = self.sensiVisible("c_showTeXpertHacks")
+        # status = False
         self.builder.get_object("tb_Expert").set_visible(status)
         self.builder.get_object("lb_Expert").set_visible(status)
         
