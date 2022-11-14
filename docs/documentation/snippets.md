@@ -154,7 +154,7 @@ at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator s
 ## Auto lengthen poetry
 
 A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.
-But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
+But for a single column layout, we would like to merge all \\q2 into the previous \\q1, and then
 turn every other \\q1 into a \\q2 to make it look like poetry.
 
 ```perl
@@ -263,6 +263,19 @@ Note that the \setbookhook restricts this change to just the 'XXS' book.
  \sethook{end}{bd}{\hfil\egroup}}
 ```
 
+### Implementation
+
+We create a hook that stores the content of the marker in an hbox. The width of
+this book could be just set to a fixed width as in replacing one line with:
+
+```tex
+\sethook{start}{bd}{\hbox to 1in\bgroup}
+```
+
+But rather than having to calculate the width of the box for every change in
+point size, we measure the width of 4 digits and use that width to set the width
+of the hbox containing the Strong's number (which is always 4 digits or less).
+
 ## Display paragraph markers next to each paragraph
 
 A typesetter may use changes.txt to change the paragraph style for typesetting
@@ -296,6 +309,12 @@ the specific verse location.
 \setcvhook{LUK8.1}{\pretolerance=100}
 ```
 
+### Implementation
+
+Setting `\pretolerance=1` forces the paragraph builder to do the extra passes it
+might not have done otherwise, to give a more accurate result. And then we reset
+the value for the next paragraph and following.
+
 ## Table of Contents right-align column 2
 
 ```tex
@@ -322,6 +341,16 @@ qr word, like 'Selah'.
 \sethook{start}{qr}{\unskip\nobreak\hfill\penalty50\hskip0.3em\hbox{}\nobreak\hfill\hbox\bgroup}
 \sethook{end}{qr}{\egroup}
 ```
+
+### Implementation
+
+This trick comes from the TeXbook. Since, at a linebreak spaces are removed,
+this snippet replaces the space before the 'Selah' with a fill to push it right
+and then a recommendation not to break here `\penalty50`. The `\hskip0.3em` only
+appears if there is no linebreak before the Selah, and guarantees a minimum
+space between the 'Selah' and the end of the text in the paragraph. Then we insert a zero width
+non breaking space in the form of `\hbox{}`, with a nobreak and the necessary
+fill followed by the box containing the 'Selah' or whatever is marked.
 
 ## Show bridged verses at the start of chapters
 
@@ -399,6 +428,19 @@ and add this snippet.
 % be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).
 %\sethook{start}{xts}{\mystrong{myxts}}
 ```
+
+### Implementation
+
+The `\mystrong` macro gets hold of the Strong's number from the attribute and
+then formats it according to the character style marker passed as `#1`. Then we
+replace the start hook for xts (which previously just called internal code to
+process the Strong's number). This new hook decides whether we are in the cross
+reference `\ifinn@te` and if so, calls the normal internal code, otherwise we
+are in the main text and so `\mystrong` should be called.
+
+Of course if you always want inline numbers even in cross references, then the
+hook can be simplified and `\mystrong` always called.
+
 
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are

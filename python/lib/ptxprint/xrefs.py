@@ -166,6 +166,7 @@ class XMLXrefs(BaseXrefs):
         self.context = context or BaseBooks
         self.shownums = shownums
         self.xmldat = cachedData(xrfile, self.readxml)
+        self.ptsettings = ptsettings
 
     def _unpackxml(self, xr):
         a = []
