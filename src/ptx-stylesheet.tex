@@ -1846,7 +1846,7 @@
       %\n@npublishablefalse\getmcp@ram{properties}%
       \ifn@npublishable\temptrue\else\tempfalse\fi
       \n@npublishablefalse\getp@ram{properties}{\styst@kfirst}{\styst@kfirst}%
-      \trace{i}{cat \c@tegory, properties=\p@ram, from \styst@kfirst}%
+      \trace{sc}{cat '\c@tegory', properties=\p@ram, from \styst@kfirst}%
       \x@\t@stnonpub\p@ram nonpublishable!
       \ifn@npublishable\global\n@npublishablec@ttrue\else\global\n@npublishablec@tfalse\fi
       \iftemp\n@npublishabletrue\else\n@npublishablefalse\fi
@@ -1884,8 +1884,8 @@
   \the\c@th@@ks% Run anythingthe enclosing code wants
   \op@ninghooks{before}{cat}{cat\ifx\styst@k\empty\else+\styst@k\fi}% 
   \begingroup % This group will be closed between the end and after hooks of @ndc@t %(1)
-  \trace{sk}{docat: Pushing '#1' onto \mcstack}%
-  \mcpush{\stylet@pe}{#1}%
+  \trace{sk}{docat '#1': Pushing '\c@tegory' onto \mcstack}%
+  \mcpush{\stylet@pe}{\c@tegory}%
   \op@ninghooks{start}{cat}{\styst@k}%
   \let\styst@k=\empty
   \s@tstyst@k%
