@@ -1453,9 +1453,6 @@
  \let\save@regular=\regular \let\regular=\Regular
  \let\save@bold=\bold \let\bold=\Bold
  \let\save@italic=\italic \let\italic=\Italic
- \ifLogFonts
-   \openout\f@ntl@g="\j@bname.fontusage"
- \fi
  \openin\styl@sheet="#1" \c@ntinuetrue                      %(1)
  \ifeof\styl@sheet\errmessage{Paratext stylesheet "#1" not found}\else
    \trace{sa}{New Stylesheet: clearing fonts: \f@ntlist}%
@@ -1463,6 +1460,7 @@
    \message{Reading Paratext stylesheet "#1" (\c@tegory)...}%
    \endlinechar=-1
    %\catcode`\#=5 % paratext comment char
+   \catcode`\(=12
    \loop
     \catcode`\#=12
     \read\styl@sheet to \th@line                            %(2)
@@ -1605,6 +1603,9 @@
  \let\periph\@periph
  
  %\global\lastptxfiletrue
+ \ifLogFonts
+   \openout\f@ntl@g="\j@bname.fontusage"
+ \fi
  \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
 

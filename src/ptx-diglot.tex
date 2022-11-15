@@ -96,8 +96,11 @@
 %+cdig_define-hooks
 \newtoks\diglotLho@ks
 \newtoks\diglotRho@ks
+\def\addToSideHooks#1#2{\x@\let\x@\tmp\csname diglot#1ho@ks\endcsname \x@\global\x@\tmp\x@{\the\tmp #2}}
 \def\addToLeftHooks#1{\x@\global\x@\diglotLho@ks\x@{\the\diglotLho@ks #1}}
 \def\addToRightHooks#1{\x@\global\x@\diglotRho@ks\x@{\the\diglotRho@ks #1}}
+\def\addToLHooks{\addToSideHooks{L}}
+\def\addToRHooks{\addToSideHooks{R}}
 %-cdig_define-hooks
 
 \def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
@@ -2822,6 +2825,7 @@
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+    \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 %TODO:
 %FIXMEs needing for polyglot processing:
 % UI!
