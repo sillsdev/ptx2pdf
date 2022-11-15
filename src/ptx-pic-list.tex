@@ -146,6 +146,7 @@
 }
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
+  \trace{P}{ch@ckN@xtPicid: \p@cid}%
   \ifcsname\p@cid\endcsname 
     \traceifset{ch@ckN@xtPicid}%
     \x@\let\x@\t@st\csname \p@cid\endcsname
@@ -170,6 +171,7 @@
 }
 
 \def\ch@ckpiclist{%
+  \trace{P}{Start of of checkpic \c@rref}%
   \ifpicslurp
     \let\p@cref=\c@rref
     \p@clistsuff=1
