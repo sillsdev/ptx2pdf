@@ -514,7 +514,7 @@ class Xrefs:
             parent.hasLocalBookNames = True
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
-        seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
+        seps = parent.printer.getRefSeparators().copy()
         seps['verseonly'] = parent.printer.getvar('verseident') or "v"
         if source.startswith("strongs"):
             self.xrefs = getattr(parent.printer, 'strongs', None)

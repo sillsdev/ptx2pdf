@@ -259,7 +259,14 @@ class ViewModel:
         else:
             # return self.booklist
             return []
-            
+
+    def getRefSeparators(self):
+        pts = self._getPtSettings()
+        res = pts.getRefSeparators()
+        if res is None:
+            res = self.getScriptSnippet().getrefseps(self)
+        return res
+
     def switchFRTsettings(self):
         frtpath = self.configFRT()
         logger.debug(f"Front Matter file is {frtpath}")
@@ -1572,7 +1579,7 @@ class ViewModel:
             if os.path.exists(ipf):
                 zf.write(ipf, pf)
         from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
+        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
         res = runjob.wait()
         temps = []
@@ -1768,7 +1775,7 @@ set stack_size=32768""".format(self.configName())
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        seps = self.getScriptSnippet().getrefseps(self)
+        seps = self.getRefSeparators().copy()
         seps['verseonly'] = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
         wanal = None

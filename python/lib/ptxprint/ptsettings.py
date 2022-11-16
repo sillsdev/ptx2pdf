@@ -3,7 +3,14 @@ import xml.etree.ElementTree as et
 import regex
 from ptxprint.utils import allbooks, books, bookcodes, chaps
 from ptxprint.unicode.UnicodeSets import flatten
+from ptxprint.reference import RefSeparators
 
+ptrefsepvals = {
+    'books': 'BookSequenceSeparator',
+    'chaps': 'ChapterNumberSeparator',
+    'cv': 'ChapterVerseSeparator',
+    'range': 'RangeIndicator',
+}
 
 class ParatextSettings:
     def __init__(self, basedir, prjid):
@@ -38,6 +45,7 @@ class ParatextSettings:
             self.default_bookNames()
             self.hasLocalBookNames = False
         self.collation = None
+        self.refsep = False     # tristate: (False=undef), None, RefSeparator
         return self
 
     def read_ldml(self):
@@ -200,3 +208,20 @@ class ParatextSettings:
             return None
         res = list(flatten(s))
         return res
+
+    def getRefSeparators(self):
+        if self.refsep is not False:
+            return self.refsep
+        foundsetting = False
+        vals = {}
+        for k, v in ptrefsepvals.items():
+            if v in self.dict:
+                foundsetting = True
+                vals[k] = self.dict[v]
+        if not foundsetting:
+            self.refsep = None
+        else:
+            if self.dict.get('NoSpaceBetweenBookAndChapter', False):
+                vals['bkc'] = ''
+            self.refsep = RefSeparators(**vals)
+        return self.refsep
