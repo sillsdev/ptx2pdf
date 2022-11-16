@@ -352,6 +352,25 @@ space between the 'Selah' and the end of the text in the paragraph. Then we inse
 non breaking space in the form of `\hbox{}`, with a nobreak and the necessary
 fill followed by the box containing the 'Selah' or whatever is marked.
 
+In effect TeX chooses between two text runs depending on whether it needs to
+insert a line break:
+
+```tex
+\nobreak\hfill
+\hbox{}\hfill\hbox{
+```
+
+if the line breaks (at the \break). Or with no break:
+
+```text
+\nobreak\hfill\hskip0.3em\hbox{}\hfill\hbox{
+```
+
+Notice the two `\hfill`s with the ensured space floating between them. But who
+cares, since everything is invisible. In both cases, the box is pushed to the
+right of the page.
+
+
 ## Show bridged verses at the start of chapters
 
 Generally people do not want to show the verse number for verse 1 at the start
