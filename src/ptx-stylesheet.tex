@@ -1760,11 +1760,14 @@
  \endt@ble
  \ifdiglot\enddigl@t\fi
  \iflastptxfile \global\lastpagetrue\fi
+ \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi
+ \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
  \csname bookend-all\endcsname
  \the\@ndptxhooks
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \singlecolumn\zplaceallnotes\fi
  \unprepusfm
+\trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
  \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak

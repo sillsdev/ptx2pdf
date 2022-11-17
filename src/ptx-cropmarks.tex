@@ -221,6 +221,7 @@
 \reinitThumbTabs
 
 \def\TabBleed{5pt}%
+\newif\ifstretchtabs
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
@@ -252,7 +253,13 @@
  \fi
  \setbox0\hbox{\b@okShort}%
  \iftemp%Rotated tabs
-   \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide (\the\wd0) for tab height (\tabheight)}\fi\fi
+   \edef\t@bdim{\the\tabheight}%
+   \ifdim\wd0>\tabheight
+     \ifstretchtabs
+       \edef\t@bdim{\the\dimexpr \wd0 + 1pt\relax}%
+     \fi
+     \ifx\lastw@rning\b@okShort\else\let\lastw@rning\b@okShort\message{Thumb tab contents "\b@okShort" too wide (\the\wd0) for tab height (\the\tabheight)}\fi
+   \fi
    \tempfalse
    \ifodd\pageno
      \ifTabTopToEdgeOdd\temptrue\fi
@@ -276,7 +283,7 @@
      \edef\bxdp{\the\dimen0}%
      \edef\V@dj{\vertThumbtabVadj}%
    \fi
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\t@bdim}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
    \ht0=\tabwidth
    \let\r@tSet\r@cwSet 
    \ifodd\pageno
@@ -292,11 +299,17 @@
      \if\st@rtatedge F\hss\else \kern-1\tabwidth\fi
    }%
  \else%Unrotated tabs
-   \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
+   \edef\t@bdim{\tabwidth}%
+   \ifdim\wd0>\tabwidth
+     \ifstretchtabs
+       \edef\t@bdim{\the\dimexpr \wd0 + 1pt\relax}%
+     \fi
+     \ifx\lastw@rning\b@okShort\else\let\lastw@rning\b@okShort\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi
+   \fi
    \hbox to 0pt{%
     \dimen0=\ifodd\pageno\TabBleed\else-\TabBleed\fi
     \if\st@rtatedge F\hss\else\kern \dimen0\fi% Bleed of 1pt
-    \dimen0=\TabBleed \advance\dimen0\tabwidth
+    \dimen0=\TabBleed \advance\dimen0\t@bdim
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\dimen0}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
