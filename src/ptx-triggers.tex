@@ -51,6 +51,8 @@
 \x@\font\csname font<TV>\endcsname "Source Code Pro:extend=0.8,color=7f007f" at 7pt %Trigger verse
 \x@\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=7f7f00" at 7pt % AdjustPar
 
+\def\@@@TP{TP}
+\def\@@@TV{TV}
 \def\@mark@trigerTP{1}
 \def\@mark@trigerTV{0.5}
 \def\@mark@trigerAP{0.1}
@@ -59,10 +61,33 @@
 \def\trigg@rmark@select#1#2\E{\csname trigg@rmark@select#1\endcsname}%
 \def\trigg@rmark#1{%
   \ifhmode
-    \llap{\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}}%
+    {%
+      \count255=0
+      \ifdim\lastkern<0pt \ifdim\lastkern>-10sp
+        \count255=\lastkern\unkern 
+        \count254=\lastkern\unkern
+        \ifnum\count254=-\count255
+        \else
+          \ifnum\count254=0 \else       
+            \kern\count254
+          \fi
+          \kern\count255
+          \count255=0
+        \fi
+      \fi\fi
+      \setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip0.5em}%
+      \dimen0=\x@\dimexpr\csname @mark@triger#1\endcsname\ht0 - 0.7\ht0 * \count255\relax
+      %\trace{tm}{Trigger mark at \c@rref, \the\count255, lowering by \the\dimen0}%
+      \llap{\smash{\lower\dimen0\box0}}%
+      \advance\count255 by -1
+      \kern -\count255 sp% 
+      \kern \count255 sp% 
+    }%
   \else
-    %If anything is put in vmode, then empty paragraphs are not skipped. Better to do nothiing
-    %\setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\vbox to 0pt{\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}\penalty10000 }%
+    %If anything is put in vmode, then empty paragraphs are no longer skipped. Better to do nothing until we work out how to add a 0pt box which won't cause a parskip. Must be possible, surely?
+    \edef\t@st{#1}\ifx\t@st\@@@TV\else
+      \setbox0\hbox{\csname font<#1>\endcsname \trigg@rmark@select#1\E\hskip1em}\vbox to 0pt{\smash{\x@\lower\csname @mark@triger#1\endcsname\ht0\box0}\penalty10000 }%
+    \fi
   \fi
 }
 
