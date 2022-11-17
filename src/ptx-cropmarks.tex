@@ -252,7 +252,7 @@
  \fi
  \setbox0\hbox{\b@okShort}%
  \iftemp%Rotated tabs
-   \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
+   \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide (\the\wd0) for tab height (\tabheight)}\fi\fi
    \tempfalse
    \ifodd\pageno
      \ifTabTopToEdgeOdd\temptrue\fi

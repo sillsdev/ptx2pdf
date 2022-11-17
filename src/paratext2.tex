@@ -1614,11 +1614,14 @@
 }
 
 \def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
-  \trace{i}{Saving inserts}%
+  \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \s@veallnotes{1}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+  %\tracingassigns=1
   \nextshipout
+  %\tracingassigns=0
+  \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
     \csname page-\the\pageno\endcsname
   \fi

@@ -602,6 +602,13 @@
   \x@\xdef\x@\m@rksm@x{\the\count255}%
   \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
 }
+\def\getm@rknum#1{%retrieve or get a new m@rknum#1
+  \x@\let\x@\m@rknum\csname m@rknum#1\endcsname
+  \ifx\m@rknum\relax
+    \newm@rknum{#1}\let\m@rknum\m@rksm@x
+  \fi
+}
+  
 
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
@@ -949,8 +956,8 @@
   \after@this
 }
 
-\def\ztmon{\tracingmacros=1 \tracingmacros=1}
-\def\ztmoff{\tracingmacros=0 \tracingmacros=0}
+\def\ztmon{\tracingassigns=1 \tracingmacros=1}
+\def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty

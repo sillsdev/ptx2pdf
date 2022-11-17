@@ -73,9 +73,9 @@ This should reduce the amount of typing and opportinities for errors, compared t
 #### Control over position of text within the box
 The box position is controlled as described as above. The controls below position the text within the box.
 
-* \let\horizThumbtabContents=```\TabTxtCentred``` Override the normal placement rule for text in horizontally oriented tabs, in order that they be centred in the thumb tab.  (Options:`\TabTxtFarFromEdge`, `\TabTxtCentred`, `\TabTxtNearToEdge`). Default is `\TabTxtFarFromEdge`, putting the text far from the edge of the paper, to allow for  cropping errors.
+* \let\horizThumbtabContents=```\TabTxtCentred``` Override the normal placement rule for text in horizontally oriented tabs, in order that they be centred in the thumb tab.  (Options:`\TabTxtFarFromEdge`, `\TabTxtCentred`, `\TabTxtCloseToEdge`). Default is `\TabTxtFarFromEdge`, putting the text far from the edge of the paper, to allow for  cropping errors.
 
-* \let\vertThumbtabContents=```\TabTxtFarFromEdge``` Override the normal placement rule for text in vertically oriented tabs, in order that they not be positioned centrally in the box before being rotated. As in vertically oriented tabs the text is rotated so the bottom of letters are towards the page-edge, the example puts the text at the bottom of the thumb tab. Correspondingly, setting it to `\TabTxtNearToEdge` will put the text at the top of the thumbtab. (Options:`\TabTxtFarFromEdge`, `\TabTxtCentred`, `\TabTxtNearToEdge`). Default is `\TabTxtCentred`.
+* \let\vertThumbtabContents=```\TabTxtFarFromEdge``` Override the normal placement rule for text in vertically oriented tabs, in order that they not be positioned centrally in the box before being rotated. As in vertically oriented tabs the text is rotated so the bottom of letters are towards the page-edge, the example puts the text at the bottom of the thumb tab. Correspondingly, setting it to `\TabTxtCloseToEdge` will put the text at the top of the thumbtab. (Options:`\TabTxtFarFromEdge`, `\TabTxtCentred`, `\TabTxtCloseToEdge`). Default is `\TabTxtCentred`.
 
 * \def\vertThumbtabVadj{```-3pt```} (default `-2pt`).
 * \def\horizThumbtabVadj{```1sp```} (default `1sp`).

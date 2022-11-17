@@ -1352,6 +1352,6 @@
 }
 \newtoks\onship@ut 
 \def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}
-\def\nextshipout{\the\onship@ut\onship@ut{}\dofigp@ge}
+\def\nextshipout{\x@\toks0\x@{\the\onship@ut}\global\onship@ut{}\the\toks0\dofigp@ge}
 %-cfig_dofigpage
 

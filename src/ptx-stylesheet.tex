@@ -1171,7 +1171,9 @@
    \catcode32=10 \@id}% \id gets stored and printed in the margin with cropmarks
  \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
         \gdef\b@okShort{}%Prevent roll-over of short-form book name
+        \trace{oh}{hook for bookstart-all \ifcsname bookstart-all\endcsname exists\else missing\fi}%
         \csname bookstart-all\endcsname
+        \trace{oh}{hook for bookstart-\id@@@ \ifcsname bookstart-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
         \csname bookstart-\id@@@\endcsname
         \runtrigg@rsother{bookstart}%
         }%

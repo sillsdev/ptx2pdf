@@ -478,7 +478,18 @@
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
-
+\x@\def\csname MS:zusermark\endcsname{%
+  \get@ttribute{type}% 
+  \ifx\attr@b\relax
+    \getm@rknum{user}%
+  \else
+    \getm@rknum{\attr@b}%
+  \fi
+  \get@ttribute{value}%
+  \ifx\attr@b\relax\else
+    \marks\m@rknum{\attr@b}
+  \fi
+}
 \x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
   \endgraf
