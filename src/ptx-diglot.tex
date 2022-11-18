@@ -601,12 +601,14 @@
   {\count255=\numexpr \m@rksm@x+1\relax
   \x@\xdef\x@\m@rksm@x{\the\count255}%
   \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
+  \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
 }
 \def\getm@rknum#1{%retrieve or get a new m@rknum#1
   \x@\let\x@\m@rknum\csname m@rknum#1\endcsname
   \ifx\m@rknum\relax
     \newm@rknum{#1}\let\m@rknum\m@rksm@x
   \fi
+  \trace{ma}{getm@rknum #1 -> \m@rknum}%
 }
   
 

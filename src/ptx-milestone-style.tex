@@ -478,7 +478,10 @@
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
-\x@\def\csname MS:zusermark\endcsname{%
+\x@\def\csname MS:zcustommark\endcsname{%
+  \ifnum\currentgrouptype>0
+    \savingmarks
+  \fi
   \get@ttribute{type}% 
   \ifx\attr@b\relax
     \getm@rknum{user}%
@@ -486,8 +489,9 @@
     \getm@rknum{\attr@b}%
   \fi
   \get@ttribute{value}%
+  \trace{m}{zcustommark(\m@rknum) \attr@b}%
   \ifx\attr@b\relax\else
-    \marks\m@rknum{\attr@b}%
+    \x@\x@\x@\marks\x@\m@rknum\x@{\attr@b}%
   \fi
 }
 \x@\def\csname MS:zgap\endcsname{%

@@ -853,6 +853,9 @@
   \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
   \c@th@@ks{}% Just in case
+  \ifx\c@tprefix\empty
+    \dos@vedm@rk
+  \fi
   \ifnum \sb@numcuts>0
     \@numcuts=\sb@numcuts
     \trace{e}{Re-doing cutouts for \sb@numcuts}%

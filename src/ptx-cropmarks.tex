@@ -144,7 +144,7 @@
   % 6 - =0, no movement >0pt  separation of text from bottom =1sp, centre text.  < 0pt separation from top of box to top of text 
   % 7 - text (should include glue to align / centre e.g. \hss)
   %\dimen2=\baselineskip\advance\dimen2 by -.2ex
-  % Box height is set by \tabwidth, text is set 2pt below top 
+  % For tabs, Box height is set by \tabwidth, text is set 2pt below top 
   \trace{pt}{(#1) (#2) #3 #4 #5 #6 #7}%
   \dimen2=#6
   \setbox0\hbox to #3{#7}%
@@ -211,7 +211,7 @@
 \def\lastw@rning{}
 
 \def\in@tThumbT@bs{%Thumb-tab setup code goes here.
-  \let\initThumbT@bs\relax
+  \global\let\initThumbT@bs\relax
 }
 
 \def\reinitThumbTabs{%Function for users to call if they've altered something that affects initialisation
@@ -273,7 +273,9 @@
      \edef\bxdp{\the\tabwidth}%
      \bgroup
        \dimen1=\vertThumbtabVadj%
-       \ifdim\dimen1=1sp\else %Don't mess with special value!
+       \ifdim\dimen1=1sp
+         % Something should happen here. TabBleed is confusing the positioning 
+       \else 
          \multiply\dimen1 by -1%
        \fi
        \xdef\V@dj{\the\dimen1}%
@@ -350,8 +352,10 @@
         \advance\dimen1 by -\TabsEnd
         \advance\dimen1 by -\tabheight
         \count255=\NumTabs
-        \advance\count255 by -1
-        \divide\dimen1 by\count255
+        \ifnum\count255 >1
+          \advance\count255 by -1
+          \divide\dimen1 by\count255
+        \fi
         \count255=\tabnum
         \advance\count255 by -1
         \multiply\dimen1 by \count255
