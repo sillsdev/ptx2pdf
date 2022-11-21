@@ -931,7 +931,8 @@ class RunJob:
         return t
 
     def cropBorder(self, im):
-        bwim = im.convert("L").load()
+        #bwim = im.convert("L").load()
+        bwim = im.convert("L")
         box = im.getbbox()
         cbox = []
         cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
