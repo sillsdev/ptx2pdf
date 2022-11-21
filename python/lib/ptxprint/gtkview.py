@@ -946,9 +946,9 @@ class GtkViewModel(ViewModel):
                     except AttributeError:
                         continue
                     if t is not None:
-                        t += "\n" + v[0]
+                        t += "\n{}({})".format(k, v[0])
                     else:
-                        t = v[0]
+                        t = "{}({})".format(k, v[0])
                     w.set_tooltip_text(t)
             if k and not v[0].startswith("r_"):
                 self.initValues[v[0]] = self.get(v[0], skipmissing=True)
