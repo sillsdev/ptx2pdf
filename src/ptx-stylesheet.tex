@@ -737,6 +737,7 @@
   \let\p@ssParams\savep@ssParams\let\tmpstyst@k\savestyst@k
   \trace{sa}{getthep@ram-fontsize found \ps@ze\space from \tmpfr@m}%
     \dimen0=\ps@ze pt 
+  \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
   \def\d@##1\E{\edef\tmpstylen@me{##1}%
     \getp@r@m{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
     \ifx\p@ram\relax\edef\sc@le{1}\getp@r@m{fontsize}{\tmpstylen@me}%
