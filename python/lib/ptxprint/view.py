@@ -741,7 +741,7 @@ class ViewModel:
         if isinstance(value, bool):
             value = "true" if value else "false"
         if update or not hasval:
-            config.set(sect, k, value)
+            config.set(sect, k, str(value))
 
     def createConfig(self):
         def sortkeys(x):
