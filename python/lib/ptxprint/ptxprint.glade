@@ -11267,17 +11267,18 @@ button to adjust either the Line Spacing or Top Margin.</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_noinkinmargin">
-                                    <property name="label" translatable="yes">Don't Place Footer in Margin Area</property>
+                                    <property name="label" translatable="yes">Place Footer Text Above the Bottom Margin</property>
                                     <property name="name">Don't place footer in the margin area</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Normally the page number on an intro book
-occurs above the page margin (in the area
-that text would normally flow until). However
-if you need the footer page number to sit
-below the page's bottom margin, then you
-need to activate this compatibility option.</property>
+                                    <property name="tooltip-text" translatable="yes">Normally the footer page number sits
+below the page's bottom margin. 
+
+However if you need  the page number to
+be placed above the page margin (in the area
+that text would normally flow until) then this
+option will cause that to happen.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="draw-indicator">True</property>
@@ -11286,7 +11287,7 @@ need to activate this compatibility option.</property>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">5</property>
-                                    <property name="width">2</property>
+                                    <property name="width">3</property>
                                   </packing>
                                 </child>
                                 <child>
