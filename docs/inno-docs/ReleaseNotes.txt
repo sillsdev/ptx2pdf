@@ -1,7 +1,30 @@
 PTXprint 2.2.40 Release Notes
-12 Nov 2022
+21 Nov 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.41 (21 Nov 2022)
+  
+  * Read Reference Separators from Settings.xml if possible
+  
+  * Add tex model names as well as widget names to -I tooltips
+  
+  * Fix wrong diglot line spacing
+  
+  * Fixed Confusing label for option about footers in margin #781
+  
+  * Fix config setting from texpert
+  
+  * Try fixing an odd OSError -2 on convert().load()
+  
+  * Mask tiff convert in cropping
+  
+  * Various TeX macro fixes:
+    * hook tracing and try zusermarks
+    * more macro tracing, add ifstretchtabs
+    * Stretchtabs and improved trigger marking
+    * fix tabs bug, rename zusermarks to zcustommarks and fix it
+    * fix unwanted space in style stack
 
 Bug fixes and improvements in 2.2.40 (12 Nov 2022)
   
