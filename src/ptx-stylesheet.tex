@@ -744,14 +744,16 @@
         %\dimen0=\sc@le\dimen0 % If this is reached, sc@le is 1, so it does nothing
       \else
         \dimen0=\p@ram pt%
+        \trace{sa}{Setting to \the\dimen0}%
         \let\tmpfr@m\tmpstylen@me
       \fi
     \else
+      \trace{sa}{Scaling \the\dimen0 by \sc@le}%
       \dimen0=\sc@le\dimen0                                                  %(2)
       \let\tmpfr@m\tmpstylen@me
     \fi
     \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
-    \trace{sa}{\space working c@rrfontsize from ##1 is \c@rrfontsize}}%
+    \trace{sa}{\space working c@rrfontsize from ##1 is \c@rrfontsize \space based on \the\dimen0}}%
   \x@\cstackup\p@ssParams,\E
   \edef\p@ram{\c@rrfontsize}%
   \trace{sa}{set c@rrfontsize for \tmpstyst@k\space from \tmpfr@m\space is \c@rrfontsize}%
