@@ -740,6 +740,7 @@
   \let\p@ssParams\savep@ssParams\let\tmpstyst@k\savestyst@k
   \trace{sa}{getthep@ram-fontsize found \ps@ze\space from \tmpfr@m}%
     \dimen0=\ps@ze pt 
+  \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
   \def\d@##1\E{\edef\tmpstylen@me{##1}%
     \getp@r@m{fontscale}{\tmpstylen@me}\edef\sc@le{\p@ram}%                            %(1)
     \ifx\p@ram\relax\edef\sc@le{1}\getp@r@m{fontsize}{\tmpstylen@me}%
@@ -747,14 +748,16 @@
         %\dimen0=\sc@le\dimen0 % If this is reached, sc@le is 1, so it does nothing
       \else
         \dimen0=\p@ram pt%
+        \trace{sa}{Setting to \the\dimen0}%
         \let\tmpfr@m\tmpstylen@me
       \fi
     \else
+      \trace{sa}{Scaling \the\dimen0 by \sc@le}%
       \dimen0=\sc@le\dimen0                                                  %(2)
       \let\tmpfr@m\tmpstylen@me
     \fi
     \xdef\c@rrfontsize{\strip@pt{\dimen0}}%
-    \trace{sa}{\space working c@rrfontsize from ##1 is \c@rrfontsize}}%
+    \trace{sa}{\space working c@rrfontsize from ##1 is \c@rrfontsize \space based on \the\dimen0}}%
   \x@\cstackup\p@ssParams,\E
   \edef\p@ram{\c@rrfontsize}%
   \trace{sa}{set c@rrfontsize for \tmpstyst@k\space from \tmpfr@m\space is \c@rrfontsize}%

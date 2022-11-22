@@ -29,8 +29,8 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.40"
-GitVersionStr = "2.2.40"
+VersionStr = "2.2.41"
+GitVersionStr = "2.2.41"
 ConfigVersion = "2.12"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -741,7 +741,7 @@ class ViewModel:
         if isinstance(value, bool):
             value = "true" if value else "false"
         if update or not hasval:
-            config.set(sect, k, value)
+            config.set(sect, k, str(value))
 
     def createConfig(self):
         def sortkeys(x):
