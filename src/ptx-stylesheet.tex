@@ -75,11 +75,14 @@
 \def \Marker         #1\relax{
   \m@kedigitsletters%
   \xdef\m@rker{\scantokens{#1\noexpand}}%
-  \lowercase{\message{[|#1}}%
+  \lowercase{\message{[|#1\ds@ffix}}%
   \m@kedigitsother
   \remember@xists{\m@rker}% store name of marker currently being defined
+  \ifx\ds@ffix\empty\else
+    \remember@xists{\m@rker\ds@ffix}% store name of marker currently being define
+  \fi
   \ifx\c@tprefix\empty\else
-    \remember@xists{\c@tprefix\m@rker}%
+    \remember@xists{\c@tprefix\m@rker\ds@ffix}% store name of marker currently being define
   \fi
   \expandafter\let\csname font<\m@rker>\endcsname\relax}
   %\expandafter\let\csname extrafont<#1>\endcsname\relax}
