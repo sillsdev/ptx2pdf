@@ -10301,8 +10301,8 @@ updates automatically when you change
 from 1 to 2 columns, and vice versa. </property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
-                                            <property name="label" translatable="yes">Base Paragraph
-Indent (inches):</property>
+                                            <property name="label" translatable="yes">Base
+Indent:</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -24061,7 +24061,8 @@ to Parent</property>
                                                         <property name="visible">True</property>
                                                         <property name="can-focus">True</property>
                                                         <property name="receives-default">False</property>
-                                                        <property name="tooltip-text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the underlying (parent) font then enable this option. Note that \p has a FontSize of 12 in usfm.sty</property>
+                                                        <property name="tooltip-text" translatable="yes">The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the surrounding text font size then enable this option. Note that 
+\p has a FontSize of 12 in the underlying stylesheet.</property>
                                                         <property name="halign">start</property>
                                                         <property name="valign">center</property>
                                                         <property name="xalign">0</property>
