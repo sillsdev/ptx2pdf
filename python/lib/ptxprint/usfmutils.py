@@ -788,7 +788,7 @@ class Module:
                 einfo = exclusionmap.get(c, ([], None))
                 if c == "-":
                     self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
-                elif einfo[1] is None or (self.model is not None and not self.model[einfo[1]]):
+                elif einfo[1] is None or (self.model is not None and self.model[einfo[1]]):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
             mod = Module(e[0].strip(), self.usfms, self.model)
