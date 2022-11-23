@@ -106,7 +106,9 @@
 \def\need@evenpage{\ifodd\pageno\EmptyPage\fi}
 \def\need@oddpage{\ifodd\pageno\else\EmptyPage\fi}
 \def\need@quadpage{\ifodd\pageno\EmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \EmptyPage\EmptyPage\fi}
-
+\let\NeedEvenPage\need@evenpage
+\let\NeedOddPage\need@evenpage
+\let\NeedQuadPage\need@evenpage
 %-c_evenpage
 
 %+c_imports
