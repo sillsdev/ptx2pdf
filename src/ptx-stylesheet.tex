@@ -923,6 +923,7 @@
    \fi
    \ifReenterIntroOK\else\global\intr@donetrue\fi% Are markers starting 'i' allowed to flip us back into one-column mode?
    \uppercase{\xdef\c@rref{\id@@@\ifdiglot\c@rrdstat\fi\ch@pter.0}}%
+   \ifcsname cv-\c@rref\endcsname\csname cv-\c@rref\endcsname\fi
    \global\let\print@bleverse=\v@rse
    \op@ninghooks{start}{c}{\styst@k}%
    \m@kedigitsletters
