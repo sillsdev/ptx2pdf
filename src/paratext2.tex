@@ -102,13 +102,13 @@
 %+c_evenpage
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
-\def\EmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
-\def\need@evenpage{\ifodd\pageno\EmptyPage\fi}
-\def\need@oddpage{\ifodd\pageno\else\EmptyPage\fi}
-\def\need@quadpage{\ifodd\pageno\EmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \EmptyPage\EmptyPage\fi}
-\let\NeedEvenPage\need@evenpage
-\let\NeedOddPage\need@evenpage
-\let\NeedQuadPage\need@evenpage
+\def\zEmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
+\def\need@evenpage{\ifodd\pageno\zEmptyPage\fi}
+\def\need@oddpage{\ifodd\pageno\else\zEmptyPage\fi}
+\def\need@quadpage{\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
+\let\zNeedEvenPage\need@evenpage
+\let\zNeedOddPage\need@evenpage
+\let\zNeedQuadPage\need@evenpage
 %-c_evenpage
 
 %+c_imports
