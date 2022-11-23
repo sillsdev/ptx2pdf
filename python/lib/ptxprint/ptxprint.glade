@@ -2731,7 +2731,7 @@ If in doubt, click Cancel.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">The FRT book in Paratext contains front matter
-for a publicatuon. Visit the Peripherals page to
+for a publication. Visit the Peripherals page to
 set up front matter for this publication.</property>
                         <property name="valign">end</property>
                         <property name="margin-top">6</property>
