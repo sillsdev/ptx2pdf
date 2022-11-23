@@ -48,7 +48,7 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \p
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
-\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't.
+\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to page \zpage|Spirit\*.
 \p
 \zmine-s\* 
 \s T 
@@ -78,7 +78,7 @@ enter the second time into his mother's womb, and be born?
 \p  Verily, verily, I say unto thee, Except a man be born of
 water and of the Spirit, he cannot enter into the kingdom of God.
 \v  6 That which is born of the flesh is flesh; and that which is born of the
-Spirit is spirit.
+Spirit is \jmp |link-id="Spirit"\jmp*spirit.
 \v  7 Marvel not that I said unto thee, Ye must be born again.
 \v  8 The wind bloweth where it listeth, and thou hearest the sound thereof, but
 canst not tell whence it cometh, and whither it goeth: so is every one that is

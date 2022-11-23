@@ -157,8 +157,8 @@
 \x@\let\csname https:schema\endcsname\pdfURL
 \x@\let\csname prj:schema\endcsname\pdfPRJ
 
-
-\SetSpeciallAttribs{link-id}{\ifActions\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}\fi}{}
+\def\PDFposfromattr{\ifActions\raise\the\baselineskip\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}}\fi}
+\SetSpeciallAttribs{link-id}{\PDFposfromattr\noexpand\makelabelfromattr}{}
 \SetSpeciallAttribs{link-href}{\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end}{\special{pdf:eann}}
 %%%%%%%%%
 %

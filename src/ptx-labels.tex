@@ -34,11 +34,17 @@
 \x@\def\csname MS:zlabel\endcsname{%
   \get@ttribute{id}%
   \trace{m}{zlabel: \attr@b}%
+  \makelabelfromattr
+}
+\def\makelabelfromattr{%
   \ifx\attr@b\relax
     \let\attr@b\c@rref
+    \ifx\attr@b\undefined
+      \let\attr@b\relax
+    \fi
   \fi
-  \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
   \ifx\attr@b\relax\else
+    \x@\def\x@\@@l@bel\x@{\x@\detokenize\x@{\attr@b}}%
     \edef\l@gstring{{\@@l@bel}{\book:\ch@pter:\print@bleverse}}%
     \trace{m}{zlabel: \l@gstring}%
     \x@\labelp@ge\x@{\l@gstring}%
@@ -89,14 +95,9 @@
 
 \def\labelonpage#1#2#3{%
   \x@\def\csname zpage-\x@\detokenize{#2}\endcsname{#1}%Page number for label.
-  \x@\def\csname zref-\x@\detokenize{#2}\endcsname{#3}%Reference for label. (why??)
+  \x@\def\csname zref-\x@\detokenize{#2}\endcsname{#3}%Reference for label, in case label might be triggered from trigger.
 }
   
-\def\labelonpage#1#2#3{%
-  \x@\def\csname zpage-\x@\detokenize{#2}\endcsname{#1}%Page number for label.
-  \x@\def\csname zref-\x@\detokenize{#2}\endcsname{#3}%Reference for label. (why??)
-}
-
 \def\checklabelpage#1#2#3{%
   \def\ch@ck{#1}%
   \let\ch@nged\empty
