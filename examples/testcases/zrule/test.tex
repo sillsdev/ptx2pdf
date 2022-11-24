@@ -12,8 +12,9 @@
 \stylesheet{test.sty}
 %\PaperHeight=210mm
 %\PaperWidth=296.9mm
-
+\MarkAdjustPointstrue
 \catcode`\@=11
+\tracing{sh}
 \gdef\b@okShort{}
 \def\doLines{\doGridLines}
 \x@\def\csname complex-w\endcsname{\rubyb{w}{lemma}}
@@ -32,6 +33,7 @@
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
 
+\setbetweenhook{p}{pm}{\zrule | style="double" thick="10pt"\*}
 \tracingassigns=1
 \tracingoutput=1
 \showboxdepth=19

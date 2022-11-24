@@ -6,7 +6,7 @@
 \p
 \v 1 This is just some random text. Something is on page \zpage|Opt(io\*
 \p
-\zrule|width="0.3" align="l" thick="5pt"\*
+\zrule|width="0.3" align="l" thick="5pt" raise="6pt"\*
 \p 
 \v 2 That rule should have been 0.3 of the page. 
 \v 3 Alias sed et est est vel et. Sint facilis illum sed est nihil fugiat. Minima quaerat eius quae et animi tenetur hic exercitationem. Iusto non consequatur voluptatum velit et vitae veritatis consectetur. 

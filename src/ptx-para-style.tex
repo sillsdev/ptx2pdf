@@ -355,6 +355,7 @@
   %\fi
   \cl@singhooks{after}{\m@rker}{\h@@kstyst@k}%
   \the\afterh@@ks
+  \
  \fi
 }
 
@@ -393,6 +394,7 @@
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
+  \op@ninghooks{between}{\m@rker-#1}{\styst@k}% Run any between old par an current
   \traceifset{p@rstyle}%
   \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P}{#1}%
