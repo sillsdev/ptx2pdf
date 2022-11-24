@@ -215,7 +215,8 @@
 \pgfsys@eoruletrue
 \def\pdf@stroke{\sysprotocol@literal{S}}\def\pdf@closestroke{\sysprotocol@literal{s}} \def\pdf@fill{\ifpgfsys@eorule\sysprotocol@literal{f*}\else\sysprotocol@literal{f}\fi}
 \def\pdf@fillstroke{\ifpgfsys@eorule\sysprotocol@literal{B*}\else\sysprotocol@literal{B}\fi}
-\def\pdf@clipnext{\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi \pdf@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
+\newif\ifClipOrnaments\ClipOrnamentsfalse
+\def\pdf@clipnext{\ifClipOrnaments\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi\fI \PDF@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
 %\def\pdf@clipnext{\pdf@stroke\pdf@discardpath}%
 \def\pdf@discardpath{\sysprotocol@literal{n}}
 \def\pdf@parse@clip@rect#1 #2 #3 #4{\trace{orn}{ParseClip: #1 #2 #3 #4}\dimen2=#1 pt \dimen3=#2 pt \dimen4=#3 pt \dimen 5=#4 pt}
