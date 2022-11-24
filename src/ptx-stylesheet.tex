@@ -806,7 +806,7 @@
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
 \def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
-\def\setbetweenhook#1#2#3{\sethook{between}{#1-#2}{#3}}
+\def\setbetweenhook#1#2#3{\sethook{between-#1}{#2}{#3}}
 %-csty_sethook
 
 %+csty_testpublishability

@@ -393,11 +393,11 @@
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
-  \op@ninghooks{between}{\m@rker-#1}{\styst@k}% Run any between old par an current
-  \traceifset{p@rstyle}%
-  \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
+  \op@ninghooks{between-\m@rker}{#1}{\styst@k}% Run any between old par an current
+  \traceifset{p@rstyle}%
+  \gdef\m@rker{#1}% remember the new style name
   \op@ninghooks{before}{\m@rker}{\styst@k}%
 %-cpar_parstyle_after
   %

@@ -1,10 +1,11 @@
 \input paratext2
 \tracing{m}
 \tracing{A}
-%\tracing{s}
+\tracing{s}
 %\tracing{F}
 \tracing{j}
-\tracinggroups=1
+\tracing{sh}
+%\tracinggroups=1
 %\input "ptx-extended.tex"
 \stylesheet{ptx2pdf.sty}
 \stylesheet{usfm_sb.sty}
@@ -33,9 +34,9 @@
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
 
-\setbetweenhook{p}{pm}{\zrule | style="double" thick="10pt"\*}
-\tracingassigns=1
-\tracingoutput=1
+\setbetweenhook{p}{pm}{\line{\zrule | style="double" thick="0.3\baselineskip"\*}}
+%\tracingassigns=1
+%\tracingoutput=1
 \showboxdepth=19
 \showboxbreadth=19
 \pageno=-1

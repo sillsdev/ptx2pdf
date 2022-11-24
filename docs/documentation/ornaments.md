@@ -351,7 +351,7 @@ are acceptable for within a simple horizontal box (`\hbox`).
 
 
 ```
-\StringOrnament{402}{AGA Arabesque Desktop}{^^^^f057}
+\StringOrnament{402}{AGA Arabesque Desktop}{\char"F057}
 \StringOrnament{403}{Times New Roman}{<-+=+->}
 \StringOrnament{403}{URW Chancery L}{\TeX}
 ```
@@ -363,7 +363,7 @@ If selecting ornaments as part of the pattern is preferred (and they all come fr
 \def\StringOrnamentFont{AGA Arabesque Desktop}
 ```
 
-And the stylesheet can include the string-pattern, enclosed in straight double-quotes:
+And the stylesheet can include the string-pattern, enclosed in straight double-quotes: (NB: this is possibly broken):
 ```
 \BorderPatternTop "^^^^f051"|||1.02,"^^^^f057"||*a,"^^^^f045"|||1.02
 ```
