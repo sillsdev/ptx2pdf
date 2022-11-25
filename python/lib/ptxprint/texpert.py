@@ -1,5 +1,5 @@
 
-from ptxprint.utils import _
+from ptxprint.utils import _, strtobool, asfloat
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,17 +50,21 @@ class TeXpert:
         for opt in texpertOptions.values():
             n = widgetName(opt)
             v = view.get(n)
+            if n.startswith("c_") and v is None:
+                v = False
             if v != opt[1]:
                 view._configset(config, "{}/{}".format(self.section, opt[0]), v)
 
     @classmethod
     def loadConfig(self, config, view):
         for opt in texpertOptions.values():
+            if not config.has_option(self.section, opt[0]):
+                continue
             n = widgetName(opt)
             if n.startswith("c_"):
-                v = config.getboolean(self.section, opt[0], fallback=opt[1])
+                v = strtobool(config.get(self.section, opt[0], fallback=opt[1]))
             elif n.startswith("s_"):
-                v = config.getfloat(self.section, opt[0], fallback=opt[1])
+                v = asfloat(config.get(self.section, opt[0], fallback=opt[1]), opt[1])
 
     @classmethod
     def generateTeX(self, view):

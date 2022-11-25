@@ -548,7 +548,7 @@ class RunJob:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
-                print_traceback()
+                print_traceback(f=1)
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
 

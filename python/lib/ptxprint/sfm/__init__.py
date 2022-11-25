@@ -34,6 +34,9 @@ from itertools import chain, groupby
 from enum import IntEnum
 from functools import reduce
 from typing import NamedTuple
+import logging
+
+logger = logging.getLogger(__name__)
 
 __all__ = ('usfm',                                            # Sub modules
            'Position', 'Element', 'Text', 'ErrorLevel', 'parser',  # data types
@@ -595,6 +598,7 @@ class parser(collections.abc.Iterable):
         pathstr = " ["+" ".join(reversed(path))+"]" if len(path) else ""
         msg = (f'{self.source}: line {ev.pos.line},{ev.pos.col}{pathstr}: ' +
                str(msg).format(token=ev,source=self.source, *args,**kwds))
+        logger.debug(msg)
         if severity >= 0 and severity >= self._error_level:
             raise SyntaxError(msg)
         elif severity < 0 and severity < self._error_level:
@@ -663,7 +667,7 @@ class parser(collections.abc.Iterable):
 
         # Check for the expected end markers with no separator and
         # break them apart
-        while parent.meta['Endmarker']:
+        while parent is not None and parent.meta['Endmarker']:
             if tag.name.startswith(parent.meta['Endmarker']):
                 cut = len(parent.meta['Endmarker'])
                 rest = tag.name[cut:]

@@ -246,8 +246,8 @@ def universalopen(fname, rewrite=False, cp=65001):
         fh = open(fname, "r", encoding="utf-8", errors="ignore")
     return fh
 
-def print_traceback():
-    traceback.print_stack()
+def print_traceback(f=None):
+    traceback.print_stack(f=f)
 
 if sys.platform == "linux":
 
@@ -394,6 +394,9 @@ def asfloat(v, d):
         return float(v)
     except (ValueError, TypeError):
         return d
+
+def strtobool(s):
+    return s.lower() in ('true', '1', 't')
 
 def pluralstr(s, l):
     """CLDR plural rules"""
