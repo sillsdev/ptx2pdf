@@ -793,7 +793,7 @@ class Module:
                 elif einfo[1] is None or (self.model is not None and self.model[einfo[1]]):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
-            mod = Module(e[0].strip(), self.usfms, self.model)
+            mod = Module(str(e[0]).strip(), self.usfms, self.model)
             return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), [])
