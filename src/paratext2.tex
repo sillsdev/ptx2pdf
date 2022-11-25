@@ -236,9 +236,9 @@
     \fi
     \leavevmode % begin paragraph
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
+    \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
       \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
-    \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     % if note omitting caller from note (i.e. all callers are *'s)
     \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
     \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
