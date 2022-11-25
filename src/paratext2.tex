@@ -606,7 +606,8 @@
   \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
-  \everypar={}% don't do body text formatting
+  \getp@ram{firstindent}{#2}{#2}\let\notef@rstindent=\p@ram
+  \everypar={\ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
