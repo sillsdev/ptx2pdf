@@ -479,19 +479,19 @@ class TexModel:
                'right':  'left'
     }
     _glossarymarkup = {
-        "ai": r"\1",                # "As is (pass|through)":                    
-        "no": r"\1",                # "None":                    
-        None: r"\1",                # None:                      
-        "bd": r"\\bd \1\\bd*",      # "format as bold":          
-        "it": r"\\it \1\\it*",      # "format as italics":       
-        "bi": r"\\bdit \1\\bdit*",  # "format as bold italics":  
-        "em": r"\\em \1\\em*",      # "format with emphasis":    
-        "ww":  r"\\w \1\\w*",       # "\w ...\w* char style":  
+        "ai": r"\1",                # "As is (pass|through)":
+        "no": r"\1",                # "None":
+        None: r"\1",                # None:
+        "bd": r"\\+bd \1\\+bd*",      # "format as bold":
+        "it": r"\\+it \1\\+it*",      # "format as italics":
+        "bi": r"\\+bdit \1\\+bdit*",  # "format as bold italics":
+        "em": r"\\+em \1\\+em*",      # "format with emphasis":
+        "ww":  r"\\+w \1\\+w*",       # "\w ...\w* char style":
         # Note that these glossary markers can be styled with \zglm 
         # But this doesn't work if fallback font is turned on for these chars
-        "fb": r"\\zglm \u2E24\\zglm*\1\\zglm \u2E25\\zglm*",    # "with ⸤floor⸥ brackets":   
-        "fc": r"\\zglm \u230a\\zglm*\1\\zglm \u230b\\zglm*",    # "with ⌊floor⌋ characters": 
-        "cc": r"\\zglm \u231e\\zglm*\1\\zglm \u231f\\zglm*",    # "with ⌞corner⌟ characters":
+        "fb": r"\\+zglm \u2E24\\+zglm*\1\\+zglm \u2E25\\+zglm*",    # "with ⸤floor⸥ brackets":   
+        "fc": r"\\+zglm \u230a\\+zglm*\1\\+zglm \u230b\\+zglm*",    # "with ⌊floor⌋ characters": 
+        "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
         "sb": r"*\1",               # "star *before word":       
         "sa": r"\1*",               # "star after* word":        
         "cb": r"^\1",               # "circumflex ^before word": 
