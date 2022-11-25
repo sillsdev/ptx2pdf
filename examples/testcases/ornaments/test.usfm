@@ -141,9 +141,12 @@ formatting.
 \q3\cat testpar\cat*
 \v 16 This is a q // to see what we can do
 \m The end. Back to '\showTheCategory'
+
+Some text \zornament |pattern="1|u"\* \relax\relax\relax\relax\relax
 \pb
 
-\s1 The default ornaments (vectorian)
+
+\s1 The default ornaments  (vectorian)
 \p
 \testornamentsv
 

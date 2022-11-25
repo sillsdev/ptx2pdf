@@ -216,7 +216,7 @@
 \def\pdf@stroke{\sysprotocol@literal{S}}\def\pdf@closestroke{\sysprotocol@literal{s}} \def\pdf@fill{\ifpgfsys@eorule\sysprotocol@literal{f*}\else\sysprotocol@literal{f}\fi}
 \def\pdf@fillstroke{\ifpgfsys@eorule\sysprotocol@literal{B*}\else\sysprotocol@literal{B}\fi}
 \newif\ifClipOrnaments\ClipOrnamentsfalse
-\def\pdf@clipnext{\ifClipOrnaments\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi\fI \PDF@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
+\def\pdf@clipnext{\ifClipOrnaments\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi\fi \pdf@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
 %\def\pdf@clipnext{\pdf@stroke\pdf@discardpath}%
 \def\pdf@discardpath{\sysprotocol@literal{n}}
 \def\pdf@parse@clip@rect#1 #2 #3 #4{\trace{orn}{ParseClip: #1 #2 #3 #4}\dimen2=#1 pt \dimen3=#2 pt \dimen4=#3 pt \dimen 5=#4 pt}
@@ -331,7 +331,7 @@
       \catcode`\%=5
       \catcode`\{=1 
       \catcode`\}=2
-      \input \OrnamentsFamily\pdf@ornamentNum.pgf%
+      \input "\OrnamentsFamily\pdf@ornamentNum.pgf"%
     \m@kedigitsletters}%
   \fi
 }
@@ -1002,6 +1002,28 @@
     \doOrnament{#1}%
 }
 
+\x@\def\csname MS:zornament\endcsname{%
+  \bgroup
+    \orn@setup
+    \get@ttribute{size}%
+    \ifx\attr@b\relax
+      \edef\ornamentheight{\the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
+    \else
+      \edef\ornamentheight{\attr@b}%
+    \fi
+    \get@ttribute{pattern}%
+    \ifx\attr@b\relax
+      \message{! zornament milestone must have a valid pattern="..." set}%
+    \else
+      \m@kenumber{\attr@b}%
+      \x@\n@endsp@ce\@@result \E
+      \hbox{\doOrnament{\@@@result}}%
+      \relax
+    \fi
+    \message{end of zornament (\@@@result)}%
+  \egroup
+} 
+\def\n@endsp@ce#1 \E{\def\@@@result{#1}}
 \newif\ifornamentfill
 \def\chkset#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\x@\global\x@\let\csname #1\endcsname\tmp\fi}
 
