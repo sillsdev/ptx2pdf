@@ -142,7 +142,8 @@ formatting.
 \v 16 This is a q // to see what we can do
 \m The end. Back to '\showTheCategory'
 
-Some text \zornament |pattern="1|u"\* \relax\relax\relax\relax\relax
+\p
+Some text \zornament |pattern="1|"\*\zornament |pattern="2|v"\*\zornament |pattern="1|h" \* Hi
 \pb
 
 

@@ -87,7 +87,8 @@
 
 \def\@ttrSlash{\in@ttribtrue
   \trace{m}{Starting attribute collection}%
-  \catcode`\/=12\relax % FIXME Other active chars too?
+  \catcode`\/=12 \relax % FIXME Other active chars too?
+  \catcode`\|=12
   \@ttrSl@sh}
 % using #1#2 eats initial spaces. This means  #1#2 nicely ignores annoying initial spaces, but it also crashes on a spaces-only arg, so check for that.
 \def\@ttrSl@sh #1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\else\x@\@@ttrSlash #1\relax\relax\fi}
