@@ -484,22 +484,44 @@
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
-\x@\def\csname MS:zcustommark\endcsname{%
-  \ifnum\currentgrouptype>0
-    \savingmarks
-  \fi
+\def\getcustommarknum#1{%
+  \getm@rknum{#1}%
+  \let\custommarknum\m@rknum
+}
+\def\getcustomm@rknum{%
   \get@ttribute{type}% 
   \ifx\attr@b\relax
     \getm@rknum{user}%
   \else
     \getm@rknum{\attr@b}%
   \fi
+}
+
+\x@\def\csname MS:zcustommark\endcsname{%
+  \ifnum\currentgrouptype>0
+    \savingmarks
+  \fi
+  \getcustomm@rknum
   \get@ttribute{value}%
   \trace{m}{zcustommark(\m@rknum) \attr@b}%
   \ifx\attr@b\relax\else
     \x@\x@\x@\marks\x@\m@rknum\x@{\attr@b}%
   \fi
 }
+
+\x@\def\csname MS:zcustombotmark\endcsname{%
+  \getcustomm@rknum
+  \botmarks\custommarknum
+}
+\x@\def\csname MS:zcustomfirstmark\endcsname{%
+  \getcustomm@rknum
+  \firstmarks\custommarknum
+}
+\x@\def\csname MS:zcustomtopmark\endcsname{%
+  \getcustomm@rknum
+  \topmarks\custommarknum
+}
+
 \x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
   \endgraf

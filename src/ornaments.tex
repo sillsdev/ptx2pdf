@@ -267,9 +267,9 @@
 }
 
 \def\orn@setup{%
-  \def\i{\orn@usepath{clip}}%
-  \def\k{\orn@usepath{stroke}}%
-  \def\ubb{\orn@usepath{boundingbox}}%
+  \def\i{\orn@usepath{\orn@clip}}%
+  \def\k{\orn@usepath{\orn@stroke}}%
+  \def\ubb{\orn@usepath{\orn@bb}}%
   \let\o\pdf@closepath
   \def\p ##1##2{\orn@qpoint{##1}{##2}}%
   \def\m ##1 ##2 {\edef\tmp{\p{##1}{##2}}\x@\pdf@moveto\tmp}%
