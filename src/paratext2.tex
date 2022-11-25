@@ -607,7 +607,9 @@
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \getp@ram{firstindent}{#2}{#2}\let\notef@rstindent=\p@ram
-  \everypar={\ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
+  \everypar={%
+    \ifRTL\beginR\fi % respect directionality
+    \ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
@@ -628,7 +630,6 @@
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph
-  \ifRTL\beginR\fi % respect directionality
   \ifNoteTracing\tracingparagraphs=1\fi
   %\ifnum\pagenumber=8\showbox0\fi
   \unhbox0 % unbox the text so it can be line-wrapped
