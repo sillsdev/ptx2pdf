@@ -1556,7 +1556,7 @@
 \StorePeriph{spine}
 
 
-\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\tracingassigns=1 \tracingcommands=3  \let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}\ifcsname keepperiph-\periphattr@b\endcsname\else\global\keeptriggerfalse\fi}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
+\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup \let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}\ifcsname keepperiph-\periphattr@b\endcsname\else\global\keeptriggerfalse\fi}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
 \def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{periph}\global\let\periph@@@\empty}
 
 \newif\ifStorePeriph\StorePeriphtrue

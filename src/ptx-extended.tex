@@ -248,7 +248,7 @@
   %F* and P* might need to fill the vertical dimension.
   \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \m@rker}%
   \sbar@rotatedfalse
-  \getsbp@ram{barrotation}\ifx\cp@ram\relax\else
+  \getsbp@ram{sbarrotation}\ifx\cp@ram\relax\else
     \ifcsname geom@xform@\cp@ram\endcsname
       \setgeomtransform{\cp@ram}%
       \ifnum \pdf@aa=0 \else
@@ -797,8 +797,12 @@
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
     \ifsbar@rotated
       \setbox0\box\extchunkb@x
-      \let\r@tSet\r@cwSet
-      \rot@tebz
+      \ifnum \pdf@ab=1
+	\let\r@tSet\r@cwSet%FIXME
+      \else
+	\let\r@tSet\r@acwSet%
+      \fi
+      \rot@tebz 
       \setbox\extchunkb@x\box0
     \fi
     \ifpicUsesIns
@@ -933,7 +937,7 @@
 \def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}\setsbp@ram{boxvpadding}{#1}}
-\def\Rotation  #1\relax{\initc@t\setsbp@ram{barrotation}{#1}}
+\def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%
