@@ -175,16 +175,10 @@
   
 
 \def\setornamenttransform#1{%
-  \x@\let\x@\ornament@xform\csname ornament@xform@#1\endcsname
-  \ifx\ornament@xform\relax
-    \let\ornament@xform\ornament@xform@u
-  \fi
-  \x@\s@tornamenttransform@m\ornament@xform % Calculate pdf@aa, etc.
+  \setgeomtransform{#1}%
 } 
 
-\def\s@tornamenttransform@m#1#2#3#4{%
-  \def\pdf@aa{#1}\def\pdf@ab{#2}\def\pdf@ba{#3}\def\pdf@bb{#4}%
-}
+
 \def\s@tornamenttransform#1#2#3#4{%
   \def\pdf@aa{#1}\def\pdf@ab{#2}\def\pdf@ba{#3}\def\pdf@bb{#4}%
   \def\pdf@xo{0}\def\pdf@yo{0}%
@@ -381,7 +375,7 @@
     \setbox0\hbox to \dimen0{%
       \pdf@beginscope
       \pdf@beginpic
-      \x@\s@tornamenttransform\ornament@xform
+      \x@\s@tornamenttransform\geom@xform
       \pdf@setlinewidth{\ornamentlinewidth}%
       \ifx\ornamentlinecol\empty\else
         \x@\pdf@color@rgb@stroke\ornamentlinecol\E
@@ -500,15 +494,7 @@
 \def\endstack\E{}
 \def\E{}
 
-\def\ornament@xform@u{{1}{0}{0}{1}} % Normal
-\def\ornament@xform@d{{-1}{0}{0}{-1}} %Rotate 180 / Flip both
-\def\ornament@xform@l{{0}{-1}{1}{0}} % Rotate +90
-\def\ornament@xform@r{{0}{1}{-1}{0}} % Rotate -90
-\def\ornament@xform@h{{-1}{0}{0}{1}} % Flip Horizontally 
-\def\ornament@xform@v{{1}{0}{0}{-1}} % Flip vertically
-\def\ornament@xform@L{{0}{-1}{-1}{0}} % Rotate +90 and Flip vertically
-\def\ornament@xform@R{{0}{1}{1}{0}} % Rotate -90 and Flip vertically
-\setornamenttransform{u}
+\setgeomtransform{u}
 
 \def\ptn@minus{-}
 \def\ptn@ast{*}
@@ -570,7 +556,7 @@
   %  \not@pgfornamentdim{#2}%
   %\fi
   \trace{orn}{Dimensions: \@pgfornamentX, \@pgfornamentY}%
-  \setornamenttransform{#2}%
+  \setgeomtransform{#2}%
   \pdf@ornament@stretchfalse
   \pdf@ornament@repeatfalse
   \let\orn@repeat@class\empty
@@ -1260,14 +1246,14 @@
         \def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
         \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
     \else
-      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXPDFfile "#2" width \dimen0 height \dimen1 }}%
+      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXpdffile "#2" width \dimen0 height \dimen1 }}%
     \fi
   \egroup
 }
 
 \def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}
-\plugin@endif
 \let\pgfsetroundjoin\relax
 \let\typeout\message
 \let\pgfsetrectcap\relax
+\plugin@endif

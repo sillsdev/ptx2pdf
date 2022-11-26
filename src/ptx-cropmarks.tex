@@ -189,7 +189,6 @@
   \advance\dimen2 by \dp0%
   \hbox to \dimen2{\kern -0.5\wd0%
     %kern so that the correct edge of the box is at the centrepoint location, and set rotation
-    %\ifodd\pageno \kern\ht0\else\kern\dp0\fi %Old-style
     \r@tSet
     \trace{pt}{Rotating tab \@ngle (+ is anticlockwise)}%
     \vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \@ngle}\hss}\vss}%

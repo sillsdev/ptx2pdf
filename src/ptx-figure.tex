@@ -1055,10 +1055,15 @@
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
   \iftemp\else
     %\def\pagecontents{\vss\box#1\vss}\plainoutput
-    \trace{g}{Can proceess immediately}%
-    \dofigp@ge
+    \ifh@ldfig
+      \h@ldfigfalse
+    \else
+      \trace{g}{Can proceess immediately}%
+      \dofigp@ge
+    \fi
   \fi
 }
+\newif\ifh@ldfig
 
 
 \def\DefaultSpaceBeside{10pt}

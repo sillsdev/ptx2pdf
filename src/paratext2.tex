@@ -103,9 +103,9 @@
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
 \def\zEmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
-\def\need@evenpage{\ifodd\pageno\zEmptyPage\fi}
-\def\need@oddpage{\ifodd\pageno\else\zEmptyPage\fi}
-\def\need@quadpage{\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
+\def\need@evenpage{\endgraf\ifodd\pageno\zEmptyPage\fi}
+\def\need@oddpage{\endgraf\ifodd\pageno\else\zEmptyPage\fi}
+\def\need@quadpage{\endgraf\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
 \let\zNeedEvenPage\need@evenpage
 \let\zNeedOddPage\need@evenpage
 \let\zNeedQuadPage\need@evenpage
@@ -113,6 +113,7 @@
 
 %+c_imports
 \input ptx-constants.tex
+\input ptx-utility.tex
 \input ptx-tracing.tex
 \input ptx-diglot.tex
 \input ptx-para-style.tex

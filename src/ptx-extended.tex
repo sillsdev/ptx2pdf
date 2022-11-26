@@ -190,7 +190,7 @@
 }
 \def\sb@leftedge{}\def\sb@rightedge{}%
 \edef\sb@leftshift{0pt}\edef\sb@rightshift{0pt}%
-
+\newif\ifsbar@rotated
 \newdimen\sb@rwidth
 \def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into
   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
@@ -206,15 +206,22 @@
     \fi
   \fi
   \trace{sc}{Initial width set to \the\dimen1 '\@t@st' (\tempd)}%
+  \x@\let\csname sb@height-t\endcsname\textheight
+  \x@\let\csname sb@height-b\endcsname\textheight
+  \x@\let\csname sb@height-B\endcsname\textheight
+  \x@\let\csname sb@height-P\endcsname\textheight
+  \x@\let\csname sb@height-F\endcsname\PaperHeight %Good luck with that!
   \x@\let\csname sb@width-t\endcsname\textwidth
   \x@\let\csname sb@width-b\endcsname\textwidth
   \x@\let\csname sb@width-B\endcsname\textwidth
   \x@\let\csname sb@width-P\endcsname\textwidth
   \x@\let\csname sb@width-F\endcsname\PaperWidth %Good luck with that!
   \ifcsname sb@width-\@t@st\endcsname
+    \x@\let\x@\sb@height\csname sb@height-\@t@st\endcsname
     \x@\dimen1\csname sb@width-\@t@st\endcsname
     \trace{sc}{Revised width set to \the\dimen1}%
   \else
+    \let\sb@height\textheight
     \temptrue
     \ifnum\c@rrentcols>1\else
       \tempfalse
@@ -225,9 +232,14 @@
       \fi\fi
     \fi
   \fi
-  \p@cinswid=\dimen1
+  \ifsbar@rotated
+    \p@cinswid=\sb@height
+    \edef\sb@maxheight{\the\dimen1}%
+  \else
+    \p@cinswid=\dimen1
+    \edef\sb@maxheight{\the\sb@height}%
+  \fi
 }
-
 \def\s@tsb@rwidth{%Set default / specific width of esb box
   %h*,c*,p* take the current page width as their base
   %tX,bX take the column width 
@@ -235,6 +247,15 @@
   %F* takes the whole paper.
   %F* and P* might need to fill the vertical dimension.
   \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \m@rker}%
+  \sbar@rotatedfalse
+  \getsbp@ram{barrotation}\ifx\cp@ram\relax\else
+    \ifcsname geom@xform@\cp@ram\endcsname
+      \setgeomtransform{\cp@ram}%
+      \ifnum \pdf@aa=0 \else
+	\sbar@rotatedtrue
+      \fi
+    \fi
+  \fi
   \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
   \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
   \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
@@ -378,7 +399,7 @@
       \iftemp
         \x@\minip@rs@two\tempd\end
         \if f\tempd\relax
-          \setsbp@ram{outerh@ight}{\the\dimexpr\ifx\t@mploc\loc@Full \PaperHeight\else\textheight\fi}%
+          \setsbp@ram{outerh@ight}{\sb@maxheight}%
         \fi
       \fi
     \fi  
@@ -774,6 +795,12 @@
     \let\sp@ceafter\empty
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
+    \ifsbar@rotated
+      \setbox0\box\extchunkb@x
+      \let\r@tSet\r@cwSet
+      \rot@tebz
+      \setbox\extchunkb@x\box0
+    \fi
     \ifpicUsesIns
       \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
       \trace{g}{Sidebar aligned into hbox \the\p@cinswid (\pic@lign)}%
@@ -906,7 +933,7 @@
 \def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}\setsbp@ram{boxvpadding}{#1}}
-
+\def\Rotation  #1\relax{\initc@t\setsbp@ram{barrotation}{#1}}
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%

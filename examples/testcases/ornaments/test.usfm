@@ -1,5 +1,18 @@
 \id TST Test file
 \h small test file
+\periph front|frontcover
+\mt1 the front
+\p
+
+\periph spine|spine
+\mt1 the spine
+\p
+
+\periph back|backcover
+\mt1 the back
+\p
+\zendperiph
+
 \mt Ornaments Demonstration File
 \c 1
 \s This is demonstration file 
