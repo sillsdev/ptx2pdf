@@ -780,7 +780,7 @@ class RunJob:
             outpdf = PdfReader(opath)
             extras = split_pages(outpdf)
             if 'cover' in extras:
-                fixpdffile(outpdf, extras['cover'][0], colour="cmyk")
+                fixpdffile(outpdf, outfname.replace(".tex", "_cover.pdf"), colour="cmyk")
         colour = None
         params = {}
         if self.ispdfxa == "Spot":
