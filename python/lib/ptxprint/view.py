@@ -261,8 +261,11 @@ class ViewModel:
             return []
 
     def getRefSeparators(self):
-        pts = self._getPtSettings()
-        res = pts.getRefSeparators()
+        if self.get("fcb_textDirection", "") == "rtl":
+            res = None
+        else:
+            pts = self._getPtSettings()
+            res = pts.getRefSeparators()
         if res is None:
             res = self.getScriptSnippet().getrefseps(self)
         return res
