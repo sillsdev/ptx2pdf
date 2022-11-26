@@ -1676,7 +1676,7 @@ set stack_size=32768""".format(self.configName())
     def createSettingsZip(self, outf):
         res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
         sdir = self.configPath(self.configName())
-        for d in (None, 'AdjLists'):
+        for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
             if not os.path.exists(ind):
                 continue
