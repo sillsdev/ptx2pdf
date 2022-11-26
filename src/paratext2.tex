@@ -107,8 +107,8 @@
 \def\need@oddpage{\ifodd\pageno\else\zEmptyPage\fi}
 \def\need@quadpage{\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
 \let\zNeedEvenPage\need@evenpage
-\let\zNeedOddPage\need@evenpage
-\let\zNeedQuadPage\need@evenpage
+\let\zNeedOddPage\need@oddpage
+\let\zNeedQuadPage\need@quadpage
 %-c_evenpage
 
 %+c_imports
