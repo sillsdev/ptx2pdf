@@ -138,7 +138,7 @@ class XrefFileXrefs(BaseXrefs):
                     continue
                 shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
                 info = {
-                    "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
+                    "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
                     "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
                 }
                 triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
@@ -271,7 +271,7 @@ class XMLXrefs(BaseXrefs):
                 #kref = usfm.bridges.get(k, k) if usfm is not None else k
                 if len(res):
                     info = {
-                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
+                        "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
                         "refs":         res,
                         "brtl":         r"\beginR" if self.rtl else "",
                         "ertl":         r"\endR" if self.rtl else ""
