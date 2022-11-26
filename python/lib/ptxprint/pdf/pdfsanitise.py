@@ -26,11 +26,10 @@ def split_pages(trailer):
         d = p.PieceInfo.ptxprint
         if d is None:
             continue
-        fname = d.Target
-        category  = d.Category
+        category  = d.Insert
         if fname is None:
             continue
-        res.setdefault(category, (fname, []))[1].append(p)
+        res.setdefault(category, []).append(p)
         trailer.pages.remove(p)
         while dad := p.parent is not None:
             try:

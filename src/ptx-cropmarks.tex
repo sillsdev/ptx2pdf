@@ -53,7 +53,9 @@
       \raise12pt \vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL}%
+        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL\par
+        \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
+          \kern\sp@newidth\vrule height 6pt depth .5pt width .4pt}\fi}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -73,6 +75,8 @@
       \kern 4.8pt
       \vrule height -5pt depth 30pt width .4pt
       \hss
+      \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
+        \kern\sp@newidth\vrule height 6pt depth .5pt width .4pt}\hss\fi
       \vrule height -5pt depth 30pt width .4pt
       \kern 4.8pt
       \vrule height \dimen0 depth -\bottomm@rgin width 15pt
@@ -775,4 +779,63 @@
   }
 %-c_plainoutput
 
+\newbox\instopcr@p
+\newbox\insbottomcr@p
+\newdimen\sp@newidth
+\def\ship@utcoverinsert#1#2#3#4#5{%
+% #1 - insertion name, #2 - box, #3 - pagewidth, #4 - pageheight, #5 - spine width
+% make cropmarks if spine width >=0pt, if -ve, no cropmarks
+  \dimen4=\PaperWidth \dimen5=\PaperHeight
+  \PaperWidth=#3 \PaperHeight=#4
+  \ifdim #5<0pt
+    \dimen0=0pt
+  \else
+    \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
+    \sp@newidth=#5\makecr@ps
+    \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
+    \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
+    \dimen0=0.5pt
+  \fi
+  \advance\PaperWidth by 2\dimen0 % increase PDF media size
+  \advance\PaperHeight by 2\dimen0
+  \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \let\pr@tect=\noexpand
+  \trace{G}{\the\PaperWidth x \the\PaperHeight}
+  \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
+    \bgroup
+      \dimen1=0.99626401\PaperWidth \dimen2=0.99626401\PaperHeight
+      \dimen3=0.99626401\dimen0 \trace{s}{pdfpagewidth=\the\dimen1 from \the\PaperWidth}%
+      \ifdim\dimen0>0pt
+        \pdfcropwidth=\PaperWidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
+        \pdfcropheight=\PaperHeight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+        \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
+          \strip@pt{\dimen3} \space \strip@pt\pdfcropwidth \space
+          \strip@pt\pdfcropheight ] >>}
+      \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
+          \strip@pt{\dimen2} ]>> }\fi
+    \egroup
+    \special {pdf:put @thispage <</PieceInfo <</ptxprint 
+        <</LastModified (D:20221126103720Z) /Private <</Insertion #1>> >>
+    >>}
+    \edef\oldup{\the\XeTeXupwardsmode}
+    \XeTeXupwardsmode=0 %
+    \trace{o}{p@ = \the\p@}\offinterlineskip
+    \vbox to \PaperHeight{\vss
+      \ifdim\dimen0>0pt\kern 0.5in\fi
+      #2
+      \ifdim\dimen0>0pt\kern 0.5in\fi
+      \vss}
+    \vss
+    \vbox to 0pt{
+      \kern\dimen0
+      \moveright\dimen0\copy\instopcr@p
+      \kern\PaperHeight
+      \moveright\dimen0\copy\insbottomcr@p
+      \vss
+      }
+  }%
+  \PaperWidth=\dimen4 \PaperHeight=\dimen5
+}
 \endinput
