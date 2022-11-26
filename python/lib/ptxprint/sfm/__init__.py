@@ -696,7 +696,7 @@ class parser(collections.abc.Iterable):
                 while parent.meta['StyleType'] == 'Character':
                     parent = parent.parent
             parent_tag = getattr(parent, 'name', None)
-        return parent_tag in occurs and (parent is None or parent.meta['StyleType'] != 'Paragraph' or parent_tag != tag)
+        return (parent_tag in occurs or re.sub(r'_.*$', '', parent_tag or '') in occurs) and (parent is None or parent.meta['StyleType'] != 'Paragraph' or parent_tag != tag)
 
     def _default_(self, parent):
         force_need = False
