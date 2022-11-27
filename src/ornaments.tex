@@ -273,7 +273,7 @@
     \edef\tmp{\p{##1}{##2}\p{##3}{##4}\p{##5}{##6}}\x@\pdf@curveto\tmp}%
 }
 
-\def\LocalOrnament#1#2#3#4{% Define a local ornament #1, natural size #2 x #3, having code #4
+\def\LocalOrnament#1#2#3#4{% Define a local ornament #1, natural size #2 x #3, having code #4%
 	\x@\gdef\csname localornament@#1@X\endcsname{#2}%
 	\x@\gdef\csname localornament@#1@Y\endcsname{#3}%
 	\x@\gdef\csname localornament@#1@code\endcsname{#4}%
@@ -905,7 +905,7 @@
     \trace{orn}{multitry '#1' {#3}}%
     \x@\let\x@\t@mp\csname mult@class@dim@#1\endcsname
     \x@\let\x@\t@mpstr\csname mult@class@stretch@dim@#1\endcsname
-    \count255=#3
+    \count255=#3%
     \ifnum\count255=-1
       \ifdim 3\dimexpr \dimen1-\dimen0\relax > \t@mp
 	\dimen3=\dimexpr \dimen1 \ifdim -\dimen0 >\t@mp  + \t@mp \else -\dimen0 \fi\relax
@@ -1103,11 +1103,11 @@
   \setbox\orn@bdr@right\box\voidb@x
   \ifx\b@drleft\tr@e
     \orn@SetStretch{\the\dimen1}{y}{=}{\patternL}\setbox\orn@bdr@left\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternL}}%
-    \def\border@l@pad{\border@hpadding}%
+    \def\border@l@pad{\border@lpadding}%
     \ifx\patternL\patternR
       \ifx\b@drright\tr@e
 	\setbox\orn@bdr@right\copy\orn@bdr@left
-        \def\border@r@pad{\border@hpadding}%
+        \def\border@r@pad{\border@rpadding}%
       \fi
     \fi
   \else
@@ -1118,7 +1118,7 @@
     \ifvoid\orn@bdr@right
       \def\ornXalign{1}%
       \orn@SetStretch{\the\dimen1}{y}{=}{\patternR}\setbox\orn@bdr@right\vbox to \dimen1{\lineskip=0pt \lineskiplimit=0pt \baselineskip=0pt \Ornaments{\patternR}}%
-      \def\border@r@pad{\border@hpadding}%
+      \def\border@r@pad{\border@rpadding}%
     \fi
   \fi
   \showboxdepth=3
@@ -1129,7 +1129,7 @@
   \dimen9=\dimexpr\wd\orn@bdr@right + \border@r@pad\relax
   \setbox\b@rderbox\vbox to \b@rderbox@height{\baselineskip=0pt \lineskip=0pt \hsize=\b@rderbox@width
     \box\orn@bdr@top\hbox to \b@rderbox@width{\box\orn@bdr@left\hskip\border@l@pad\hss\hbox{\vbox to \dimen1{}}\hskip\border@r@pad\hss\box\orn@bdr@right\kern-\b@drwidth\FontSizeUnit}\baselineskip=\ht\orn@bdr@bot\box\orn@bdr@bot}%
-  %\showbox#1
+  %\showbox#1%
   %\x@\setbox#1\vbox{\vbox to 0pt{\vskip\dimen7\hbox to \b@rderbox@width{\hskip\dimen8\hss\box#1\hss\hskip\dimen9}\vss}\box\b@rderbox}%
 }
 

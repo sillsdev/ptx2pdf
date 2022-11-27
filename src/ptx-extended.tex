@@ -76,20 +76,21 @@
 \setsbp@ram{bgfigalpha}{1.0}%Normally solid colour
 \setsbp@ram{bgfigcolour}{0 0 0}%Normally black
 %\setsbp@ram{borderfillcolour}{NONE} % For double. (Should match fill@none)
-%\setsbp@ram{borderhpadding}{0} %pt
 %\setsbp@ram{bordervpadding}{0} %pt
 \def\m@rker{textborder}
 \setsbp@ram{properties}{nonpublishable}
 \setsbp@ram{borderlinewidth}{0.05}
 \setsbp@ram{borderwidth}{8}
-\setsbp@ram{borderhpadding}{2}
+\setsbp@ram{borderrpadding}{2}
+\setsbp@ram{borderlpadding}{2}
 \setsbp@ram{bordervpadding}{2}
 \setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
 \setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
 \setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
 \S@tCat{}
 \let\c@tegory\empty
-\def\fb@hpadding{1pt}%Added left and right of feintbox content
+\def\fb@lpadding{1pt}%Added left of feintbox content
+\def\fb@rpadding{1pt}%Added right of feintbox content
 \def\fb@vpadding{1pt}%added above and below feintbox content
 \newif\ifNoTransparency
 \NoTransparencyfalse
@@ -134,8 +135,8 @@
   \hbox to 0pt{%
     \dimen0=#3\advance\dimen0 by \fb@vpadding
     \dimen1=#4\advance\dimen1 by \fb@vpadding
-    \dimen3=\fb@hpadding
-    \dimen2=#5\advance\dimen2 by 2\dimen3
+    \dimen3=\fb@lpadding 
+    \dimen2=#5\advance\dimen2 by \dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
     \f@intthing{#1}{#2}{\c@de}%
@@ -232,12 +233,24 @@
       \fi\fi
     \fi
   \fi
-  \ifsbar@rotated
-    \p@cinswid=\sb@height
-    \edef\sb@maxheight{\the\dimen1}%
-  \else
+  %\ifsbar@rotated
+    %\p@cinswid=\sb@height
+    %\edef\sb@maxheight{\the\dimen1}%
+  %\else
     \p@cinswid=\dimen1
     \edef\sb@maxheight{\the\sb@height}%
+  %\fi
+}
+\def\ch@ckr@tation{%
+  \getsbp@ram{sbarrotation}\ifx\cp@ram\relax\else
+    \trace{e}{Side bar rotation is '\cp@ram'}%
+    \ifcsname geom@xform@\cp@ram\endcsname
+      \setgeomtransform{\cp@ram}%
+      \ifnum \pdf@aa=0 
+	\sbar@rotatedtrue
+	\trace{e}{Side bar is rotated}%
+      \fi
+    \fi
   \fi
 }
 \def\s@tsb@rwidth{%Set default / specific width of esb box
@@ -248,20 +261,15 @@
   %F* and P* might need to fill the vertical dimension.
   \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \m@rker}%
   \sbar@rotatedfalse
-  \getsbp@ram{sbarrotation}\ifx\cp@ram\relax\else
-    \ifcsname geom@xform@\cp@ram\endcsname
-      \setgeomtransform{\cp@ram}%
-      \ifnum \pdf@aa=0 \else
-	\sbar@rotatedtrue
-      \fi
-    \fi
-  \fi
+  \ch@ckr@tation
   \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
   \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
   \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
-  \getsbp@ram{borderhpadding}\ifx\cp@ram\relax\xdef\border@hpadding{0pt}\else\xdef\border@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{0pt}\else\xdef\border@rpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{0pt}\else\xdef\border@lpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordervpadding}\ifx\cp@ram\relax\xdef\border@vpadding{0pt}\else\xdef\border@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{boxhpadding}\ifx\cp@ram\relax\else\edef\fb@hpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxlpadding}\ifx\cp@ram\relax\else\edef\fb@lpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{boxrpadding}\ifx\cp@ram\relax\else\edef\fb@rpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{boxvpadding}\ifx\cp@ram\relax\else\edef\fb@vpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{posn}%
   \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
@@ -324,13 +332,13 @@
           \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
           \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
           \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
-          \advance\dimen0 by \fb@hpadding
+          \advance\dimen0 by \fb@lpadding
           \xdef\sb@leftshift{\the\dimen0}%
         \else
           \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
           \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
           \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
-          \advance\dimen0 by \fb@hpadding
+          \advance\dimen0 by \fb@rpadding
           \xdef\sb@rightshift{\the\dimen0}%
         \fi
         \let\fgfigsp@c\empty
@@ -376,14 +384,14 @@
         \fi
       \fi
     \fi
-    \advance\dimen1 by -2\dimexpr \fb@hpadding\relax
-    \ifx\b@drleft\tr@e \ifdim \border@hpadding>-\b@drwidth pt  
+    \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
+    \ifx\b@drleft\tr@e \ifdim \border@lpadding>-\b@drwidth pt  
         \advance\dimen1 by -\b@drwidth pt 
-        \advance\dimen1 by -\border@hpadding
+        \advance\dimen1 by -\border@lpadding
     \fi\fi
-    \ifx\b@drright\tr@e\ifdim \border@hpadding>-\b@drwidth pt   
+    \ifx\b@drright\tr@e\ifdim \border@rpadding>-\b@drwidth pt   
         \advance\dimen1 by -\b@drwidth pt 
-        \advance\dimen1 by -\border@hpadding
+        \advance\dimen1 by -\border@rpadding
     \fi\fi
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
@@ -562,6 +570,7 @@
    \global\let\c@t@gory=\c@tegory\egroup 
   \global\p@ppingfalse%suppress another end@llpoppedstyles
   \trace{e}{ESBE, chunking every \sb@rchunkheight}%
+  \ch@ckr@tation
   \ifx\fgfig@cutout\tr@e
     \cancelcutouts
   \fi
@@ -575,7 +584,8 @@
   %\showbox\extb@x
   %\inextendedfalse
   \let\os@vedvpadding=\fb@vpadding%%Preserve old value
-  \let\os@vedhpadding=\fb@hpadding%
+  \let\os@vedlpadding=\fb@lpadding%
+  \let\os@vedrpadding=\fb@rpadding%
   \get@border@style@params
   \getsbp@ram{bgfigspec}\let\bgf@gsp@c\cp@ram
   \getsbp@ram{bgfiglow}\let\bgf@gl@w\cp@ram%
@@ -621,10 +631,10 @@
     \fi
     \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
-    \if\bgf@gl@w F
+    \if\bgf@gl@w F%
       \earlybgimagetrue
     \fi
-    \if\h@scol F
+    \if\h@scol F%
       \earlybgimagetrue
     \fi
   \fi
@@ -700,17 +710,17 @@
     \ifdim\sb@leftshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@leftedge}%
       \trace{e}{Adding \sb@leftshift to left of box}%
-      \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@hpadding}\box\extchunkb@x}}\fi
+      \setbox\extchunkb@x\vbox{\hbox{\hbox to \sb@leftshift{\hss\box0\hskip\fb@rpadding}\box\extchunkb@x}}\fi
     \ifdim\sb@rightshift>0pt
       \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{%
-        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@hpadding\box0\hss}}}\fi
+        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@rpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in \the\p@cinswid}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
     \ifx\cp@ram\relax
-      \edef\sp@ceafter{0pt}
+      \edef\sp@ceafter{0pt}%
     \else
       \edef\sp@ceafter{\the\dimexpr\cp@ram\verticalsp@ceunit\relax}%
     \fi
@@ -743,7 +753,7 @@
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifx\picl@c\loc@Inl
-      \headingtopspace=0pt%-\oldlastdepth
+      \headingtopspace=0pt %-\oldlastdepth
     \else
       \headingtopspace=0pt
     \fi
@@ -795,16 +805,21 @@
     \let\sp@ceafter\empty
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%
-    \ifsbar@rotated
-      \setbox0\box\extchunkb@x
-      \ifnum \pdf@ab=1
-	\let\r@tSet\r@cwSet%FIXME
-      \else
-	\let\r@tSet\r@acwSet%
-      \fi
-      \rot@tebz 
-      \setbox\extchunkb@x\box0
-    \fi
+    %\ifsbar@rotated
+      %\tracingmacros=1
+      %\tracingcommands=3
+      %\setbox0\box\extchunkb@x
+      %\ifnum \pdf@ab=1
+	%\let\r@tSet\r@cwSet%FIXME
+      %\else
+	%\let\r@tSet\r@acwSet%
+      %\fi
+      %%\rot@tebz
+      %\tracingmacros=0
+      %\tracingcommands=0
+    %\fi
+    %\let\r@tSet\r@cwSet%FIXME
+    %\setbox\extchunkb@x\hbox{\rot@tebz}%
     \ifpicUsesIns
       \x@\let\x@\@xtins\csname ins-\loc@ption\endcsname
       \trace{g}{Sidebar aligned into hbox \the\p@cinswid (\pic@lign)}%
@@ -880,7 +895,8 @@
   \ifvoid\sid@barnotes\else
     \vadjust{\unvbox\sid@barnotes}%
   \fi
-  \let\fb@hpadding\os@vedhpadding
+  \let\fb@lpadding\os@vedlpadding
+  \let\fb@rpadding\os@vedrpadding
   \let\fb@vpadding\os@vedvpadding
   \kill@PossParamCache
   \c@th@@ks{}% Just in case
@@ -934,9 +950,11 @@
 \def\SpaceBeside #1\relax{\initc@t\setsbp@ram{spacebeside}{#1}}
 \let\BgColor\BgColour%For Americans
 \def\Alpha   #1\relax{\initc@t\setsbp@ram{alpha}{#1}}% 1=solid 0=invisible
-\def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}}
+\def\BoxLPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}}
+\def\BoxRPadding #1\relax{\initc@t\setsbp@ram{boxrpadding}{#1}}
+\def\BoxHPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxvpadding}{#1}}
-\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxhpadding}{#1}\setsbp@ram{boxvpadding}{#1}}
+\def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxvpadding}{#1}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax

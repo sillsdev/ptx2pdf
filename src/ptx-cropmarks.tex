@@ -150,7 +150,7 @@
   %\dimen2=\baselineskip\advance\dimen2 by -.2ex
   % For tabs, Box height is set by \tabwidth, text is set 2pt below top 
   \trace{pt}{(#1) (#2) #3 #4 #5 #6 #7}%
-  \dimen2=#6
+  \dimen2=#6%
   \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
    \advance\dimen2 by #5\advance\dimen2 by -\ht0
@@ -165,10 +165,10 @@
      \divide\dimen2 by 2
     \else
       \ifdim\dimen2=0pt \else
-        %Distance from bottom  shift=#6+dp0 -#4
+        %Distance from bottom  shift=#6+dp0 -#4%
         %can't use -#4 because #4 may be -ve already.
         \dimen2=#4\multiply\dimen2 by -1
-        \advance\dimen2 by #6
+        \advance\dimen2 by #6%
         \advance\dimen2 by \dp0
       \fi
     \fi
@@ -782,10 +782,11 @@
 \newbox\insbottomcr@p
 \newdimen\sp@newidth
 \def\ship@utcoverinsert#1#2#3#4#5#6{%
+  \trace{cov}{ship@utcoverinsert #1 #3 #4 #5 #6}%
 % #1 - insertion name, #2 - box, #3 - pagewidth, #4 - pageheight, #5 - spine width, #6 - trimbox
 % make cropmarks if spine width >=0pt, if -ve, no cropmarks
   \dimen5=\PaperWidth \dimen6=\PaperHeight
-  \PaperWidth=#3 \PaperHeight=#4
+  \PaperWidth=#3 \PaperHeight=#4%
   \ifdim #5<0pt
     \dimen0=0pt
   \else
@@ -799,11 +800,14 @@
   \advance\PaperHeight by 2\dimen0
   \hoffset=-1in \advance\hoffset -#6 \voffset=-1in \advance\voffset -#6 % shift the origin to (0,0)
   \let\pr@tect=\noexpand
-  \trace{G}{\the\PaperWidth x \the\PaperHeight}
+  \trace{cov}{\the\PaperWidth x \the\PaperHeight}
+  \tracingoutput=1 
+  \showboxdepth=999
+  \showboxbreadth=999
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \bgroup
-      \dimen1=0.99626401\PaperWidth \dimen3=\dimen1 \advance\dimen1 #6 \advance\dimen1 #6
-      \dimen2=0.99626401\PaperHeight \dimen4=\dimen2 \advance\dimen2 #6 \advance\dimen2 #6
+      \dimen1=0.99626401\PaperWidth \dimen3=\dimen1 \advance\dimen1 #6 \advance\dimen1 #6%
+      \dimen2=0.99626401\PaperHeight \dimen4=\dimen2 \advance\dimen2 #6 \advance\dimen2 #6%
       \ifdim\dimen0>0pt
         \pdfcropwidth=\PaperWidth\advance\pdfcropwidth by -\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
         \pdfcropheight=\PaperHeight\advance\pdfcropheight by -\dimen0 \pdfcropheight=0.99626401\pdfcropheight
@@ -823,7 +827,7 @@
     \trace{o}{p@ = \the\p@}\offinterlineskip
     \vbox to \PaperHeight{\vss
       \ifdim\dimen0>0pt\kern 0.5in\fi
-      #2
+      #2%
       \ifdim\dimen0>0pt\kern 0.5in\fi
       \vss}
     \vss

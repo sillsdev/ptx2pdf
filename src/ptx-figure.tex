@@ -579,13 +579,13 @@
 \def\ins@rtpic#1#2#3#4#5#6#7{%
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread=#1
+ \openin\t@stread=#1%
    \ifeof\t@stread
      \dimen0=\ifdim #3>#4 #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
      \message{INPUTFILE: #1 -> \tmpfile}%
-     \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6
+     \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6%
    \fi
 }
 
@@ -990,7 +990,7 @@
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
-      \gridb@x#1
+      \gridb@x#1%
       \lastdepth=0pt
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
@@ -1039,8 +1039,8 @@
 % #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
 \def\d@figurep@ge#1#2#3#4#5{%
   \trace{g}{\w@tsit\space is #2, \the\ht#1, \the\wd#1}%
-  \dimen0=#3 \advance\dimen0 by -\ht#1
-  \advance\dimen0 by -\dp#1
+  \dimen0=#3\advance\dimen0 by -\ht#1%
+  \advance\dimen0 by -\dp#1%
   \divide\dimen0 by 2
   \ifx\picV@lign\@lignTop \trace{g}{V alignment: top}\setbox#1\vbox{\vbox to #3{\kern#5\box#1\vss}}\else
     \ifx\picV@lign\@lignBot \trace{g}{V alignment: bottom}\setbox#1\vbox{\vbox to #3{\vss\box#1}}\else
