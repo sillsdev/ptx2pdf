@@ -1560,6 +1560,7 @@
 \newif\ifStorePeriph\StorePeriphtrue
 
 \def\@@@periph #1|#2|#3\E{%
+  \trace{s}{@@@periph #1|#2}%
   \def\tmp{#2}%
   \unset@ttribs
   \def\thisdefault@ttrkey{id}%
@@ -1577,6 +1578,7 @@
   \global\let\periph@@@\attr@b
   \the\@idhooks
   \tempfalse
+  \trace{s}{Setting periph@@@ to `\attr@b` (#2)}%
   \ifStorePeriph
     \ifcsname storeperiph-\attr@b\endcsname \temptrue\fi
   \fi
