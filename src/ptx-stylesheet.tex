@@ -1497,7 +1497,40 @@
 \newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 \newif\ifinperiph
-\def\codesforperiphgr@b{\catcode13=12 \catcode92=12 }
+\def\codesforperiphgr@b{% Turn off everything
+  \catcode13=12 %cr
+  \catcode92=12 %bkslash
+  \catcode`\/=12 
+  \catcode`\|=12
+  \catcode`\~=12
+  \catcode"2000=12
+  \catcode"2001=12
+  \catcode"2002=12
+  \catcode"2003=12
+  \catcode"2004=12
+  \catcode"2005=12
+  \catcode"2006=12
+  \catcode"2009=12
+  \catcode"200A=12
+  \catcode"200B=12
+  \catcode"2010=12
+  \catcode"2011=12
+  \catcode"2018=12
+  \catcode"2019=12
+  \catcode"201C=12
+  \catcode"201D=12
+  \catcode"2028=12
+  \catcode"202A=12
+  \catcode"202B=12
+  \catcode"202C=12
+  \catcode"2060=12
+  \catcode"2063=12
+  \catcode"2064=12
+  \catcode"A0=12
+  \catcode"AD=12
+  \catcode"FEFF=12 
+} 
+
 \def\endofperiph{\relax}
 {\catcode13=12 %
 \gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
