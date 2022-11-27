@@ -1086,7 +1086,7 @@ class TexModel:
                             currk = ma[2] or ma[3]
                             if not currk:
                                 currk = self._periphids.get(m[1].lower(), m[1].lower())
-                            currperiphs = []
+                            currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:
                             if r"\periph" in l:
