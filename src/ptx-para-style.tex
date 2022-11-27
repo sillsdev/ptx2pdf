@@ -169,9 +169,9 @@
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
       \dimen0=\baselineskip \m@d \advance\dimen2 by -\dimen0
       \advance\dimen2 by \headingtopspace                                           %(1)
-      \ifgridp@c\else\ifdiglot\else
+      \ifgridp@c\else\ifdiglot\else\ifrotate\else
         \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
-      \fi\fi
+      \fi\fi\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
@@ -193,6 +193,7 @@
 
 \newif\ifdoingt@ble
 \newdimen\lastdepth
+\newif\ifrotate \rotatefalse
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
@@ -208,7 +209,14 @@
      \fi\fi
    \fi
    \endgraf
-   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
+   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else
+     %\ifrotate
+     %  \setbox9=\lastbox \lastdepth=\ht9 \box9\trace{h}{lastdepth in upwards = \the\lastdepth}%
+     %  \lastdepth=0pt\prevdepth=0pt%
+     %\else
+       \lastdepth=\prevdepth
+     %\fi
+   \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
@@ -457,7 +465,7 @@
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
-		\trace{h}{marker = \m@rker, spacebefore = \p@ram, heading top space = \the\headingtopspace}%
+		\trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
   \else\trace{sa}{headingstyle false}%
