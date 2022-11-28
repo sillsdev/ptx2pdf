@@ -1529,6 +1529,7 @@
   \catcode"A0=12
   \catcode"AD=12
   \catcode"FEFF=12 
+  \deactiv@tecustomch@rs
 } 
 
 \def\endofperiph{\relax}
@@ -1536,7 +1537,7 @@
 \gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
 \gdef\@@rem@#1^^M{\egroup\@@realrem #1}%
 %Code to read periph sections line by line.
-\gdef\@periph{\ifinperiph\endp@riph\inperiphfalse\fi\bgroup\catcode13=12 \@@periph}%
+\gdef\@periph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi\bgroup\catcode13=12 \@@periph}%
 \gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
 \gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endp@riph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
 %% DO NOT COMMENT END OF FOLLOWING LINE:
@@ -1588,7 +1589,7 @@
 
 
 \def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname ms:zgetperiph=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}\ifcsname keepperiph-\periphattr@b\endcsname\else\global\keeptriggerfalse\fi}\everyeof{}}
-\def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{periph}\global\let\periph@@@\empty}
+\def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{endperiph}\global\let\periph@@@\empty}
 
 \newif\ifStorePeriph\StorePeriphtrue
 
