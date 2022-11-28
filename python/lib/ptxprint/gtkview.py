@@ -268,6 +268,8 @@ _sensitivities = {
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
     # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
+    "c_makeCoverPage":         ["bx_cover"],
+    "c_inclSpine":             ["gr_spine"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -546,6 +548,7 @@ class GtkViewModel(ViewModel):
         self.rtl = False
         self.isDiglotMeasuring = False
         self.warnedSIL = False
+        self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
@@ -4433,22 +4436,6 @@ class GtkViewModel(ViewModel):
         self.docreatediff = True
         self.onOK(None)
         
-    def onPaperWeightChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        thck = int(float(self.get("s_paperWeight")) / 0.8)
-        self.noUpdate = True
-        self.set("s_paperThickness", thck)
-        self.noUpdate = False
-        
-    def onpaperThicknessChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        wght = int(float(self.get("s_paperThickness")) * 0.8)
-        self.noUpdate = True
-        self.set("s_paperWeight", wght)
-        self.noUpdate = False
-
     def onMarginEnterNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, True)
 
@@ -4465,7 +4452,6 @@ class GtkViewModel(ViewModel):
                 else:
                     self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(False)
                     self.builder.get_object("img_{}".format(_clr[i])).set_visible(status)
-            
                 
     def highlightMargin(self, btn, highlightMargin=True):
         self.showColouredArrows(False)
@@ -4529,12 +4515,53 @@ class GtkViewModel(ViewModel):
             l = f"{ov}\n{ex}" if overview else ex
         self.builder.get_object("l_txlExample").set_label(l)
 
+    def onPaperWeightChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        thck = int(float(self.get("s_paperWeight")) / 0.8)
+        self.noUpdate = True
+        self.set("s_paperThickness", thck)
+        self.noUpdate = False
+        self.thickActive = False
+        self.onCoverSettingsChanged(None)
+        
+    def onpaperThicknessChanged(self, btn):
+        if self.loadingConfig or self.noUpdate:
+            return
+        wght = int(float(self.get("s_paperThickness")) * 0.8)
+        self.noUpdate = True
+        self.set("s_paperWeight", wght)
+        self.noUpdate = False
+        self.thickActive = True
+        self.onCoverSettingsChanged(None)
+
     def onCoverSettingsChanged(self, btn):
+        self.sensiVisible("c_makeCoverPage")
         RLdir = self.get("r_coverDirection")[0]
-        self.builder.get_object(f"bx_LHScover").set_visible(False)
-        self.builder.get_object(f"bx_RHScover").set_visible(False)
+        self.builder.get_object("bx_LHScover").set_visible(False)
+        self.builder.get_object("bx_RHScover").set_visible(False)
         self.builder.get_object(f"bx_{RLdir}HScover").set_visible(True)
         
-        spineRotate = self.get("fcb_rotateSpineText")
-        print(f"{spineRotate=}")
+        rotateDegrees = float(self.get("fcb_rotateSpineText"))
+        self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
+        if rotateDegrees != 0:
+            self.builder.get_object("lb_spineTitle").set_label(_("Spine Title"))
+        else:
+            self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
         
+        pgs = 500 # l_totalPages
+        adj = float(self.get("s_coverAdjust"))
+        if self.thickActive:
+            thck = float(self.get("s_paperThickness"))
+        else:
+            thck = float(self.get("s_paperWeight")) / .84
+        spine = (thck * pgs / 2000) + adj
+
+        showSpine = self.sensiVisible("c_inclSpine")
+        for w in ["vp_spine", "lb_style_cat:cover-spine|esb"]:
+            self.builder.get_object(w).set_visible(showSpine)
+        self.builder.get_object("lb_style_cat:cover-spine|esb").set_visible(self.get("c_inclSpine"))
+        thick = float(self.get("s_spineThickness")) * 4
+        self.builder.get_object("vp_spine").set_size_request(thick, -1)
+
+        self.set("s_spineThickness", spine)
