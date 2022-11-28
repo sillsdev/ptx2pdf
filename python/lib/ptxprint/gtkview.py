@@ -4528,3 +4528,13 @@ class GtkViewModel(ViewModel):
             ex = f"{t1}\n{t2}"
             l = f"{ov}\n{ex}" if overview else ex
         self.builder.get_object("l_txlExample").set_label(l)
+
+    def onCoverSettingsChanged(self, btn):
+        RLdir = self.get("r_coverDirection")[0]
+        self.builder.get_object(f"bx_LHScover").set_visible(False)
+        self.builder.get_object(f"bx_RHScover").set_visible(False)
+        self.builder.get_object(f"bx_{RLdir}HScover").set_visible(True)
+        
+        spineRotate = self.get("fcb_rotateSpineText")
+        print(f"{spineRotate=}")
+        
