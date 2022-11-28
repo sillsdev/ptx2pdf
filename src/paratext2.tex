@@ -903,10 +903,10 @@
 
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
-\def\makeheadline{%
+\def\makeheadline{{%
   \let\oldstystk\styst@k
   \let\oldmcstack=\mcstack
-  \def\styst@k{h}\def\mcstack{p+h+h,}%
+  \def\styst@k{h}\def\mcstack{P+h+h,}%
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
@@ -923,14 +923,14 @@
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
     \fi\fi}\vss}\nointerlineskip
-    \let\styst@k\oldstystk
-    \let\mcstack\oldmcstack
-}
+   \let\styst@k=\oldstystk
+   \let\mcstack\oldmcstack
+}}
 \newif\ifrhr@le
-\def\makefootline{%
+\def\makefootline{{%
   \let\oldstystk\styst@k
   \let\oldmcstack=\mcstack
-  \def\styst@k{zfooter+h}\def\mcstack{c+zfooter+zfooter+h,p+h+h,}%
+  \def\styst@k{zfooter+h}\def\mcstack{c+zfooter+zfooter+h,P+h+h,}%
   %\nomsg@tfontname{h}%
   \s@tfont{zfooter}{zfooter+h}%
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
@@ -939,7 +939,7 @@
      \hbox to \textwidth{\the\footline}\vss}%
   \let\styst@k\oldstystk
   \let\mcstack\oldmcstack
-}
+}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
 \def\makefootbox{%
