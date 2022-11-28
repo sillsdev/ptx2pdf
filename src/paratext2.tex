@@ -922,6 +922,7 @@
     \fi\fi}\vss}\nointerlineskip}
 \newif\ifrhr@le
 \def\makefootline{%
+  \s@tfont{zfooter}{zfooter+h}%
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit

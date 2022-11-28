@@ -143,7 +143,20 @@ formatting.
 \m The end. Back to '\showTheCategory'
 
 \p
-Some text \zornament |pattern="1|"\*\zornament |pattern="2|v"\*\zornament |pattern="1|h" \* Hi
+Some text \par
+
+u:\zornament |pattern="1|u"\*
+l:\zornament |pattern="1|l"\*
+r:\zornament |pattern="1|r"\*
+d:\zornament |pattern="1|d"\*
+\par
+h:\zornament |pattern="1|h"\*
+L:\zornament |pattern="1|L"\*
+R:\zornament |pattern="1|R"\*
+v:\zornament |pattern="1|v"\*
+\par
+
+\zornament |pattern="2|v"\*\zornament |pattern="1|h" \* Hi
 \pb
 
 

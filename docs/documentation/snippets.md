@@ -321,6 +321,28 @@ the value for the next paragraph and following.
 \deftocalign{2}{r}
 ```
 
+## Add extra  TOC entries 
+Additional TOC entries can be specified to appear before or after an automatic table of
+contents. As this is done by seting values that are used while `\ztoc` runs, it must occur 
+*before* the call to ztoc:
+```tex
+\ztocafter
+\tr \tc1 Maps\tc2 (maps) \tcr3 479
+\tr \tc1 Unusual animals mentioned in scripture\tc2 (animals)\tcr3 483
+\ztocafter*
+
+\ztoc|main\*
+
+```
+For the 'before' variant, you must set the style of the table:
+```tex
+For before
+\ztocbefore
+\tr \cat toc\cat*\tc1 Index\tc2\tcr3 i
+\ztocbefore*
+
+\ztocafter....
+```
 ## Set a larger space before footnote caller in the text
 
 If the space before a footnote caller (defined by style zcf) needs to be

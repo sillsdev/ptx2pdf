@@ -193,9 +193,15 @@
 \addtoeveryparhooks{\checkfort@c}
 
 \let\tocf@@t=\empty
+\let\tocaft@r=\empty
+\let\tocb@fore=\empty
 \def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
 \def\d@fiftoc#1#2{\should@xist{cat:toc|#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
-\def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\gentoche@dfoot\global\keeptriggertrue \toch@ad #2 \tocf@@t \endt@ble}}
+\def\defTOC#1#2{\x@\def\csname ms:ztoc=#1\endcsname{\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}}
+
+\def\ztocafter#1\ztocafter*{\x@\gdef\x@\tocaft@r\x@{\tocaft@r #1}}
+\def\ztocbefore#1\ztocbefore*{\x@\gdef\x@\tocb@fore\x@{\tocb@fore #1}}
+
 \def\addt@tmptok#1#2{\x@\tmpt@ks\x@{\the\tmpt@ks \csname #1\endcsname #2}}%
 \def\gentoche@dfoot{\let\toch@ad\empty\let\tocf@@t\empty
   \tmpt@ks{\tr }%

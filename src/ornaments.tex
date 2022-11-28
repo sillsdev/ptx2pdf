@@ -1286,7 +1286,7 @@
         \def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
         \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
     \else
-      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXPDFfile "#2" width \dimen0 height \dimen1 }}%
+      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXpdffile "#2" width \dimen0 height \dimen1 }}%
     \fi
   \egroup
 }
