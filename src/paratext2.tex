@@ -924,20 +924,19 @@
    \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newif\ifrhr@le
-\def\makefootline{{%
-  \mcpush{P}{h}%
+\def\makefootline{{%HISTORIC, unused by ptx2pdf macros
   %\nomsg@tfontname{h}%
-  \s@tfont{zfooter}{zfooter+h}%
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
      \hbox to \textwidth{\the\footline}\vss}%
- \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
 \def\makefootbox{%
   \vbox{
+    \mcpush{P}{h}%
+    \s@tfont{zfooter}{zfooter+h}%
     \setbox8=\hbox{\the\footline}%
     \ifdim\ht8>0pt
       \dimen0=\textwidth\advance\dimen0 by -\columnshift
@@ -950,7 +949,8 @@
     \else
       \box\voidb@x
     \fi
-  }
+    \mcpop\trace{h}{Stack now: \mcstack}%
+  }%
 }
 %-c_pagebody
 
