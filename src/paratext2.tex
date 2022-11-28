@@ -936,7 +936,10 @@
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss}}
+     \hbox to \textwidth{\the\footline}\vss}%
+  \let\styst@k\oldstystk
+  \let\mcstack\oldmcstack
+}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
 \def\makefootbox{%
