@@ -327,7 +327,7 @@ contents. As this is done by seting values that are used while `\ztoc` runs, it 
 *before* the call to ztoc:
 ```tex
 \ztocafter
-\tr \tc1 Maps\tc2 (maps) \tcr3 479
+\tr \tc1 Maps\tc2 \tcr3 479
 \tr \tc1 Unusual animals mentioned in scripture\tc2 (animals)\tcr3 483
 \ztocafter*
 
