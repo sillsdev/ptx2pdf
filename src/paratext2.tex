@@ -904,6 +904,9 @@
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
 \def\makeheadline{%
+  \let\oldstystk\styst@k
+  \let\oldmcstack=\mcstack
+  \def\styst@k{h}\def\mcstack{p+h+h,}%
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
@@ -919,9 +922,16 @@
         \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
-    \fi\fi}\vss}\nointerlineskip}
+    \fi\fi}\vss}\nointerlineskip
+    \let\styst@k\oldstystk
+    \let\mcstack\oldmcstack
+}
 \newif\ifrhr@le
 \def\makefootline{%
+  \let\oldstystk\styst@k
+  \let\oldmcstack=\mcstack
+  \def\styst@k{zfooter+h}\def\mcstack{c+zfooter+zfooter+h,p+h+h,}%
+  %\nomsg@tfontname{h}%
   \s@tfont{zfooter}{zfooter+h}%
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
