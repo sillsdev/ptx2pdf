@@ -936,8 +936,13 @@
 \def\makefootbox{%
   \vbox{
     \mcpush{P}{h}%
-    \s@tfont{zfooter}{zfooter+h}%
-    \setbox8=\hbox{\the\footline}%
+    \setbox8=\hbox{%
+	\mcpush{C}{zfooter}%
+	\s@tfont{zfooter}{zfooter+h}%
+	\trace{h}{Making footer. Stack now: \mcstack, \meaning\footline}%
+	\the\footline
+	\mcpop
+    }%
     \ifdim\ht8>0pt
       \dimen0=\textwidth\advance\dimen0 by -\columnshift
       %\dimen1=\bottomm@rgin\advance\dimen1 by -\FooterPosition\MarginUnit
@@ -949,7 +954,7 @@
     \else
       \box\voidb@x
     \fi
-    \mcpop\trace{h}{Stack now: \mcstack}%
+    \mcpop\trace{h}{End of footer. Stack now: \mcstack}%
   }%
 }
 %-c_pagebody
