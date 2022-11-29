@@ -592,7 +592,7 @@ class RunJob:
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         info.update()
         if info['project/iffrontmatter'] != '%':
-            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
+            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.SFM"))
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
