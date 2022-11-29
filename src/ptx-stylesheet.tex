@@ -1851,10 +1851,11 @@
 \def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
 
+\m@kedigitsother
 % use numbers to allow sequences to work in \fig .. \fig*
-\def\openbracket{\char91\ignorespaces}
-\def\openparen{\char40\ignorespaces}
-
+\def\openbracket{\char 91\ignorespaces}
+\def\openparen{\char 40\ignorespaces}
+\tracing{ch}
 \DefineActiveChar{[}{\openbracket} % make these skip following spaces
 \DefineActiveChar{(}{\openparen}   % (useful at end-of-line before new verse)
 

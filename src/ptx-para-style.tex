@@ -151,6 +151,7 @@
 % \dimen1 ends up rounded down to an integral number of input \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
+\newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
   \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
@@ -172,6 +173,7 @@
       \ifgridp@c\else\ifdiglot\else\ifrotate\else
         \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
       \fi\fi\fi
+      \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%

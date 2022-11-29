@@ -17,7 +17,7 @@ class PDFx1aOutput(Snippet):
         res = r"""
 \bgroup
 \catcode`\#=12 
-\catcode`\@=11 \catcode`\^^M=10 \deactiv@tecustomch@rs
+\catcode`\@=11 \catcode`\^^M=10 \activ@tecustomch@rs\deactiv@tecustomch@rs
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
