@@ -903,7 +903,10 @@
 
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
-\def\makeheadline{{%NB font setting happens in \headline
+\def\makeheadline{{%
+  \mcpush{P}{h}%
+  \s@tfont{h}{h}%
+  %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
   \vbox to 0pt{\hsize=\textwidth\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
@@ -918,6 +921,7 @@
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
     \fi\fi}\vss}\nointerlineskip
+   \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newif\ifrhr@le
 \def\makefootline{{%HISTORIC, unused by ptx2pdf macros
@@ -929,13 +933,11 @@
 }}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
-\def\makefootbox{%NB font setting is done in \footline
+\def\makefootbox{%
   \vbox{
-    \setbox8=\hbox{%
-	\trace{h}{Making footer. Stack now: \mcstack, \meaning\footline}%
-	\the\footline
-	\mcpop
-    }%
+    \mcpush{P}{h}%
+    \s@tfont{zfooter}{zfooter+h}%
+    \setbox8=\hbox{\the\footline}%
     \ifdim\ht8>0pt
       \dimen0=\textwidth\advance\dimen0 by -\columnshift
       %\dimen1=\bottomm@rgin\advance\dimen1 by -\FooterPosition\MarginUnit
@@ -947,7 +949,7 @@
     \else
       \box\voidb@x
     \fi
-    \trace{h}{End of footer. Stack now: \mcstack}%
+    \mcpop\trace{h}{Stack now: \mcstack}%
   }%
 }
 %-c_pagebody
