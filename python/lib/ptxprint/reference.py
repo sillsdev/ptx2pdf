@@ -269,7 +269,7 @@ class Reference:
 
     def _getmaxvrs(self, bk, chap):
         vrs = self.first.vrs or Reference.loadvrs()
-        if bk not in books or len(vrs[books[bk]]) < chap:
+        if bk not in books or len(vrs[books[bk]]) <= chap:
             maxvrs = 200
         else:
             maxvrs = vrs[books[bk]][chap] - (vrs[books[bk]][chap-1] if chap > 1 else 0)
@@ -369,7 +369,7 @@ class RefRange:
 
     def allrefs(self):
         r = self.first
-        while r <= self.last:
+        while r is not None and r <= self.last:
             yield r
             r = r.nextverse()
 
