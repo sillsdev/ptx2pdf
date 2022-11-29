@@ -19,6 +19,8 @@ except NameError:
         return s
 
     def convert_store(s):
+        if isinstance(s, bytes):
+            return s
         return s.encode('Latin-1')
 
     def from_array(a):

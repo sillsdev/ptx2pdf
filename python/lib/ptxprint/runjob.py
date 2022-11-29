@@ -632,6 +632,7 @@ class RunJob:
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+        logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
@@ -1023,7 +1024,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa != "Screen" or (ratio is not None and iw/ih < ratio) \
+        if cropme or (ratio is not None and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             #try:

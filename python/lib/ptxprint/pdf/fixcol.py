@@ -10,6 +10,9 @@ from PIL import Image
 from ptxprint.utils import pycodedir
 from colorsys import rgb_to_hsv, hsv_to_rgb
 from math import isclose
+import logging
+
+logger = logging.getLogger(__name__)
 
 import re, os
 
@@ -39,10 +42,42 @@ def cmyk_to_rgb(c, m, y, k):
 
 
 class PdfStreamParser:
+
+    def __init__(self, imgcache=None):
+        self.cache = set()
+        self.imgcache = imgcache or {}
+
     def parsepage(self, page, trailer, **kw):
         instrm = page.Contents
         if not isinstance(instrm, PdfArray):
             instrm = [instrm]
+        else:
+            instrm = instrm[:]
+        if page.Resources is not None:
+            externals = page.Resources.XObject
+            if externals is not None:
+                for k, v in externals.items():
+                    if isinstance(v, PdfIndirect):
+                        if v in self.cache:
+                            continue
+                        else:
+                            self.cache.add(v)
+                            vi = v
+                            v = v.real_value()
+                    else:
+                        vi = None
+                    if v.Subtype == "/Form":
+                        instrm.append(v)
+                    elif v.Subtype == "/Image":
+                        if vi is not None and vi in self.imgcache:
+                            img = self.imgcache[vi]
+                        else:
+                            img = PDFImage(v, compressor=compress)
+                        if vi is not None:
+                            self.imgcache[vi] = img
+                        newimg = self.processImg(img)
+                        if newimg is not None:
+                            externals[k] = newimg
         for i in instrm:
             if isinstance(i, PdfIndirect):
                 i = i.real_value()
@@ -80,15 +115,22 @@ class PdfStreamParser:
                 operands = []
         return "\r\n".join(res)
 
+    def processImg(self, img):
+        return img.asXobj()
+
 
 class PageCMYKState(PdfStreamParser):
     opmap = {'K': 'k', 'RG': 'rg'}
-    def __init__(self, threshold, gstates):
+
+    def __init__(self, threshold):
         self.currgs = None
         self.threshold = threshold
-        self.gstates = gstates
         self.testnumcols = False
         self.profile = None
+
+    def parsepage(self, page, trailer, gstates, **kw):
+        self.gstates = gstates
+        super().parsepage(page, trailer, **kw)
 
     def setProfiles(self, inprofile, outprofile):
         self.profile = buildTransform(inprofile, outprofile, "RGB", "CMYK")
@@ -145,6 +187,15 @@ class PageCMYKState(PdfStreamParser):
         newim = applyTransform(im, self.profile)
         return newim.getpixel(0, 0)
 
+    def processImg(self, img):
+        print(f"{img.cs=}")
+        if "rgb" in img.cs.lower():
+            img.rgb_cmyk()
+            logger.debug(f"After convert to CMYK, {img.cs=}")
+            return img.asXobj()
+        else:
+            return None
+
 
 class PageRGBState(PdfStreamParser):
     opmap = {'RG': 'rg', 'G': 'rg', 'g': 'rg'}
@@ -158,14 +209,26 @@ class PageRGBState(PdfStreamParser):
             operands = operands * 3
         return extras + operands + [newop]
 
+    def processImg(self, img):
+        if "cmyk" in img.cs.lower():
+            img.img = img.img.convert("RGB")
+            img.cs = "/DeviceRGB"
+            return img.asXobj()
+        else:
+            return None
+
+
 class PageDuoToneStateWrite(PdfStreamParser):
     opmap = {'RG': 'rg'}
 
-    def __init__(self, hashue, spothsv, hrange):
+    def __init__(self, hashue, spothsv, hrange, name, imgcache):
         super().__init__()
         self.hashue = hashue
         self.spothsv = spothsv
         self.hrange = hrange
+        self.usesColour = False
+        self.name = name
+        self.imgcache = imgcache
 
     def rg(self, op, operands, **kw):
         rgb = [float(x) for x in operands[-3:]]
@@ -181,6 +244,13 @@ class PageDuoToneStateWrite(PdfStreamParser):
             black = hsv[2]
             newops = ["{:.2f}".format(black), tocase("G")]
         return newops
+
+    def processImg(self, img):
+        logger.debug(f"spotting from {img.cs} {self.spothsv=}, {self.hrange}, {self.name=}")
+        self.usesColour |= img.duotone(self.hashue, self.spothsv, self.hrange,
+                spotcspace=PdfName(self.name), blackcspace=PdfName("DeviceGray"))
+        return img.asXobj()
+
 
 class PageDuoToneStateRead(PdfStreamParser):
     opmap = {'RG': 'rg'}
@@ -199,6 +269,10 @@ class PageDuoToneStateRead(PdfStreamParser):
             self.sats = [min(self.sats[0], hsv[1]), max(self.sats[1], hsv[1])]
             self.values = [min(self.values[0], hsv[2]), max(self.values[1], hsv[2])]
         return operands + [op]
+
+    def processImg(self, img):
+        self.add_analysis(img.analyse(self.hue, self.hrange))
+        return None
 
     def add_analysis(self, results):
         if results is None:
@@ -226,9 +300,9 @@ def compress(mylist):
             obj.DecodeParms = None
 
 def fixpdfcmyk(trailer, threshold=1., **kw):
+    pstate = PageCMYKState(threshold)
     for pagenum, page in enumerate(trailer.pages, 1):
-        pstate = PageCMYKState(threshold, page.Resources.ExtGState)
-        pstate.parsepage(page, trailer, **kw)
+        pstate.parsepage(page, trailer, page.Resources.ExtGState, **kw)
         annots = page.Annots
         if annots is not None:
             for a in annots:
@@ -281,20 +355,6 @@ def fixpdfspot(trailer, hashue, hue, hrange, **kw):
     rparser = PageDuoToneStateRead(hue, hrange)
     for pagenum, page in enumerate(trailer.pages, 1):
         rparser.parsepage(page, trailer, **kw)
-        r = page.Resources
-        if r is None:
-            continue
-        x = r.XObject
-        if x is None:
-            continue
-        page.private.xobjs = {}
-        for k, v in x.items():
-            if v.Subtype != "/Image":
-                continue
-            img = PDFImage(v, compressor=compress)
-            page.xobjs[k] = img
-            if hashue:
-                rparser.add_analysis(img.analyse(hue, hrange))
 
     if hashue:
         spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
@@ -328,18 +388,11 @@ pop }}""".format(*spotcmyk)
         spothsv = 0
         hrange = 0
         name = "None"
-    wparser = PageDuoToneStateWrite(hashue, spothsv, hrange)
+    wparser = PageDuoToneStateWrite(hashue, spothsv, hrange, name, rparser.imgcache)
     for pagenum, page in enumerate(trailer.pages, 1):
         wparser.usesColour = False
         wparser.parsepage(page, trailer)
         r = page.Resources
-        if r is not None:
-            x = r.XObject
-            if x is not None and hasattr(page, 'xobjs'):
-                for k, v in page.xobjs.items():
-                    wparser.usesColour |= v.duotone(hashue, spothsv, hrange,
-                                    spotcspace=PdfName(name), blackcspace=PdfName("DeviceGray"))
-                    x[k] = v.asXobj()
         if wparser.usesColour:
             if page.Resources is None:
                 page.Resources = PdfDict()

@@ -60,13 +60,15 @@ def check_output(*a, **kw):
     print("Capturing", a, kw)
     return subprocess.check_output(*a, **kw)
 
-def make_paths(projectsdir, project, config):
+def make_paths(projectsdir, project, config, logging):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
                 "--nofontcache",
                 "-p", projectsdir, "-f", os.path.join(testsdir, "fonts")]
     if config is not None:
         ptxcmd += ['-c', config]
+    if logging is not None:
+        ptxcmd += ['-l', logging]
     ptxcmd += ["-P", project]
     if sys.platform == "win32":
         ptxcmd.insert(0, "python")
@@ -98,8 +100,8 @@ def make_paths(projectsdir, project, config):
 PdfInfo = namedtuple("PdfInfo", ["projectsdir", "project", "config", "stddir", "pdfpath", "stdpath", "diffpath", "result"])
 
 @pytest.fixture(scope="class")
-def pdf(request, projectsdir, project, config, starttime):
-    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config)
+def pdf(request, projectsdir, project, config, starttime, logging):
+    (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, logging)
     pdftpath = os.path.join(projectsdir, project, "local", "ptxprint")
     os.makedirs(os.path.join(pdftpath, config), exist_ok=True)
     pdffile = "ptxprint-{}.pdf".format(filename)
@@ -118,7 +120,7 @@ def pdf(request, projectsdir, project, config, starttime):
 
 @pytest.mark.usefixtures("pdf")
 class TestXetex:
-    def test_pdf(self, updatedata, pypy):
+    def test_pdf(self, updatedata):
         if self.pdf.result == 2:
             msg = "missing base pdf"
         elif os.path.exists(self.pdf.diffpath):
