@@ -1156,9 +1156,11 @@ class TexModel:
                     l = scriptf.readline().replace("\uFEFF", "")
                     if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
                         scriptf.seek(0)
+                        gs = globals().copy()
+                        ls = {}
                         sys._argv = sys.argv
                         sys.argv = [script, infpath, outfpath]
-                        exec(scriptf.read())
+                        exec(scriptf.read(), gs, ls)
                         sys.argv = sys._argv
                         hasrun = True
             if not hasrun:
