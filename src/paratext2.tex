@@ -837,7 +837,7 @@
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{%      
           \ifpartialfr@med\else
-            \doTextB@rder{\partial}%2HERE
+            %\doTextB@rder{\partial}%2HERE
           \fi
           \hbox to \dimen1{\box\partial}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
@@ -1175,6 +1175,15 @@
         \p@geendcontent
         \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
+    \else
+      \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
+      \ifm@rksonpage
+	\edef\mktmp{\botmark}%
+	\ifx\mktmp\t@tle\else
+	   \trace{o}{Placing border on partial page}%
+	   \doTextB@rder{\partial}%
+	\fi
+      \fi
     \fi
     \fin@lverybottom
     \global\holdinginserts=1

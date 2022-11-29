@@ -524,7 +524,7 @@
       \ifvoid\p@rtl\else
         % FIXME: Merge boxes back together? More data needed! It didn't used to
         % be here, but surely it ought to be?
-        \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with \NoMergeReflow\ifNoMergeReflow false\else true\fi}%
+        \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
         \fi

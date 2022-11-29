@@ -1862,11 +1862,13 @@
 %+csty_slash
 \catcode`\/=\active
 \def/{\futurelet\n@xt\sl@sh}
-\def\sl@sh{\ifx\n@xt/\let\n@xt\sl@shbreak\else\let\n@xt\sl@shprint\fi\n@xt}
+\def\sl@sh{\ifx\n@xt/\let\n@@xt\sl@shbreak\else\let\n@@xt\sl@shprint\fi\n@@xt}
 \def\OptionalBreakPenalty{300}
 \let\oldlinepenalty\relax
 \def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
-\def\sl@shprint{\char`\/}
+\def\sl@shprint{\char`\/\message{next character after slash: '\meaning\n@xt'}\unless\if\relax\n@xt\relax
+\x@\if\n@xt/\relax   \else   \fi
+\message{Found space after slash}\hbox{ }\ \ \fi}
 \catcode`\/=12
 %-csty_slash
 %+csty_category
