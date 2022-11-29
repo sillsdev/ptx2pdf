@@ -15,7 +15,9 @@ class PDFx1aOutput(Snippet):
 
     def generateTex(self, model, diglotSide=""):
         res = r"""
-\bgroup \catcode`\^^M=10
+\bgroup
+\catcode`\#=12 
+\catcode`\@=11 \catcode`\^^M=10 \deactiv@tecustomch@rs
 \special{{pdf:docinfo<<
 /Title({document/title})%
 /Subject({document/subject})%
@@ -26,10 +28,10 @@ class PDFx1aOutput(Snippet):
 /Producer(XeTeX)%
 /Trapped /False
 {_gtspdfx}>> }}
+\message{{snippet 1}}%
 \special{{pdf:fstream @OBJCVR ({/iccfpath})}}
 \special{{pdf:put @OBJCVR <</N {_iccnumcols}>>}}
 %\special{{pdf:close @OBJCVR}}
-\catcode`\#=12
 \special{{pdf:stream @OBJCMR (
 <x:xmpmeta xmlns:x="adobe:ns:meta/">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-ref-syntax-ns#"
@@ -160,7 +162,7 @@ class PDFx1aOutput(Snippet):
 >> ]
 >>}}
 \egroup
-\catcode`\#=6
+\catcode`\#=6\catcode`\@=11 \activ@tecustomch@rs
 """
 # /MarkInfo <</Marked /False>>
 

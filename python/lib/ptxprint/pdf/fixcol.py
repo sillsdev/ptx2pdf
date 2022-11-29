@@ -188,7 +188,6 @@ class PageCMYKState(PdfStreamParser):
         return newim.getpixel(0, 0)
 
     def processImg(self, img):
-        print(f"{img.cs=}")
         if "rgb" in img.cs.lower():
             img.rgb_cmyk()
             logger.debug(f"After convert to CMYK, {img.cs=}")
