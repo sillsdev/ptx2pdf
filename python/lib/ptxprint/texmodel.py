@@ -965,10 +965,11 @@ class TexModel:
                                 res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
-                        if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append(r"\lastptxfiletrue")
+                        if i == len(self.dict['project/bookids']) - 1: 
+                          res.append(r"\lastptxfiletrue")
+                          if self.dict['project/ifcolophon'] == "":
                             if self.dict['project/pgbreakcolophon'] != '%':
-                                res.append(r"\endbooknoejecttrue")
+                               res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
@@ -1112,7 +1113,7 @@ class TexModel:
                     if l.strip().startswith(r"\periph"):
                         l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
-                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
+                    #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \

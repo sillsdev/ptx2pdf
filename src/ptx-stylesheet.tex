@@ -1813,8 +1813,8 @@
  \the\@ndptxhooks
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \singlecolumn\zplaceallnotes\fi
  \unprepusfm
- \trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookend-final\endcsname\else missing\fi. This is \iflastptxfile not\fi the last book.}%
- \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
+ \trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookend-final\endcsname\else missing\fi. This is \iflastptxfile\else not\fi the last book.}%
+ \iflastptxfile \trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
  %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
