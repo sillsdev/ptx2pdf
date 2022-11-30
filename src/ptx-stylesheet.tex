@@ -1813,7 +1813,7 @@
  \the\@ndptxhooks
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \singlecolumn\zplaceallnotes\fi
  \unprepusfm
-\trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
+ \trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookend-final\endcsname\else missing\fi. This is \iflastptxfile not\fi the last book.}%
  \iflastptxfile\trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
  \singlecolumn % must come after bookend-final, as that might include 2col content.
  \bookendpagebreak
@@ -1866,7 +1866,7 @@
 \def\OptionalBreakPenalty{300}
 \let\oldlinepenalty\relax
 \def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
-\def\sl@shprint{\char`\/{}%
+\def\sl@shprint{\char`\/{}% Empty group makes any following spaces behave properly
   %\message{next character after slash: '\meaning\n@xt'}%
 }
 \catcode`\/=12
