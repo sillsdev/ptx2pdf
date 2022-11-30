@@ -1374,8 +1374,14 @@ class TexModel:
             return []
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
-            for i, l in enumerate(inf.readlines()):
-                l = l.strip().replace(u"\uFEFF", "")
+            alllines = list(inf.readlines())
+            i = 0
+            while i < len(alllines):
+                l = alllines[i].strip().replace(u"\uFEFF", "")
+                i += 1
+                while l.endswith("\\") and i < len(alllines):
+                    l = l[:-1] + alllines[i].strip()
+                    i += 1
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
@@ -1429,6 +1435,8 @@ class TexModel:
                                                  show=not self.printer.get("c_quickRun"))
                             break
                     continue
+                elif len(l):
+                    logger.warning(f"Faulty change line found at {i}:\n{l}")
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
