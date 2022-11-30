@@ -312,8 +312,8 @@ the specific verse location.
 ### Implementation
 
 Setting `\pretolerance=1` forces the paragraph builder to do the extra passes it
-might not have done otherwise, to give a more accurate result. And then we reset
-the value for the next paragraph and following.
+might not have done otherwise, to give a more accurate result. And then we
+reset the value for the next paragraph and following.
 
 ## Table of Contents right-align column 2
 
@@ -481,6 +481,17 @@ are in the main text and so `\mystrong` should be called.
 
 Of course if you always want inline numbers even in cross references, then the
 hook can be simplified and `\mystrong` always called.
+
+## Special page numbering for a book
+"I want the page number for the glossary to restart numbers at one, and
+be prefixed with G-" 
+```tex
+\setbookhook{GLO}{start}{\pageno=1 \def\pagenumber{G-\folio}}
+```
+
+First, we reset the page number to one,  and then redefine the macro that
+prints the pagenumber.  (`\folio` prints lower case roman numerals if the page
+number is negative, and numbers starting from 1 if positive).
 
 
 # Python scripts
