@@ -1866,9 +1866,9 @@
 \def\OptionalBreakPenalty{300}
 \let\oldlinepenalty\relax
 \def\sl@shbreak/{\ifx\oldlinepenalty\relax\edef\oldlinepenalty{\the\linepenalty}\fi\linepenalty=\OptionalBreakPenalty\unskip\penalty-\OptionalBreakPenalty{} \ignorespaces}
-\def\sl@shprint{\char`\/\message{next character after slash: '\meaning\n@xt'}\unless\if\relax\n@xt\relax
-\x@\if\n@xt/\relax   \else   \fi
-\message{Found space after slash}\hbox{ }\ \ \fi}
+\def\sl@shprint{\char`\/{}%
+  %\message{next character after slash: '\meaning\n@xt'}%
+}
 \catcode`\/=12
 %-csty_slash
 %+csty_category
