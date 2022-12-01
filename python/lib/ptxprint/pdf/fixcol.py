@@ -127,6 +127,7 @@ class PageCMYKState(PdfStreamParser):
         self.threshold = threshold
         self.testnumcols = False
         self.profile = None
+        self.hascolor = False
 
     def parsepage(self, page, trailer, gstates, **kw):
         self.gstates = gstates
@@ -159,6 +160,10 @@ class PageCMYKState(PdfStreamParser):
 
     def rg(self, op, operands, **kw):
         rgb = [float(x) for x in operands[-3:]]
+        diffs = sum([(rgb[0] - x) * (rgb[0] - x) for x in rgb[1:]])
+        if diffs < 0.05:
+            return ["{:.2f}".format(rgb[0] / 255.), ('g' if op.lower() == op else "G")]
+        self.hascolor = True
         cmyk = self.rgb2cmyk(*rgb)
         newop = "k" if op.lower() == op else "K"
         return [simplefloat(x) for x in cmyk] + [newop]
@@ -192,9 +197,10 @@ class PageCMYKState(PdfStreamParser):
             img.rgb_cmyk()
             logger.debug(f"After convert to CMYK, {img.cs=}")
             return img.asXobj()
+        elif img.cmyk_black():
+            return img.asXobj()
         else:
-            return None
-
+            return None # img.asXobj()
 
 class PageRGBState(PdfStreamParser):
     opmap = {'RG': 'rg', 'G': 'rg', 'g': 'rg'}

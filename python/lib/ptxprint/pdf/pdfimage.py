@@ -73,9 +73,9 @@ def rgb_vecto_cmyk(img):
     #omk = max(img[...,0], img[...,1], img[...,2])
     omk = np.maximum(img[...,0], img[...,1])
     omk = np.maximum(omk, img[...,2])
-    c = (1. - img[...,0] + omk) / (omk + .0001)
-    m = (1. - img[...,1] + omk) / (omk + .0001)
-    y = (1. - img[...,2] + omk) / (omk + .0001)
+    c = (omk - img[...,0]) / (omk + .001)
+    m = (omk - img[...,1]) / (omk + .001)
+    y = (omk - img[...,2]) / (omk + .001)
     cond = omk > 0.
     out[cond,0] = c[cond]
     out[cond,1] = m[cond]
@@ -147,15 +147,15 @@ class PDFImage:
         if self.spotc is None:
             if self.spotb is not None:
                 self.img = Image.fromarray((self.spotb * 255).astype(np.uint8), "L")
-            if self.colorspace == "/DeviceCMYK":
+            if False and self.colorspace == "/DeviceCMYK":
                 res.stream = self.img.tobytes()
                 res.Binary = True
             else:
                 stream = io.BytesIO()
                 self.img.save(stream, format='JPEG')
                 res.stream = stream.getvalue().decode('Latin-1')
+                res[PdfName("Filter")] = PdfName("DCTDecode")
             logger.debug(f"{len(res.stream)=}, {type(res.stream)=}")
-            res[PdfName("Filter")] = PdfName("DCTDecode")
         else:
             spotb = (self.spotb * 255).astype(np.uint8).tobytes()
             spotc = (self.spotc * 255).astype(np.uint8).tobytes()
@@ -203,9 +203,20 @@ class PDFImage:
 
     def rgb_cmyk(self):
         img = np.asarray(self.img) / 255.
-        self.img = rgb_vecto_cmyk(img)
+        res = rgb_vecto_cmyk(img)
+        self.img = Image.from_bytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
-        
+
+    def cmyk_black(self):
+        img = np.asarray(self.img) / 255.
+        sda = img[...,0] - img[...,1]
+        sdb = img[...,0] - img[...,2]
+        cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01)
+        if not cond:
+            self.img = Image.frombytes(data=((1.-img[...,3]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
+            self.cs = self.colorspace = PdfName("DeviceGray")
+            return True
+        return False
         
 if __name__ == "__main__":
     import argparse, sys, os
