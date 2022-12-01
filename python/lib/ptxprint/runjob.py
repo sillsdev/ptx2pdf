@@ -323,6 +323,8 @@ class RunJob:
                             os.startfile(diffname)
                         elif sys.platform == "linux":
                             subprocess.call(('xdg-open', diffname))
+                    else:
+                        self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
