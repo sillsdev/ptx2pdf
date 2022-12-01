@@ -658,11 +658,13 @@ class StyleEditorView(StyleEditor):
                     r = self.treestore[selecti]
                     if r[0] == cat:
                         selecti = self.treestore.append(selecti, [key, name, True])
+                        logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
                         break
                     selecti = self.treestore.iter_next(selecti)
                 else:
                     selecti = self.treestore.append(None, [cat, cat, False])
                     selecti = self.treestore.append(selecti, [key, name, True])
+                    logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():
@@ -688,6 +690,7 @@ class StyleEditorView(StyleEditor):
                 self.setval(key, 'EndMarker', None)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
+            self.selectMarker(key)
         dialog.hide()
 
     def resolveEndMarker(self, key, newval):
