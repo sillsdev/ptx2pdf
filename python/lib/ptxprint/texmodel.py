@@ -87,6 +87,7 @@ ModelMap = {
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
     "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
+    "project/inclcoverperiphs": ("c_includeCoverSections", None),
     "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("txbf_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
@@ -278,6 +279,15 @@ ModelMap = {
     "document/diffpdf":         ("btn_selectDiffPDF", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/printarchive":    ("c_printArchive", None),
+
+    "cover/makecoverpage":      ("c_makeCoverPage", None),
+    "cover/rtlbinding":         ("c_RTLcoverBinding", None),
+    "cover/includespine":       ("c_inclSpine", None),
+    "cover/rotatespine":        ("fcb_rotateSpineText", None),
+    "cover/totalpages":         ("s_totalPages", None),
+    "cover/coveradjust":        ("s_coverAdjust", None),
+    "cover/weightorthick":      ("s_paperWidthOrThick", None),
+    "cover/papercalcunits":     ("r_paperCalc", None),
 
     "document/keepversions":    ("s_keepVersions", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", None),

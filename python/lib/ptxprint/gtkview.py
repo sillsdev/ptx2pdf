@@ -301,8 +301,10 @@ _object_classes = {
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
-                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
+    "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
+                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
+                    "lb_style_cat:cover-front|esb", "lb_style_cat:cover-back|esb",
+                    "lb_style_cat:cover-spine|esb", "lb_style_cat:cover-whole|esb", ), 
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
@@ -2266,7 +2268,7 @@ class GtkViewModel(ViewModel):
             self.rtl = rtl
 
     def onEditStyleClicked(self, btn):
-        mkr = Gtk.Buildable.get_name(btn)[9:]
+        mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")
         if mkr == "toc3" and self.get("r_thumbText") == "zthumbtab":  # "c_thumbIsZthumb"):
             self.set("c_styTextProperties", False)  # MH: why is this being done?
             mkr = "zthumbtab"
@@ -4515,32 +4517,11 @@ class GtkViewModel(ViewModel):
             l = f"{ov}\n{ex}" if overview else ex
         self.builder.get_object("l_txlExample").set_label(l)
 
-    def onPaperWeightChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        thck = int(float(self.get("s_paperWeight")) / 0.8)
-        self.noUpdate = True
-        self.set("s_paperThickness", thck)
-        self.noUpdate = False
-        self.thickActive = False
-        self.onCoverSettingsChanged(None)
-        
-    def onpaperThicknessChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        wght = int(float(self.get("s_paperThickness")) * 0.8)
-        self.noUpdate = True
-        self.set("s_paperWeight", wght)
-        self.noUpdate = False
-        self.thickActive = True
-        self.onCoverSettingsChanged(None)
-
     def onCoverSettingsChanged(self, btn):
         self.sensiVisible("c_makeCoverPage")
-        RLdir = self.get("r_coverDirection")[0]
         self.builder.get_object("bx_LHScover").set_visible(False)
         self.builder.get_object("bx_RHScover").set_visible(False)
-        self.builder.get_object(f"bx_{RLdir}HScover").set_visible(True)
+        self.builder.get_object(f'bx_{"L" if self.get("c_RTLcoverBinding") else "R"}HScover').set_visible(True)
         
         rotateDegrees = float(self.get("fcb_rotateSpineText"))
         self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
@@ -4549,19 +4530,26 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
         
-        pgs = 500 # l_totalPages
+        pgs = float(self.get("s_totalPages"))
         adj = float(self.get("s_coverAdjust"))
-        if self.thickActive:
-            thck = float(self.get("s_paperThickness"))
-        else:
-            thck = float(self.get("s_paperWeight")) / .84
+        thck = float(self.get("s_paperWidthOrThick"))
+        if self.get("r_paperCalc") == "weight":
+            # Value below is from Pretore's paper thickness calculations 
+            #                     (GSM/um, 36/43, 40/47, 50/60, 60/70)
+            thck = thck / .845 
         spine = (thck * pgs / 2000) + adj
 
         showSpine = self.sensiVisible("c_inclSpine")
         for w in ["vp_spine", "lb_style_cat:cover-spine|esb"]:
             self.builder.get_object(w).set_visible(showSpine)
         self.builder.get_object("lb_style_cat:cover-spine|esb").set_visible(self.get("c_inclSpine"))
-        thick = float(self.get("s_spineThickness")) * 4
+        thick = spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
+        self.builder.get_object("l_spineWidth").set_label(f"{spine:.3f}mm")
 
-        self.set("s_spineThickness", spine)
+    def editCoverSidebarStyle(self, btn, foo):
+        posn = Gtk.Buildable.get_name(btn)[3:]
+        self.styleEditor.selectMarker(f"cat:cover-{posn}|esb")
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.wiggleCurrentTabLabel()
