@@ -1281,12 +1281,16 @@
     \x@\xdef\csname localornament@#1@Y\endcsname{\x@\r@und\tmp\E}%
     \ifx\picfilecomm@nd\XeTeXpicfile
       \x@\gdef\csname localornament@#1@code\endcsname{%
-        \trace{orn}{"#2" \the\dimen0 * \the\dimen1}%
-        \def\@@x{\ifdim\dimen0 < 0pt \the\dimexpr-\dimen0\relax \else \the\dimen0\fi}%
-        \def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
+        %\def\@@x{\ifdim\dimen0 < 0pt \the\dimexpr-\dimen0\relax \else \the\dimen0\fi}%
+        %\def\@@y{\ifdim\dimen1 < 0pt \the\dimexpr-\dimen1\relax \else \the\dimen1\fi}%
+	\edef\@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
+	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
         \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
     \else
-      \x@\gdef\csname localornament@#1@code\endcsname{\hbox{\XeTeXpdffile "#2" width \dimen0 height \dimen1 }}%
+      \x@\gdef\csname localornament@#1@code\endcsname{
+	\edef\@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
+	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
+	\hbox{\XeTeXpdffile "#2" width \@@x height \@@y }}%
     \fi
   \egroup
 }
