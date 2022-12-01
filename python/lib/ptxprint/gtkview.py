@@ -2266,6 +2266,7 @@ class GtkViewModel(ViewModel):
             return
         else:
             self.rtl = rtl
+            self.set("c_RTLpagination", rtl)
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")

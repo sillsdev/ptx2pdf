@@ -14090,7 +14090,7 @@ showing, then a default set will appear.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_fnOverride">
-                                        <property name="label" translatable="yes">Override Footnote-Specific -/+ Settings in Text</property>
+                                        <property name="label" translatable="yes">Override hidden/automatic Footnote caller settings</property>
                                         <property name="name">Override Footnote Settings in Text</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -15151,7 +15151,7 @@ line then set this option.</property>
                                     </child>
                                     <child>
                                       <object class="GtkCheckButton" id="c_xrOverride">
-                                        <property name="label" translatable="yes">Override xRef-Specific -/+ Settings in Text</property>
+                                        <property name="label" translatable="yes">Override hidden/automatic Cross-reference caller settings</property>
                                         <property name="name">Override Cross-Reference Settings in Text</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -27462,6 +27462,9 @@ without a confirmation check.</property>
                         <property name="can-focus">True</property>
                         <property name="hexpand">False</property>
                         <property name="vexpand">True</property>
+                        <property name="scrollable">True</property>
+                        <property name="enable-popup">True</property>
+                        <property name="group-name">gr_ViewEdit</property>
                         <signal name="change-current-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="select-page" handler="onViewerChangePage" swapped="no"/>
                         <signal name="switch-page" handler="onViewerChangePage" swapped="no"/>
@@ -29520,7 +29523,7 @@ of the publication.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=5 n-rows=2 -->
+                              <!-- n-columns=6 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -29561,7 +29564,8 @@ of paper that you print on will be
 A4-sized sheet of paper.</property>
                                     <property name="halign">end</property>
                                     <property name="margin-start">6</property>
-                                    <property name="label" translatable="yes">Physical Paper Size:</property>
+                                    <property name="label" translatable="yes">Physical
+Paper Size:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
@@ -29623,6 +29627,7 @@ For example: 203mm, 330mm (Foolscap)</property>
                                   <packing>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -29688,13 +29693,14 @@ per Spread (both set on this tab).</property>
                                   <object class="GtkLabel" id="l_foldCutMargin">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">The width of the area to be cut
-after folding of the signature.
+                                    <property name="tooltip-text" translatable="yes">The minimum width of the area to
+be cut after folding of the signature.
 Measured in millimeters (mm).</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Minimum Fold 
-Cut Margin (mm):</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="label" translatable="yes">Fold Cut 
+Margin (mm):</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
@@ -29756,6 +29762,25 @@ then you want to fold first and then cut. This, for example
 makes a folded sheet that is part of a signature consist of
 two sets of sequential pages.</property>
                                     <property name="halign">start</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkCheckButton" id="c_RTLpagination">
+                                    <property name="label" translatable="yes">Reverse 
+Page Order</property>
+                                    <property name="name">Use reverse (RTL) page order for pagination</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">When paginating a book with more than
+one script, it may be necessary to reverse
+the page order. For example, when creating
+a diglot with both LTR and RTL scripts.</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
