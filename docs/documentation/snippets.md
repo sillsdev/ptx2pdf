@@ -493,6 +493,14 @@ First, we reset the page number to one,  and then redefine the macro that
 prints the pagenumber.  (`\folio` prints lower case roman numerals if the page
 number is negative, and numbers starting from 1 if positive).
 
+## Move colophon to after included pages
+```
+\sethook{bookend}{final}{\layoutstylebreak\pagebreak}
+\sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
+```
+
+The first line replaces the normal colophon including code with code that will output the 
+page. The second line puts the normal colophon including code after any included documents.
 
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
