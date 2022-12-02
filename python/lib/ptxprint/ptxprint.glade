@@ -5320,7 +5320,7 @@ the text. This may be useful for precise measuring.</property>
     <data>
       <row>
         <col id="0" translatable="yes">Screen (Quickest)</col>
-        <col id="1" translatable="yes">Screen</col>
+        <col id="1">Screen</col>
       </row>
       <row>
         <col id="0" translatable="yes">Digital-RGB</col>
@@ -5328,7 +5328,7 @@ the text. This may be useful for precise measuring.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Digital-CMYK (Transparency)</col>
-        <col id="1" translatable="yes">Transparent</col>
+        <col id="1">Transparent</col>
       </row>
       <row>
         <col id="0" translatable="yes">Print-CMYK</col>
@@ -5336,11 +5336,11 @@ the text. This may be useful for precise measuring.</property>
       </row>
       <row>
         <col id="0" translatable="yes">Print-Gray</col>
-        <col id="1" translatable="yes">Gray</col>
+        <col id="1">Gray</col>
       </row>
       <row>
         <col id="0" translatable="yes">Print-Spot</col>
-        <col id="1" translatable="yes">Spot</col>
+        <col id="1">Spot</col>
       </row>
     </data>
   </object>

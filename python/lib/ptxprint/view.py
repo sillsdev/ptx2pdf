@@ -50,6 +50,8 @@ FontModelMap = {
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent", "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 def doError(txt, secondary=None, **kw):
     print(txt)
     logger.error(txt)
