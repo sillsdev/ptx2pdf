@@ -115,27 +115,36 @@
 }
 
 \def\m@kecover{%
-  \tracingassigns=1
-  \cover@maths
-  \tracingassigns=0
-  \setbox0\hbox{%
-    \c@verbit{whole}{\topskip=0pt 
-  %    \tracingall
-      \ifBookOpenLeft
-	\hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
-	\d@spine
-	{\rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
-      \else
-	\hbox{{\leftble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
-	\d@spine
-	{\rightble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}}%
-      \fi
+  \temptrue
+  \ifcsname periphcontents=frontcover\endcsname\else\tempfalse\fi
+  \ifcsname periphcontents=backcover\endcsname\else\tempfalse\fi
+  \iftemp
+    %\tracingassigns=1
+    \cover@maths
+    %\tracingassigns=0
+    \setbox0\hbox{%
+      \c@verbit{whole}{\topskip=0pt 
+    %    \tracingall
+        \ifBookOpenLeft
+          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+          \d@spine
+          {\rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
+        \else
+          \hbox{{\leftble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+          \d@spine
+          {\rightble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}}%
+        \fi
+      }%
     }%
-  }%
-  \def\pagecontents{\copy0}\plainoutput
-  \showbox0
-  \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
-  \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+    \def\pagecontents{\copy0}\plainoutput
+    \ifnum\interactionmode=2
+      \showbox0
+    \fi
+    \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
+    \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+  \else
+    \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
+  \fi
 }
 
 \plugin@endif
