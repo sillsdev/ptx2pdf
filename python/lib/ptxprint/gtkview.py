@@ -296,7 +296,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", ),
+    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -354,6 +354,28 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
+_defaultPermissionRequest = r"""
+TO: International Publishing Services Coordinator
+7500 West Camp Wisdom Road
+Dallas, TX 75236 USA\n
+1. The name of the country, language, Ethnologue code.
+\t[COUNTRY, Language, iso-code]\n
+2. The title of the book in the vernacular.
+\t[Fill this in]\n
+3. The kind of the book: 
+\t[Portion|New Testament|Bible]
+4. The number of books to be printed.
+\t[N,NNN] copies
+5. The number of illustrations and specific catalog number(s) of the illustration(s)/picture(s).\n
+\t[List of illustrations]
+[Optional statement IF Sensitive project:] 
+Due to regional sensitivities, we would like to use abbreviations in the copyright statement
+and the abbreviated form (© D.C.C.) of the watermark on each of the illustrations.\n
+Blessings,
+Requester's Name
+My SIL Entity
+"""
+
 _notebooks = ("Main", "Viewer", "PicList", "fnxr")
 
 # Vertical Thumb Tab Orientation options L+R
@@ -393,19 +415,22 @@ _dlgtriggers = {
     "dlg_borders":          "onSBborderClicked"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
     if copy2clip:
-        if secondary is not None:
-            secondary += _("\nPTXprint Version {}").format(GitVersionStr)
-        lines = [title or ""]
+        if who2email.startswith("ptxp"):
+            if secondary is not None:
+                secondary += _("\nPTXprint Version {}").format(GitVersionStr)
+            lines = [title or ""]
+        else:
+            lines = [""]
         if text is not None and len(text):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _("Please send to: ptxprint_support@sil.org") + "\n\n{}".format("\n\n".join(lines))
+        s = _(f"Mailto: {who2email}") + "\n\n{}".format("\n\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
@@ -416,7 +441,7 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
     if show:
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=text)
-        if title is None:
+        if title is None and who2email.startswith("ptxp"):
             title = "PTXprint Version " + VersionStr
         dialog.set_title(title)
         if secondary is not None:
@@ -4588,4 +4613,10 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()
 
-        
+    def onRequestPicturePermission(self, btn):
+        if self.artpgs is not None:
+            for a,v in self.artpgs:
+                print(f"{a}\t{v}")
+        self.doError("SIL Illustration Permission Request", secondary=_defaultPermissionRequest, 
+                      title="PTXprint", copy2clip=True, show=True, 
+                      who2email="scripturepicturepermissions_intl@sil.org")

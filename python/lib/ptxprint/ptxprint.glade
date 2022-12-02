@@ -423,7 +423,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_paperThickness">
     <property name="lower">25</property>
     <property name="upper">175</property>
-    <property name="value">90</property>
+    <property name="value">70</property>
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
   </object>
@@ -2114,10 +2114,8 @@ For example:
                         <property name="label" translatable="yes">Include sections for a separate cover page</property>
                         <property name="name">Generate front matter: Include sections for cover page</property>
                         <property name="visible">True</property>
-                        <property name="sensitive">False</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="no-show-all">True</property>
                         <property name="tooltip-text" translatable="yes">(Not yet implemented)
 Enable this option if you want to include the following
 sections (used for creating a cover page):
@@ -19448,6 +19446,34 @@ settings will remain unchanged.</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="btn_requestPermission">
+                                    <property name="label" translatable="yes"> Request Permission... </property>
+                                    <property name="width-request">55</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">If you are publishing (i.e. more than 50 copies) any
+material with illustrations from David C Cook, or
+Scripture Press, you are required to obtain prior
+permission. Click this button to generate the text
+to be sent to ScripturepicturePermissions_intl@sil.org
+requesting permission.</property>
+                                    <property name="halign">end</property>
+                                    <property name="margin-left">6</property>
+                                    <property name="margin-right">6</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">3</property>
+                                    <signal name="clicked" handler="onRequestPicturePermission" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkBox" id="bx_showImage">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -19505,7 +19531,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">4</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                               </object>
@@ -28705,7 +28731,7 @@ or thickness (microns).</property>
                                                 <property name="xalign">1</property>
                                                 <property name="adjustment">a_paperThickness</property>
                                                 <property name="climb-rate">5</property>
-                                                <property name="value">90</property>
+                                                <property name="value">70</property>
                                                 <signal name="value-changed" handler="onCoverSettingsChanged" swapped="no"/>
                                               </object>
                                               <packing>
