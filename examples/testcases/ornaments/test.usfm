@@ -3,7 +3,10 @@
 \periph front|frontcover
 \p ~
 \vfill
-\mt1 front
+\mt2  The Test Case
+\zgap|1cm\*
+\mt1 Bible 
+\p
 \vfill
 \p ~
 \p
@@ -14,6 +17,7 @@
 \periph back|backcover
 \vfill
 \mt1 back
+\p
 \vfill
 \p
 \zendperiph

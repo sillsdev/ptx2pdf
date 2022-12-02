@@ -43,9 +43,11 @@
 \def\c@verbit#1#2{%
   %\tracingall
   \h@ldfigtrue
+  \ble@dtrue
   \bgroup
-    \PaperHeight=\the\dimexpr\csname cover-y-#1\endcsname \relax
-    \PaperWidth=\the\dimexpr\csname cover-x-#1\endcsname\relax
+    \def\t@stsz{1}%
+    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname \relax\relax
+    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname \relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2\esbe%
     \hbox{\box\wholepagepic}%
@@ -83,8 +85,10 @@
   %  Similarly, decrease borderPadding by bleed
   %  
 }
-\def\d@spine{%
+\def\d@spine{{%
   \ifrotatespine
+    \edef\lble@d{\csname cover-bleed\endcsname}%
+    \edef\rble@d{\csname cover-bleed\endcsname}%
     \trace{cov}{Rotating spine}%
     \setbox0\hbox{\c@verbit{spine}{\topskip=1pt \vfill\csname periphcontents=spine\endcsname\vfill}}%
     \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
@@ -93,8 +97,21 @@
     \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
   \else
     \trace{cov}{NOT Rotating spine??}%
+    \edef\tble@d{\csname cover-bleed\endcsname}%
+    \edef\bble@d{\csname cover-bleed\endcsname}%
     \c@verbit{spine}{\topskip=0pt \csname periphcontents=spine\endcsname}%
   \fi
+}}
+
+\def\leftble@d{%
+  %\edef\lble@d{\csname cover-bleed\endcsname}%
+  %\edef\tble@d{\csname cover-bleed\endcsname}%
+  %\edef\bble@d{\csname cover-bleed\endcsname}%
+}
+\def\rightble@d{%
+  \edef\rble@d{\csname cover-bleed\endcsname}%
+  %\edef\tble@d{\csname cover-bleed\endcsname}%
+  %\edef\bble@d{\csname cover-bleed\endcsname}%
 }
 
 \def\m@kecover{%
@@ -105,19 +122,20 @@
     \c@verbit{whole}{\topskip=0pt 
   %    \tracingall
       \ifBookOpenLeft
-	\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}%
+	\hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
 	\d@spine
-	\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+	{\rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
       \else
-	\hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}%
+	\hbox{{\leftble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
 	\d@spine
-	\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+	{\rightble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}}%
       \fi
     }%
   }%
   \def\pagecontents{\copy0}\plainoutput
   \showbox0
-  \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+  \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
+  \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
 }
 
 \plugin@endif
