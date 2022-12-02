@@ -75,7 +75,7 @@ def make_paths(projectsdir, project, config, logging):
     cfg = configparser.ConfigParser()
     if config is not None:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", config, "ptxprint.cfg")
-        cfgname = config + "-"
+        cfgname = "_" + config
     else:
         configpath = os.path.join(projectsdir, project, "shared", "ptxprint", "ptxprint.cfg")
         cfgname = ""
@@ -91,9 +91,9 @@ def make_paths(projectsdir, project, config, logging):
     else:
         bks = [cfg.get("project", "book")]
     if len(bks) > 1:
-        filename = "{}{}_{}{}".format(cfgname, bks[0], bks[-1], project)
+        filename = "{}{}_{}-{}_ptxp".format(project, cfgname, bks[0], bks[-1])
     else:
-        filename = "{}{}{}".format(cfgname, bks[0], project)
+        filename = "{}{}_{}_ptxp".format(project, cfgname, bks[0])
     stddir = os.path.join(projectsdir, '..', 'standards', project)
     return (stddir, filename, testsdir, ptxcmd)
 
@@ -104,7 +104,7 @@ def pdf(request, projectsdir, project, config, starttime, logging):
     (stddir, filename, testsdir, ptxcmd) = make_paths(projectsdir, project, config, logging)
     pdftpath = os.path.join(projectsdir, project, "local", "ptxprint")
     os.makedirs(os.path.join(pdftpath, config), exist_ok=True)
-    pdffile = "ptxprint-{}.pdf".format(filename)
+    pdffile = "{}.pdf".format(filename)
     pdfpath = os.path.join(pdftpath, pdffile)
     stdpath = os.path.join(stddir, pdffile)
     diffpath = pdfpath.replace(".pdf", "_diff.pdf")

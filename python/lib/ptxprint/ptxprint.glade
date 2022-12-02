@@ -5349,7 +5349,7 @@ the text. This may be useful for precise measuring.</property>
         <col id="1">CMYK</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Print-Gray</col>
+        <col id="0" translatable="yes">Print-Gray (B/W)</col>
         <col id="1">Gray</col>
       </row>
       <row>
@@ -10625,8 +10625,8 @@ inactive, it is due to Diglot being
 active (which obviously must use 
 the Two Column layout).
 
-If you get an unexpected result, 
-check the Different Column Layout 
+If you get an unexpected result, check
+the "Use One/Two Column Layout ..."
 setting near the end of the Body tab
 which is only accessible when using
 the Full View mode.</property>
@@ -13618,7 +13618,7 @@ Label:</property>
                                 </child>
                                 <child>
                                   <object class="GtkCheckButton" id="c_differentColLayout">
-                                    <property name="label" translatable="yes">Use Different Column
+                                    <property name="label" translatable="yes">Use One/Two Column
 Layout for These Books:</property>
                                     <property name="name">Enable 1 or 2 column layout for certain books</property>
                                     <property name="visible">True</property>
@@ -29876,28 +29876,6 @@ default to _1).</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
-                                    <property name="width-request">110</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select a particular PDF file to be compared 
-against the current output PDF. If you just 
-want to compare output to the previous run,
-then click Cancel in the File Open dialog
-to reset the filename (which will then
-default to _1).</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">center</property>
-                                    <property name="label" translatable="yes">Compare With 
-a Previous PDF:</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn_createDiff">
                                     <property name="label" translatable="yes">Create "Diff" PDF</property>
                                     <property name="name">Compare PDFs: Create 'diff' PDF</property>
@@ -30019,6 +29997,35 @@ the previous location) in the old PDF.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <signal name="button-release-event" handler="resetComparePDFfileToPrevious" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_selectDiffPDF">
+                                        <property name="width-request">110</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Select a particular PDF file to be compared 
+against the current output PDF. If you just 
+want to compare output to the previous run,
+then click Cancel in the File Open dialog
+to reset the filename (which will then
+default to _1).</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Compare With 
+a Previous PDF:</property>
+                                        <property name="xalign">1</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
