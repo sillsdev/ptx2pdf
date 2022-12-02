@@ -389,6 +389,7 @@
 %simple + separated list processing
 \def\l@stitem #1\E{}
 \newcount\it@mcount
+\newcount\prefacepages \prefacepages=0
 \def\e@chitem#1+#2\E{%
   \edef\it@mtmp{#1}\ifx\it@mtmp\empty\let\nxt@item\l@stitem\else
     \advance\it@mcount by 1
@@ -554,6 +555,38 @@
     \fi
   \fi
 }
+\x@\def\csname MS:zfillsignature\endcsname{{%
+  \get@ttribute{pagenums}%
+  \ifx\attr@b\relax\else
+    \ifcsname \attr@b pagenums\endcsname \csname attr@b pagenums\endcsname
+    \else
+      \message{valid options for pagenums attribute of zfillsignature are 'do' and 'no'}%
+    \fi
+  \fi
+  \ifdim\pagetotal>0pt
+    \pagebreak\endgraf
+  \fi
+  \get@ttribute{pages}%
+  \ifx\attr@b\relax
+    \message{pages attribute of zfillsignature must be supplied at the moment}%
+  \else
+    \trace{m}{zfillsignature \the\pageno}%
+    \expandafter\m@kenumb@r \attr@b =%
+    \count255=\@@result
+    \count254=\numexpr \prefacepages + \ifnum \pageno <0 -1\fi \pageno +\prefacepages -1\relax
+    \count253=\numexpr \count255 - (\count254 - \count255 * \numexpr \count254 / \count255 \relax) \relax
+    \trace{m}{\the\count254 pages printed, \the\count253 needed to complete the signature of \the\count255}%
+    \get@ttribute{periph}%
+    \ifx\attr@b\relax\else
+      \x@\def\x@\TPILB{\x@\zgetperiph\x@|\attr@b\*}%
+    \fi
+    \loop
+      \ifnum\count253>0
+      \zEmptyPage
+      \advance\count253 by -1
+    \repeat
+  \fi
+}}
 
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}

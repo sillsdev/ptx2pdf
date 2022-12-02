@@ -16,20 +16,20 @@
 %\tracingmacros=1
 %\tracinggroups=1
 %\tracingifs=1
-\tracing{A}
+%\tracing{A}
 \tracing{m}
-\tracing{e}
-\tracing{eb}
-\tracing{ebi}
-\tracing{s}
-%\tracing{sa}
-\tracing{sc}
-\tracing{sh}
-\tracing{sk}
-\tracing{C}
-\tracing{F}
+%\tracing{e}
+%\tracing{eb}
+%\tracing{ebi}
+%\tracing{s}
+%%\tracing{sa}
+%\tracing{sc}
+%\tracing{sh}
+%\tracing{sk}
+%\tracing{C}
+%\tracing{F}
 \tracing{T}
-\tracing{o}
+%\tracing{o}
 \tracing{V}
 \def\DebugBorderCat{footbox}
 \tracing{g}
@@ -69,7 +69,7 @@
 \ptxfile{int.usfm}
 %\tracingassigns=1
 \addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intbible\* \unprepusfm}
-\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intnt\* \unprepusfm\vskip 10pt}
+\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intnt\* \unprepusfm\vskip 10pt}\sethook{final}{afterpdfs}{\zNeedQuadPage}
 
 \ptxfile{test.usfm}
 \tracingstats=1
