@@ -354,20 +354,21 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_defaultPermissionRequest = r"""
+_defaultPermissionRequest = """
 TO: International Publishing Services Coordinator
 7500 West Camp Wisdom Road
 Dallas, TX 75236 USA\n
+I am writing to request permission to use the following David C Cook illustrations in a publication.\n
 1. The name of the country, language, Ethnologue code.
 \t[COUNTRY, Language, iso-code]\n
 2. The title of the book in the vernacular.
 \t[Fill this in]\n
 3. The kind of the book: 
-\t[Portion|New Testament|Bible]
+\t[Portion|New Testament|Bible]\n
 4. The number of books to be printed.
-\t[N,NNN] copies
-5. The number of illustrations and specific catalog number(s) of the illustration(s)/picture(s).\n
-\t[List of illustrations]
+\t[N,NNN] copies\n
+5. The number of illustrations and specific catalog number(s) of the illustration(s)/picture(s).
+\t[Number]\t[List of illustrations]\n
 [Optional statement IF Sensitive project:] 
 Due to regional sensitivities, we would like to use abbreviations in the copyright statement
 and the abbreviated form (© D.C.C.) of the watermark on each of the illustrations.\n
@@ -4614,6 +4615,7 @@ class GtkViewModel(ViewModel):
         self.wiggleCurrentTabLabel()
 
     def onRequestPicturePermission(self, btn):
+        print(f"{self.artpgs=}")
         if self.artpgs is not None:
             for a,v in self.artpgs:
                 print(f"{a}\t{v}")
