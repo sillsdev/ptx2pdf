@@ -86,7 +86,7 @@
 \def\d@spine{%
   \ifrotatespine
     \trace{cov}{Rotating spine}%
-    \setbox0\hbox{\c@verbit{spine}{\topskip=1pt plus 1fil \csname periphcontents=spine\endcsname}}%
+    \setbox0\hbox{\c@verbit{spine}{\topskip=1pt \vfill\csname periphcontents=spine\endcsname\vfill}}%
     \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
     \raise\dp0 \box0
@@ -117,7 +117,7 @@
   }%
   \def\pagecontents{\copy0}\plainoutput
   \showbox0
-  \ship@utcoverinsert{cover}{\box0}{\coverX}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+  \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
 }
 
 \plugin@endif
