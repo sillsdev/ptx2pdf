@@ -1584,11 +1584,13 @@
 \StorePeriph{intgospels}
 \StorePeriph{intepistles}
 \StorePeriph{intletters}
+\StorePeriph{frontcover}
+\StorePeriph{backcover}
 \StorePeriph{cover}
 \StorePeriph{spine}
 
 
-\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}}
+\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
 \def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{endperiph}\global\let\periph@@@\empty}
 
 \newif\ifStorePeriph\StorePeriphtrue
@@ -1609,6 +1611,7 @@
       \let\attr@b\empty
     \fi
   \fi
+  \trace{s}{Setting periph@@@ to `\attr@b` (#2)}%
   \global\let\periph@@@\attr@b
   \the\@idhooks
   \tempfalse
@@ -1617,7 +1620,7 @@
     \ifcsname storeperiph-\attr@b\endcsname \temptrue\fi
   \fi
   \iftemp
-    %\tracingassigns=1
+    \tracingassigns=1
     \let\n@xt\getp@riphlines
   \else 
     \egroup

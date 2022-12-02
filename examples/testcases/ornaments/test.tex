@@ -1,6 +1,7 @@
-\def\pluginlist{ornaments}
+\def\pluginlist{ornaments,cover}
 \input "paratext2.tex"
 \catcode`\@=11
+\tracing{m}
 \pluginjustwarntrue
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
@@ -22,7 +23,7 @@
 \FontSizeUnit=0.833pt
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
-
+\CropMarkstrue
 % HEADERFOOTER
 \def\HeaderPosition{0.33}
 \def\FooterPosition{0.5}
@@ -182,4 +183,14 @@
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
 \ptxfile{test.usfm}
+\makeatletter
+\showboxdepth=9
+\showboxbreadth=99
+\tracing{e}
+\tracing{cov}
+\prepusfm
+\BookOpenLefttrue
+\m@kecover
+\unprepusfm
+
 \bye

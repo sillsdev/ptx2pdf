@@ -1,5 +1,23 @@
 \id TST Test file
 \h small test file
+\periph front|frontcover
+\p ~
+\vfill
+\mt1 front
+\vfill
+\p ~
+\p
+
+\periph spine|spine
+\pc This is the spine
+\p
+\periph back|backcover
+\vfill
+\mt1 back
+\vfill
+\p
+\zendperiph
+
 \mt Ornaments Demonstration File
 \c 1
 \s This is demonstration file 
@@ -162,8 +180,8 @@ v:\zornament |pattern="1|v"\*
 
 \s1 The default ornaments  (vectorian)
 \p
-\testornamentsv
+\rem \testornamentsv
 
 \s1 pgfhan ornaments
 \p
-\testornamentsh
+\rem \testornamentsh
