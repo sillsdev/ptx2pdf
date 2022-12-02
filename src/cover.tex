@@ -1,0 +1,123 @@
+%:strip
+% This optional plugin (see ptx-plugins) provides ptx2pdf users with 
+% access to decorative ornaments distributed as part of latex package pgfornaments,
+% It does not include those ornaments, which are available at https://www.ctan.org/pkg/pgfornament
+%
+% This code thus includes a  XeTeX-specific, partial reimplementation of some portions
+% of the pgfornament package to use the pgf-vectorian (and other) ornaments,
+% but without loading (any of) pgf. 
+% It also adds auto-filling and scaling functionality not found in that original package.
+%
+% Copyright (c) 2021 by SIL International written by David Gardner
+%
+% Some portions of this code derive from the pgfornament.sty file  (v0.2)
+%  (C) 2016 Alain Matthes,  which was released under LaTeX Project Public
+%  License. 
+% Other portions de-abstract the abstraction layers from the pdf drivers from
+% the pgf package, released under the same licence.
+% 
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\plugin@startif{cover}
+\x@\edef\csname cover-x-spine\endcsname{\the\PaperHeight}
+\x@\edef\csname cover-y-spine\endcsname{11mm}
+\x@\edef\csname cover-x-front\endcsname{\the\PaperWidth}
+\x@\edef\csname cover-y-front\endcsname{\the\PaperHeight}
+\x@\edef\csname cover-x-back\endcsname{\the\PaperWidth}
+\x@\edef\csname cover-y-back\endcsname{\the\PaperHeight}
+\x@\edef\csname cover-bleed\endcsname{10mm}
+\newif\ifrotatespine
+\rotatespinetrue
+\def\c@verbit#1#2{%
+  %\tracingall
+  \h@ldfigtrue
+  \bgroup
+    \PaperHeight=\the\dimexpr\csname cover-y-#1\endcsname \relax
+    \PaperWidth=\the\dimexpr\csname cover-x-#1\endcsname\relax
+    \hsize=\PaperWidth
+    \esb\cat cover_#1\cat*#2\esbe%
+    \hbox{\box\wholepagepic}%
+  \egroup
+} 
+
+\def\cover@maths{%
+  \global\rotatespinefalse
+  \bgroup\s@tc@tprefix{cover_spine}\getsbp@ram{sbarrotation}%
+  \message{Rotating spine? \cp@ram}%
+  \ifx\cp@ram\relax\else
+    \trace{cov}{Rotating spine?}%
+    \ifcsname geom@xform@\cp@ram\endcsname
+      \setgeomtransform{\cp@ram}%
+      \message{Rotating spine? \cp@ram => \pdf@aa / \pdf@ab}%
+      \ifnum \pdf@aa=0 
+	\global\rotatespinetrue
+      \fi
+      \ifnum \pdf@ab=1
+        \global\let\r@tSet\r@cwSet%
+      \else
+        \global\let\r@tSet\r@acwSet%
+      \fi
+    \fi
+  \fi\egroup
+  \x@\edef\csname cover-x-whole\endcsname{\the\dimexpr \csname cover-x-front\endcsname + \csname cover-x-back\endcsname\relax + \csname cover-bleed\endcsname * 2\relax}
+  \x@\edef\csname cover-y-whole\endcsname{\the\dimexpr \csname cover-y-front\endcsname + \csname cover-bleed\endcsname *2\relax}
+  \edef\coverX{\the\dimexpr \csname cover-\ifrotatespine y\else x\fi -spine\endcsname + \csname cover-x-front\endcsname + \csname cover-x-back\endcsname \relax}%
+  \edef\coverY{\the\dimexpr \csname cover-y-front\endcsname \relax}%
+  \edef\coverXbleed{\the\dimexpr \coverX+\dimexpr \csname cover-bleed\endcsname \relax\relax}%
+  \edef\coverYbleed{\the\dimexpr \coverY+2\dimexpr \csname cover-bleed\endcsname \relax\relax}%
+  \trace{cov}{Cover maths: \coverX, \coverY, \coverXbleed, \coverYbleed}%
+  % TODO:
+  %  Increase boxPadding by bleed on top,bottom and outer sides  of cover_{front,spine,back}
+  %  Similarly, decrease borderPadding by bleed
+  %  
+}
+\def\d@spine{%
+  \ifrotatespine
+    \trace{cov}{Rotating spine}%
+    \setbox0\hbox{\c@verbit{spine}{\topskip=1pt plus 1fil \csname periphcontents=spine\endcsname}}%
+    \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
+    \setbox0\hbox{\rot@tebz}%
+    \raise\dp0 \box0
+    \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
+  \else
+    \trace{cov}{NOT Rotating spine??}%
+    \c@verbit{spine}{\topskip=0pt \csname periphcontents=spine\endcsname}%
+  \fi
+}
+
+\def\m@kecover{%
+  \tracingassigns=1
+  \cover@maths
+  \tracingassigns=0
+  \setbox0\hbox{%
+    \c@verbit{whole}{\topskip=0pt 
+  %    \tracingall
+      \ifBookOpenLeft
+	\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}%
+	\d@spine
+	\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+      \else
+	\hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}%
+	\d@spine
+	\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+      \fi
+    }%
+  }%
+  \def\pagecontents{\copy0}\plainoutput
+  \showbox0
+  \ship@utcoverinsert{cover}{\box0}{\coverX}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+}
+
+\plugin@endif
