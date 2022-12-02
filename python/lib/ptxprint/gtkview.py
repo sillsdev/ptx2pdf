@@ -354,29 +354,6 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_defaultPermissionRequest = """
-TO: International Publishing Services Coordinator
-7500 West Camp Wisdom Road
-Dallas, TX 75236 USA\n
-I am writing to request permission to use the following David C Cook illustrations in a publication.\n
-1. The name of the country, language, Ethnologue code.
-\t[COUNTRY, Language, iso-code]\n
-2. The title of the book in the vernacular.
-\t[Fill this in]\n
-3. The kind of the book: 
-\t[Portion|New Testament|Bible]\n
-4. The number of books to be printed.
-\t[N,NNN] copies\n
-5. The number of illustrations and specific catalog number(s) of the illustration(s)/picture(s).
-\t[Number]\t[List of illustrations]\n
-[Optional statement IF Sensitive project:] 
-Due to regional sensitivities, we would like to use abbreviations in the copyright statement
-and the abbreviated form (© D.C.C.) of the watermark on each of the illustrations.\n
-Blessings,
-Requester's Name
-My SIL Entity
-"""
-
 _notebooks = ("Main", "Viewer", "PicList", "fnxr")
 
 # Vertical Thumb Tab Orientation options L+R
@@ -4616,9 +4593,40 @@ class GtkViewModel(ViewModel):
 
     def onRequestPicturePermission(self, btn):
         print(f"{self.artpgs=}")
+####### This bit needs fixing still.
         if self.artpgs is not None:
             for a,v in self.artpgs:
                 print(f"{a}\t{v}")
-        self.doError("SIL Illustration Permission Request", secondary=_defaultPermissionRequest, 
-                      title="PTXprint", copy2clip=True, show=True, 
+        picount = "10"
+        picturelist = "Cn01656c, CN01667C, cn01800C, CN01875C, CN01782C, Cn01739C, CN01700C, CN01769C, cn01815C, cn01857c"
+####### This bit needs fixing still.
+        if self.get('c_sensitive'):
+            sensitive = "Due to regional sensitivities, we would like to use the abbreviated form " + \
+            "(© D.C.C.) in the copyright statement and for the watermark on each illustration.\n"
+        else:
+            sensitive = ""
+        _permissionRequest = """
+TO: International Publishing Services Coordinator
+7500 West Camp Wisdom Road
+Dallas, TX 75236 USA\n
+I am writing to request permission to use the following David C Cook illustrations in a publication.\n
+1. The name of the country, language, Ethnologue code.
+\t{}, {}, {}\n
+2. The title of the book in the vernacular.
+\t{}\n
+3. The kind of book: 
+\t{}\n
+4. The number of books to be printed.
+\t{} copies\n
+5. The number of illustrations and specific catalog number(s) of the illustrations/pictures.
+\t{} illustrations:\n{}\n{}
+Blessings,
+<Requester's Name>
+<SIL Entity>
+""".format(self.getvar("country") or "<Country>", self.getvar("languagename") or "<Language>", \
+           self.getvar("langiso") or "<Ethnologue code>", self.getvar("maintitle") or "<Title>", \
+           self.getvar("pubtype") or "<[Portion|NT|Bible]>", self.getvar("copiesprinted") or "<99>", \
+           picount, picturelist, sensitive)
+        self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
+                      title="PTXprint", copy2clip=True, show=True, \
                       who2email="scripturepicturepermissions_intl@sil.org")
