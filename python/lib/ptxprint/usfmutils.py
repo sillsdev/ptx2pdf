@@ -770,6 +770,9 @@ class Module:
                 del e.parent[curr+1]
             for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
                 if r.first.verse == 1:
+                    if not isinstance(r, RefRange):
+                        r = RefRange(r.first, r.first.copy())
+                        r.last.verse = 1
                     r.first.verse = 0
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":

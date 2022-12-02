@@ -190,6 +190,9 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
+    def lock_widget(self):
+        pass
+
     def baseTeXPDFnames(self, bks=None, diff=False):
         if bks is None:
             bks = self.getBooks(files=True)
@@ -984,7 +987,7 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
@@ -1024,6 +1027,8 @@ class ViewModel:
                                 val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
+                            if lock:
+                                self.lock_widget(v[0])
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":

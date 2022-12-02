@@ -548,6 +548,7 @@ class GtkViewModel(ViewModel):
         self.warnedSIL = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
+        self.locked = set()
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -1532,6 +1533,9 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
+    def lock_widget(self, wid):
+        self.locked.add(wid)
+
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
             state = self.get(k)
@@ -1546,18 +1550,18 @@ class GtkViewModel(ViewModel):
                         anyset = s
                     for w in v:
                         wid = self.builder.get_object(w)
-                        if wid is not None:
+                        if wid is not None and wid not in self.locked:
                             wid.set_sensitive(l(s))
                 if not anyset:
                     v = list(d[k].values())[0]
                     for w in v:
                         wid = self.builder.get_object(w)
-                        if wid is not None:
+                        if wid is not None and wid not in self.locked:
                             wid.set_sensitive(l(s))
             else:
                 for w in d[k]:
                     wid = self.builder.get_object(w)
-                    if wid is not None:
+                    if wid is not None and wid not in self.locked:
                         wid.set_sensitive(l(state))
         if focus and k in _sensitivities:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
