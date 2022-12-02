@@ -1,8 +1,125 @@
 PTXprint 2.2.41 Release Notes
-21 Nov 2022
+2 Dec 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.42 (2 Dec 2022)
+
+(Note: This is a post-workshop release with a large number of minor changes
+       made as a result of feedback from participants.)
+   
+  * Added various blank/empty page controls (zEmptyPage, zNeed[Odd|Even|Quad]Page)
+  
+  * Added between hooks 
+  
+  * Added MarkAdjustPoints
+  
+  * Add cv hook for GEN1.0 etc (before chap number)
+  
+  * Add cv hook for all1.0 etc (before chap number)
+  
+  * Added \zornament milestone
+  
+  * Treat p_95 as p in occursunder hierarchy
+  
+  * Allow line final \ extension in changes.txt files
+  
+  * Add snippet to change glossary page numbering
+  
+  * Select marker after adding a new marker in style editor
+  
+  * Add sm@rtquotes to enable smart quotes alongside liter@lkerns to turn them off
+  
+  * Display status line for no differences found when comparing pdfs
+  
+  * Output gray CMYK as gray
+  
+  * Update Base Indent wording
+  
+  * attempt to fix missing definitions for diglot defs
+  
+  * Invert model controls for module inclusions; x-credit background default to white
+  
+  * Set first verse of module ref range to 0 if 1
+  
+  * href-targets should also be reference labels.
+  
+  * Tweak UI range values for left indent and border width
+  
+  * correct occursunder for esb
+  
+  * Fixed textborders
+  
+  * Fix accidental forced-space in endlastparstyle
+  
+  * ifClipOrnaments (Ornaments by default clip themselves to a certain box. That box 
+    is sometimes just too small for real beauty, so clipping has been disabled. 
+    \ClipOrnamentstrue restores previous behaviour.)
+  
+  * Fix a bug where zrule was defining the category badly
+  
+  * Fix ornaments problem
+  
+  * Push merged footnotes down to bottom of page
+  
+  * Work around odd SFM in merging
+  
+  * Get \mod working
+  
+  * RTL non-paragraphed notes get the 1st Line indent correct
+  
+  * First line indent for footnotes
+  
+  * RTL support for paragraphed-notes first line indent
+  
+  * Use embedded styles for \w
+
+  * Don't read reference separators from Paratext Settings if RTL
+  
+  * Fix RTL reference separators
+  
+  * Include \periph in output FRT etc. as opposed to stripping it
+  
+  * Change local FRT to use .SFM instead of .tex (MJ)
+  
+  * Implement \ztocbefore and ...after
+  
+  * Added \zfooter to enable footer styling
+  
+  * Exemplify empty cell in table
+  
+  * try to do a better job on headers
+  
+  * fix style leaks, finally?
+  
+  * Apply header/footer font changes in the right place
+  
+  * Fix finalising output formats
+  
+  * Fix PDF/X1-A headers
+  
+  * Add upwardsHackDiff
+  
+  * Fix activ@tecustomchars not early enough
+  
+  * Exec .py in private context
+  
+  * Fix edge case bugs in reference sequences
+  
+  * Make imported modules look in same place as original module
+  
+  * Fix incorrect borders on partial 
+  
+  * Preserve spaces after forward slash
+  
+  * Fix bookend-final error
+  
+  * Do not apply rotated dimensions to graphic images
+  
+  * Fix broken \zgetperph for people who do not include INT
+  
+  * Fix tabs in python, make \zgetperiph diglot-aware
+  
 Bug fixes and improvements in 2.2.41 (21 Nov 2022)
   
   * Read Reference Separators from Settings.xml if possible
