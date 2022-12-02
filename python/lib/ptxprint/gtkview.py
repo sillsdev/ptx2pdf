@@ -554,6 +554,7 @@ class GtkViewModel(ViewModel):
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         self.locked = set()
+        self.spine = 0
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -4570,15 +4571,15 @@ class GtkViewModel(ViewModel):
             # Value below is from Pretore's paper thickness calculations 
             #                     (GSM/um, 36/43, 40/47, 50/60, 60/70)
             thck = thck / .845 
-        spine = (thck * pgs / 2000) + adj
+        self.spine = (thck * pgs / 2000) + adj
 
         showSpine = self.sensiVisible("c_inclSpine")
         for w in ["vp_spine", "lb_style_cat:cover-spine|esb"]:
             self.builder.get_object(w).set_visible(showSpine)
         self.builder.get_object("lb_style_cat:cover-spine|esb").set_visible(self.get("c_inclSpine"))
-        thick = spine * 4
+        thick = self.spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
-        self.builder.get_object("l_spineWidth").set_label(f"{spine:.3f}mm")
+        self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
 
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]

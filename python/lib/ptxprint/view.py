@@ -47,9 +47,6 @@ FontModelMap = {
     "fontextraregular": ("bl_fontExtraR", None)
 }
 
-_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
-                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
-
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
@@ -199,12 +196,8 @@ class ViewModel:
     def lock_widget(self):
         pass
 
-    def baseTeXPDFnames(self, bks=None, diff=False, outformat=None):
+    def baseTeXPDFnames(self, bks=None, diff=False):
         components = {}
-        if outformat is None:
-            of = self.get("fcb_outputFormat")
-            outformat = _outputPDFtypes.get(of, "")
-        components['format'] = "_"+outformat if len(outformat) else ""
         if bks is None:
             bks = self.getBooks(files=True)
         if len(bks) > 1:
@@ -222,7 +215,7 @@ class ViewModel:
             cfgname = "_" + cfgname
         components['config'] = cfgname
         components['prjid'] = self.prjid
-        fname = "{prjid}{config}_{bks}_ptxp{format}".format(**components)
+        fname = "{prjid}{config}_{bks}_ptxp".format(**components)
             
         if diff:
             return [fname, fname+"_diff"]

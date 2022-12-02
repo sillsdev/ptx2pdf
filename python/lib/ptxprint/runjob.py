@@ -81,6 +81,9 @@ _pdfmodes = {
     'cmyk': ("CMYK", "Transparency")
 }
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
+                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 _unitpts = {
     'mm': 2.845275591,
     'in': 72.27,
@@ -641,10 +644,12 @@ class RunJob:
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, outfname[:-4])
+        pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", ""))
+        pdfext = "_" + pdfext if len(pdfext) else ""
         if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
+            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+"{}.pdf".format(pdfext)) 
         else:
-            pdffile = outpath + ".pdf"
+            pdffile = outpath + "{}.pdf".format(pdfext)
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:

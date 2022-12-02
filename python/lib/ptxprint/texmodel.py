@@ -280,7 +280,7 @@ ModelMap = {
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/printarchive":    ("c_printArchive", None),
 
-    "cover/makecoverpage":      ("c_makeCoverPage", None),
+    "cover/makecoverpage":      ("c_makeCoverPage", lambda w,v: "" if v else "%"),
     "cover/rtlbinding":         ("c_RTLcoverBinding", None),
     "cover/includespine":       ("c_inclSpine", None),
     "cover/rotatespine":        ("fcb_rotateSpineText", None),
@@ -705,6 +705,8 @@ class TexModel:
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
+        self.dict['cover/spinewidth_'] = self.printer.spine
+
 
     def updatefields(self, a):
         global get
@@ -1782,17 +1784,17 @@ class TexModel:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
-                        self.printer.artpgs.setdefault(f[5], []).append(int(f[0]))
+                        self.printer.artpgs.setdefault(f[5], {})[f[1]] = int(f[0])
                     elif a == '':
-                        self.printer.artpgs.setdefault('zz', []).append(int(f[0]))
+                        self.printer.artpgs.setdefault('zz', {})[f[1]] = int(f[0])
                         msngPgs += [f[0]] 
                     else:
-                        self.printer.artpgs.setdefault(a, []).append(int(f[0]))
+                        self.printer.artpgs.setdefault(a, {})[f[1]] = int(f[0])
             artistWithMost = ""
             if len(self.printer.artpgs):
                 artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
                 if len(artpgcmp):
-                    artistWithMost = max(artpgcmp, key=lambda x: len(set(self.printer.artpgs[x])))
+                    artistWithMost = max(artpgcmp, key=lambda x: len(self.printer.artpgs[x].values()))
 
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
@@ -1812,7 +1814,7 @@ class TexModel:
                 for art, pgs in self.printer.artpgs.items():
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
-                            pgs = sorted(set(pgs))
+                            pgs = sorted(pgs.values())
                             plurals = pluralstr(plstr, pgs)
                             artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                             if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
@@ -1837,7 +1839,7 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        pgs = self.printer.artpgs[artistWithMost]
+                        pgs = sorted(self.printer.artpgs[artistWithMost].values())
                         plurals = pluralstr(plstr, pgs)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                         if sensitive and "sensitive" in artinfo:
