@@ -47,6 +47,9 @@ FontModelMap = {
     "fontextraregular": ("bl_fontExtraR", None)
 }
 
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
+                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
+
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
 
@@ -196,21 +199,28 @@ class ViewModel:
         pass
 
     def baseTeXPDFnames(self, bks=None, diff=False):
+        components = {}
+        of = self.get("fcb_outputFormat")
+        oft = _outputPDFtypes.get(of, "")
+        components['format'] = "_"+oft if len(oft) else ""
         if bks is None:
             bks = self.getBooks(files=True)
-        cfgname = self.configName()
+        if len(bks) > 1:
+            components['bks'] = "{}-{}".format(bks[0], bks[-1])
+        elif '.' in bks[0]:
+            components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
+        else:
+            components['bks'] = bks[0]
         if self.working_dir == None:
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", cfgname)
+        cfgname = self.configName()
         if cfgname is None:
             cfgname = ""
         else:
-            cfgname = "-" + cfgname
-        if len(bks) > 1:
-            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
-        elif "." in bks[0]:
-            fname = "ptxprint{}-{}{}".format(cfgname, os.path.splitext(os.path.basename(bks[0]))[0], self.prjid)
-        else:
-            fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
+            cfgname = "_" + cfgname
+        components['config'] = cfgname
+        components['prjid'] = self.prjid
+        fname = "{prjid}{config}_{bks}_ptxp{format}".format(**components)
             
         if diff:
             return [fname, fname+"_diff"]
@@ -695,6 +705,14 @@ class ViewModel:
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
+        for opath, locked in  ((os.path.join(self.configPath(cfgname, makePath=False), "ptxprint_override.cfg"), True),
+                (os.path.join(self.configPath(cfgname, makePath=False), '..', 'ptxprint_project.cfg'), False)):
+            if not os.path.exists(opath):
+                continue
+            oconfig = configparser.ConfigParser()
+            self.versionFwdConfig(oconfig, cfgname)
+            self.localiseConfig(oconfig)
+            self.loadConfig(oconfig, lock=locked, updatebklist=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
