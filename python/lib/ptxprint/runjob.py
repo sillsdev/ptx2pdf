@@ -12,6 +12,7 @@ from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
+from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError
 from ptxprint.pdfrw.objects import PdfDict, PdfString
@@ -775,9 +776,14 @@ class RunJob:
             return opath
         return pdffile
 
-    def procpdf(self, outfname, pdffile, info):
+    def procpdf(self, outfname, pdffile, info, **kw):
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
+        if 'cover' in kw:
+            outpdf = PdfReader(opath)
+            extras = split_pages(outpdf)
+            if 'cover' in extras:
+                fixpdffile(outpdf, outfname.replace(".tex", "_cover.pdf"), colour="cmyk")
         colour = None
         params = {}
         if self.ispdfxa == "Spot":

@@ -29,8 +29,8 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.41"
-GitVersionStr = "2.2.41"
+VersionStr = "2.2.42"
+GitVersionStr = "2.2.42"
 ConfigVersion = "2.12"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -49,6 +49,8 @@ FontModelMap = {
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
+
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent", "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
 
 def doError(txt, secondary=None, **kw):
     print(txt)
@@ -189,6 +191,9 @@ class ViewModel:
 
     def clearvars(self):
         self.pubvars = {}
+
+    def lock_widget(self):
+        pass
 
     def baseTeXPDFnames(self, bks=None, diff=False):
         if bks is None:
@@ -984,7 +989,7 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
@@ -1024,6 +1029,8 @@ class ViewModel:
                                 val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
+                            if lock:
+                                self.lock_widget(v[0])
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
@@ -1679,7 +1686,7 @@ set stack_size=32768""".format(self.configName())
     def createSettingsZip(self, outf):
         res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
         sdir = self.configPath(self.configName())
-        for d in (None, 'AdjLists'):
+        for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
             if not os.path.exists(ind):
                 continue

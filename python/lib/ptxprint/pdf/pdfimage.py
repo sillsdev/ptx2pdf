@@ -147,8 +147,8 @@ class PDFImage:
         if self.spotc is None:
             if self.spotb is not None:
                 self.img = Image.fromarray((self.spotb * 255).astype(np.uint8), "L")
-            if False and self.colorspace == "/DeviceCMYK":
-                res.stream = self.img.tobytes()
+            if self.colorspace == "/DeviceCMYK":    # Temporary workaround bug in DCTEncoder for CMYK.
+                res.stream = self.img.tobytes()     # Makes for big files :(
                 res.Binary = True
             else:
                 stream = io.BytesIO()
