@@ -113,6 +113,7 @@ class ViewModel:
         self.font2baselineRatio = 1.
         self.docreatediff = False
         self.strongs = None
+        self.artpgs = None
 
         # private to this implementation
         self.dict = {}
@@ -198,11 +199,12 @@ class ViewModel:
     def lock_widget(self):
         pass
 
-    def baseTeXPDFnames(self, bks=None, diff=False):
+    def baseTeXPDFnames(self, bks=None, diff=False, outformat=None):
         components = {}
-        of = self.get("fcb_outputFormat")
-        oft = _outputPDFtypes.get(of, "")
-        components['format'] = "_"+oft if len(oft) else ""
+        if outformat is None:
+            of = self.get("fcb_outputFormat")
+            outformat = _outputPDFtypes.get(of, "")
+        components['format'] = "_"+outformat if len(outformat) else ""
         if bks is None:
             bks = self.getBooks(files=True)
         if len(bks) > 1:

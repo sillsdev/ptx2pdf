@@ -1760,7 +1760,7 @@ class TexModel:
         return "\n".join(res)
 
     def generateImageCopyrightText(self):
-        artpgs = {}
+        self.printer.artpgs = {}
         mkr='pc'
         sensitive = self['document/sensitive']
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
@@ -1782,17 +1782,17 @@ class TexModel:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
-                        artpgs.setdefault(f[5], []).append(int(f[0]))
+                        self.printer.artpgs.setdefault(f[5], []).append(int(f[0]))
                     elif a == '':
-                        artpgs.setdefault('zz', []).append(int(f[0]))
+                        self.printer.artpgs.setdefault('zz', []).append(int(f[0]))
                         msngPgs += [f[0]] 
                     else:
-                        artpgs.setdefault(a, []).append(int(f[0]))
+                        self.printer.artpgs.setdefault(a, []).append(int(f[0]))
             artistWithMost = ""
-            if len(artpgs):
-                artpgcmp = [a for a in artpgs if a != 'zz']
+            if len(self.printer.artpgs):
+                artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
                 if len(artpgcmp):
-                    artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
+                    artistWithMost = max(artpgcmp, key=lambda x: len(set(self.printer.artpgs[x])))
 
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
@@ -1809,7 +1809,7 @@ class TexModel:
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
-                for art, pgs in artpgs.items():
+                for art, pgs in self.printer.artpgs.items():
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
                             pgs = sorted(set(pgs))
@@ -1837,7 +1837,7 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        pgs = artpgs[artistWithMost]
+                        pgs = self.printer.artpgs[artistWithMost]
                         plurals = pluralstr(plstr, pgs)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                         if sensitive and "sensitive" in artinfo:
