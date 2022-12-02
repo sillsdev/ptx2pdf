@@ -1496,7 +1496,13 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
         self.onExtListSourceChanges(None)
         # self.onExpertModeClicked(None)
-
+        x = self.get("btn_selectDiffPDF")
+        if x is not None:
+            self.makeLabelBold("l_selectDiffPDF", True)
+            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
+        else:
+            self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        
     def colorTabs(self):
         # col = "crimson"
         col = "#0000CD"
@@ -1626,7 +1632,13 @@ class GtkViewModel(ViewModel):
             # if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
                # self.set("r_{}pos".format(fx), "normal")
         # for w in ("l_colXRside", "fcb_colXRside"):
-            # self.builder.get_object(w).set_visible(not btn.get_active())            
+            # self.builder.get_object(w).set_visible(not btn.get_active())
+
+    def setOneTwoColumnLabel(self):
+        if self.get("c_doublecolumn"):
+            self.builder.get_object("c_differentColLayout").set_label(_("Use One Column\nLayout for These Books:"))
+        else:
+            self.builder.get_object("c_differentColLayout").set_label(_("Use Two Column\nLayout for These Books:"))
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -3336,6 +3348,22 @@ class GtkViewModel(ViewModel):
                 "diffPDF", "diffPDF", btn_selectDiffPDF, False)
         if self.get("lb_diffPDF") == "":
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
+            self.makeLabelBold("l_selectDiffPDF", False)
+        else:
+            self.makeLabelBold("l_selectDiffPDF", True)
+
+    def makeLabelBold(self, lbl, bold=True):
+        lb = self.builder.get_object(lbl)
+        ctxt = lb.get_style_context()
+        if not bold:
+            ctxt.remove_class("changed")
+        else:
+            ctxt.add_class("changed")
+
+    def resetComparePDFfileToPrevious(self, btn, foo):
+        self.makeLabelBold("l_selectDiffPDF", False)
+        self.set("btn_selectDiffPDF", None)
+        self.set("lb_diffPDF", _("Previous PDF (_1)"))
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
@@ -4016,7 +4044,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_adjust_{}".format(w)).set_sensitive(clickable)
     
     def updateMarginGraphics(self):
-
+        self.setOneTwoColumnLabel()
         for tb in ["top", "bot", "nibot"]:
             self.builder.get_object("img_{}grid".format(tb)).set_visible(False)
             self.builder.get_object("img_{}vrule".format(tb)).set_visible(False)
@@ -4558,3 +4586,5 @@ class GtkViewModel(ViewModel):
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()
+
+        
