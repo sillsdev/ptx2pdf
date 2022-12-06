@@ -45,9 +45,10 @@
   \h@ldfigtrue
   \ble@dtrue
   \bgroup
+    %\def\t@stsz{.3333}%
     \def\t@stsz{1}%
-    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname \relax\relax
-    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname \relax\relax
+    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname +\tble@d+\bble@d\relax\relax
+    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2\esbe%
     \hbox{\box\wholepagepic}%
@@ -73,7 +74,7 @@
       \fi
     \fi
   \fi\egroup
-  \x@\edef\csname cover-x-whole\endcsname{\the\dimexpr \csname cover-x-front\endcsname + \csname cover-x-back\endcsname\relax + \csname cover-bleed\endcsname * 2\relax}
+  \x@\edef\csname cover-x-whole\endcsname{\the\dimexpr \csname cover-\ifrotatespine y\else x\fi -spine\endcsname +\csname cover-x-front\endcsname + \csname cover-x-back\endcsname\relax + \csname cover-bleed\endcsname * 2\relax}
   \x@\edef\csname cover-y-whole\endcsname{\the\dimexpr \csname cover-y-front\endcsname + \csname cover-bleed\endcsname *2\relax}
   \edef\coverX{\the\dimexpr \csname cover-\ifrotatespine y\else x\fi -spine\endcsname + \csname cover-x-front\endcsname + \csname cover-x-back\endcsname \relax}%
   \edef\coverY{\the\dimexpr \csname cover-y-front\endcsname \relax}%
@@ -104,13 +105,13 @@
 }}
 
 \def\leftble@d{%
-  %\edef\lble@d{\csname cover-bleed\endcsname}%
+  \edef\lble@d{\csname cover-bleed\endcsname}%
   %\edef\tble@d{\csname cover-bleed\endcsname}%
   %\edef\bble@d{\csname cover-bleed\endcsname}%
 }
 \def\rightble@d{%
   \edef\rble@d{\csname cover-bleed\endcsname}%
-  %\edef\tble@d{\csname cover-bleed\endcsname}%
+  \edef\tble@d{\csname cover-bleed\endcsname}%
   %\edef\bble@d{\csname cover-bleed\endcsname}%
 }
 
@@ -123,25 +124,37 @@
     \cover@maths
     %\tracingassigns=0
     \setbox0\hbox{%
+      \BoxLikeBorderfalse
       \c@verbit{whole}{\topskip=0pt 
     %    \tracingall
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}%
+          \vrule height 1pt depth 0pt width \border@rpadding }%
           \d@spine
-          {\rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
+          {\vrule height 1pt depth 0pt width \border@lpadding 
+          \rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
         \else
-          \hbox{{\leftble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
-          \d@spine
-          {\rightble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}}%
+          \hbox{{\leftble@d
+              \hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+              \vrule height 1pt depth 0pt width -\border@rpadding
+            }%
+            \d@spine
+            {\rightble@d
+              \setbox0\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+              \edef\tmp@r{\the\dimexpr \tble@d+\bble@d\relax}\trace{cov}{raising by \tmp@r (\the\dp0}%
+              % \kern \b@dr@left@pad
+              \raise \dimexpr\tble@d+\bble@d\relax\box0
+            }%
+          }%
         \fi
       }%
-    }%
+    }%%
     \def\pagecontents{\copy0}\plainoutput
     \ifnum\interactionmode=2
       \showbox0
     \fi
-    \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
-    \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverY}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+    \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
+    \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
   \else
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
   \fi
