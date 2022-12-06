@@ -138,6 +138,7 @@
     \dimen1=#4\advance\dimen1 by \fb@bpadding
     \dimen3=\fb@lpadding 
     \dimen2=#5\advance\dimen2 by \dimen3
+    \advance\dimen2 by \fb@rpadding
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
     \f@intthing{#1}{#2}{\c@de}%
