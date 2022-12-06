@@ -807,16 +807,18 @@
     \bgroup
       \dimen1=0.99626401\PaperWidth \dimen3=\dimen1 \advance\dimen1 #6 \advance\dimen1 #6%
       \dimen2=0.99626401\PaperHeight \dimen4=\dimen2 \advance\dimen2 #6 \advance\dimen2 #6%
+      \pdfcropwidth=\PaperWidth \pdfcropwidth=0.99626401\pdfcropwidth
+      \pdfcropheight=\PaperHeight \pdfcropheight=0.99626401\pdfcropheight
       \ifdim\dimen0>0pt
-        \pdfcropwidth=\PaperWidth\advance\pdfcropwidth by 2\dimen0 \pdfcropwidth=0.99626401\pdfcropwidth
-        \pdfcropheight=\PaperHeight\advance\pdfcropheight by 2\dimen0 \pdfcropheight=0.99626401\pdfcropheight
+        \advance\pdfcropwidth by 1.99252802\dimen0
+        \advance\pdfcropheight by 1.99252802\dimen0
         \special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
-          \strip@pt{\dimen2} ] /TrimBox [\strip@pt{\dimen3} \space
-          \strip@pt{\dimen4} \space \strip@pt\pdfcropwidth \space
-          \strip@pt\pdfcropheight ] >>}
+          \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt\pdfcropwidth \space
+          \strip@pt\pdfcropheight ] >>}%
       \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen3} \space
-          \strip@pt{\dimen4} ] /TrimBox [0 0 \strip@pt{\dimen3} \space
-          \strip@pt{\dimen4} ]>> }\fi
+          \strip@pt{\dimen4} ] /TrimBox [0 0 \strip@pt{\pdfcropwidth} \space
+          \strip@pt{\pdfcropheight} ]>> }%
+      \fi
     \egroup
     \special {pdf:put @thispage <</PieceInfo <</ptxprint 
         <</LastModified (D:20221126103720Z) /Private <</Insertion #1>> >>
