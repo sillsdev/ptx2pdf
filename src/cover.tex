@@ -45,8 +45,8 @@
   \h@ldfigtrue
   \ble@dtrue
   \bgroup
-    \def\t@stsz{.33}%
-    %\def\t@stsz{1}%
+    %\def\t@stsz{.33}%
+    \def\t@stsz{1}%
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname +\tble@d+\bble@d\relax\relax
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
@@ -141,6 +141,7 @@
             \d@spine
             {\rightble@d
               \setbox0\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+              \raise \dimexpr+\bble@d\relax
               \box0
             }%
           }%
