@@ -45,8 +45,8 @@
   \h@ldfigtrue
   \ble@dtrue
   \bgroup
-    %\def\t@stsz{.3333}%
-    \def\t@stsz{1}%
+    \def\t@stsz{.33}%
+    %\def\t@stsz{1}%
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname +\tble@d+\bble@d\relax\relax
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
@@ -106,13 +106,13 @@
 
 \def\leftble@d{%
   \edef\lble@d{\csname cover-bleed\endcsname}%
-  %\edef\tble@d{\csname cover-bleed\endcsname}%
-  %\edef\bble@d{\csname cover-bleed\endcsname}%
+  \edef\tble@d{\csname cover-bleed\endcsname}%
+  \edef\bble@d{\csname cover-bleed\endcsname}%
 }
 \def\rightble@d{%
   \edef\rble@d{\csname cover-bleed\endcsname}%
   \edef\tble@d{\csname cover-bleed\endcsname}%
-  %\edef\bble@d{\csname cover-bleed\endcsname}%
+  \edef\bble@d{\csname cover-bleed\endcsname}%
 }
 
 \def\m@kecover{%
@@ -135,15 +135,13 @@
           \rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
         \else
           \hbox{{\leftble@d
-              \hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
-              \vrule height 1pt depth 0pt width -\border@rpadding
+              \setbox0\hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+              \box0
             }%
             \d@spine
             {\rightble@d
               \setbox0\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
-              \edef\tmp@r{\the\dimexpr \tble@d+\bble@d\relax}\trace{cov}{raising by \tmp@r (\the\dp0}%
-              % \kern \b@dr@left@pad
-              \raise \dimexpr\tble@d+\bble@d\relax\box0
+              \box0
             }%
           }%
         \fi

@@ -262,20 +262,25 @@
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
   \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\ifble@d \the\dimexpr  -\tble@d\relax\else 0pt\fi}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \ifble@d -\tble@d \fi\relax}\fi
   \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\ifble@d \the\dimexpr -\bble@d \relax\else 0pt\fi}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \ifble@d  -\bble@d\fi\relax}\fi
-  \getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else\xdef\fb@tpadding{\the\dimexpr \cp@ram pt \ifble@d +\tble@d \fi \relax}\fi
-  \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else\xdef\fb@bpadding{\the\dimexpr \cp@ram pt \ifble@d +\bble@d\fi \relax}\fi
+  \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\tble@d \fi \relax}%
+  \getsbp@ram{boxbpadding}\xdef\fb@bpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\tble@d \fi \relax}%
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
   \getsbp@ram{properties}\let\b@drprop\cp@ram
 } 
+
+\def\@get@Hborder@style@params{%Read the border-related parameters
+  \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker}%
+  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifble@d \the\dimexpr -\lble@d\relax\else 0pt\fi}\else\edef\border@lpadding{\the\dimexpr \cp@ram pt \ifble@d - \lble@d\fi\relax}\fi
+  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifble@d \the\dimexpr -\rble@d\relax\else 0pt\fi}\else\edef\border@rpadding{\the\dimexpr \cp@ram pt \ifble@d - \rble@d\fi\relax}\fi
+  \getsbp@ram{boxlpadding}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\lble@d \fi \relax}%
+  \getsbp@ram{boxrpadding}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\rble@d \fi \relax}%
+}
 \def\get@border@style@params{%Read the border-related parameters
   \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
+  \@get@Hborder@style@params
   %\tracingassigns=1
-  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifble@d -\lble@d\else 0pt\fi}\else\edef\border@lpadding{\the\dimexpr \cp@ram pt \ifble@d - \lble@d\fi\relax}\fi
-  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifble@d -\rble@d\else 0pt\fi}\else\edef\border@rpadding{\the\dimexpr \cp@ram pt \ifble@d - \rble@d\fi\relax}\fi
-  \getsbp@ram{boxlpadding}\ifx\cp@ram\relax\else\xdef\fb@lpadding{\the\dimexpr \cp@ram pt \ifble@d + \lble@d\fi \relax}\fi
-  \getsbp@ram{boxrpadding}\ifx\cp@ram\relax\else\xdef\fb@rpadding{\the\dimexpr \cp@ram pt \ifble@d + \rble@d\fi \relax}\fi
   \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
   \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \@get@Vborder@style@params
@@ -316,7 +321,7 @@
 \def\@prepVb@rderdims{% Minimal set of vertical border dimensions
   \ifhasb@rder
     \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  \ifx\b@drtop\tr@e +\border@tpadding + \b@drwidth pt  \fi\relax}% Distance to back-skip to insert border
-    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  \ifx\b@drbottom\tr@e +\border@tpadding + \b@drwidth pt  \fi\relax}%
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  \ifx\b@drbottom\tr@e +\border@bpadding + \b@drwidth pt  \fi\relax}%
   \else
     \xdef\b@dr@top@pad{0pt}%
     \xdef\b@dr@bot@pad{0pt}%
@@ -335,8 +340,8 @@
   \ch@ckhasb@rder
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
-    \edef\b@dr@top@edge{\the\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  +\fi\fi  \fb@tpadding\relax}%
-    \edef\b@dr@bot@edge{\the\dimexpr\ifx\b@drbottom\tr@e \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt +\fi\fi  \fb@bpadding\relax}%
+    \edef\b@dr@top@edge{\the\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi\fi  +\fb@tpadding\relax}%
+    \edef\b@dr@bot@edge{\the\dimexpr\ifx\b@drbottom\tr@e \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi\fi  +\fb@bpadding\relax}%
     %Where does the border go relative to the contents? (Subtliy different to 
     \@prepVb@rderdims
     \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt  \fi\relax}%
