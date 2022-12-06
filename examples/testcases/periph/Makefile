@@ -1,9 +1,11 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+# DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR:=../../../src
+FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf
 .tex.pdf:
 	-mkdir 1 2 3 4
-	TEXINPUTS=.:$(DIR)// xetex $<
+	TEXINPUTS=.:$(DIR)// FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex $<
 	#cp test.pdf test.parlocs test.delayed test.log 1
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 2; else rm  -f 2/* ; fi 
 	#if grep Rerun test.log ; then TEXINPUTS=.:$(DIR) xetex $<  && cp test.pdf test.parlocs test.delayed test.log 3;  else rm  -f 3/* ; fi 
