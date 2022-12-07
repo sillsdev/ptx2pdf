@@ -798,7 +798,6 @@
   \fi
   %\advance\PaperWidth by 2\dimen0 % increase PDF media size
   %\advance\PaperHeight by 2\dimen0
-  \hoffset=-1in \advance\hoffset -#6 \voffset=-1in \advance\voffset -#6 % shift the origin to (0,0)
   \let\pr@tect=\noexpand
   \trace{cov}{\the\PaperWidth\space x\space \the\PaperHeight}
   \tracingoutput=1 
@@ -806,7 +805,8 @@
   \showboxbreadth=9999
   \pdfpagewidth=\PaperWidth
   \pdfpageheight=\PaperHeight
-  \ifdim #6>\dimen0\relax \dimen0=#6\fi
+  \hoffset=-1in \advance\hoffset \dimen0 \voffset=-1in \advance\voffset \dimen0 % shift the origin to (0,0)
+  \ifdim #6>\dimen0\relax \dimen0=#6\advance\hoffset #6 \advance\voffset #6\fi %\else\advance\hoffset -#6 \advance\voffset -#6\fi
   \advance\pdfpagewidth 2\dimen0
   \advance\pdfpageheight 2\dimen0
   %\pdfpagewidth=0.99626401\pdfpagewidth
@@ -816,7 +816,7 @@
       \dimen1=0.99626401\PaperWidth
       \dimen2=0.99626401\PaperHeight
       \dimen0=0.99626401\dimen0 %convert to bp
-      \trace{cov}{trimbox: \the\dimen0, \the\dimen0, \the\dimen1, \the\dimen2. MediaBox: 0, 0, \the\pdfcropwidth, \the\pdfcropheight}%
+      \trace{cov}{trimbox: \the\dimen0, \the\dimen0, \the\dimen1, \the\dimen2. MediaBox: 0, 0, \the\pdfcropwidth, \the\pdfcropheight. offset = \the\hoffset \space x \the\voffset}%
       \special {pdf:put @thispage <</TrimBox [\strip@pt{\dimen0} \strip@pt{\dimen0} \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ] /MediaBox [0 0 \strip@pt\pdfpagewidth \space
         \strip@pt\pdfpageheight ] >>}%
