@@ -54,6 +54,8 @@
     \getsbp@ram{borderbpadding}%
     \global\let\bpp@ram\p@ram
     \esbe%
+    \trace{cov}{Request  was (\the\PaperHeight x\the\PaperWidth)}%
+    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic w \the\dimexpr-\b@dr@left@pad-\b@dr@right@pad\relax padding and hbleed of \the\dimexpr \lble@d + \rble@d\relax )}%
     \hskip -\dimexpr \b@dr@left@pad\relax
     \raise\dimexpr \bble@d\ifx\tp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
     \hskip -\dimexpr \b@dr@right@pad\relax
@@ -100,8 +102,8 @@
     \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
     %\showbox0
-    \raise\dp0 \box0
     \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
+    \raise\dp0 \box0
   \else
     \trace{cov}{NOT Rotating spine??}%
     \edef\tble@d{\csname cover-bleed\endcsname}%
@@ -156,7 +158,7 @@
     \ifnum\interactionmode=2
       \showbox0
     \fi
-    \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}}%
+    \trace{cov}{ship@utcoverinsert{cover}{}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname} box is (\the\ht0+\the\dp0)x\the\wd0}%
     \ship@utcoverinsert{cover}{\box0}{\coverXbleed}{\coverYbleed}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
   \else
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
