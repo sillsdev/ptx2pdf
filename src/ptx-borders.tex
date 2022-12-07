@@ -260,20 +260,25 @@
 
 \def\@get@Vborder@style@params{%Read the minimal set of border-related parameters for vertical spacing
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\ifble@d \the\dimexpr  -\tble@d\relax\else 0pt\fi}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \ifble@d -\tble@d \fi\relax}\fi
-  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\ifble@d \the\dimexpr -\bble@d \relax\else 0pt\fi}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \ifble@d  -\bble@d\fi\relax}\fi
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\ifble@d \the\dimexpr -\tble@d-\b@drwidth pt\relax\else 0pt\fi}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \ifble@d -\tble@d \fi\relax}\fi
+  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\ifble@d \the\dimexpr -\bble@d -\b@drwidth pt\relax\else 0pt\fi}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \ifble@d  -\bble@d\fi\relax}\fi
   \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\tble@d \fi \relax}%
-  \getsbp@ram{boxbpadding}\xdef\fb@bpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\tble@d \fi \relax}%
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \ifble@d 
+    \xdef\fb@tskip{\the\dimexpr\tble@d \relax}%
+  \else
+    \global\let\fb@tskip\fb@tpadding
+  \fi
+  \getsbp@ram{boxbpadding}\xdef\fb@bpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\tble@d \fi \relax}%
   \getsbp@ram{properties}\let\b@drprop\cp@ram
 } 
 
 \def\@get@Hborder@style@params{%Read the border-related parameters
   \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifble@d \the\dimexpr -\lble@d\relax\else 0pt\fi}\else\edef\border@lpadding{\the\dimexpr \cp@ram pt \ifble@d - \lble@d\fi\relax}\fi
-  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifble@d \the\dimexpr -\rble@d\relax\else 0pt\fi}\else\edef\border@rpadding{\the\dimexpr \cp@ram pt \ifble@d - \rble@d\fi\relax}\fi
+  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifble@d \the\dimexpr -\lble@d -\b@drwidth pt\relax\else 0pt\fi}\else\edef\border@lpadding{\the\dimexpr \cp@ram pt \ifble@d - \lble@d\fi\relax}\fi
+  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifble@d \the\dimexpr -\rble@d -\b@drwidth pt\relax\else 0pt\fi}\else\edef\border@rpadding{\the\dimexpr \cp@ram pt \ifble@d - \rble@d\fi\relax}\fi
   \getsbp@ram{boxlpadding}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\lble@d \fi \relax}%
   \getsbp@ram{boxrpadding}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax 0 \else\cp@ram\fi pt \ifble@d +\rble@d \fi \relax}%
 }
@@ -311,7 +316,7 @@
     \fi
   \fi
   \ifcsname mkb@rder@\b@drstyle\endcsname 
-    \trace{eb}{making box for \b@drstyle}%
+    \trace{eb}{making box for \b@drstyle: \b@rderbox@height x\b@rderbox@width }%
     \csname mkb@rder@\b@drstyle\endcsname
   \else
     \message{! Unknown borderstyle '\b@drstyle'. Known styles: \borderstylelist}%
@@ -320,8 +325,8 @@
 
 \def\@prepVb@rderdims{% Minimal set of vertical border dimensions
   \ifhasb@rder
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  \ifx\b@drtop\tr@e +\border@tpadding + \b@drwidth pt  \fi\relax}% Distance to back-skip to insert border
-    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  \ifx\b@drbottom\tr@e +\border@bpadding + \b@drwidth pt  \fi\relax}%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding \ifble@d\else + \b@drwidth pt\fi  \relax}% Distance to back-skip to insert border
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding + \b@drwidth pt  \relax}%
   \else
     \xdef\b@dr@top@pad{0pt}%
     \xdef\b@dr@bot@pad{0pt}%
@@ -340,8 +345,8 @@
   \ch@ckhasb@rder
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
-    \edef\b@dr@top@edge{\the\dimexpr\ifx\b@drtop\tr@e \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi\fi  +\fb@tpadding\relax}%
-    \edef\b@dr@bot@edge{\the\dimexpr\ifx\b@drbottom\tr@e \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi\fi  +\fb@bpadding\relax}%
+    \edef\b@dr@top@edge{\the\dimexpr \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
+    \edef\b@dr@bot@edge{\the\dimexpr \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
     %Where does the border go relative to the contents? (Subtliy different to 
     \@prepVb@rderdims
     \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt  \fi\relax}%
@@ -367,8 +372,8 @@
   \ifhasb@rder
     \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
     \dp\b@rderbox=\dp#1\relax
-    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@lpadding+\fb@rpadding + \b@drwidth pt  *\b@drhsides+ \border@lpadding + \border@rpadding \relax}%% Final width of border artwork
-    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox + \b@drwidth pt  *\b@drvsides + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
+    \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@lpadding+\fb@rpadding +\b@drwidth pt  *\b@drhsides+ \border@lpadding + \border@rpadding \relax}%% Final width of border artwork
+    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  \ifble@d\else +\b@drwidth pt  *\b@drvsides\fi + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
     \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@bpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@bpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@bpadding +\b@drwidth pt  \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%

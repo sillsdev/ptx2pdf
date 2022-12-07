@@ -147,11 +147,7 @@
   \egroup}
 \def\fb@htadjust{0pt}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
-  \ifble@d
-    \vskip-\tble@d
-  \else
-    \vskip-\fb@tpadding% ensure box expands to border line
-  \fi
+  \vskip-\fb@tskip
   \setbox0#3%
   \trace{e}{pre-feintb@x, ht=\the\ht0 - \fb@htadjust, dp=\the\dp0}%
   \setbox0\hbox{\feintb@x{#1}{#2}{\the\dimexpr \ht0 - \fb@htadjust\relax}{\the\dp0}{\the\wd0}\box0}%
@@ -268,6 +264,7 @@
   \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
   \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
   \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
   \@get@Hborder@style@params
   \@get@Vborder@style@params
   \getsbp@ram{posn}%
@@ -673,8 +670,11 @@
     \ifx\sb@rheightspec\empty
       \edef\sb@rheightspec{to \the\ht\extb@x}%
     \fi
-    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt \vbox to 0pt{\vbox to\ht\extb@x{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}}\vss}\vss}\vbox\sb@rheightspec{\unvbox\extb@x}}%
-    \let\bgf@gsp@c\relax %used it, so if it's still there later, we need to use it.
+    \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt 
+      \vbox to 0pt{\vbox \sb@rheightspec{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}}\vss}\vss}%
+      \vbox\sb@rheightspec{\unvbox\extb@x}%
+    }%
+    \let\bgf@gsp@c\relax %used it, so delete it. If it were still there later, we'd use it.
   \fi
   \ifx\h@scol\tr@e
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
@@ -726,28 +726,22 @@
     \else
       \edef\sp@ceafter{\the\dimexpr\cp@ram\verticalsp@ceunit\relax}%
     \fi
+    \trace{e}{Before bg: \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \ifx\h@scol\tr@e
-      %\dimen0=\ht\extchunkb@x
-      %\advance\dimen0 by -\lstch@nkdp
-      %\dp\extchunkb@x=\lstch@nkdp
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
          \trace{e}{Including background image below everything: \t@mpfigspec}%
           \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}%
         \fi
-       % \vskip\baselineskip
         \let\fb@htadjust=\lstch@nkdp
         \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
-      %\setbox\extchunkb@x\vbox{%
-        %\vskip \lstch@nkdp
-        %\unvbox\extchunkb@x}%
-      %\dimen0=\ht\extchunkb@x
-      %\advance\dimen0 by -\thsch@nkdp
-      %\ht\extchunkb@x=\dimen0
-      %\dp\extchunkb@x=\thsch@nkdp
       \xdef\lstch@nkdp{\thsch@nkdp}%
-      \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+    \else
+      \ifsb@rfillpage
+        \dp\extchunkb@x=\fb@bpadding
+      \fi
     \fi
+    \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \let\b@drtop=\fstb@drtop
     \prepb@rderbox\extchunkb@x %sets ifhasb@rder
     \ifx\picl@c\loc@Inl
@@ -774,7 +768,7 @@
       \fi
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \ifble@d\headingtopspace=\dimexpr \tble@d\relax\fi
+      \ifble@d\headingtopspace=\dimexpr \tble@d\relax \fi
       \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi\vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
       %Little bit of test code to trace what's up with a single box class
     \else

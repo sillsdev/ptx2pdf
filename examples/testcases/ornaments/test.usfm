@@ -3,6 +3,7 @@
 \periph front|frontcover
 \p ~
 \vfill
+\keeptriggertrue
 \mt2  The Test Case
 \zgap|1cm\*
 \mt1 Bible 
@@ -13,8 +14,10 @@
 
 \periph spine|spine
 \pc This is the spine
+\keeptriggertrue
 \p
 \periph back|backcover
+\keeptriggertrue
 \vfill
 \mt1 back
 \p

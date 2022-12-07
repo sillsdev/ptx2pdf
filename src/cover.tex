@@ -45,13 +45,18 @@
   \h@ldfigtrue
   \ble@dtrue
   \bgroup
-    %\def\t@stsz{.33}%
     \def\t@stsz{1}%
+    %\def\t@stsz{.33}%
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname +\tble@d+\bble@d\relax\relax
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
-    \esb\cat cover_#1\cat*#2\esbe%
-    \hbox{\box\wholepagepic}%
+    \esb\cat cover_#1\cat*#2
+    \getsbp@ram{borderbpadding}%
+    \global\let\bpp@ram\p@ram
+    \esbe%
+    \hskip -\dimexpr \b@dr@left@pad\relax
+    \raise\dimexpr \bble@d\ifx\tp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
+    \hskip -\dimexpr \b@dr@right@pad\relax
   \egroup
 } 
 
@@ -91,9 +96,10 @@
     \edef\lble@d{\csname cover-bleed\endcsname}%
     \edef\rble@d{\csname cover-bleed\endcsname}%
     \trace{cov}{Rotating spine}%
-    \setbox0\hbox{\c@verbit{spine}{\topskip=1pt \vfill\csname periphcontents=spine\endcsname\vfill}}%
+    \setbox0\hbox{\hskip\lble@d\c@verbit{spine}{\topskip=1pt \vfill\csname periphcontents=spine\endcsname\vfill}\hskip\rble@d}%
     \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
+    %\showbox0
     \raise\dp0 \box0
     \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
   \else
@@ -124,7 +130,7 @@
     \cover@maths
     %\tracingassigns=0
     \setbox0\hbox{%
-      \BoxLikeBorderfalse
+      \BoxLikeBordertrue
       \c@verbit{whole}{\topskip=0pt 
     %    \tracingall
         \ifBookOpenLeft
@@ -135,13 +141,11 @@
           \rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
         \else
           \hbox{{\leftble@d
-              \setbox0\hbox{\c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
-              \box0
+              \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
             }%
             \d@spine
             {\rightble@d
-              \setbox0\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
-              \raise \dimexpr+\bble@d\relax
+              \setbox0=\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
               \box0
             }%
           }%
@@ -158,5 +162,5 @@
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
   \fi
 }
-
+%\addtoendhooks{\m@kecover}
 \plugin@endif
