@@ -381,7 +381,7 @@
       \fi
     \fi
     \advance\dimen1 by -\dimexpr \fb@lpadding + \fb@rpadding\relax
-    \ifx\b@drleft\tr@e \ifdim \border@lpadding>-\b@drwidth pt  
+    \ifx\b@drleft\tr@e\ifdim \border@lpadding>-\b@drwidth pt
         \advance\dimen1 by -\b@drwidth pt 
         \advance\dimen1 by -\border@lpadding
     \fi\fi
@@ -790,7 +790,8 @@
           \else
             \box\extchunkb@x
           \fi
-          \kern\dimen1\vskip\sp@ceafter}%
+          \ifsb@rfillpage\else\kern\dimen1\fi
+          \vskip\sp@ceafter}%
     \fi
     \ifx\c@tegory\DebugBorderCat \bgroup\def\@im{\the\interactionmode}\interactionmode=2 \showboxdepth=99\showboxbreadth=99\showbox\extchunkb@x
        \interactionmode=\@im \egroup 
