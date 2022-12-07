@@ -31,13 +31,17 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \plugin@startif{cover}
-\x@\edef\csname cover-x-spine\endcsname{\the\PaperHeight}
-\x@\edef\csname cover-y-spine\endcsname{11mm}
-\x@\edef\csname cover-x-front\endcsname{\the\PaperWidth}
-\x@\edef\csname cover-y-front\endcsname{\the\PaperHeight}
-\x@\edef\csname cover-x-back\endcsname{\the\PaperWidth}
-\x@\edef\csname cover-y-back\endcsname{\the\PaperHeight}
-\x@\edef\csname cover-bleed\endcsname{10mm}
+
+% Input parameters - TO BE OVERRIDDEN! 
+\x@\edef\csname cover-bleed\endcsname{10mm}   % Bleed dimension
+\x@\edef\csname cover-spine\endcsname{11mm}   % Actual spine width = book thickness, endpapers, board thickness, etc.
+\x@\edef\csname cover-y\endcsname{\the\PaperHeight} % spine/book height 
+\x@\edef\csname cover-x\endcsname{\the\PaperWidth} % Front/back cover
+\x@\edef\csname cover-back-spinewrap\endcsname{0mm} %  Should the graphic/colour on the spine be given extra space?
+\x@\edef\csname cover-front-spinewrap\endcsname{0mm} % 
+% NB: cover-spine is used to set fold-marks, and should be the actual value
+% if cover-X-spinewrap is non-zero, that space is added to the spine and removed from the front/back cover.
+
 \newif\ifrotatespine
 \rotatespinetrue
 \def\c@verbit#1#2{%
@@ -47,17 +51,21 @@
   \bgroup
     \def\t@stsz{1}%
     %\def\t@stsz{.33}%
-    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-y-#1\endcsname +\tble@d+\bble@d\relax\relax
-    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-x-#1\endcsname +\rble@d+\lble@d\relax\relax
+    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname +\tble@d+\bble@d\relax\relax
+    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2
-    \getsbp@ram{borderbpadding}%
-    \global\let\bpp@ram\p@ram
+    \ifx\b@drbottom\tr@e
+      \getsbp@ram{borderbpadding}%
+      \global\let\bpp@ram\p@ram
+    \else
+      \gdef\bpp@ram{0}%
+    \fi
     \esbe%
-    \trace{cov}{Request  was (\the\PaperHeight x\the\PaperWidth)}%
+    \trace{cov}{Request  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic w \the\dimexpr-\b@dr@left@pad-\b@dr@right@pad\relax padding and hbleed of \the\dimexpr \lble@d + \rble@d\relax )}%
     \hskip -\dimexpr \b@dr@left@pad\relax
-    \raise\dimexpr \bble@d\ifx\tp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
+    \raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
     \hskip -\dimexpr \b@dr@right@pad\relax
   \egroup
 } 
@@ -65,9 +73,8 @@
 \def\cover@maths{%
   \global\rotatespinefalse
   \bgroup\s@tc@tprefix{cover_spine}\getsbp@ram{sbarrotation}%
-  \message{Rotating spine? \cp@ram}%
   \ifx\cp@ram\relax\else
-    \trace{cov}{Rotating spine?}%
+    \trace{cov}{Rotating spine? \cp@ram}%
     \ifcsname geom@xform@\cp@ram\endcsname
       \setgeomtransform{\cp@ram}%
       \message{Rotating spine? \cp@ram => \pdf@aa / \pdf@ab}%
@@ -76,34 +83,45 @@
       \fi
       \ifnum \pdf@ab=1
         \global\let\r@tSet\r@cwSet%
+        \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
+        \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
       \else
         \global\let\r@tSet\r@acwSet%
+        \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
+        \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
       \fi
     \fi
   \fi\egroup
-  \x@\edef\csname cover-x-whole\endcsname{\the\dimexpr \csname cover-\ifrotatespine y\else x\fi -spine\endcsname +\csname cover-x-front\endcsname + \csname cover-x-back\endcsname\relax + \csname cover-bleed\endcsname * 2\relax}
-  \x@\edef\csname cover-y-whole\endcsname{\the\dimexpr \csname cover-y-front\endcsname + \csname cover-bleed\endcsname *2\relax}
-  \edef\coverX{\the\dimexpr \csname cover-\ifrotatespine y\else x\fi -spine\endcsname + \csname cover-x-front\endcsname + \csname cover-x-back\endcsname \relax}%
-  \edef\coverY{\the\dimexpr \csname cover-y-front\endcsname \relax}%
-  \edef\coverXbleed{\the\dimexpr \coverX+\dimexpr \csname cover-bleed\endcsname \relax\relax}%
-  \edef\coverYbleed{\the\dimexpr \coverY+2\dimexpr \csname cover-bleed\endcsname \relax\relax}%
-  \trace{cov}{Cover maths: \coverX, \coverY, \coverXbleed, \coverYbleed}%
-  % TODO:
-  %  Increase boxPadding by bleed on top,bottom and outer sides  of cover_{front,spine,back}
-  %  Similarly, decrease borderPadding by bleed
+  \ifrotatespine
+    \x@\let\csname cover-X-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\edef\csname cover-Y-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
+  \else
+    \x@\let\csname cover-Y-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\edef\csname cover-X-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
+  \fi
+  \x@\let\csname cover-Y-front\x@\endcsname\csname cover-y\endcsname
+  \x@\let\csname cover-Y-back\x@\endcsname\csname cover-y\endcsname
+  \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname\relax}%
+  \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname\relax}%
+  \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2\relax }
+  \x@\edef\csname cover-Y-whole\endcsname{\the\dimexpr \csname cover-y\endcsname \relax}
   %  
 }
 \def\d@spine{{%
   \ifrotatespine
     \edef\lble@d{\csname cover-bleed\endcsname}%
     \edef\rble@d{\csname cover-bleed\endcsname}%
-    \trace{cov}{Rotating spine}%
-    \setbox0\hbox{\hskip\lble@d\c@verbit{spine}{\topskip=1pt \vfill\csname periphcontents=spine\endcsname\vfill}\hskip\rble@d}%
-    \message{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
+    \trace{cov}{Rotated spine}%
+    \setbox0\hbox{\hskip\lble@d\c@verbit{spine}{\topskip=1pt 
+      \vskip \@@spinebeforeskip
+      \vfill\csname periphcontents=spine\endcsname\vfill
+      \vskip \@@spineafterskip
+    }\hskip\rble@d}%
+    \trace{cov}{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
     %\showbox0
     \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
-    \raise\dp0 \box0
+    \raise\dimexpr\dp0\box0
   \else
     \trace{cov}{NOT Rotating spine??}%
     \edef\tble@d{\csname cover-bleed\endcsname}%
@@ -132,26 +150,27 @@
     \cover@maths
     %\tracingassigns=0
     \setbox0\hbox{%
-      \BoxLikeBordertrue
       \c@verbit{whole}{\topskip=0pt 
     %    \tracingall
+        \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
+        \BoxLikeBordertrue
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}%
-          \vrule height 1pt depth 0pt width \border@rpadding }%
-          \d@spine
-          {\vrule height 1pt depth 0pt width \border@lpadding 
-          \rightble@d\c@verbit{back}{\csname periphcontents=backcover\endcsname}}}%
+          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}
+            }%
+            \d@spine
+            {\rightble@d
+              \c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+          }%
         \else
           \hbox{{\leftble@d
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
             }%
             \d@spine
             {\rightble@d
-              \setbox0=\hbox{\c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
-              \box0
-            }%
+              \c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
           }%
         \fi
+        \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
       }%
     }%%
     \def\pagecontents{\copy0}\plainoutput
@@ -159,7 +178,7 @@
       \showbox0
     \fi
     \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
-    \ship@utcoverinsert{cover}{0}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname}%
+    \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname}%
   \else
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
   \fi
