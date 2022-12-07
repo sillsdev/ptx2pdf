@@ -809,8 +809,8 @@
   \ifdim #6>\dimen0\relax \dimen0=#6\fi
   \advance\pdfpagewidth 2\dimen0
   \advance\pdfpageheight 2\dimen0
-  \pdfpagewidth=0.99626401\pdfpagewidth
-  \pdfpageheight=0.99626401\pdfpageheight
+  %\pdfpagewidth=0.99626401\pdfpagewidth
+  %\pdfpageheight=0.99626401\pdfpageheight
   \shipout\vbox to \PaperHeight{% ship the actual page content, with \BindingGutter added if wanted
     \bgroup
       \dimen1=0.99626401\PaperWidth
@@ -822,8 +822,8 @@
         \strip@pt\pdfpageheight ] >>}%
     \egroup
     \special {pdf:put @thispage <</PieceInfo <</ptxprint 
-        <</LastModified (D:20221126103720Z) /Private <</Insertion #1>> >>
-    >>}%
+        <</LastModified (D:20221126103720Z) /Private <</Insertion (#1)>> >>
+    >> >>}%
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
     \trace{o}{p@ = \the\p@}\offinterlineskip
@@ -842,5 +842,6 @@
       }
   }%
   \PaperWidth=\dimen5 \PaperHeight=\dimen6
+  \pdfpagewidth=\dimen7 \pdfpageheight=\dimen8
 }
 \endinput
