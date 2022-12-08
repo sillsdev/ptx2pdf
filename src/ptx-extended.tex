@@ -89,10 +89,11 @@
 \setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
 \S@tCat{}
 \let\c@tegory\empty
-\def\fb@lpadding{1pt}%Added left of feintbox content
-\def\fb@rpadding{1pt}%Added right of feintbox content
-\def\fb@tpadding{1pt}%added above and below feintbox content
-\def\fb@bpadding{1pt}%added above and below feintbox content
+\def\fb@dfltpad{1}%Default
+\edef\fb@lpadding{\fb@dfltpad pt}%Added left of feintbox content
+\edef\fb@rpadding{\fb@dfltpad pt}%Added right of feintbox content
+\edef\fb@tpadding{\fb@dfltpad pt}%added above and below feintbox content
+\edef\fb@bpadding{\fb@dfltpad pt}%added above and below feintbox content
 \newif\ifNoTransparency
 \NoTransparencyfalse
 \newcount\feintb@xnum
@@ -234,10 +235,9 @@
   \fi
   %\ifsbar@rotated
     %\p@cinswid=\sb@height
-    %\edef\sb@maxheight{\the\dimen1}%
+    %\edef\sb@height{\the\dimen1}%
   %\else
     \p@cinswid=\dimen1
-    \edef\sb@maxheight{\the\sb@height}%
   %\fi
 }
 \def\ch@ckr@tation{%
@@ -403,7 +403,7 @@
       \iftemp
         \x@\minip@rs@two\tempd\end
         \if f\tempd\relax
-          \setsbp@ram{outerh@ight}{\sb@maxheight}%
+          \setsbp@ram{outerh@ight}{\sb@height}%
         \fi
       \fi
     \fi  

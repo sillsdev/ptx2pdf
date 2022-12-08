@@ -62,8 +62,8 @@
       \gdef\bpp@ram{0}%
     \fi
     \esbe%
-    \trace{cov}{Request  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
-    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic w \the\dimexpr-\b@dr@left@pad-\b@dr@right@pad\relax padding and hbleed of \the\dimexpr \lble@d + \rble@d\relax )}%
+    \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
+    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr-\b@dr@left@pad\relax|\the\dimexpr -\b@dr@right@pad\relax>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr-\b@dr@top@pad\relax|\the\dimexpr -\b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
     \hskip -\dimexpr \b@dr@left@pad\relax
     \raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
     \hskip -\dimexpr \b@dr@right@pad\relax
@@ -134,11 +134,13 @@
   \edef\lble@d{\csname cover-bleed\endcsname}%
   \edef\tble@d{\csname cover-bleed\endcsname}%
   \edef\bble@d{\csname cover-bleed\endcsname}%
+  \edef\rble@d{0pt}%
 }
 \def\rightble@d{%
   \edef\rble@d{\csname cover-bleed\endcsname}%
   \edef\tble@d{\csname cover-bleed\endcsname}%
   \edef\bble@d{\csname cover-bleed\endcsname}%
+  \edef\lble@d{0pt}%
 }
 
 \def\m@kecover{%
