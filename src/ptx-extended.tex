@@ -743,7 +743,8 @@
     \fi
     \trace{e}{Chunk is (with box) \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
     \let\b@drtop=\fstb@drtop
-    \prepb@rderbox\extchunkb@x %sets ifhasb@rder
+    \ch@ckhasb@rder
+    \prepb@rderbox\extchunkb@x 
     \ifx\picl@c\loc@Inl
       \headingtopspace=0pt %-\oldlastdepth
     \else
