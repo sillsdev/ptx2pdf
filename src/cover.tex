@@ -70,7 +70,7 @@
       \raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
     \else
       \trace{cov}{Cover had no border}%
-      \box\wholepagepic%}%\lower-\bble@d\hbox{\box\wholepagepic}%
+      \box\wholepagepic
     \fi
     \hskip -\dimexpr \b@dr@right@pad\relax
   \egroup
@@ -117,6 +117,8 @@
   \ifrotatespine
     \edef\lble@d{\csname cover-bleed\endcsname}%
     \edef\rble@d{\csname cover-bleed\endcsname}%
+    \edef\tble@d{0pt}%
+    \edef\bble@d{0pt}%
     \trace{cov}{Rotated spine}%
     \setbox0\hbox{\hskip\lble@d\c@verbit{spine}{\topskip=1pt 
       \vskip \@@spinebeforeskip
@@ -132,6 +134,8 @@
     \trace{cov}{NOT Rotating spine??}%
     \edef\tble@d{\csname cover-bleed\endcsname}%
     \edef\bble@d{\csname cover-bleed\endcsname}%
+    \edef\lble@d{0pt}%
+    \edef\rble@d{0pt}%
     \c@verbit{spine}{\topskip=0pt \csname periphcontents=spine\endcsname}%
   \fi
 }}
@@ -157,7 +161,13 @@
     %\tracingassigns=1
     \cover@maths
     %\tracingassigns=0
-    \setbox0\hbox{%
+    \setbox0\vbox{\topskip=0pt \lineskip=0pt%
+      \hsize=\csname cover-X-whole\endcsname
+      \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
+      \edef\lble@d{\csname cover-bleed\endcsname}%
+      \edef\rble@d{\csname cover-bleed\endcsname}%
+      \edef\tble@d{\csname cover-bleed\endcsname}%
+      \edef\bble@d{\csname cover-bleed\endcsname}%
       \c@verbit{whole}{\topskip=0pt 
     %    \tracingall
         \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
@@ -180,6 +190,7 @@
         \fi
         \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
       }%
+      \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
     }%%
     \def\pagecontents{\copy0}\plainoutput
     \ifnum\interactionmode=2
