@@ -774,7 +774,7 @@
 
 \def\orn@SetStretch#1#2#3#4{%
   \trace{orn}{SetStretch #1 #2 #3 #4}%
-  \fill@target=#1%
+  \fill@target=#1
   \ifornscale
     \setorn@scale
   \fi
@@ -905,7 +905,7 @@
     \trace{orn}{multitry '#1' {#3}}%
     \x@\let\x@\t@mp\csname mult@class@dim@#1\endcsname
     \x@\let\x@\t@mpstr\csname mult@class@stretch@dim@#1\endcsname
-    \count255=#3%
+    \count255=#3
     \ifnum\count255=-1
       \ifdim 3\dimexpr \dimen1-\dimen0\relax > \t@mp
 	\dimen3=\dimexpr \dimen1 \ifdim -\dimen0 >\t@mp  + \t@mp \else -\dimen0 \fi\relax
