@@ -202,5 +202,9 @@
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
   \fi
 }
+\KeepPeriph{frontcover}
+\KeepPeriph{backcover}
+\KeepPeriph{spine}
+\KeepPeriph{wholecover}
 %\addtoendhooks{\m@kecover}
 \plugin@endif

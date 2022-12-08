@@ -551,7 +551,7 @@
     \csname periphcontents\t@mpside=\attr@b\endcsname
     \ifcsname keepperiph-\attr@b\endcsname\keeptriggertrue\fi
     \ifkeeptrigger\else
-      \x@\let\csname periphcontents\t@mpside=\attr@b\endcsname\undefined
+      \x@\global\x@\let\csname periphcontents\t@mpside=\attr@b\endcsname\undefined
     \fi
   \fi
 }

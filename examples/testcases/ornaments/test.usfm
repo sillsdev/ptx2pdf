@@ -14,10 +14,8 @@
 
 \periph spine|spine
 \pc This is the spine
-\keeptriggertrue
 \p
 \periph back|backcover
-\keeptriggertrue
 \vfill
 \mt1 back
 \p

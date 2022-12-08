@@ -1590,7 +1590,7 @@
 \StorePeriph{spine}
 
 
-\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\global\x@\def\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
+\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
 \def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{endperiph}\global\let\periph@@@\empty}
 
 \newif\ifStorePeriph\StorePeriphtrue
