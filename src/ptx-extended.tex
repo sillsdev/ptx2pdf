@@ -481,16 +481,32 @@
   \egroup}
 
 
+\def\@p@rsef@gsc@le#1|#2|#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
+  \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
+  \edef\tmp{#2}\ifx\tmp\empty
+    \p@rsef@gsc@le #1xx\E
+  \else
+    \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{#1}}%
+    \p@rsef@gsc@le #2xx\E
+  \fi
+}
+
+\def\f@grefdim{%
+}
+% ch@ckfigdim gets called after the image trial load with dimen3=\wd figure box, dimen4=\ht figurebox
+% This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
+% f@grefdim should do something more sane
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
+  \f@grefdim
   \edef\fig@h@dim{#1}\edef\fig@v@dim{#2}%
-  \trace{e}{p@rsefigscale:#1,#2,#3}%
+  \trace{e}{p@rsef@gscale:#1,#2,#3}%
   \ifdim\ht\extb@x=0pt
     \def\fig@v@dim{}% 
   \fi
   \def\ch@ckfigdim{\tempfalse}%
   \ifx\fig@v@dim\empty
     \x@\def\csname \v@lpfx fig@scale@ht\endcsname{}%
-    \def\ch@ckfigdim{\trace{e}{Checking image width \the\dimen3 <\the\ht\extb@x?}\ifdim\dimen4>\ht\extb@x \def\resc@le{ height \the\ht\extb@x}\temptrue\fi}%
+    \def\ch@ckfigdim{\trace{e}{Checking image height \the\dimen4 <\the\ht\extb@x?}\ifdim\dimen4>\ht\extb@x \def\resc@le{ height \the\ht\extb@x}\temptrue\fi}%
   \else
     \dimen0=\fig@v@dim\ht\extb@x
     \x@\edef\csname \v@lpfx fig@scale@ht\endcsname{ height \the\dimen0}%
@@ -499,7 +515,7 @@
   \ifx\fig@h@dim\empty
     \x@\def\csname \v@lpfx fig@scale@wd\endcsname{}%
     \x@\edef\csname \v@lpfx fig@dim@wd\endcsname{\the\dimen1}%
-    \def\ch@ckfigdim{\trace{e}{Checking height \the\dimen4 <\the\dimen1?}\ifdim\dimen3>\dimen1 \def\resc@le{ width \the\dimen1}\temptrue\fi}%
+    \def\ch@ckfigdim{\trace{e}{Checking width \the\dimen3 <\the\dimen1?}\ifdim\dimen3>\dimen1 \def\resc@le{ width \the\dimen1}\temptrue\fi}%
   \else
     \dimen0=\fig@h@dim\dimen1
     \x@\edef\csname \v@lpfx fig@scale@wd\endcsname{ width \the\dimen0}%
@@ -514,7 +530,7 @@
   \fi
   \getsbp@ram{#1figscale}%
   \edef\v@lpfx{#1}%
-  \x@\p@rsef@gsc@le\cp@ram xx\E
+  \x@\@p@rsef@gsc@le\cp@ram ||\E
   \trace{e}{parsed figure scale: \csname #1fig@scale@wd\endcsname \csname #1fig@scale@ht\endcsname}%
 }
 
@@ -564,7 +580,7 @@
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
-  \global\p@ppingfalse%suppress another end@llpoppedstyles
+  \global\p@ppingfalse%
   \trace{e}{ESBE, chunking every \sb@rchunkheight}%
   \ch@ckr@tation
   \ifx\fgfig@cutout\tr@e
@@ -596,15 +612,33 @@
   \tempfalse
   \trace{e}{= \bgf@gsp@c}%
   %Does the box have a defined size? 
+  %
+  % Reference dimensions
+  \edef\text@ref@w@dth{\the\wd\extb@x}%
+  \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
+  \edef\inner@ref@w@dth{\the\wd\extb@x}%
+  \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
   \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
   \ifx\cp@ram\relax
     \let\sb@rheightspec\empty
+    \edef\outer@ref@h@ight{\the\textheight}%
+    \edef\inner@ref@h@ight{\the\dimexpr \textheight - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \sb@rfillpagefalse
   \else
     \sb@rfillpagetrue
-    \edef\sb@rheightspec{to \the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
+    \edef\outer@ref@h@ight{\the\dimexpr \cp@ram \relax}%
+    \edef\inner@ref@h@ight{\the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
+    \ifble@d
+      \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
+      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@h@ight + \lble@d + \rble@d\relax}%
+    \else
+      \let\bleed@ref@h@ight\outer@ref@h@ight
+      \let\bleed@ref@w@dth\outer@ref@w@dth
+    \fi
+    \edef\sb@rheightspec{to \inner@ref@h@ight}%
     \trace{e}{Sidebar will be \sb@rheightspec, paper:\the\PaperHeight, text:\the\textheight}%
-  \fi  
+  \fi
+  %
   \earlybgimagefalse
   \ifx\bgf@gsp@c\relax
     \let\t@mpfigspec\relax
@@ -615,6 +649,7 @@
     \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
     \ch@ckfigdim
     \iftemp% It doesn't fit
+      \trace{e}{Image oversize}%
       \getsbp@ram{bgfigoversize}%
       \ifx\cp@ram\Img@Shrink\edef\t@mpfigspec{\bgf@gsp@c \resc@le|\bgfig@dim@wd}\else
         \ifx\cp@ram\Img@Distort\edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd \resc@le|\bgfig@dim@wd}\else
