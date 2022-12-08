@@ -105,15 +105,22 @@ scale certain elements based on the actual size to which they are to
 fill / surround, to minimise the required stretch/shrink. Thus there
 may be unexpected changes from adjustments of the padding
 etc.  
+\p For all designs in real situations, some tweaking of the BoxPadding and
+BorderPadding parameters may be very appropriate, e.g to account for font 
+requirements and cutting errors.
 
-For designs where the ornaments are within the colour fill area, is text-borders, some tweaking of the BoxPadding and BorderPadding
-parameters may be appropriate.
+
 
 \E
 \demoborder Vectorian1|a4 
 \b
 \p Vectorian1 uses the very ornate and quite floral ornament71, 
-probably to excess. Notice how on with the default settings on A4 paper, one less ornament 72 is being used than when the same border was used on A5.\E
+probably to excess. Notice how on with the default settings on A4 paper, one less ornament 72 is being used than when the same border was used on A5.
+\p Borders where the coloured rectangle is inside the ornamental border have
+zero or positive border padding. For a border fully inside the coloured
+area, the border padding must equal (or be more negative than) -BorderWidth
+
+\E
 
 \demoborder Vectorian2|a5 
 \b
@@ -174,7 +181,10 @@ include half- and quarter-values.
 \esb\cat fullpage\cat*
 \s1 Full Sized Test
 \p
-This page is mainly to demonstrate the border at full scale.
+This page is mainly to demonstrate the border at full scale. At the time of writing it used 
+pattern Vectorian1 (which has a BorderWidth of 15) adjusted to use  BorderPadding of -30
+and a light green BorderColour and dark green BorderFillColour.
+
 \esbe
 
 

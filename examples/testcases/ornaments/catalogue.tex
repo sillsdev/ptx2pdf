@@ -109,10 +109,14 @@
 \x@\edef\csname scalefrm@a5\endcsname{\strip@pt{\dimexpr (32\dimen1/\dimexpr 0.707\dimen2/2048\relax)\relax}}
 \x@\edef\csname scalefrm@a4\endcsname{\strip@pt{\dimexpr (32\dimen1/\dimexpr \dimen2/2048\relax)\relax}}
 \def\scale@borderwidth{1}
-\def\scale@borderhpadding{1}
-\def\scale@bordervpadding{1}
-\def\scale@boxhpadding{1}
-\def\scale@boxvpadding{1}
+\def\scale@borderlpadding{1}
+\def\scale@borderrpadding{1}
+\def\scale@bordertpadding{1}
+\def\scale@borderbpadding{1}
+\def\scale@boxtpadding{1}
+\def\scale@boxbpadding{1}
+\def\scale@boxlpadding{1}
+\def\scale@boxrpadding{1}
 
 \def\modcat #1|#2 {\def\d@##1\E{%
   \getp@r@m{##1}{bdr-#1}\ifx\p@ram\relax\else
