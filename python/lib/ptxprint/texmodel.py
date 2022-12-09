@@ -50,6 +50,7 @@ ModelMap = {
     "config/name":              ("_cfgid", None),
     "config/filterpics":        ("c_filterPicList", None),
     "config/autosave":          ("c_autoSave", None),
+    "config/displayfontsize":   ("s_viewEditFontSize", None),
     "config/texperthacks":      ("c_showTeXpertHacks", None),
 
     "project/id":               ("_prjid", None),

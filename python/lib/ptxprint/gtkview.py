@@ -2173,9 +2173,14 @@ class GtkViewModel(ViewModel):
         super(GtkViewModel, self).onFontChanged(fbtn)
         self.setEntryBoxFont()
 
+    def onChangeViewEditFontSize(self, btn, foo):
+        self.setEntryBoxFont()
+
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
-        fsize = self.get("s_fontsize")
+        fsize = self.get("s_viewEditFontSize")
+        if fsize is None:
+            fsize = "12"
         fontr = self.get("bl_fontR", skipmissing=True)
         if fontr is None:
             return
@@ -2185,7 +2190,8 @@ class GtkViewModel(ViewModel):
             fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_FrontMatter", \
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
+                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", "scroll_Settings", "scroll_SettingsOld", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)

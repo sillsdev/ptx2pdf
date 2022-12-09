@@ -1317,6 +1317,13 @@ contained within the sidebar.</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_viewEditFontSize">
+    <property name="lower">8</property>
+    <property name="upper">20</property>
+    <property name="value">12</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_xrAboveSpace">
     <property name="lower">-50</property>
     <property name="upper">50</property>
@@ -27342,7 +27349,7 @@ Shortcut: Ctrl-E</property>
                           <object class="GtkButton" id="btn_editZvars">
                             <property name="label" translatable="yes">Edit Variables...</property>
                             <property name="name">Edit peripheral variables</property>
-                            <property name="width-request">115</property>
+                            <property name="width-request">112</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -27363,7 +27370,7 @@ this button to show that tab.</property>
                           <object class="GtkButton" id="btn_removeZeros">
                             <property name="label" translatable="yes">Remove +0's</property>
                             <property name="name">Remove redundant lines from AdjList</property>
-                            <property name="width-request">115</property>
+                            <property name="width-request">112</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -27382,17 +27389,6 @@ more clearly where changes are being made.</property>
                           </object>
                           <packing>
                             <property name="left-attach">4</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_spacer">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="hexpand">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">6</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
@@ -27472,7 +27468,30 @@ without a confirmation check.</property>
                           </packing>
                         </child>
                         <child>
-                          <placeholder/>
+                          <object class="GtkScale" id="s_viewEditFontSize">
+                            <property name="name">Adjust display font size </property>
+                            <property name="width-request">70</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="tooltip-text" translatable="yes">Use this slider to adjust
+the size of the text on the
+View+Edit tab as well as
+in other locations that use 
+a specialized font or script.</property>
+                            <property name="hexpand">True</property>
+                            <property name="adjustment">a_viewEditFontSize</property>
+                            <property name="restrict-to-fill-level">False</property>
+                            <property name="fill-level">12</property>
+                            <property name="round-digits">0</property>
+                            <property name="draw-value">False</property>
+                            <property name="has-origin">False</property>
+                            <signal name="button-release-event" handler="onChangeViewEditFontSize" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="left-attach">5</property>
+                            <property name="top-attach">0</property>
+                            <property name="width">2</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
