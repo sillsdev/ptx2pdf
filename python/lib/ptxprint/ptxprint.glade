@@ -9103,8 +9103,10 @@ to be printed from the project.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="label" translatable="yes">&lt;&lt;&lt;&lt; Start by selecting a project</property>
+                                <property name="wrap">True</property>
                                 <property name="ellipsize">end</property>
-                                <property name="single-line-mode">True</property>
+                                <property name="max-width-chars">40</property>
+                                <property name="xalign">0</property>
                                 <attributes>
                                   <attribute name="scale" value="0.90000000000000002"/>
                                 </attributes>
@@ -27201,12 +27203,12 @@ interlinear (&amp; ruby text) output.</property>
                       <object class="GtkGrid" id="gr_editableButtons">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="valign">center</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
-                        <property name="margin-top">4</property>
-                        <property name="margin-bottom">4</property>
+                        <property name="margin-bottom">3</property>
                         <property name="hexpand">False</property>
-                        <property name="column-spacing">6</property>
+                        <property name="column-spacing">5</property>
                         <child>
                           <object class="GtkButton" id="btn_refreshViewerText">
                             <property name="label">gtk-refresh</property>
@@ -27222,6 +27224,7 @@ of this file as it was when last saved.
 Shortcut: F5</property>
                             <property name="double-buffered">False</property>
                             <property name="halign">center</property>
+                            <property name="valign">center</property>
                             <property name="margin-top">5</property>
                             <property name="margin-bottom">5</property>
                             <property name="use-stock">True</property>
@@ -27256,8 +27259,7 @@ Focus:</property>
 those which are not currently
 in the list to be printed.)</property>
                             <property name="halign">end</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
+                            <property name="valign">center</property>
                             <property name="model">ls_books</property>
                             <property name="wrap-width">5</property>
                             <property name="active">0</property>
@@ -27296,8 +27298,7 @@ list for each of the books listed for printing.
 
 Shortcut: Ctrl-G</property>
                             <property name="halign">start</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
+                            <property name="valign">center</property>
                             <signal name="clicked" handler="onGenerateClicked" swapped="no"/>
                             <accelerator key="g" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
@@ -27334,8 +27335,7 @@ to the text or markers need to be made in Paratext.
 
 Shortcut: Ctrl-E</property>
                             <property name="halign">end</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
+                            <property name="valign">center</property>
                             <signal name="button-release-event" handler="button_release_callback" swapped="no"/>
                             <signal name="clicked" handler="onOpenInSystemEditor" swapped="no"/>
                             <accelerator key="e" signal="activate" modifiers="GDK_CONTROL_MASK"/>
@@ -27472,25 +27472,38 @@ without a confirmation check.</property>
                             <property name="name">Adjust display font size </property>
                             <property name="width-request">70</property>
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
+                            <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Use this slider to adjust
 the size of the text on the
 View+Edit tab as well as
 in other locations that use 
 a specialized font or script.</property>
-                            <property name="hexpand">True</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
                             <property name="adjustment">a_viewEditFontSize</property>
+                            <property name="lower-stepper-sensitivity">off</property>
+                            <property name="upper-stepper-sensitivity">off</property>
                             <property name="restrict-to-fill-level">False</property>
                             <property name="fill-level">12</property>
                             <property name="round-digits">0</property>
                             <property name="draw-value">False</property>
-                            <property name="has-origin">False</property>
                             <signal name="button-release-event" handler="onChangeViewEditFontSize" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">5</property>
                             <property name="top-attach">0</property>
-                            <property name="width">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="valign">center</property>
+                            <property name="hexpand">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">6</property>
+                            <property name="top-attach">0</property>
                           </packing>
                         </child>
                       </object>
