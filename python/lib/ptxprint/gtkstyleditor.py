@@ -443,11 +443,15 @@ class StyleEditorView(StyleEditor):
             site = 'https://ubsicap.github.io/usfm'
             tl = self.get("fcb_interfaceLang") # target language for Google Translate
             ggltrans = "" 
+            self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
             if not self.model.get("c_useEngLinks") and \
                    tl in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
                 ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
             if urlcat is None:
                 self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
+            elif "+" in urlmkr or "|" in urlmkr:
+                self.builder.get_object("l_url_usfm").set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
+                self.builder.get_object("l_url_usfm").set_label(_('Complex style'))
             else:
                 usfmkeys = tuple(usfmpgname.keys())
                 pgname = 'index'
