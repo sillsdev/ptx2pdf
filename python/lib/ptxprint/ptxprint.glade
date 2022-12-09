@@ -13701,7 +13701,7 @@ be set in single-column layout.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_showChaptersIn">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="margin-start">12</property>
@@ -17445,7 +17445,7 @@ such as en-US, fr, es are also acceptable).</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkLabel" id="l_txlQuestionsLang">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="tooltip-text" translatable="yes">Enter the language code for the questions
@@ -17540,7 +17540,7 @@ then the reference will in parenthesis (ch:vs).</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkLabel">
+                                          <object class="GtkLabel" id="l_txlExampleHead">
                                             <property name="width-request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
@@ -17554,7 +17554,7 @@ then the reference will in parenthesis (ch:vs).</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkSeparator">
+                                          <object class="GtkSeparator" id="rule_txl">
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">center</property>
@@ -17648,7 +17648,7 @@ project can be located.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkExpander">
+                                  <object class="GtkExpander" id="exp_filterCats">
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <child>
@@ -17872,7 +17872,7 @@ extended study notes and sidebars from being displayed. </property>
                                       </object>
                                     </child>
                                     <child type="label">
-                                      <object class="GtkLabel">
+                                      <object class="GtkLabel" id="l_filterCats">
                                         <property name="visible">True</property>
                                         <property name="sensitive">False</property>
                                         <property name="can-focus">False</property>
@@ -21987,7 +21987,7 @@ the proportion here.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_diglotPriFraction">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">If you need the column widths to be different
@@ -22004,7 +22004,7 @@ be Used by Primary (Left) Text</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_diglotSecProject">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">Select the project for the other text
@@ -22020,7 +22020,7 @@ in the right-hand (or outer) column.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_diglotSecConfig">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
@@ -22244,7 +22244,7 @@ paragraphs start in the same verse.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkFrame">
+                              <object class="GtkFrame" id="fr_diglotSeparateNotes">
                                 <property name="width-request">240</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -22409,7 +22409,7 @@ option does not apply at all.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkSeparator">
+                              <object class="GtkSeparator" id="rule_diglotSep">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">center</property>
@@ -22463,7 +22463,7 @@ options here to create a Diglot or Didoc.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="tb_diglotSwitch">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
@@ -29533,7 +29533,7 @@ of the publication.</property>
                     <property name="margin-end">6</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_pagination">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -29560,7 +29560,7 @@ of the publication.</property>
                                 <property name="row-spacing">6</property>
                                 <property name="column-spacing">6</property>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_pagesPerSpread">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">How many pages will be printed on
@@ -29836,7 +29836,7 @@ options allow plenty of scope.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_compare">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -29887,6 +29887,7 @@ default to _1).</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="lb_diffPDF">
+                                    <property name="width-request">220</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="opacity">0.80</property>
@@ -29894,6 +29895,7 @@ default to _1).</property>
                                     <property name="valign">center</property>
                                     <property name="label" translatable="yes">Previous PDF (_1)</property>
                                     <property name="ellipsize">middle</property>
+                                    <property name="xalign">0</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
@@ -29972,7 +29974,7 @@ the current location) in the new PDF.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_ndiffColor">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Set the color to use when
@@ -29992,7 +29994,7 @@ or Position in:</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkLabel" id="l_odiffColor">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Set the color to use when
@@ -30080,7 +30082,7 @@ runs.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_pdfDetails">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
