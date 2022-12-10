@@ -1177,7 +1177,7 @@
   \trace{eb}{mkb@rder@ornaments}%
   \def\ornamentheight{\b@drwidth}%
   \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol{\fill@none}\else\let\ornamentfillcol\cp@ram\fi
-  \trace{eb}{Colour:\meaning\b@drcol, Fill:\meaning\ornamentfillcol}
+  \trace{eb}{Colour:\meaning\b@drcol, Fill:\meaning\ornamentfillcol}%
   \ifx\b@drcol\relax
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
@@ -1273,7 +1273,7 @@
 	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
         \hbox{\XeTeXpicfile "#2" width \@@x height \@@y}}%
     \else
-      \x@\gdef\csname localornament@#1@code\endcsname{
+      \x@\gdef\csname localornament@#1@code\endcsname{%
 	\edef\@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
 	\edef\@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
 	\hbox{\XeTeXpdffile "#2" width \@@x height \@@y }}%

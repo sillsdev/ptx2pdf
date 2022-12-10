@@ -4,23 +4,35 @@
 \p ~
 \vfill
 \keeptriggertrue
-\mt2  The Test Case
-\zgap|1cm\*
-\mt1 Bible 
-\p
+\esb \cat TitleBox\cat*
+\mt3 The 
+\mt1 Test-case Bible
+\esbe
 \vfill
-\p ~
+\esb \cat footbox\cat*
+\pc \sc Atlantis\sc* 2022
 \p
+\esbe
+\p ~
 
 \periph spine|spine
-\pc This is the spine
+\pc The Test-Case Bible
 \p
+
+\periph wholecover|wholecover
+\pc |<-------\hfil \the\hsize \hfil ------->|\endgraf
+\p ~
+
 \periph back|backcover
+\pc The back
 \vfill
-\mt1 back
-\p
-\vfill
-\p
+\pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+\pc 0 copies, Klingon-Esperanto
+\b
+
 \zendperiph
 
 \mt Ornaments Demonstration File

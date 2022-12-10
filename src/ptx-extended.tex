@@ -133,19 +133,28 @@
   % 2 - colour (r g b)
   % 3 4 5 height, depth, width of colour block
   \trace{e}{feintbox #1 #2 #3, #4, #5}%
+  \traceifset{feintb@x}%
   \bgroup
   \hbox to 0pt{%
     \dimen0=#3\advance\dimen0 by \fb@tpadding
     \dimen1=#4\advance\dimen1 by \fb@bpadding
-    \dimen3=\fb@lpadding 
-    \dimen2=#5\advance\dimen2 by \dimen3
+    \dimen2=#5\dimen3=\fb@lpadding
     \advance\dimen2 by \fb@rpadding
+    \ifble@d 
+      \advance \dimen2 by \rble@d 
+      \advance \dimen3 by \lble@d 
+      \advance \dimen0 by \tble@d 
+      \advance \dimen1 by \bble@d 
+    \fi
+    \advance\dimen2 by \dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
     \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
     \f@intthing{#1}{#2}{\c@de}%
     \hss
   }%
-  \egroup}
+  \egroup
+  \traceifcheck{feintb@x}%
+}
 \def\fb@htadjust{0pt}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
   \vskip-\fb@tskip
@@ -220,7 +229,7 @@
   \ifcsname sb@width-\@t@st\endcsname
     \x@\let\x@\sb@height\csname sb@height-\@t@st\endcsname
     \x@\dimen1\csname sb@width-\@t@st\endcsname
-    \trace{sc}{Revised width set to \the\dimen1}%
+    \trace{sc}{Revised width to \the\dimen1}%
   \else
     \let\sb@height\textheight
     \temptrue
@@ -298,11 +307,11 @@
     % Now apply scale..
     \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
+      \trace{e}{scaled width to \cp@ram x\sb@rpos: \the\dimen1}%
     \fi
     \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
     \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
     \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-    \trace{e}{basic width of \sb@rpos: \the\dimen1}%
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
       \p@rsefigscale{fg}%
@@ -394,7 +403,7 @@
         \setsbp@ram{w@dth}{\the\dimen1}%
       \fi
     \fi
-    \let\t@mploc\tempc
+    \let\t@mploc\tempc % Will be overwriting tempc soon
     \ifx\tempd\empty\else
       \tempfalse
       \ifx\t@mploc\loc@Full\temptrue\else
@@ -410,7 +419,7 @@
   \else
    \dimen1=\cp@ram
   \fi
-  \trace{e}{Box width is \the\dimen1}%
+  \trace{e}{text box width is \the\dimen1}%
   \hsize=\dimen1
 }
 
@@ -419,12 +428,16 @@
   \@@sbar{esb}%
 }
 
+\newif\ifble@dthisbar
 \def\@@sbar#1{%
   \trace{e}{Starting side bar (\sb@rmarker) from \m@rker, \the\lastdepth}%
+  \ble@dthisbarfalse
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
+  \ifsk@pping \egroup 
+    \endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. 
+  \fi % if we were skipping nonpublishable text, end that mode
   \xdef\oldlastdepth{\the\lastdepth}\lastdepth=0pt
   \xdef\stylet@pe{\ss@Sbar}%                                                                   %(2)
-  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
   \ifhe@dings\endhe@dings\fi% Sidebars should close a heading section.
   \ifdoingt@ble\endt@ble\fi% Sidebars should close a table, too
   % kill cached possParam-\m@rker values  
@@ -440,6 +453,7 @@
     \edef\sb@rmarker{#1}%
     \let\m@rker\sb@rmarker
     \s@tsb@rwidth\inextendedtrue
+    \ifble@d\ble@dfalse\ble@dthisbartrue\fi
     \mcpush{\ss@Para}{\if@ntro ip\else p\fi}%
     \textwidth=\hsize
     \sb@rchunkh@ight=\maxdimen
@@ -451,8 +465,14 @@
 \newdimen\sb@rus@dheightr
 \def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
   \c@th@@ks{}%Once per box is enough!
-  \s@tsb@rwidth
-  \trace{e}{startESB \the\dimen1}%
+  \ifble@dthisbar
+    \ble@dtrue
+    \s@tsb@rwidth
+    \ble@dfalse
+  \else
+    \s@tsb@rwidth
+  \fi
+  \trace{e}{startESB \the\dimen1 (ble@d \ifble@d true\else false\fi)}%
   \kill@PossParamCache
   \sb@rchunkh@ight=\maxdimen
   \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
@@ -580,6 +600,9 @@
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
+  %
+  % ^^^ END OF GROUP! ^^^
+  %
   \global\p@ppingfalse%
   \trace{e}{ESBE, chunking every \sb@rchunkheight}%
   \ch@ckr@tation
@@ -630,7 +653,7 @@
     \edef\inner@ref@h@ight{\the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \ifble@d
       \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
-      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@h@ight + \lble@d + \rble@d\relax}%
+      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \lble@d + \rble@d\relax}%
     \else
       \let\bleed@ref@h@ight\outer@ref@h@ight
       \let\bleed@ref@w@dth\outer@ref@w@dth
@@ -752,7 +775,7 @@
       \setbox0\vbox to\ht\extchunkb@x{\sb@rightedge}%
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{%
-        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@rpadding\box0\hss}}}\fi
+        \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@lpadding\box0\hss}}}\fi
     \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in \the\p@cinswid}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
