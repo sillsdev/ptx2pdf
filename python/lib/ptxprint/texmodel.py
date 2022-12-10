@@ -50,6 +50,7 @@ ModelMap = {
     "config/name":              ("_cfgid", None),
     "config/filterpics":        ("c_filterPicList", None),
     "config/autosave":          ("c_autoSave", None),
+    "config/displayfontsize":   ("s_viewEditFontSize", None),
     "config/texperthacks":      ("c_showTeXpertHacks", None),
 
     "project/id":               ("_prjid", None),
@@ -1776,6 +1777,7 @@ class TexModel:
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
             rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
+            print(f"{m=}")
             msngPgs = []
             customStmt = []
             if len(m):
