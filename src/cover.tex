@@ -55,19 +55,25 @@
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname +\rble@d+\lble@d\relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2
+    \esbe%
+    \bgroup\s@tc@tprefix{cover_#1}%
     \ifx\b@drbottom\tr@e
       \getsbp@ram{borderbpadding}%
       \global\let\bpp@ram\p@ram
+      \getsbp@ram{borderwidth}%
+      \global\let\bwp@ram\p@ram
     \else
       \gdef\bpp@ram{0}%
+      \gdef\bwp@ram{0}%
     \fi
-    \esbe%
-    \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
-    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr-\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr -\b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr-\b@dr@top@pad\relax|\the\dimexpr -\b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
+    \egroup
+    \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram bwp@ram=\bwp@ram}%    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr-\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr -\b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr-\b@dr@top@pad\relax|\the\dimexpr -\b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
     \hskip -\dimexpr \b@dr@left@pad\relax
     \ifhasb@rder
       \trace{cov}{Cover had border}%
-      \raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
+      \raise\dimexpr \dp\wholepagepic + \ifble@d\bble@d\fi\ifx\bpp@ram\relax\else -\bpp@ram pt \fi\relax
+        \hbox{\box\wholepagepic}%
+      %\raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
     \else
       \trace{cov}{Cover had no border}%
       \box\wholepagepic
