@@ -62,7 +62,8 @@
       \getsbp@ram{borderwidth}%
       \global\let\bwp@ram\p@ram
     \else
-      \gdef\bpp@ram{0}%
+      \global\let\bpp@ram\relax%
+      \gdef\bwp@ram{0}%
     \fi
     \egroup
     \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
@@ -70,8 +71,10 @@
     \hskip \dimexpr \unble@d@lpad\relax
     \trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
     \ifhasb@rder
-      \trace{cov}{Cover had border}%
-       \raise\dimexpr \ifble@d\bble@d\fi\ifx\bpp@ram\relax\else -\bpp@ram pt - \bwp@ram pt\fi\relax
+      \trace{cov}{Covr had border}%
+       \raise\dimexpr \dp\wholepagepic \ifble@d +\bble@d\fi
+            \ifx\bpp@ram\relax\else -\bpp@ram pt \fi
+            \relax
           \hbox{\box\wholepagepic}%
     \else
       \trace{cov}{Cover had no border}%
