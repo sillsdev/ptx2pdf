@@ -3,6 +3,7 @@
 \periph front|frontcover
 \p ~
 \vfill
+\pc |<-------\hfil \the\hsize \hfil ------->|\endgraf
 \keeptriggertrue
 \esb \cat TitleBox\cat*
 \mt3 The 

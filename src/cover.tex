@@ -47,12 +47,16 @@
 \def\c@verbit#1#2{%
   %\tracingall
   \h@ldfigtrue % Don't shipout a full page!
-  \ble@dtrue 
+  %\ble@dtrue 
   \bgroup
     \def\t@stsz{1}%
     %\def\t@stsz{.33}%
-    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname \ifble@d +\tble@d+\bble@d\fi\relax\relax
-    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname \ifble@d +\rble@d+\lble@d\fi\relax\relax
+    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname 
+   %   \ifble@d +\tble@d+\bble@d\fi
+    \relax\relax
+    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname 
+   %   \ifble@d +\rble@d+\lble@d\fi
+    \relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2
     \esbe%
@@ -62,25 +66,29 @@
       \getsbp@ram{borderwidth}%
       \global\let\bwp@ram\p@ram
     \else
-      \global\let\bpp@ram\relax%
-      \gdef\bwp@ram{0}%
+      \getsbp@ram{borderbpadding}%
+      \global\let\bpp@ram\p@ram
+      \getsbp@ram{borderwidth}%
+      \global\let\bwp@ram\p@ram
+      %\gdef\bpp@ram{0}%
+      %\gdef\bwp@ram{0}%
     \fi
     \egroup
     \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax|\the\dimexpr \b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
-    \hskip \dimexpr \unble@d@lpad\relax
-    \trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
+    %\hskip \dimexpr \unble@d@lpad\relax
+    %\trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
     \ifhasb@rder
       \trace{cov}{Covr had border}%
        \raise\dimexpr \dp\wholepagepic \ifble@d +\bble@d\fi
-            \ifx\bpp@ram\relax\else -\bpp@ram pt \fi
+            \ifx\bpp@ram\relax\else -\bwp@ram pt -\bpp@ram pt \fi
             \relax
           \hbox{\box\wholepagepic}%
     \else
       \trace{cov}{Cover had no border}%
       \box\wholepagepic
     \fi
-    \hskip \dimexpr \unble@d@rpad\relax
+    %\hskip \dimexpr \unble@d@rpad\relax
   \egroup
 } 
 

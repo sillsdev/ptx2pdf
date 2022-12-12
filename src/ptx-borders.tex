@@ -279,8 +279,8 @@
 \def\@get@Hborder@style@params{%Read the border-related parameters
   \traceifset{@get@Hborder@style@params}%
   \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifble@d \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
-  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifble@d \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
+  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
+  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
   \getsbp@ram{boxlpadding}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \getsbp@ram{boxrpadding}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \ifble@d
@@ -361,6 +361,8 @@
     %\xdef\unble@d@rpad{\the\dimexpr -\fb@rpadding - \border@rpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
     \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else\ifble@d +\border@lpadding\fi \fi\relax}%
     \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else\ifble@d +\border@rpadding\fi  \fi\relax}%
+    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else\ifble@d -\border@lpadding\fi \fi\relax}%
+    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else-\border@rpadding \fi\relax}%
     \xdef\unble@d@rpad{\the\dimexpr - \b@dr@right@pad\relax}%
     \xdef\unble@d@lpad{\the\dimexpr - \b@dr@left@pad \relax}%
     %\xdef\unble@d@lpad{\the\dimexpr - \b@dr@left@pad\relax}%
