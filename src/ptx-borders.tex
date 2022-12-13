@@ -261,17 +261,15 @@
   \traceifset{@get@Vborder@style@params}%
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
+  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \global\let\fb@tskip\fb@tpadding
+  \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \getsbp@ram{boxbpadding}\xdef\fb@bpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt  \relax}%
   \getsbp@ram{properties}\let\b@drprop\cp@ram
-  \ifble@d
-    \trace{cov}{border@Xpadding: t \border@tpadding, b \border@bpadding. fb@Xpadding: t \fb@tpadding, b \fb@bpadding}%
-  \fi
+  \trace{cov}{border@Xpadding: t \border@tpadding, b \border@bpadding. fb@Xpadding: t \fb@tpadding, b \fb@bpadding}%
   \traceifcheck{@get@Vborder@style@params}%
 } 
 
@@ -282,9 +280,7 @@
   \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
   \getsbp@ram{boxlpadding}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \getsbp@ram{boxrpadding}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
-  \ifble@d
     \trace{cov}{border@Xpadding: l \border@lpadding, r \border@rpadding. fb@Xpadding: l \fb@lpadding, r \fb@rpadding}%
-  \fi
   \traceifcheck{@get@Hborder@style@params}%
 }
 \def\get@border@style@params{%Read the border-related parameters
@@ -330,8 +326,8 @@
 
 \def\@prepVb@rderdims{% Minimal set of vertical border dimensions
   \ifhasb@rder
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding \ifble@d\else + \b@drwidth pt\fi }% Distance to back-skip to insert border
-    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding + \b@drwidth pt }%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding \ifx\b@drtop\tr@e  + \b@drwidth pt \fi}% Distance to back-skip to insert border
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding \ifx\b@drbottom\tr@e  + \b@drwidth pt \fi }%
   \else
     \xdef\b@dr@top@pad{0pt}%
     \xdef\b@dr@bot@pad{0pt}%

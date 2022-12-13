@@ -62,12 +62,9 @@
       \getsbp@ram{borderwidth}%
       \global\let\bwp@ram\p@ram
     \else
-      %\getsbp@ram{borderbpadding}%
-      %\global\let\bpp@ram\p@ram
-      %\getsbp@ram{borderwidth}%
-      %\global\let\bwp@ram\p@ram
-      %\gdef\bpp@ram{0}%
-      %\gdef\bwp@ram{0}%
+      \getsbp@ram{borderbpadding}%
+      \global\let\bpp@ram\p@ram
+      \gdef\bwp@ram{0}%
     \fi
     \egroup
     \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
@@ -137,12 +134,12 @@
     \edef\tble@d{0pt}%
     \edef\bble@d{0pt}%
     \trace{cov}{Rotated spine}%
-    \setbox0\hbox{\ifble@d \hskip\lble@d\fi
+    \setbox0\hbox{%
       \c@verbit{spine}{\topskip=1pt 
         \vskip \@@spinebeforeskip
         \vfill\csname periphcontents=spine\endcsname\vfill
         \vskip \@@spineafterskip
-      }\ifble@d\hskip\rble@d\fi
+      }%
     }%
     \trace{cov}{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
@@ -198,19 +195,25 @@
         \ifBookOpenLeft
           \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}
             }%
-            \d@spine
+            {%
+              \ble@dtrue
+              \d@spine
+            }%
             {\rightble@d
               %\ble@dtrue
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
           }%
         \else
           \hbox{\setbox0\hbox{\leftble@d
-              %\ble@dtrue
+              \ble@dtrue
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
             }%
             \trace{cov}{back cover is \l@gdims0}%
             \box0
-            \d@spine
+            {%
+              \ble@dtrue
+              \d@spine
+            }%
             \setbox0\hbox{\rightble@d
               \ble@dtrue
               \c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%

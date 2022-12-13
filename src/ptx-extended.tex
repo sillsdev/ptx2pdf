@@ -473,7 +473,7 @@
   \else
     \s@tsb@rwidth
   \fi
-  \trace{e}{startESB \the\dimen1 (ble@d \ifble@d true\else false\fi)}%
+  \trace{e}{startESB \the\dimen1 (ble@dthisbar\ifble@dthisbar true\else false\fi)}%
   \kill@PossParamCache
   \sb@rchunkh@ight=\maxdimen
   \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
@@ -739,8 +739,8 @@
     \getsbp@ram{alpha}\global\let\pdf@lpha=\cp@ram
     \getsbp@ram{bgcolour}\let\pdfBGc@l=\cp@ram
   \fi
-  \let\fstb@drtop=\b@drtop
-  \let\lstb@drbot=\b@drbottom
+  \let\fstb@drtop=\b@drtop % Top border for the first chunk? 
+  \let\lstb@drbot=\b@drbottom % Bottom border for the last chunk?
   \ifdim\ht\extb@x > 0.9\textheight
     \message{*** WARNING: Sidebar or colophon might not print on page \folio. (\the\ht\extb@x\space high, and  page is \the\textheight).}%
   \fi
@@ -793,11 +793,12 @@
           \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}%
         \fi
         \let\fb@htadjust=\lstch@nkdp
+        \trace{cov}{Space removal around feintbox (\ifble@d bleed: \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax\else none\fi)}%
         \ifble@d
           %\hbox{\hskip-\lble@d\vrule width 1pt \vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}\hskip-\rble@d}%
-          \vskip -\dimexpr \tble@d 
+          \vskip -\dimexpr \tble@d\relax
           \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
-          \vskip -\dimexpr \bble@d 
+          \vskip -\dimexpr \bble@d\relax
         \else
           \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
         \fi
@@ -837,7 +838,7 @@
        \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
         \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
       \fi
-      \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
+      \trace{e}{Border Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
       \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
         \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%

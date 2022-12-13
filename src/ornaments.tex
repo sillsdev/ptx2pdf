@@ -696,7 +696,7 @@
 \def\O@tp@t{}
 \def\m@lti@print#1{\edef\O@tp@t{\O@tp@t #1: \csname mult@class@num@#1\endcsname\space}}
 \def\best@m@lti@print#1{\edef\O@tp@t{\O@tp@t #1: \csname best@mult@class@num@#1\endcsname\space}}
-\def\print@multi{\immediate\write-1{\O@tp@t}\let\O@tp@t\empty}
+\def\print@multi{\trace{orn}{\O@tp@t}\let\O@tp@t\empty}
 \def\foundb@st#1{\x@\global\x@\let\csname best@mult@class@num@#1\x@\endcsname\csname mult@class@num@#1\endcsname}
 \newcount\best@score
 \newdimen\best@adjust
