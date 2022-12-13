@@ -85,7 +85,7 @@
           \hbox{\box\wholepagepic}%
     \else
       \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic - had no border}%
-      \ifble@d \ifvmode \vskip -\tble@d \else \raise \tble@d \fi\fi
+      %\ifble@d \ifvmode \vskip -\tble@d \fi\fi
         \box\wholepagepic
       %\vrule width 1pt
     \fi
@@ -187,7 +187,7 @@
       \edef\rble@d{\csname cover-bleed\endcsname}%
       \edef\tble@d{\csname cover-bleed\endcsname}%
       \edef\bble@d{\csname cover-bleed\endcsname}%
-      \ble@dtrue
+      %\ble@dtrue
       \c@verbit{whole}{\topskip=0pt \lineskip=0pt
         \ifcsname  periphcontents=wholecover\endcsname
           \vbox to 0pt{\vbox to \csname cover-Y-whole\endcsname{\csname periphcontents=wholecover\endcsname}\vss}%
@@ -204,13 +204,18 @@
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
           }%
         \else
-          \hbox{{\leftble@d
+          \hbox{\setbox0\hbox{\leftble@d
               %\ble@dtrue
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
             }%
+            \trace{cov}{back cover is \l@gdims0}%
+            \box0
             \d@spine
-            {\rightble@d
+            \setbox0\hbox{\rightble@d
+              \ble@dtrue
               \c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+            \trace{cov}{front cover is \l@gdims0}%
+            \box0
           }%
         \fi
         %\ifble@d \vskip \bble@d plus 1fil minus 1fil \fi
