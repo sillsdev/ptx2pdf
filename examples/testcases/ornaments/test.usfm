@@ -21,10 +21,15 @@
 \p
 
 \periph wholecover|wholecover
+\hrule
 \pc |<-------\hfil \the\hsize \hfil ------->|\endgraf
 \p ~
+\makeatletter
+\vskip \@ne pt plus \@ne filll
+\hrule
 
 \periph back|backcover
+\p ~
 \pc The back
 \vfill
 \pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
@@ -33,7 +38,6 @@
 \esbe
 \pc 0 copies, Klingon-Esperanto
 \b
-
 \zendperiph
 
 \mt Ornaments Demonstration File

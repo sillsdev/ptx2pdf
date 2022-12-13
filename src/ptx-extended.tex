@@ -128,6 +128,7 @@
   \special{pdf:code Q}%
 }%
 
+\newif\ifble@d
 \def\feintb@x#1#2#3#4#5{%
   % 1 - alpha
   % 2 - colour (r g b)
@@ -148,7 +149,7 @@
     \fi
     \advance\dimen2 by \dimen3
     \hskip -\dimen3 % Backup so the expanded box is centred properly
-    \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2}%should be possible to get this working in pdf code, but this works.
+    \def\c@de{\vrule height \dimen0 depth \dimen1  width \dimen2 }%should be possible to get this working in pdf code, but this works.
     \f@intthing{#1}{#2}{\c@de}%
     \hss
   }%
@@ -792,7 +793,15 @@
           \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}%
         \fi
         \let\fb@htadjust=\lstch@nkdp
-        \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}%
+        \ifble@d
+          %\hbox{\hskip-\lble@d\vrule width 1pt \vbox{\feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}}\hskip-\rble@d}%
+          \vskip -\dimexpr \tble@d 
+          \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
+          \vskip -\dimexpr \bble@d 
+        \else
+          \feintbox{\pdf@lpha}{\pdfBGc@l}{\box\extchunkb@x}%
+        \fi
+      }%
       \xdef\lstch@nkdp{\thsch@nkdp}%
     \else
       \ifsb@rfillpage
@@ -807,6 +816,9 @@
       \headingtopspace=0pt %-\oldlastdepth
     \else
       \headingtopspace=0pt
+    \fi
+    \ifble@d
+      %\advance\headingtopspace -\tble@d
     \fi
     \trace{e}{heading topspace=\the\headingtopspace}%
     \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
@@ -827,7 +839,6 @@
       \fi
       \trace{e}{Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
-      \ifble@d\headingtopspace=\dimexpr \tble@d\relax \fi
       \x@\setbox\extchunkb@x\vbox{\lineskiplimit=0pt \lineskip=0pt \baselineskip=0pt\vskip\headingtopspace\ifdoIntskip\kern\b@xintadj\else\vskip\b@xextadj\fi
         \vbox to 0pt{\vskip\b@dr@top@pad\hbox to \b@rderbox@width{\hskip\b@dr@left@pad\box\extchunkb@x\hskip\b@dr@right@pad}\vss}\penalty10000\box\b@rderbox\kern\dimen1\vskip\sp@ceafter}%
       %Little bit of test code to trace what's up with a single box class
@@ -929,7 +940,7 @@
         \fi
         \ifx\picl@c\loc@Full
           \trace{e}{Full page box \b@x@lunpad | \b@x@runpad}%
-          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@lunpad}%
+          \setbox\extchunkb@x\hbox {\penalty-10001\kern\b@x@lunpad\box\extchunkb@x\kern \b@x@runpad}%
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut

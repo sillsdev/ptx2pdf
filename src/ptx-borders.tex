@@ -256,14 +256,13 @@
 \def\rble@d{0pt}
 \def\tble@d{0pt}
 \def\bble@d{0pt}
-\newif\ifble@d
 
 \def\@get@Vborder@style@params{%Read the minimal set of border-related parameters for vertical spacing
   \traceifset{@get@Vborder@style@params}%
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\ifble@d  -\b@drwidth pt\else 0pt\fi}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \ifble@d -\tble@d\fi\relax}\fi
-  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\ifble@d  -\b@drwidth pt\else 0pt\fi}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \ifble@d -\bble@d\fi\relax}\fi
+  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
@@ -359,10 +358,10 @@
     %\xdef\unble@d@lpad{\the\dimexpr \fb@lpadding+\border@lpadding\relax }%
     %\xdef\unble@d@lpad{\the\dimexpr -\fb@lpadding - \border@lpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
     %\xdef\unble@d@rpad{\the\dimexpr -\fb@rpadding - \border@rpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
-    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else\ifble@d +\border@lpadding\fi \fi\relax}%
-    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else\ifble@d +\border@rpadding\fi  \fi\relax}%
-    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else\ifble@d -\border@lpadding\fi \fi\relax}%
-    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else-\border@rpadding \fi\relax}%
+    \xdef\b@dr@left@pad{\the\dimexpr \fb@lpadding  \ifx\b@drleft\tr@e +\border@lpadding + \b@drwidth pt \else \fi\relax}%
+    \xdef\b@dr@right@pad{\the\dimexpr \fb@rpadding  \ifx\b@drright\tr@e +\border@rpadding + \b@drwidth pt\else \fi\relax}%
+    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else  \fi\relax}%
+    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else \fi\relax}%
     \xdef\unble@d@rpad{\the\dimexpr - \b@dr@right@pad\relax}%
     \xdef\unble@d@lpad{\the\dimexpr - \b@dr@left@pad \relax}%
     %\xdef\unble@d@lpad{\the\dimexpr - \b@dr@left@pad\relax}%
@@ -374,6 +373,8 @@
   \else
     \edef\b@drvsides{0}%
     \edef\b@drhsides{0}%
+    \xdef\b@x@lunpad{\the\dimexpr 0pt \ifx\b@drleft\tr@e -\b@drwidth pt -\border@lpadding \else  \fi\relax}%
+    \xdef\b@x@runpad{\the\dimexpr 0pt \ifx\b@drright\tr@e -\b@drwidth pt -\border@rpadding \else \fi\relax}%
     \edef\b@dr@top@edge{\fb@tpadding}%
     \edef\b@dr@bot@edge{\fb@bpadding}%
     \xdef\b@dr@left@pad{\fb@lpadding}%
@@ -392,7 +393,7 @@
     \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
     \dp\b@rderbox=\dp#1\relax
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@lpadding+\fb@rpadding +\b@drwidth pt  *\b@drhsides+ \border@lpadding + \border@rpadding \relax}%% Final width of border artwork
-    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  \ifble@d\else +\b@drwidth pt *\b@drvsides\fi + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
+    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  +\b@drwidth pt *\b@drvsides + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
     \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@bpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@bpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@bpadding +\b@drwidth pt  \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
