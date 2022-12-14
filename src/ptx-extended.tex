@@ -159,7 +159,7 @@
 }
 \def\fb@htadjust{0pt}
 \def\feintbox#1#2#3{% Set a (transparent) coloured box as background for box given in #3. #1: alpha, #2: {r g b}  (all numbers in range 0-1.0)
-  \vskip-\fb@tskip %Relative positioning of box and border
+  \kern-\fb@tskip %Relative positioning of box and border
   \setbox0#3%
   \trace{e}{pre-feintb@x, ht=\the\ht0 - \fb@htadjust, dp=\the\dp0}%
   \setbox0\hbox{\feintb@x{#1}{#2}{\the\dimexpr \ht0 - \fb@htadjust\relax}{\the\dp0}{\the\wd0}\box0}%
@@ -824,6 +824,9 @@
     \ifble@d
       %\advance\headingtopspace -\tble@d
     \fi
+    \ifhasb@rder\ifsb@rfillpage
+        %\advance\headingtopspace \fb@tpadding
+    \fi\fi
     \trace{e}{heading topspace=\the\headingtopspace}%
     \getsbp@ram{spacebefore}\ifx\cp@ram\relax\else
       \advance\headingtopspace by \cp@ram\verticalsp@ceunit
@@ -1041,7 +1044,7 @@
  \else
    \let\c@tfigname\p@ram
    %\getbp@r@m{#1figscale}%
-   \edef\tmp{\c@tfigname|}
+   \edef\tmp{\c@tfigname|}%
    \x@\setsbp@ram{#1figspec}{\tmp}%
    \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
  \fi

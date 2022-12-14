@@ -265,8 +265,9 @@
   \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
-  \global\let\fb@tskip\fb@tpadding
   \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
+  \global\let\fb@tskip\fb@tpadding
+  \trace{cov}{Set fb@tskip to \fb@tskip}%
   \getsbp@ram{boxbpadding}\xdef\fb@bpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt  \relax}%
   \getsbp@ram{properties}\let\b@drprop\cp@ram
   \trace{cov}{border@Xpadding: t \border@tpadding, b \border@bpadding. fb@Xpadding: t \fb@tpadding, b \fb@bpadding}%
@@ -331,17 +332,20 @@
     \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding \ifx\b@drbottom\tr@e  + \b@drwidth pt \fi \relax}%
   \else
     \ifBoxLikeBorder
-      %This seems to break Fcf sidebars
-      %\edef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding\relax}% Distance to skip / backup to insert border
-      \edef\b@dr@top@pad{0pt}%
+%      \edef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding\relax}% Distance to skip / backup to insert border
       \edef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding\relax}%
+      \ifsb@rfillpage
+        \edef\b@dr@top@pad{0pt}%
+      \else  
+        \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding +\border@tpadding \relax}% Distance to back-skip to insert border
+      \fi
     \else
       \edef\b@dr@top@pad{0pt}%
       \edef\b@dr@bot@pad{0pt}%
     \fi
   \fi
 }
-  
+
 \def\ch@ckhasb@rder{%
   \hasb@rderfalse\horizb@rderfalse
   \ifx\b@drleft\tr@e\hasb@rdertrue\trace{eb}{Border: left}\fi
@@ -391,11 +395,27 @@
 }
 
 \def\prepb@rderbox#1{% Prepare b@rderbox
+  \def\tmptbpart{}\def\tmpbbpart{}%
+  {\ifx\b@drtop\tr@e
+    \ifdim \border@tpadding < -\b@drwidth pt  
+      \xdef\tmptbpart{+ \the\dimexpr \border@tpadding + \b@drwidth pt\relax}%
+    \fi
+  \fi
+  \ifx\b@drbottom\tr@e
+    \ifdim \border@bpadding < -\b@drwidth pt  
+      \xdef\tmpbbpart{+ \the\dimexpr \border@bpadding + \b@drwidth pt\relax}%
+    \fi
+  \fi}%
   \ifhasb@rder
     \setbox\b@rderbox\vbox to \ht#1{\hsize=\wd#1\hbox to \wd#1{\hss}\vss}%Placeholder
     \dp\b@rderbox=\dp#1\relax
     \edef\b@rderbox@width{\the\dimexpr \wd\b@rderbox +\fb@lpadding+\fb@rpadding +\b@drwidth pt  *\b@drhsides+ \border@lpadding + \border@rpadding \relax}%% Final width of border artwork
-    \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  +\b@drwidth pt *\b@drvsides + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
+    \ifsb@rfillpage 
+      \edef\b@rderbox@height{\the\dimexpr\outer@ref@h@ight \tmptbpart \tmpbbpart\relax}% Final height of border artwork 
+    \else 
+      \edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox + \fb@tpadding +\dp\b@rderbox  +\b@drwidth pt *\b@drvsides + \border@tpadding + \border@bpadding \relax}% Final height of border artwork 
+    \fi
+    %\edef\b@rderbox@height{\the\dimexpr \ht\b@rderbox +\fb@tpadding +\dp\b@rderbox  +\b@drwidth pt *\b@drvsides + \border@tpadding + \border@bpadding \relax}%
     \edef\b@xextadj{\the\dimexpr 0pt - \ifdim\border@bpadding< -\b@drwidth pt  \ifx\b@drbottom\tr@e\the\dimexpr \b@drwidth pt  +\border@bpadding\relax\else 0pt \fi\else 0pt \fi\relax}% b@xminadj is for inserts, so that the top of the box is at exactly the page top.
     \edef\b@rderbox@depth{\the\dimexpr \dp\b@rderbox  \ifx\b@drbottom\tr@e + \border@bpadding +\b@drwidth pt  \fi \relax}% 
     %\trace{e}{Depth b@drbox=\the\dp\b@rderbox / \the\dp\extchunkb@x / \thsch@nkdp}%
