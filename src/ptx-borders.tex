@@ -325,12 +325,20 @@
 }
 
 \def\@prepVb@rderdims{% Minimal set of vertical border dimensions
+  \trace{e}{@prepVb@rderdims [\c@tegory]}%
   \ifhasb@rder
-    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding \ifx\b@drtop\tr@e  + \b@drwidth pt \fi}% Distance to back-skip to insert border
-    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding \ifx\b@drbottom\tr@e  + \b@drwidth pt \fi }%
+    \xdef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding \ifx\b@drtop\tr@e  + \b@drwidth pt \fi\relax}% Distance to back-skip to insert border
+    \xdef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding \ifx\b@drbottom\tr@e  + \b@drwidth pt \fi \relax}%
   \else
-    \xdef\b@dr@top@pad{0pt}%
-    \xdef\b@dr@bot@pad{0pt}%
+    \ifBoxLikeBorder
+      %This seems to break Fcf sidebars
+      %\edef\b@dr@top@pad{\the\dimexpr \fb@tpadding  +\border@tpadding\relax}% Distance to skip / backup to insert border
+      \edef\b@dr@top@pad{0pt}%
+      \edef\b@dr@bot@pad{\the\dimexpr \fb@bpadding  +\border@bpadding\relax}%
+    \else
+      \edef\b@dr@top@pad{0pt}%
+      \edef\b@dr@bot@pad{0pt}%
+    \fi
   \fi
 }
   
@@ -344,12 +352,12 @@
 }
 \def\prepb@rderdims{% Prepare all b@rderbox dimensions
   \ch@ckhasb@rder
+  \@prepVb@rderdims
   \ifhasb@rder
     %Where does is the outer-edge of the  border or box,  relative to the contents?
     \edef\b@dr@top@edge{\the\dimexpr \ifdim  \border@tpadding > -\b@drwidth pt  \border@tpadding + \b@drwidth pt  \fi  +\fb@tpadding\relax}%
     \edef\b@dr@bot@edge{\the\dimexpr \ifdim  \border@bpadding > -\b@drwidth pt  \border@bpadding + \b@drwidth pt \fi  +\fb@bpadding\relax}%
     %Where does the border go relative to the contents? (Subtliy different to 
-    \@prepVb@rderdims
     %\xdef\unble@d@lpad{\the\dimexpr -\border@lpadding+\fb@lpadding \relax }%
     %\xdef\unble@d@lpad{\the\dimexpr \fb@lpadding+\border@lpadding\relax }%
     %\xdef\unble@d@lpad{\the\dimexpr -\fb@lpadding - \border@lpadding \ifx\b@drleft\tr@e -\b@drwidth pt\fi}%
@@ -375,8 +383,6 @@
     \edef\b@dr@bot@edge{\fb@bpadding}%
     \xdef\b@dr@left@pad{\fb@lpadding}%
     \xdef\b@dr@right@pad{\fb@rpadding}%
-    \xdef\b@dr@top@pad{\fb@tpadding}%
-    \xdef\b@dr@bot@pad{\fb@bpadding}%
     \xdef\unble@d@rpad{\the\dimexpr 0pt- \b@dr@right@pad\relax}%
     \xdef\unble@d@lpad{\the\dimexpr 0pt- \b@dr@left@pad\relax}%
     \trace{cov}{Unbleed def \c@tprefix: \unble@d@lpad}%

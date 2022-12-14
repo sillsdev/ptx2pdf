@@ -47,7 +47,7 @@
 \def\c@verbit#1#2{%
   %\tracingall
   \h@ldfigtrue % Don't shipout a full page!
-  %\ble@dtrue 
+  \ble@dtrue 
   \bgroup
     \def\t@stsz{1}%
     %\def\t@stsz{.33}%
@@ -226,7 +226,7 @@
       %\ifble@d \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil \fi
       %\vfill
     }%%
-    \def\pagecontents{\copy0}\plainoutput
+    %\def\pagecontents{\copy0}\plainoutput
     \ifnum\interactionmode=2
       \showbox0
     \fi

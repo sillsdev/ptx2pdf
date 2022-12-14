@@ -1,9 +1,8 @@
 \id TST Test file
 \h small test file
 \periph front|frontcover
-\p ~
-\vfill
 \pc |<-------\hfil \the\hsize \hfil ------->|\endgraf
+\vfill
 \keeptriggertrue
 \esb \cat TitleBox\cat*
 \mt3 The 
@@ -29,6 +28,7 @@
 \hrule
 
 \periph back|backcover
+\hrule
 \p ~
 \pc The back
 \vfill
