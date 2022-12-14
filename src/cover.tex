@@ -56,16 +56,18 @@
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2
     \esbe%
-    \bgroup\s@tc@tprefix{cover_#1}\getsbp@ram{borderbottom}\ifx\cp@ram\tr@e
-      \getsbp@ram{borderbpadding}%
-      \global\let\bpp@ram\p@ram
-      \getsbp@ram{borderwidth}%
-      \global\let\bwp@ram\p@ram
-    \else
-      \getsbp@ram{borderbpadding}%
-      \global\let\bpp@ram\p@ram
-      \gdef\bwp@ram{0}%
-    \fi
+    \bgroup
+      \s@tc@tprefix{cover_#1}\getsbp@ram{borderbottom}\ifx\cp@ram\tr@e
+        \getsbp@ram{borderbpadding}%
+        \global\let\bpp@ram\p@ram
+        \getsbp@ram{borderwidth}%
+        \global\let\bwp@ram\p@ram
+      \else
+        \getsbp@ram{borderbpadding}%
+        \global\let\bpp@ram\p@ram
+        \gdef\bwp@ram{0}%
+      \fi
+      \getsbp@ram{position}%
     \egroup
     \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax|\the\dimexpr \b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
@@ -178,16 +180,27 @@
     \cover@maths
     %\tracingassigns=0
     \setbox0\vbox to \csname cover-Y-whole\endcsname{\topskip=0pt \lineskip=0pt%
-      \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
+      %\vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
       \hsize=\csname cover-X-whole\endcsname
       \edef\lble@d{\csname cover-bleed\endcsname}%
       \edef\rble@d{\csname cover-bleed\endcsname}%
       \edef\tble@d{\csname cover-bleed\endcsname}%
       \edef\bble@d{\csname cover-bleed\endcsname}%
+      \edef\wholec@vrtpad{0 pt}%
+      \edef\wholec@vrbpad{0 pt}%
+      \bgroup
+        \s@tc@tprefix{cover_whole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
+        \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
+      \egroup
+      \trace{cov}{wholec@vr v padding=\wholec@vrtpad|\wholec@vrbpad}%
       %\ble@dtrue
       \c@verbit{whole}{\topskip=0pt \lineskip=0pt
+        \vskip-\wholec@vrtpad
         \ifcsname  periphcontents=wholecover\endcsname
-          \vbox to 0pt{\vbox to \csname cover-Y-whole\endcsname{\csname periphcontents=wholecover\endcsname}\vss}%
+          \vbox to 0pt{\vskip \wholec@vrtpad\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
+              \csname periphcontents=wholecover\endcsname}\vss}%
         \fi
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
