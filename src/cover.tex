@@ -94,6 +94,7 @@
 
 \def\cover@maths{%
   \global\rotatespinefalse
+  \edef\c@vY{\dimexpr \csname cover-y\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax}%
   \bgroup\s@tc@tprefix{cover_spine}\getsbp@ram{sbarrotation}%
   \ifx\cp@ram\relax\else
     \trace{cov}{Rotating spine? \cp@ram}%
@@ -107,22 +108,26 @@
         \global\let\r@tSet\r@cwSet%
         \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
         \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
+        \global\let\spinelble@d\topedgeble@d%
+        \global\let\spinerble@d\botedgeble@d%
       \else
         \global\let\r@tSet\r@acwSet%
         \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
         \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
+        \global\let\spinerble@d\topedgeble@d%
+        \global\let\spinelble@d\botedgeble@d%
       \fi
     \fi
   \fi\egroup
   \ifrotatespine
-    \x@\let\csname cover-X-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\let\csname cover-X-spine\endcsname\c@vY
     \x@\edef\csname cover-Y-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
   \else
-    \x@\let\csname cover-Y-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\let\csname cover-Y-spine\endcsname\c@vY
     \x@\edef\csname cover-X-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
   \fi
-  \x@\let\csname cover-Y-front\x@\endcsname\csname cover-y\endcsname
-  \x@\let\csname cover-Y-back\x@\endcsname\csname cover-y\endcsname
+  \x@\let\csname cover-Y-front\endcsname\c@vY
+  \x@\let\csname cover-Y-back\endcsname\c@vY
   \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname\relax}%
   \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname\relax}%
   \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2\relax }
@@ -131,8 +136,8 @@
 }
 \def\d@spine{{%
   \ifrotatespine
-    \edef\lble@d{\csname cover-bleed\endcsname}%
-    \edef\rble@d{\csname cover-bleed\endcsname}%
+    \let\lble@d\spinelble@d
+    \let\rble@d\spinerble@d
     \edef\tble@d{0pt}%
     \edef\bble@d{0pt}%
     \trace{cov}{Rotated spine}%
@@ -158,16 +163,21 @@
   \fi
 }}
 
+\def\topedgeble@d{\ifdim\wholec@vrtpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\botedgeble@d{\ifdim\wholec@vrbpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\udble@d{%
+  \edef\tble@d{\topedgeble@d}%
+  \edef\bble@d{\botedgeble@d}%
+}
 \def\leftble@d{%
   \edef\lble@d{\csname cover-bleed\endcsname}%  \edef\tble@d{\csname cover-bleed\endcsname}%
-  \edef\bble@d{\csname cover-bleed\endcsname}%
   \edef\rble@d{0pt}%
+  \udble@d
 }
 \def\rightble@d{%
   \edef\rble@d{\csname cover-bleed\endcsname}%
-  \edef\tble@d{\csname cover-bleed\endcsname}%
-  \edef\bble@d{\csname cover-bleed\endcsname}%
   \edef\lble@d{0pt}%
+  \udble@d
 }
 
 \def\m@kecover{%
@@ -176,6 +186,14 @@
   \ifcsname periphcontents=backcover\endcsname\else\tempfalse\fi
   \ifcsname periphcontents=wholecover\endcsname\else\temptrue\fi
   \iftemp
+      \edef\wholec@vrtpad{0 pt}%
+      \edef\wholec@vrbpad{0 pt}%
+      \bgroup
+        \s@tc@tprefix{cover_whole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
+        \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
+      \egroup
     %\tracingassigns=1
     \cover@maths
     %\tracingassigns=0
@@ -186,25 +204,17 @@
       \edef\rble@d{\csname cover-bleed\endcsname}%
       \edef\tble@d{\csname cover-bleed\endcsname}%
       \edef\bble@d{\csname cover-bleed\endcsname}%
-      \edef\wholec@vrtpad{0 pt}%
-      \edef\wholec@vrbpad{0 pt}%
-      \bgroup
-        \s@tc@tprefix{cover_whole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
-          \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
-        \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
-          \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
-      \egroup
       \trace{cov}{wholec@vr v padding=\wholec@vrtpad|\wholec@vrbpad}%
       %\ble@dtrue
+      \BoxLikeBordertrue
       \c@verbit{whole}{\topskip=0pt \lineskip=0pt
-        \vskip-\wholec@vrtpad
+        %\vskip-\wholec@vrtpad
         \ifcsname  periphcontents=wholecover\endcsname
-          \vbox to 0pt{\vskip \wholec@vrtpad\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
+          \vbox to 0pt{\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
               \csname periphcontents=wholecover\endcsname}\vss}%
         \fi
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
-        \BoxLikeBordertrue
         \ifBookOpenLeft
           \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}
             }%
