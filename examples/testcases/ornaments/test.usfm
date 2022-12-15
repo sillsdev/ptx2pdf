@@ -1,9 +1,7 @@
 \id TST Test file
 \h small test file
 \periph front|frontcover
-\p ~
 \vfill
-\keeptriggertrue
 \esb \cat TitleBox\cat*
 \mt3 The 
 \mt1 Test-case Bible
@@ -17,13 +15,13 @@
 
 \periph spine|spine
 \pc The Test-Case Bible
-\p
 
 \periph wholecover|wholecover
-\pc |<-------\hfil \the\hsize \hfil ------->|\endgraf
-\p ~
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\endgraf
 
 \periph back|backcover
+\hrule
 \pc The back
 \vfill
 \pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
@@ -32,7 +30,6 @@
 \esbe
 \pc 0 copies, Klingon-Esperanto
 \b
-
 \zendperiph
 
 \mt Ornaments Demonstration File

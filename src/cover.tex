@@ -46,44 +46,56 @@
 \rotatespinetrue
 \def\c@verbit#1#2{%
   %\tracingall
-  \h@ldfigtrue
-  \ble@dtrue
+  \h@ldfigtrue % Don't shipout a full page!
+  \ble@dtrue 
   \bgroup
     \def\t@stsz{1}%
     %\def\t@stsz{.33}%
-    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname +\tble@d+\bble@d\relax\relax
-    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname +\rble@d+\lble@d\relax\relax
+    \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname \relax\relax
+    \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname \relax\relax
     \hsize=\PaperWidth
     \esb\cat cover_#1\cat*#2
     \esbe%
-    \bgroup\s@tc@tprefix{cover_#1}%
-    \ifx\b@drbottom\tr@e
-      \getsbp@ram{borderbpadding}%
-      \global\let\bpp@ram\p@ram
-      \getsbp@ram{borderwidth}%
-      \global\let\bwp@ram\p@ram
-    \else
-      \gdef\bpp@ram{0}%
-      \gdef\bwp@ram{0}%
-    \fi
+    \bgroup
+      \s@tc@tprefix{cover_#1}%
+      \getsbp@ram{borderbottom}\ifx\cp@ram\tr@e
+        \getsbp@ram{borderbpadding}%
+        \global\let\bpp@ram\p@ram
+        \getsbp@ram{borderwidth}%
+        \global\let\bwp@ram\p@ram
+      \else
+        \getsbp@ram{borderbpadding}%
+        \global\let\bpp@ram\p@ram
+        \gdef\bwp@ram{0}%
+      \fi
+      \getsbp@ram{position}%
     \egroup
-    \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) bpparam=\bpp@ram bwp@ram=\bwp@ram}%    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr-\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr -\b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr-\b@dr@top@pad\relax|\the\dimexpr -\b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
-    \hskip -\dimexpr \b@dr@left@pad\relax
+    \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
+    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax|\the\dimexpr \b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
+    %\hskip \dimexpr \unble@d@lpad\relax
+    %\trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
     \ifhasb@rder
-      \trace{cov}{Cover had border}%
-      \raise\dimexpr \dp\wholepagepic + \ifble@d\bble@d\fi\ifx\bpp@ram\relax\else -\bpp@ram pt \fi\relax
-        \hbox{\box\wholepagepic}%
-      %\raise\dimexpr \bble@d\ifx\bpp@ram\relax\else -\bpp@ram pt\fi\relax\hbox{\box\wholepagepic}%
+      \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic had a border (flags: \ifvmode vmode \fi \ifble@d bleed \fi)}%
+      
+      \ifvmode\else
+       \raise\dimexpr \dp\wholepagepic 
+          \ifx\bpp@ram\relax\else -\bwp@ram pt -\bpp@ram pt \fi
+          %\ifble@d +\bble@d \fi
+      \fi
+          \hbox{\box\wholepagepic}%
     \else
-      \trace{cov}{Cover had no border}%
-      \box\wholepagepic
+      \trace{cov}{Cover (\the\ht\wholepagepic+\the\dp\wholepagepic)*\the\wd\wholepagepic - had no border}%
+      %\ifble@d \ifvmode \vskip -\tble@d \fi\fi
+        \box\wholepagepic
+      %\vrule width 1pt
     \fi
-    \hskip -\dimexpr \b@dr@right@pad\relax
+    %\hskip \dimexpr \unble@d@rpad\relax
   \egroup
 } 
 
 \def\cover@maths{%
   \global\rotatespinefalse
+  \edef\c@vY{\dimexpr \csname cover-y\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax}%
   \bgroup\s@tc@tprefix{cover_spine}\getsbp@ram{sbarrotation}%
   \ifx\cp@ram\relax\else
     \trace{cov}{Rotating spine? \cp@ram}%
@@ -97,22 +109,26 @@
         \global\let\r@tSet\r@cwSet%
         \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
         \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
+        \global\let\spinelble@d\topedgeble@d%
+        \global\let\spinerble@d\botedgeble@d%
       \else
         \global\let\r@tSet\r@acwSet%
         \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
         \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
+        \global\let\spinerble@d\topedgeble@d%
+        \global\let\spinelble@d\botedgeble@d%
       \fi
     \fi
   \fi\egroup
   \ifrotatespine
-    \x@\let\csname cover-X-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\let\csname cover-X-spine\endcsname\c@vY
     \x@\edef\csname cover-Y-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
   \else
-    \x@\let\csname cover-Y-spine\x@\endcsname\csname cover-y\endcsname
+    \x@\let\csname cover-Y-spine\endcsname\c@vY
     \x@\edef\csname cover-X-spine\endcsname{\the\dimexpr \csname cover-spine\endcsname + \csname cover-back-spinewrap\endcsname + \csname cover-front-spinewrap\endcsname\relax}%
   \fi
-  \x@\let\csname cover-Y-front\x@\endcsname\csname cover-y\endcsname
-  \x@\let\csname cover-Y-back\x@\endcsname\csname cover-y\endcsname
+  \x@\let\csname cover-Y-front\endcsname\c@vY
+  \x@\let\csname cover-Y-back\endcsname\c@vY
   \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname\relax}%
   \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname\relax}%
   \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2\relax }
@@ -121,16 +137,18 @@
 }
 \def\d@spine{{%
   \ifrotatespine
-    \edef\lble@d{\csname cover-bleed\endcsname}%
-    \edef\rble@d{\csname cover-bleed\endcsname}%
+    \let\lble@d\spinelble@d
+    \let\rble@d\spinerble@d
     \edef\tble@d{0pt}%
     \edef\bble@d{0pt}%
     \trace{cov}{Rotated spine}%
-    \setbox0\hbox{\hskip\lble@d\c@verbit{spine}{\topskip=1pt 
-      \vskip \@@spinebeforeskip
-      \vfill\csname periphcontents=spine\endcsname\vfill
-      \vskip \@@spineafterskip
-    }\hskip\rble@d}%
+    \setbox0\hbox{%
+      \c@verbit{spine}{\topskip=0pt 
+        \vskip \@@spinebeforeskip
+        \vfill\csname periphcontents=spine\endcsname\vfill
+        \vskip \@@spineafterskip
+      }%
+    }%
     \trace{cov}{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
     %\showbox0
@@ -146,68 +164,103 @@
   \fi
 }}
 
+\def\topedgeble@d{\ifdim\wholec@vrtpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\botedgeble@d{\ifdim\wholec@vrbpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\udble@d{% unified bleed disable if they want padding for coverwhole
+  \edef\tble@d{\topedgeble@d}%
+  \edef\bble@d{\botedgeble@d}%
+}
 \def\leftble@d{%
-  \edef\lble@d{\csname cover-bleed\endcsname}%
-  \edef\tble@d{\csname cover-bleed\endcsname}%
-  \edef\bble@d{\csname cover-bleed\endcsname}%
+  \edef\lble@d{\csname cover-bleed\endcsname}%  \edef\tble@d{\csname cover-bleed\endcsname}%
   \edef\rble@d{0pt}%
+  \udble@d
 }
 \def\rightble@d{%
   \edef\rble@d{\csname cover-bleed\endcsname}%
-  \edef\tble@d{\csname cover-bleed\endcsname}%
-  \edef\bble@d{\csname cover-bleed\endcsname}%
   \edef\lble@d{0pt}%
+  \udble@d
 }
 
 \def\m@kecover{%
   \temptrue
   \ifcsname periphcontents=frontcover\endcsname\else\tempfalse\fi
   \ifcsname periphcontents=backcover\endcsname\else\tempfalse\fi
+  \ifcsname periphcontents=wholecover\endcsname\else\temptrue\fi
   \iftemp
+      \edef\wholec@vrtpad{0 pt}%
+      \edef\wholec@vrbpad{0 pt}%
+      \bgroup
+        \s@tc@tprefix{cover_whole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
+        \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
+          \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
+      \egroup
     %\tracingassigns=1
     \cover@maths
     %\tracingassigns=0
-    \setbox0\vbox{\topskip=0pt \lineskip=0pt%
+    \setbox0\vbox to \csname cover-Y-whole\endcsname{\topskip=0pt \lineskip=0pt%
+      %\vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
       \hsize=\csname cover-X-whole\endcsname
-      \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
       \edef\lble@d{\csname cover-bleed\endcsname}%
       \edef\rble@d{\csname cover-bleed\endcsname}%
       \edef\tble@d{\csname cover-bleed\endcsname}%
       \edef\bble@d{\csname cover-bleed\endcsname}%
-      \c@verbit{whole}{\topskip=0pt 
+      \trace{cov}{wholec@vr v padding=\wholec@vrtpad|\wholec@vrbpad}%
+      %\ble@dtrue
+      \BoxLikeBordertrue
+      \c@verbit{whole}{\topskip=0pt \lineskip=0pt
+        %\vskip-\wholec@vrtpad
+        \ifcsname  periphcontents=wholecover\endcsname
+          \vbox to 0pt{\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
+              \csname periphcontents=wholecover\endcsname}\vss}%
+        \fi
     %    \tracingall
-        \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
-        \BoxLikeBordertrue
+        %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
         \ifBookOpenLeft
           \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}
             }%
-            \d@spine
+            {%
+              \ble@dtrue
+              \d@spine
+            }%
             {\rightble@d
+              %\ble@dtrue
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
           }%
         \else
-          \hbox{{\leftble@d
+          \hbox{\setbox0\hbox{\leftble@d
+              \ble@dtrue
               \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
             }%
-            \d@spine
-            {\rightble@d
+            \trace{cov}{back cover is \l@gdims0}%
+            \box0
+            {%
+              \ble@dtrue
+              \d@spine
+            }%
+            \setbox0\hbox{\rightble@d
+              \ble@dtrue
               \c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+            \trace{cov}{front cover is \l@gdims0}%
+            \box0
           }%
         \fi
-        \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
+        %\ifble@d \vskip \bble@d plus 1fil minus 1fil \fi
       }%
-      \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
+      %\ifble@d \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil \fi
+      %\vfill
     }%%
-    \def\pagecontents{\copy0}\plainoutput
+    %\def\pagecontents{\copy0}\plainoutput
     \ifnum\interactionmode=2
       \showbox0
     \fi
-    \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-y-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
-    \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname}%
+    \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
+    \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\ifble@d \csname cover-bleed\endcsname \else 0pt\fi}%
   \else
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
   \fi
 }
+\StorePeriph{wholecover}
 \KeepPeriph{frontcover}
 \KeepPeriph{backcover}
 \KeepPeriph{spine}
