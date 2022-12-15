@@ -569,7 +569,6 @@ class GtkViewModel(ViewModel):
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         self.locked = set()
-        self.spine = 0
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):

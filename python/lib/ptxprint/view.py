@@ -111,6 +111,7 @@ class ViewModel:
         self.docreatediff = False
         self.strongs = None
         self.artpgs = None
+        self.spine = 0
 
         # private to this implementation
         self.dict = {}

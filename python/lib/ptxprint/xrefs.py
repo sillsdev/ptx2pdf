@@ -385,16 +385,17 @@ class StrongsXrefs(XMLXrefs):
         wds = self.strongs.get(st,{}).get('local', [])
         reg = []
         for w in wds:
+            pending = ""
             for i, b in enumerate(re.sub(r"\(.*?\)", "", w).split()):
                 t = b.strip()
                 p = ""
                 r = ""
                 s = ""
                 if t == "**":
-                    reg.append(r"(?:\s+\w+)*")
+                    pending += r"(?:\s+\w+)*"
                     continue
                 elif t == "*":
-                    reg.append(r"(?:\s+\w+)?")
+                    pending += r"(?:\s+\w+)?"
                     continue
                 if not t.startswith("*"):
                     r = r"\bb"
@@ -417,8 +418,9 @@ class StrongsXrefs(XMLXrefs):
                     a = s
                     s += r"\s+" + b
                     b = s + "r\s+" + a
-                    reg.append(r + b + p)
-                reg.append(r + s + p)
+                    pending += r + b + p + "|"
+                pending += r + s + p
+            reg.append(pending)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res)
         logger.debug(f"strongs regexes {st} = {res}")
