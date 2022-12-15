@@ -3586,6 +3586,7 @@ class GtkViewModel(ViewModel):
     def finished(self):
         # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
+        # enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -4618,7 +4619,6 @@ class GtkViewModel(ViewModel):
             if artist == "co":
                 for series in self.artpgs[artist].keys():
                     for a,v in self.artpgs[artist][series]:
-                        # print(f"{v}\t on page {a}")
                         pics += [v]
         picount = len(pics)
         if picount == 0:
@@ -4651,9 +4651,9 @@ I am writing to request permission to use the following David C Cook illustratio
 Thank you,
 <Requester's Name>
 <SIL Entity>
-""".format(self.getvar("country") or "<Country>", self.getvar("languagename") or "<Language>", \
-           self.getvar("langiso") or "<Ethnologue code>", self.getvar("maintitle") or "<Title>", \
-           self.getvar("pubtype") or "<[Portion|NT|Bible]>", self.getvar("copiesprinted") or "<99>", \
+""".format(self.getvar("country", "<Country>"),            self.getvar("languagename",  "<Language>"), \
+           self.getvar("langiso", "<Ethnologue code>"),    self.getvar("maintitle",     "<Title>"), \
+           self.getvar("pubtype", "<[Portion|NT|Bible]>"), self.getvar("copiesprinted", "<99>"), \
            picount, picturelist, sensitive)
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \
