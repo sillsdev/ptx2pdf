@@ -110,7 +110,7 @@ class mymr(ScriptSnippet):
                     "\u1082-\u108D\u108F\u109A-\u109D\uA9E5\uA9E6\uAA70\uAA7B-\uAA7D]|\u1039{}".format(cons)
             res += [(onlybody, re.compile('(?<![\\s\u1039"\'\[\(\{{\u2018-\u201F])({0})(?!(?:{1})*[\\s\u1039\u103A])'.format(cons, ncons)), '\u200B\\1')]
             res += [(onlybody, re.compile('(\u103A\u1039{0})\u200B'.format(cons)), r'\1')]
-            res += [(onlybody, re.compile('(\\s{0}(?:\u1039{0})*{1}*)\u200B'.format(cons, ncons)), r'\1')]
+            res += [(onlybody, re.compile('(\\s{0}(?:\u1039{0})*(?:{1})*)\u200B'.format(cons, ncons)), r'\1')]
         return res
 
 class thai(ScriptSnippet):
