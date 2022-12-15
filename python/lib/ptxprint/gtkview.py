@@ -1122,7 +1122,7 @@ class GtkViewModel(ViewModel):
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup)
 
-    def getvar(self, k, dest=None):
+    def getvar(self, k, default="", dest=None):
         if dest is None:
             varlist = self.pubvarlist
         elif dest == "strongs":
@@ -1134,7 +1134,7 @@ class GtkViewModel(ViewModel):
         for r in varlist:
             if r[0] == k:
                 return r[1]
-        return None
+        return default
 
     def setvar(self, k, v, dest=None):
         if dest is None:
