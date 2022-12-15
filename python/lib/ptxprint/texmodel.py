@@ -1813,9 +1813,7 @@ class TexModel:
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
-                print(f"{self.printer.artpgs=}")
                 for art, pgs in self.printer.artpgs.items():
-                    print(f"{art=} {pgs=}")
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
                             pages = [x[0] for x in pgs[art]]
