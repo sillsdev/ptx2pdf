@@ -19466,7 +19466,7 @@ settings will remain unchanged.</property>
 material with illustrations from David C Cook, or
 Scripture Press, you are required to obtain prior
 permission. Click this button to generate the text
-to be sent to ScripturepicturePermissions_intl@sil.org
+to be sent to ScripturePicturePermissions_intl@sil.org
 requesting permission.</property>
                                     <property name="halign">end</property>
                                     <property name="margin-left">6</property>
@@ -28679,8 +28679,8 @@ main scripture pages.</property>
                 </child>
                 <child>
                   <object class="GtkBox" id="tb_Cover">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="no-show-all">True</property>
                     <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <property name="homogeneous">True</property>
@@ -29545,8 +29545,8 @@ on the Styles tab for the Front Cover.</property>
                 </child>
                 <child type="tab">
                   <object class="GtkLabel" id="lb_Cover">
-                    <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="no-show-all">True</property>
                     <property name="tooltip-text" translatable="yes">Set parameters for the cover
 of the publication.</property>
                     <property name="halign">start</property>

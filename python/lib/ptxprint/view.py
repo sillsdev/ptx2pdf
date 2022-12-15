@@ -173,11 +173,11 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def getvar(self, k, dest=None):
+    def getvar(self, k, default="", dest=None):
         if dest is None:
-            return self.pubvars.get(k, "")
+            return self.pubvars.get(k, default)
         elif dest == "strongs":
-            return self.strongsvars.get(k, "")
+            return self.strongsvars.get(k, default)
 
     def setvar(self, k, v, dest=None):
         if dest is None:

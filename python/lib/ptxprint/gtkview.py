@@ -180,7 +180,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Cover", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR")
 
@@ -1122,7 +1122,7 @@ class GtkViewModel(ViewModel):
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup)
 
-    def getvar(self, k, dest=None):
+    def getvar(self, k, default="", dest=None):
         if dest is None:
             varlist = self.pubvarlist
         elif dest == "strongs":
@@ -1134,7 +1134,7 @@ class GtkViewModel(ViewModel):
         for r in varlist:
             if r[0] == k:
                 return r[1]
-        return None
+        return default
 
     def setvar(self, k, v, dest=None):
         if dest is None:
@@ -3586,6 +3586,7 @@ class GtkViewModel(ViewModel):
     def finished(self):
         # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
+        # enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -4618,7 +4619,6 @@ class GtkViewModel(ViewModel):
             if artist == "co":
                 for series in self.artpgs[artist].keys():
                     for a,v in self.artpgs[artist][series]:
-                        # print(f"{v}\t on page {a}")
                         pics += [v]
         picount = len(pics)
         if picount == 0:
@@ -4651,9 +4651,9 @@ I am writing to request permission to use the following David C Cook illustratio
 Thank you,
 <Requester's Name>
 <SIL Entity>
-""".format(self.getvar("country") or "<Country>", self.getvar("languagename") or "<Language>", \
-           self.getvar("langiso") or "<Ethnologue code>", self.getvar("maintitle") or "<Title>", \
-           self.getvar("pubtype") or "<[Portion|NT|Bible]>", self.getvar("copiesprinted") or "<99>", \
+""".format(self.getvar("country", "<Country>"),            self.getvar("languagename",  "<Language>"), \
+           self.getvar("langiso", "<Ethnologue code>"),    self.getvar("maintitle",     "<Title>"), \
+           self.getvar("pubtype", "<[Portion|NT|Bible]>"), self.getvar("copiesprinted", "<99>"), \
            picount, picturelist, sensitive)
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \

@@ -557,6 +557,7 @@ class RefList(list):
         for r in self:
             res.append(r.str(context, level, lastref, this, addsep=addsep))
             lastref = r.last if isinstance(r, RefRange) else r
+            this = None
         return "".join(res)
 
     def __str__(self):
@@ -723,6 +724,7 @@ def tests():
     t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
     testrange("PSA 125:4-128:4", r("PSA", 125, 4), r("PSA", 128, 4))
     testlist("ROM 1; MAT 3:4-11; ROM 1:3-2:7", "MAT 3:4-11; ROM 1-2:7")
+    t("GEN 1:1-3; 3:2-11; LUK 4:5", "ACB-ACDAGC-AGLeiF", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
 
 
 if __name__ == "__main__":

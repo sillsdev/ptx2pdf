@@ -1777,7 +1777,6 @@ class TexModel:
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
             rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
-            print(f"{m=}")
             msngPgs = []
             customStmt = []
             if len(m):
@@ -1792,7 +1791,7 @@ class TexModel:
                         msngPgs += [f[0]] 
                     else:
                         p = a
-                    self.printer.artpgs.setdefault(p, {}).setdefault(f[1],[]).append((int(f[0]),f[1]+f[2]))
+                    self.printer.artpgs.setdefault(p, {}).setdefault(a,[]).append((int(f[0]),f[1]+f[2]))
             artistWithMost = ""
             if len(self.printer.artpgs):
                 artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
@@ -1817,14 +1816,14 @@ class TexModel:
                 for art, pgs in self.printer.artpgs.items():
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
-                            pgs = sorted(pgs.values())
-                            plurals = pluralstr(plstr, pgs)
+                            pages = [x[0] for x in pgs[art]]
+                            plurals = pluralstr(plstr, pages)
                             artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                             if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
                                 artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                                 if sensitive and "sensitive" in artinfo:
                                     artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                                cpystr = multstr(cpytemplate, lang, len(pgs), plurals, artstr.replace("_", "\u00A0"))
+                                cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
                                 crdts.append("\\{} {}".format(mkr, cpystr))
                             else:
                                 crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
@@ -1842,8 +1841,8 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        pgs = sorted(self.printer.artpgs[artistWithMost].values())
-                        plurals = pluralstr(plstr, pgs)
+                        pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
+                        plurals = pluralstr(plstr, pages)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                         if sensitive and "sensitive" in artinfo:
                             artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
