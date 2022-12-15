@@ -420,12 +420,16 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2ema
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _(f"Mailto: {who2email}") + "\n\n{}".format("\n\n".join(lines))
+        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            if who2email.startswith("ptxp"):
+                secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            else:
+                secondary += "\n" + _("The letter above has been copied to the clipboard.")
+                secondary += "\n" + _("Send it by e-mail to: {}").format(who2email)
         else:
             secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
     if show:
@@ -4609,17 +4613,24 @@ class GtkViewModel(ViewModel):
         self.wiggleCurrentTabLabel()
 
     def onRequestPicturePermission(self, btn):
-        print(f"{self.artpgs=}")
-####### This bit needs fixing still.
-        if self.artpgs is not None:
-            for a,v in self.artpgs:
-                print(f"{a}\t{v}")
-        picount = "10"
-        picturelist = "Cn01656c, CN01667C, cn01800C, CN01875C, CN01782C, Cn01739C, CN01700C, CN01769C, cn01815C, cn01857c"
-####### This bit needs fixing still.
+        pics = []
+        for artist in self.artpgs.keys():
+            if artist == "co":
+                for series in self.artpgs[artist].keys():
+                    for a,v in self.artpgs[artist][series]:
+                        # print(f"{v}\t on page {a}")
+                        pics += [v]
+        picount = len(pics)
+        if picount == 0:
+            _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
+                       _("However none were detected in this publication.")
+            self.doError("Request Permission Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+            return
+        picturelist = ", ".join(pics)
         if self.get('c_sensitive'):
-            sensitive = "Due to regional sensitivities, we would like to use the abbreviated form " + \
-            "(© D.C.C.) in the copyright statement and for the watermark on each illustration.\n"
+            sensitive = "\nDue to regional sensitivities, we would like to use the abbreviated form " + \
+            "(© DCC) in the copyright statement and for the watermark on each illustration.\n"
         else:
             sensitive = ""
         _permissionRequest = """
@@ -4627,17 +4638,17 @@ TO: International Publishing Services Coordinator
 7500 West Camp Wisdom Road
 Dallas, TX 75236 USA\n
 I am writing to request permission to use the following David C Cook illustrations in a publication.\n
-1. The name of the country, language, Ethnologue code.
+1. The name of the country, language, Ethnologue code:
 \t{}, {}, {}\n
-2. The title of the book in the vernacular.
+2. The title of the book in the vernacular:
 \t{}\n
-3. The kind of book: 
+3. The kind of book:
 \t{}\n
-4. The number of books to be printed.
+4. The number of books to be printed:
 \t{} copies\n
-5. The number of illustrations and specific catalog number(s) of the illustrations/pictures.
+5. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
 \t{} illustrations:\n{}\n{}
-Blessings,
+Thank you,
 <Requester's Name>
 <SIL Entity>
 """.format(self.getvar("country") or "<Country>", self.getvar("languagename") or "<Language>", \

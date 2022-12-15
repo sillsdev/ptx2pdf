@@ -1786,12 +1786,13 @@ class TexModel:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
-                        self.printer.artpgs.setdefault(f[5], {})[f[1]] = int(f[0])
+                        p = f[5]
                     elif a == '':
-                        self.printer.artpgs.setdefault('zz', {})[f[1]] = int(f[0])
+                        p = "zz"
                         msngPgs += [f[0]] 
                     else:
-                        self.printer.artpgs.setdefault(a, {})[f[1]] = int(f[0])
+                        p = a
+                    self.printer.artpgs.setdefault(p, {}).setdefault(f[1],[]).append((int(f[0]),f[1]+f[2]))
             artistWithMost = ""
             if len(self.printer.artpgs):
                 artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
