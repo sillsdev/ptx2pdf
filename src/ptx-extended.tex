@@ -528,6 +528,7 @@
     \x@\let\x@\scale@height\csname text@ref@h@ight\endcsname
     \x@\let\x@\scale@width\csname text@ref@w@dth\endcsname
   \fi
+  \trace{e}{Scale size: \scale@width x\scale@height}%
   \ifcsname @@\scale@ref @ofs\endcsname
     \x@\edef\x@\fig@lskip{\the\dimexpr -\csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \lble@d\fi}%
     \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
@@ -538,8 +539,9 @@
     \trace{e}{Set skips for #1 (unknown:\scale@ref) image to <\fig@lskip|\fig@rskip>}%
   \fi
 }
-% ch@ckfigdim gets called after the image trial load with dimen3=\wd figure box, dimen4=\ht figurebox
-% This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
+% ch@ckfigdim needs defining. It gets called after the image trial load with dimen3=\wd figure box, dimen4=\ht figurebox
+% (set by sb@ins@rtpic) 
+%This p@rsef@gsc@le gets called with dimen1=\wd sidebar , \dimen0=scratch, \dimen2=scratch.
 % f@grefdim should do something more sane
 \def\p@rsef@gsc@le#1x#2x#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
   \f@grefdim{\v@lpfx}%
@@ -669,6 +671,7 @@
   % Fall back to text lskip/rskip for inner
   \edef\inner@ref@w@dth{\the\wd\extb@x}%
   \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
+  \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
   \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
   \def\@@text@ofs{0pt}%
   \def\@@box@ofs{\fb@lpadding}%
@@ -682,11 +685,13 @@
     \edef\outer@ref@h@ight{\the\textheight}%
     \edef\inner@ref@h@ight{\the\dimexpr \textheight - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \edef\box@ref@h@ight{\the\dimexpr \ht\extb@x+\dp\extb@x +\fb@tpadding + \fb@bpadding\relax}%
+    \edef\border@ref@h@ight{\the\dimexpr\ht\extb@x + \b@dr@top@pad + \b@dr@bot@pad\relax}%
     \sb@rfillpagefalse
   \else
     \sb@rfillpagetrue
     \edef\outer@ref@h@ight{\the\dimexpr \cp@ram \relax}%
     \edef\inner@ref@h@ight{\the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
+    \edef\border@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding +\b@drwidth pt * \b@drvsides \relax}%
     \edef\box@ref@h@ight{\the\dimexpr \cp@ram\relax}%
     \ifble@d
       \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
@@ -721,6 +726,9 @@
       \iftemp
         \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
       \fi
+    \fi
+    \ifdim\wd\newpicb@x >\wd\extb@x
+      \setbox\newpicb@x\hbox to 0pt{\box\newpicb@x\hss}%
     \fi
     \def\sb@rchunkheight{\the\maxdimen}% Background images and page-broken chunks are incompatible 
     \tempfalse
@@ -826,7 +834,7 @@
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
          \trace{e}{Including background image below everything: \t@mpfigspec}%
-          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vfil\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vfil}\vss}%
+          \vbox to 0pt{\vbox to\ht\extchunkb@x{\vss\f@intthing{\bgf@galpha}{\bgf@gcol}{\box\newpicb@x}\vss}\vss}%
         \fi
         \let\fb@htadjust=\lstch@nkdp
         \trace{cov}{Space removal around feintbox (\ifble@d bleed: \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax\else none\fi)}%
