@@ -7,6 +7,8 @@
 \mt1 Test-case Bible
 \esbe
 \vfill
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\p ~
 \esb \cat footbox\cat*
 \pc \sc Atlantis\sc* 2022
 \p
@@ -21,7 +23,6 @@
 \endgraf
 
 \periph back|backcover
-\hrule
 \pc The back
 \vfill
 \pc |<-------\hfil \the\hsize \hfil -------->|\endgraf

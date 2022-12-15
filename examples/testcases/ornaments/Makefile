@@ -26,7 +26,7 @@ installcat: catalogue.pdf
 	git add -f ../../../docs/documentation/OrnamentsCatalogue.pdf
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
-	cp *.tex *.usfm *.sty Makefile ../bisect
+	cp *.tex *.usfm *.sty Makefile inner_include.pdf rose.jpg Background.jpg ../bisect
 
 auto:
 	echo Source code in $(DIR)
