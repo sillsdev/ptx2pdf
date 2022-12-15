@@ -52,7 +52,7 @@ if sys.platform in ("win32", "cygwin"):
 else:
     binaries = []
 
-a = Analysis(['python/scripts/ptxprint'],
+a = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
              pathex =   ['python/lib'],
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
