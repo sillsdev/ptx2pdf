@@ -316,8 +316,8 @@ _object_classes = {
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
-                    "lb_style_cat:cover-front|esb", "lb_style_cat:cover-back|esb",
-                    "lb_style_cat:cover-spine|esb", "lb_style_cat:cover-whole|esb", ), 
+                    "lb_style_cat:coverfront|esb", "lb_style_cat:coverback|esb",
+                    "lb_style_cat:coverspine|esb", "lb_style_cat:coverwhole|esb", ), 
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
@@ -1526,7 +1526,7 @@ class GtkViewModel(ViewModel):
         self.onExtListSourceChanges(None)
         # self.onExpertModeClicked(None)
         x = self.get("btn_selectDiffPDF")
-        if x is not None:
+        if x is not None and len(x) < 200:
             self.makeLabelBold("l_selectDiffPDF", True)
             self.set("lb_diffPDF", pdfre.sub(r"\1", x))
         else:
@@ -4612,16 +4612,18 @@ class GtkViewModel(ViewModel):
         self.spine = (thck * pgs / 2000) + adj
 
         showSpine = self.sensiVisible("c_inclSpine")
-        for w in ["vp_spine", "lb_style_cat:cover-spine|esb"]:
+        for w in ["vp_spine", "lb_style_cat:coverspine|esb"]:
             self.builder.get_object(w).set_visible(showSpine)
-        self.builder.get_object("lb_style_cat:cover-spine|esb").set_visible(self.get("c_inclSpine"))
+        self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
         thick = self.spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
         self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
 
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]
-        self.styleEditor.selectMarker(f"cat:cover-{posn}|esb")
+        print(f"{Gtk.Buildable.get_name(btn)=}\n{posn=}")
+        print(f"cat:cover{posn}|esb")
+        self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()

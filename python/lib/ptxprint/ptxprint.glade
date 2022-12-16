@@ -29214,7 +29214,7 @@ of overlap here (mm).</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLinkButton" id="lb_style_cat:cover-whole|esb">
+                                      <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
                                         <property name="label">Edit Cover Spread Settings</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -29332,7 +29332,7 @@ been trimmed.</property>
                                                   <object class="GtkLabel" id="l_coverBackBlurb1">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
-                                                    <property name="label" translatable="yes">Back Cover Blurb</property>
+                                                    <property name="label" translatable="yes">Back Cover Text</property>
                                                     <attributes>
                                                       <attribute name="weight" value="bold"/>
                                                       <attribute name="stretch" value="expanded"/>
@@ -29430,6 +29430,8 @@ been trimmed.</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
                                                     <property name="halign">end</property>
+                                                    <property name="margin-start">10</property>
+                                                    <property name="margin-end">10</property>
                                                     <property name="label" translatable="yes">ISBN Bar
   Code</property>
                                                     <attributes>
@@ -29444,7 +29446,7 @@ been trimmed.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLinkButton" id="lb_style_cat:cover-back|esb">
+                                                  <object class="GtkLinkButton" id="lb_style_cat:coverback|esb">
                                                     <property name="label">Edit Back Cover Settings</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
@@ -29513,7 +29515,7 @@ on the Styles tab for the Back Cover.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLinkButton" id="lb_style_cat:cover-spine|esb">
+                                                  <object class="GtkLinkButton" id="lb_style_cat:coverspine|esb">
                                                     <property name="label">Spine</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
@@ -29673,7 +29675,7 @@ on the Styles tab for the Spine.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLinkButton" id="lb_style_cat:cover-front|esb">
+                                                  <object class="GtkLinkButton" id="lb_style_cat:coverfront|esb">
                                                     <property name="label">Edit Front Cover Settings</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
@@ -30099,12 +30101,6 @@ options allow plenty of scope.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Select a particular PDF file to be compared 
-against the current output PDF. If you just 
-want to compare output to the previous run,
-then click Cancel in the File Open dialog
-to reset the filename (which will then
-default to _1).</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <signal name="clicked" handler="onSelectDiffPDFclicked" swapped="no"/>
@@ -30148,6 +30144,7 @@ default PDF viewer.
 
 Shortcut: Ctrl-D</property>
                                     <property name="halign">end</property>
+                                    <property name="valign">start</property>
                                     <property name="margin-start">21</property>
                                     <signal name="clicked" handler="onCreateDiffclicked" swapped="no"/>
                                     <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
