@@ -1402,6 +1402,12 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.configPath(cfgname=cfg)
         if cfg == 'Default':
             self.resetToInitValues()
+            try:
+                rmtree(delCfgPath)
+            except OSError:
+                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+
+            self.updateProjectSettings(self.prjid)
             self.onFontChanged(None)
             # Right now this 'reset' (only) re-initializes the UI settings, and removes the ptxprint.sty file
             # We could provide a dialog with options about what else to delete (piclists, adjlists, etc.)
