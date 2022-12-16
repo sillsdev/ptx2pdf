@@ -12676,7 +12676,7 @@ gr = Graphite</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkCheckButton" id="c_RTLcoverBinding">
+                                      <object class="GtkCheckButton" id="c_RTLbookBinding">
                                         <property name="label" translatable="yes">RTL Book
 Binding</property>
                                         <property name="name">Set the binding to Right (for RTL publications)</property>
@@ -29287,7 +29287,7 @@ been trimmed.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox">
+                                  <object class="GtkBox" id="bx_coverPreview">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">start</property>
@@ -30027,23 +30027,7 @@ two sets of sequential pages.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_RTLpagination">
-                                    <property name="label" translatable="yes">Reverse 
-Page Order</property>
-                                    <property name="name">Use reverse (RTL) page order for pagination</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">When paginating a book with more than
-one script, it may be necessary to reverse
-the page order. For example, when creating
-a diglot with both LTR and RTL scripts.</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">2</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

@@ -1312,7 +1312,6 @@ class GtkViewModel(ViewModel):
             
     def enableDisableSpotColor(self, btn):
         ofmt = self.get("fcb_outputFormat")
-        print(f"{ofmt=}")
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
@@ -2317,7 +2316,7 @@ class GtkViewModel(ViewModel):
             return
         else:
             self.rtl = rtl
-            self.set("c_RTLpagination", rtl)
+            self.set("c_RTLbookBinding", rtl)
 
     def onEditStyleClicked(self, btn):
         mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")
@@ -4588,12 +4587,18 @@ class GtkViewModel(ViewModel):
 
     def onCoverSettingsChanged(self, btn):
         self.sensiVisible("c_makeCoverPage")
-        # if self.get("c_RTLcoverBinding"):
-            # self.builder.get_object("vp_coverBack").pack_start(2)
-            # self.builder.get_object("vp_coverFront").pack_start(0)
-        # else:
-            # self.builder.get_object("vp_coverBack").pack_start(0)
-            # self.builder.get_object("vp_coverFront").pack_start(2)
+        hbx = self.builder.get_object("bx_coverPreview")
+        b = self.builder.get_object("vp_coverBack")
+        s = self.builder.get_object("vp_spine")
+        f = self.builder.get_object("vp_coverFront")
+        for v in [b,s,f]:
+            hbx.remove(v)
+        if self.get("c_RTLbookBinding"):
+            for v in [b,s,f]:
+                hbx.pack_end(v, False, False, 0)
+        else:
+            for v in [f,s,b]:
+                hbx.pack_end(v, False, False, 0)
         
         rotateDegrees = float(self.get("fcb_rotateSpineText"))
         self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
@@ -4621,8 +4626,6 @@ class GtkViewModel(ViewModel):
 
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]
-        print(f"{Gtk.Buildable.get_name(btn)=}\n{posn=}")
-        print(f"cat:cover{posn}|esb")
         self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
         mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)

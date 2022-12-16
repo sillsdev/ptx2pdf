@@ -280,7 +280,7 @@ ModelMap = {
     "document/printarchive":    ("c_printArchive", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", lambda w,v: "" if v else "%"),
-    "cover/rtlbinding":         ("c_RTLcoverBinding", None),
+    "cover/rtlbookbinding":     ("c_RTLbookBinding", None),
     "cover/includespine":       ("c_inclSpine", None),
     "cover/rotatespine":        ("fcb_rotateSpineText", None),
     "cover/overridepagecount":  ("c_overridePageCount", None),
