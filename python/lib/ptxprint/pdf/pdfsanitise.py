@@ -27,7 +27,7 @@ def split_pages(trailer):
         if d is None:
             continue
         category  = d.Insert
-        if fname is None:
+        if category is None:
             continue
         res.setdefault(category, []).append(p)
         trailer.pages.remove(p)

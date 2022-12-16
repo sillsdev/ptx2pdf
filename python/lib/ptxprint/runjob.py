@@ -785,10 +785,11 @@ class RunJob:
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
         if kw.get('cover', False):
-            outpdf = PdfReader(opath)
-            extras = split_pages(outpdf)
+            inpdf = PdfReader(opath)
+            extras = split_pages(inpdf)
             if 'cover' in extras:
-                fixpdffile(outpdf, outfname.replace(".tex", "_cover.pdf"), colour="cmyk")
+                fixpdffile(inpdf, outfname.replace(".tex", "_cover.pdf"), colour="cmyk")
+            outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}
         if self.ispdfxa == "Spot":

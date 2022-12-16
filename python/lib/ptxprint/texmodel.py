@@ -285,9 +285,13 @@ ModelMap = {
     "cover/rtlbinding":         ("c_RTLcoverBinding", None),
     "cover/includespine":       ("c_inclSpine", None),
     "cover/rotatespine":        ("fcb_rotateSpineText", None),
+    "cover/overridepagecount":  ("c_overridePageCount", None),
     "cover/totalpages":         ("s_totalPages", None),
     "cover/coveradjust":        ("s_coverAdjust", None),
     "cover/weightorthick":      ("s_paperWidthOrThick", None),
+    "cover/spineoverlapback":   ("s_spineOverlapBack", None),
+    "cover/spineoverlapfront":  ("s_spineOverlapFront", None),
+    "cover/coverbleed":         ("s_coverBleed", None),
     "cover/papercalcunits":     ("r_paperCalc", None),
 
     "document/keepversions":    ("s_keepVersions", None),
