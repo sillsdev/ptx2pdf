@@ -767,7 +767,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            if not self.procpdf(outfname, pdffile, info):
+            if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
 
@@ -784,7 +784,7 @@ class RunJob:
     def procpdf(self, outfname, pdffile, info, **kw):
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
-        if 'cover' in kw:
+        if kw.get('cover', False):
             outpdf = PdfReader(opath)
             extras = split_pages(outpdf)
             if 'cover' in extras:
