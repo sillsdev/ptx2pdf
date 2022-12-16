@@ -282,6 +282,7 @@ _sensitivities = {
     "c_filterCats":            ["gr_filterCats"],
     "c_makeCoverPage":         ["bx_cover"],
     "c_inclSpine":             ["gr_spine"],
+    "c_overridePageCount":     ["s_totalPages"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -4587,9 +4588,12 @@ class GtkViewModel(ViewModel):
 
     def onCoverSettingsChanged(self, btn):
         self.sensiVisible("c_makeCoverPage")
-        self.builder.get_object("bx_LHScover").set_visible(False)
-        self.builder.get_object("bx_RHScover").set_visible(False)
-        self.builder.get_object(f'bx_{"L" if self.get("c_RTLcoverBinding") else "R"}HScover').set_visible(True)
+        # if self.get("c_RTLcoverBinding"):
+            # self.builder.get_object("vp_coverBack").pack_start(2)
+            # self.builder.get_object("vp_coverFront").pack_start(0)
+        # else:
+            # self.builder.get_object("vp_coverBack").pack_start(0)
+            # self.builder.get_object("vp_coverFront").pack_start(2)
         
         rotateDegrees = float(self.get("fcb_rotateSpineText"))
         self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
