@@ -1,9 +1,9 @@
 PTXprint 2.2.42 Release Notes
-16 Dec 2022
+17 Dec 2022
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.2.43 (16 Dec 2022)
+Bug fixes and improvements in 2.2.43 (17 Dec 2022)
 
   * Added feature on Pictures tab to generate Request Permission letter (DCC)
   
@@ -18,8 +18,8 @@ Bug fixes and improvements in 2.2.43 (16 Dec 2022)
   * Improved Basic View by exposing some relatively new UI elements
   
   * Improved mymr syllable breaking logic
-
-  * WiP: Cover and Spine foundations in place (UI yet to be exposed)
+  
+  * Implement ifSeparateVerseAdornments for standard case
 
   * Fixed ornaments and ornament catalogue
 
@@ -28,6 +28,12 @@ Bug fixes and improvements in 2.2.43 (16 Dec 2022)
   * Fixed Strong's text matching regex creation
 
   * Fixed RefList output to include book if preceded by a reference from another book
+
+  * Work in progress: (UI yet to be exposed)
+     * Cover and Spine foundations in place 
+     * Added documentation for covers
+     * Enable covers using commandline option -z 16
+     * Refactored cover tab layout and added extra controls
 
 Bug fixes and improvements in 2.2.42 (2 Dec 2022)
 

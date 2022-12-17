@@ -7,36 +7,6 @@
 \rem make it unsuitable for use within Paratext without prior modification.
 
 \rem -------------------------------------------------------------------------
-\periph front|frontcover
-\rem -------------------------------------------------------------------------
-\zgap|0pt plus 1fill\*
-\esb \cat TitleBox\cat*
-\mt2 The Good News
-\mt3 according to
-\mt1 Matthew
-\esbe
-\zgap| 0pt plus 1fill\*
-\esb \cat footbox\cat*
-\pc \sc Atlantis\sc* 2022
-\p
-\esbe
-\p ~
-\rem -------------------------------------------------------------------------
-\periph spine|spine
-\rem -------------------------------------------------------------------------
-\pc The Gospel of Matthew
-\p
-\rem -------------------------------------------------------------------------
-\periph back|backcover
-\rem -------------------------------------------------------------------------
-\pc Why you should read this book
-\zgap| 0pt plus 1fill\*
-\esb \cat ISBNbox\cat*
-\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
-\esbe
-\pc 50 copies, Wakawaka Language
-\b
-\rem -------------------------------------------------------------------------
 \periph Title Page|id="title"
 \rem -------------------------------------------------------------------------
 \nopagenums
