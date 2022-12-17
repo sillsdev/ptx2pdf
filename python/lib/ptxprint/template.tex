@@ -244,9 +244,9 @@
 %%%%% Covers
 \catcode`\@=11
 {cover/makecoverpage}\include cover.tex
-\expandafter\def\csname cover-y-spine\endcsname{{{cover/spinewidth_} mm}}
-\expandafter\def\csname cover-y\endcsname{{\the\PaperHeight}}
-\expandafter\def\csname cover-x\endcsname{{\the\PaperWidth}}
+\expandafter\xdef\csname cover-y-spine\endcsname{{{cover/spinewidth_} mm}}
+\expandafter\xdef\csname cover-y\endcsname{{\the\PaperHeight}}
+\expandafter\xdef\csname cover-x\endcsname{{\the\PaperWidth}}
 
 % tweak to enable blank lines
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
