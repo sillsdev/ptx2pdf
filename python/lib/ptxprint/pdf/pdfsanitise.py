@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 
 from ptxprint.pdfrw import PdfReader, PdfWriter
-from ptxprint.pdfrw.objects import PdfDict
+from ptxprint.pdfrw.objects import PdfDict, PdfObject
 
 def ensure_contents(trailer):
     changed = False
@@ -26,18 +26,24 @@ def split_pages(trailer):
         d = p.PieceInfo.ptxprint
         if d is None:
             continue
-        category  = d.Insert
+        pr = d.Private
+        if pr is None:
+            continue
+        category  = pr.Insertion
         if category is None:
             continue
-        res.setdefault(category, []).append(p)
+        res.setdefault(category.lstrip("/"), []).append(p)
         trailer.pages.remove(p)
-        while dad := p.parent is not None:
+        noremove = False
+        while (dad := p.Parent) is not None:
             try:
-                dad.Kids.remove(p)
+                if not noremove:
+                    dad.Kids.remove(p)
+                dad.Count = PdfObject(int(dad.Count) - 1)
             except ValueError:
                 pass
             if len(dad.Kids) > 0:
-                break
+                noremove = True
             p = dad
     return res
 

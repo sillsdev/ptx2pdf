@@ -135,6 +135,12 @@ class PDFImage:
         elif self.filt == "/CCITTFaxDecode":
             print("No CCITTFaxDecode support yet")
             self.img = None
+        elif self.filt == "None":
+            mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
+            if mode == "L" and self.bits == 1:
+                mode = "1"
+            logger.debug(f"{mode=}, {self.width=}, {self.height=}, {self.cs=}")
+            self.img = Image.frombytes(mode=mode, size=(self.width, self.height), data=xobj.stream)
     
     def asXobj(self):
         res = PdfDict()
@@ -204,7 +210,7 @@ class PDFImage:
     def rgb_cmyk(self):
         img = np.asarray(self.img) / 255.
         res = rgb_vecto_cmyk(img)
-        self.img = Image.from_bytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
+        self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
 
     def cmyk_black(self):

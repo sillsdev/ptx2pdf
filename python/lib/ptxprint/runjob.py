@@ -15,7 +15,7 @@ from ptxprint.pdf.pdfsig import make_signatures
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError
-from ptxprint.pdfrw.objects import PdfDict, PdfString
+from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
@@ -788,7 +788,16 @@ class RunJob:
             inpdf = PdfReader(opath)
             extras = split_pages(inpdf)
             if 'cover' in extras:
-                fixpdffile(inpdf, outfname.replace(".tex", "_cover.pdf"), colour="cmyk")
+                eps = extras['cover']
+                covpdf = PdfReader(source=inpdf.source, trailer=inpdf)
+                covpdf.Root = covpdf.Root.copy()
+                covpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
+                covpdf.Root.Names = None
+                covpdf.Root.Outlines = None
+                covpdf.private.pages = eps
+                for v in eps:
+                    v.Parent = covpdf.Root.Pages
+                fixpdffile(covpdf, pdffile.replace(".pdf", "_cover.pdf"), colour="cmyk")
             outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}
@@ -803,7 +812,7 @@ class RunJob:
         else:
             colour = self.ispdfxa.lower()
         if colour is not None:
-            outpdf = fixpdffile(opath, None,
+            outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
                             colour=colour,
                             parlocs = outfname.replace(".tex", ".parlocs"), **params)
         nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
