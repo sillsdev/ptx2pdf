@@ -1,6 +1,6 @@
 \id TST Test file
 \h small test file
-\periph front|frontcover
+\periph front|coverfront
 \vfill
 \esb \cat TitleBox\cat*
 \mt3 The 
@@ -18,11 +18,11 @@
 \periph spine|spine
 \pc The Test-Case Bible
 
-\periph wholecover|wholecover
+\periph whole cover|coverwhole
 \pc |<-------\hfil \the\hsize \hfil ------->|
 \endgraf
 
-\periph back|backcover
+\periph back|coverback
 \pc The back
 \vfill
 \pc |<-------\hfil \the\hsize \hfil -------->|\endgraf

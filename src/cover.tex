@@ -49,6 +49,22 @@
   \h@ldfigtrue % Don't shipout a full page!
   \ble@dtrue 
   \bgroup
+    \bgroup
+      \s@tc@tprefix{cover#1}%
+      \getsbp@ram{posn}%
+      \x@\minip@rs@two\cp@ram\end % Parse the location, ready to get the size of this sidebar's container
+      \tempfalse
+      \ifx\tempc\loc@Full\temptrue\else
+        \ifx\tempc\loc@Page\temptrue\fi
+      \fi
+      \iftemp\else
+        \message{! Cover sidebar 'cover#1' is currently '\cp@ram'. It must be Fcf or similar}%
+        \tracingassigns=1
+        \edef\m@rker{esb}%
+        \setsbp@ram{posn}{Fcf}%
+        \tracingassigns=0
+      \fi
+    \egroup
     \def\t@stsz{1}%
     %\def\t@stsz{.33}%
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname \relax\relax
@@ -69,7 +85,6 @@
         \global\let\bpp@ram\p@ram
         \gdef\bwp@ram{0}%
       \fi
-      \getsbp@ram{position}%
     \egroup
     \trace{cov}{Request (#1)  was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
     \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax|\the\dimexpr \b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
@@ -146,7 +161,13 @@
     \setbox0\hbox{%
       \c@verbit{spine}{\topskip=0pt 
         \vskip \@@spinebeforeskip
-        \vfill\csname periphcontents=spine\endcsname\vfill
+        \vfill
+        \ifcsname periphcontents=coverspine\endcsname
+          \csname periphcontents=coverspine\endcsname
+        \else
+          \csname periphcontents=spine\endcsname
+        \fi
+        \vfill
         \vskip \@@spineafterskip
       }%
     }%
@@ -161,7 +182,13 @@
     \edef\bble@d{\csname cover-bleed\endcsname}%
     \edef\lble@d{0pt}%
     \edef\rble@d{0pt}%
-    \c@verbit{spine}{\topskip=0pt \csname periphcontents=spine\endcsname}%
+    \c@verbit{spine}{\topskip=0pt 
+      \ifcsname periphcontents=coverspine\endcsname
+        \csname periphcontents=coverspine\endcsname
+      \else
+        \csname periphcontents=spine\endcsname
+      \fi
+    }%
   \fi
 }}
 
@@ -184,21 +211,30 @@
 
 \def\m@kecover{%
   \temptrue
-  \ifcsname periphcontents=frontcover\endcsname\trace{cov}{frontcover exists}%
-    \x@\let\x@\tmp\csname periphcontents=frontcover\endcsname \ifx\tmp\empty
+  \ifcsname periphcontents=coverfront\endcsname\trace{cov}{coverfront exists}%
+    \x@\let\x@\c@verfront\csname periphcontents=coverfront\endcsname \ifx\c@verfront\empty
+      \trace{cov}{...but it's empty}%
+      \tempfalse
+    \fi
+  \else
+    \ifcsname periphcontents=cover\endcsname\trace{cov}{cover exists}%
+      \x@\let\x@\c@verfront\csname periphcontents=cover\endcsname \ifx\c@verfront\empty
+        \tempfalse
+      \fi
+    \else
+      \trace{cov}{No front cover}%
+      \tempfalse
+    \fi
+  \fi
+  \ifcsname periphcontents=coverback\endcsname\trace{cov}{coverback exists}%
+    \x@\let\x@\tmp\csname periphcontents=coverback\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
       \tempfalse
     \fi
   \else\tempfalse\fi
-  \ifcsname periphcontents=backcover\endcsname\trace{cov}{backcover exists}%
-    \x@\let\x@\tmp\csname periphcontents=backcover\endcsname \ifx\tmp\empty
-      \trace{cov}{...but it's empty}%
-      \tempfalse
-    \fi
-  \else\tempfalse\fi
-  \ifcsname periphcontents=wholecover\endcsname\trace{cov}{wholecover exists}%
+  \ifcsname periphcontents=coverwhole\endcsname\trace{cov}{wholecover exists}%
     \tracingassigns=1
-    \x@\let\x@\tmp\csname periphcontents=wholecover\endcsname \ifx\tmp\empty
+    \x@\let\x@\tmp\csname periphcontents=coverwhole\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
     \else
       \trace{cov}{...and is not empty}%
@@ -230,14 +266,14 @@
       \BoxLikeBordertrue
       \c@verbit{whole}{\topskip=0pt \lineskip=0pt
         %\vskip-\wholec@vrtpad
-        \ifcsname  periphcontents=wholecover\endcsname
+        \ifcsname  periphcontents=coverwhole\endcsname
           \vbox to 0pt{\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
-              \csname periphcontents=wholecover\endcsname}\vss}%
+              \csname periphcontents=coverwhole\endcsname}\vss}%
         \fi
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{\csname periphcontents=frontcover\endcsname}
+          \hbox{{\leftble@d\c@verbit{front}{\c@verfront}
             }%
             {%
               \ble@dtrue
@@ -245,12 +281,12 @@
             }%
             {\rightble@d
               %\ble@dtrue
-              \c@verbit{back}{\csname periphcontents=backcover\endcsname}}%
+              \c@verbit{back}{\csname periphcontents=coverback\endcsname}}%
           }%
         \else
           \hbox{\setbox0\hbox{\leftble@d
               \ble@dtrue
-              \c@verbit{back}{\csname periphcontents=backcover\endcsname}%
+              \c@verbit{back}{\csname periphcontents=coverback\endcsname}%
             }%
             \trace{cov}{back cover is \l@gdims0}%
             \box0
@@ -260,7 +296,7 @@
             }%
             \setbox0\hbox{\rightble@d
               \ble@dtrue
-              \c@verbit{front}{\csname periphcontents=frontcover\endcsname}}%
+              \c@verbit{front}{\c@verfront}}%
             \trace{cov}{front cover is \l@gdims0}%
             \box0
           }%
@@ -277,13 +313,16 @@
     \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
     \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\ifble@d \csname cover-bleed\endcsname \else 0pt\fi}%
   \else
-    \message{No cover produced, as periphery missing (\ifcsname periphcontents=frontcover\endcsname\else frontcover\fi\ \ifcsname periphcontents=backcover\endcsname backcover\fi)}%
+    \message{No cover produced, as periphery missing (\ifcsname periphcontents=coverfront\endcsname\else coverfront (or cover)\fi\ \ifcsname periphcontents=coverback\endcsname coverback\fi)}%
   \fi
 }
-\StorePeriph{wholecover}
-\KeepPeriph{frontcover}
-\KeepPeriph{backcover}
+\StorePeriph{coverwhole}
+\StorePeriph{coverfront}
+\StorePeriph{coverback}
+\StorePeriph{coverspine}
+\KeepPeriph{cover}
+\KeepPeriph{coverback}
 \KeepPeriph{spine}
-\KeepPeriph{wholecover}
+\KeepPeriph{coverwhole}
 %\addtoendhooks{\m@kecover}
 \plugin@endif
