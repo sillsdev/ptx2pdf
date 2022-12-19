@@ -2,12 +2,12 @@
 
 ## General principles
 The cover-generating macro (\\m@kecover) arranges four sidebars to make the cover:
-1. The whole cover : `cover_whole`
-2. The back cover : `cover_back`
-3. The spine : `cover_spine`
-4. The front cover : `cover_front`
+1. The whole cover : `coverwhole`
+2. The back cover : `coverback`
+3. The spine : `coverspine`
+4. The front cover : `coverfront`
 
-The front, spine and back are laid up (on top of the `cover_whole` sidebar) in 
+The front, spine and back are laid up (on top of the `coverwhole` sidebar) in 
 a sequence determined by the boolean `\ifBookOpensLeft`.
 
 The contents are drawn from the three USFM-3.0 periphery sections:
@@ -114,7 +114,7 @@ The revised Cornilescu Bible, (EDCR 2019, Societatea Biblică Interconfesională
 din România,  ISBN 978-606-8279-63-3) has a solid background on the front and
 spine that wraps approx 2cm onto the back cover, where a contrasting colour
 provides a background for the majority of the rear cover.
-To set up a similar cover, the `cover_front`, `cover_spine` and `cover_back` could have 
+To set up a similar cover, the `coverfront`, `coverspine` and `coverback` could have 
 appropriate background colours set and the parameter `cover-back-spinewrap`
 could be defined to `2cm`.
 Alternatively, a large cover image could have the back-page portion of it masked off, 
@@ -127,12 +127,12 @@ shrunk horizontally by this.
 ![2cm forward spinewrap](coverpics/cover_outer1x1_spinewrap.jpg "2cm forward spinewrap")
 
 
-### Upper/Lower band: BoxPadding for cover\_whole.
+### Upper/Lower band: BoxPadding for coverwhole.
 Testing demonstrated a strange effect came about from setting the `BoxTPadding` and `BoxBPadding` 
-style parameters the `cover_whole`, sidebar, where the covers were pushed off the page. This 
+style parameters the `coverwhole`, sidebar, where the covers were pushed off the page. This 
 has been embraced as a (probably rarely used) feature: if these padding values are set 
 to `>=1pt` then the upper and/or lower bleed is turned off for the other 3 sidebars, 
-and background colour for the upper and lower edges will be set by the `cover_whole` sidebar.
+and background colour for the upper and lower edges will be set by the `coverwhole` sidebar.
 Note that nothing from these sidebars should be able to reach into this area.
 
 ![Back page masked](coverpics/cover_solidback_BoxPad.jpg "Solid back with 2cm backward spinewrap and 20pt of BoxPadding")
@@ -143,11 +143,11 @@ Note that nothing from these sidebars should be able to reach into this area.
 The images in this document have almost all been generated using minor
 variations on the stylesheet below.
 Note the use of the short-hand `\Category` which sets an internal prefix that
-is applied to later style definitions. I.e. `\Marker pc` after `\Category cover_whole` 
-is actually styling `\Marker cat:cover_whole|pc`
+is applied to later style definitions. I.e. `\Marker pc` after `\Category coverwhole` 
+is actually styling `\Marker cat:coverwhole|pc`
 
 ```tex
-\Category cover_front
+\Category coverfront
 \BorderStyle Vectorian3
 \BoxBPadding 30
 \BorderWidth 24
@@ -164,7 +164,7 @@ is actually styling `\Marker cat:cover_whole|pc`
 \BgImageScale inner|x0.8
 \Border All
 
-\Category cover_back
+\Category coverback
 \Alpha 1
 \BgColour T
 \BorderStyle double
@@ -179,7 +179,7 @@ is actually styling `\Marker cat:cover_whole|pc`
 \BoxBPadding 10
 \Border None 
 
-\Category cover_whole
+\Category coverwhole
 %\SpaceBefore 10
 %\BoxLPadding 30
 %\BorderTPadding -30
@@ -199,7 +199,7 @@ is actually styling `\Marker cat:cover_whole|pc`
 \Marker p
 \Color xff0000
 
-\Category cover_spine
+\Category coverspine
 \Border None
 \Alpha 0.6
 \BgColour F
