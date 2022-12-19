@@ -18,4 +18,10 @@
 \NoteAtEnd{x}
 \ParagraphedNotes{x}
 \ptxfile{test.usfm}
+\sethook{final}{afterincludes}{\prepusfm\csname m@kecover\endcsname\unprepusfm}
+\tracing{e}
+\tracing{cov}
+\tracing{m}
+\tracing{g}
+\NoTransparencyfalse
 \endinput

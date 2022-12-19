@@ -1,0 +1,33 @@
+\id TST Test file
+\h small test file
+\periph front|frontcover
+\vfill
+\esb \cat TitleBox\cat*
+\mt3 The 
+\mt1 Test-case Bible
+\esbe
+\vfill
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\p ~
+\esb \cat footbox\cat*
+\pc \sc Atlantis\sc* 2022
+\p
+\esbe
+\p ~
+
+\periph spine|spine
+\pc The Test-Case Bible
+
+\periph wholecover|wholecover
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\endgraf
+
+\periph back|backcover
+\pc The back
+\vfill
+\pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+\pc 0 copies, Klingon-Esperanto
+\b

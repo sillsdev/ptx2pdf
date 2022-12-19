@@ -53,11 +53,12 @@
     %\def\t@stsz{.33}%
     \PaperHeight=\the\dimexpr \t@stsz\dimexpr\csname cover-Y-#1\endcsname \relax\relax
     \PaperWidth=\the\dimexpr \t@stsz\dimexpr\csname cover-X-#1\endcsname \relax\relax
+    \trace{cov}{Cover part #1 ought to be \the\PaperWidth x \the\PaperHeight}%
     \hsize=\PaperWidth
-    \esb\cat cover_#1\cat*#2
+    \esb\cat cover#1\cat*#2
     \esbe%
     \bgroup
-      \s@tc@tprefix{cover_#1}%
+      \s@tc@tprefix{cover#1}%
       \getsbp@ram{borderbottom}\ifx\cp@ram\tr@e
         \getsbp@ram{borderbpadding}%
         \global\let\bpp@ram\p@ram
@@ -96,7 +97,7 @@
 \def\cover@maths{%
   \global\rotatespinefalse
   \edef\c@vY{\dimexpr \csname cover-y\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax}%
-  \bgroup\s@tc@tprefix{cover_spine}\getsbp@ram{sbarrotation}%
+  \bgroup\s@tc@tprefix{coverspine}\getsbp@ram{sbarrotation}%
   \ifx\cp@ram\relax\else
     \trace{cov}{Rotating spine? \cp@ram}%
     \ifcsname geom@xform@\cp@ram\endcsname
@@ -183,14 +184,33 @@
 
 \def\m@kecover{%
   \temptrue
-  \ifcsname periphcontents=frontcover\endcsname\else\tempfalse\fi
-  \ifcsname periphcontents=backcover\endcsname\else\tempfalse\fi
-  \ifcsname periphcontents=wholecover\endcsname\else\temptrue\fi
+  \ifcsname periphcontents=frontcover\endcsname\trace{cov}{frontcover exists}%
+    \x@\let\x@\tmp\csname periphcontents=frontcover\endcsname \ifx\tmp\empty
+      \trace{cov}{...but it's empty}%
+      \tempfalse
+    \fi
+  \else\tempfalse\fi
+  \ifcsname periphcontents=backcover\endcsname\trace{cov}{backcover exists}%
+    \x@\let\x@\tmp\csname periphcontents=backcover\endcsname \ifx\tmp\empty
+      \trace{cov}{...but it's empty}%
+      \tempfalse
+    \fi
+  \else\tempfalse\fi
+  \ifcsname periphcontents=wholecover\endcsname\trace{cov}{wholecover exists}%
+    \tracingassigns=1
+    \x@\let\x@\tmp\csname periphcontents=wholecover\endcsname \ifx\tmp\empty
+      \trace{cov}{...but it's empty}%
+    \else
+      \trace{cov}{...and is not empty}%
+      \temptrue%
+    \fi
+    \tracingassigns=0
+  \fi
   \iftemp
       \edef\wholec@vrtpad{0 pt}%
       \edef\wholec@vrbpad{0 pt}%
       \bgroup
-        \s@tc@tprefix{cover_whole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
+        \s@tc@tprefix{coverwhole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
           \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
         \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
           \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
