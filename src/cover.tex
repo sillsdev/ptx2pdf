@@ -217,7 +217,7 @@
       \tempfalse
     \fi
   \else
-    \ifcsname periphcontents=cover\endcsname\trace{cov}{cover exists}%
+    \ifcsname periphcontents=cover\endcsname\trace{cov}{cover exists (coverfront would have priority if it existed)}%
       \x@\let\x@\c@verfront\csname periphcontents=cover\endcsname \ifx\c@verfront\empty
         \tempfalse
       \fi
@@ -229,9 +229,8 @@
   \ifcsname periphcontents=coverback\endcsname\trace{cov}{coverback exists}%
     \x@\let\x@\tmp\csname periphcontents=coverback\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
-      \tempfalse
     \fi
-  \else\tempfalse\fi
+  \fi
   \ifcsname periphcontents=coverwhole\endcsname\trace{cov}{wholecover exists}%
     \tracingassigns=1
     \x@\let\x@\tmp\csname periphcontents=coverwhole\endcsname \ifx\tmp\empty
@@ -316,6 +315,8 @@
     \message{No cover produced, as periphery missing (\ifcsname periphcontents=coverfront\endcsname\else coverfront (or cover)\fi\ \ifcsname periphcontents=coverback\endcsname coverback\fi)}%
   \fi
 }
+\StorePeriph{cover}
+\StorePeriph{spine}
 \StorePeriph{coverwhole}
 \StorePeriph{coverfront}
 \StorePeriph{coverback}

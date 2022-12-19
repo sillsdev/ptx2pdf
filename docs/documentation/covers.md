@@ -10,14 +10,14 @@ The cover-generating macro (\\m@kecover) arranges four sidebars to make the cove
 The front, spine and back are laid up (on top of the `coverwhole` sidebar) in 
 a sequence determined by the boolean `\ifBookOpensLeft`.
 
-The contents are drawn from the three USFM-3.0 periphery sections:
-`frontcover`, `backcover` and `spine`, plus an additional (and normally empty)
-`wholecover` periphery.
+The contents are drawn from periphery sections of the same names. If there is no `coverspine` 
+periphery or `coverfront` peripery, then the two USFM-3.0 periphery
+sections:`spine` and `cover` will be used instead.
 
 An sample cover might have contents such as this (which is cut down from a
 test-file): 
 ```tex
-\periph front|frontcover
+\periph front|coverfront
 \zgap|0pt plus 1fill\*
 \esb \cat TitleBox\cat*
 \mt3 The 
@@ -30,11 +30,11 @@ test-file):
 \esbe
 \p ~
 
-\periph spine|spine
+\periph spine|coverspine
 \pc The Test-Case Bible
 \p
 
-\periph back|backcover
+\periph back|coverback
 \pc Test-Case
 \zgap| 0pt plus 1fill\*
 \esb \cat ISBNbox\cat*
