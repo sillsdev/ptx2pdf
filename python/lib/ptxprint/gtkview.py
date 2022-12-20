@@ -4647,8 +4647,8 @@ class GtkViewModel(ViewModel):
             return
         picturelist = ", ".join(pics)
         if self.get('c_sensitive'):
-            sensitive = "\nDue to regional sensitivities, we would like to use the abbreviated form " + \
-            "(© DCC) in the copyright statement and for the watermark on each illustration.\n"
+            sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
+            "(© DCC) in the copyright statement and for the credit text on each illustration.\n"
         else:
             sensitive = ""
         _permissionRequest = """
