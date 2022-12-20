@@ -572,7 +572,7 @@ class GtkViewModel(ViewModel):
         self.highlight = False
         self.rtl = False
         self.isDiglotMeasuring = False
-        self.warnedSIL = False
+        # self.warnedSIL = False
         self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
@@ -3787,14 +3787,15 @@ class GtkViewModel(ViewModel):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
-        if not self.warnedSIL:
-            chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
-            if len(chkSIL):
-                self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
-                               "Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
-                self.warnedSIL = True
+        # Removed by MP after the Nov-2022 SIL Board changed the EL (allowing SIL to publish scripture)
+        # if not self.warnedSIL:
+            # chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
+            # if len(chkSIL):
+                # self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
+                   # secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
+                               # "Contact your entity's Publishing Coordinator for advice regarding protocols."))
+                # t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
+                # self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
