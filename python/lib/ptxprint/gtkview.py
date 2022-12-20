@@ -1554,6 +1554,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
         self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
 
+        cv = " color='"+col+"'" if self.get("c_makeCoverPage") else ""
+        self.builder.get_object("lb_Cover").set_markup("<span{}>".format(cv)+_("Cover")+"</span>")
+
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
         tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
@@ -4588,6 +4591,7 @@ class GtkViewModel(ViewModel):
 
     def onCoverSettingsChanged(self, btn):
         self.sensiVisible("c_makeCoverPage")
+        self.colorTabs()
         hbx = self.builder.get_object("bx_coverPreview")
         b = self.builder.get_object("vp_coverBack")
         s = self.builder.get_object("vp_spine")
