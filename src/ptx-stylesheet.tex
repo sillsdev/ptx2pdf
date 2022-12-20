@@ -1511,6 +1511,7 @@
 \newif\iflastpage
 \newdimen\origb@selineskip %Save the initial baselineskip here
 \newif\ifinperiph
+\newif\ifst@ringperiph
 \def\codesforperiphgr@b{% Turn off everything
   \catcode13=12 %cr
   \catcode92=12 %bkslash
@@ -1549,7 +1550,7 @@
 \def\endofperiph{\relax}
 {\catcode13=12 %
 \gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
-\gdef\@@rem@#1^^M{\egroup\@@realrem #1}%
+\gdef\@@rem@#1^^M{\egroup\@@realrem }% Swallow first line like I thought it was designed to.
 %Code to read periph sections line by line.
 \gdef\@periph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi\bgroup\catcode13=12 \@@periph}%
 \gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
@@ -1604,10 +1605,11 @@
 \StorePeriph{spine}
 
 
-\def\endp@riph{\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}\trace{m}{Saving periph \periphattr@b}}
-\def\zendperiph{\ifinperiph\endp@riph\inperiphfalse\fi\endlastp@rstyle{endperiph}\global\let\periph@@@\empty}
+\def\endp@riph{\ifst@ringperiph\global\let\periphattr@b\attr@b\egroup\egroup\let\tmp\p@riphlines\x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{\x@\scantokens\x@{\tmp}}\everyeof{}\trace{m}{Saving periph \periphattr@b as \meaning\tmp}\else\egroup\st@ringperiphfalse\ifPagebreakAfterPeriph\pb\fi\fi}
+\def\zendperiph{\endlastp@rstyle{zendperiph}\ifinperiph\endp@riph\inperiphfalse\fi\global\let\periph@@@\empty}
 
 \newif\ifStorePeriph\StorePeriphtrue
+\newif\ifPagebreakAfterPeriph\PagebreakAfterPeriphtrue
 
 \def\@@@periph #1|#2|#3\E{%
   \trace{s}{@@@periph #1|#2}%
@@ -1635,9 +1637,11 @@
   \fi
   \iftemp
     %\tracingassigns=1
+    \st@ringperiphtrue
     \let\n@xt\getp@riphlines
   \else 
-    \egroup
+    \st@ringperiphfalse
+    \aftergroup{\global\let\periph\empty\pagebreak}%
     \let\n@xt\relax
   \fi
   \n@xt
