@@ -48,7 +48,7 @@
   %\tracingall
   \h@ldfigtrue % Don't shipout a full page!
   \ble@dtrue 
-  \bgroup
+  \bgroup \prepusfm %we need those catcodes!
     \bgroup
       \s@tc@tprefix{cover#1}%
       \getsbp@ram{posn}%
@@ -59,10 +59,10 @@
       \fi
       \iftemp\else
         \message{! Cover sidebar 'cover#1' is currently '\cp@ram'. It must be Fcf or similar}%
-        \tracingassigns=1
+        %\tracingassigns=1
         \edef\m@rker{esb}%
         \setsbp@ram{posn}{Fcf}%
-        \tracingassigns=0
+        %\tracingassigns=0
       \fi
     \egroup
     \def\t@stsz{1}%
@@ -226,20 +226,21 @@
       \tempfalse
     \fi
   \fi
+  \trace{cov}{Front cover is \meaning\c@verfront}%
   \ifcsname periphcontents=coverback\endcsname\trace{cov}{coverback exists}%
     \x@\let\x@\tmp\csname periphcontents=coverback\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
     \fi
   \fi
   \ifcsname periphcontents=coverwhole\endcsname\trace{cov}{wholecover exists}%
-    \tracingassigns=1
+    %\tracingassigns=1
     \x@\let\x@\tmp\csname periphcontents=coverwhole\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
     \else
       \trace{cov}{...and is not empty}%
       \temptrue%
     \fi
-    \tracingassigns=0
+    %\tracingassigns=0
   \fi
   \iftemp
       \edef\wholec@vrtpad{0 pt}%
@@ -312,7 +313,7 @@
     \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
     \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\ifble@d \csname cover-bleed\endcsname \else 0pt\fi}%
   \else
-    \message{No cover produced, as periphery missing (\ifcsname periphcontents=coverfront\endcsname\else coverfront (or cover)\fi\ \ifcsname periphcontents=coverback\endcsname coverback\fi)}%
+    \message{No cover produced, as periphery missing (state: \ifcsname periphcontents=coverfront\endcsname\else No coverfront (or cover). \fi\ifcsname periphcontents=coverback\endcsname\else, No coverback \fi \ifcsname periphcontents=coverspine\endcsname\else \ifcsname periphcontents=spine\els, No coverspine (or spine).\fi\fi)}%
   \fi
 }
 \StorePeriph{cover}

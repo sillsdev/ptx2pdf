@@ -358,7 +358,12 @@
 \newif\ifboxorn % Set to true to surroud all ornaments with boxes.
 \boxornfalse
 \def\boxornRGB{0.5 1.0 1.0}
+\newif\ifCacheOrnaments
+\def\c@cheornbox{% This macro may not contain any logic, so that TeX's logic skipper can skip the macro 
+  \x@\newb@x\csname \ornUUID\endcsname
+}
 \def\orn@do@ornament{\bgroup%
+    \traceifset{orn@do@ornament}%
     \ifpdf@ornament@stretch
       \pdf@xunit=\ornamentstretch\pdf@xunit
     \fi
@@ -371,41 +376,82 @@
     \fi
     \global\let\orn@clip@rect\empty
     \global\let\orn@last@rect\empty
+    \edef\ornUUID{ornament-\ornamentlinewidth-\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\the\pdf@xunit-\the\pdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
+    %\message{\ornUUID}%
     \trace{orn}{orn@do@ornament(\ifpdf@ornament@stretch *\ornamentstretch\fi) \the\dimen0 x \the\dimen1}%
-    \setbox0\hbox to \dimen0{%
-      \pdf@beginscope
-      \pdf@beginpic
-      \x@\s@tornamenttransform\geom@xform
-      \pdf@setlinewidth{\ornamentlinewidth}%
-      \ifx\ornamentlinecol\empty\else
-        \x@\pdf@color@rgb@stroke\ornamentlinecol\E
-      \fi
-      \ifx\ornamentfillcol\empty\else
-        \ifx\ornamentfillcol\fill@none
-          \ornamentfillfalse
-        \else
-          \ornamentfilltrue
-          \x@\pdf@color@rgb@fill\ornamentfillcol\E%
-        \fi
-      \fi
-      \ifornamentfill
-        \let\s\pdf@fillstroke
+    %\tracingifs=1\tracingassigns=1
+    \ifCacheOrnaments
+      \ifcsname \ornUUID \endcsname
+        \temptrue
       \else
-        \let\s\k
+        \tempfalse
       \fi
-      \get@ornament@Code
-      \pdf@endpic
-      \pdf@endscope\hss
-    }%
-    \ifx\orn@clip@rect\empty
-      \dimen2=0pt\dimen3=0pt\dimen4=0pt\dimen5=0pt
-      \trace{orn}{No clip rect}%
     \else
-      \x@\pdf@parse@clip@rect\orn@clip@rect
+      \tempfalse
     \fi
-    \ifdim\dimen2=0pt \else
-      \setbox0=\hbox to \dimen0{\kern-\dimen2\unhbox0\kern\dimen2}%
+    \traceifset{orn@do@ornamentA}%
+    \iftemp
+      \dimen2=\x@\csname \ornUUID-dim2\endcsname
+      \dimen3=\x@\csname \ornUUID-dim3\endcsname
+      \dimen4=\x@\csname \ornUUID-dim4\endcsname
+      \dimen5=\x@\csname \ornUUID-dim5\endcsname
+      \setbox0=\x@\box\csname \ornUUID\endcsname
+      \relax
+    \else
+      \ifCacheOrnaments
+        \c@cheornbox
+      \fi
+      \x@\setbox0\hbox to \dimen0{%
+        \pdf@beginscope
+        \pdf@beginpic
+        \x@\s@tornamenttransform\geom@xform
+        \pdf@setlinewidth{\ornamentlinewidth}%
+        \ifx\ornamentlinecol\empty\else
+          \x@\pdf@color@rgb@stroke\ornamentlinecol\E
+        \fi
+        \ifx\ornamentfillcol\empty\else
+          \ifx\ornamentfillcol\fill@none
+            \ornamentfillfalse
+          \else
+            \ornamentfilltrue
+            \x@\pdf@color@rgb@fill\ornamentfillcol\E%
+          \fi
+        \fi
+        \ifornamentfill
+          \let\s\pdf@fillstroke
+        \else
+          \let\s\k
+        \fi
+        \get@ornament@Code
+        \pdf@endpic
+        \pdf@endscope
+        \hss
+      }%
+      \ifCacheOrnaments
+        \x@\global\x@\setbox\csname \ornUUID\endcsname\copy0
+      \fi
+      \tempfalse
     \fi
+    \iftemp\else 
+      \ifx\orn@clip@rect\empty
+        \dimen2=0pt\dimen3=0pt\dimen4=0pt\dimen5=0pt
+        \trace{orn}{No clip rect}%
+      \else
+        \x@\pdf@parse@clip@rect\orn@clip@rect
+      \fi
+      \ifdim\dimen2=0pt \else
+        \setbox0=\hbox to \dimen0{\kern-\dimen2\unhbox0\kern\dimen2}%
+      \fi
+      %\x@\global\x@\setbox\csname \ornUUID\endcsname\copy0
+      \ifCacheOrnaments
+        \x@\xdef\csname \ornUUID-dim2\endcsname{\the\dimen2}%
+        \x@\xdef\csname \ornUUID-dim3\endcsname{\the\dimen3}%
+        \x@\xdef\csname \ornUUID-dim4\endcsname{\the\dimen4}%
+        \x@\xdef\csname \ornUUID-dim5\endcsname{\the\dimen5}%
+      \fi
+    \fi
+    \traceifcheck{orn@do@ornamentA}%
+    \traceifset{orn@do@ornamentB}%
     \ht0=\dimen1%\@pgfornamentY\pdf@yunit
     \dimen7=\dimen3 % dimen7=vadjust. Start by adjusting to crop-box
     %Manual adjustments?
@@ -428,7 +474,7 @@
     %\ifdim\dimen6<0pt \dimen6=-\dimen6\fi
     %\ifdim\dimen6>0pt
       %\ifdim\dimen1>\dimen6
-	%\advance \dimen7 by 0.5\dimexpr \dimen6 -\dimen1\relax
+        %\advance \dimen7 by 0.5\dimexpr \dimen6 -\dimen1\relax
       %\fi
     %\fi
     \ifboxorn
@@ -442,7 +488,7 @@
         \kern-\dimen0
         \ifdim\dimen8=0pt \else\kern -\dimen8 \trace{orn}{kerning by \the\dimen8}\fi%
         \ifdim\dimen7=0pt
-	  \box0
+          \box0
         \else
           \ifdim\dimen7<0pt
             \raise -\dimen7
@@ -480,6 +526,8 @@
       \fi
     \fi%
     \ifdim\dimen8=0pt \else\kern \dimen8\egroup\dimen8=0pt\fi
+    \traceifcheck{orn@do@ornamentB}%
+    \traceifcheck{orn@do@ornament}%
 \egroup}
 \def\doOrnament#1{%
   \begingroup
