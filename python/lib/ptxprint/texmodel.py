@@ -294,8 +294,6 @@ ModelMap = {
 
     "document/keepversions":    ("s_keepVersions", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", None),
-    "document/spinethickness":  ("s_spineThickness", None),
-    "document/rotatespinetext": ("fcb_rotateSpineText", None),
     
     "finishing/pgsperspread":   ("fcb_pagesPerSpread", None),
     "finishing/rtlpagination":  ("c_RTLpagination", None),
@@ -552,6 +550,10 @@ class TexModel:
         "weights and measures": "measures",
         "map index": "maps",
         "lxx quotes in nt": "lxxquotes",
+        # "coverfront": "coverfront",
+        # "coverback": "coverback",
+        # "coverspine": "coverspine",
+        # "coverwhole": "coverwhole",
         "cover": "cover",
         "spine": "spine"
     }
@@ -1112,9 +1114,15 @@ class TexModel:
                                 currperiphs.append(l.rstrip())
                     if currk is not None:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
+                        # print(f"{currk=}\n{self.frontperiphs[currk]=}")
         return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
+        # print(f"{l=}")
+        # if "cover" in l:
+            # seenperiph = True
+            # print(f"Found 'cover' in: {l}")
+        # else:
         self.dict['project/frontfile'] = os.path.basename(outfname)
         infpath = self.printer.configFRT()
         logger.debug(f"Using front matter from {infpath}")
@@ -1127,7 +1135,7 @@ class TexModel:
                 seenperiph = False
                 for l in inf.readlines():
                     if l.strip().startswith(r"\periph"):
-                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
                     # if they incude INT, then this shouldn't be called, otherwise it should
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
@@ -1818,7 +1826,10 @@ class TexModel:
                 for art, pgs in self.printer.artpgs.items():
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
-                            pages = [x[0] for x in pgs[art]]
+                            if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                                pages = [x[0] for x in pgs[art]]
+                            else:
+                                pages = [x[0] for x in pgs['']]
                             plurals = pluralstr(plstr, pages)
                             artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                             if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
@@ -1843,7 +1854,10 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
+                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                            pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
+                        else:
+                            pages = [x[0] for x in self.printer.artpgs[artistWithMost]['']]
                         plurals = pluralstr(plstr, pages)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                         if sensitive and "sensitive" in artinfo:

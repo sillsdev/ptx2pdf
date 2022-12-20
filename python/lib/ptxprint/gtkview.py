@@ -572,7 +572,7 @@ class GtkViewModel(ViewModel):
         self.highlight = False
         self.rtl = False
         self.isDiglotMeasuring = False
-        self.warnedSIL = False
+        # self.warnedSIL = False
         self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
@@ -1553,6 +1553,9 @@ class GtkViewModel(ViewModel):
         xl = " color='"+col+"'" if self.get("c_useXrefList") else ""
         self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
         self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
+
+        cv = " color='"+col+"'" if self.get("c_makeCoverPage") else ""
+        self.builder.get_object("lb_Cover").set_markup("<span{}>".format(cv)+_("Cover")+"</span>")
 
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
@@ -3787,14 +3790,15 @@ class GtkViewModel(ViewModel):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
-        if not self.warnedSIL:
-            chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
-            if len(chkSIL):
-                self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
-                               "Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
-                self.warnedSIL = True
+        # Removed by MP after the Nov-2022 SIL Board changed the EL (allowing SIL to publish scripture)
+        # if not self.warnedSIL:
+            # chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
+            # if len(chkSIL):
+                # self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
+                   # secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
+                               # "Contact your entity's Publishing Coordinator for advice regarding protocols."))
+                # t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
+                # self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
@@ -4587,6 +4591,7 @@ class GtkViewModel(ViewModel):
 
     def onCoverSettingsChanged(self, btn):
         self.sensiVisible("c_makeCoverPage")
+        self.colorTabs()
         hbx = self.builder.get_object("bx_coverPreview")
         b = self.builder.get_object("vp_coverBack")
         s = self.builder.get_object("vp_spine")
@@ -4647,8 +4652,8 @@ class GtkViewModel(ViewModel):
             return
         picturelist = ", ".join(pics)
         if self.get('c_sensitive'):
-            sensitive = "\nDue to regional sensitivities, we would like to use the abbreviated form " + \
-            "(© DCC) in the copyright statement and for the watermark on each illustration.\n"
+            sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
+            "(© DCC) in the copyright statement and for the credit text on each illustration.\n"
         else:
             sensitive = ""
         _permissionRequest = """
