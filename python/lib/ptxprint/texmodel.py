@@ -1118,11 +1118,6 @@ class TexModel:
         return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
-        # print(f"{l=}")
-        # if "cover" in l:
-            # seenperiph = True
-            # print(f"Found 'cover' in: {l}")
-        # else:
         self.dict['project/frontfile'] = os.path.basename(outfname)
         infpath = self.printer.configFRT()
         logger.debug(f"Using front matter from {infpath}")
@@ -1135,6 +1130,7 @@ class TexModel:
                 seenperiph = False
                 for l in inf.readlines():
                     if l.strip().startswith(r"\periph"):
+                        # if "cover" in l:
                         # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
                     # if they incude INT, then this shouldn't be called, otherwise it should

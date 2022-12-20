@@ -432,8 +432,8 @@ class StyleEditorView(StyleEditor):
         sb = self.marker.startswith("cat:") and self.marker.endswith("esb")
         self.builder.get_object("ex_stySB").set_expanded(sb)
         if sb:
-            self.builder.get_object("ex_styTable").set_expanded(False)
-            self.builder.get_object("ex_styNote").set_expanded(False)
+            for w in ['Para', 'Table', 'Note']:
+                self.builder.get_object("ex_sty"+w).set_expanded(False)
         self.builder.get_object("ex_styOther").set_expanded(False)
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
