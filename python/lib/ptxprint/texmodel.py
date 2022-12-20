@@ -550,6 +550,10 @@ class TexModel:
         "weights and measures": "measures",
         "map index": "maps",
         "lxx quotes in nt": "lxxquotes",
+        # "coverfront": "coverfront",
+        # "coverback": "coverback",
+        # "coverspine": "coverspine",
+        # "coverwhole": "coverwhole",
         "cover": "cover",
         "spine": "spine"
     }
@@ -1110,9 +1114,15 @@ class TexModel:
                                 currperiphs.append(l.rstrip())
                     if currk is not None:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
+                        # print(f"{currk=}\n{self.frontperiphs[currk]=}")
         return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
+        # print(f"{l=}")
+        # if "cover" in l:
+            # seenperiph = True
+            # print(f"Found 'cover' in: {l}")
+        # else:
         self.dict['project/frontfile'] = os.path.basename(outfname)
         infpath = self.printer.configFRT()
         logger.debug(f"Using front matter from {infpath}")
@@ -1125,7 +1135,7 @@ class TexModel:
                 seenperiph = False
                 for l in inf.readlines():
                     if l.strip().startswith(r"\periph"):
-                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
                         seenperiph = True
                     # if they incude INT, then this shouldn't be called, otherwise it should
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
