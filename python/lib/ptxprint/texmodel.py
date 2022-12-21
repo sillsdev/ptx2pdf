@@ -1127,14 +1127,14 @@ class TexModel:
         if os.path.exists(infpath):
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
-                seenperiph = False
+                # seenperiph = False
                 for l in inf.readlines():
-                    if l.strip().startswith(r"\periph"):
+                    # if l.strip().startswith(r"\periph"):
                         # if "cover" in l:
                             # pass
                         # else:
-                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
-                        seenperiph = True
+                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        # seenperiph = True
                     # if they incude INT, then this shouldn't be called, otherwise it should
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
