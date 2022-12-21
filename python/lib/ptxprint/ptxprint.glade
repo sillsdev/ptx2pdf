@@ -1165,14 +1165,14 @@ contained within the sidebar.</property>
   <object class="GtkAdjustment" id="a_spineOverlapBack">
     <property name="lower">-50</property>
     <property name="upper">50</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">5</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_spineOverlapFront">
     <property name="lower">-50</property>
     <property name="upper">50</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">5</property>
+    <property name="step-increment">0.5</property>
+    <property name="page-increment">1</property>
   </object>
   <object class="GtkAdjustment" id="a_spineThickness">
     <property name="lower">5</property>
@@ -29075,7 +29075,7 @@ of overlap here (mm).</property>
                                                     <property name="text" translatable="yes">0.0</property>
                                                     <property name="xalign">1</property>
                                                     <property name="adjustment">a_spineOverlapBack</property>
-                                                    <property name="climb-rate">1</property>
+                                                    <property name="climb-rate">0.5</property>
                                                     <property name="digits">1</property>
                                                   </object>
                                                   <packing>
@@ -29115,7 +29115,7 @@ of overlap here (mm).</property>
                                                     <property name="text" translatable="yes">0.0</property>
                                                     <property name="xalign">1</property>
                                                     <property name="adjustment">a_spineOverlapFront</property>
-                                                    <property name="climb-rate">1</property>
+                                                    <property name="climb-rate">0.5</property>
                                                     <property name="digits">1</property>
                                                   </object>
                                                   <packing>

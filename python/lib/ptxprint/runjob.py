@@ -309,6 +309,7 @@ class RunJob:
             cfgname = ""
         if pdfname is not None:
             print(pdfname)
+        self.printer.set("l_statusLine", "")
         if self.res == 0:
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
@@ -360,8 +361,6 @@ class RunJob:
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
-        else:
-            self.printer.set("l_statusLine", "")
         self.printer.finished()
         self.busy = False
         logger.debug("done_job: Finishing thread")
