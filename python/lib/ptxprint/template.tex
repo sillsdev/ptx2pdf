@@ -2,6 +2,8 @@
 \input paratext2.tex
 \input ptx-ptxprint.tex
 
+{cover/makecoverpage}\makeatletter \include cover.tex 
+{cover/makecoverpage}\makeatother
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
@@ -243,7 +245,6 @@
 
 %%%%% Covers
 \catcode`\@=11
-{cover/makecoverpage}\include cover.tex
 \expandafter\edef\csname cover-bleed\endcsname{{{cover/coverbleed}mm}}   % Bleed dimension
 \expandafter\edef\csname cover-spine\endcsname{{{cover/spinewidth_}mm}}   % Actual spine width = book thickness, endpapers, board thickness, etc.
 \expandafter\xdef\csname cover-y\endcsname{{\the\PaperHeight}} % spine/book height 
