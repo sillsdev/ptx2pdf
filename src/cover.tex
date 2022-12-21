@@ -210,6 +210,7 @@
 }
 
 \def\m@kecover{%
+  \trace{cov}{m@kecover \the\currentgrouplevel}%
   \temptrue
   \ifcsname periphcontents=coverfront\endcsname\trace{cov}{coverfront exists}%
     \x@\let\x@\c@verfront\csname periphcontents=coverfront\endcsname \ifx\c@verfront\empty
@@ -273,7 +274,7 @@
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{\c@verfront}
+          \hbox{{\leftble@d\c@verbit{front}{\c@verfront}%
             }%
             {%
               \ble@dtrue
@@ -288,7 +289,6 @@
               \ble@dtrue
               \c@verbit{back}{\csname periphcontents=coverback\endcsname}%
             }%
-            \trace{cov}{back cover is \l@gdims0}%
             \box0
             {%
               \ble@dtrue
