@@ -73,7 +73,7 @@ However, if a plugin requires one or more other plugins, this should be indicate
 \plugins@needed{polyglot-simplepages,borders-font}
 ```
 
-The only-written plugin so far, `polyglot-simplepages` includes this re-insertion prevention wrapper. Other plugins should also 
+The plugins written so far, `polyglot-simplepages`, `ornaments` and `covers` include this re-insertion prevention wrapper. Other plugins should also 
 include similar code. 
 ```
 \plugin@startif{polyglot-simplepages}
@@ -89,6 +89,9 @@ This expands to:
 \fi
 ```
 
+Note that since it is illegal TeX to conditionally define a `\newif` inside another if, all `\newif` statements must 
+come outside the `plugin@startif` block.
+
 In both cases, the filename (without the .tex) should exactly match the plugin name, otherwise the automatic inclusion by `\plugins@needed` will fail.
 
 Stylesheet macros that depend on a plugin should be registered like this, e.g. included in ptx-plugins.
@@ -96,4 +99,4 @@ Stylesheet macros that depend on a plugin should be registered like this, e.g. i
 \PluginOptions{ornaments}{BorderFillColour,BorderFillColor,BorderPatternTop,BorderPatternBot,BorderPatternLeft,BorderPatternRight,BorderPadding,BorderHPadding,BorderVPadding,BorderLineWidth}
 ```
 Each one of the sylesheet macros listed in the second argument will (if not defined) become code that will produce a warning or attempt to load the necessary plugin. That activity is controlled by the switch `\ifpluginjustwarn`
-At present, only the ornaments plugin uses this functionality. 
+At present, only the ornaments plugin uses this functionality, and only warnings are possible 

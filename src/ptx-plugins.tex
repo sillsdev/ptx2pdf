@@ -31,7 +31,7 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\def\kn@wnplugins{polyglot-simplecols,polyglot-simplepages,ornaments}
+\def\kn@wnplugins{polyglot-simplecols,polyglot-simplepages,ornaments,cover}
 \newif\ifpluginjustwarn
 \pluginjustwarntrue %Should the code just warn, or try to load the code?
 \def\sw@llowignoredarg #1\relax{}
@@ -64,6 +64,7 @@
   \x@\let\csname #1@plugin@loaded\endcsname\empty
 }
 \def\plugin@endif{\fi}
+
 \def\plugin@check#1\E{%
   \ifcsname #1@plugin@loaded\endcsname\else
     %\unc@tcodespecials

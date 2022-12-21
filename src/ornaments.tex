@@ -31,6 +31,16 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \makeatletter
+\newif\ifpgfsys@eorule\pgfsys@eoruletrue % Using evenodd rule?
+\newif\ifClipOrnaments\ClipOrnamentsfalse
+\newif\ifboxorn\boxornfalse % Set to true to surroud all ornaments with boxes.
+\newif\ifCacheOrnaments\CacheOrnamentsfalse %
+\newif\ifpdf@ornament@stretch
+\newif\ifpdf@ornament@repeat
+\newif\iflocalornament
+\newif\ifstringornament
+\newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
+\newif\ifornamentfill
 
 \plugin@startif{ornaments}
 %\plugins@needed{} % Just in case it becomes separate.
@@ -205,11 +215,8 @@
 
 
 % Path usage:
-\newif\ifpgfsys@eorule % Using evenodd rule?
-\pgfsys@eoruletrue
 \def\pdf@stroke{\sysprotocol@literal{S}}\def\pdf@closestroke{\sysprotocol@literal{s}} \def\pdf@fill{\ifpgfsys@eorule\sysprotocol@literal{f*}\else\sysprotocol@literal{f}\fi}
 \def\pdf@fillstroke{\ifpgfsys@eorule\sysprotocol@literal{B*}\else\sysprotocol@literal{B}\fi}
-\newif\ifClipOrnaments\ClipOrnamentsfalse
 \def\pdf@clipnext{\ifClipOrnaments\ifpgfsys@eorule\sysprotocol@literal{W*}\else\sysprotocol@literal{W}\fi\fi \pdf@discardpath\ifx\orn@clip@rect\empty\global\let\orn@clip@rect\orn@last@rect\fi}
 %\def\pdf@clipnext{\pdf@stroke\pdf@discardpath}%
 \def\pdf@discardpath{\sysprotocol@literal{n}}
@@ -355,10 +362,8 @@
     \dimen1=\dimexpr \pdf@xunit*\numexpr \pdf@ab*\@pgfornamentX\relax + \pdf@yunit * \numexpr\pdf@bb*\@pgfornamentY\relax\relax
 }
 \def\ornamentstretch{1}
-\newif\ifboxorn % Set to true to surroud all ornaments with boxes.
-\boxornfalse
+
 \def\boxornRGB{0.5 1.0 1.0}
-\newif\ifCacheOrnaments
 \def\c@cheornbox{% This macro may not contain any logic, so that TeX's logic skipper can skip the macro 
   \x@\newb@x\csname \ornUUID\endcsname
 }
@@ -554,8 +559,6 @@
 \def\ptn@ex{x}
 
 \def\parse@repeat@class#1-#2)#3\E{\ifnum 0#2=0\set@repeat@class{#3}{#1}{}\else\set@repeat@class{#3}{#1}{#2}\fi}
-\newif\ifpdf@ornament@stretch
-\newif\ifpdf@ornament@repeat
 \def\StringOrnamentFont{AGA Arabesque Desktop}
 \newcount\orn@strings
 \orn@strings=20000
@@ -581,8 +584,6 @@
 % if =, the previous scaling will be applied, if it's set, but not '=' or a
 % number in formal N.N, then a pre-set scale [which must have been set by setornscale] will be applied 
 % #5 offset (-)0.NN  Ajdusts ornYalign. ornYalign takes values: 0.5=align to centre, 1=align to top, 0=align to bottom. Units are size of object.
-\newif\iflocalornament
-\newif\ifstringornament
 \def\@@ornsetnum #1#2\E{%
  %\trace{eb}{Ornament number is "#1#2"}%
  \edef\pdf@ornamentNum{#1#2}%
@@ -688,7 +689,6 @@
   \x@\edef\csname mult@repeat@max@\orn@repeat@class\endcsname{#3}%
 }
 
-\newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
 \def\orn@an@ornament#1,#2\E{%Possibly without changing the scale, output several ornaments
   \x@\ornament@parse#1|||||\E%
   \ifornscale
@@ -1062,7 +1062,6 @@
   \egroup
 } 
 \def\n@endsp@ce#1 \E{\def\@@@result{#1}}
-\newif\ifornamentfill
 \def\chkset#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\x@\global\x@\let\csname #1\endcsname\tmp\fi}
 
 % Parameters:

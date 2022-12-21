@@ -30,6 +30,7 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newif\ifrotatespine
 \plugin@startif{cover}
 
 % Input parameters - TO BE OVERRIDDEN! 
@@ -42,7 +43,6 @@
 % NB: cover-spine is used to set fold-marks, and should be the actual value
 % if cover-X-spinewrap is non-zero, that space is added to the spine and removed from the front/back cover.
 
-\newif\ifrotatespine
 \rotatespinetrue
 \def\c@verbit#1#2{%
   %\tracingall
@@ -313,7 +313,7 @@
     \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
     \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\ifble@d \csname cover-bleed\endcsname \else 0pt\fi}%
   \else
-    \message{No cover produced, as periphery missing (state: \ifcsname periphcontents=coverfront\endcsname\else No coverfront (or cover). \fi\ifcsname periphcontents=coverback\endcsname\else, No coverback \fi \ifcsname periphcontents=coverspine\endcsname\else \ifcsname periphcontents=spine\els, No coverspine (or spine).\fi\fi)}%
+    \message{No cover produced, as periphery missing (state: \ifcsname periphcontents=coverfront\endcsname\else No coverfront (or cover). \fi\ifcsname periphcontents=coverback\endcsname\else, No coverback \fi \ifcsname periphcontents=coverspine\endcsname\else \ifcsname periphcontents=spine\else, No coverspine (or spine).\fi\fi)}%
   \fi
 }
 \StorePeriph{cover}
@@ -327,4 +327,6 @@
 \KeepPeriph{spine}
 \KeepPeriph{coverwhole}
 %\addtoendhooks{\m@kecover}
-\plugin@endif
+
+%\plugin@endif
+\fi
