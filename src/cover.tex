@@ -110,6 +110,20 @@
 } 
 
 \def\cover@maths{%
+  \edef\wholec@vrtpad{0 pt}%
+  \edef\wholec@vrbpad{0 pt}%
+  \edef\wholec@vrlpad{0 pt}%
+  \edef\wholec@vrrpad{0 pt}%
+  \bgroup
+    \s@tc@tprefix{coverwhole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
+      \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
+    \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
+      \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
+    \getsbp@ram{boxlpadding}\ifx\cp@ram\relax\else
+      \xdef\wholec@vrlpad{\the\dimexpr \cp@ram pt\relax}\fi
+    \getsbp@ram{boxrpadding}\ifx\cp@ram\relax\else
+      \xdef\wholec@vrrpad{\the\dimexpr \cp@ram pt\relax}\fi
+  \egroup
   \global\rotatespinefalse
   \edef\c@vY{\dimexpr \csname cover-y\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax}%
   \bgroup\s@tc@tprefix{coverspine}\getsbp@ram{sbarrotation}%
@@ -145,8 +159,8 @@
   \fi
   \x@\let\csname cover-Y-front\endcsname\c@vY
   \x@\let\csname cover-Y-back\endcsname\c@vY
-  \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname\relax}%
-  \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname\relax}%
+  \x@\edef\csname cover-X-front\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-front-spinewrap\endcsname - \ifBookOpenLeft \wholec@vrlpad\else\wholec@vrrpad\fi\relax}%
+  \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname - \ifBookOpenLeft \wholec@vrrpad\else\wholec@vrlpad\fi\relax}%
   \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2\relax }
   \x@\edef\csname cover-Y-whole\endcsname{\the\dimexpr \csname cover-y\endcsname \relax}
   %  
@@ -192,19 +206,21 @@
   \fi
 }}
 
-\def\topedgeble@d{\ifdim\wholec@vrtpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
-\def\botedgeble@d{\ifdim\wholec@vrbpad<1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\topedgeble@d{\ifdim\wholec@vrtpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\botedgeble@d{\ifdim\wholec@vrbpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\leftedgeble@d{\ifdim\wholec@vrrpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\rightedgeble@d{\ifdim\wholec@vrrpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
 \def\udble@d{% unified bleed disable if they want padding for coverwhole
   \edef\tble@d{\topedgeble@d}%
   \edef\bble@d{\botedgeble@d}%
 }
 \def\leftble@d{%
-  \edef\lble@d{\csname cover-bleed\endcsname}%  \edef\tble@d{\csname cover-bleed\endcsname}%
+  \edef\lble@d{\leftedgeble@d}%  \edef\tble@d{\csname cover-bleed\endcsname}%
   \edef\rble@d{0pt}%
   \udble@d
 }
 \def\rightble@d{%
-  \edef\rble@d{\csname cover-bleed\endcsname}%
+  \edef\rble@d{\rightedgeble@d}%
   \edef\lble@d{0pt}%
   \udble@d
 }
@@ -244,15 +260,7 @@
     %\tracingassigns=0
   \fi
   \iftemp
-      \edef\wholec@vrtpad{0 pt}%
-      \edef\wholec@vrbpad{0 pt}%
-      \bgroup
-        \s@tc@tprefix{coverwhole}\getsbp@ram{boxtpadding}\ifx\cp@ram\relax\else
-          \xdef\wholec@vrtpad{\the\dimexpr \cp@ram pt\relax}\fi
-        \getsbp@ram{boxbpadding}\ifx\cp@ram\relax\else
-          \xdef\wholec@vrbpad{\the\dimexpr \cp@ram pt\relax}\fi
-      \egroup
-    %\tracingassigns=1
+         %\tracingassigns=1
     \cover@maths
     %\tracingassigns=0
     \setbox0\vbox to \csname cover-Y-whole\endcsname{\topskip=0pt \lineskip=0pt%
