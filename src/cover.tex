@@ -128,26 +128,28 @@
   \edef\c@vY{\dimexpr \csname cover-y\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax}%
   \bgroup\s@tc@tprefix{coverspine}\getsbp@ram{sbarrotation}%
   \ifx\cp@ram\relax\else
-    \trace{cov}{Rotating spine? \cp@ram}%
+    \trace{cov}{Spine rotation: top -> \cp@ram}%
     \ifcsname geom@xform@\cp@ram\endcsname
       \setgeomtransform{\cp@ram}%
-      \message{Rotating spine? \cp@ram => \pdf@aa / \pdf@ab}%
+      \message{\cp@ram => \pdf@aa / \pdf@ab}%
       \ifnum \pdf@aa=0 
 	\global\rotatespinetrue
+        \ifnum \pdf@ab=1
+          \global\let\r@tSet\r@cwSet%
+          \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
+          \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
+          \global\let\spinelble@d\topedgeble@d%
+          \global\let\spinerble@d\botedgeble@d%
+        \else
+          \global\let\r@tSet\r@acwSet%
+          \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
+          \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
+          \global\let\spinerble@d\topedgeble@d%
+          \global\let\spinelble@d\botedgeble@d%
+        \fi
       \fi
-      \ifnum \pdf@ab=1
-        \global\let\r@tSet\r@cwSet%
-        \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
-        \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
-        \global\let\spinelble@d\topedgeble@d%
-        \global\let\spinerble@d\botedgeble@d%
-      \else
-        \global\let\r@tSet\r@acwSet%
-        \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
-        \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
-        \global\let\spinerble@d\topedgeble@d%
-        \global\let\spinelble@d\botedgeble@d%
-      \fi
+    \else
+      \trace{cov}{\cp@ram -> No transform matrix}%
     \fi
   \fi\egroup
   \ifrotatespine
@@ -166,6 +168,15 @@
   %  
 }
 \def\d@spine{{%
+  \ifcsname periphcontents=coverspine\endcsname
+    \x@\let\x@\sp@ne\csname periphcontents=coverspine\endcsname
+  \else
+    \ifcsname periphcontents=coverspine\endcsname
+      \x@\let\x@\sp@ne\csname periphcontents=spine\endcsname
+    \else
+      \let\sp@ne\empty
+    \fi
+  \fi
   \ifrotatespine
     \let\lble@d\spinelble@d
     \let\rble@d\spinerble@d
@@ -176,10 +187,10 @@
       \c@verbit{spine}{\topskip=0pt 
         \vskip \@@spinebeforeskip
         \vfill
-        \ifcsname periphcontents=coverspine\endcsname
-          \csname periphcontents=coverspine\endcsname
+        \ifx\sp@ne\empty
+          \leavevmode
         \else
-          \csname periphcontents=spine\endcsname
+          \sp@ne
         \fi
         \vfill
         \vskip \@@spineafterskip
@@ -191,24 +202,27 @@
     \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
     \raise\dimexpr\dp0\box0
   \else
-    \trace{cov}{NOT Rotating spine??}%
-    \edef\tble@d{\csname cover-bleed\endcsname}%
-    \edef\bble@d{\csname cover-bleed\endcsname}%
+    \let\tble@d\topedgeble@d
+    \let\bble@d\botedgeble@d
     \edef\lble@d{0pt}%
     \edef\rble@d{0pt}%
-    \c@verbit{spine}{\topskip=0pt 
-      \ifcsname periphcontents=coverspine\endcsname
-        \csname periphcontents=coverspine\endcsname
+    \trace{cov}{Unrotated spine}%
+    \setbox0\hbox{\c@verbit{spine}{\topskip=0pt 
+      \ifx\sp@ne\empty
+        \leavevmode
       \else
-        \csname periphcontents=spine\endcsname
+        \sp@ne
       \fi
-    }%
+      \endgraf\vskip 0pt plus 0.001fil % very weak fill
+    }}%
+    \trace{cov}{NOT Rotating spine \the\ht0+\the\dp0 x \the\wd0}%
+    \box0
   \fi
 }}
 
 \def\topedgeble@d{\ifdim\wholec@vrtpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
 \def\botedgeble@d{\ifdim\wholec@vrbpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
-\def\leftedgeble@d{\ifdim\wholec@vrrpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
+\def\leftedgeble@d{\ifdim\wholec@vrlpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
 \def\rightedgeble@d{\ifdim\wholec@vrrpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
 \def\udble@d{% unified bleed disable if they want padding for coverwhole
   \edef\tble@d{\topedgeble@d}%
@@ -241,6 +255,7 @@
     \else
       \trace{cov}{No front cover}%
       \tempfalse
+      \let\c@verfront\leavevmode
     \fi
   \fi
   \trace{cov}{Front cover is \meaning\c@verfront}%
