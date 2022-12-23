@@ -195,7 +195,7 @@
    \x@\global\x@\let\csname\trign@me\endcsname\tr@gtmp
 }
 
-\def\r@ntr@g#1\E{\scantokens{#1\noexpand}}
+\def\r@ntr@g#1\E{\p@sheof\scantokens{#1\noexpand}\p@peof}
 %\def\r@ntr@g#1\E{
   %\toks0={#1}%
   %\immediate\openout0=tmptrigfile\relax

@@ -1,0 +1,162 @@
+%:strip
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Part of the ptx2pdf macro package for formatting USFM text
+% copyright (c) 2007-2022 by SIL International
+%
+% Permission is hereby granted, free of charge, to any person obtaining  
+% a copy of this software and associated documentation files (the  
+% "Software"), to deal in the Software without restriction, including  
+% without limitation the rights to use, copy, modify, merge, publish,  
+% distribute, sublicense, and/or sell copies of the Software, and to  
+% permit persons to whom the Software is furnished to do so, subject to  
+% the following conditions:
+%
+% The above copyright notice and this permission notice shall be  
+% included in all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Macros to handle periphery sections.
+\def\periph@@@{} % Eventually will hold the current peripheral type
+
+
+\def\endofperiph{\relax}
+{\catcode13=12 %
+\gdef\@@rem{\bgroup\catcode13=12 \unc@tcodespecials\catcode`\\=12\@@rem@}%
+\gdef\@@rem@#1^^M{\egroup\@@realrem }% Swallow first line like I thought it was designed to.
+%Code to read periph sections line by line.
+\gdef\@periph{%
+  \trace{ss}{periph}%
+  \ifinperiph\endp@riph\inperiphfalse\else%
+  \ifsk@pping\egroup\fi%
+  \fi%
+ \endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi\bgroup\catcode13=12 \@@periph}%
+\gdef\@@periph #1^^M{\x@\@@@periph #1||\E}%
+\gdef\g@tp@riphline#1^^M{\gdef\p@riphtst{#1}\trace{T}{Got line '\p@riphtst'}\ifx\p@riphtst\endofperiph\let\getp@riphline\endp@riph\else\ifx\p@riphtst\empty\else\testp@riph{#1}\fi\fi\getp@riphline}%
+%% DO NOT COMMENT END OF FOLLOWING LINE:
+\gdef\getp@riphlines{\bgroup\inperiphtrue\codesforperiphgr@b\let\p@riphlines\empty\let\getp@riphline\g@tp@riphline\everyeof{\relax
+\noexpand} \getp@riphline}%
+\gdef\n@wline{
+}%
+}
+
+\gdef\n@wperiph{\expandafter\newperiphb\p@riphtst\E}%
+%Code to check periph sections line by line until the next periph section or end of file. Slash is made inactive
+\catcode`\~=0 \catcode`\\=12 
+  ~gdef~@@testendperiph{\zendperiph}%
+  ~gdef~testp@riph #1{~edef~t@mp{#1}~ifx~t@mp~@@testendperiph~inperiphfalse~fi
+    ~expandafter~def~expandafter~p@riphtst~expandafter{#1}%
+    ~ifx~p@riphtst~relax~inperiphfalse~fi%
+    ~ifinperiph~expandafter~@testp@riph#1\periph~E~else~let~getp@riphline~endp@riph~E~fi}%
+{~catcode13=12 %
+  ~gdef~@testp@riph #1\periph#2~E{% NOTE that line feeds are not spaces any more! Comment them!
+    ~def~tstb{#1}~ifx~tstb~empty%
+      ~trace{T}{New periph starting}%
+      ~let~getp@riphline~n@wperiph%
+    ~else%
+       ~xdef~p@riphlines{~ifx~p@riphlines~empty~else~p@riphlines~n@wline~fi~p@riphtst}%
+    ~fi}% DO NOT COMMENT THE END OF THE NEXT LINE!
+  ~gdef~newperiphb #1\periph#2~E{~xdef~p@riphlines{~ifx~p@riphlines~empty~else ~p@riphlines~n@wline~fi #1}~endp@riph ~periph #2
+}%
+}
+~catcode`\=0 
+\catcode`\~=13
+
+\def\StorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\relax}
+\def\NoStorePeriph#1{\x@\global\x@\let\csname storeperiph-#1\endcsname\undefined} %A thing let to undefined does not ifcsname
+\def\KeepPeriph#1{\x@\global\x@\let\csname keepperiph-#1\endcsname\relax}
+
+\StorePeriph{intbible}
+\StorePeriph{intnt}
+\StorePeriph{intot}
+\StorePeriph{intpent}
+\StorePeriph{inthistory}
+\StorePeriph{intpoetry}
+\StorePeriph{intprophesy}
+\StorePeriph{intdc}
+\StorePeriph{intgospels}
+\StorePeriph{intepistles}
+\StorePeriph{intletters}
+\StorePeriph{frontcover}
+\StorePeriph{backcover}
+\StorePeriph{cover}
+\StorePeriph{spine}
+
+\def\endp@riph{%
+  \trace{ss}{endp@riph}%
+  \ifst@ringperiph
+    \global\let\periphattr@b\attr@b
+    \egroup\egroup
+    \let\tmp\p@riphlines
+    \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
+      \p@sheof\x@\scantokens\x@{\tmp}\p@peof\endlastp@rstyle{endperiph}%
+      \ifhe@dings\endhe@dings\fi
+      }\everyeof{}%
+    \trace{m}{Saved periph \periphattr@b as \meaning\tmp}%
+    \st@ringperiphfalse
+  \else
+    \endlastp@rstyle{endperiph}%
+    \ifhe@dings\endhe@dings\fi
+    \egroup
+    \everyeof{}%
+    \ifPagebreakAfterPeriph\pb\fi
+  \fi\global\let\periph@@@\empty}
+\def\zendperiph{\endlastp@rstyle{zendperiph}%
+  \ifhe@dings\endhe@dings\fi
+  \ifinperiph\endp@riph\inperiphfalse\fi}
+
+\newif\ifStorePeriph\StorePeriphtrue
+\newif\ifPagebreakAfterPeriph\PagebreakAfterPeriphtrue
+
+\def\@@@periph #1|#2|#3\E{%
+  \trace{ss}{@@@periph #1|#2}%
+  \def\tmp{#2}%
+  \unset@ttribs
+  \def\thisdefault@ttrkey{id}%
+  \ifx\tmp\empty
+    \let\attr@b\empty
+  \else\let\@ttributes\tmp
+    \parse@ttribs{\@ttributes}%
+    %\let\d@\apply@attr@specials
+    %\x@\cstackdown \attribsus@d,\E
+    \get@ttribute{id}%
+    \ifx\attr@b\relax
+      \let\attr@b\empty
+    \fi
+  \fi
+  \trace{per}{Setting periph@@@ to `\attr@b` (#2)}%
+  \global\let\periph@@@\attr@b
+  \the\@idhooks
+  \tempfalse
+  \ifStorePeriph
+    \ifcsname storeperiph-\attr@b\endcsname \temptrue\fi
+  \fi
+  \iftemp
+    %\tracingassigns=1
+    \trace{per}{periph '\periph@@@' will be stored}%
+    \st@ringperiphtrue
+    \let\n@xt\getp@riphlines
+  \else 
+    \st@ringperiphfalse
+    \trace{per}{periph '\periph@@@' will not be stored}%
+    \inperiphtrue
+    \catcode13=10
+    \everyeof{\trace{per}{end of file}\endp@riph}%
+    \aftergroup\@ndofperiphgroup%
+    \let\n@xt\relax
+  \fi
+  \n@xt
+}
+
+\def\@ndofperiphgroup{\trace{per}{End of periph group}\global\let\periph@@@\empty\pagebreak}

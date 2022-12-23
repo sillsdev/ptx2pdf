@@ -29,6 +29,9 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
+% scantokens triggers eof. Therefore it should be wrapped in these:
+\def\p@sheof{\x@\toks\x@\x@0\x@{\the\everyeof}\everyeof{}}
+\def\p@peof{\x@\everyeof\x@{\the\toks0}}
 % Utility macros for rotation, etc.
 \def\geom@xform@u{{1}{0}{0}{1}} % Normal
 \def\geom@xform@d{{-1}{0}{0}{-1}} %Rotate 180 / Flip both
