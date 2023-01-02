@@ -134,16 +134,19 @@
       \message{\cp@ram => \pdf@aa / \pdf@ab}%
       \ifnum \pdf@aa=0 
 	\global\rotatespinetrue
+        \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+        \getsbp@ram{bordertpadding}\xdef\spine@tpaddingcorn{\the\dimexpr -\b@drwidth pt\ifx\cp@ram\relax\else - \the\dimexpr \cp@ram pt\fi \relax\relax}%
+        \trace{cov}{border t correction for rotated spine is \spine@tpaddingcorn}%
         \ifnum \pdf@ab=1
           \global\let\r@tSet\r@cwSet%
-          \x@\global\x@\let\x@\@@spineafterskip\csname cover-back-spinewrap\endcsname
-          \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-front-spinewrap\endcsname
+          \x@\global\x@\edef\x@\@@spineafterskip{\the\dimexpr \csname cover-back-spinewrap\endcsname \relax}%
+          \x@\global\x@\edef\x@\@@spinebeforeskip{\the\dimexpr \csname cover-front-spinewrap\endcsname \relax}%
           \global\let\spinelble@d\topedgeble@d%
           \global\let\spinerble@d\botedgeble@d%
         \else
           \global\let\r@tSet\r@acwSet%
-          \x@\global\x@\let\x@\@@spineafterskip\csname cover-front-spinewrap\endcsname
-          \x@\global\x@\let\x@\@@spinebeforeskip\csname cover-back-spinewrap\endcsname
+          \x@\global\x@\edef\x@\@@spineafterskip{\the\dimexpr \csname cover-front-spinewrap\endcsname \relax}%
+          \x@\global\x@\edef\x@\@@spinebeforeskip{\the\dimexpr \csname cover-back-spinewrap\endcsname\relax}%
           \global\let\spinerble@d\topedgeble@d%
           \global\let\spinelble@d\botedgeble@d%
         \fi
@@ -198,9 +201,17 @@
     }%
     \trace{cov}{Rotating spine \pdf@ab. \the\ht0+\the\dp0 x\the\wd0}%
     \setbox0\hbox{\rot@tebz}%
+    %\showboxdepth20
     %\showbox0
-    \message{Rotating spine \the\ht0+\the\dp0 x\the\wd0}%
+    \message{Rotating spine \ifx\r@tSet\r@acwSet anti\fi clockwise \the\ht0+\the\dp0 x\the\wd0}%
+    \leavevmode
+    \ifx\r@tSet\r@acwSet 
+      \kern \spine@tpaddingcorn
+    \fi
     \raise\dimexpr\dp0\box0
+    \ifx\r@tSet\r@cwSet 
+      \kern \spine@tpaddingcorn
+    \fi
   \else
     \let\tble@d\topedgeble@d
     \let\bble@d\botedgeble@d

@@ -261,8 +261,8 @@
   \traceifset{@get@Vborder@style@params}%
   \trace{eb}{Reading border vertical params for \c@tprefix\sb@rmarker}%
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
-  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\edef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{bordertpadding}\ifx\cp@ram\relax\xdef\border@tpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@tpadding{\the\dimexpr \cp@ram pt \relax}\fi
+  \getsbp@ram{borderbpadding}\ifx\cp@ram\relax\xdef\border@bpadding{\the\dimexpr \ifsb@rfillpage -\b@drwidth pt\else 0pt\fi\relax}\else\xdef\border@bpadding{\the\dimexpr \cp@ram pt \relax}\fi
   \getsbp@ram{bordertop}\let\b@drtop\cp@ram
   \getsbp@ram{borderbottom}\let\b@drbottom\cp@ram 
   \getsbp@ram{boxtpadding}\xdef\fb@tpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
