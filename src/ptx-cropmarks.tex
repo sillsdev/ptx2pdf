@@ -55,7 +55,7 @@
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
         \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
-          \kern\sp@newidth\vrule height 6pt depth .5pt width .4pt}\fi}%
+          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -74,8 +74,9 @@
       \vrule height \dimen0 depth -\bottomm@rgin width 15pt
       \kern 4.8pt
       \vrule height -5pt depth 30pt width .4pt
-      \ifdim\sp@newidth>0pt\lower 6pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
-        \kern\sp@newidth\vrule height 6pt depth .5pt width .4pt}\hss\fi
+      \kern -0.2pt
+      \ifdim\sp@newidth>0pt\lower 6pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
+        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\hss\fi
       \hss
       \vrule height -5pt depth 30pt width .4pt
       \kern 4.8pt
