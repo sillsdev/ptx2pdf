@@ -140,7 +140,7 @@ class PDFImage:
             if mode == "L" and self.bits == 1:
                 mode = "1"
             logger.debug(f"{mode=}, {self.width=}, {self.height=}, {self.cs=}")
-            self.img = Image.frombytes(mode=mode, size=(self.width, self.height), data=xobj.stream)
+            self.img = Image.frombytes(mode=mode, size=(self.width, self.height), data=xobj.stream.encode("Latin-1"))
     
     def asXobj(self):
         res = PdfDict()

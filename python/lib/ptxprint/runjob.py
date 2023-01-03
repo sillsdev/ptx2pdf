@@ -810,6 +810,7 @@ class RunJob:
             colour = "rgbx4"
         else:
             colour = self.ispdfxa.lower()
+        logger.debug(f"{colour=}, {self.ispdfxa=}")
         if colour is not None:
             outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
                             colour=colour,
