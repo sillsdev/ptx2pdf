@@ -56,3 +56,33 @@
 }
 
 \setgeomtransform{u}
+
+\def\@pprox#1#2#3{% #1 = number #2 =  significant 3-bits. #3 = where to save the value.
+  \bgroup \dimen0=#1 \count255=0
+    \loop \unless\ifdim \dimen0=0pt 
+      \divide \dimen0 by 8
+      \advance \count255 by 1
+      \repeat
+    %\message{Removing #1 has \the\count255 significant 3-bits}%
+    \advance \count255 by -#2
+    \dimen0=#1 \tmpcount=0
+    \loop \ifnum\count255>0
+      \divide \dimen0 by 8
+      \advance \count255 by -1
+      \advance \tmpcount by 1 \relax
+      %\message{After removing \the\tmpcount  digits from #1: \the\dimen0}%
+      \repeat
+    \loop \ifnum\tmpcount>0
+      \multiply \dimen0 by 8
+      \advance \tmpcount by -1
+      \repeat
+    \xdef#3{\the\dimen0}%
+    %\message{#1 to #2 significant 3-bits is #3}%
+  \egroup
+}
+    
+      
+
+      
+    
+
