@@ -786,11 +786,14 @@
 \def\calc@p@rlinesgone#1#2{%
   \ifcsname baselineskip@\c@rrdstat\endcsname
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+    \relax % Must end look-ahead from setting baselineskip
   \fi
-  %\ifdim\baselineskip<1pt \trace{C}{baselineskip too low}\baselineskip=12pt\fi
-  \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
-  \ifdim #1 > 1pt
-    \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+  \ifdim\the\baselineskip<100sp \trace{C}{baselineskip too low}%
+  \else
+    \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
+    \ifdim #1 > 1pt
+      \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+    \fi
   \fi
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
@@ -810,7 +813,7 @@
       \advance\p@rlinesgone by 1
     \fi
   \else
-    \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+    \relax\calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
   \fi
   \csname inp@r-\c@rrdstat false\endcsname
 }

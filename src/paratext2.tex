@@ -2333,8 +2333,8 @@
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
 \def\NQUAD{\BADBREAK\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
 \def\MQUAD{\BADBREAK\hskip 1em plus .2em minus .2em}
-\def\MSPACE{\hskip 1em}
-\def\NSPACE{\space}
+\def\MSPACE{\hskip 1em} % Fixed width
+\def\NSPACE{\hbox{\space}} % Fixed width
 \def\THREEPEREMSPACE{\hskip .333em}
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}

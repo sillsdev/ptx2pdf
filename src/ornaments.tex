@@ -34,7 +34,8 @@
 \newif\ifpgfsys@eorule\pgfsys@eoruletrue % Using evenodd rule?
 \newif\ifClipOrnaments\ClipOrnamentsfalse
 \newif\ifboxorn\boxornfalse % Set to true to surroud all ornaments with boxes.
-\newif\ifCacheOrnaments\CacheOrnamentsfalse %
+\newif\ifCacheOrnaments\CacheOrnamentsfalse % Cache ornaments in boxes
+\newif\ifXformOrnaments\XformOrnamentsfalse % Use XForm objects 
 \newif\ifpdf@ornament@stretch
 \newif\ifpdf@ornament@repeat
 \newif\iflocalornament
@@ -242,7 +243,7 @@
   %\begingroup
     \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
  %\endgroup}
-\def\pdf@special#1{\special{pdf:code #1}}
+\def\pdf@special#1{\unskip\special{pdf:code #1}}
 \def\pdfcommands{}
 \def\pdfpath{}
 \def\sysprotocol@literal#1{\let\tmp\pdfpath\xdef\pdfpath{}\x@\pdf@special{\tmp#1}\xdef\pdfcommands{}}
@@ -367,6 +368,10 @@
 \def\c@cheornbox{% This macro may not contain any logic, so that TeX's logic skipper can skip the macro 
   \x@\newb@x\csname \ornUUID\endcsname
 }
+\newcount\ornXFids
+\newbox\ornXobjects
+\newbox\theornament
+
 \def\orn@do@ornament{\bgroup%
     \traceifset{orn@do@ornament}%
     \ifpdf@ornament@stretch
@@ -382,29 +387,54 @@
     \global\let\orn@clip@rect\empty
     \global\let\orn@last@rect\empty
     \edef\ornUUID{ornament-\ornamentlinewidth-\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\the\pdf@xunit-\the\pdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
+    \ifXformOrnaments 
+      \edef\ornUUID{\x@\x@\x@\zap@space \x@\ornUUID\space \empty}%
+    \fi
     %\message{\ornUUID}%
     \trace{orn}{orn@do@ornament(\ifpdf@ornament@stretch *\ornamentstretch\fi) \the\dimen0 x \the\dimen1}%
     %\tracingifs=1\tracingassigns=1
+    \tempfalse
     \ifCacheOrnaments
+      \temptrue
+    \fi
+    \ifXformOrnaments
+      \temptrue
+    \fi
+    \let\ornXFid\relax
+    \iftemp
       \ifcsname \ornUUID \endcsname
-        \temptrue
+        \x@\let\x@\ornXFid\csname \ornUUID\endcsname
+        \trace{orn}{using \ornXFid\space again}%
       \else
         \tempfalse
       \fi
-    \else
-      \tempfalse
     \fi
     \traceifset{orn@do@ornamentA}%
     \iftemp
+      \trace{orn}{ornUUID is \ornUUID}%
       \dimen2=\x@\csname \ornUUID-dim2\endcsname
       \dimen3=\x@\csname \ornUUID-dim3\endcsname
       \dimen4=\x@\csname \ornUUID-dim4\endcsname
       \dimen5=\x@\csname \ornUUID-dim5\endcsname
-      \setbox0=\x@\box\csname \ornUUID\endcsname
+      \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
+      \ifXformOrnaments
+        \edef\tmp{pdf:uxobj @\ornXFid}%
+        \trace{orn}{special: \tmp}%
+        \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
+      \else
+        \setbox0=\x@\box\csname \ornUUID\endcsname
+      \fi
       \relax
     \else
-      \ifCacheOrnaments
-        \c@cheornbox
+      \ifXformOrnaments
+        \edef\ornXFid{orn\pdf@ornamentNum-\the\ornXFids}%
+        \global\advance\ornXFids by 1
+        \x@\global\x@\let\csname \ornUUID\endcsname\ornXFid
+        \trace{orn}{Defining \ornXFid}%
+      \else
+        \ifCacheOrnaments
+          \c@cheornbox
+        \fi
       \fi
       \x@\setbox0\hbox to \dimen0{%
         \pdf@beginscope
@@ -432,8 +462,25 @@
         \pdf@endscope
         \hss
       }%
-      \ifCacheOrnaments
-        \x@\global\x@\setbox\csname \ornUUID\endcsname\copy0
+      \ifXformOrnaments
+        \global\setbox\ornXobjects\hbox{%\unhbox\ornXobjects %
+          \edef\tmp{pdf:bxobj @\ornXFid\space width \the\dimen0 \noexpand\space height \the\dimen1 }%
+          \trace{orn}{Definition special: \tmp}%
+          \x@\special\x@{\tmp}%
+          \hbox to 0pt{\unhbox0}%
+          \special{pdf:exobj}%
+        }%
+        \edef\tmp{pdf:uxobj @\ornXFid}%
+        \trace{orn}{Usage special: \tmp}%
+        \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
+        \x@\xdef\csname \ornUUID-matrix\endcsname{\the\dimen5}%
+        \ifpdf@ornament@repeat\else
+          \box\ornXobjects
+        \fi
+      \else
+        \ifCacheOrnaments
+          \x@\global\x@\setbox\csname \ornUUID\endcsname\copy0
+        \fi
       \fi
       \tempfalse
     \fi
@@ -448,11 +495,12 @@
         \setbox0=\hbox to \dimen0{\kern-\dimen2\unhbox0\kern\dimen2}%
       \fi
       %\x@\global\x@\setbox\csname \ornUUID\endcsname\copy0
-      \ifCacheOrnaments
-        \x@\xdef\csname \ornUUID-dim2\endcsname{\the\dimen2}%
-        \x@\xdef\csname \ornUUID-dim3\endcsname{\the\dimen3}%
+      \ifnum 0<  \ifCacheOrnaments 1\fi\ifXformOrnaments 1\fi 0 
+        \x@\xdef\csname \ornUUID-dim2\endcsname{\the\dimen2}% Initial Hoffset
+        \x@\xdef\csname \ornUUID-dim3\endcsname{\the\dimen3}% 
         \x@\xdef\csname \ornUUID-dim4\endcsname{\the\dimen4}%
         \x@\xdef\csname \ornUUID-dim5\endcsname{\the\dimen5}%
+      \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
       \fi
     \fi
     \traceifcheck{orn@do@ornamentA}%
@@ -520,6 +568,7 @@
       \fi
     \fi
     %\dimen7=-\ornYalign\dimen1
+    \global\setbox\theornament\hbox{%
     \ifdim\dimen8=0pt \else\hbox\bgroup\leavevmode \kern -\dimen8 \trace{orn}{kerning by \the\dimen8}\fi
     \ifdim\dimen7=0pt
       \box0
@@ -531,6 +580,10 @@
       \fi
     \fi%
     \ifdim\dimen8=0pt \else\kern \dimen8\egroup\dimen8=0pt\fi
+    }%
+    \ifpdf@ornament@repeat\else
+      \box\theornament
+    \fi
     \traceifcheck{orn@do@ornamentB}%
     \traceifcheck{orn@do@ornament}%
 \egroup}
@@ -695,17 +748,21 @@
     \setorn@scale
   \fi
   \ifpdf@ornament@repeat
+    \orn@do@ornament
+    \ifXformOrnaments
+      \box\ornXobjects
+    \fi
     \ifx\orn@repeat@class\empty
       \trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
-      \xleaders\hbox{\orn@do@ornament}\hskip 0pt plus 1 fil\relax
+      \xleaders\box\theornament\hskip 0pt plus 1 fil\relax
     \else
       \x@\let\x@\tmp \csname best@mult@class@num@\orn@repeat@class\endcsname
       \ifx\tmp\relax
 	\trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
-	\xleaders\hbox{\orn@do@ornament}\hskip 0pt plus 1 fil\relax
+	\xleaders\box\theornament\hskip 0pt plus 1 fil\relax
       \else
 	\trace{orn}{Repeating ornament #1 (\tmp times)}%
-	\bgroup\setbox1=\hbox{\orn@do@ornament}\count255=\tmp\loop\ifnum\count255>0\copy1\advance\count255 by -1\repeat\egroup%
+	\bgroup\setbox1=\box\theornament\count255=\tmp\loop\ifnum\count255>0\copy1\advance\count255 by -1\repeat\egroup%
       \fi
     \fi
   \else
