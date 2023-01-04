@@ -178,11 +178,15 @@ formatting.
 \p
 Some text \par
 
+\global\boxorntrue
+
+Orientation of patern 1:
 u:\zornament |pattern="1|u"\*
 l:\zornament |pattern="1|l"\*
 r:\zornament |pattern="1|r"\*
 d:\zornament |pattern="1|d"\*
-\par
+\pb
+
 h:\zornament |pattern="1|h"\*
 L:\zornament |pattern="1|L"\*
 R:\zornament |pattern="1|R"\*

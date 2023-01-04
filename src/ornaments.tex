@@ -195,12 +195,23 @@
   \def\pdf@xo{0}\def\pdf@yo{0}%
   \calc@ornamentdim
   \ifdim\dimen0<0pt
-    \def\pdf@xo{\strip@pt{\dimexpr -\dimen0\relax}}%
+    \dimen0=-\dimen0
+    \def\pdf@xo{\strip@pt{\dimexpr \dimen0\relax}}%
   \fi
   \ifdim\dimen1<0pt
-    \def\pdf@yo{\strip@pt{\dimexpr -\dimen1\relax}}%
+    \dimen1=-\dimen1
+    \def\pdf@yo{\strip@pt{\dimexpr \dimen1\relax}}%
   \fi
-  \pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}%
+  \edef\pdf@matrix{}%
+  \def\pdf@apply@transform{}%
+  \ifXformOrnaments
+  %\iftrue
+    %\def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
+    %\edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\strip@pt{\dimen0}\space \strip@pt{\dimen1}}%
+    \edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\pdf@xo\space\pdf@yo}%
+  \else
+    \def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
+  \fi
 }
 \def\orn@qpoint#1#2{%Apply x and y scaling to dimensinons
   {\strip@pt{\dimexpr #1\pdf@xunit\relax}} {\strip@pt{\dimexpr #2\pdf@yunit}} }
@@ -389,14 +400,15 @@
     \ifXformOrnaments
       \@pprox{\the\pdf@xunit}{3}{\tpdf@xunit}%
       \@pprox{\the\pdf@yunit}{3}{\tpdf@yunit}%
-      \edef\ornUUID{ornament-\ornamentlinewidth\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\tpdf@xunit-\tpdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
+      \edef\ornUUID{ornament-\ornamentlinewidth-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\tpdf@xunit-\tpdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
       \edef\ornUUID{\x@\x@\x@\zap@space \x@\ornUUID\space \empty}%
     \else
       \edef\ornUUID{ornament-\ornamentlinewidth-\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\the\pdf@xunit-\the\pdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
     \fi
     %\message{\ornUUID}%
     \trace{orn}{orn@do@ornament(\ifpdf@ornament@stretch *\ornamentstretch\fi) \the\dimen0 x \the\dimen1}%
-    %\tracingifs=1\tracingassigns=1
+    %\tracingifs=1
+    %\tracingassigns=1
     \tempfalse
     \ifCacheOrnaments
       \temptrue
@@ -420,16 +432,17 @@
       \dimen3=\x@\csname \ornUUID-dim3\endcsname
       \dimen4=\x@\csname \ornUUID-dim4\endcsname
       \dimen5=\x@\csname \ornUUID-dim5\endcsname
+      \x@\let\x@\pdf@matrix\csname \ornUUID-matrix\endcsname
       \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
       \ifXformOrnaments
-        \edef\tmp{pdf:uxobj @\ornXFid}%
+        \edef\tmp{pdf:uxobj @\ornXFid \space \pdf@matrix}%
         \trace{orn}{special: \tmp}%
         \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
       \else
         \setbox0=\x@\box\csname \ornUUID\endcsname
       \fi
-      \relax
     \else
+      \x@\s@tornamenttransform\geom@xform
       \ifXformOrnaments
         \edef\ornXFid{orn\pdf@ornamentNum-\the\ornXFids}%
         \global\advance\ornXFids by 1
@@ -443,7 +456,7 @@
       \x@\setbox0\hbox to \dimen0{%
         \pdf@beginscope
         \pdf@beginpic
-        \x@\s@tornamenttransform\geom@xform
+        \pdf@apply@transform
         \pdf@setlinewidth{\ornamentlinewidth}%
         \ifx\ornamentlinecol\empty\else
           \x@\pdf@color@rgb@stroke\ornamentlinecol\E
@@ -474,7 +487,7 @@
           \hbox to 0pt{\unhbox0}%
           \special{pdf:exobj}%
         }%
-        \edef\tmp{pdf:uxobj @\ornXFid}%
+        \edef\tmp{pdf:uxobj @\ornXFid \space \pdf@matrix}%
         \trace{orn}{Usage special: \tmp}%
         \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
         \ifpdf@ornament@repeat\else
@@ -503,7 +516,7 @@
         \x@\xdef\csname \ornUUID-dim3\endcsname{\the\dimen3}% 
         \x@\xdef\csname \ornUUID-dim4\endcsname{\the\dimen4}%
         \x@\xdef\csname \ornUUID-dim5\endcsname{\the\dimen5}%
-        \x@\xdef\csname \ornUUID-matrix\endcsname{\geom@xform}%
+        \x@\xdef\csname \ornUUID-matrix\endcsname{\pdf@matrix}%
       \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
       \fi
     \fi
