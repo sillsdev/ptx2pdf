@@ -99,11 +99,11 @@ bl   | 'Bottoom-Left'    [^1]  | At the bottom of the left-hand [^2] column     
 h    | 'Here'                 | Where defined / before the verse in piclist[^3], centred       | width of column
 hc   | 'Here',centred         | Where defined / before the verse in piclist[^3], centred       | width of column
 hl   | 'Here',Left            | Where defined / before the verse in piclist[^3], left-aligned  | same width as image
-p    | 'Post-paragraph'       | After this paragraph[^4,^7], centred                              | width of column
+p    | 'Post-paragraph'       | After this paragraph[^4],[^7], centred                              | width of column
 pc   | 'Post-paragraph', centred  | After this paragraph[^4], centred                            | width of column
 pl   | 'Post-paragraph, Left' | After this paragraph[^4], left-aligned                           | same width as image
-pc#  | 'Post-paragraph'       | After # paragraphs[^4,^5], centred                                | width of column
-pl#  | 'Post-paragraph, Left' | After # paragraphs[^4,^5], left-aligned                           | width of column
+pc#  | 'Post-paragraph'       | After # paragraphs[^4],[^5], centred                                | width of column
+pl#  | 'Post-paragraph, Left' | After # paragraphs[^4],[^5], left-aligned                           | width of column
 cl   | 'Cutout Left'          | A notch/corner cut out of the text, starting at current line    | same width as image
 cl#  | 'Cutout Left'          | A notch starting # lines[^6] below the current line              | same width as image
 P    | 'Page'                 | An image that replaces the normal text on the page              | width of page
