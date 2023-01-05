@@ -87,7 +87,7 @@
         \pdf@yunit=\dimexpr \ornamentheight / \@pgfornamentY\relax
     \fi
     \the\tmptoks
-    \trace{orn}{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit\relax}%
+    \trace{orn}{setorn@scale: xunit \the\pdf@xunit\space yunit \the\pdf@yunit. Object will be \the\dimexpr \@pgfornamentX\pdf@xunit \relax\space by \the\dimexpr \@pgfornamentY\pdf@yunit\relax }%
   \fi
 }
 
@@ -204,6 +204,8 @@
   \fi
   \edef\pdf@matrix{}%
   \def\pdf@apply@transform{}%
+  \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
+  \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
   \ifXformOrnaments
   %\iftrue
     %\def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
@@ -380,9 +382,9 @@
   \x@\newb@x\csname \ornUUID\endcsname
 }
 \newcount\ornXFids
-\newbox\ornXobjects
+\newbox\ornXobjects % Unboxed at shipout (or maybe definition).
+\newif\ifholdXobjects\holdXobjectsfalse  %
 \newbox\theornament
-
 \def\orn@do@ornament{\bgroup%
     \traceifset{orn@do@ornament}%
     \ifpdf@ornament@stretch
@@ -400,10 +402,10 @@
     \ifXformOrnaments
       \@pprox{\the\pdf@xunit}{3}{\tpdf@xunit}%
       \@pprox{\the\pdf@yunit}{3}{\tpdf@yunit}%
-      \edef\ornUUID{ornament-\ornamentlinewidth-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\tpdf@xunit-\tpdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
+      \edef\ornUUID{orn-\ornamentlinewidth-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\tpdf@xunit-\tpdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
       \edef\ornUUID{\x@\x@\x@\zap@space \x@\ornUUID\space \empty}%
     \else
-      \edef\ornUUID{ornament-\ornamentlinewidth-\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\the\pdf@xunit-\the\pdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
+      \edef\ornUUID{orn-\ornamentlinewidth-\geom@xform-\ornamentlinecol-\ifornamentfill \ornamentfillcol\else nofil\fi-\the\pdf@xunit-\the\pdf@yunit-\OrnamentsFamily\pdf@ornamentNum}%
     \fi
     %\message{\ornUUID}%
     \trace{orn}{orn@do@ornament(\ifpdf@ornament@stretch *\ornamentstretch\fi) \the\dimen0 x \the\dimen1}%
@@ -426,23 +428,25 @@
       \fi
     \fi
     \traceifset{orn@do@ornamentA}%
+    \x@\s@tornamenttransform\geom@xform
     \iftemp
       \trace{orn}{ornUUID is \ornUUID}%
       \dimen2=\x@\csname \ornUUID-dim2\endcsname
       \dimen3=\x@\csname \ornUUID-dim3\endcsname
       \dimen4=\x@\csname \ornUUID-dim4\endcsname
       \dimen5=\x@\csname \ornUUID-dim5\endcsname
-      \x@\let\x@\pdf@matrix\csname \ornUUID-matrix\endcsname
+      \x@\let\x@\orn@@x\csname \ornUUID-@@x\endcsname
+      \x@\let\x@\orn@@y\csname \ornUUID-@@y\endcsname
       \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
       \ifXformOrnaments
-        \edef\tmp{pdf:uxobj @\ornXFid \space \pdf@matrix}%
+        \edef\tmp{pdf:uxobj @\ornXFid \space width \orn@@x \space \pdf@matrix}%
         \trace{orn}{special: \tmp}%
         \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
       \else
         \setbox0=\x@\box\csname \ornUUID\endcsname
       \fi
     \else
-      \x@\s@tornamenttransform\geom@xform
+      %\x@\s@tornamenttransform\geom@xform
       \ifXformOrnaments
         \edef\ornXFid{orn\pdf@ornamentNum-\the\ornXFids}%
         \global\advance\ornXFids by 1
@@ -480,18 +484,23 @@
         \hss
       }%
       \ifXformOrnaments
-        \global\setbox\ornXobjects\hbox{%\unhbox\ornXobjects %
-          \edef\tmp{pdf:bxobj @\ornXFid\space width \the\dimen0 \noexpand\space height \the\dimen1 }%
+        \global\xdef\ornXFid@list{\ornXFid@list \ornXFid,}
+        \global\setbox\ornXobjects\hbox{\unhbox\ornXobjects %
+          \edef\tmp{pdf:bxobj @\ornXFid\space width \orn@@x \space height \orn@@y \space }%
           \trace{orn}{Definition special: \tmp}%
           \x@\special\x@{\tmp}%
           \hbox to 0pt{\unhbox0}%
           \special{pdf:exobj}%
         }%
-        \edef\tmp{pdf:uxobj @\ornXFid \space \pdf@matrix}%
+        \edef\tmp{pdf:uxobj @\ornXFid \space width \orn@@x  \space \pdf@matrix \space}%
         \trace{orn}{Usage special: \tmp}%
         \setbox0\hbox to \dimen0{\x@\special\x@{\tmp }}%
         \ifpdf@ornament@repeat\else
-          \box\ornXobjects
+          \ifholdXobjects\else\ifvoid\ornXobjects\else
+            \trace{orn}{Emmitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
+            \global\let\ornXFid@list\empty
+            \box\ornXobjects
+          \fi\fi
         \fi
       \else
         \ifCacheOrnaments
@@ -516,7 +525,8 @@
         \x@\xdef\csname \ornUUID-dim3\endcsname{\the\dimen3}% 
         \x@\xdef\csname \ornUUID-dim4\endcsname{\the\dimen4}%
         \x@\xdef\csname \ornUUID-dim5\endcsname{\the\dimen5}%
-        \x@\xdef\csname \ornUUID-matrix\endcsname{\pdf@matrix}%
+        \x@\xdef\csname \ornUUID-@@x\endcsname{\orn@@x}%
+        \x@\xdef\csname \ornUUID-@@y\endcsname{\orn@@y}%
       \trace{orn}{dimens: \the\dimen0 \x@\space x \the\dimen1, 2:\the\dimen2, 3:\the\dimen3, 4:\the\dimen4, 5:\the\dimen5}%
       \fi
     \fi
@@ -599,6 +609,7 @@
     \ifdim\dimen8=0pt \else\kern \dimen8\egroup\dimen8=0pt\fi
     }%
     \ifpdf@ornament@repeat\else
+      \trace{orn}{Not holding ornament \ornUUID \ifXformOrnaments (\ornXFid)\fi}%
       \box\theornament
     \fi
     \traceifcheck{orn@do@ornamentB}%
@@ -767,7 +778,11 @@
   \ifpdf@ornament@repeat
     \orn@do@ornament
     \ifXformOrnaments
-      \box\ornXobjects
+      \ifholdXobjects\else\ifvoid\ornXobjects\else
+        \trace{orn}{Emmitting Xobj definitions: \ornXFid@list (gt:\the\currentgrouptype, gd:\the\currentgrouplevel)}%
+        \global\let\ornXFid@list\empty
+        \box\ornXobjects
+      \fi\fi
     \fi
     \ifx\orn@repeat@class\empty
       \trace{orn}{Repeating ornament using xleaders for \orn@repeat@class}%
@@ -1242,8 +1257,8 @@
       \def\border@r@pad{\border@rpadding}%
     \fi
   \fi
-  \showboxdepth=3
-  \showboxbreadth=9999
+  %\showboxdepth=3
+  %\showboxbreadth=9999
   %\showbox\orn@bdr@right
   \dimen7=\dimexpr\ht\orn@bdr@top+\dp\orn@bdr@top  \ifx\b@drtop\tr@e +\dimen2\fi \relax
   \dimen8=\dimexpr\wd\orn@bdr@left + \border@l@pad\relax
@@ -1402,6 +1417,7 @@
   \egroup
 }
 
+\let\ornXFid@list\empty
 \def\pgfsetmiterlimit#1{}
 \edef\borderstylelist{\borderstylelist, ornaments}
 \let\pgfsetroundjoin\relax
