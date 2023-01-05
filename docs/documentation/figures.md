@@ -88,7 +88,7 @@ with `l` (Left), **you may also specify**: `r` (Right), `i` (Inner) and `o` (Out
 diglot when the `mirrored` columns are in use ('left' text is always inner, the
 'right' text outer), you probably don't want to use `ti` or `to` for picture placement.
 
-
+#### Positions
 Code | Mnemnonic              | Position                                                      | Max. caption width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
 t    | 'Top'                  | Above everything except the header line.                        | across both columns 
