@@ -93,47 +93,47 @@ Code | Mnemnonic              | Position                                        
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
 t    | 'Top'                  | Above everything except the header line.                        | across both columns 
 b    | 'Bottom'               | Below all verse text (and footnotes in diglot).                 | across both columns 
-tl   | 'Top-Left'    [1]      | At the top of the left-hand [2] column                          | width of column 
-bl   | 'Bottoom-Left'    [1]  | At the bottom of the left-hand [2] column                          | width of column 
+tl   | 'Top-Left'    [^1]      | At the top of the left-hand [^2] column                          | width of column 
+bl   | 'Bottoom-Left'    [^1]  | At the bottom of the left-hand [^2] column                          | width of column 
 -----|------------------------|       ***Experimental Additions***                              |----------------------------
-h    | 'Here'                 | Where defined / before the verse in piclist[3], centred       | width of column
-hc   | 'Here',centred         | Where defined / before the verse in piclist[3], centred       | width of column
-hl   | 'Here',Left            | Where defined / before the verse in piclist[3], left-aligned  | same width as image
-p    | 'Post-paragraph'       | After this paragraph[4,7], centred                              | width of column
-pc   | 'Post-paragraph', centred  | After this paragraph[4], centred                            | width of column
-pl   | 'Post-paragraph, Left' | After this paragraph[4], left-aligned                           | same width as image
-pc#  | 'Post-paragraph'       | After # paragraphs[4,5], centred                                | width of column
-pl#  | 'Post-paragraph, Left' | After # paragraphs[4,5], left-aligned                           | width of column
+h    | 'Here'                 | Where defined / before the verse in piclist[^3], centred       | width of column
+hc   | 'Here',centred         | Where defined / before the verse in piclist[^3], centred       | width of column
+hl   | 'Here',Left            | Where defined / before the verse in piclist[^3], left-aligned  | same width as image
+p    | 'Post-paragraph'       | After this paragraph[^4,^7], centred                              | width of column
+pc   | 'Post-paragraph', centred  | After this paragraph[^4], centred                            | width of column
+pl   | 'Post-paragraph, Left' | After this paragraph[^4], left-aligned                           | same width as image
+pc#  | 'Post-paragraph'       | After # paragraphs[^4,^5], centred                                | width of column
+pl#  | 'Post-paragraph, Left' | After # paragraphs[^4,^5], left-aligned                           | width of column
 cl   | 'Cutout Left'          | A notch/corner cut out of the text, starting at current line    | same width as image
-cl#  | 'Cutout Left'          | A notch starting # lines[6] below the current line              | same width as image
+cl#  | 'Cutout Left'          | A notch starting # lines[^6] below the current line              | same width as image
 P    | 'Page'                 | An image that replaces the normal text on the page              | width of page
 Pc   | 'Page', centred        | An image that replaces the normal text on the page              | width of page
-Pct  | 'Page', centred, top[8] | An image that replaces the normal text on the page              | width of page
+Pct  | 'Page', centred, top[^8] | An image that replaces the normal text on the page              | width of page
 Pl   | 'Page', left           | An image that replaces the normal text on the page, left-aligned | width of page
-Plt  | 'Page', left, top[8]   | An image that replaces the normal text on the page, left-aligned | width of page
-F    | 'Full page'            | The entirety of the paper [9]                                    | width of paper, may be off the page.
-Flt | 'Full page', as above  | The entirety of the paper [9] pushed to whatever edge is indicated   | width of paper, may be off the page.
+Plt  | 'Page', left, top[^8]   | An image that replaces the normal text on the page, left-aligned | width of page
+F    | 'Full page'            | The entirety of the paper [^9]                                    | width of paper, may be off the page.
+Flt | 'Full page', as above  | The entirety of the paper [^9] pushed to whatever edge is indicated   | width of paper, may be off the page.
 -----|------------------------|       ***Polyglot  Additions***                              |----------------------------
 tL   | 'Top-of-L'	      | At the top of column L (substitute L for R, A, B...)		| width of column
 bL   | 'Bottom-of-L'	      | At the top of column L						| width of column
 
 Notes:
-[1] Only if two columns are in use.
+[^1]: Only if two columns are in use.
 
-[2] If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
+[^2]: If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
 
-[3] *Here*  images need to start at a new paragraph. If the
+[^3]: *Here*  images need to start at a new paragraph. If the
     specified location is not a paragraph boundary, a new paragraph will be forced.
     
-[4] The 'insert image here' code will be activated at the end of the paragraph.
+[^4]: The 'insert image here' code will be activated at the end of the paragraph.
     Counting starts at the paragraph containing the verse number or the \fig
     definition.
     
-[5] pc1 'after one paragraph' is interpreted as meaning the same as p or pc (the
+[^5]: pc1 'after one paragraph' is interpreted as meaning the same as p or pc (the
     c is assumed if no number is specified, but required if supplying a number), pc2
     means after the next paragraph. This is useful if the verse contains poetry.
     
-[6] Multi-digit numbers may be specified, but little sanity checking is done.
+[^6]: Multi-digit numbers may be specified, but little sanity checking is done.
     The image will *always* be on the same page/column as the anchor (normally 
     a verse);  It may occur off the page's bottom, even if the notch is partly
     or fully on the next. A negative number (e.g. cr-1) will raise the image and
@@ -144,16 +144,16 @@ Notes:
     cr1.5 is treated as cr2 (two full-width lines before the image) with an
     adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
     
-[7] Since `p` is also interpretable as a media target, `pc` should always be
+[^7]: Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
     
-[8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
+[^8]: Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
     If a vertical alignment is specified, then the image will be the only image
     on the page, even if another image would also fit. If no vertical
     alignment is specified, then the image will be centred vertically,
     but an additional image or images may be fitted onto the page if there is space.
     
-[9] If the image is not the same aspect ratio as the page, or a scaling factor is used, 
+[^9]: If the image is not the same aspect ratio as the page, or a scaling factor is used, 
     there may be some space. For this reason, the alignment options are available.
     Full page images have no header or footer, and using a caption with them 
     is normally a mistake leading to part of the image or caption. 
