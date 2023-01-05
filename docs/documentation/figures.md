@@ -119,15 +119,20 @@ bL   | 'Bottom-of-L'	      | At the top of column L						| width of column
 
 Notes:
 [1] Only if two columns are in use.
+
 [2] If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
+
 [3] *Here*  images need to start at a new paragraph. If the
     specified location is not a paragraph boundary, a new paragraph will be forced.
+    
 [4] The 'insert image here' code will be activated at the end of the paragraph.
     Counting starts at the paragraph containing the verse number or the \fig
     definition.
+    
 [5] pc1 'after one paragraph' is interpreted as meaning the same as p or pc (the
     c is assumed if no number is specified, but required if supplying a number), pc2
     means after the next paragraph. This is useful if the verse contains poetry.
+    
 [6] Multi-digit numbers may be specified, but little sanity checking is done.
     The image will *always* be on the same page/column as the anchor (normally 
     a verse);  It may occur off the page's bottom, even if the notch is partly
@@ -138,13 +143,16 @@ Notes:
     amount within the cutout. i.e. cr1.9 will be 0.1 lines higher than cr2. 
     cr1.5 is treated as cr2 (two full-width lines before the image) with an
     adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
+    
 [7] Since `p` is also interpretable as a media target, `pc` should always be
     used in SFM2 instead.
+    
 [8] Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
     If a vertical alignment is specified, then the image will be the only image
     on the page, even if another image would also fit. If no vertical
     alignment is specified, then the image will be centred vertically,
     but an additional image or images may be fitted onto the page if there is space.
+    
 [9] If the image is not the same aspect ratio as the page, or a scaling factor is used, 
     there may be some space. For this reason, the alignment options are available.
     Full page images have no header or footer, and using a caption with them 
