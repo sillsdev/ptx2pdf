@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
 % written by Jonathan Kew
@@ -429,11 +429,11 @@
   \trace{G}{\the\pdfpagewidth x \the\pdfpageheight}
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \pdfp@geout
-    \ifXformOrnaments\ifvoid\ornXobjects\else
+    \ifvoid\ornXobjects\else
       \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
       \global\let\ornXFid@list\empty
       \vbox to 0pt{\vss\box\ornXobjects}%
-    \fi\fi
+    \fi
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
     \ifrotate
@@ -485,11 +485,11 @@
     \pdfp@geout
     \offinterlineskip                                                           %(1)
     \vbox to \pdfpageheight{\vss
-      \ifXformOrnaments\ifvoid\ornXobjects\else
+      \ifvoid\ornXobjects\else
         \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
         \global\let\ornXFid@list\empty
         \vbox to 0pt{\vss\box\ornXobjects}%
-      \fi\fi
+      \fi
       \hbox to \pdfpagewidth{\hss#1\hss}
       \vss}
     \vss
