@@ -24,13 +24,13 @@ DisableProgramGroupPage=yes
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\ReleaseNotes.txt
 InfoAfterFile=docs\inno-docs\AboutPTXprint.txt
-;OutputBaseFilename=PTXprint-{#MyAppVersion}-Setup
 OutputBaseFilename=SetupPTXprint({#MyAppVersion})
 SetupIconFile=icon\62859-open-book-icon-setup.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 
+; These languages are for the installer (not for PTXprint itself)
 [Languages]
 Name: "english";    MessagesFile: "compiler:Default.isl"
 Name: "french";     MessagesFile: "compiler:Languages\French.isl"
@@ -46,6 +46,7 @@ Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "python\scripts\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
+; These are the (14) languages that PTXprint's UI is available in:
 Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -70,7 +71,7 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall 
-;skipifsilent - removed this param so it can automatically (re)start the app after a silent install
+;skipifsilent - removed this flag/param so it can automatically (re)start the app after a silent install
 
 [InstallDelete]
 Type: files; Name: "{app}\ptxprint\Strong*.xml"
