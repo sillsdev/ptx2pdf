@@ -1203,6 +1203,9 @@
 }%
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
+\newcount\ornXFids % counter for xobjects
+\newbox\ornXobjects % Unboxed at shipout (or maybe definition), for any Xobject definitions.
+\newif\ifholdXobjects\holdXobjectsfalse  %
 %-c_savepartialpage
 
 %+c_twocols

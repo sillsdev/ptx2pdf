@@ -381,9 +381,6 @@
 \def\c@cheornbox{% This macro may not contain any logic, so that TeX's logic skipper can skip the macro 
   \x@\newb@x\csname \ornUUID\endcsname
 }
-\newcount\ornXFids
-\newbox\ornXobjects % Unboxed at shipout (or maybe definition).
-\newif\ifholdXobjects\holdXobjectsfalse  %
 \newbox\theornament
 \def\orn@do@ornament{\bgroup%
     \traceifset{orn@do@ornament}%
