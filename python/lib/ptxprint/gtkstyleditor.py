@@ -16,7 +16,7 @@ stylemap = {
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
     'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    1, None, None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    12, None, None),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    False, None, None),
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  False, None, None),
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
@@ -558,8 +558,8 @@ class StyleEditorView(StyleEditor):
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
             oldval = self.getval(self.marker, otherkey)
             newval = self._convertabs(newkey, oldval)
+            logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             self.setval(self.marker, newkey, newval)
-            # print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
@@ -758,9 +758,9 @@ class StyleEditorView(StyleEditor):
                 break
         else:
             return
-        old = self.basesheet.get(self.marker, {})
         if k in self.stylediverts:
             newk = self.stylediverts[k][0]
+            old = self.basesheet.get(self.marker, {})
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)
