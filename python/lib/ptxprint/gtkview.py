@@ -1397,6 +1397,22 @@ class GtkViewModel(ViewModel):
             self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configId)
         super().writeConfig(cfgname=cfgname, force=force)
 
+    def fillCopyrightDetails(self):
+        pts = self._getPtSettings()
+        if pts is not None:
+            t = pts.get('Copyright', "")
+            t = re.sub("</?p>", "", t)
+            t = re.sub("\([cC]\)", "\u00a9 ", t)
+            t = re.sub("\([rR]\)", "\u00ae ", t)
+            t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+            if len(t) < 100:
+                self.builder.get_object("t_copyrightStatement").set_text(t)
+            else:
+                self.builder.get_object("t_copyrightStatement").set_text(t[:70]+"...")
+                self.doError(_("Warning! The copyright statement in Paratext appears to be too long."), 
+                   secondary=_("Type in a shorter copyright statement and then use" + \
+                               "the local FRT book for longer licensing details."))
+    
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
@@ -1412,9 +1428,7 @@ class GtkViewModel(ViewModel):
             self.triggervcs = True
             self.updateFonts()
             self.readConfig("Default")
-            pts = self._getPtSettings()
-            if pts is not None:
-                self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+            self.fillCopyrightDetails()
             self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
             return
         else:
@@ -2927,10 +2941,8 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
-        pts = self._getPtSettings()
-        if pts is not None:
-            if self.get("t_copyrightStatement") == "":
-                self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+        if self.get("t_copyrightStatement") == "":
+            self.fillCopyrightDetails()
         self.onUseIllustrationsClicked(None)
         self.updatePrjLinks()
         self.checkFontsMissing()
@@ -3780,7 +3792,7 @@ class GtkViewModel(ViewModel):
         self.set("txbf_colophon", ct)
 
     def onResetCopyrightClicked(self, btn):
-        self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
+        self.fillCopyrightDetails()
 
     def onCopyrightStatementChanged(self, btn):
         btname = Gtk.Buildable.get_name(btn)
