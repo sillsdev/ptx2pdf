@@ -1,8 +1,40 @@
 PTXprint 2.2.43 Release Notes
-17 Dec 2022
+11 Jan 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.43 (11 Jan 2023)
+
+  * Added ability to create a cover page PDF (with front, back, spine, bleed, etc.)
+     - this option is currently only available using the -z 16 commandline parameter
+     - it will become mainstream after further testing and when documentation is ready
+
+  * Enabled installer to run PTXprint on ARM64 architecture
+
+  * Improved resetting/deleting the Default config
+
+  * Improvement to now use pdf xform objects for ornaments
+
+  * Improved tooltip documentation for pictures (anchor & no of lines)
+
+  * Sidebar settings are in focus when cat:...esb is selected in the style editor
+
+  * Removed warning if SIL found in copyright statement (as EL has been modified)
+  
+  * Put some sanity into the PT copyright statement handling (if > 100 chars in length)
+
+  * Fixed crash on unknown artist used in copyright credits
+
+  * Fixed Black+White output PDF stream issue
+
+  * Fixed grid boxing for vertical text (used for Mongolian script)
+
+  * Fixed picCopyright statement generation (artistWithMost error)
+
+  * Fixed broken zvar bug
+
+  * Fixed style editor for font reset and 0 non diffs
+  
 Bug fixes and improvements in 2.2.43 (17 Dec 2022)
 
   * Added feature on Pictures tab to generate Request Permission letter (DCC)
