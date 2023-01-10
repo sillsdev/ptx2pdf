@@ -1852,7 +1852,8 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                        # print(f"{art=} {artistWithMost=} {self.printer.artpgs=}")
+                        if artistWithMost in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
                         else:
                             pages = [x[0] for x in self.printer.artpgs[artistWithMost]['']]
