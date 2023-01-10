@@ -20184,32 +20184,21 @@ the Header+Footer tab for details).
                                                   <object class="GtkLabel" id="l_plAnchor">
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">False</property>
-                                                    <property name="tooltip-text" translatable="yes">The anchor specifies what page in a book a picture will appear on.
-It appears on the same page as its anchor in the text. You can alter 
-the Anchor Ref by a few verses to change the page on which it appears.
+                                                    <property name="tooltip-text" translatable="yes">The anchor specifies what page in a book a picture will appear on. It appears on the same page as its anchor in the text. You can alter the Anchor Ref by a few verses to change the page on which it appears.
 
-An Anchor Ref must consist of a book code, perhaps followed by L or R 
-(in the case of a diglot), then a space, then an in-book location which 
-contains a dot (period). In a scripture book, the in-book location 
-is Chap.Verse where the Verse matches the \v value precisely. In other 
-books, the in-book location can be anything as long as it is unique in 
-that book and contains a dot (period).
+An Anchor Ref must consist of a book code, perhaps followed by L or R (in the case of a diglot), then a space, then an in-book location which contains a dot (period). In a scripture book, the in-book location is Chap.Verse where the Verse matches the \v value precisely. In other books, the in-book location can be anything as long as it is unique in that book and contains a dot (period).
 
-Anchor Refs for Diglots use the L or R suffix on the 3-letter book code
-to indicate whether the picture is to be associated with the Primary (L) 
-text or the Secondary (R) text.
+Anchor Refs for Diglots use the L or R suffix on the 3-letter book code to indicate whether the picture is to be associated with the Primary (L) text or the Secondary (R) text.
 
-In the glossary book (GLO) there is special support for \k Keywords\k* where
-in-book location of k.keyword(s) will anchor a picture to the corresponding term.
-The in-book location must match the value of the \k Keyword or phrase\k* with its
-spaces removed. For example,
+In the glossary book (GLO) there is special support for \k Keywords\k* where in-book location of k.keyword(s) will anchor a picture to the corresponding term. The in-book location must match the value of the \k Keyword or phrase\k* with its spaces removed. For example,
 
     GLO k.Altar - would link it to \k Altar\k*
     GLO k.JohntheBaptist - would link a picture to
                a glossary entry \k John the Baptist\k*
 
-You can copy-and-paste a glossary word or phrase after typing GLO k. and 
-PTXprint will automatically strip the spaces for you.</property>
+You can copy-and-paste a glossary word or phrase after typing GLO k. and PTXprint will automatically strip the spaces for you.
+
+Where there are no intervening anchors, you can anchor to the Nth paragraph of e.g. poetry or a keyterm definition, by specifying the paragraph number after an = sign. For example, GLO k.Harp=2 or PSA 23.4=3. This can avoid the need to insert an explicit milestone to anchor a cutout if there is a page or column break after the start of the verse.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Anchor Ref:</property>
                                                   </object>
@@ -20223,32 +20212,21 @@ PTXprint will automatically strip the spaces for you.</property>
                                                     <property name="name">Picture: Anchor reference</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
-                                                    <property name="tooltip-text" translatable="yes">The anchor specifies what page in a book a picture will appear on.
-It appears on the same page as its anchor in the text. You can alter 
-the Anchor Ref by a few verses to change the page on which it appears.
+                                                    <property name="tooltip-text" translatable="yes">The anchor specifies what page in a book a picture will appear on. It appears on the same page as its anchor in the text. You can alter the Anchor Ref by a few verses to change the page on which it appears.
 
-An Anchor Ref must consist of a book code, perhaps followed by L or R 
-(in the case of a diglot), then a space, then an in-book location which 
-contains a dot (period). In a scripture book, the in-book location 
-is Chap.Verse where the Verse matches the \v value precisely. In other 
-books, the in-book location can be anything as long as it is unique in 
-that book and contains a dot (period).
+An Anchor Ref must consist of a book code, perhaps followed by L or R (in the case of a diglot), then a space, then an in-book location which contains a dot (period). In a scripture book, the in-book location is Chap.Verse where the Verse matches the \v value precisely. In other books, the in-book location can be anything as long as it is unique in that book and contains a dot (period).
 
-Anchor Refs for Diglots use the L or R suffix on the 3-letter book code
-to indicate whether the picture is to be associated with the Primary (L) 
-text or the Secondary (R) text.
+Anchor Refs for Diglots use the L or R suffix on the 3-letter book code to indicate whether the picture is to be associated with the Primary (L) text or the Secondary (R) text.
 
-In the glossary book (GLO) there is special support for \k Keywords\k* where
-in-book location of k.keyword(s) will anchor a picture to the corresponding term.
-The in-book location must match the value of the \k Keyword or phrase\k* with its
-spaces removed. For example,
+In the glossary book (GLO) there is special support for \k Keywords\k* where in-book location of k.keyword(s) will anchor a picture to the corresponding term. The in-book location must match the value of the \k Keyword or phrase\k* with its spaces removed. For example,
 
     GLO k.Altar - would link it to \k Altar\k*
     GLO k.JohntheBaptist - would link a picture to
                a glossary entry \k John the Baptist\k*
 
-You can copy-and-paste a glossary word or phrase after typing GLO k. and 
-PTXprint will automatically strip the spaces for you.</property>
+You can copy-and-paste a glossary word or phrase after typing GLO k. and PTXprint will automatically strip the spaces for you.
+
+Where there are no intervening anchors, you can anchor to the Nth paragraph of e.g. poetry or a keyterm definition, by specifying the paragraph number after an = sign. For example, GLO k.Harp=2 or PSA 23.4=3. This can avoid the need to insert an explicit milestone to anchor a cutout if there is a page or column break after the start of the verse.</property>
                                                     <property name="halign">start</property>
                                                     <property name="width-chars">18</property>
                                                     <signal name="focus-out-event" handler="onAnchorRefChanged" swapped="no"/>
@@ -20706,7 +20684,12 @@ to be moved up or down by a number of lines
 or paragraphs.
 
 -Negative (minus) values specify to move UP.
-+Positive (plus) values specify to move DOWN.</property>
++Positive (plus) values specify to move DOWN.
+
+Negative counts for cutouts raise the image,
+but the cutout will not affect earlier paragraphs. 
+Note that negative and fractional paragraph 
+counts are invalid.</property>
                                                     <property name="halign">end</property>
                                                     <property name="label" translatable="yes">Number of
 Lines:</property>
@@ -20728,7 +20711,12 @@ to be moved up or down by a number of lines
 or paragraphs.
 
 -Negative (minus) values specify to move UP.
-+Positive (plus) values specify to move DOWN.</property>
++Positive (plus) values specify to move DOWN.
+
+Negative counts for cutouts raise the image,
+but the cutout will not affect earlier paragraphs. 
+Note that negative and fractional paragraph 
+counts are invalid.</property>
                                                     <property name="halign">start</property>
                                                     <property name="max-length">4</property>
                                                     <property name="width-chars">4</property>
