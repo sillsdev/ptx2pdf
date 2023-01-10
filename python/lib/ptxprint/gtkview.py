@@ -1400,25 +1400,21 @@ class GtkViewModel(ViewModel):
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
+        sec = None
         if cfg == 'Default':
             self.resetToInitValues()
             try:
                 rmtree(delCfgPath)
             except OSError:
-                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+                sec = _("But the 'Default' folder could not be erased completely:") + "\n" + delCfgPath
 
-            self.updateProjectSettings(self.prjid)
-            self.onFontChanged(None)
-            # Right now this 'reset' (only) re-initializes the UI settings, and removes the ptxprint.sty file
-            # We could provide a dialog with options about what else to delete (piclists, adjlists, etc.)
-            sec = _("And the ptxprint.sty stylesheet has been deleted.")
-            try:
-                print("Reset Default config; Deleting: ", os.path.join(delCfgPath, "ptxprint.sty"))
-                os.remove(os.path.join(delCfgPath, "ptxprint.sty"))
-            except OSError:
-                sec = _("But the ptxprint.sty stylesheet could not be deleted.")
+            self.writeConfig(cfgname="Default", force=True)
             self.triggervcs = True
             self.updateFonts()
+            self.readConfig("Default")
+            pts = self._getPtSettings()
+            if pts is not None:
+                self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
             self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
             return
         else:
