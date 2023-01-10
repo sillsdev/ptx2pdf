@@ -4297,7 +4297,7 @@ class GtkViewModel(ViewModel):
                 self.setvar(b, "50")
             elif b == "toctitle":
                 pass
-            elif self.getvar(b) is None:
+            elif self.getvar(b, default=None) is None:
                 self.setvar(b, _("<Type Value Here>"))
                 
     def onEnglishClicked(self, btn):
@@ -4326,7 +4326,7 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             k = entry.get_text()
-            if self.getvar(k) is None:
+            if self.getvar(k, default=None) is None:
                 self.setvar(k, "")
         dialog.destroy()
 
