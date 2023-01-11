@@ -65,21 +65,8 @@ side-bar is.  Repeated elements can have matching or dissimilar counts.
 Counts determined from the top of the box can be re-used by other edges.
 
 ## Using the module
-At present the PTXprint user-interface has no way to select plugins, not even
-on the advanced tab.  For the plugin to function, it must be loaded manually,
-and until some bugs are worked out with auto-loading, it must be loaded before
-any style files are loaded. The ptxprint-premods.tex file should include the
-line:
-```
-\input ornaments
-```
-
-PTXprint must also be instructed about where the ornament files live on your local filesystem, 
-via the TEXINPUTS enviromnent variable. E.g. on linux you might need to enter:
-```
-export TEXINPUTS=.:/usr/lib/ptx2pdf/src:/usr/share/texlive/texmf-dist/tex/latex/pgfornament/:/usr/share/texlive/texmf-dist/tex/generic/pgfornament/vectorian/
-ptxprint
-```
+The PTXprint user-interface can now select plugins. Enter `ornaments` in the plugins 
+text box on the advanced tab. 
 
 ## Specifying that a border or sidebar should use ornaments
 The relevant stylesheet entry to use the ornaments package is
@@ -90,6 +77,7 @@ This is true for rules and for sidebars.
 
 ## The Ornament Catalogue
 See [OrnamentsCatalogue.pdf](OrnamentsCatalogue.pdf).
+
 
 ## Configuring a border for a sidebar
 ### Ornament specification
@@ -295,6 +283,17 @@ For a given book, the marker can be prefixed as normal e.g.: ```\Marker id:MAT|t
 borders are not put on title sections or on negative page numbers.
 Setting the `nonpublishable` property will disable text borders.
 
+## Using an ornament mid-text
+Normally it is not appropriate to use an ornament in the middle of the text, and a `\zrule` with a properly 
+defined style is better.
+
+However, there may be cases where a mid-text ornament is neeeded and the `\zornament` milestone makes it possible. The 
+default size (height before any rotation) is 0.7 of the current font size (0.7em).
+```
+Upside-down ornament 1: \zornament |pattern="1|d"\*
+Upside-left ornament 1 at 20pt: \zornament |pattern="1|l" size="20pt"\*
+
+```
 
 ## Using the pgfhan ornaments througout the document
 The pgfhan ornament set may be selected by adding this line to

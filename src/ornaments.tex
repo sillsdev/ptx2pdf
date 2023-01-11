@@ -42,7 +42,7 @@
 \newif\ifstringornament
 \newif\ifornscale % Should the ornament be scaled to the relevant dimension(s)
 \newif\ifornamentfill
-
+\def\x@bjpadding{5pt} %How much extra space around xobjects to avoid clipping?
 \plugin@startif{ornaments}
 %\plugins@needed{} % Just in case it becomes separate.
 
@@ -192,27 +192,31 @@
 
 \def\s@tornamenttransform#1#2#3#4{%
   \def\pdf@aa{#1}\def\pdf@ab{#2}\def\pdf@ba{#3}\def\pdf@bb{#4}%
-  \def\pdf@xo{0}\def\pdf@yo{0}%
+  \def\pdf@xo{-\x@bjpadding}\def\pdf@yo{-\x@bjpadding}%
   \calc@ornamentdim
   \ifdim\dimen0<0pt
     \dimen0=-\dimen0
-    \def\pdf@xo{\strip@pt{\dimexpr \dimen0\relax}}%
+    \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0\relax}}%
   \fi
   \ifdim\dimen1<0pt
     \dimen1=-\dimen1
-    \def\pdf@yo{\strip@pt{\dimexpr \dimen1\relax}}%
+    \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1\relax}}%
   \fi
   \edef\pdf@matrix{}%
   \def\pdf@apply@transform{}%
-  \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
-  \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
   \ifXformOrnaments
   %\iftrue
     %\def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
     %\edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\strip@pt{\dimen0}\space \strip@pt{\dimen1}}%
+    \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX + \x@bjpadding *2\relax}%
+    \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY + \x@bjpadding *2\relax}%
+    \edef\pdf@xo{\strip@pt{\dimexpr \pdf@xo pt + \x@bjpadding \relax}}% Actually bp
+    \edef\pdf@yo{\strip@pt{\dimexpr \pdf@yo pt + \x@bjpadding \relax}}% Actually bp
     \edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\pdf@xo\space\pdf@yo}%
   \else
     \def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
+    \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
+    \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
   \fi
 }
 \def\orn@qpoint#1#2{%Apply x and y scaling to dimensinons
@@ -481,12 +485,13 @@
         \hss
       }%
       \ifXformOrnaments
-        \global\xdef\ornXFid@list{\ornXFid@list \ornXFid,}
+        \global\xdef\ornXFid@list{\ornXFid@list \ornXFid,}%
         \global\setbox\ornXobjects\hbox{\unhbox\ornXobjects %
           \edef\tmp{pdf:bxobj @\ornXFid\space width \orn@@x \space height \orn@@y \space }%
           \trace{orn}{Definition special: \tmp}%
           \x@\special\x@{\tmp}%
-          \hbox to 0pt{\unhbox0}%
+          %\raise \x@bjpadding \hbox to 0pt{\kern \x@bjpadding \unhbox0\hss}%
+          \vbox to 0pt{\vss\hbox to 0pt{\kern\x@bjpadding\unhbox0\hss}\kern\x@bjpadding}%
           \special{pdf:exobj}%
         }%
         \edef\tmp{pdf:uxobj @\ornXFid \space width \orn@@x  \space \pdf@matrix \space}%
@@ -563,7 +568,7 @@
         \vrule height 0.02pt width\dimen0  depth 0pt
         \vrule height \dimen1 width 0.02pt depth 0pt \kern -0.02pt 
         \kern-\dimen0
-        \ifdim\dimen8=0pt \else\kern -\dimen8 \trace{orn}{kerning by \the\dimen8}\fi%
+        \ifdim\dimen8=0pt \else\kern -\dimen8\trace{orn}{kerning by \the\dimen8}\fi%
         \ifdim\dimen7=0pt
           \box0
         \else

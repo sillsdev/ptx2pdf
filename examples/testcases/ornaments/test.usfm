@@ -183,7 +183,7 @@ Some text \par
 Orientation of patern 1:
 \par
 
-u:\zornament |pattern="1|u"\*
+u:\zornament |pattern="1|u" size="0.7em"\*
 l:\zornament |pattern="1|l"\*
 r:\zornament |pattern="1|r"\*
 d:\zornament |pattern="1|d"\*
