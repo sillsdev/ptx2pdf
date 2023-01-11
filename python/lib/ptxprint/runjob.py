@@ -785,6 +785,8 @@ class RunJob:
         outpdf = None
         if kw.get('cover', False):
             inpdf = PdfReader(opath)
+            covpdfname = pdffile.replace(".pdf", "_cover.pdf")
+            logger.debug(f"Pulling out cover pages into {covpdfname} from {opath}")
             extras = split_pages(inpdf)
             if 'cover' in extras:
                 eps = extras['cover']
@@ -796,7 +798,7 @@ class RunJob:
                 covpdf.private.pages = eps
                 for v in eps:
                     v.Parent = covpdf.Root.Pages
-                fixpdffile(covpdf, pdffile.replace(".pdf", "_cover.pdf"), colour="cmyk")
+                fixpdffile(covpdf, covpdfname, colour="cmyk")
             outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}
@@ -810,8 +812,8 @@ class RunJob:
             colour = "rgbx4"
         else:
             colour = self.ispdfxa.lower()
-        logger.debug(f"{colour=}, {self.ispdfxa=}")
         if colour is not None:
+            logger.debug(f"Fixing colour for {colour}")
             outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
                             colour=colour,
                             parlocs = outfname.replace(".tex", ".parlocs"), **params)
@@ -827,6 +829,7 @@ class RunJob:
                     paper.append(0.)
             sigsheets = int(info['finishing/sheetsinsigntr'])
             foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
+            logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
             try:
                 outpdf = make_signatures((outpdf._trailer if outpdf else opath),
                                      paper[0], paper[1], nums,
@@ -837,6 +840,7 @@ class RunJob:
                                      title=_("Paper Size Error"), secondary=str(e), threaded=True)
                 return False
         if info['finishing/inclsettings']:
+            logger.debug("Adding settings to the pdf")
             zio = cStringIO()
             z = info.printer.createSettingsZip(zio)
             z.close()
