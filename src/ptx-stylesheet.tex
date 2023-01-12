@@ -240,7 +240,8 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\SHOWSTUFF{\message{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph}}
+\def\sh@wstuff{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph}
+\def\SHOWSTUFF{\message{\sh@wstuff}}%
                 
 %returns \@@ut 
 \def\fullstack@xpand#1|#2|#3\E{%Parameters: complexity|depth|style stack
@@ -812,6 +813,9 @@
 % All types of marker use this to check for the "nonpublishable" property
 \def\t@stpublishability#1{\n@npublishablefalse % check if "nonpublishable" occurred in the marker's \Properties
  \getp@ram{properties}{#1}{#1}%Should not decend, but can have specific version
+ \x@\t@stnonpub\p@ram nonpublishable!}
+\def\@@t@stpublishability#1#2{\n@npublishablefalse % Some things may need a descending version
+ \getp@ram{properties}{#1}{#2}%
  \x@\t@stnonpub\p@ram nonpublishable!}
 \def\t@stnonpub #1nonpublishable#2!{%
  \def\t@st{#2}\ifx\t@st\empty\else\n@npublishabletrue\fi}
