@@ -319,8 +319,7 @@ class StyleEditor:
                 if k == "Name":
                     v = self.getval(m, k, v)
                 other = om.get(k, None)
-                defaultval = _fieldmap.get(k.lower(), [None, None, None])[2]
-                if not self._eq_val(other, v, key=k) and not self._eq_val(defaultval, v, key=k):
+                if not self._eq_val(other, v, key=k):
                     if not markerout:
                         outfh.write("\n\\Marker {}\n".format(m))
                         markerout = True

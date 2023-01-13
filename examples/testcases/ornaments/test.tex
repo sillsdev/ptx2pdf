@@ -1,6 +1,7 @@
-\def\pluginlist{ornaments}
+\def\pluginlist{ornaments,cover}
 \input "paratext2.tex"
 \catcode`\@=11
+\tracing{m}
 \pluginjustwarntrue
 %\addtoversehooks{\ifx\prev@rsemode\empty \endash\penalty5 \fi}
 %\input "ptx-extended.tex"
@@ -22,11 +23,10 @@
 \FontSizeUnit=0.833pt
 \def\LineSpacingFactor{1.0}
 \def\VerticalSpaceFactor{1}
-
+\CropMarkstrue
 % HEADERFOOTER
 \def\HeaderPosition{0.33}
 \def\FooterPosition{0.5}
-
 % FOOTERCONTENT
 \def\RFtitleleft{\empty}
 \def\RFtitlecenter{\empty}
@@ -76,7 +76,7 @@
 \vfuzz=0.1pt
 
 % INSTALLED FONTS
-\def\regular{"Charis SIL"}
+\def\regular{"Gentium"}
 \def\bold{"Charis SIL/B"}
 \def\italic{"Charis SIL/I"}
 \def\bolditalic{"Charis SIL/BI"}
@@ -96,8 +96,10 @@
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \tracing{sc}
+\tracing{orn}
 %\tracing{sC}
 \stylesheet{test.sty}
+\stylesheet{cover.sty}
 %\tracing{C}
 \tracing{e}
 \tracing{A}
@@ -178,7 +180,27 @@
   \repeat
 \par
 }
+\StorePeriph{wholecover}
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
+%\CacheOrnamentstrue
+\XformOrnamentstrue
+\holdXobjectsfalse
+\tracingoutput=1
 \ptxfile{test.usfm}
+\zNeedEvenPage
+\makeatletter
+\showboxdepth=9
+\showboxbreadth=99
+\tracing{e}
+\tracing{cov}
+\BookOpenLeftfalse
+\showboxdepth=999
+\showboxbreadth=99
+\tracing{cov}
+\eject
+\prepusfm
+\m@kecover
+\unprepusfm
+
 \bye

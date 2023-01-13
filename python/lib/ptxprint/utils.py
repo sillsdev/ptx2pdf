@@ -246,8 +246,8 @@ def universalopen(fname, rewrite=False, cp=65001):
         fh = open(fname, "r", encoding="utf-8", errors="ignore")
     return fh
 
-def print_traceback():
-    traceback.print_stack()
+def print_traceback(f=None):
+    traceback.print_stack(f=f)
 
 if sys.platform == "linux":
 
@@ -290,12 +290,28 @@ def get_ptsettings():
     pt_settings = None
     ptob = openkey("Paratext/8")
     if ptob is None:
-        tempstr = ("C:\\My Paratext {} Projects" if sys.platform == "win32" else
-                    os.path.expanduser("~/Paratext{}Projects"))
+        logger.debug(f"No registry key found for Paratext. Searching for data folder...")
         for v in ('9', '8'):
-            path = tempstr.format(v)
-            if os.path.exists(path):
-                pt_settings = path
+            if sys.platform == "win32":
+                for d in map(chr, range(ord('C'), ord('Z')+1)):
+                    if os.path.exists("{}:\\".format(d)):
+                        tempstr = "{}:\\My Paratext {} Projects"
+                        path = tempstr.format(d,v)
+                        if os.path.exists(path):
+                            pt_settings = path
+                            logger.debug(f"Found Paratext data folder: {path}")
+                            break
+                else:
+                    continue
+                break
+            else:
+                tempstr = os.path.expanduser("~/Paratext{}Projects")
+                path = tempstr.format(v)
+                if os.path.exists(path):
+                    pt_settings = path
+                    logger.debug(f"Found Paratext data folder: {path}")
+                    break
+        logger.debug(f"ERROR: Unable to find a Paratext data folder! Searched C,D,E,...,Z drives")
     else:
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     return pt_settings
@@ -379,6 +395,9 @@ def asfloat(v, d):
     except (ValueError, TypeError):
         return d
 
+def strtobool(s):
+    return s.lower() in ('true', '1', 't')
+
 def pluralstr(s, l):
     """CLDR plural rules"""
     if len(l) == 0:
@@ -417,6 +436,11 @@ def f2s(x, dp=3) :
     res = re.sub(r"0*$", "", res)
     if res == "":
         res = "0"
+    return res
+
+def ustr(x):
+    res = re.sub(r"\\u([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), x)
+    res = re.sub(r"\\U([0-9A-Fa-f]{4})", lambda m:chr(int(m.group(1), 16)), res)
     return res
 
 def runChanges(changes, bk, dat):

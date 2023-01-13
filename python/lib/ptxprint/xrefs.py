@@ -12,6 +12,56 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+class WordForm:
+    def __init__(self, stem, prefix, suffix):
+        self.stem = stem
+        self.prefices = prefix if prefix is None else set([prefix])
+        self.suffices = suffix if suffix is None else set([suffix])
+
+    def __str__(self):
+        res = []
+        if self.prefices is not None:
+            res.append("("+"|".join(sorted(self.prefices, key=len))+")")
+        res.append(self.stem)
+        if self.suffices is not None:
+            res.append("("+"|".join(sorted(self.suffices, key=len))+")")
+        return "".join(res)
+
+    def merge(self, stem, prefix, suffix):
+        if self.stem != stem:
+            return False
+        matchpref = (prefix is None and self.prefices is None) or (prefix in self.prefices)
+        matchsuff = (suffix is None and self.suffix is None) or (suffix in self.suffixes)
+        if matchpref and not matchsuff:
+            if suffix is not None:
+                self.suffices.add(suffix)
+                return True
+        elif not matchpref and matchsuff:
+            if prefix is not None:
+                self.prefices.add(prefix)
+                return True
+        elif matchpref and matchsuff:
+            return True
+        return False
+
+class WordForms:
+    def __init__(self, stem):
+        self.stem = stem
+        self.forms = []
+
+    def __str__(self):
+        return "("+"|".join(self.forms + [self.stem])+ ")"
+
+    def merge(self, stem, prefix, suffix):
+        if prefix is None and suffix is None:
+            return True
+        for f in self.forms:
+            if f.merge(stem, prefix, suffix):
+                break
+        else:
+            self.forms.append(WordForm(stem, prefix, suffix))
+
+
 class NoBook:
     @classmethod
     def getLocalBook(cls, s, level=0):
@@ -23,7 +73,7 @@ def usfmmark(ref, txt):
     return (ref.mark or "") + txt
 
 class BaseXrefs:
-    template = "\n\\AddTrigger {book}{dotref}\n\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*\n\\EndTrigger\n"
+    template = "\\x - \\cat strongs\\cat*\\xo {colnobook}\u00A0\\xt {refs}\\x*"
     addsep = RefSeparators(books="; ", chaps=";\u200A", verses=",\u200A", bkc="\u2000", mark=usfmmark, bksp="\u00A0")
     dotsep = RefSeparators(cv=".", onechap=True)
 
@@ -70,7 +120,7 @@ class XrefFileXrefs(BaseXrefs):
                 results[ra] = acc
                 logger.debug(f"{ra=} {acc=}")
 
-    def process(self, bk, outpath, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None):
         results = {}
         for k, v in self.xrefdat.get(bk, {}).items():
             outl = v[0]
@@ -80,21 +130,19 @@ class XrefFileXrefs(BaseXrefs):
         if usfm is not None:
             self._addranges(results, usfm)
         if len(results):
-            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-                for k, v in sorted(results.items()):
-                    if self.filters is not None:
-                        v.filterBooks(self.filters)
-                    v.simplify()
-                    if not len(v):
-                        continue
-                    shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
-                    info = {
-                        "book":         k.first.book,
-                        "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                        "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
-                        "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
-                    }
-                    outf.write(self.template.format(**info))
+            for k, v in sorted(results.items()):
+                if self.filters is not None:
+                    v.filterBooks(self.filters)
+                v.simplify()
+                if not len(v):
+                    continue
+                shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
+                info = {
+                    "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                    "refs":         v.str(owner.parent.ptsettings, addsep=self.addsep, level=2)
+                }
+                triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+        return triggers
 
 
 class StandardXrefs(XrefFileXrefs):
@@ -118,6 +166,7 @@ class XMLXrefs(BaseXrefs):
         self.context = context or BaseBooks
         self.shownums = shownums
         self.xmldat = cachedData(xrfile, self.readxml)
+        self.ptsettings = ptsettings
 
     def _unpackxml(self, xr):
         a = []
@@ -188,7 +237,7 @@ class XMLXrefs(BaseXrefs):
 
     def _procnested(self, xr, baseref):
         a = []
-        for e in xr:
+        for e in sorted(xr, key=lambda n:("", 0, []) if n is None or n[0] is None else (n[0][0], int(n[0][1:]), n)):
             st = e[0]
             if st is not None and self.strongsfilter is not None and st not in self.strongsfilter:
                 continue
@@ -210,27 +259,25 @@ class XMLXrefs(BaseXrefs):
                     a.append(s + self._procnested(e[2], baseref))
         return r"\space ".join(a)
 
-    def process(self, bk, outpath, owner, usfm=None):
+    def process(self, bk, triggers, owner, usfm=None):
         xmldat = self.xmldat.get(bk, {})
         if len(xmldat):
             #import pdb; pdb.set_trace()
             if usfm is not None:
                 self._addranges(xmldat, usfm)
-            with open(outpath + ".triggers", "w", encoding="utf-8") as outf:
-                for k, v in xmldat.items():
-                    res = self._procnested(v, k)
-                    shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
-                    #kref = usfm.bridges.get(k, k) if usfm is not None else k
-                    if len(res):
-                        info = {
-                            "book":         k.first.book,
-                            "dotref":       k.str(context=NoBook, addsep=self.dotsep),
-                            "colnobook":    k.str(context=NoBook) if not self.shortrefs else shortref,
-                            "refs":         res,
-                            "brtl":         r"\beginR" if self.rtl else "",
-                            "ertl":         r"\endR" if self.rtl else ""
-                        }
-                        outf.write(self.template.format(**info))
+            for k, v in xmldat.items():
+                res = self._procnested(v, k)
+                shortref = str(k.first.verse) if k.first.verse == k.last.verse else "{}-{}".format(k.first.verse, k.last.verse)
+                #kref = usfm.bridges.get(k, k) if usfm is not None else k
+                if len(res):
+                    info = {
+                        "colnobook":    k.str(context=NoBook, addsep=self.addsep) if not self.shortrefs else shortref,
+                        "refs":         res,
+                        "brtl":         r"\beginR" if self.rtl else "",
+                        "ertl":         r"\endR" if self.rtl else ""
+                    }
+                    triggers[k.first] = triggers.get(k.first, "") + self.template.format(**info)
+        return triggers
 
 
 components = [
@@ -243,7 +290,7 @@ components = [
 
 class StrongsXrefs(XMLXrefs):
     def __init__(self, xrfile, filters, localfile=None, ptsettings=None, separators=None,
-                 context=None, shownums=True, rtl=False, shortrefs=False):
+                 context=None, shownums=True, rtl=False, shortrefs=False, wanal=None):
         super().__init__(xrfile, filters, localfile=localfile, ptsettings=ptsettings, separators=separators,
                  context=context, shownums=shownums, rtl=rtl, shortrefs=shortrefs)
         self.regexes = {}
@@ -251,8 +298,9 @@ class StrongsXrefs(XMLXrefs):
         self.revwds = None
         self.strongs = None
         self.lang = None
-        if localfile is not None:
-            self.loadlocal(localfile, addfilter=True)
+        self.wfi = {}
+        if localfile is not None or wanal is not None:
+            self.loadlocal(localfile, addfilter=True, wordanalysisfile=wanal)
             logger.debug("strongsfilter="+str(self.strongsfilter))
         else:
             self.strongsfilter = None
@@ -288,6 +336,22 @@ class StrongsXrefs(XMLXrefs):
                 self.strongs[sref]['def'] = None
                 self.strongs[sref]['trans'] = ""
 
+    def _readWordAnalysis(self, fname):
+        self.wfi = {}
+        doc = et.parse(fname)
+        for e in doc.findall(".//Analysis"):
+            d = {}
+            for l in e.findall("Lexeme"):
+                (t, v) = l.text.split(":")
+                d.setdefault(t, []).append(v)
+            stem = "".join(d['Stem']) or None
+            prefix = "".join(d['Prefix']) or None
+            suffix = "".join(d['Suffix']) or None
+            if stem is not None:
+                if stem not in self.wfi:
+                    self.wfi[stem] = WordForms(stem)
+                self.wfi[stem].merge(stem, suffix, prefix)
+
     def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, addfilter=False):
         if addfilter:
             self.strongsfilter = set()
@@ -305,12 +369,15 @@ class StrongsXrefs(XMLXrefs):
                 for w in strongs[st][key]:
                     revwds.setdefault(w.lower(), set()).add(st)
 
-    def loadlocal(self, localfile, addfilter=False):
+    def loadlocal(self, localfile, addfilter=False, wordanalysisfile=None):
         self.loadinfo(self.lang)
         if self.revwds is not None:
             return
         self.revwds = {}
-        self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
+        if localfile is not None:
+            self._readTermRenderings(localfile, self.strongs, self.revwds, self.btmap, 'local', addfilter=addfilter)
+        if wordanalysisfile is not None:
+            self._readWordAnalysis(wordanalysisfile)
 
     def addregexes(self, st):
         if self.strongs is None:
@@ -318,22 +385,45 @@ class StrongsXrefs(XMLXrefs):
         wds = self.strongs.get(st,{}).get('local', [])
         reg = []
         for w in wds:
-            w = re.sub(r"\(.*?\)", "", w).strip()
-            if " ** " in w:
-                continue
-            r = ""
-            if w.startswith("*"):
-                w = w[1:]
-                r = r"\bb.*?"
-            else:
-                r = r"\bb"
-            if w.endswith("*"):
-                r += w[:-1]
-            else:
-                r += w + r"\ba"
-            reg.append(r)
+            pending = ""
+            for i, b in enumerate(re.sub(r"\(.*?\)", "", w).split()):
+                t = b.strip()
+                p = ""
+                r = ""
+                s = ""
+                if t == "**":
+                    pending += r"(?:\s+\w+)*"
+                    continue
+                elif t == "*":
+                    pending += r"(?:\s+\w+)?"
+                    continue
+                if not t.startswith("*"):
+                    r = r"\bb"
+                else:
+                    t = t[1:]
+                if not t.endswith("*"):
+                    p = r"\ba"
+                else:
+                    t = t[:-1]
+                if "/" in t:            # allows two words in either order
+                    (a, b) = t.split("/")
+                    t = a
+                else:
+                    a = None
+                if i == 0 and t in self.wfi:  # test for word forms
+                    s = str(self.wfi[t])
+                else:
+                    s = t.replace("*", r"\w*")
+                if a is not None:
+                    a = s
+                    s += r"\s+" + b
+                    b = s + "r\s+" + a
+                    pending += r + b + p + "|"
+                pending += r + s + p
+            reg.append(pending)
         res = "(" + "|".join(sorted(reg, key=lambda s:(-len(s), s))) + ")" if len(reg) else ""
         res = regex_localiser(res)
+        logger.debug(f"strongs regexes {st} = {res}")
         self.regexes[st] = res
         return res
 
@@ -378,7 +468,7 @@ class StrongsXrefs(XMLXrefs):
                         if bits[-1][-1] == ";":
                             bits[-1] = bits[-1][:-1]
                         outf.write(" ".join(bits).format(_key=k[1:], _lang=a[0].lower(), _marker="li", **v) + "\n")
-            if len(self.revwds) and view.get("c_strongsNdx"):
+            if self.revwds is not None and len(self.revwds) and view.get("c_strongsNdx"):
                 tailoring = self.context.getCollation()
                 ducet = tailored(tailoring.text) if tailoring else None
                 ldmlindices = self.context.getIndexList()
@@ -426,7 +516,7 @@ class Xrefs:
             parent.hasLocalBookNames = True
         rtl = parent['document/ifrtl'] == 'true'
         logger.debug(f"Source: {source}, {rtl=}")
-        seps = parent.printer.getScriptSnippet().getrefseps(parent.printer)
+        seps = parent.printer.getRefSeparators().copy()
         seps['verseonly'] = parent.printer.getvar('verseident') or "v"
         if source.startswith("strongs"):
             self.xrefs = getattr(parent.printer, 'strongs', None)
@@ -451,9 +541,10 @@ class Xrefs:
                         listsize=listsize, rtl=rtl, shortrefs=shortrefs) if t is not None else None
         gc.collect()
 
-    def process(self, bk, outpath, usfm=None):
+    def process(self, bk, triggers, usfm=None):
         if usfm is not None:
             usfm.addorncv()
         if self.xrefs is not None:
-            self.xrefs.process(bk, outpath, self, usfm=usfm)
+            return self.xrefs.process(bk, triggers, self, usfm=usfm)
+        return triggers
 

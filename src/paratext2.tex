@@ -1,4 +1,3 @@
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
@@ -102,22 +101,26 @@
 %+c_evenpage
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
-\def\EmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
-\def\need@evenpage{\ifodd\pageno\EmptyPage\fi}
-\def\need@oddpage{\ifodd\pageno\else\EmptyPage\fi}
-\def\need@quadpage{\ifodd\pageno\EmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \EmptyPage\EmptyPage\fi}
-
+\def\zEmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\pagecontents\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
+\def\need@evenpage{\endgraf\ifodd\pageno\zEmptyPage\fi}
+\def\need@oddpage{\endgraf\ifodd\pageno\else\zEmptyPage\fi}
+\def\need@quadpage{\endgraf\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
+\let\zNeedEvenPage\need@evenpage
+\let\zNeedOddPage\need@oddpage
+\let\zNeedQuadPage\need@quadpage
 %-c_evenpage
 
 %+c_imports
 \input ptx-constants.tex
-\input ptx-diglot.tex
+\input ptx-utility.tex
 \input ptx-tracing.tex
+\input ptx-diglot.tex
 \input ptx-para-style.tex
 \input ptx-char-style.tex
 \input ptx-milestone-style.tex
 \input ptx-note-style.tex
 \input ptx-stylesheet.tex % must come after the ptx-*-style.tex macros
+\input ptx-periph.tex % 
 \input ptx-attribute.tex %Must come after ptx-stylesheet
 \input ptx-references.tex
 \input ptx-cropmarks.tex
@@ -208,6 +211,10 @@
     \else\ifx\p@ram\r@ght
      \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
     \fi\fi\fi
+    \getp@ram{leftmargin}{#1}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
+    \getp@ram{rightmargin}{#1}{#1}%
+    \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
     \trace{f}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
@@ -220,17 +227,19 @@
     \fi
     \ifp@ranotes\else
       \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
-      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
-      \ifdim\dimen0<\baselineskip
-        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
-        \vskip\dimen1
-		\trace{f}{\reference : Footnote vskip=\the\dimen1 baselineskip=\the\baselineskip strut height=\the\dimen0}%
-	\fi\fi
+%      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
+%      \ifdim\dimen0<\baselineskip
+%        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
+%        \vskip\dimen1
+%		\trace{f}{\reference : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
+%        \prevdepth=-1000pt
+%	  \fi
+    \fi
     \leavevmode % begin paragraph
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
+    \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
       \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
-    \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     % if note omitting caller from note (i.e. all callers are *'s)
     \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
     \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
@@ -348,8 +357,9 @@
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
-    \dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
-    \vskip \dimen0
+    % surely we don't want a strut above and below?
+    %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
+    %\vskip \dimen0
   \fi
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
@@ -381,7 +391,7 @@
       \def\s@urce{calcn:\f@ntstyle}%
       \dimen0=\p@ram\le@dingunit
       \multiply\dimen0 by \LineSpaceBase \divide\dimen0 by 12 % default .75 shift of .85ex (ex=.5 fontsize) against 14/12
-      \trace{F}{baseline [\f@ntstyle] = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
+      \trace{F}{baseline [\f@ntstyle] (#1,#2) = \the\dimen0 = \p@ram * \the\le@dingunit  * \LineSpaceBase / 12}%
       \setp@ram{baseline}{\f@ntstyle}{\the\dimen0}\baselineskip=\dimen0
       \should@xist{\f@ntstyle}%
     \fi
@@ -441,6 +451,7 @@
     \@@LOOP\temptrue
       \setbox1=\copy\th@cl@ss
       \trace{n}{splitting study box to \the\dimen10}%
+      \splittopskip=0pt
       \setbox11=\vsplit1 to \dimen10%
       \setbox12=\vsplit1 to \dimen10%
       \trace{n}{split box remainder \the\ht1}%
@@ -597,7 +608,10 @@
   \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
-  \everypar={}% don't do body text formatting
+  \getp@ram{firstindent}{#2}{#2}\let\notef@rstindent=\p@ram
+  \everypar={%
+    \ifRTL\beginR\fi % respect directionality
+    \ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   \makehboxofhboxes % make a single hbox for all notes of this class
   \unskip\unskip
@@ -618,7 +632,6 @@
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph
-  \ifRTL\beginR\fi % respect directionality
   \ifNoteTracing\tracingparagraphs=1\fi
   %\ifnum\pagenumber=8\showbox0\fi
   \unhbox0 % unbox the text so it can be line-wrapped
@@ -707,7 +720,7 @@
         \m@ke@te@mp{#1}%
         \ifdim\ht0>0pt \hbox{\unhbox0\unskip\unskip\unpenalty\unskip\unpenalty}\fi
       \fi
-      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen2\XrefSkip
+      \dimen1=\baselineskip\advance\dimen1-\dp\xr@fbox\advance\dimen1-\dimen2\advance\dimen1\XrefSkip
       \ifdim\ht1>0pt \global\setbox\xr@fbox=\vbox{\unvbox\xr@fbox\vskip\dimen1\unvbox1}\fi
     \else \ifvoid0\else\trace{o}{Unexpected 0 height box in m@kexrefbox}\fi\tempfalse
     \fi
@@ -767,14 +780,15 @@
 \def\p@geendcontent{%
   \traceifset{p@geendcontent}%
   \tempfalse
-  \ifdim\ht\bottomins>0pt \vfil\kern-\lastd@pth \temptrue
+  \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
+  \ifdim\ht\bottomins>0pt \vfil \temptrue\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
-  \trace{b}{BALANCE pageouttxt: notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
+  \trace{b}{BALANCE pageouttxt: border=\b@dr@bot@pad notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
   \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth \temptrue\fi\fi
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
-  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins , availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
   \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
@@ -818,15 +832,17 @@
       \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, xr@fbox=\the\ht\xr@fbox}%
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
+    \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
-    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins, botmark=\splitbotmark}%
+    \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \def\pagecontents{%                                                     %(3)
       \dimen1=\textwidth% \advance\dimen1 -\ExtraRMargin
       \trace{b}{BALANCE pageoutins: cols=1: text=\the\ht\colA, \the\dp\colA: partial=\the\ht\partial, \the\dp\partial: topins=\the\ht\topins: bottomins=\the\ht\bottomins, width=\the\dimen1}%
       \dimen9=\ht\partial
       \ifvoid\partial\else \vbox{%      
           \ifpartialfr@med\else
-            \doTextB@rder{\partial}%2HERE
+            %\doTextB@rder{\partial}%2HERE
           \fi
           \hbox to \dimen1{\box\partial}} \fi
       \ifvoid\topins\else \vbox{\hbox to \columnshift{}\box\topins} \vskip\skip\topins \fi
@@ -854,7 +870,7 @@
         \fi\fi
         \hbox to \ExtraRMargin{}}%
       \p@geendcontent
-      \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -892,7 +908,8 @@
 
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
-\def\makeheadline{%
+\def\makeheadline{{%
+  \mcpush{P}{h}%
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
@@ -908,17 +925,23 @@
         \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
-    \fi\fi}\vss}\nointerlineskip}
+    \fi\fi}\vss}\nointerlineskip
+   \mcpop\trace{h}{Stack now: \mcstack}%
+}}
 \newif\ifrhr@le
-\def\makefootline{%
+\def\makefootline{{%HISTORIC, unused by ptx2pdf macros
+  %\nomsg@tfontname{h}%
   \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss}}
+     \hbox to \textwidth{\the\footline}\vss}%
+}}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
 \def\makefootbox{%
   \vbox{
+    \mcpush{P}{h}%
+    \s@tfont{zfooter}{zfooter+h}%
     \setbox8=\hbox{\the\footline}%
     \ifdim\ht8>0pt
       \dimen0=\textwidth\advance\dimen0 by -\columnshift
@@ -931,7 +954,8 @@
     \else
       \box\voidb@x
     \fi
-  }
+    \mcpop\trace{h}{Stack now: \mcstack}%
+  }%
 }
 %-c_pagebody
 
@@ -1093,6 +1117,8 @@
     \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
   \fi
   % and check if it all fit; if not, we'll have to back up and try again
+  \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+  \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
@@ -1132,7 +1158,7 @@
     }%
     \ifdim\ht\partial>0.5\baselineskip
       \dimen1=\ht\partial %\advance\dimen1\dp\partial
-      \dimen0=\baselineskip
+      \s@tbaseline{p}{p}\dimen0=\baselineskip
       \m@d\advance\dimen1 by -\ht\partial\ifdim\dimen1 < -0.01pt
         \dimen1=\ht\partial \advance\dimen1\dimen0
         \trace{o}{Adjusting single partial ht from \the\ht\partial \space to \the\dimen1 with baselineskip=\the\baselineskip}%
@@ -1154,8 +1180,17 @@
         \doTextB@rder{\partial}%
         \box\partial\vfil
         \p@geendcontent
-        \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\s@tpage \clearn@tes
+    \else
+      \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
+      \ifm@rksonpage
+	\edef\mktmp{\botmark}%
+	\ifx\mktmp\t@tle\else
+	   \trace{o}{Placing border on partial page}%
+	   \doTextB@rder{\partial}%
+	\fi
+      \fi
     \fi
     \fin@lverybottom
     \global\holdinginserts=1
@@ -1174,6 +1209,10 @@
 }%
   % save 1 column material since we are switching to 2 columns
 \newbox\partial
+\newcount\ornXFids % counter for xobjects
+\newbox\ornXobjects % Unboxed at shipout (or maybe definition), for any Xobject definitions.
+\let\ornXFid@list\empty % Xobject IDs  should be added to this list, for debugging.
+\newif\ifholdXobjects\holdXobjectsfalse  %
 %-c_savepartialpage
 
 %+c_twocols
@@ -1519,7 +1558,7 @@
     \setbox\colA=\vbox{\unvbox\colA\unskip}%
     \setbox\colB=\vbox{\unvbox\colB\unskip}%
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
-      \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern}
+      \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern\unskip}
     \fi\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
@@ -1607,11 +1646,14 @@
 }
 
 \def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
-  \trace{i}{Saving inserts}%
+  \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \s@veallnotes{1}%
   \xdef\p@gefirstmark{}\xdef\p@gebotmark{}%
+  %\tracingassigns=1
   \nextshipout
+  %\tracingassigns=0
+  \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
   \ifcsname page-\the\pageno\endcsname
     \csname page-\the\pageno\endcsname
   \fi
@@ -1737,6 +1779,7 @@
 }
 %+c_savepartialpaged_intro
 \newif\ifrerunsavepartialpaged
+\newdimen\und@rfill
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
@@ -1777,6 +1820,8 @@
       \setbox2=\vsplit1 to \dimen3
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
+    \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     %\setbox255=\box\voidb@x
     %\advance\dimen3\lastd@pth
@@ -1807,17 +1852,18 @@
       \dimen2=\dimen3% \advance\dimen2\bmg@p
       \trace{o}{texboxheight=\the\dimen2, htA=\the\ht\colA, htB=\the\ht\colB}%
       \setbox\colA=\vbox{\hbox to \dimen5{\noindent
-          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{1}%
-            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{0}%
-            \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-          \else \lshiftc@lumn{0}\vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-            \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+          \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}%
+            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+            \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+            \makecolumngutter{\the\dimen3}{\the\dimen3}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+            \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
         \kern\lastd@pth}%
       \doTextB@rder{\colA}%
-      \box\colA
+      \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
+      \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding + \lastd@pth \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
       }%
-    \global\partialfr@medtrue
+    %\global\partialfr@medfalse
 %-c_savepartialpaged_intro
 %+c_savepartialpaged
     \trace{o}{sppd: saved partial, ht:\the\ht\partial\space rem:\the\ht\s@vedpage}%
@@ -1935,6 +1981,8 @@
       \setbox2=\vsplit1 to \dimen3
       \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
     \fi
+    \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
@@ -1950,16 +1998,16 @@
         \ifdim\ht\colA>\ht\colB \ht\colB=\ht\colA\else\ht\colA=\ht\colB\fi\fi
       \trace{p}{Text depth = \the\dimen3}%
       \setbox\colA\hbox to \dimen1{\noindent
-        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen2{\box\colB\vfil}\rshiftc@lumn{1}%
-          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{0}%
-          \vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-        \else \lshiftc@lumn{0}\vbox to \dimen2{\box\colA\vfil}\rshiftc@lumn{0}%
-          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen2}{3}\lshiftc@lumn{1}%
-          \vbox to \dimen2{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
+        \ifRTL \lshiftc@lumn{1}\hbox to \ExtraRMargin{}\vbox to \dimen3{\box\colB\vfil}\rshiftc@lumn{1}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{0}%
+          \vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+        \else \lshiftc@lumn{0}\vbox to \dimen3{\box\colA\vfil}\rshiftc@lumn{0}%
+          \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
+          \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \doTextB@rder{\colA}%
-      \box\colA
+      \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
       \p@geendcontent
-      \ifnoinkinmargin\ifvoid14\else\vfil\box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
     \global\partialfr@medfalse
     \global\setbox255=\box\voidb@x                                          %(+)
@@ -2061,7 +2109,6 @@
   \ifStudyGutterRule \ifnum#5=3\box4\else\ifnum#5=0\box4\fi\fi\fi
   \ifnum#5>1\hfil\else\ifnum#5=0\hfil\fi\fi
   \hbox to \columnshift{}}
-\newif\ifColumnGutterRule
 %-c_makecolumngutter
 
 %+c_backingup
@@ -2158,7 +2205,7 @@
       \setbox0=\vsplit\verybottomins to \textheight
       \setbox15=\copy14
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}%
-         \ifvoid14\else\ifnoinkinmargin\vfil\box14\fi\fi}
+         \ifdim\ht14>0pt \ifnoinkinmargin\vfil\box14\fi\fi}
       \plainoutput\trace{plainoutput for fin@lverybottom}%
       \s@tpage
       \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\setbox14=\copy15\repeat
@@ -2290,6 +2337,7 @@
 \frenchspacing
 
 \XeTeXdashbreakstate=1 % allow line-break after en- and em-dash even if no space
+\def\currintercharstate{0}
 
 %% various Unicode characters that we handle in TeX... and protect in TOC and PDF bookmarks
 \def\intercharspace{\hskip0pt}
@@ -2299,20 +2347,23 @@
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
 \def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
-\def\NQUAD{\penalty\the\badspacepenalty\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
-\def\MQUAD{\penalty\the\badspacepenalty\hskip 1em plus .2em minus .2em}
-\def\MSPACE{\hskip 1em}
-\def\NSPACE{\space}
+\def\NQUAD{\BADBREAK\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
+\def\MQUAD{\BADBREAK\hskip 1em plus .2em minus .2em}
+\def\MSPACE{\hskip 1em} % Fixed width
+\def\NSPACE{\hbox{\space}} % Fixed width
 \def\THREEPEREMSPACE{\hskip .333em}
 \def\FOURPEREMSPACE{\hskip .25em}
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em plus .1em minus .1em}
-\def\HAIRSPACE{\hskip 0.042em\intercharspace} % 1/24 em
+\def\HAIRSPACE{\hskip 0.042em\nobreak\intercharspace} % 1/24 em
 \def\HYPHEN{\-}
 \def\LINESEP{\break}
 \def\GOODBREAK{\penalty-\OptionalBreakPenalty}
 \def\BADBREAK{\penalty\the\badspacepenalty}
 \def\emdash{\char"2014\relax}
+\def\LRE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202A}
+\def\RLE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202B}
+\def\PDF{\char"202C\XeTeXinterchartokenstate=\currintercharstate}
 %endash defined in ptx-references.tex
 
 \let\pr@tect=\relax
@@ -2336,6 +2387,9 @@
   \let\LINESEP=\relax
   \let\GOODBREAK=\relax
   \let\BADBREAK=\relax
+  \let\LRE=\relax
+  \let\RLE=\relax
+  \let\PDF=\relax
 }
 
 \catcode"A0=12
@@ -2355,6 +2409,9 @@
 \catcode"2010=12
 \catcode"2063=12
 \catcode"2064=12
+\catcode"202A=12
+\catcode"202B=12
+\catcode"202C=12
 \def\liter@lspecials{%
   \def\pr@tect{}%
   \def\NBSP{^^a0}%
@@ -2376,6 +2433,9 @@
   \def\LINESEP{^^^^2028}%
   \def\GOODBREAK{^^^^2063}%
   \def\BADBREAK{^^^^2064}%
+  \def\LRE{^^^^202a}%
+  \def\RLE{^^^^202b}%
+  \def\PDF{^^^^202c}%
 }
 
 \catcode"A0=\active   \def^^a0{\pr@tect\NBSP}
@@ -2398,6 +2458,9 @@
 \catcode"2064=\active \def^^^^2064{\pr@tect\BADBREAK}
 \lccode"2010="2010
 \catcode"2028=\active \def^^^^2028{\pr@tect\LINESEP}
+\catcode"202A=\active \def^^^^202a{\pr@tect\LRE}
+\catcode"202B=\active \def^^^^202b{\pr@tect\RLE}
+\catcode"202C=\active \def^^^^202c{\pr@tect\PDF}
 \catcode`\@=12
 
 \def\asterisk{*}

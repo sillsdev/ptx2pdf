@@ -1,11 +1,14 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
-DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+#DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
+DIR=../../../src
+FONTCONFIG_FILE=~/.config/ptxprint/fonts.conf
 TPATH:=.:$(DIR)//
 
 .tex.pdf:
-	TEXINPUTS="$(TPATH)" xetex $<
-	TEXINPUTS="$(TPATH)" xetex $<
+	TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex --no-pdf $<
+	TEXINPUTS="$(TPATH)" FONTCONFIG_FILE=${FONTCONFIG_FILE} xetex --no-pdf $<
+	xdvipdfmx -o $@ $*.xdv
 	
 
 test.pdf: test.tex  test.usfm $(DIR)/*.tex *.sty $(DIR)/*.sty
@@ -23,7 +26,7 @@ installcat: catalogue.pdf
 	git add -f ../../../docs/documentation/OrnamentsCatalogue.pdf
 bisect:
 	mkdir ../bisect || rm -f ../bisect/*
-	cp *.tex *.usfm *.sty Makefile ../bisect
+	cp *.tex *.usfm *.sty Makefile inner_include.pdf rose.jpg Background.jpg ../bisect
 
 auto:
 	echo Source code in $(DIR)

@@ -23,7 +23,9 @@ import xml.etree.ElementTree as et
 from ptxprint.font import TTFont, initFontCache, fccache, FontRef, parseFeatString
 from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
-from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges
+from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
+            bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
+            _, f_, textocol, _allbkmap
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -33,8 +35,8 @@ from ptxprint.runjob import isLocked, unlockme
 from ptxprint.texmodel import TexModel, ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
+from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
-from ptxprint.utils import _, f_, textocol, _allbkmap
 import configparser, logging
 from threading import Thread
 
@@ -156,9 +158,21 @@ tb_HeadFoot lb_HeadFoot
 fr_Header l_hdrleft ecb_hdrleft l_hdrcenter ecb_hdrcenter l_hdrright ecb_hdrright
 fr_Footer l_ftrcenter ecb_ftrcenter
 tb_Pictures lb_Pictures
-c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders r_pictureRes_High r_pictureRes_Low
+c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders
+c_useCustomFolder btn_selectFigureFolder lb_selectFigureFolder
 l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra btn_deleteTempFiles btn_about
+l_complexScript btn_scrsettings 
+rule_marginalVerses c_marginalverses l_marginVrsPosn fcb_marginVrsPosn l_columnShift s_columnShift
+fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapters l_glossaryMarkupStyle fcb_glossaryMarkupStyle
+tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
+c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
+tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
+l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
+fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
 """.split()
+
+# removed from list above: r_pictureRes_High r_pictureRes_Low
 
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
@@ -166,9 +180,9 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ("btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging",
+_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Cover", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR")
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -263,7 +277,12 @@ _sensitivities = {
     "c_strongs2cols":          ["l_strongRag", "s_strongRag"],
     "c_extendedFnotes":        ["gr_ef_layout"],
     "c_ef_verticalrule" :      ["l_ef_colgutteroffset", "s_ef_colgutteroffset", "line_efGutter"],
+    "c_txlQuestionsInclude":   ["gr_txlQuestions"],
+    # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
+    "c_makeCoverPage":         ["bx_cover"],
+    "c_inclSpine":             ["gr_spine"],
+    "c_overridePageCount":     ["s_totalPages"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -290,13 +309,15 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", ),
+    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
-    "stylinks":    ("lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
-                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit|fig", "lb_omitPics"), 
+    "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
+                    "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
+                    "lb_style_cat:coverfront|esb", "lb_style_cat:coverback|esb",
+                    "lb_style_cat:coverspine|esb", "lb_style_cat:coverwhole|esb", ), 
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
@@ -331,6 +352,7 @@ _selcols = {
     "details":   ["anchor", "caption", "file", "frame", "scale", "posn", "ref", "mirror", "caption2", "desc", "copy", "media"],
     "checklist": ["anchor", "caption", "file", "desc"]
 } 
+
 
 _availableColophons = ("fr", "es") # update when .json file gets expanded
 _defaultColophon = r"""\pc \zcopyright
@@ -384,30 +406,37 @@ _dlgtriggers = {
     "dlg_borders":          "onSBborderClicked"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True, **kw):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
     if copy2clip:
-        if secondary is not None:
-            secondary += _("\nPTXprint Version {}").format(GitVersionStr)
-        lines = [title or ""]
+        if who2email.startswith("ptxp"):
+            if secondary is not None:
+                secondary += _("\nPTXprint Version {}").format(GitVersionStr)
+            lines = [title or ""]
+        else:
+            lines = [""]
         if text is not None and len(text):
             lines.append(text)
         if secondary is not None and len(secondary):
             lines.append(secondary)
-        s = _("Please send to: ptxprint_support@sil.org") + "\n\n{}".format("\n\n".join(lines))
+        s = _(f"Mailto: <{who2email}>") + "\n{}".format("\n".join(lines))
         clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
         clipboard.set_text(s, -1)
         clipboard.store() # keep after app crashed
         if secondary is not None:
-            secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            if who2email.startswith("ptxp"):
+                secondary += "\n\n" + " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
+            else:
+                secondary += "\n" + _("The letter above has been copied to the clipboard.")
+                secondary += "\n" + _("Send it by e-mail to: {}").format(who2email)
         else:
             secondary = " "*18 + "[" + _("This message has been copied to the clipboard.")+ "]"
     if show:
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.ERROR,
                  buttons=Gtk.ButtonsType.OK, text=text)
-        if title is None:
+        if title is None and who2email.startswith("ptxp"):
             title = "PTXprint Version " + VersionStr
         dialog.set_title(title)
         if secondary is not None:
@@ -523,6 +552,9 @@ class GtkViewModel(ViewModel):
         #    self.builder.set_translation_domain(APP)
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
+        if self.args.extras & 16 != 0:
+            _ui_keepHidden.remove("tb_Cover")
+            self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
         self.isDisplay = True
         self.searchWidget = []
@@ -540,9 +572,11 @@ class GtkViewModel(ViewModel):
         self.highlight = False
         self.rtl = False
         self.isDiglotMeasuring = False
-        self.warnedSIL = False
+        # self.warnedSIL = False
+        self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
+        self.locked = set()
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -680,6 +714,7 @@ class GtkViewModel(ViewModel):
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
+        # self.onExpertModeClicked(None)
         logger.debug("Project list loaded")
 
             # .mainnb {background-color: #d3d3d3;}
@@ -778,6 +813,7 @@ class GtkViewModel(ViewModel):
         tvfonts.set_model(None)
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
+        self.setupTeXOptions()
         self.onUILevelChanged(None)
         logger.debug("Starting UI")
         try:
@@ -939,9 +975,9 @@ class GtkViewModel(ViewModel):
                     except AttributeError:
                         continue
                     if t is not None:
-                        t += "\n" + v[0]
+                        t += "\n{}({})".format(k, v[0])
                     else:
-                        t = v[0]
+                        t = "{}({})".format(k, v[0])
                     w.set_tooltip_text(t)
             if k and not v[0].startswith("r_"):
                 self.initValues[v[0]] = self.get(v[0], skipmissing=True)
@@ -1090,7 +1126,7 @@ class GtkViewModel(ViewModel):
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup)
 
-    def getvar(self, k, dest=None):
+    def getvar(self, k, default="", dest=None):
         if dest is None:
             varlist = self.pubvarlist
         elif dest == "strongs":
@@ -1102,7 +1138,7 @@ class GtkViewModel(ViewModel):
         for r in varlist:
             if r[0] == k:
                 return r[1]
-        return None
+        return default
 
     def setvar(self, k, v, dest=None):
         if dest is None:
@@ -1276,7 +1312,6 @@ class GtkViewModel(ViewModel):
             
     def enableDisableSpotColor(self, btn):
         ofmt = self.get("fcb_outputFormat")
-        print(f"{ofmt=}")
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
@@ -1362,22 +1397,38 @@ class GtkViewModel(ViewModel):
             self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configId)
         super().writeConfig(cfgname=cfgname, force=force)
 
+    def fillCopyrightDetails(self):
+        pts = self._getPtSettings()
+        if pts is not None:
+            t = pts.get('Copyright', "")
+            t = re.sub("</?p>", "", t)
+            t = re.sub("\([cC]\)", "\u00a9 ", t)
+            t = re.sub("\([rR]\)", "\u00ae ", t)
+            t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+            if len(t) < 100:
+                self.builder.get_object("t_copyrightStatement").set_text(t)
+            else:
+                self.builder.get_object("t_copyrightStatement").set_text(t[:70]+"...")
+                self.doError(_("Warning! The copyright statement in Paratext appears to be too long."), 
+                   secondary=_("Type in a shorter copyright statement and then use" + \
+                               "the local FRT book for longer licensing details."))
+    
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
+        sec = None
         if cfg == 'Default':
             self.resetToInitValues()
-            self.onFontChanged(None)
-            # Right now this 'reset' (only) re-initializes the UI settings, and removes the ptxprint.sty file
-            # We could provide a dialog with options about what else to delete (piclists, adjlists, etc.)
-            sec = _("And the ptxprint.sty stylesheet has been deleted.")
             try:
-                print("Reset Default config; Deleting: ", os.path.join(delCfgPath, "ptxprint.sty"))
-                os.remove(os.path.join(delCfgPath, "ptxprint.sty"))
+                rmtree(delCfgPath)
             except OSError:
-                sec = _("But the ptxprint.sty stylesheet could not be deleted.")
+                sec = _("But the 'Default' folder could not be erased completely:") + "\n" + delCfgPath
+
+            self.writeConfig(cfgname="Default", force=True)
             self.triggervcs = True
             self.updateFonts()
+            self.readConfig("Default")
+            self.fillCopyrightDetails()
             self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
             return
         else:
@@ -1482,7 +1533,14 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
         self.updateMarginGraphics()
         self.onExtListSourceChanges(None)
-
+        # self.onExpertModeClicked(None)
+        x = self.get("btn_selectDiffPDF")
+        if x is not None and len(x) < 200:
+            self.makeLabelBold("l_selectDiffPDF", True)
+            self.set("lb_diffPDF", pdfre.sub(r"\1", x))
+        else:
+            self.set("lb_diffPDF", _("Previous PDF (_1)"))
+        
     def colorTabs(self):
         # col = "crimson"
         col = "#0000CD"
@@ -1506,6 +1564,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_NotesRefs").set_markup(_("Notes+")+"<span{}>".format(xl)+_("Refs")+"</span>")
         self.builder.get_object("lb_xrefs").set_markup("<span{}>".format(xl)+_("Cross-References")+"</span>")
 
+        cv = " color='"+col+"'" if self.get("c_makeCoverPage") else ""
+        self.builder.get_object("lb_Cover").set_markup("<span{}>".format(cv)+_("Cover")+"</span>")
+
         tb = self.get("c_thumbtabs")
         bd = self.get("c_borders")
         tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
@@ -1524,6 +1585,9 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
+    def lock_widget(self, wid):
+        self.locked.add(wid)
+
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:
             state = self.get(k)
@@ -1538,18 +1602,18 @@ class GtkViewModel(ViewModel):
                         anyset = s
                     for w in v:
                         wid = self.builder.get_object(w)
-                        if wid is not None:
+                        if wid is not None and wid not in self.locked:
                             wid.set_sensitive(l(s))
                 if not anyset:
                     v = list(d[k].values())[0]
                     for w in v:
                         wid = self.builder.get_object(w)
-                        if wid is not None:
+                        if wid is not None and wid not in self.locked:
                             wid.set_sensitive(l(s))
             else:
                 for w in d[k]:
                     wid = self.builder.get_object(w)
-                    if wid is not None:
+                    if wid is not None and wid not in self.locked:
                         wid.set_sensitive(l(state))
         if focus and k in _sensitivities:
             self.builder.get_object(_sensitivities[k][0]).grab_focus()
@@ -1609,7 +1673,13 @@ class GtkViewModel(ViewModel):
             # if not btn.get_active() and self.get("r_{}pos".format(fx)) == "column":
                # self.set("r_{}pos".format(fx), "normal")
         # for w in ("l_colXRside", "fcb_colXRside"):
-            # self.builder.get_object(w).set_visible(not btn.get_active())            
+            # self.builder.get_object(w).set_visible(not btn.get_active())
+
+    def setOneTwoColumnLabel(self):
+        if self.get("c_doublecolumn"):
+            self.builder.get_object("c_differentColLayout").set_label(_("Use One Column\nLayout for These Books:"))
+        else:
+            self.builder.get_object("c_differentColLayout").set_label(_("Use Two Column\nLayout for These Books:"))
 
     def onSimpleFocusClicked(self, btn):
         self.sensiVisible(Gtk.Buildable.get_name(btn), focus=True)
@@ -1871,7 +1941,8 @@ class GtkViewModel(ViewModel):
                 outf.write("% autogenerated hints for paragraph possible changes: +0 for increases, -0 for decreases\n")
                 for k, v in sorted(adjs.items(), key=lambda x:refKey(x[0])):
                     r = refKey(k)
-                    if k[:3] != bk or r[0] >= 100: # May need to take these lines out!
+                    logger.debug(f"{k=} {r=}")
+                    if k[:3] != bk or r[0] >= 100 or (r[1] == 0 and r[2] == 0): # May need to take these lines out!
                         continue                   # May need to take these lines out!
                     vals = []
                     first = True
@@ -2127,9 +2198,14 @@ class GtkViewModel(ViewModel):
         super(GtkViewModel, self).onFontChanged(fbtn)
         self.setEntryBoxFont()
 
+    def onChangeViewEditFontSize(self, btn, foo):
+        self.setEntryBoxFont()
+
     def setEntryBoxFont(self):
         # Set the font of any GtkEntry boxes to the primary body text font for this project
-        fsize = self.get("s_fontsize")
+        fsize = self.get("s_viewEditFontSize")
+        if fsize is None:
+            fsize = "12"
         fontr = self.get("bl_fontR", skipmissing=True)
         if fontr is None:
             return
@@ -2139,7 +2215,8 @@ class GtkViewModel(ViewModel):
             fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
-        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", "scroll_FinalSFM", "scroll_FrontMatter", \
+        for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
+                  "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", "scroll_Settings", "scroll_SettingsOld", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
                   "l_projectFullName", "t_plCaption", "t_plRef", "t_plAltText", "t_plCopyright", "textv_colophon"):
             self.builder.get_object(w).modify_font(p)
@@ -2252,9 +2329,10 @@ class GtkViewModel(ViewModel):
             return
         else:
             self.rtl = rtl
+            self.set("c_RTLbookBinding", rtl)
 
     def onEditStyleClicked(self, btn):
-        mkr = Gtk.Buildable.get_name(btn)[9:]
+        mkr = Gtk.Buildable.get_name(btn)[9:].strip("_")
         if mkr == "toc3" and self.get("r_thumbText") == "zthumbtab":  # "c_thumbIsZthumb"):
             self.set("c_styTextProperties", False)  # MH: why is this being done?
             mkr = "zthumbtab"
@@ -2367,7 +2445,7 @@ class GtkViewModel(ViewModel):
             extend = None
             isCtxtSpace = False
             mapping = "Default"
-            name = None
+            name = self.get("bl_fontR").name
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:
@@ -2544,6 +2622,57 @@ class GtkViewModel(ViewModel):
     def onFontIsGraphiteClicked(self, btn):
         self.onSimpleClicked(btn)
         self.set("t_fontFeatures", "")
+
+    # this is copied from 'onFontFeaturesClicked' in order to do something similar with TeXpert options
+
+    # Dict looks like this:
+#          "notesEachBook": ["Endnotes at Each Book", "Output endnotes at the end of each book", True],
+    # Results need to look like this:
+#          \ifnotesEachBookfalse   (and should only be set if option is set different to the default value)
+
+    def setupTeXOptions(self):
+        texopts = self.builder.get_object("box_texoptions")
+        for i, (k, opt, wname) in enumerate(TeXpert.opts()):
+            lasti = i
+            texopts.insert_row(i)
+            l = Gtk.Label(label=opt[3]+":")
+            l.set_halign(Gtk.Align.END)
+            texopts.attach(l, 0, i, 1, 1)
+            l.show()
+            if wname.startswith("c_"):
+                obj = Gtk.CheckButton()
+                self.btnControls.add(wname)
+                v = opt[1]
+                tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+            elif wname.startswith("s_"):
+                if len(opt) < 6:
+                    base = opt[1]
+                    upper = base*10
+                    lower = base/10
+                    if base < 0:
+                        upper = -base*10
+                        lower = base*10
+                        base = -base
+                    elif base == 0:
+                        base = 1
+                        upper = 10
+                        lower = 0
+                    adj = Gtk.Adjustment(upper=upper, lower=lower, step_increment=base/5, page_increment=base)
+                else:
+                    a = opt[5]
+                    adj = Gtk.Adjustment(lower=a[0], upper=a[1], step_increment=a[2], page_increment=a[3])
+                obj = Gtk.SpinButton()
+                obj.set_adjustment(adj)
+                v = str(opt[1])
+                tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+            l.set_tooltip_text(tiptext)
+            obj.set_tooltip_text(tiptext)
+            obj.set_halign(Gtk.Align.START)
+            texopts.attach(obj, 1, i, 1, 1)
+            self.builder.expose_object(wname, obj)
+            self.set(wname, v)
+            self.allControls.append(wname)
+            obj.show()
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
@@ -2812,10 +2941,8 @@ class GtkViewModel(ViewModel):
         else:
             self.builder.get_object("l_projectFullName").set_label("")
             self.builder.get_object("l_projectFullName").set_tooltip_text("")
-        pts = self._getPtSettings()
-        if pts is not None:
-            if self.get("t_copyrightStatement") == "":
-                self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+        if self.get("t_copyrightStatement") == "":
+            self.fillCopyrightDetails()
         self.onUseIllustrationsClicked(None)
         self.updatePrjLinks()
         self.checkFontsMissing()
@@ -2869,8 +2996,19 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
+        self.enableTXLoption()
         self.onBodyHeightChanged(None)
         logger.debug(f"Changed project to {prjid} {configName=}")
+
+    def enableTXLoption(self):
+        txlpath = os.path.join(self.settings_dir, self.prjid, 
+                               "pluginData", "Transcelerator", "Transcelerator")
+        w = "c_txlQuestionsInclude"
+        if os.path.exists(txlpath):
+            self.builder.get_object(w).set_sensitive(True)
+        else:
+            self.builder.get_object(w).set_sensitive(False)
+            self.set(w, False)
 
     def onConfigNameChanged(self, cb_savedConfig):
         if self.configKeypressed:
@@ -3255,6 +3393,22 @@ class GtkViewModel(ViewModel):
                 "diffPDF", "diffPDF", btn_selectDiffPDF, False)
         if self.get("lb_diffPDF") == "":
             self.set("lb_diffPDF", _("Previous PDF (_1)"))
+            self.makeLabelBold("l_selectDiffPDF", False)
+        else:
+            self.makeLabelBold("l_selectDiffPDF", True)
+
+    def makeLabelBold(self, lbl, bold=True):
+        lb = self.builder.get_object(lbl)
+        ctxt = lb.get_style_context()
+        if not bold:
+            ctxt.remove_class("changed")
+        else:
+            ctxt.add_class("changed")
+
+    def resetComparePDFfileToPrevious(self, btn, foo):
+        self.makeLabelBold("l_selectDiffPDF", False)
+        self.set("btn_selectDiffPDF", None)
+        self.set("lb_diffPDF", _("Previous PDF (_1)"))
 
     def onEditAdjListClicked(self, btn_editParaAdjList):
         pgnum = 1
@@ -3452,15 +3606,20 @@ class GtkViewModel(ViewModel):
     def finished(self):
         # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
+        # enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
         if val is None:
             val = wid.get_progress_fraction()
-            val = 0.20 if val < 0.1 else (1. + val) * 0.5
+            val = 0.10 if val < 0.1 else (1. + 19 * val) / 20
         wid.set_progress_fraction(val)
 
-    def incrementProgress(self):
+    def incrementProgress(self, inproc=False):
+        if inproc:
+            self._incrementProgress()
+            while (Gtk.events_pending()):
+                Gtk.main_iteration_do(False)
         GLib.idle_add(self._incrementProgress)
 
     def onIdle(self, fn, *args):
@@ -3633,20 +3792,21 @@ class GtkViewModel(ViewModel):
         self.set("txbf_colophon", ct)
 
     def onResetCopyrightClicked(self, btn):
-        self.builder.get_object("t_copyrightStatement").set_text(self._getPtSettings().get('Copyright', ""))
+        self.fillCopyrightDetails()
 
     def onCopyrightStatementChanged(self, btn):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
-        if not self.warnedSIL:
-            chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
-            if len(chkSIL):
-                self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
-                               "Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
-                self.warnedSIL = True
+        # Removed by MP after the Nov-2022 SIL Board changed the EL (allowing SIL to publish scripture)
+        # if not self.warnedSIL:
+            # chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
+            # if len(chkSIL):
+                # self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
+                   # secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
+                               # "Contact your entity's Publishing Coordinator for advice regarding protocols."))
+                # t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
+                # self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
@@ -3931,7 +4091,7 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("btn_adjust_{}".format(w)).set_sensitive(clickable)
     
     def updateMarginGraphics(self):
-
+        self.setOneTwoColumnLabel()
         for tb in ["top", "bot", "nibot"]:
             self.builder.get_object("img_{}grid".format(tb)).set_visible(False)
             self.builder.get_object("img_{}vrule".format(tb)).set_visible(False)
@@ -4145,7 +4305,7 @@ class GtkViewModel(ViewModel):
                 self.setvar(b, "50")
             elif b == "toctitle":
                 pass
-            elif self.getvar(b) is None:
+            elif self.getvar(b, default=None) is None:
                 self.setvar(b, _("<Type Value Here>"))
                 
     def onEnglishClicked(self, btn):
@@ -4174,7 +4334,7 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             k = entry.get_text()
-            if self.getvar(k) is None:
+            if self.getvar(k, default=None) is None:
                 self.setvar(k, "")
         dialog.destroy()
 
@@ -4358,22 +4518,6 @@ class GtkViewModel(ViewModel):
         self.docreatediff = True
         self.onOK(None)
         
-    def onPaperWeightChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        thck = int(float(self.get("s_paperWeight")) / 0.8)
-        self.noUpdate = True
-        self.set("s_paperThickness", thck)
-        self.noUpdate = False
-        
-    def onpaperThicknessChanged(self, btn):
-        if self.loadingConfig or self.noUpdate:
-            return
-        wght = int(float(self.get("s_paperThickness")) * 0.8)
-        self.noUpdate = True
-        self.set("s_paperWeight", wght)
-        self.noUpdate = False
-
     def onMarginEnterNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, True)
 
@@ -4390,7 +4534,6 @@ class GtkViewModel(ViewModel):
                 else:
                     self.builder.get_object("img_ni{}".format(_clr[i])).set_visible(False)
                     self.builder.get_object("img_{}".format(_clr[i])).set_visible(status)
-            
                 
     def highlightMargin(self, btn, highlightMargin=True):
         self.showColouredArrows(False)
@@ -4424,3 +4567,125 @@ class GtkViewModel(ViewModel):
         for w in ["s_sheetsPerSignature", "ecb_sheetSize", "s_foldCutMargin", "c_foldFirst", 
                   "l_sheetsPerSignature", "l_sheetSize",   "l_foldCutMargin"]:
             self.builder.get_object(w).set_sensitive(status)
+
+    def onExpertModeClicked(self, btn):
+        status = self.sensiVisible("c_showTeXpertHacks")
+        # status = False
+        self.builder.get_object("tb_Expert").set_visible(status)
+        self.builder.get_object("lb_Expert").set_visible(status)
+        
+    def onTxlOptionsChanged(self, btn):
+        o = _("What did Mary say that God had done?")
+        # ov = "<b>"+o+"</b>" if self.get("c_txlBoldOverview") else o
+        ov = o
+        t1 = _("What does it means to bless someone?")
+        t2 = _("What do you know about the high priest?")
+        overview = self.get("c_txlQuestionsOverview")
+        numberedQs = self.get("c_txlQuestionsNumbered")
+        showRefs = self.get("c_txlQuestionsRefs")
+        if numberedQs and showRefs:
+            ex = f"13. (3:25) {t1}\n14. (4:6) {t2}"
+            l = f"12. (1:46-56) {ov}\n{ex}" if overview else ex
+        elif numberedQs:
+            ex = f"13. {t1}\n14. {t2}"
+            l = f"12. {ov}\n{ex}" if overview else ex
+        elif showRefs:
+            ex = f"3:25 {t1}\n4:6 {t2}"
+            l = f"1:46-56 {ov}\n{ex}" if overview else ex
+        else:
+            ex = f"{t1}\n{t2}"
+            l = f"{ov}\n{ex}" if overview else ex
+        self.builder.get_object("l_txlExample").set_label(l)
+
+    def onCoverSettingsChanged(self, btn):
+        self.sensiVisible("c_makeCoverPage")
+        self.colorTabs()
+        hbx = self.builder.get_object("bx_coverPreview")
+        b = self.builder.get_object("vp_coverBack")
+        s = self.builder.get_object("vp_spine")
+        f = self.builder.get_object("vp_coverFront")
+        for v in [b,s,f]:
+            hbx.remove(v)
+        if self.get("c_RTLbookBinding"):
+            for v in [b,s,f]:
+                hbx.pack_end(v, False, False, 0)
+        else:
+            for v in [f,s,b]:
+                hbx.pack_end(v, False, False, 0)
+        
+        rotateDegrees = float(self.get("fcb_rotateSpineText"))
+        self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
+        if rotateDegrees != 0:
+            self.builder.get_object("lb_spineTitle").set_label(_("Spine Title"))
+        else:
+            self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
+        
+        pgs = float(self.get("s_totalPages"))
+        adj = float(self.get("s_coverAdjust"))
+        thck = float(self.get("s_paperWidthOrThick"))
+        if self.get("r_paperCalc") == "weight":
+            # Value below is from Pretore's paper thickness calculations 
+            #                     (GSM/um, 36/43, 40/47, 50/60, 60/70)
+            thck = thck / .845 
+        self.spine = (thck * pgs / 2000) + adj
+
+        showSpine = self.sensiVisible("c_inclSpine")
+        for w in ["vp_spine", "lb_style_cat:coverspine|esb"]:
+            self.builder.get_object(w).set_visible(showSpine)
+        self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
+        thick = self.spine * 4
+        self.builder.get_object("vp_spine").set_size_request(thick, -1)
+        self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
+
+    def editCoverSidebarStyle(self, btn, foo):
+        posn = Gtk.Buildable.get_name(btn)[3:]
+        self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
+        mpgnum = self.notebooks['Main'].index("tb_StyleEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.wiggleCurrentTabLabel()
+
+    def onRequestPicturePermission(self, btn):
+        pics = []
+        for artist in self.artpgs.keys():
+            if artist == "co":
+                for series in self.artpgs[artist].keys():
+                    for a,v in self.artpgs[artist][series]:
+                        pics += [v]
+        picount = len(pics)
+        if picount == 0:
+            _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
+                       _("However none were detected in this publication.")
+            self.doError("Request Permission Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+            return
+        picturelist = ", ".join(pics)
+        if self.get('c_sensitive'):
+            sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
+            "(© DCC) in the copyright statement and for the credit text on each illustration.\n"
+        else:
+            sensitive = ""
+        _permissionRequest = """
+TO: International Publishing Services Coordinator
+7500 West Camp Wisdom Road
+Dallas, TX 75236 USA\n
+I am writing to request permission to use the following David C Cook illustrations in a publication.\n
+1. The name of the country, language, Ethnologue code:
+\t{}, {}, {}\n
+2. The title of the book in the vernacular:
+\t{}\n
+3. The kind of book:
+\t{}\n
+4. The number of books to be printed:
+\t{} copies\n
+5. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
+\t{} illustrations:\n{}\n{}
+Thank you,
+<Requester's Name>
+<SIL Entity>
+""".format(self.getvar("country", "<Country>"),            self.getvar("languagename",  "<Language>"), \
+           self.getvar("langiso", "<Ethnologue code>"),    self.getvar("maintitle",     "<Title>"), \
+           self.getvar("pubtype", "<[Portion|NT|Bible]>"), self.getvar("copiesprinted", "<99>"), \
+           picount, picturelist, sensitive)
+        self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
+                      title="PTXprint", copy2clip=True, show=True, \
+                      who2email="scripturepicturepermissions_intl@sil.org")

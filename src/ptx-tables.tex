@@ -146,14 +146,19 @@
 \newtoks\s@vedm@rks
 \let\origm@rk\mark
 \let\origm@rks\marks
+\newcount\s@vedmarkcount
 \s@vedm@rks{}
+\def\savingmarks{%
+    \global\advance\s@vedmarkcount by 1
+    \def\mark##1{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rk{##1}}}%
+    \def\marks##1##2{\trace{t}{marks ##1, ##2}\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks##1{##2}}}%
+    \aftergroup\dos@vedm@rk%
+}
 \def\st@rtcell{%
   \advance\tablec@l by 1
   \ifnum\tablec@l>\allocatedtablec@ls \@llocnewc@l \fi
   \setbox\cellb@x=\vbox\bgroup
-    \def\mark##1{\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rk{##1}}}%
-    \def\marks##1##2{\trace{t}{marks ##1, ##2}\x@\global\x@\s@vedm@rks\x@{\the\s@vedm@rks \origm@rks##1{##2}}}%
-    \aftergroup\dos@vedm@rk%
+    \savingmarks
     \hsize=\maxdimen
     \resetp@rstyle \everypar={}\noindent
     %\ifRTL\beginR\fi
@@ -167,7 +172,11 @@
     \s@tfont{tc\the\tablec@l}{\tc@ll+\styst@k}%
     \global\advance\p@ranesting by 1
     \@celltrue}
-\def\dos@vedm@rk{\the\s@vedm@rks\relax\s@vedm@rks{}}
+\def\dos@vedm@rk{%
+  \trace{ma}{Recovering \the\s@vedmarkcount marks,  gt:\the\currentgrouptype, gd:\the\currentgrouplevel}%
+  \s@vedmarkcount=0
+  \the\s@vedm@rks\relax\s@vedm@rks{}%
+}
 
 \def\@ndcell{%
   \if@cell

@@ -29,8 +29,13 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Milestone macros
-\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.                                         
-\def\ch@ckislocation#1{\keeptriggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi}
+\def\notlocation#1{\x@\let\csname n@tLocn@#1\endcsname\@ne} %Not all milestones represent unique locations.
+\def\NotTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\@ne} %Not all milestones with attributes represent trigger locations.
+\def\IsTriggerPoint#1{\x@\let\csname n@tTrig@#1\endcsname\undefined} 
+
+\NotTriggerPoint{xts} %Strongs numbers like 'ms:xtx=5447' not trigger points by default.
+\newif\ifsuppresstr@gger
+\def\ch@ckislocation#1{\keeptriggerfalse\suppresstr@ggerfalse\ifcsname n@tLocn@#1\endcsname\keeptriggertrue\fi\ifcsname n@tTrig@#1\endcsname\suppresstr@ggertrue\fi}
 
 \def\mst@nestyle#1{\trace{m}{mst@nestyle:#1 (\milestoneOp)}%
  \gdef\thismil@stone{\detokenize{#1}}% record the name of the style
@@ -82,7 +87,8 @@
 
 \def\@ttrSlash{\in@ttribtrue
   \trace{m}{Starting attribute collection}%
-  \catcode`\/=12\relax % FIXME Other active chars too?
+  \catcode`\/=12 \relax % FIXME Other active chars too?
+  \catcode`\|=12
   \@ttrSl@sh}
 % using #1#2 eats initial spaces. This means  #1#2 nicely ignores annoying initial spaces, but it also crashes on a spaces-only arg, so check for that.
 \def\@ttrSl@sh #1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\else\x@\@@ttrSlash #1\relax\relax\fi}
@@ -132,7 +138,7 @@
 
 \def\startmst@nestyle{%What actually changes between the beginning of a milestone and the end-marker? Attribute values!
    \trace{m}{startmst@nestyle}%
-   \op@ninghooks{before}{\thismil@stone}%
+   \op@ninghooks{before}{\thismil@stone}{\styst@k}%
    \csname init@ttribs\endcsname
 }
 
@@ -248,12 +254,13 @@
   \fi
   \kill@PossParamCache
   \trace{m}{Style stack now: \mcstack}%
-  \op@ninghooks{start}{\thismil@stone}%
+  \op@ninghooks{start}{\thismil@stone}{\styst@k}%
 }
 
 \def\@ndmilestone{%
   \trace{m}{@ndmilestone.  stack now: \mcstack}%
-  \cl@singhooks{end}{\thismil@stone}%
+  \let\h@@kstyst@k\styst@k
+  \cl@singhooks{end}{\thismil@stone}{\h@@kstyst@k}%
   \get@ttribute{\attrid}%attrid is id/sid/eid (set in init@ttribs)
   \ifx\attr@b\relax 
   \dr@pmilestone{\thismil@stone}{}%
@@ -262,7 +269,7 @@
   \fi
   \trace{m}{Style stack now: \mcstack}%
   \upd@teMsPrefix
-  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks
+  \cl@singhooks{after}{\thismil@stone}{\h@@kstyst@k}\the\afterh@@ks
   \global\let\attr@b\empty\global\let\attrid\empty
   \global\let\thismil@stone\empty
   \global\let\thisattrmil@stone\empty
@@ -270,26 +277,30 @@
 
 \def\figmil@stone{zfiga}
 
-\def\st@ndalonemilestone{% FIXME:Potentially some kind of hook? Or use this as an image anchor?
+% Stand alone milestones are mainly triggers for other code, figure insertion or similar things.
+% trigger-ms:\thismil@stone and trigger-ms:\thismil@stone=attrib  are user-supplied triggers, and are expected to be USFM. They self-destruct
+% ms:\thismil@stone=attrib is defined by e.g. setzvar and is expected to be simple text. They may self-destruct
+% MS:\thismilestone is TeX code to generate zgaps, zrules etc. They never self-destruct.
+
+\def\st@ndalonemilestone{% 
   \ifx\attrid\empty
     \let\attr@b\relax
   \else 
     \get@ttribute{\attrid}%
   \fi
   \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
+  \mcpush{\ss@Mstn}{\thismil@stone}%
+  \trace{m}{Milestone stacked, \mcstack}%
   \t@stpublishability{\thismil@stone}%
-  \ifx\p@ram\relax
-    \trace{m}{Properties not defined, assuming standalone milestone has no publishable text}%
-    \n@npublishabletrue
+  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
+  \ifx\p@ram\relax\let\p@ram\empty\fi
+  \ifx\p@ram\empty\else
+    \leavevmode
+    \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
   \fi
   \ifn@npublishable\else
-    \mcpush{\ss@Mstn}{\thismil@stone}%
-    \trace{m}{Milestone stacked, \mcstack}%
+    \op@ninghooks{start}{\thismil@stone}{\styst@k}%
   \fi
-  \getp@ram{type}{\thismil@stone}{\thismil@stone}%
-  \trace{m}{Leaving vmode for \thismil@stone \space type \p@ram}%
-  \ifx\p@ram\empty\else\leavevmode\fi
-  \op@ninghooks{start}{\thismil@stone}%
   \let\oldc@rref\c@rref\let\olddc@rref\dc@rref
   %\tracingmacros=1
   %\tracingassigns=1
@@ -311,28 +322,36 @@
   \fi\fi
   %\tracingassigns=0
   %\tracingmacros=0
+  % execute any standard code for this milestone.
+  \ifcsname MS:\thismil@stone\endcsname \csname MS:\thismil@stone\endcsname\fi 
   \ifx\attr@b\relax
-    \runtrigg@rs{ms:\thismil@stone}%
+    \ch@ckislocation{\thismil@stone}% 
+    \ifsuppresstr@gger\else
+      \runtrigg@rs{ms:\thismil@stone}%
+    \fi
   \else
-    \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
-    \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
-    \ifkeeptrigger% Not a location, leave c@rref what it used to be
-      \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
-    \else% This milestone is a named location 
-      \xdef\c@rref{\id@@@\attr@b}%
-      \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
-       \ch@ckadjustments
+    \ifsuppresstr@gger\else
+      \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
+      \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
+      \ifkeeptrigger% Not a location, leave c@rref what it used to be
+        \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
+      \else% This milestone is a named location 
+        \xdef\c@rref{\id@@@\attr@b}%
+        \ifx\v@rse\empty\global\p@rnum=\ifhmode 1\else 0\fi
+         \ch@ckadjustments
+        \fi
       \fi
     \fi
   \fi
-  \cl@singhooks{end}{\thismil@stone}%\
+  \let\h@@kstyst@k\styst@k
   \ifn@npublishable
     \n@npublishablefalse %restore to publishable
   \else
-    \dr@pmilestone{\thismil@stone}{}%
+    \cl@singhooks{end}{\thismil@stone}{\h@@kstyst@k}%\
   \fi
-  \cl@singhooks{after}{\thismil@stone}\the\afterh@@ks\relax
+  \dr@pmilestone{\thismil@stone}{}%
+  \cl@singhooks{after}{\thismil@stone}{\h@@kstyst@k}\the\afterh@@ks\relax
   \let\thismil@stone\empty
 }%
 
@@ -370,6 +389,7 @@
 %simple + separated list processing
 \def\l@stitem #1\E{}
 \newcount\it@mcount
+\newcount\prefacepages \prefacepages=0
 \def\e@chitem#1+#2\E{%
   \edef\it@mtmp{#1}\ifx\it@mtmp\empty\let\nxt@item\l@stitem\else
     \advance\it@mcount by 1
@@ -387,21 +407,22 @@
 \notlocation{zvar}
 %\notlocation{zuseperiph}
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
-\def\m@kenumb@r#1={\edef\@@result{\scantokens{#1\noexpand}}\m@kedigitsletters}
+\def\m@kenumb@r#1={\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{ #2}}
-\x@\def\csname start-zrule\endcsname{%
+\x@\def\csname MS:zrule\endcsname{%
   \endgraf
   \bgroup
     \get@ttribute{cat}%
-    \ifx\attr@b\relax\else\s@tc@tprefix{\attr@b}\fi
+    \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
     \get@ttribute{width}%A
     \ifx\attr@b\relax
       \s@tsideskips{zrule}%
       \edef\rule@wid{\the\dimexpr \hsize - \leftskip - \rightskip\relax}%
     \else
       \m@kenumber{\attr@b}%
-      \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}
+      \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}%
     \fi
+    \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
     \get@ttribute{thick}%A
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
@@ -415,13 +436,24 @@
       \m@kenumber{\attr@b}%
       \let\rule@thk\@@result%
     \fi
-    \getp@ram{raise}{zrule}{\styst@k}%
-    \ifx\p@ram\relax
-      \edef\rule@adjust{0pt}%
+    \get@ttribute{thick}%A
+    \ifx\attr@b\relax
+      \getp@ram{raise}{zrule}{\styst@k}%
+      \ifx\p@ram\relax
+	\edef\rule@adjust{0pt}%
+      \else
+	\edef\rule@adjust{\p@ram\FontSizeUnit}%
+      \fi
     \else
-      \edef\rule@adjust{\p@ram\FontSizeUnit}%
+      \m@kenumber{\attr@b}%
+      \edef\rule@adjust{\the\dimexpr \@@result\relax}%
     \fi
-    \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \get@ttribute{style}%A
+    \ifx\attr@b\relax
+      \getp@ram{borderstyle}{zrule}{\styst@k}%
+    \else     
+      \let\p@ram\attr@b
+    \fi
     \ifx\p@ram\relax
       \def\rule@style{plain}%
     \else
@@ -444,25 +476,119 @@
 }
 
 \x@\def\csname drawzrule-plain\endcsname{%
+  \ifx\b@drcol\relax
+    \def\bc@l{}\def\endbc@l{}%
+  \else
+    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
+  \fi
   \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
-    \vrule height \rule@thk depth 0pt width \rule@wid 
+    \bc@l\vrule height \rule@thk depth 0pt width \rule@wid \endbc@l
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%
 }
 
-\x@\def\csname start-zgap\endcsname{%
+\def\getcustommarknum#1{%
+  \getm@rknum{#1}%
+  \let\custommarknum\m@rknum
+}
+\def\getcustomm@rknum{%
+  \get@ttribute{type}% 
+  \ifx\attr@b\relax
+    \getm@rknum{user}%
+  \else
+    \getm@rknum{\attr@b}%
+  \fi
+}
+
+\x@\def\csname MS:zcustommark\endcsname{%
+  \ifnum\currentgrouptype>0
+    \savingmarks
+  \fi
+  \getcustomm@rknum
+  \get@ttribute{value}%
+  \trace{m}{zcustommark(\m@rknum) \attr@b}%
+  \ifx\attr@b\relax\else
+    \x@\x@\x@\marks\x@\m@rknum\x@{\attr@b}%
+  \fi
+}
+
+\x@\def\csname MS:zcustombotmark\endcsname{%
+  \getcustomm@rknum
+  \botmarks\custommarknum
+}
+\x@\def\csname MS:zcustomfirstmark\endcsname{%
+  \getcustomm@rknum
+  \firstmarks\custommarknum
+}
+\x@\def\csname MS:zcustomtopmark\endcsname{%
+  \getcustomm@rknum
+  \topmarks\custommarknum
+}
+
+\x@\def\csname MS:zgap\endcsname{%
   \endlastp@rstyle{zgap}%
   \endgraf
   \get@ttribute{dimension}%A
   \ifx\attr@b\relax
     \let\gap@dim\baselineskip%
   \else
+    \trace{m}{zgap: \meaning\attr@b}%
     \m@kenumber{\attr@b}%
+    \trace{m}{zgap: \meaning\attr@b}%
     \let\gap@dim\@@result%
   \fi
   \trace{m}{zgap \gap@dim}%
   \vbox{}\penalty10000\vskip\gap@dim\relax%
 }
 
+\x@\def\csname MS:zgetperiph\endcsname{%
+  \get@ttribute{side}%
+  \ifx\attr@b\relax
+    \let\t@mpside\c@rrdstat
+  \else
+    \let\t@mpside\attr@b
+  \fi
+  \get@ttribute{id}%
+  \ifcsname periphcontents\t@mpside=\attr@b\endcsname
+    \keeptriggerfalse
+    \csname periphcontents\t@mpside=\attr@b\endcsname
+    \ifcsname keepperiph-\attr@b\endcsname\keeptriggertrue\fi
+    \ifkeeptrigger\else
+      \x@\global\x@\let\csname periphcontents\t@mpside=\attr@b\endcsname\undefined
+    \fi
+  \fi
+}
+\x@\def\csname MS:zfillsignature\endcsname{{%
+  \get@ttribute{pagenums}%
+  \ifx\attr@b\relax\else
+    \ifcsname \attr@b pagenums\endcsname \csname attr@b pagenums\endcsname
+    \else
+      \message{valid options for pagenums attribute of zfillsignature are 'do' and 'no'}%
+    \fi
+  \fi
+  \ifdim\pagetotal>0pt
+    \pagebreak\endgraf
+  \fi
+  \get@ttribute{pages}%
+  \ifx\attr@b\relax
+    \message{pages attribute of zfillsignature must be supplied at the moment}%
+  \else
+    \trace{m}{zfillsignature \the\pageno}%
+    \expandafter\m@kenumb@r \attr@b =%
+    \count255=\@@result
+    \count254=\numexpr \prefacepages + \ifnum \pageno <0 -1\fi \pageno +\prefacepages -1\relax
+    \count253=\numexpr \count255 - (\count254 - \count255 * \numexpr \count254 / \count255 \relax) \relax
+    \trace{m}{\the\count254 pages printed, \the\count253 needed to complete the signature of \the\count255}%
+    \get@ttribute{periph}%
+    \ifx\attr@b\relax\else
+      \x@\def\x@\TPILB{\x@\zgetperiph\x@|\attr@b\*}%
+    \fi
+    \loop
+      \ifnum\count253>0
+      \zEmptyPage
+      \advance\count253 by -1
+    \repeat
+  \fi
+}}
 
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
@@ -511,23 +637,24 @@
 %seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
 \newdimen\ISBNfontdim
 \ISBNfontdim=10pt
-\def\ISBN#1{\leavevmode\font\belowISBN="Andika" at \ISBNfontdim
-\trace{m}{ISBN barcode for \attr@b}%
-\bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
-%I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
-\font\aboveISBN="Andika" at 0.02\dimen0
-\belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
+\def\ISBNfont{"Andika"}
+\def\ISBN#1{\leavevmode\font\belowISBN="\ISBNfont" at \ISBNfontdim
+  \trace{m}{ISBN barcode for \attr@b}%
+  \bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
+  %I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
+  \font\aboveISBN="Andika" at 0.02\dimen0
+  \belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
 %\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
-\hbox{\expandafter\isbn#1--}}\egroup}
+  \hbox{\expandafter\isbn#1--}}\egroup}
 
 
 %\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
-\x@\def\csname start-zISBNbarcode\endcsname{%
+\x@\def\csname MS:zISBNbarcode\endcsname{%
   \bgroup
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
-  \bgroup\m@kedigitsother\let\tmp\attr@b\xdef\tmp{\x@\scantokens\x@{\tmp\noexpand}}%
-  \egroup\hbox{\ISBN{\tmp}}\egroup}
+  \m@kenumber{\attr@b}%
+  \hbox{\ISBN{\@@result}}\egroup}
 
 \def\proc@strong#1{%
   \get@ttribute{align}%

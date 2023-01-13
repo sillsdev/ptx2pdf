@@ -1,5 +1,5 @@
 import os, sys, re, subprocess, time
-from PIL import Image, ImageChops, ImageEnhance
+from PIL import Image
 from io import BytesIO as cStringIO
 from shutil import copyfile, rmtree
 from threading import Thread
@@ -12,12 +12,14 @@ from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
+from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError
-from ptxprint.pdfrw.objects import PdfDict, PdfString
+from ptxprint.pdfrw.objects import PdfDict, PdfString, PdfArray, PdfName, IndirectPdfDict, PdfObject
 from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
+from ptxprint.transcel import transcel, outtriggers
 import numpy as np
 from datetime import datetime
 import logging
@@ -78,6 +80,9 @@ _pdfmodes = {
     'rgb': ("Screen", "Digital"),
     'cmyk': ("CMYK", "Transparency")
 }
+
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent",
+                   "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
 
 _unitpts = {
     'mm': 2.845275591,
@@ -177,9 +182,10 @@ def isLocked():
 
 class RunJob:
 
-    def __init__(self, printer, scriptsdir, args, inArchive=False):
+    def __init__(self, printer, scriptsdir, macrosdir, args, inArchive=False):
         self.scriptsdir = scriptsdir
         self.printer = printer
+        self.macrosdir = macrosdir
         self.tempFiles = []
         self.picfiles = []
         self.tmpdir = "."
@@ -213,6 +219,7 @@ class RunJob:
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
             return
+        self.printer.incrementProgress(True)
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
@@ -302,23 +309,27 @@ class RunJob:
             cfgname = ""
         if pdfname is not None:
             print(pdfname)
+        self.printer.set("l_statusLine", "")
         if self.res == 0:
             if self.printer.docreatediff:
                 basename = self.printer.get("btn_selectDiffPDF")
                 if basename == _("Previous PDF (_1)"):
                     basename = None
-                diffcolor = self.printer.get("col_diffColor")
+                ndiffcolor = self.printer.get("col_ndiffColor")
+                odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
                 # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, info, basename, diffcolor, onlydiffs)
+                    diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":
                             os.startfile(diffname)
                         elif sys.platform == "linux":
                             subprocess.call(('xdg-open', diffname))
+                    else:
+                        self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
                 if sys.platform == "win32":
@@ -350,8 +361,6 @@ class RunJob:
             self.printer.onIdle(self.printer.showLogFile)
         if len(self.rerunReasons):
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
-        else:
-            self.printer.set("l_statusLine", "")
         self.printer.finished()
         self.busy = False
         logger.debug("done_job: Finishing thread")
@@ -435,7 +444,9 @@ class RunJob:
     def dojob(self, jobs, info):
         donebooks = []
         # import pdb; pdb.set_trace()
-        for j in jobs:
+        for i, j in enumerate(jobs):
+            if len(jobs) >= 5 and i % (len(jobs) // 5) == 0:
+                info.printer.incrementProgress(True)
             b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
@@ -446,11 +457,20 @@ class RunJob:
             if out is None:
                 continue
             outpath = os.path.join(self.tmpdir, out)
+            triggers = {}
             if info["notes/ifxrexternalist"]:
-                info.createXrefTriggers(b, self.prjdir, outpath)
+                triggers = info.createXrefTriggers(b, self.prjdir, triggers)
+            if info.dict.get("studynotes/txlinclquestions", False):
+                triggers = transcel(triggers, b, self.prjdir, info.dict.get("studynotes/txllangtag", "en-US"),
+                                    overview=info.dict.get("studynotes/txloverview", False),
+                                    boldover=info.dict.get("studynotes/txlboldover", True),
+                                    numberedQs=info.dict.get("studynotes/txlnumbered", True),
+                                    showRefs=info.dict.get("studynotes/txlshowrefs", False),
+                                    usfm=self.printer.get_usfms().get(b))
+            if len(triggers):
+                outtriggers(triggers, b, outpath+".triggers")
             else:
                 try:
-                    # print(f"Removing {outpath}.triggers")
                     os.remove(outpath+".triggers")
                 except FileNotFoundError:
                     pass
@@ -533,7 +553,7 @@ class RunJob:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
                 syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
-                print_traceback()
+                print_traceback(f=1)
             for f in [left, right, outFile, logFile]:
                 texfiles += [os.path.join(self.tmpdir, f)]
 
@@ -577,7 +597,7 @@ class RunJob:
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         info.update()
         if info['project/iffrontmatter'] != '%':
-            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.tex"))
+            frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.SFM"))
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
@@ -590,7 +610,9 @@ class RunJob:
         os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
-        ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
+        ptxmacrospath = os.path.abspath(self.macrosdir)
+        if not os.path.exists(ptxmacrospath):
+            ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
         if not os.path.exists(ptxmacrospath):
             for b in (getattr(sys, 'USER_BASE', '.'), sys.prefix):
                 if b is None:
@@ -615,15 +637,18 @@ class RunJob:
         miscfonts.append(os.path.join(self.tmpdir, "shared", "fonts"))
         if len(miscfonts):
             os.putenv("MISCFONTS", pathjoiner.join(miscfonts))
+        logger.debug(f"MISCFONTS={pathjoiner.join(miscfonts)}")
         logger.debug("TEXINPUTS={} becomes {}".format(os.getenv('TEXINPUTS'), pathjoiner.join(texinputs)))
         logger.debug(f"{pathjoiner.join(miscfonts)=}")
         os.putenv('TEXINPUTS', pathjoiner.join(texinputs))
         os.chdir(self.tmpdir)
         outpath = os.path.join(self.tmpdir, outfname[:-4])
+        pdfext = _outputPDFtypes.get(self.printer.get("fcb_outputFormat", "")) or ""
+        pdfext = "_" + pdfext if len(pdfext) else ""
         if self.tmpdir == os.path.join(self.prjdir, "local", "ptxprint", info['config/name']):
-            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+".pdf") 
+            pdffile = os.path.join(self.prjdir, "local", "ptxprint", outfname[:-4]+"{}.pdf".format(pdfext)) 
         else:
-            pdffile = outpath + ".pdf"
+            pdffile = outpath + "{}.pdf".format(pdfext)
         logger.debug(f"{pdffile} exists({os.path.exists(pdffile)})")
         oldversions = int(self.printer.get('s_keepVersions', '0'))
         if oldversions > 0:
@@ -741,7 +766,7 @@ class RunJob:
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
                     self.res = runner.returncode
-            if not self.procpdf(outfname, pdffile, info):
+            if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
 
@@ -755,9 +780,26 @@ class RunJob:
             return opath
         return pdffile
 
-    def procpdf(self, outfname, pdffile, info):
+    def procpdf(self, outfname, pdffile, info, **kw):
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
+        if kw.get('cover', False):
+            inpdf = PdfReader(opath)
+            covpdfname = pdffile.replace(".pdf", "_cover.pdf")
+            logger.debug(f"Pulling out cover pages into {covpdfname} from {opath}")
+            extras = split_pages(inpdf)
+            if 'cover' in extras:
+                eps = extras['cover']
+                covpdf = PdfReader(source=inpdf.source, trailer=inpdf)
+                covpdf.Root = covpdf.Root.copy()
+                covpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
+                covpdf.Root.Names = None
+                covpdf.Root.Outlines = None
+                covpdf.private.pages = eps
+                for v in eps:
+                    v.Parent = covpdf.Root.Pages
+                fixpdffile(covpdf, covpdfname, colour="cmyk")
+            outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}
         if self.ispdfxa == "Spot":
@@ -771,7 +813,8 @@ class RunJob:
         else:
             colour = self.ispdfxa.lower()
         if colour is not None:
-            outpdf = fixpdffile(opath, None,
+            logger.debug(f"Fixing colour for {colour}")
+            outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
                             colour=colour,
                             parlocs = outfname.replace(".tex", ".parlocs"), **params)
         nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
@@ -786,6 +829,7 @@ class RunJob:
                     paper.append(0.)
             sigsheets = int(info['finishing/sheetsinsigntr'])
             foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
+            logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
             try:
                 outpdf = make_signatures((outpdf._trailer if outpdf else opath),
                                      paper[0], paper[1], nums,
@@ -796,6 +840,7 @@ class RunJob:
                                      title=_("Paper Size Error"), secondary=str(e), threaded=True)
                 return False
         if info['finishing/inclsettings']:
+            logger.debug("Adding settings to the pdf")
             zio = cStringIO()
             z = info.printer.createSettingsZip(zio)
             z.close()
@@ -821,81 +866,15 @@ class RunJob:
             os.remove(opath)
         return True
 
-    def createDiff(self, pdfname, info, basename=None, color=None, onlydiffs=True, maxdiff=False):
+    def createDiff(self, pdfname, basename, **kw):
+        from ptxprint.pdf.pdfdiff import createDiff
         outname = pdfname[:-4] + "_diff.pdf"
-        othername = basename or pdfname[:-4] + "_1.pdf"
-        if color is None:
-            color = (240, 0, 0)
+        othername = pdfname[:-4] + "_1.pdf" if basename is None else basename
         logger.debug(f"diffing {othername} exists({os.path.exists(othername)}) and {pdfname} exists({os.path.exists(pdfname)})")
-        if not os.path.exists(othername):
+        res = createDiff(pdfname, othername, outname, self.printer.doError, **kw)
+        if res == 2:
             self.res = 2
-            return None
-        try:
-            ingen = self.pdfimages(pdfname)
-            ogen = self.pdfimages(othername)
-        except ImportError:
-            return None
-        results = []
-        hasdiffs = False
-        for iimg in ingen:
-            oimg = next(ogen, None)
-            if oimg is None:
-                break
-            dmask = ImageChops.difference(oimg, iimg).convert("L")
-            if not dmask.getbbox():
-                if onlydiffs:
-                    continue
-            elif dmask.size != iimg.size:
-                info.printer.doError(_("Page sizes differ between output and base. Cannot create a difference."),
-                    threaded=True, title=_("Difference Error"))
-                return
-            else:
-                hasdiffs = True
-            if maxdiff:
-                dmask = dmask.point(lambda x: 255 if x else 0)
-            translucent = Image.new("RGB", iimg.size, color)
-            enhancec = ImageEnhance.Contrast(iimg)
-            enhanceb = ImageEnhance.Brightness(enhancec.enhance(0.7))
-            nimg = enhanceb.enhance(1.5)
-            nimg.paste(translucent, (0, 0), dmask)
-            results.append(nimg)
-        if hasdiffs and len(results):
-            results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
-            return outname
-        elif os.path.exists(outname):
-            try:
-                os.remove(outname)
-            except PermissionError:
-                info.printer.doError(_("No changes were detected between the two PDFs, but the (old) _diff PDF appears to be open and so cannot be deleted."),
-                                     title=_("{} could not be deleted").format(outname), secondary=str(e), threaded=True)
-                pass
-
-    def pdfimages(self, infile):
-        import gi
-        gi.require_version('Poppler', '0.18')
-        from gi.repository import Poppler, GLib
-        import cairo
-        uri = GLib.filename_to_uri(infile, None)
-        logger.debug(f"Poppler load '{uri}'")
-        doc = Poppler.Document.new_from_file(uri, None)
-        numpages = doc.get_n_pages()
-        for i in range(numpages):
-            page = doc.get_page(i)
-            w, h = (int(x*3) for x in page.get_size())
-            surface = cairo.ImageSurface(cairo.Format.ARGB32, w, h)
-            ctx = cairo.Context(surface)
-            ctx.scale(3., 3.)
-            ctx.set_source_rgba(1., 1., 1., 1.)
-            ctx.rectangle(0, 0, w, h)
-            ctx.fill()
-            try:
-                page.render(ctx)
-                imgr = Image.frombuffer(mode='RGBA', size=(w,h), data=surface.get_data().tobytes())
-                b, g, r, a = imgr.split()
-                img = Image.merge('RGB', (r, g, b))
-            except MemoryError:
-                return
-            yield img
+        return outname
 
     def checkForMissingDecorations(self, info):
         deco = {"pageborder" :     "Page Border",
@@ -980,7 +959,10 @@ class RunJob:
         return t
 
     def cropBorder(self, im):
-        bwim = im.convert("L").load()
+        try:
+            bwim = im.convert("L").load()
+        except OSError:
+            return im
         box = im.getbbox()
         cbox = []
         cbox.append(self.getBorder(box, 0, 2, lambda x, y: bwim[x, y]))
@@ -1028,7 +1010,6 @@ class RunJob:
         #    for x in range(im.width):
         #        im.putpixel((x, y), self._cmytocmyk(*im.getpixel((x, y))))
         #return im
-        #import pdb; pdb.set_trace()
         img = np.asarray(im).copy()
         if img.shape[-1] == 3:
             z = np.zeros((img.shape[0], img.shape[1], 1), dtype=np.uint8)
@@ -1070,7 +1051,7 @@ class RunJob:
             print(("Failed to get size of (image) file:"), srcpath)
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
-        if cropme or self.ispdfxa != "Screen" or (ratio is not None and iw/ih < ratio) \
+        if cropme or (ratio is not None and iw/ih < ratio) \
                   or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             #try:

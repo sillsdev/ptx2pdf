@@ -5,7 +5,10 @@ from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.pdfrw.compress import compress
 from ptxprint.pdfrw.objects import PdfDict, PdfName, PdfArray
 import numpy as np
-import io
+import io, os
+import logging
+
+logger = logging.getLogger(__name__)
 
 def getdef(v):
     def dget(d, k):
@@ -65,6 +68,21 @@ def cmyk_vecto_rgb(img):
     out[...,2] = (1. - img[...,2]) * k
     return out
 
+def rgb_vecto_cmyk(img):
+    out = np.zeros((img.shape[0], img.shape[1], 4))
+    #omk = max(img[...,0], img[...,1], img[...,2])
+    omk = np.maximum(img[...,0], img[...,1])
+    omk = np.maximum(omk, img[...,2])
+    c = (omk - img[...,0]) / (omk + .001)
+    m = (omk - img[...,1]) / (omk + .001)
+    y = (omk - img[...,2]) / (omk + .001)
+    cond = omk > 0.
+    out[cond,0] = c[cond]
+    out[cond,1] = m[cond]
+    out[cond,2] = y[cond]
+    out[...,3] = 1. - omk
+    return out
+
 
 def DCTDecode(dat):
     return Image.open(io.BytesIO(dat.encode("Latin-1")))
@@ -86,6 +104,7 @@ class PDFImage:
         if self.cs == "/ICCBased":
             uncompress([self.colorspace[1]])
             self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream.encode("Latin-1")))
+            #self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream))
             compress([self.colorspace[1]])
         self.height = int(xobj['/Height'])
         self.width = int(xobj['/Width'])
@@ -93,6 +112,8 @@ class PDFImage:
         self.bits = int(xobj['/BitsPerComponent'])
         if self.filt in ("/DCTDecode", "/JPXDecode"):
             self.img = DCTDecode(xobj.stream)
+            logger.debug(f"{self.img.getpixel((100, 100))=}")
+            logger.debug(f"{self.filt=}, {self.cs=}, {self.img.mode=}, {self.colorspace=}")
         elif self.filt == "/FlateDecode":
             uncompress([xobj])
             if self.cs == "/Indexed":
@@ -100,7 +121,9 @@ class PDFImage:
             mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
             if mode == "L" and self.bits == 1:
                 mode = "1"
+            logger.debug(f"{mode=}, {self.width=}, {self.height=}, {self.cs=}")
             self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream.encode("Latin-1"))
+            #self.img = Image.frombytes(mode, (self.width, self.height), xobj.stream)
             if self.cs == "/CalRGB":
                 self.img = calrgb_vecto_rgb(np.asarray(self.img), self.colorspace[1])
                 self.colorspace = "/DeviceRGB"
@@ -112,6 +135,12 @@ class PDFImage:
         elif self.filt == "/CCITTFaxDecode":
             print("No CCITTFaxDecode support yet")
             self.img = None
+        elif self.filt == "None":
+            mode = img_modes.get(self.cs, "RGB" if "rgb" in self.cs.lower() else "CMYK")
+            if mode == "L" and self.bits == 1:
+                mode = "1"
+            logger.debug(f"{mode=}, {self.width=}, {self.height=}, {self.cs=}")
+            self.img = Image.frombytes(mode=mode, size=(self.width, self.height), data=xobj.stream.encode("Latin-1"))
     
     def asXobj(self):
         res = PdfDict()
@@ -124,14 +153,19 @@ class PDFImage:
         if self.spotc is None:
             if self.spotb is not None:
                 self.img = Image.fromarray((self.spotb * 255).astype(np.uint8), "L")
-            stream = io.BytesIO()
-            self.img.save(stream, 'JPEG')
-            res.stream = stream.getvalue().decode("Latin-1")
-            res[PdfName("Filter")] = PdfName("DCTDecode")
+            if self.colorspace == "/DeviceCMYK":    # Temporary workaround bug in DCTEncoder for CMYK.
+                res.stream = self.img.tobytes()     # Makes for big files :(
+                res.Binary = True
+            else:
+                stream = io.BytesIO()
+                self.img.save(stream, format='JPEG')
+                res.stream = stream.getvalue().decode('Latin-1')
+                res[PdfName("Filter")] = PdfName("DCTDecode")
+            logger.debug(f"{len(res.stream)=}, {type(res.stream)=}")
         else:
             spotb = (self.spotb * 255).astype(np.uint8).tobytes()
             spotc = (self.spotc * 255).astype(np.uint8).tobytes()
-            res.stream = b"".join("".join(*z) for z in zip(spotb, spotc))
+            res.stream = b"".join(b"".join([bytes(x) for x in z]) for z in zip(spotb, spotc))
             res.Binary = True
             #self.compressor([res])
         return res
@@ -153,12 +187,13 @@ class PDFImage:
         if img.shape[-1] == 4:
             img = cmyk_vecto_rgb(img)
         hsvimg = rgb_vecto_hsv(img)
+        #import pdb; pdb.set_trace()
         if hashue:
             # calculate as if all in the hsv colour range
             spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
             # replace out of range colours with grey
             m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
-        if not hashue or np.all(m):
+        if not hashue or not np.any(m):
             self.spotb = hsvimg[...,2]
             self.spotc = None
             self.colorspace = blackcspace
@@ -171,7 +206,23 @@ class PDFImage:
             self.spotb = spotb
             self.colorspace = spotcspace
         return True
-        
+
+    def rgb_cmyk(self):
+        img = np.asarray(self.img) / 255.
+        res = rgb_vecto_cmyk(img)
+        self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
+        self.cs = self.colorspace = PdfName("DeviceCMYK")
+
+    def cmyk_black(self):
+        img = np.asarray(self.img) / 255.
+        sda = img[...,0] - img[...,1]
+        sdb = img[...,0] - img[...,2]
+        cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01)
+        if not cond:
+            self.img = Image.frombytes(data=((1.-img[...,3]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
+            self.cs = self.colorspace = PdfName("DeviceGray")
+            return True
+        return False
         
 if __name__ == "__main__":
     import argparse, sys, os

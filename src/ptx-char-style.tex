@@ -91,39 +91,49 @@
 \catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
 \lccode`\|=`\\
+\let\thisch@rstyle\empty
 \lowercase{
 %-cchar_docharstyle_intro
 %+cchar_docharstyle
+ \let\@@st@risk*
+ \let\@@spc~
+ \let\@@nl_
+ \let\@@min-
  \def\startch@rstyle@misc{\startch@rstyle \relax}%
  \def\doch@rstyle{% here, \n@xt has been \let to the next character after the marker    %(1)
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   %\tracingassigns=1
-  \if\n@xt*\let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
+  %\trace{ct}{n@xt: '\meaning\n@xt'= \meaning\@st@risk?}%
+  \ifx\n@xt\@@st@risk \let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else
     \temptrue
-    \if\n@xt~\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle}\else
-      \if\n@xt_\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
-        \if\n@xt-\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
-	  \let\n@xt@\startch@rstyle@misc\fi\fi\fi
+    \ifx\n@xt\@@spc\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle, after \thisch@rstyle}\else
+      \ifx\n@xt\@@nl\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
+        \ifx\n@xt\@@min\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
+	  \let\n@xt@\startch@rstyle@misc\trace{ss}{misc delimiter for \newch@rstyle}\fi\fi\fi
     \iftemp
-      \end@llpoppedstyles{\ss@Char}% Char style
-      %\end@llcharstyles % a char style closes all other char styles, milestones do not.
+      \end@llpoppedstyles{\ss@Char}%a char style closes all other char styles, milestones do not.e
     \fi
   \fi % else we need to start it
   \xdef\stylet@pe{\ss@Char}%                                                                   %(2)
   %\tracingassigns=0
   \n@xt@} % chain to the start or end macro
  %doch@rstylepls is like doch@rstyle, but wraps the style in a group and generates a comma-separated stack of styles.
+ \def\retrych@rstylepls~{\futurelet\n@xt\doch@rstylepls} % look at following character and call \doch@rstyle
  \def\doch@rstylepls{% here, \n@xt has been \let to the next character after the marker %(1)
   \catcode32=10 % reset <space> to act like a space again
   \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
   \trace{sa}{charstyleplus}%
   %\tracingassigns=1
-  \if\n@xt*\let\n@xt@\endch@rstylepls % check for "*", if so then we need to end the style
-  \else\if\n@xt~\let\n@xt@\startch@rstyle@spc
-    \else\if\n@xt_\let\n@xt@\startch@rstyle@nl
-      \else\if\n@xt-\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\else
+  \ifx\n@xt\@@st@risk\let\n@xt@\endch@rstylepls % check for "*", if so then we need to end the style
+  \else\ifx\n@xt\@@spc\trace{ss}{space delimiter for +\newch@rstyle, after \thisch@rstyle}%
+      \ifr@gurgitated %has this bit of input been detokenized and retokenized? that adds spaces.
+        \ifx\thisch@rstyle\newch@rstyle\let\n@xt@\retrych@rstylepls\else\let\n@xt@\startch@rstyle@spc\fi
+      \else\let\n@xt@\startch@rstyle@spc
+      \fi
+    \else\ifx\n@xt\@@nl\trace{ss}{nl delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startch@rstyle@nl
+      \else\ifx\n@xt\@@min\trace{ss}{minus delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\else
         \let\n@xt\startch@rstyle
     \fi\fi\fi
   \fi % else we need to start it
@@ -161,7 +171,7 @@
    \ifvmode\temptrue\else\tempfalse\fi
    \leavevmode % in case the paragraph hasn't started yet
    \iftemp\the\@veryparstarthooks\fi               %(2)
-   \op@ninghooks{before}{\newch@rstyle}\relax% execute any <before> hook
+   \op@ninghooks{before}{\newch@rstyle}{\styst@k}\relax% execute any <before> hook
    \x@\let\x@\@ttriblist\csname @ttriblist-\newch@rstyle\endcsname
    \trace{A}{Attributes-\newch@rstyle: \@ttriblist}%
    \bgroup % start a group to encapsulate the style's formatting changes
@@ -181,7 +191,7 @@
     \getmcp@ram{underline}%
 	\ifx\p@ram\tru@\temptrue\fi
     \iftemp\setbox0=\hbox\bgroup \fi                     %(3)
-    \op@ninghooks{start}{\thisch@rstyle}%% execute any <start> hook
+    \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
 }
@@ -245,11 +255,12 @@
      %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
+   \global\let\h@@kstyst@k\styst@k
    \ifx\thisch@rstyle\undefined
      %\MSG{*** unmatched character style end-marker |\newch@rstyle*}%
    \else
     \ifskipch@rstyle\egroup\else%
-     \cl@singhooks{end}{\oldch@rstyle}% discover and execute any <end> hook
+     \cl@singhooks{end}{\oldch@rstyle}{\h@@kstyst@k}% discover and execute any <end> hook
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
      \getmcp@ramR{raise}%
      \tempfalse
@@ -291,7 +302,7 @@
        \else\dimen9=\char@raise\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
        \fi
      \fi
-     \cl@singhooks{after}{\oldch@rstyle}% discover any <after> hooks
+     \cl@singhooks{after}{\oldch@rstyle}{\h@@kstyst@k}% discover any <after> hooks
      \ifnum\n@tenesting>0 \global\advance\n@tenesting by -1 % decrement nesting level
        \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
      \else \global\advance\p@ranesting by -1

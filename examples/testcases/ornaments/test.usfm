@@ -1,5 +1,38 @@
 \id TST Test file
 \h small test file
+\periph front|coverfront
+\vfill
+\esb \cat TitleBox\cat*
+\mt3 The 
+\mt1 Test-case Bible
+\esbe
+\vfill
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\p ~
+\esb \cat footbox\cat*
+\pc \sc Atlantis\sc* 2022
+\p
+\esbe
+\p ~
+
+\periph spine|spine
+\pc The Test-Case Bible
+
+\periph wholecover|coverwhole
+\pc |<-------\hfil \the\hsize \hfil ------->|
+\endgraf
+
+\periph back|coverback
+\pc The back
+\vfill
+\pc |<-------\hfil \the\hsize \hfil -------->|\endgraf
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|isbn="978-012345-689-2" height="normal"\*
+\esbe
+\pc 0 copies, Klingon-Esperanto
+\b
+\zendperiph
+
 \mt Ornaments Demonstration File
 \c 1
 \s This is demonstration file 
@@ -141,12 +174,36 @@ formatting.
 \q3\cat testpar\cat*
 \v 16 This is a q // to see what we can do
 \m The end. Back to '\showTheCategory'
+
+\p
+Some text \par
+
+\global\boxorntrue
+
+Orientation of patern 1:
+\par
+
+u:\zornament |pattern="1|u" size="0.7em"\*
+l:\zornament |pattern="1|l"\*
+r:\zornament |pattern="1|r"\*
+d:\zornament |pattern="1|d"\*
+
+\par
+
+h:\zornament |pattern="1|h"\*
+L:\zornament |pattern="1|L"\*
+R:\zornament |pattern="1|R"\*
+v:\zornament |pattern="1|v"\*
+\par
+
+\zornament |pattern="2|v"\*\zornament |pattern="1|h" \* Hi
 \pb
 
-\s1 The default ornaments (vectorian)
+
+\s1 The default ornaments  (vectorian)
 \p
-\testornamentsv
+\rem \testornamentsv
 
 \s1 pgfhan ornaments
 \p
-\testornamentsh
+\rem \testornamentsh

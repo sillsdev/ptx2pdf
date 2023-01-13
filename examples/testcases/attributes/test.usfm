@@ -1,5 +1,9 @@
 \id TST Test file
 \h small test file
+\periph Hello|intro
+\ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
+\zendperiph
+
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
@@ -21,8 +25,16 @@ So is this bit, after a non-matching break.
 
 
 \p  We're \rb outside|above\rb* the clever stuff and ought to be back to normal now. But let's do some nesting.
+\esb\cat testing this\cat*
+\s A sidebar
+\qt3-s|Jim\*
+\p
 \v 3 James said \qt1-s|who="James"\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
 said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"\qt-e\*, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+\qt3-e\*
+\p \cat insb\cat* This is a categorized paragraph in a sidebar\f + \fr 1:3 \ft What about footnotes?\f*
+\p This is a normal paragraph in a sidebar
+\esbe
 \p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, nisi ut aliquid ex ea commodi
 consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui \w dolorem\w* eum fugiat quo voluptas nulla pariatur?
 \p
@@ -36,9 +48,11 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \p
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
-\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't.
-
-\s \zmine-s\* A test of a custom milestone
+\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to page \zpage|Spirit\*.
+\p
+\zmine-s\* 
+\s T 
+A test of a custom milestone
 \p 
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
 \v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
@@ -64,7 +78,7 @@ enter the second time into his mother's womb, and be born?
 \p  Verily, verily, I say unto thee, Except a man be born of
 water and of the Spirit, he cannot enter into the kingdom of God.
 \v  6 That which is born of the flesh is flesh; and that which is born of the
-Spirit is spirit.
+Spirit is \jmp |link-id="Spirit"\jmp*spirit.
 \v  7 Marvel not that I said unto thee, Ye must be born again.
 \v  8 The wind bloweth where it listeth, and thou hearest the sound thereof, but
 canst not tell whence it cometh, and whither it goeth: so is every one that is
@@ -72,4 +86,16 @@ born of the Spirit.\qt-e\*
 \p
 \v  9 Nicodemus answered and said unto him, How can these things be?
 
-\ts-e|\*
+\ts-e \*
+
+\p Getting things wrong:
+
+\p I want paragraph 1 as a normal pargraph
+
+\zright-s\*
+\p 
+I want paragraph 2 as a right-justified paragraph
+\p I want paragraph 3 as a normal pargraph
+\zright-e\*
+\p I want paragraph 4 as a normal pargraph
+

@@ -96,8 +96,11 @@
 %+cdig_define-hooks
 \newtoks\diglotLho@ks
 \newtoks\diglotRho@ks
+\def\addToSideHooks#1#2{\x@\let\x@\tmp\csname diglot#1ho@ks\endcsname \x@\global\x@\tmp\x@{\the\tmp #2}}
 \def\addToLeftHooks#1{\x@\global\x@\diglotLho@ks\x@{\the\diglotLho@ks #1}}
 \def\addToRightHooks#1{\x@\global\x@\diglotRho@ks\x@{\the\diglotRho@ks #1}}
+\def\addToLHooks{\addToSideHooks{L}}
+\def\addToRHooks{\addToSideHooks{R}}
 %-cdig_define-hooks
 
 \def\stylesheetL{\gdef\ds@ffix{L}\stylesh@@t}%Need to reset ds@ffix to {}, so that side-specific settings can be applied.
@@ -521,7 +524,7 @@
       \ifvoid\p@rtl\else
         % FIXME: Merge boxes back together? More data needed! It didn't used to
         % be here, but surely it ought to be?
-        \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with \NoMergeReflow\ifNoMergeReflow false\else true\fi}%
+        \message{+++RARE CONDITION MET. Maybe doing wrong thing on page \the\pageno, debug posn \the\TRACEcount. Toggle with NoMergeReflow\ifNoMergeReflow false\else true\fi}%
         \ifNoMergeReflow\else
           \global\setbox\@xcs\vbox{\joinboxes{\p@rtl}{\@xcs}{2}{0}}%
         \fi
@@ -598,7 +601,16 @@
   {\count255=\numexpr \m@rksm@x+1\relax
   \x@\xdef\x@\m@rksm@x{\the\count255}%
   \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
+  \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
 }
+\def\getm@rknum#1{%retrieve or get a new m@rknum#1
+  \x@\let\x@\m@rknum\csname m@rknum#1\endcsname
+  \ifx\m@rknum\relax
+    \newm@rknum{#1}\let\m@rknum\m@rksm@x
+  \fi
+  \trace{ma}{getm@rknum #1 -> \m@rknum}%
+}
+  
 
 \newm@rknum{L}% registers m@rknumL
 \newm@rknum{R}% registers m@rknumR
@@ -946,8 +958,8 @@
   \after@this
 }
 
-\def\ztmon{\tracingmacros=1}
-\def\ztmoff{\tracingmacros=0}
+\def\ztmon{\tracingassigns=1 \tracingmacros=1}
+\def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
   \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
@@ -2039,6 +2051,7 @@
      \ifdiglotSepNotes%
      \else%
        % RTLness will have been asserted (or not) when the note was defined.
+       \vfill
        \box\notechunk%
      \fi%
      \ifvoid\verybottomins\else % \kern-\dimen0
@@ -2839,6 +2852,7 @@
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+    \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
 %TODO:
 %FIXMEs needing for polyglot processing:
 % UI!

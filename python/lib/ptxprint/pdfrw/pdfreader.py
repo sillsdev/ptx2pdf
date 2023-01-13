@@ -548,7 +548,7 @@ class PdfReader(PdfDict):
             source.warning(
                 'Unsupported Encrypt version: {}'.format(version))
 
-    def __init__(self, fname=None, fdata=None, decompress=False,
+    def __init__(self, fname=None, fdata=None, source=None, trailer=None, decompress=False,
                  decrypt=False, password='', disable_gc=True, verbose=True):
         self.private.verbose = verbose
 
@@ -557,6 +557,7 @@ class PdfReader(PdfDict):
         if disable_gc:
             gc.disable()
 
+        sourceonly = True
         try:
             if fname is not None:
                 assert fdata is None
@@ -572,32 +573,36 @@ class PdfReader(PdfDict):
                         raise PdfParseError('Could not read PDF file %s' %
                                             fname)
 
-            assert fdata is not None
-            fdata = convert_load(fdata)
+            if fdata is not None:
+                fdata = convert_load(fdata)
 
-            if not fdata.startswith('%PDF-'):
-                startloc = fdata.find('%PDF-')
-                if startloc >= 0:
-                    log.warning('PDF header not at beginning of file')
-                else:
-                    lines = fdata.lstrip().splitlines()
-                    if not lines:
-                        raise PdfParseError('Empty PDF file!')
-                    raise PdfParseError('Invalid PDF header: %s' %
-                                        repr(lines[0]))
+                if not fdata.startswith('%PDF-'):
+                    startloc = fdata.find('%PDF-')
+                    if startloc >= 0:
+                        log.warning('PDF header not at beginning of file')
+                    else:
+                        lines = fdata.lstrip().splitlines()
+                        if not lines:
+                            raise PdfParseError('Empty PDF file!')
+                        raise PdfParseError('Invalid PDF header: %s' %
+                                            repr(lines[0]))
 
-            self.private.version = fdata[5:8]
+                self.private.version = fdata[5:8]
 
-            endloc = fdata.rfind('%EOF')
-            if endloc < 0:
-                raise PdfParseError('EOF mark not found: %s' %
-                                    repr(fdata[-20:]))
-            endloc += 6
-            junk = fdata[endloc:]
-            fdata = fdata[:endloc]
-            if junk.rstrip('\00').strip():
-                log.warning('Extra data at end of file')
+                endloc = fdata.rfind('%EOF')
+                if endloc < 0:
+                    raise PdfParseError('EOF mark not found: %s' %
+                                        repr(fdata[-20:]))
+                endloc += 6
+                junk = fdata[endloc:]
+                fdata = fdata[:endloc]
+                if junk.rstrip('\00').strip():
+                    log.warning('Extra data at end of file')
 
+                startloc, source = self.findxref(fdata)
+                sourceonly = False
+
+            assert source is not None
             private = self.private
             private.indirect_objects = {}
             private.deferred_objects = set()
@@ -607,25 +612,26 @@ class PdfReader(PdfDict):
                                }
             for tok in r'\ ( ) < > { } ] >> %'.split():
                 self.special[tok] = self.badtoken
-
-            startloc, source = self.findxref(fdata)
             private.source = source
 
             # Find all the xref tables/streams, and
             # then deal with them backwards.
-            xref_list = []
-            while 1:
-                source.obj_offsets = {}
-                trailer, is_stream = self.parsexref(source)
-                prev = trailer.Prev
-                if prev is None:
-                    token = source.next()
-                    if token != 'startxref' and not xref_list:
-                        source.warning('Expected "startxref" '
-                                       'at end of xref table')
-                    break
-                xref_list.append((source.obj_offsets, trailer, is_stream))
-                source.floc = int(prev)
+            source.xref_list = []
+            if not sourceonly:
+                while 1:
+                    source.obj_offsets = {}
+                    trailer, source.is_stream = self.parsexref(source)
+                    prev = trailer.Prev
+                    if prev is None:
+                        token = source.next()
+                        if token != 'startxref' and not xref_list:
+                            source.warning('Expected "startxref" '
+                                           'at end of xref table')
+                        break
+                    source.xref_list.append((source.obj_offsets, trailer, source.is_stream))
+                    source.floc = int(prev)
+            else:
+                assert trailer is not None
 
             # Handle document encryption
             private.crypt_filters = None
@@ -644,13 +650,13 @@ class PdfReader(PdfDict):
 
                 self._parse_encrypt_info(source, password, trailer)
 
-            if is_stream:
+            if source.is_stream:
                 self.load_stream_objects(trailer.object_streams)
 
-            while xref_list:
-                later_offsets, later_trailer, is_stream = xref_list.pop()
+            while source.xref_list:
+                later_offsets, later_trailer, source.is_stream = source.xref_list.pop()
                 source.obj_offsets.update(later_offsets)
-                if is_stream:
+                if source.is_stream:
                     trailer.update(later_trailer)
                     self.load_stream_objects(later_trailer.object_streams)
                 else:
@@ -666,14 +672,12 @@ class PdfReader(PdfDict):
                 self.decrypt_all()
                 trailer.Encrypt = None
 
-            if is_stream:
-                self.Root = trailer.Root
-                self.Info = trailer.Info
-                self.ID = trailer.ID
-                self.Size = trailer.Size
-                self.Encrypt = trailer.Encrypt
+            if source.is_stream:
+                for a in ('Root', 'Info', 'ID', 'Size', 'Encrypt'):
+                    v = getattr(trailer, a)
+                    setattr(self, a, v.copy() if sourceonly else v)
             else:
-                self.update(trailer)
+                self.update({k: (v.copy() if isinstance(v, PdfDict) else v) for k,v in trailer.items()})
 
             # self.read_all_indirect(source)
             private.pages = self.readpages(self.Root)

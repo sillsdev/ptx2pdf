@@ -16,7 +16,7 @@ This esb is included from a separate file, triggered before the verse number for
 \EndTrigger
 
 \AddTrigger  TST1.2  
-\bd This bit of text is triggered after the verse number.\bd*
+\bd This bit of text is triggered after the verse number.\bd*~
 \EndTrigger
 
 \AddTrigger TST1.3=2

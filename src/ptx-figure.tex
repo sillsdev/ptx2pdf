@@ -451,14 +451,15 @@
   %
   %\trace{g}{Parse credit box}%
   \let\cr@dit@col\empty
-  \edef\cr@ditstyle{x-credit|fig}%
+  \edef\cr@ditstyle{x-credit}%
+  \edef\cr@ditlist{x-credit|fig,x-credit}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@ditbox\tru@\else
       \expandafter\p@rseCreditBox \cr@ditbox - - - \end\relax%
     \fi
     \ifx\cr@ditbox\tru@
     \else
-      \edef\cr@ditstyle{x-credit:box=\cr@ditbox|fig,\cr@ditstyle}%
+      \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
   % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a 
@@ -476,7 +477,8 @@
      \count255=-\count255
   \fi
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditstyle}{\cr@ditstyle}\ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
+  \setbox0=\hbox{\s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+    \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
@@ -579,11 +581,12 @@
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
  \openin\t@stread=#1
    \ifeof\t@stread
+     \message{MISSING IMAGE: #1 -> \tmpfile}%
      \dimen0=\ifdim #3>#4 #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
      \message{INPUTFILE: #1 -> \tmpfile}%
-     \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6
+     \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6%
    \fi
 }
 
@@ -988,7 +991,7 @@
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
-      \gridb@x#1
+      \gridb@x#1%
       \lastdepth=0pt
       %\kern 0pt
       \ifearlyeotpskip\kern -1sp\kern 1sp\fi
@@ -1037,8 +1040,8 @@
 % #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
 \def\d@figurep@ge#1#2#3#4#5{%
   \trace{g}{\w@tsit\space is #2, \the\ht#1, \the\wd#1}%
-  \dimen0=#3 \advance\dimen0 by -\ht#1
-  \advance\dimen0 by -\dp#1
+  \dimen0=#3\advance\dimen0 by -\ht#1%
+  \advance\dimen0 by -\dp#1%
   \divide\dimen0 by 2
   \ifx\picV@lign\@lignTop \trace{g}{V alignment: top}\setbox#1\vbox{\vbox to #3{\kern#5\box#1\vss}}\else
     \ifx\picV@lign\@lignBot \trace{g}{V alignment: bottom}\setbox#1\vbox{\vbox to #3{\vss\box#1}}\else
@@ -1053,10 +1056,15 @@
   \global\setbox\wholepagepic\vbox{\unvbox\wholepagepic\unvbox#1\kern#4 sp\penalty 1}% magic number
   \iftemp\else
     %\def\pagecontents{\vss\box#1\vss}\plainoutput
-    \trace{g}{Can proceess immediately}%
-    \dofigp@ge
+    \ifh@ldfig
+      \h@ldfigfalse
+    \else
+      \trace{g}{Can proceess immediately}%
+      \dofigp@ge
+    \fi
   \fi
 }
+\newif\ifh@ldfig
 
 
 \def\DefaultSpaceBeside{10pt}
@@ -1350,6 +1358,6 @@
 }
 \newtoks\onship@ut 
 \def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}
-\def\nextshipout{\the\onship@ut\onship@ut{}\dofigp@ge}
+\def\nextshipout{\x@\toks0\x@{\the\onship@ut}\global\onship@ut{}\the\toks0\dofigp@ge}
 %-cfig_dofigpage
 

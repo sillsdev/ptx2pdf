@@ -1,4 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Part of the ptx2pdf macro package for formatting USFM text
 % copyright (c) 2007 by SIL International
 % written by Jonathan Kew
@@ -53,7 +53,9 @@
       \raise12pt \vtop{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL}%
+        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL\par
+        \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
+          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
@@ -72,6 +74,9 @@
       \vrule height \dimen0 depth -\bottomm@rgin width 15pt
       \kern 4.8pt
       \vrule height -5pt depth 30pt width .4pt
+      \kern -0.2pt
+      \ifdim\sp@newidth>0pt\lower 6pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
+        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\hss\fi
       \hss
       \vrule height -5pt depth 30pt width .4pt
       \kern 4.8pt
@@ -86,7 +91,6 @@
 %-c_makecropmarks
 
 %+c_shipwithcropmarks
-\newif\ifrotate\rotatefalse
 \newdimen\pdfcropwidth
 \newdimen\pdfcropheight
 \newdimen\tabheight % In page-orientation
@@ -144,9 +148,9 @@
   % 6 - =0, no movement >0pt  separation of text from bottom =1sp, centre text.  < 0pt separation from top of box to top of text 
   % 7 - text (should include glue to align / centre e.g. \hss)
   %\dimen2=\baselineskip\advance\dimen2 by -.2ex
-  % Box height is set by \tabwidth, text is set 2pt below top 
+  % For tabs, Box height is set by \tabwidth, text is set 2pt below top 
   \trace{pt}{(#1) (#2) #3 #4 #5 #6 #7}%
-  \dimen2=#6
+  \dimen2=#6%
   \setbox0\hbox to #3{#7}%
   \ifdim\dimen2<0pt
    \advance\dimen2 by #5\advance\dimen2 by -\ht0
@@ -161,10 +165,10 @@
      \divide\dimen2 by 2
     \else
       \ifdim\dimen2=0pt \else
-        %Distance from bottom  shift=#6+dp0 -#4
+        %Distance from bottom  shift=#6+dp0 -#4%
         %can't use -#4 because #4 may be -ve already.
         \dimen2=#4\multiply\dimen2 by -1
-        \advance\dimen2 by #6
+        \advance\dimen2 by #6%
         \advance\dimen2 by \dp0
       \fi
     \fi
@@ -185,7 +189,6 @@
   \advance\dimen2 by \dp0%
   \hbox to \dimen2{\kern -0.5\wd0%
     %kern so that the correct edge of the box is at the centrepoint location, and set rotation
-    %\ifodd\pageno \kern\ht0\else\kern\dp0\fi %Old-style
     \r@tSet
     \trace{pt}{Rotating tab \@ngle (+ is anticlockwise)}%
     \vbox to 0pt{\vss\hbox to 0pt{\kern 0.5\wd0\special{x:gsave}\special{x:rotate \@ngle}\hss}\vss}%
@@ -211,7 +214,7 @@
 \def\lastw@rning{}
 
 \def\in@tThumbT@bs{%Thumb-tab setup code goes here.
-  \let\initThumbT@bs\relax
+  \global\let\initThumbT@bs\relax
 }
 
 \def\reinitThumbTabs{%Function for users to call if they've altered something that affects initialisation
@@ -221,6 +224,7 @@
 \reinitThumbTabs
 
 \def\TabBleed{5pt}%
+\newif\ifstretchtabs
 \def\t@bbox{%
  \s@tfont{\ThumbTabStyle}{\ThumbTabStyle}%
  \x@\let\x@\t@bBoxCol\csname\t@bname -boxcol\endcsname
@@ -252,7 +256,13 @@
  \fi
  \setbox0\hbox{\b@okShort}%
  \iftemp%Rotated tabs
-   \ifdim\wd0>\tabheight\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab height}\fi\fi
+   \edef\t@bdim{\the\tabheight}%
+   \ifdim\wd0>\tabheight
+     \ifstretchtabs
+       \edef\t@bdim{\the\dimexpr \wd0 + 1pt\relax}%
+     \fi
+     \ifx\lastw@rning\b@okShort\else\let\lastw@rning\b@okShort\message{Thumb tab contents "\b@okShort" too wide (\the\wd0) for tab height (\the\tabheight)}\fi
+   \fi
    \tempfalse
    \ifodd\pageno
      \ifTabTopToEdgeOdd\temptrue\fi
@@ -266,7 +276,9 @@
      \edef\bxdp{\the\tabwidth}%
      \bgroup
        \dimen1=\vertThumbtabVadj%
-       \ifdim\dimen1=1sp\else %Don't mess with special value!
+       \ifdim\dimen1=1sp
+         % Something should happen here. TabBleed is confusing the positioning 
+       \else 
          \multiply\dimen1 by -1%
        \fi
        \xdef\V@dj{\the\dimen1}%
@@ -276,7 +288,7 @@
      \edef\bxdp{\the\dimen0}%
      \edef\V@dj{\vertThumbtabVadj}%
    \fi
-   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\tabheight}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
+   \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\t@bdim}{\bxdp}{\bxht}{\V@dj}{\vertThumbtabContents{\b@okShort}}}%
    \ht0=\tabwidth
    \let\r@tSet\r@cwSet 
    \ifodd\pageno
@@ -292,11 +304,17 @@
      \if\st@rtatedge F\hss\else \kern-1\tabwidth\fi
    }%
  \else%Unrotated tabs
-   \ifdim\wd0>\tabwidth\ifx\lastw@rning\b@okShort\else\xdef\lastw@rning{\b@okShort}\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi\fi
+   \edef\t@bdim{\tabwidth}%
+   \ifdim\wd0>\tabwidth
+     \ifstretchtabs
+       \edef\t@bdim{\the\dimexpr \wd0 + 1pt\relax}%
+     \fi
+     \ifx\lastw@rning\b@okShort\else\let\lastw@rning\b@okShort\message{Thumb tab contents "\b@okShort" too wide for tab width}\fi
+   \fi
    \hbox to 0pt{%
     \dimen0=\ifodd\pageno\TabBleed\else-\TabBleed\fi
     \if\st@rtatedge F\hss\else\kern \dimen0\fi% Bleed of 1pt
-    \dimen0=\TabBleed \advance\dimen0\tabwidth
+    \dimen0=\TabBleed \advance\dimen0\t@bdim
     \setbox0\hbox{\colourbox{\t@bBoxCol}{\t@bFontCol}{\dimen0}{0.1\tabheight}{0.9\tabheight}{\horizThumbtabVadj}{\horizThumbtabContents{\b@okShort}}}%
    % \setbox2\hbox{\vrule height \ht0 depth \dp0 width 1pt}%
    % \copy2 
@@ -337,8 +355,10 @@
         \advance\dimen1 by -\TabsEnd
         \advance\dimen1 by -\tabheight
         \count255=\NumTabs
-        \advance\count255 by -1
-        \divide\dimen1 by\count255
+        \ifnum\count255 >1
+          \advance\count255 by -1
+          \divide\dimen1 by\count255
+        \fi
         \count255=\tabnum
         \advance\count255 by -1
         \multiply\dimen1 by \count255
@@ -409,6 +429,11 @@
   \trace{G}{\the\pdfpagewidth x \the\pdfpageheight}
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \pdfp@geout
+    \ifvoid\ornXobjects\else
+      \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
+      \global\let\ornXFid@list\empty
+      \vbox to 0pt{\vss\box\ornXobjects}%
+    \fi
     \edef\oldup{\the\XeTeXupwardsmode}
     \XeTeXupwardsmode=0 %
     \ifrotate
@@ -460,6 +485,11 @@
     \pdfp@geout
     \offinterlineskip                                                           %(1)
     \vbox to \pdfpageheight{\vss
+      \ifvoid\ornXobjects\else
+        \trace{orn}{Emmitting Xobj definitions: \ornXFid@list}%
+        \global\let\ornXFid@list\empty
+        \vbox to 0pt{\vss\box\ornXobjects}%
+      \fi
       \hbox to \pdfpagewidth{\hss#1\hss}
       \vss}
     \vss
@@ -746,6 +776,7 @@
   \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
   \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
+  \holdXobjectsfalse
   \shipwithcr@pmarks{#1}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
   \advancepageno
@@ -758,4 +789,70 @@
   }
 %-c_plainoutput
 
+\newbox\instopcr@p
+\newbox\insbottomcr@p
+\newdimen\sp@newidth
+\def\ship@utcoverinsert#1#2#3#4{%
+  \trace{cov}{ship@utcoverinsert #1 \the\wd#2 \space x \the\ht#2 \space #3 #4}%
+% #1 - insertion name, #2 - box, #3 - spine width, #4 - bleed
+% make cropmarks if spine width >=0pt, if -ve, no cropmarks
+  \dimen5=\PaperWidth \dimen6=\PaperHeight
+  \PaperWidth=\wd#2 \PaperHeight=\ht#2%
+  \dimen7=\pdfpagewidth \dimen8=\pdfpageheight
+  \ifdim #3<0pt
+    \dimen0=0pt
+  \else
+    \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
+    \sp@newidth=#3 \makecr@ps
+    \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
+    \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
+    \dimen0=0.5in
+  \fi
+  %\advance\PaperWidth by 2\dimen0 % increase PDF media size
+  %\advance\PaperHeight by 2\dimen0
+  \let\pr@tect=\noexpand
+  \trace{cov}{\the\PaperWidth\space x\space \the\PaperHeight}
+  %\tracingoutput=1 
+  \showboxdepth=9999
+  \showboxbreadth=9999
+  \pdfpagewidth=\PaperWidth
+  \pdfpageheight=\PaperHeight
+  \hoffset=-1in \voffset=-1in% shift the origin to (0,0)
+  \ifdim #4>\dimen0\relax \dimen0=#4\advance\hoffset #4 \advance\voffset #4
+  \else\advance\hoffset \dimen0\advance\voffset \dimen0\fi %\else\advance\hoffset -#4 \advance\voffset -#4\fi
+  \advance\pdfpagewidth 2\dimen0
+  \advance\pdfpageheight 2\dimen0
+  %\pdfpagewidth=0.99626401\pdfpagewidth
+  %\pdfpageheight=0.99626401\pdfpageheight
+  \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
+    \bgroup
+      \dimen1=0.99626401\PaperWidth
+      \dimen2=0.99626401\PaperHeight
+      \dimen0=0.99626401\dimen0 %convert to bp
+      \trace{cov}{trimbox: \the\dimen0, \the\dimen0, \the\dimen1, \the\dimen2. MediaBox: 0, 0, \the\pdfcropwidth, \the\pdfcropheight. offset = \the\hoffset \space x \the\voffset}%
+      \special {pdf:put @thispage <</TrimBox [\strip@pt{\dimen0} \strip@pt{\dimen0} \strip@pt{\dimen1} \space
+        \strip@pt{\dimen2} ] /MediaBox [0 0 \strip@pt\pdfpagewidth \space
+        \strip@pt\pdfpageheight ] >>}%
+    \egroup
+    \special {pdf:put @thispage <</PieceInfo <</ptxprint 
+        <</LastModified /D:20221126103720Z /Private <</Insertion /#1>> >>
+    >> >>}%
+    \edef\oldup{\the\XeTeXupwardsmode}
+    \XeTeXupwardsmode=0 %
+    \trace{o}{p@ = \the\p@}\offinterlineskip
+    \vbox to \PaperHeight{\vss \box#2\vss}
+    \vss
+    \ifdim #3>0pt
+      \vbox to 0pt{
+        %\kern\dimen0 \moveright\dimen0
+        \copy\instopcr@p
+        \kern\PaperHeight% \moveright\dimen0
+        \copy\insbottomcr@p
+        \vss
+        }
+    \fi
+  }%
+  \PaperWidth=\dimen5 \PaperHeight=\dimen6
+  \pdfpagewidth=\dimen7 \pdfpageheight=\dimen8
+}
 \endinput

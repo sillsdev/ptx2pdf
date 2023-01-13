@@ -1,0 +1,37 @@
+#!/usr/bin/python3
+
+import argparse, sys, os
+
+if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+    site.USER_BASE = os.path.join(os.path.expanduser("~"), ".local")
+    if not hasattr(site, 'getuserbase'):
+        site.getuserbase = lambda : site.USER_BASE
+    os.putenv("PATH", sys._MEIPASS)
+
+try:
+    from ptxprint.pdf.pdfdiff import createDiff
+except ImportError:
+    sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
+    from ptxprint.pdf.pdfdiff import createDiff
+
+def splithex(s):
+    return [int(s[i:i+2], 16) for i in range(0, 6, 2)]
+
+def doError(txt, secondary=None, **kw):
+    print(txt)
+
+parser = argparse.ArgumentParser()
+parser.add_argument('infilea', help="Original input PDF file")
+parser.add_argument('infileb', help="Different input PDF file")
+parser.add_argument('outfile', help="Output difference PDF file")
+parser.add_argument('-O','--oldcol',help="From colour 6 hex RGB digits")
+parser.add_argument('-N','--newcol',help="To colour 6 hex RGB digits")
+args = parser.parse_args()
+
+if args.oldcol is not None:
+    args.oldcol = splithex(args.oldcol)
+if args.newcol is not None:
+    args.newcol = splithex(args.newcol)
+
+res = createDiff(os.path.abspath(args.infilea), os.path.abspath(args.infileb),
+        os.path.abspath(args.outfile), doError, color=args.oldcol, oldcolor=args.newcol)

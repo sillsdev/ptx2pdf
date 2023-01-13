@@ -1,6 +1,6 @@
 \SetBorder Vectorian10inside
 \BorderWidth 10
-\BorderPadding -11
+\BorderPadding -12
 \BoxPadding 20
 \BorderLineWidth 0.3
 \BorderStyle ornaments
@@ -8,7 +8,7 @@
 
 \SetBorder Vectorian15inside
 \BorderWidth 15
-\BorderPadding -16
+\BorderPadding -17
 \BoxPadding 20
 \BorderLineWidth 0.3
 \BorderStyle ornaments
@@ -80,15 +80,15 @@
 \SetBorder Vectorian3
 \BorderPatternTop 31|||2.5, 47||-, 48||, 70||*C, 47||, 48||-, 31|h||2.5
 \BorderPatternBot 31|v||2.5, 47|v|-, 48|v|, 70||*C, 47|v|, 48|v|-, 31|d||2.5
-\BorderPatternLeft 47|L|-, 48|L|, 70|l|*C,  47|L|, 48|L|-
-\BorderPatternRight 47|l|-, 48|l|, 70|l|*C, 47|l|, 48|l|-
+\BorderPatternLeft 47|L|-, 48|L|(1-1)A, 70|l|*C,  47|L|"A, 48|L|-
+\BorderPatternRight 47|l|-, 48|l|=A, 70|l|*C, 47|l|=A, 48|l|-
 \BorderRef Vectorian20inside
  
 \SetBorder Vectorian4
 \BorderPatternTop 31|||2.5, 47||-, 0||*e, 48||-,47||?d,48||?d, 47||-, 0||"e, 48||-, 31|h||2.5
 \BorderPatternBot 31|v||2.5, 47|v|-, 0||*e, 48|v|-, 47|v|=d,48|v|=d, 47|v|-,0||*e,  48|v|-, 31|d||2.5
-\BorderPatternLeft 47|L|-, 0||*e, 48|L|, 47|L|, 48|L|?d,47|L|?d, 0||*e,  48|L|-
-\BorderPatternRight 47|l|-,0||*e,  48|l|,47|l|, 48|l|?d,47|l|?d, 0||*e,  48|l|-
+\BorderPatternLeft 47|L|-, 0||*e, 48|L|(1-1)A, 47|L|(1-1)B, 48|L|?d,47|L|?d, 0||*e,  48|L|-
+\BorderPatternRight 47|l|-,0||*e,  48|l|(1-1)A, 47|l|(1-1)B, 48|l|?d,47|l|?d, 0||*e,  48|l|-
 \BorderRef Vectorian15inside
 
 \SetBorder v88
@@ -215,6 +215,7 @@
 \BorderPatternTop  -1||+a, 84|||1.045,-1||+a
 \VerticalAlign b
 \BorderRef vrule12
+
 \Marker cat:VectorianRule3|zrule
 \BorderStyle VectorianRule3
 
@@ -291,6 +292,47 @@
 \Marker cat:VectorianRule89|zrule
 \BorderStyle VectorianRule89
 
+\SetBorder hrule5
+\BorderWidth 5
+\BorderColour x000000
+\BorderFillColour x000000
+\BorderStyle ornaments
+\BorderStyleExtra pgfhan
+\VerticalAlign c
+
+\SetBorder hrule8
+\BorderWidth 8 
+\Raise -.5
+\BorderColour x000000
+\BorderFillColour x000000
+\BorderStyle ornaments
+\BorderStyleExtra pgfhan
+\VerticalAlign c
+
+\SetBorder HanRule62
+\BorderPatternTop 62|h,29||-|0.56,62|
+\BorderRef hrule8
+\Marker cat:HanRule62|zrule
+\BorderStyle HanRule62
+
+\SetBorder HanRule62v
+\BorderPatternTop 62|d,29||-|0.56,62|v
+\BorderRef hrule8
+\Marker cat:HanRule62v|zrule
+\BorderStyle HanRule62v
+
+\SetBorder HanRule35
+\BorderPatternTop 35||*a
+\BorderRef hrule5
+\Marker cat:HanRule35|zrule
+\BorderStyle HanRule35
+
+\SetBorder HanRule47
+\BorderPatternTop 47||*a
+\BorderRef hrule5
+\Marker cat:HanRule47|zrule
+\BorderStyle HanRule47
+
 \SetBorder Han1
 \BorderRef Han15inside
 \BorderPatternTop 25|||3.4,47|h|+A,70||?c,70|h|"c,47||"A,25|h||3.4
@@ -330,10 +372,10 @@
 \SetBorder Han5
 \BorderRef Han15inside
 \OrnamentScaleRef s:y|34
-\BorderPatternTop 7|||s,33||+a||0.825,33|h|"a||0.825,7|h||s
-\BorderPatternBot 7|v||s,33|v|=a||-0.835,33|d|=a||-0.835,7|d||s
-\BorderPatternLeft 33|L|*b||-0.835,33|r|"b||-0.835
-\BorderPatternRight 33|l|=b||0.825,33|R|=b||0.825
+\BorderPatternTop 7|||s, 33||+a||0.825, 33|h|"a||0.825, 7|h||s
+\BorderPatternBot 7|v||s, 33|v|=a||-0.835, 33|d|=a||-0.835, 7|d||s
+\BorderPatternLeft 33|L|*b||-0.835, 33|r|"b||-0.835
+\BorderPatternRight 33|l|=b||0.825, 33|R|=b||0.825
 \BorderPadding 8 
 \BoxPadding 4
 \BorderLineWidth 0.3

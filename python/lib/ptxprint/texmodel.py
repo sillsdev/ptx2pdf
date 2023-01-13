@@ -17,6 +17,7 @@ from ptxprint.interlinear import Interlinear
 from ptxprint.reference import Reference, RefRange, RefList, RefSeparators, AnyBooks
 from ptxprint.xrefs import Xrefs
 from ptxprint.pdf.pdfsanitise import sanitise
+from ptxprint.texpert import TeXpert
 import logging
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,8 @@ ModelMap = {
     "config/name":              ("_cfgid", None),
     "config/filterpics":        ("c_filterPicList", None),
     "config/autosave":          ("c_autoSave", None),
+    "config/displayfontsize":   ("s_viewEditFontSize", None),
+    "config/texperthacks":      ("c_showTeXpertHacks", None),
 
     "project/id":               ("_prjid", None),
     "project/bookscope":        ("r_book", None),
@@ -85,6 +88,7 @@ ModelMap = {
     "project/copyright":        ("t_copyrightStatement", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v).replace("//", "\u2028") if v is not None else ""),
     "project/iffrontmatter":    ("c_frontmatter", lambda w,v: "" if v else "%"),
+    "project/inclcoverperiphs": ("c_includeCoverSections", None),
     "project/periphpagebreak":  ("c_periphPageBreak", None),
     "project/colophontext":     ("txbf_colophon", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
@@ -95,8 +99,6 @@ ModelMap = {
     "paper/height":             ("ecb_pagesize", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
     "paper/pagesize":           ("ecb_pagesize", None),
-    "paper/weight":             ("s_paperWeight", None),
-    "paper/thickness":          ("s_paperThickness", None),
     "paper/ifwatermark":        ("c_applyWatermark", lambda w,v: "" if v else "%"),
     "paper/watermarkpdf":       ("btn_selectWatermarkPDF", lambda w,v: w.watermarks.as_posix() \
                                  if (w.get("c_applyWatermark") and w.watermarks is not None and w.watermarks != 'None') else ""),
@@ -271,17 +273,30 @@ ModelMap = {
     "document/pagefullfactor":     ("s_pageFullFactor", lambda w,v: float(v or "0.65")),
     
     "document/onlyshowdiffs":   ("c_onlyDiffs", None),
-    "document/diffcolor":       ("col_diffColor", None),
+    "document/ndiffcolor":      ("col_ndiffColor", None),
+    "document/odiffcolor":      ("col_odiffColor", None),
     "document/diffpdf":         ("btn_selectDiffPDF", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
     "document/printarchive":    ("c_printArchive", None),
 
+    "cover/makecoverpage":      ("c_makeCoverPage", lambda w,v: "" if v else "%"),
+    "cover/rtlbookbinding":     ("c_RTLbookBinding", None),
+    "cover/includespine":       ("c_inclSpine", None),
+    "cover/rotatespine":        ("fcb_rotateSpineText", None),
+    "cover/overridepagecount":  ("c_overridePageCount", None),
+    "cover/totalpages":         ("s_totalPages", None),
+    "cover/coveradjust":        ("s_coverAdjust", None),
+    "cover/weightorthick":      ("s_paperWidthOrThick", None),
+    "cover/spineoverlapback":   ("s_spineOverlapBack", None),
+    "cover/spineoverlapfront":  ("s_spineOverlapFront", None),
+    "cover/coverbleed":         ("s_coverBleed", None),
+    "cover/papercalcunits":     ("r_paperCalc", None),
+
     "document/keepversions":    ("s_keepVersions", None),
     "document/settingsinpdf":   ("c_inclSettingsInPDF", None),
-    "document/spinethickness":  ("s_spineThickness", None),
-    "document/rotatespinetext": ("fcb_rotateSpineText", None),
     
     "finishing/pgsperspread":   ("fcb_pagesPerSpread", None),
+    "finishing/rtlpagination":  ("c_RTLpagination", None),
     "finishing/foldfirst":      ("c_foldFirst", None),
     "finishing/scaletofit":     ("c_scaleToFit", None),
     "finishing/sheetsize":      ("ecb_sheetSize", None),
@@ -386,6 +401,12 @@ ModelMap = {
     "studynotes/colgutteroffset": ("s_ef_colgutteroffset", lambda w,v: "{:.1f}".format(float(v)) if v else "0.0"),
   # "studynotes/bottomrag":       ("s_ef_bottomRag", lambda w,v: str(int(v or 0)+0.95)),
     "studynotes/includesidebar":  ("c_sidebars", None),
+    "studynotes/txlinclquestions":("c_txlQuestionsInclude", None),
+    "studynotes/txloverview":     ("c_txlQuestionsOverview", None),
+    # "studynotes/txlboldover":     ("c_txlBoldOverview", None),
+    "studynotes/txlnumbered":     ("c_txlQuestionsNumbered", None),
+    "studynotes/txlshowrefs":     ("c_txlQuestionsRefs", None),
+    "studynotes/txllangtag":      ("t_txlQuestionsLang", None), 
     "studynotes/filtercats":      ("c_filterCats", None),
 
     "document/fontregular":     ("bl_fontR", lambda w,v,s: v.asTeXFont(s.inArchive) if v else ""),
@@ -470,19 +491,19 @@ class TexModel:
                'right':  'left'
     }
     _glossarymarkup = {
-        "ai": r"\1",                # "As is (pass|through)":                    
-        "no": r"\1",                # "None":                    
-        None: r"\1",                # None:                      
-        "bd": r"\\bd \1\\bd*",      # "format as bold":          
-        "it": r"\\it \1\\it*",      # "format as italics":       
-        "bi": r"\\bdit \1\\bdit*",  # "format as bold italics":  
-        "em": r"\\em \1\\em*",      # "format with emphasis":    
-        "ww":  r"\\w \1\\w*",       # "\w ...\w* char style":  
+        "ai": r"\1",                # "As is (pass|through)":
+        "no": r"\1",                # "None":
+        None: r"\1",                # None:
+        "bd": r"\\+bd \1\\+bd*",      # "format as bold":
+        "it": r"\\+it \1\\+it*",      # "format as italics":
+        "bi": r"\\+bdit \1\\+bdit*",  # "format as bold italics":
+        "em": r"\\+em \1\\+em*",      # "format with emphasis":
+        "ww":  r"\\+w \1\\+w*",       # "\w ...\w* char style":
         # Note that these glossary markers can be styled with \zglm 
         # But this doesn't work if fallback font is turned on for these chars
-        "fb": r"\\zglm \u2E24\\zglm*\1\\zglm \u2E25\\zglm*",    # "with ⸤floor⸥ brackets":   
-        "fc": r"\\zglm \u230a\\zglm*\1\\zglm \u230b\\zglm*",    # "with ⌊floor⌋ characters": 
-        "cc": r"\\zglm \u231e\\zglm*\1\\zglm \u231f\\zglm*",    # "with ⌞corner⌟ characters":
+        "fb": r"\\+zglm \u2E24\\+zglm*\1\\+zglm \u2E25\\+zglm*",    # "with ⸤floor⸥ brackets":   
+        "fc": r"\\+zglm \u230a\\+zglm*\1\\+zglm \u230b\\+zglm*",    # "with ⌊floor⌋ characters": 
+        "cc": r"\\+zglm \u231e\\+zglm*\1\\+zglm \u231f\\+zglm*",    # "with ⌞corner⌟ characters":
         "sb": r"*\1",               # "star *before word":       
         "sa": r"\1*",               # "star after* word":        
         "cb": r"^\1",               # "circumflex ^before word": 
@@ -529,6 +550,10 @@ class TexModel:
         "weights and measures": "measures",
         "map index": "maps",
         "lxx quotes in nt": "lxxquotes",
+        # "coverfront": "coverfront",
+        # "coverback": "coverback",
+        # "coverspine": "coverspine",
+        # "coverwhole": "coverwhole",
         "cover": "cover",
         "spine": "spine"
     }
@@ -685,6 +710,8 @@ class TexModel:
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
+        self.dict['cover/spinewidth_'] = self.printer.spine
+
 
     def updatefields(self, a):
         global get
@@ -938,6 +965,12 @@ class TexModel:
                 self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
+        if self.dict['project/plugins']:
+            p = self.dict['project/plugins']
+            if p.startswith("\\"):
+                res.append(p)
+            else:
+                res.append("\\def\\pluginlist{{{}}}".format(p))
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
@@ -950,10 +983,11 @@ class TexModel:
                                 res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
                         if extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
-                        if i == len(self.dict['project/bookids']) - 1 and self.dict['project/ifcolophon'] == "":
-                            res.append(r"\lastptxfiletrue")
+                        if i == len(self.dict['project/bookids']) - 1: 
+                          res.append(r"\lastptxfiletrue")
+                          if self.dict['project/ifcolophon'] == "":
                             if self.dict['project/pgbreakcolophon'] != '%':
-                                res.append(r"\endbooknoejecttrue")
+                               res.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._peripheralBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
@@ -1042,6 +1076,7 @@ class TexModel:
                     if "diglot/copyright" in self.dict:
                         res.append("\\def\\zcopyrightR\uFDEE{}\uFDEF".format(self.dict["diglot/copyright"]))
                     res.append("\\unprepusfm")
+                    res.append(TeXpert.generateTeX(self.printer))
                 elif l.startswith(r"%\defzvar"):
                     for k in self.printer.allvars():
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
@@ -1070,7 +1105,7 @@ class TexModel:
                             currk = ma[2] or ma[3]
                             if not currk:
                                 currk = self._periphids.get(m[1].lower(), m[1].lower())
-                            currperiphs = []
+                            currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:
                             if r"\periph" in l:
@@ -1079,6 +1114,7 @@ class TexModel:
                                 currperiphs.append(l.rstrip())
                     if currk is not None:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
+                        # print(f"{currk=}\n{self.frontperiphs[currk]=}")
         return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
@@ -1091,11 +1127,15 @@ class TexModel:
         if os.path.exists(infpath):
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
-                seenperiph = False
+                # seenperiph = False
                 for l in inf.readlines():
-                    if l.strip().startswith(r"\periph"):
-                        l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
-                        seenperiph = True
+                    # if l.strip().startswith(r"\periph"):
+                        # if "cover" in l:
+                            # pass
+                        # else:
+                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
+                        # seenperiph = True
+                    # if they incude INT, then this shouldn't be called, otherwise it should
                     l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
@@ -1140,13 +1180,15 @@ class TexModel:
                     l = scriptf.readline().replace("\uFEFF", "")
                     if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
                         scriptf.seek(0)
+                        gs = globals().copy()
+                        ls = {}
                         sys._argv = sys.argv
                         sys.argv = [script, infpath, outfpath]
-                        exec(scriptf.read())
+                        exec(scriptf.read(), gs, ls)
                         sys.argv = sys._argv
                         hasrun = True
-                if not hasrun:
-                    checkoutput(cmd) # dont't pass cmd as list when shell=True
+            if not hasrun:
+                checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
@@ -1265,8 +1307,11 @@ class TexModel:
             if doc is None:
                 doc = self._makeUSFM(dat.splitlines(True), bk)
             logger.debug("Add strongs numbers to text")
-            doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
-            
+            try:
+                doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
+            except SyntaxError as e:
+                self.printer.doError("Processing Strongs", secondary=str(e))
+
         if doc is not None and getattr(doc, 'doc', None) is not None:
             dat = str(doc)
             logger.log(5, "Unparsing text to run local changes\n"+dat)
@@ -1353,8 +1398,14 @@ class TexModel:
             return []
         qreg = r'(?:"((?:[^"\\]|\\.)*?)"|' + r"'((?:[^'\\]|\\.)*?)')"
         with universalopen(fname) as inf:
-            for i, l in enumerate(inf.readlines()):
-                l = l.strip().replace(u"\uFEFF", "")
+            alllines = list(inf.readlines())
+            i = 0
+            while i < len(alllines):
+                l = alllines[i].strip().replace(u"\uFEFF", "")
+                i += 1
+                while l.endswith("\\") and i < len(alllines):
+                    l = l[:-1] + alllines[i].strip()
+                    i += 1
                 l = re.sub(r"\s*#.*$", "", l)
                 if not len(l):
                     continue
@@ -1408,6 +1459,8 @@ class TexModel:
                                                  show=not self.printer.get("c_quickRun"))
                             break
                     continue
+                elif len(l):
+                    logger.warning(f"Faulty change line found at {i}:\n{l}")
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
@@ -1581,13 +1634,13 @@ class TexModel:
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):
             if self.dict["document/script"][8:].lower() != "hebr":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wh\s[^\\]*)(\p{sc=Hebr}.*?)"
-                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Hebr}\p{sc=Zyyy}\p{sc=Zinh}]))", 
-                                          flags=regex.M), r"\\+wh \1\\+wh*"))
+                hchar = r"\p{sc=Hebr}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wh[^\\]*)(\s+)([{hchar}][\\s{hchar}]*"
+                                          rf"[\p{{sc=Hebr}}][\s{hchar}]*\b)", flags=regex.M | regex.V1), "\\1\\+wh \\2\\+wh*"))
             if self.dict["document/script"][8:].lower() != "grek":
-                self.localChanges.append((None, regex.compile(r"(?<!\\wg\s[^\\]*)(\p{sc=Grek}.*?)"
-                                          r"(?=[\s\p{P}]*(?:\\|[^\p{sc=Grek}\p{sc=Zyyy}\p{sc=Zinh}]))", 
-                                          flags=regex.M), r"\\+wg \1\\+wg*"))
+                gchar = r"\p{sc=Grek}\p{P}\p{sc=Zinh}\p{sc=Zyyy}--\\"
+                self.localChanges.append((None, regex.compile(rf"(?<!\\[+]?wg[^\\]*)(\s+)([{gchar}][\s{gchar}]*"
+                                          rf"[\p{{sc=Grek}}][\s{gchar}]*\b)", flags=regex.M | regex.V1), "\\1\\+wg \\2\\+wg*"))
 
         if self.asBool("document/toc") and self.asBool("document/multibook"):
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
@@ -1621,7 +1674,7 @@ class TexModel:
 
         ## Final tweaks
         # Strip out any spaces either side of an en-quad 
-        self.localChanges.append((None, regex.compile(r"\s?\u2000\s?", flags=regex.M), r"\u2000")) 
+        self.localChanges.append((None, regex.compile(r"(?<!\\\S+)\s?\u2000\s?", flags=regex.M), r"\u2000")) 
         # Change double-spaces to singles
         self.localChanges.append((None, regex.compile(r" {2,}", flags=regex.M), r" ")) 
         # Remove any spaces before the \ior*
@@ -1718,7 +1771,7 @@ class TexModel:
         return "\n".join(res)
 
     def generateImageCopyrightText(self):
-        artpgs = {}
+        self.printer.artpgs = {}
         mkr='pc'
         sensitive = self['document/sensitive']
         picpagesfile = os.path.join(self.docdir()[0], self['jobname'] + ".picpages")
@@ -1740,17 +1793,18 @@ class TexModel:
                         continue
                     a = 'co' if f[1] == 'cn' else f[1] # merge Cook's OT & NT illustrations together
                     if a == '' and f[5] != '':
-                        artpgs.setdefault(f[5], []).append(int(f[0]))
+                        p = f[5]
                     elif a == '':
-                        artpgs.setdefault('zz', []).append(int(f[0]))
+                        p = "zz"
                         msngPgs += [f[0]] 
                     else:
-                        artpgs.setdefault(a, []).append(int(f[0]))
+                        p = a
+                    self.printer.artpgs.setdefault(p, {}).setdefault(a,[]).append((int(f[0]),f[1]+f[2]))
             artistWithMost = ""
-            if len(artpgs):
-                artpgcmp = [a for a in artpgs if a != 'zz']
+            if len(self.printer.artpgs):
+                artpgcmp = [a for a in self.printer.artpgs if a != 'zz']
                 if len(artpgcmp):
-                    artistWithMost = max(artpgcmp, key=lambda x: len(set(artpgs[x])))
+                    artistWithMost = max(artpgcmp, key=lambda x: len(self.printer.artpgs[x].values()))
 
         langs = set(self.imageCopyrightLangs.keys())
         langs.add("en")
@@ -1767,17 +1821,20 @@ class TexModel:
                 plstr = cinfo["plurals"].get(lang, cinfo["plurals"]["en"])
                 cpytemplate = cinfo['templates']['imageCopyright'].get(lang,
                                         cinfo['templates']['imageCopyright']['en'])
-                for art, pgs in artpgs.items():
+                for art, pgs in self.printer.artpgs.items():
                     if art != artistWithMost and art != 'zz':
                         if len(pgs):
-                            pgs = sorted(set(pgs))
-                            plurals = pluralstr(plstr, pgs)
+                            if art in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                                pages = [x[0] for x in pgs[art]]
+                            else:
+                                pages = [x[0] for x in pgs['']]
+                            plurals = pluralstr(plstr, pages)
                             artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
                             if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
                                 artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                                 if sensitive and "sensitive" in artinfo:
                                     artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
-                                cpystr = multstr(cpytemplate, lang, len(pgs), plurals, artstr.replace("_", "\u00A0"))
+                                cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
                                 crdts.append("\\{} {}".format(mkr, cpystr))
                             else:
                                 crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
@@ -1795,8 +1852,12 @@ class TexModel:
                     artinfo = cinfo["copyrights"].get(artistWithMost, 
                                 {'copyright': {'en': artistWithMost}, 'sensitive': {'en': artistWithMost}})
                     if artinfo is not None and (artistWithMost in cinfo["copyrights"] or len(artistWithMost) > 5):
-                        pgs = artpgs[artistWithMost]
-                        plurals = pluralstr(plstr, pgs)
+                        # print(f"{art=} {artistWithMost=} {self.printer.artpgs=}")
+                        if artistWithMost in "ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib".split("|"):
+                            pages = [x[0] for x in self.printer.artpgs[artistWithMost][artistWithMost]]
+                        else:
+                            pages = [x[0] for x in self.printer.artpgs[artistWithMost]['']]
+                        plurals = pluralstr(plstr, pages)
                         artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                         if sensitive and "sensitive" in artinfo:
                             artstr = artinfo["sensitive"].get(lang, artinfo["sensitive"]["en"])
@@ -1825,7 +1886,7 @@ class TexModel:
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
         return "\n".join(crdts)
 
-    def createXrefTriggers(self, bk, prjdir, outpath):
+    def createXrefTriggers(self, bk, prjdir, triggers):
         if self.xrefs is None:
             cfilter = self.dict['notes/xrfilterbooks']
             if cfilter == "pub":
@@ -1852,9 +1913,10 @@ class TexModel:
                 xrsrc = xrsrc[:-2]
             else:
                 listsize = 0
-            logger.debug(f"Create Xrefs: {bk=} {xrsrc=}, {localfile=}, {outpath=}")
+            logger.debug(f"Create Xrefs: {bk=} {xrsrc=}, {localfile=}")
+            # import pdb; pdb.set_trace()
             self.xrefs = Xrefs(self, filters, prjdir,
                     self.dict['project/selectxrfile'] if self.dict['notes/xrlistsource'] == 'custom' else None,
                     listsize, xrsrc, localfile, self.dict['strongsndx/shownums'], self.dict['notes/xrverseonly'])
-        self.xrefs.process(bk, outpath, usfm=self.printer.get_usfms().get(bk))
+        return self.xrefs.process(bk, triggers, usfm=self.printer.get_usfm(bk))
 

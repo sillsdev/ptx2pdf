@@ -142,6 +142,20 @@ formatting.
 \v 18 This is a first q // to see what we can
 \q1 \cat 0.5w\cat*
 \v 19 This is a first q // to see what we can do
+\b
 
-
+\s Testing
+\p Can we really put a sidebar in a sidebar?
+\p
+\esb \cat inl\cat*
+\p This is the outer sidebar
+\esb \cat cut0\cat*
+\p This is a category cut0 sidebar
+\esbe
+And we're back to the outer one again.
+\p This is the next paragraph.
+\p This is the next paragraph.
+\p This is the next paragraph.
+\p This is the next paragraph.
+\esbe
 

@@ -1,8 +1,313 @@
-PTXprint 2.2.34 Release Notes
-20 Oct 2022
+PTXprint 2.2.44 Release Notes
+11 Jan 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.44 (11 Jan 2023)
+
+  * Added ability to create a cover page PDF (with front, back, spine, bleed, etc.)
+     - this option is currently only available using the -z 16 commandline parameter
+     - it will become mainstream after further testing and when documentation is ready
+
+  * Enabled installer to run PTXprint on ARM64 architecture
+
+  * Improved resetting/deleting the Default config
+
+  * Improvement to now use pdf xform objects for ornaments
+
+  * Improved tooltip documentation for pictures (anchor & no of lines)
+
+  * Sidebar settings are in focus when cat:...esb is selected in the style editor
+
+  * Removed warning if SIL found in copyright statement (as EL has been modified)
+  
+  * Put some sanity into the PT copyright statement handling (if > 100 chars in length)
+
+  * Fixed crash on unknown artist used in copyright credits
+
+  * Fixed Black+White output PDF stream issue
+
+  * Fixed grid boxing for vertical text (used for Mongolian script)
+
+  * Fixed picCopyright statement generation (artistWithMost error)
+
+  * Fixed broken zvar bug
+
+  * Fixed style editor for font reset and 0 non diffs
+  
+Bug fixes and improvements in 2.2.43 (17 Dec 2022)
+
+  * Added feature on Pictures tab to generate Request Permission letter (DCC)
+  
+  * Added font size slider to View+Edit tab
+
+  * Rename output files, and add output format labels (RGB, CMYK, BW, Spot, etc.)
+
+  * Improved wording on body tab for one/two layout for certain books 
+  
+  * Improved diff PDF UI 
+  
+  * Improved Basic View by exposing some relatively new UI elements
+  
+  * Improved mymr syllable breaking logic
+  
+  * Implement ifSeparateVerseAdornments for standard case
+
+  * Fixed ornaments and ornament catalogue
+
+  * Don't attempt link to USFM online documentation if a complex style is selected
+
+  * Fixed Strong's text matching regex creation
+
+  * Fixed RefList output to include book if preceded by a reference from another book
+
+  * Work in progress: (UI yet to be exposed)
+     * Cover and Spine foundations in place 
+     * Added documentation for covers
+     * Enable covers using commandline option -z 16
+     * Refactored cover tab layout and added extra controls
+
+Bug fixes and improvements in 2.2.42 (2 Dec 2022)
+
+(Note: This is a post-workshop release with a large number of minor changes
+       made as a result of feedback from participants.)
+   
+  * Added various blank/empty page controls (zEmptyPage, zNeed[Odd|Even|Quad]Page)
+  
+  * Added between hooks 
+  
+  * Added MarkAdjustPoints
+  
+  * Add cv hook for GEN1.0 etc (before chap number)
+  
+  * Add cv hook for all1.0 etc (before chap number)
+  
+  * Added \zornament milestone
+  
+  * Treat p_95 as p in occursunder hierarchy
+  
+  * Allow line final \ extension in changes.txt files
+  
+  * Add snippet to change glossary page numbering
+  
+  * Select marker after adding a new marker in style editor
+  
+  * Add sm@rtquotes to enable smart quotes alongside liter@lkerns to turn them off
+  
+  * Display status line for no differences found when comparing pdfs
+  
+  * Output gray CMYK as gray
+  
+  * Update Base Indent wording
+  
+  * attempt to fix missing definitions for diglot defs
+  
+  * Invert model controls for module inclusions; x-credit background default to white
+  
+  * Set first verse of module ref range to 0 if 1
+  
+  * href-targets should also be reference labels.
+  
+  * Tweak UI range values for left indent and border width
+  
+  * correct occursunder for esb
+  
+  * Fixed textborders
+  
+  * Fix accidental forced-space in endlastparstyle
+  
+  * ifClipOrnaments (Ornaments by default clip themselves to a certain box. That box 
+    is sometimes just too small for real beauty, so clipping has been disabled. 
+    \ClipOrnamentstrue restores previous behaviour.)
+  
+  * Fix a bug where zrule was defining the category badly
+  
+  * Fix ornaments problem
+  
+  * Push merged footnotes down to bottom of page
+  
+  * Work around odd SFM in merging
+  
+  * Get \mod working
+  
+  * RTL non-paragraphed notes get the 1st Line indent correct
+  
+  * First line indent for footnotes
+  
+  * RTL support for paragraphed-notes first line indent
+  
+  * Use embedded styles for \w
+
+  * Don't read reference separators from Paratext Settings if RTL
+  
+  * Fix RTL reference separators
+  
+  * Include \periph in output FRT etc. as opposed to stripping it
+  
+  * Change local FRT to use .SFM instead of .tex (MJ)
+  
+  * Implement \ztocbefore and ...after
+  
+  * Added \zfooter to enable footer styling
+  
+  * Exemplify empty cell in table
+  
+  * try to do a better job on headers
+  
+  * fix style leaks, finally?
+  
+  * Apply header/footer font changes in the right place
+  
+  * Fix finalising output formats
+  
+  * Fix PDF/X1-A headers
+  
+  * Add upwardsHackDiff
+  
+  * Fix activ@tecustomchars not early enough
+  
+  * Exec .py in private context
+  
+  * Fix edge case bugs in reference sequences
+  
+  * Make imported modules look in same place as original module
+  
+  * Fix incorrect borders on partial 
+  
+  * Preserve spaces after forward slash
+  
+  * Fix bookend-final error
+  
+  * Do not apply rotated dimensions to graphic images
+  
+  * Fix broken \zgetperph for people who do not include INT
+  
+  * Fix tabs in python, make \zgetperiph diglot-aware
+  
+Bug fixes and improvements in 2.2.41 (21 Nov 2022)
+  
+  * Read Reference Separators from Settings.xml if possible
+  
+  * Add tex model names as well as widget names to -I tooltips
+  
+  * Fix wrong diglot line spacing
+  
+  * Fixed Confusing label for option about footers in margin #781
+  
+  * Fix config setting from texpert
+  
+  * Try fixing an odd OSError -2 on convert().load()
+  
+  * Mask tiff convert in cropping
+  
+  * Various TeX macro fixes:
+    * hook tracing and try zusermarks
+    * more macro tracing, add ifstretchtabs
+    * Stretchtabs and improved trigger marking
+    * fix tabs bug, rename zusermarks to zcustommarks and fix it
+    * fix unwanted space in style stack
+
+Bug fixes and improvements in 2.2.40 (12 Nov 2022)
+  
+  * Get commandline -m working (Integrate macros dir into the job)
+  
+  * Fixed faulty 0.0 AdjList references
+  
+  * Added UI for global (layout-altering) misc settings
+  
+  * Refactor createDiff to enable a separate app pdfdiff
+  
+  * First cut at stemmed strongs cross references
+  
+  * Double rule zrules and testing that sidebars in sidebars work
+
+Bug fixes and improvements in 2.2.39 (8 Nov 2022)
+  
+  * Added UI for Transcelerator checking questions (Notes+Refs > Study Notes+Questions)
+
+  * Bring xrefs back in Basic view mode (#767)
+  
+  * Handle cross drive font issues
+
+  * Be smarter finding Paratext data folder if no registry entry located
+
+  * Don't break between multiple spaces. Allow any break before a ZWSP
+
+  * Refactor hardwired penalties in M/NQUAD to use BADBREAK
+
+  * Pull out ISBN font so that it can be specified
+  
+  * Remove slashes from \k...\k* reference (related to #766)
+  
+  * Fix issue with regurgitated char styles (#766)
+
+  * Remove struts from notes. 
+  
+  * Fix note indent.
+  
+  * Update Strong's databases (better linkage between cross-references and index)
+  
+  * Fix balancing colnotes overflow with page
+  
+  * Fix accidental new lines around keyterms
+  
+  * Make the files generation part of printing more interactive
+  
+  * Get external processing scripts to run if not .py
+
+Bug fixes and improvements in 2.2.37 (2 Nov 2022)
+  
+  * Added extra color to diff output: "red has fled, blue is new"
+  
+  * Fix separate footnotes outputting two struts.
+  
+  * Distinguish milestone code from hooks
+  
+  * Fix hebrew & greek wrapping \wh & \wg
+
+Bug fixes and improvements in 2.2.36 (29 Oct 2022)
+  
+  * Fix crashing on syntax error in most places
+
+  * Refactor to use cstyle{}{}
+
+  * Make logging on loading styles a bit smarter
+
+  * Improved hook handling (the 'forget' functionality was over-zealous)
+  
+  * Add and update snippets.md and markers.md
+  
+  * Add fault capture for Strong's matching
+
+  * Various other minor fixes:
+    - spelling of Spanish (Espanol) in language selector
+    - fix typo in sanitise
+    - fix wh and wg handling
+
+Bug fixes and improvements in 2.2.35 (25 Oct 2022)
+  
+  * Added option (\versehyphenfalse) to not insert hyphen between adjacent 
+    bridged marginal verses
+
+  * Added RLE,LRE,PDF to turn off interchar spacing
+
+  * Added support for including Transcelerator questions (now awaiting UI)
+
+  * Refactored description of full marker
+
+  * Refactored x-credit:box=Dark|fig to Dark|x-credit
+
+  * Fixed deleting a style
+
+  * Correct accidental inversion of child/parent
+
+  * Grid partial to main paragraph baseline
+  
+  * Added a couple of changes.txt examples to snippets.md 
+  
+  * Fixed colophon vertical position (an empty footer box is not void. 
+    Change to test for height.
+  
 Bug fixes and improvements in 2.2.34 (20 Oct 2022)
   
   * Updated Crowdin localization strings

@@ -5,7 +5,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges
+                            get_gitver, getcaller, runChanges, coltoonemax
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -13,6 +13,7 @@ from ptxprint.xrefs import StrongsXrefs
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
+from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -28,9 +29,9 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.34"
-GitVersionStr = "2.2.34"
-ConfigVersion = "2.10"
+VersionStr = "2.2.44"
+GitVersionStr = "2.2.44"
+ConfigVersion = "2.12"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -48,6 +49,8 @@ FontModelMap = {
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale"]
+
+_outputPDFtypes = {"Screen" : "", "Digital" : "RGB", "Transparent" : "CMYK-Transparent", "CMYK" : "CMYK", "Gray" : "BW", "Spot" : "Spot"}
 
 def doError(txt, secondary=None, **kw):
     print(txt)
@@ -107,6 +110,8 @@ class ViewModel:
         self.font2baselineRatio = 1.
         self.docreatediff = False
         self.strongs = None
+        self.artpgs = None
+        self.spine = 0
 
         # private to this implementation
         self.dict = {}
@@ -168,11 +173,11 @@ class ViewModel:
         else:
             self.dict[wid] = value
 
-    def getvar(self, k, dest=None):
+    def getvar(self, k, default="", dest=None):
         if dest is None:
-            return self.pubvars.get(k, "")
+            return self.pubvars.get(k, default)
         elif dest == "strongs":
-            return self.strongsvars.get(k, "")
+            return self.strongsvars.get(k, default)
 
     def setvar(self, k, v, dest=None):
         if dest is None:
@@ -189,22 +194,29 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
+    def lock_widget(self):
+        pass
+
     def baseTeXPDFnames(self, bks=None, diff=False):
+        components = {}
         if bks is None:
             bks = self.getBooks(files=True)
-        cfgname = self.configName()
+        if len(bks) > 1:
+            components['bks'] = "{}-{}".format(bks[0], bks[-1])
+        elif '.' in bks[0]:
+            components['bks'] = os.path.splitext(os.path.basename(bks[0]))[0]
+        else:
+            components['bks'] = bks[0]
         if self.working_dir == None:
             self.working_dir = os.path.join(self.settings_dir, self.prjid, "local", "ptxprint", cfgname)
+        cfgname = self.configName()
         if cfgname is None:
             cfgname = ""
         else:
-            cfgname = "-" + cfgname
-        if len(bks) > 1:
-            fname = "ptxprint{}-{}_{}{}".format(cfgname, bks[0], bks[-1], self.prjid)
-        elif "." in bks[0]:
-            fname = "ptxprint{}-{}{}".format(cfgname, os.path.splitext(os.path.basename(bks[0]))[0], self.prjid)
-        else:
-            fname = "ptxprint{}-{}{}".format(cfgname, bks[0], self.prjid)
+            cfgname = "_" + cfgname
+        components['config'] = cfgname
+        components['prjid'] = self.prjid
+        fname = "{prjid}{config}_{bks}_ptxp".format(**components)
             
         if diff:
             return [fname, fname+"_diff"]
@@ -258,7 +270,17 @@ class ViewModel:
         else:
             # return self.booklist
             return []
-            
+
+    def getRefSeparators(self):
+        if self.get("fcb_textDirection", "") == "rtl":
+            res = None
+        else:
+            pts = self._getPtSettings()
+            res = pts.getRefSeparators()
+        if res is None:
+            res = self.getScriptSnippet().getrefseps(self)
+        return res
+
     def switchFRTsettings(self):
         frtpath = self.configFRT()
         logger.debug(f"Front Matter file is {frtpath}")
@@ -570,6 +592,13 @@ class ViewModel:
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.picinfos = None
             self.loadPics(mustLoad=False)
+            pts = self._getPtSettings()
+            if pts is not None:
+                # if self.get("t_copyrightStatement") == "":
+                    # self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
+                lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
+                if self.get("t_txlQuestionsLang") == "":
+                    self.builder.get_object("t_txlQuestionsLang").set_text(lngCode)
             return oldVersion >= 0
         else:
             return True
@@ -580,6 +609,15 @@ class ViewModel:
                             os.path.join(self.settings_dir, self.prjid),
                             Sheets(self.getStyleSheets()))
         return self.usfms
+
+    def get_usfm(self, bk):
+        self.get_usfms()
+        try:
+            res = self.usfms.get(bk)
+        except SyntaxError as e:
+            self.doError(_("Syntax Error Warning"), secondary=str(e), show=not self.get("c_quickRun"))
+            return None
+        return res
 
     def getDialogTitle(self):
         prjid = self.get("fcb_project")
@@ -663,6 +701,14 @@ class ViewModel:
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
+        for opath, locked in  ((os.path.join(self.configPath(cfgname, makePath=False), "ptxprint_override.cfg"), True),
+                (os.path.join(self.configPath(cfgname, makePath=False), '..', 'ptxprint_project.cfg'), False)):
+            if not os.path.exists(opath):
+                continue
+            oconfig = configparser.ConfigParser()
+            self.versionFwdConfig(oconfig, cfgname)
+            self.localiseConfig(oconfig)
+            self.loadConfig(oconfig, lock=locked, updatebklist=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
@@ -717,7 +763,7 @@ class ViewModel:
         if isinstance(value, bool):
             value = "true" if value else "false"
         if update or not hasval:
-            config.set(sect, k, value)
+            config.set(sect, k, str(value))
 
     def createConfig(self):
         def sortkeys(x):
@@ -761,6 +807,7 @@ class ViewModel:
             self._configset(config, "vars/"+str(k), self.getvar(str(k)), update=False)
         for k in self.allvars(dest="strongs"):
             self._configset(config, "strongsvars/"+str(k), self.getvar(str(k), dest="strongs"), update=False)
+        TeXpert.saveConfig(config, self)
         return config
 
     def _config_get(self, config, section, option, conv=None, fallback=_UNSET, **kw):
@@ -927,6 +974,11 @@ class ViewModel:
             self._configset(config, "paper/footerpos", str(max(0, (bmargin - fpos))))
             self._configset(config, "footer/noinkinmargin", not config.getboolean("footer", "noinkinmargin", fallback=False))
             self._configset(config, "document/marginalposn", "left")
+        if v < 2.12:
+            if (x := config.get("document", "diffColor", fallback=None)) is not None:
+                self._configset(config, "document/odiffcolor", x)
+                y = coltoonemax(x)
+                self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
@@ -951,7 +1003,7 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
@@ -991,6 +1043,8 @@ class ViewModel:
                                 val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
+                            if lock:
+                                self.lock_widget(v[0])
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
@@ -1015,6 +1069,7 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
+        TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
             (sect, name) = k.split("/")
             try:
@@ -1043,6 +1098,19 @@ class ViewModel:
                     if v is not None:
                         self.styleEditor.setval(a+b, 'FontSize', None)
                         self.styleEditor.setval(a+b, 'FontScale', v)
+        elif version < 2.11:
+            xre = re.compile(r"^x-credit:box=(.*?)(\|fig)?$")
+            for k in self.styleEditor.allStyles():
+                if k is not None and k.startswith("x-credit:"):
+                    t = xre.sub(r"\1", str(k))
+                    if t is None:
+                        newk = "x-credit"
+                    else:
+                        newk = "{}|x-credit".format(t)
+                    for s in (self.styleEditor.basesheet, self.styleEditor.sheet):
+                        if k in s:
+                            s[newk] = s[k]
+                            del s[k]
 
         if self.get('r_xrpos') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')
@@ -1202,7 +1270,9 @@ class ViewModel:
             acc = {}
             usfms = self.get_usfms()
             for bk in self.getBooks():
-                u = usfms.get(bk)
+                u = self.get_usfm(bk)
+                if u is None:
+                    continue
                 u.getwords(init=acc)
             if inbooks: # cut the list down to only include words that are actually in the text
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
@@ -1315,7 +1385,7 @@ class ViewModel:
     def finished(self):
         pass
 
-    def incrementProgress(self, val=None):
+    def incrementProgress(self, inproc=False):
         pass
 
     def getStyleSheets(self, cfgname=None, generated=False, prjid=None, subdir=""):
@@ -1533,7 +1603,7 @@ class ViewModel:
             if os.path.exists(ipf):
                 zf.write(ipf, pf)
         from ptxprint.runjob import RunJob
-        runjob = RunJob(self, self.scriptsdir, self.args, inArchive=True)
+        runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
         res = runjob.wait()
         temps = []
@@ -1604,7 +1674,7 @@ class ViewModel:
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         for t in texfiles:
-            if t.endswith("_FRT.tex"):
+            if t.endswith("_FRT.SFM"):
                 continue
             scriptlines.append("hyph_size=32749 stack_size=32768 FONTCONFIG_FILE=`pwd`/../../../fonts.conf TEXINPUTS=../../../src:. xetex {}".format(os.path.basename(t)))
         zinfo = ZipInfo("{}/runtex.sh".format(self.prjid))
@@ -1622,7 +1692,7 @@ set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749
 set stack_size=32768""".format(self.configName())
         for t in texfiles:
-            if t.endswith("_FRT.tex"):
+            if t.endswith("_FRT.SFM"):
                 continue
             batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\..\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
@@ -1630,7 +1700,7 @@ set stack_size=32768""".format(self.configName())
     def createSettingsZip(self, outf):
         res = ZipFile(outf, "w", compression=ZIP_DEFLATED)
         sdir = self.configPath(self.configName())
-        for d in (None, 'AdjLists'):
+        for d in (None, 'AdjLists', 'Triggers'):
             ind = sdir if d is None else os.path.join(sdir, d)
             if not os.path.exists(ind):
                 continue
@@ -1729,11 +1799,18 @@ set stack_size=32768""".format(self.configName())
         localfile = os.path.join(self.settings_dir, self.prjid, "TermRenderings.xml")
         if not os.path.exists(localfile):
             localfile = None
-        seps = self.getScriptSnippet().getrefseps(self)
+        seps = self.getRefSeparators().copy()
         seps['verseonly'] = self.getvar('verseident') or "v"
         ptsettings = self._getPtSettings()
+        wanal = None
+        if ptsettings.get('MatchBaseOnStems', 'F') == 'T':
+            wanal = os.path.join(self.settings_dir, self.prjid, 'WordAnalyses.xml')
+            if not os.path.exists(wanal):
+                wanal = None
         self.strongs = StrongsXrefs(os.path.join(pycodedir(), "xrefs", "strongs.xml"), 
-                    None, localfile, ptsettings, seps, ptsettings, self.get("c_strongsShowNums"),
-                    self.get("fcb_textDirection") == "rtl", self.get("c_xoVerseOnly"))
+                    None, localfile=localfile, ptsettings=ptsettings, separators=seps,
+                    context=ptsettings, shownums=self.get("c_strongsShowNums"),
+                    rtl=self.get("fcb_textDirection") == "rtl", shortrefs=self.get("c_xoVerseOnly"),
+                    wanal=wanal)
         return self.strongs
 

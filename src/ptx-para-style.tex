@@ -151,6 +151,7 @@
 % \dimen1 ends up rounded down to an integral number of input \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
 
+\newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
   \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
@@ -172,9 +173,11 @@
       \ifgridp@c\else\ifdiglot\else
         \ifdim\lastdepth>0pt \advance\dimen2 by -\lastdepth\fi
       \fi\fi
+      \ifdim\upwardsHackDiff=0pt\else\advance\dimen2 by -\upwardsHackDiff \advance\dimen0 by \upwardsHackDiff\fi
       \ifdiglot\kern\else\vskip\fi\dimen2
       \trace{h}{after gridbox(\ch@pter.\v@rse): skip \the\dimen2, kern \the\dimen0; baselineskip=\the\baselineskip; dim1=\the\dimen1;  ht0=\the\ht0; dp0=\the\dp0; is \ifdiglot\else\space not\fi\space diglot}%
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
+      \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
   \fi
 }
@@ -193,11 +196,12 @@
 
 \newif\ifdoingt@ble
 \newdimen\lastdepth
+\newif\ifrotate \rotatefalse
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
 \def\par{\ifhmode
    \makecutouts
-   \cl@singhooks{end}{\m@rker}%
+   \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
    \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
    \ifdoingt@ble\else
@@ -208,7 +212,14 @@
      \fi\fi
    \fi
    \endgraf
-   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else\lastdepth=\prevdepth\fi\fi\fi\fi
+   \ifvmode\ifinn@te\else\ifhe@dings\else\ifdoingt@ble\else
+     %\ifrotate
+     %  \setbox9=\lastbox \lastdepth=\ht9 \box9\trace{h}{lastdepth in upwards = \the\lastdepth}%
+     %  \lastdepth=0pt\prevdepth=0pt%
+     %\else
+       \lastdepth=\prevdepth
+     %\fi
+   \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
@@ -322,12 +333,13 @@
  \ifdebugthisparearly\global\debugthisparearlyfalse\showlists\fi
  \getp@ram{spaceafter}{\m@rker}{\styst@k}% output any <spaceafter> for the  style active when the last paragraph ended.
  \global\let\spaceafterp@ram\p@ram
+ \global\let\h@@kstyst@k\styst@k
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \end@llpoppedstyles{P}%
  \ifdebugthispar\global\debugthisparfalse\showlists\fi
- \trace{s}{endlastp@rstyle #1 stack=\mcstack, stys@k:\styst@k}%
+ \trace{s}{endlastp@rstyle #1 stack=\mcstack, styst@k:\styst@k}%
  \trace{ss}{endlastp@rstyle #1 stack=\mcstack}%
  \toplevelp@rtrue
  \def\d@##1+##2\E{\if##1P\relax\global\toplevelp@rfalse\let\d@=\cstackrelax\fi}%
@@ -352,7 +364,7 @@
   
     %\mctop \mcpop                                                                 %(2)
   %\fi
-  \cl@singhooks{after}{\m@rker}%
+  \cl@singhooks{after}{\m@rker}{\h@@kstyst@k}%
   \the\afterh@@ks
  \fi
 }
@@ -392,11 +404,12 @@
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \endlastp@rstyle{#1}%
  \ifn@npublishable\else
-  \traceifset{p@rstyle}%
-  \gdef\m@rker{#1}% remember the new style name
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
-  \op@ninghooks{before}{\m@rker}%
+  \op@ninghooks{between-\m@rker}{#1}{\styst@k}% Run any between old par an current
+  \traceifset{p@rstyle}%
+  \gdef\m@rker{#1}% remember the new style name
+  \op@ninghooks{before}{\m@rker}{\styst@k}%
 %-cpar_parstyle_after
   %
   % now we check what kind of marker this is: intro? title? section? other?
@@ -455,7 +468,7 @@
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
-		\trace{h}{marker = \m@rker, spacebefore = \p@ram, heading top space = \the\headingtopspace}%
+		\trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
   \else\trace{sa}{headingstyle false}%
@@ -604,7 +617,7 @@
    \global\p@ranesting=1
    \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
    \tmpn@xtparstart
-   \op@ninghooks{start}{\m@rker}%handle <start> hook
+   \op@ninghooks{start}{\m@rker}{\styst@k}%handle <start> hook
    \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
    \startparafalse\first@fterheadingfalse
@@ -773,11 +786,14 @@
 \def\calc@p@rlinesgone#1#2{%
   \ifcsname baselineskip@\c@rrdstat\endcsname
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
+    \relax % Must end look-ahead from setting baselineskip
   \fi
-  %\ifdim\baselineskip<1pt \trace{C}{baselineskip too low}\baselineskip=12pt\fi
-  \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
-  \ifdim #1 > 1pt
-    \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+  \ifdim\the\baselineskip<100sp \trace{C}{baselineskip too low}%
+  \else
+    \trace{C}{#2: \the\p@rlinesgone \space += #1 / \the\baselineskip}%
+    \ifdim #1 > 1pt
+      \advance\p@rlinesgone by \numexpr \dimexpr #1 / \baselineskip \relax\relax
+    \fi
   \fi
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
@@ -797,7 +813,7 @@
       \advance\p@rlinesgone by 1
     \fi
   \else
-    \calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
+    \relax\calc@p@rlinesgone{\the\dimexpr \numexpr \prev@y-\this@y\relax sp\relax}{parend}%
   \fi
   \csname inp@r-\c@rrdstat false\endcsname
 }

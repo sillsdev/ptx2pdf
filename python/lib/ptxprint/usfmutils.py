@@ -630,7 +630,7 @@ class Usfm:
         def iterfn(el, silent=False, base=None):
             if isinstance(el, sfm.Element):
                 styletype = el.meta["StyleType"]
-                issilent = styletype.lower() == "note" or el.name.startswith("s") or silent
+                issilent = styletype is not None and styletype.lower() == "note" or el.name.startswith("s") or silent
                 if el.meta.get("Attributes", None) is not None:
                     base = el
                 for c in tuple(el):      # in case of insertions
@@ -652,7 +652,11 @@ class Usfm:
                     continue
                 matched = False
                 if base is not None:
-                    if regex.search(regs, newstr):
+                    try:
+                        regre = regex.compile(regs)
+                    except regex._regex_core.error as e:
+                        raise SyntaxError(f"Faulty regex in {regs}: {e}")
+                    if regre.search(newstr):
                         newelement = sfm.Text('\u200B\\xts|strong="{}" align="r"\\*\\nobreak\u200A'.format(st.lstrip("GH")))
                         i = base.parent.index(base)
                         base.parent.insert(i, newelement)
@@ -660,10 +664,12 @@ class Usfm:
                         if not showall:
                             self.currstate[1].remove(st)
                 else:
-                    #newstr = regex.sub(regs,
-                    newstr_diff = regex.sub(("(?<!\u200A)" if not showall else "")+regs,
-                            '\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(st.lstrip("GH")),
-                            newstr, count=0 if showall else 1)
+                    try:
+                        newm = regex.compile(("(?<!\u200A)" if not showall else "")+regs)
+                    except regex._regex_core.error as e:
+                        raise SyntaxError(f"Faulty regex in {regs}: {e}")
+                    newstr_diff = newm.sub('\u200B\\\\xts|strong="{}" align="r"\\\\*\\\\nobreak\u200A\\1'.format(
+                                           st.lstrip("GH")), newstr, count=0 if showall else 1)
                     if newstr_diff != newstr:
                         newstr = newstr_diff
                         matched = True
@@ -763,6 +769,11 @@ class Module:
                             m.group(2)))
                 del e.parent[curr+1]
             for r in RefList.fromStr(str(e[0]), context=self.usfms.booknames):
+                if r.first.verse == 1:
+                    if not isinstance(r, RefRange):
+                        r = RefRange(r.first, r.first.copy())
+                        r.last.verse = 1
+                    r.first.verse = 0
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
                 if e.name == "ref":
                     for i, t in enumerate(p):
@@ -782,10 +793,12 @@ class Module:
                 einfo = exclusionmap.get(c, ([], None))
                 if c == "-":
                     self.removes = set(sum((e[0] for e in exclusionmap.values()), []))
-                elif einfo[1] is None or (self.model is not None and not self.model[einfo[1]]):
+                elif einfo[1] is None or (self.model is not None and self.model[einfo[1]]):
                     self.removes.difference_update(einfo[0])
         elif e.name == 'mod':
-            mod = Module(e[0].strip(), self.usfms, self.model)
+            dirname = os.path.dirname(self.fname)
+            infpath = os.path.join(dirname, str(e[0]).strip())
+            mod = Module(infpath, self.usfms, self.model)
             return mod.parse()
         else:
             cs = sum(map(self.parse_element, e), [])
@@ -795,7 +808,10 @@ class Module:
     def get_passage(self, ref, removes={}, strippara=False):
         if ref.first.book is None:
             return []
-        book = self.usfms.get(ref.first.book.upper())
+        try:
+            book = self.usfms.get(ref.first.book.upper())
+        except SyntaxError:
+            book = None
         if book is None:
             return []
         return book.subdoc(ref, removes=removes, strippara=strippara)

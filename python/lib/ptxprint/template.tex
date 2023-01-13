@@ -1,8 +1,9 @@
 % Created by ptxprint {config/version} at {date_}
-\def\pluginlist{{{project/plugins}}}
 \input paratext2.tex
 \input ptx-ptxprint.tex
 
+{cover/makecoverpage}\makeatletter \include cover.tex 
+{cover/makecoverpage}\makeatother
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
@@ -242,9 +243,17 @@
 {document/ifusepiclist}\openpiclist "{document/piclistfile}"
 \NoTransparency{transparency_}
 
+%%%%% Covers
+\catcode`\@=11
+\expandafter\edef\csname cover-bleed\endcsname{{{cover/coverbleed}mm}}   % Bleed dimension
+\expandafter\edef\csname cover-spine\endcsname{{{cover/spinewidth_}mm}}   % Actual spine width = book thickness, endpapers, board thickness, etc.
+\expandafter\xdef\csname cover-y\endcsname{{\the\PaperHeight}} % spine/book height 
+\expandafter\xdef\csname cover-x\endcsname{{\the\PaperWidth}} % Front/back cover
+\expandafter\edef\csname cover-back-spinewrap\endcsname{{{cover/spineoverlapback}mm}} %  Should the graphic/colour on the spine be given extra space?
+\expandafter\edef\csname cover-front-spinewrap\endcsname{{{cover/spineoverlapfront}mm}} % 
+
 % tweak to enable blank lines
 % restore page break definition (if present in USFM stylesheet, it has been re-defined and will not work)
-\catcode`\@=11
 \def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
@@ -310,7 +319,11 @@
 \def\closepiclist{{\relax}}
 % job files:
 %\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
+
+\csname final-extra\endcsname
 %%%%% Back Matter PDF file(s) get included here %%%%%
 {backincludes_}
 
+\csname final-afterincludes\endcsname
+{cover/makecoverpage}\m@kecover
 \end

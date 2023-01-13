@@ -107,10 +107,10 @@ class mymr(ScriptSnippet):
                    "\u108E\u109E\u109F\uA9E0-\uA9E4\uA9E7-\uA9EF\uA9F8-\uA9FE\uAA60-\uAA6F" + \
                    "\uAA71-\uAA7A\uAA7E\uAA7F]\uFE00?"
             ncons = "[\u102B-\u103E\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074" + \
-                    "\u1082-\u108D\u108F\u109A-\u109D\uA9E5\uA9E6\uAA70\uAA7B-\uAA7D]"
-            res += [(onlybody, re.compile('(?<![\\s\u1039"\'\[\(\{{\u2018-\u201F])({0})(?![\\s\u1039\u103A])'.format(cons)), '\u200B\\1')]
+                    "\u1082-\u108D\u108F\u109A-\u109D\uA9E5\uA9E6\uAA70\uAA7B-\uAA7D]|\u1039{}".format(cons)
+            res += [(onlybody, re.compile('(?<![\\s\u1039"\'\[\(\{{\u2018-\u201F])({0})(?!(?:{1})*[\\s\u103A])'.format(cons, ncons)), '\u200B\\1')]
             res += [(onlybody, re.compile('(\u103A\u1039{0})\u200B'.format(cons)), r'\1')]
-            res += [(onlybody, re.compile('(\\s{0}(?:\u1039{0})*{1}*)\u200B'.format(cons, ncons)), r'\1')]
+            res += [(onlybody, re.compile('(\\s{0}(?:\u1039{0})*(?:{1})*)\u200B'.format(cons, ncons)), r'\1')]
         return res
 
 class thai(ScriptSnippet):
@@ -128,7 +128,8 @@ class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))
     ]
-    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:"), RefSeparators(range="\u200F-", cv="\u200E:"))
+    refseparators = (RefSeparators(range="\u200F-", cv="\u200F:", verses="\u060C ", chaps="\u061B "),
+                     RefSeparators(range="\u200F-", cv="\u200E:", verses="\u060C ", chaps="\u061B "))
 
     @classmethod
     def getrefseps(cls, view):

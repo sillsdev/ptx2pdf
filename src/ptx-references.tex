@@ -158,6 +158,7 @@
 
 % define \headline for use by the output routine
 \headline={\hbox to \textwidth{%
+ \mcpush{P}{h}%
  \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
@@ -185,7 +186,9 @@
       \fi
     \fi
 %  \fi
- \fi}}
+ \fi
+ \mcpop
+}}
 
 % default headers are made of three components, placed left, center and right
 \newtoks\oddhead
@@ -254,7 +257,9 @@
 
 % \footline is similar except it doesn't have to place a border graphic
 \footline={{%
- \s@tfont{h}{h}%
+ \mcpush{P}{h}%
+ \mcpush{C}{zfooter}%
+ \s@tfont{zfooter}{zfooter+h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \trace{h}{page \the\pageno (f), first mark=\t@st}%
@@ -265,7 +270,9 @@
    \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi \else
      \ifodd\pageno \the\oddfoot \else
        \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
- \fi\fi\fi}}
+ \fi\fi\fi
+ \mcpop\mcpop
+}}
 
 \def\s@treffont{\let\tmp@dstat\c@rrdstat\ifuseRightMarks\setc@rdstat{R}\else\setc@rdstat{L}\fi\s@tfont{h}{h}\setc@rdstat{\tmp@dstat}}
 \def\headfootL#1{\headfoot L{#1}}

@@ -16,20 +16,20 @@
 %\tracingmacros=1
 %\tracinggroups=1
 %\tracingifs=1
-\tracing{A}
+%\tracing{A}
 \tracing{m}
-\tracing{e}
-\tracing{eb}
-\tracing{ebi}
-\tracing{s}
-%\tracing{sa}
-\tracing{sc}
+%\tracing{e}
+%\tracing{eb}
+%\tracing{ebi}
+%\tracing{s}
+%%\tracing{sa}
+%\tracing{sc}
 %\tracing{sh}
-\tracing{sk}
-\tracing{C}
-\tracing{F}
+%\tracing{sk}
+%\tracing{C}
+%\tracing{F}
 \tracing{T}
-\tracing{o}
+%\tracing{o}
 \tracing{V}
 \def\DebugBorderCat{footbox}
 \tracing{g}
@@ -54,9 +54,23 @@
 \tracingoutput=1
 %\nonstopmode
 \singlecolumn
+\def\thelord{\nd The Lord\nd*}
+\def\zitems#1 #2{→ #1 \bd #2\bd*}
+
+\sethook{before}{q1}{\widdowpenalty=500 \clubpenalty=500}
+\sethook{after}{q1}{\widdowpenalty=10000 \clubpenalty=500}
+
+\sethook{before}{is1}{↓}
+\sethook{after}{is1}{↑}
+\sethook{start}{is1}{→}
+\sethook{end}{is1}{←}
+
 \ptxfile{cover.usfm}
 \ptxfile{int.usfm}
 %\tracingassigns=1
-%\ptxfile{test.usfm}
+\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intbible\* \unprepusfm}
+\addtrigger{bookstart}{TST}{\prepusfm\zgetperiph|intnt\* \unprepusfm\vskip 10pt}\sethook{final}{afterpdfs}{\zNeedQuadPage}
+
+\ptxfile{test.usfm}
 \tracingstats=1
 \bye

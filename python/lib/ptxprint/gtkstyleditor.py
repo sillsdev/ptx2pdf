@@ -16,7 +16,7 @@ stylemap = {
     'StyleType':    ('fcb_styStyleType',    'l_styStyleType',   'Paragraph', None, None),
     'FontName':     ('bl_font_styFontName', 'l_styFontName',    None, None, None),
     'Color':        ('col_styColor',        'l_styColor',       'x000000', None, None),
-    'FontSize':     ('s_styFontSize',       'l_styFontSize',    1, None, None),
+    'FontSize':     ('s_styFontSize',       'l_styFontSize',    12, None, None),
     'Bold':         ('c_styFaceBold',       'c_styFaceBold',    False, None, None),
     'Italic':       ('c_styFaceItalic',     'c_styFaceItalic',  False, None, None),
     'Smallcaps':    ('c_stySmallCap',       'c_stySmallCap',    False, None, None),
@@ -151,6 +151,10 @@ class StyleEditorView(StyleEditor):
     def __init__(self, model):
         super().__init__(model)
         self.mrkrlist = []
+        self.stylediverts = {
+            "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
+            "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
+        }
         self.builder = model.builder
         self.treestore = self.builder.get_object("ts_styles")
         self.treeview = self.builder.get_object("tv_Styles")
@@ -179,10 +183,6 @@ class StyleEditorView(StyleEditor):
             # if v[0].startswith("s_"):
             #     w.connect("focus-out-event", self.item_changed, k)
         self.isLoading = False
-        self.stylediverts = {
-            "LineSpacing": ("_linespacing", _("Line Spacing\nFactor:"), _("Baseline:")),
-            "FontSize": ("_fontsize", _("Font Size\nFactor:"), _("Font Scale:"))
-        }
 
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):
@@ -294,6 +294,7 @@ class StyleEditorView(StyleEditor):
         self.editMarker()
 
     def selectMarker(self, marker):
+        print("Got to selectMarker")
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
         path = self.treestore.get_path(it)
@@ -431,8 +432,8 @@ class StyleEditorView(StyleEditor):
         sb = self.marker.startswith("cat:") and self.marker.endswith("esb")
         self.builder.get_object("ex_stySB").set_expanded(sb)
         if sb:
-            self.builder.get_object("ex_styTable").set_expanded(False)
-            self.builder.get_object("ex_styNote").set_expanded(False)
+            for w in ['Para', 'Table', 'Note']:
+                self.builder.get_object("ex_sty"+w).set_expanded(False)
         self.builder.get_object("ex_styOther").set_expanded(False)
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
@@ -443,11 +444,15 @@ class StyleEditorView(StyleEditor):
             site = 'https://ubsicap.github.io/usfm'
             tl = self.get("fcb_interfaceLang") # target language for Google Translate
             ggltrans = "" 
+            self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
             if not self.model.get("c_useEngLinks") and \
                    tl in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
                 ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
             if urlcat is None:
                 self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
+            elif "+" in urlmkr or "|" in urlmkr:
+                self.builder.get_object("l_url_usfm").set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
+                self.builder.get_object("l_url_usfm").set_label(_('Complex style'))
             else:
                 usfmkeys = tuple(usfmpgname.keys())
                 pgname = 'index'
@@ -553,8 +558,8 @@ class StyleEditorView(StyleEditor):
             newv = stylemap.get(newkey, stylemap.get(otherkey, [None]))
             oldval = self.getval(self.marker, otherkey)
             newval = self._convertabs(newkey, oldval)
+            logger.debug(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             self.setval(self.marker, newkey, newval)
-            # print(f"{newkey}: {oldval=} -> {newval=} | {self.getval(self.marker, newkey)}")
             newlabel = self.stylediverts[controlk][2 if val else 1]
             controlw = stylemap[controlk][1]
             self.set(controlw, newlabel)
@@ -658,11 +663,13 @@ class StyleEditorView(StyleEditor):
                     r = self.treestore[selecti]
                     if r[0] == cat:
                         selecti = self.treestore.append(selecti, [key, name, True])
+                        logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
                         break
                     selecti = self.treestore.iter_next(selecti)
                 else:
                     selecti = self.treestore.append(None, [cat, cat, False])
                     selecti = self.treestore.append(selecti, [key, name, True])
+                    logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():
@@ -688,6 +695,7 @@ class StyleEditorView(StyleEditor):
                 self.setval(key, 'EndMarker', None)
             self.marker = key
             self.treeview.get_selection().select_iter(selecti)
+            self.selectMarker(key)
         dialog.hide()
 
     def resolveEndMarker(self, key, newval):
@@ -733,7 +741,8 @@ class StyleEditorView(StyleEditor):
             del self.sheet[key]
             selection = self.treeview.get_selection()
             model, i = selection.get_selected()
-            model.remove(i)
+            p = model.get_path(i)
+            model.row_delete(p)
             self.onSelected(selection)
 
     def refreshKey(self):
@@ -749,9 +758,9 @@ class StyleEditorView(StyleEditor):
                 break
         else:
             return
-        old = self.basesheet.get(self.marker, {})
         if k in self.stylediverts:
             newk = self.stylediverts[k][0]
+            old = self.basesheet.get(self.marker, {})
             newval = old.get(" "+newk, None)
             if newval is not None:
                 self._setFieldVal(k, stylemap[newk], newval, newval)

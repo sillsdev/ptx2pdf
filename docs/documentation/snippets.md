@@ -62,6 +62,33 @@ chapter title.
 ```perl
 "(\\c \d+)" > "\\pb\n\1\n\\zrule|\\*"
 ```
+## Mark headers with 3-letter book codes (temporarily)
+
+When working with a script that you cannot read, it is very helpful to place the book code in
+the header (using the Alt book name) so that you can navigate easily within the entire NT. But
+remember to comment out this expression before your final.
+
+```perl
+"(\\id (...).*\n)" > "\1\\h1 \2\r\n"
+```
+
+### Implementation
+
+We grab 2 capture groups:
+- the entire \id line
+- the 3-letter book code
+
+Then we put the 1st group back in and follow it with a new marker \h1 and the 
+2nd group (which is the book code) and finally a new line code.
+
+## Force a blank page at the end of the entire NT
+
+Sometimes you just need a blank page after the final text. Change the 'Amen.' to whatever
+the last word in Revelation is.
+
+```perl
+at REV 22:21 "Amen." >  "\1\n\\pb\n\\p \\bd ~\\bd*"
+```
 
 ## Fancy book separators from Heading information
 
@@ -127,7 +154,7 @@ at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator s
 ## Auto lengthen poetry
 
 A team has nice and short \\q1 and \\q2 lines in their text which work great for 2-col layouts.
-But for a single column layout, we would like to merge all \\q2 into the previos \\q1, and then
+But for a single column layout, we would like to merge all \\q2 into the previous \\q1, and then
 turn every other \\q1 into a \\q2 to make it look like poetry.
 
 ```perl
@@ -222,17 +249,32 @@ be specified more like a .sty file, within TeX. Notice that each value is
 delimited by `\relax` and that the `\Marker` is necessary to know which style
 marker we are setting attributes one.
 
-## Tabbed indent for glossary or index
+## Tabbed indent for glossary or Strong's index
 
 When typesetting an indented list, such as a glossary or Strongs index, it looks
 neater if the main body starts at the same indent position as the rest of the 
 paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\* and
-we can add a 'tab' after the Strongs number to make things line up neatly.
+we can add a 'tab' after the Strongs number to make things line up neatly. 
+Note that the \setbookhook restricts this change to just the 'XXS' book.
 
 ```tex
-\sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
-\sethook{end}{bd}{\hfil\egroup}
+\setbookhook{start}{XXS}{
+ \sethook{start}{bd}{\setbox0=\hbox{9999}\hbox to \wd0\bgroup}
+ \sethook{end}{bd}{\hfil\egroup}}
 ```
+
+### Implementation
+
+We create a hook that stores the content of the marker in an hbox. The width of
+this book could be just set to a fixed width as in replacing one line with:
+
+```tex
+\sethook{start}{bd}{\hbox to 1in\bgroup}
+```
+
+But rather than having to calculate the width of the box for every change in
+point size, we measure the width of 4 digits and use that width to set the width
+of the hbox containing the Strong's number (which is always 4 digits or less).
 
 ## Display paragraph markers next to each paragraph
 
@@ -267,12 +309,40 @@ the specific verse location.
 \setcvhook{LUK8.1}{\pretolerance=100}
 ```
 
+### Implementation
+
+Setting `\pretolerance=1` forces the paragraph builder to do the extra passes it
+might not have done otherwise, to give a more accurate result. And then we
+reset the value for the next paragraph and following.
+
 ## Table of Contents right-align column 2
 
 ```tex
 \deftocalign{2}{r}
 ```
 
+## Add extra  TOC entries 
+Additional TOC entries can be specified to appear before or after an automatic table of
+contents. As this is done by seting values that are used while `\ztoc` runs, it must occur 
+*before* the call to ztoc:
+```tex
+\ztocafter
+\tr \tc1 Maps\tc2 \tcr3 479
+\tr \tc1 Unusual animals mentioned in scripture\tc2 (animals)\tcr3 483
+\ztocafter*
+
+\ztoc|main\*
+
+```
+For the 'before' variant, you must set the style of the table:
+```tex
+For before
+\ztocbefore
+\tr \cat toc\cat*\tc1 Index\tc2\tcr3 i
+\ztocbefore*
+
+\ztocafter....
+```
 ## Set a larger space before footnote caller in the text
 
 If the space before a footnote caller (defined by style zcf) needs to be
@@ -293,6 +363,35 @@ qr word, like 'Selah'.
 \sethook{start}{qr}{\unskip\nobreak\hfill\penalty50\hskip0.3em\hbox{}\nobreak\hfill\hbox\bgroup}
 \sethook{end}{qr}{\egroup}
 ```
+
+### Implementation
+
+This trick comes from the TeXbook. Since, at a linebreak spaces are removed,
+this snippet replaces the space before the 'Selah' with a fill to push it right
+and then a recommendation not to break here `\penalty50`. The `\hskip0.3em` only
+appears if there is no linebreak before the Selah, and guarantees a minimum
+space between the 'Selah' and the end of the text in the paragraph. Then we insert a zero width
+non breaking space in the form of `\hbox{}`, with a nobreak and the necessary
+fill followed by the box containing the 'Selah' or whatever is marked.
+
+In effect TeX chooses between two text runs depending on whether it needs to
+insert a line break:
+
+```tex
+\nobreak\hfill
+\hbox{}\hfill\hbox{
+```
+
+if the line breaks (at the \break). Or with no break:
+
+```text
+\nobreak\hfill\hskip0.3em\hbox{}\hfill\hbox{
+```
+
+Notice the two `\hfill`s with the ensured space floating between them. But who
+cares, since everything is invisible. In both cases, the box is pushed to the
+right of the page.
+
 
 ## Show bridged verses at the start of chapters
 
@@ -327,12 +426,15 @@ referred to as Marginal verses.
 
 Sometimes, where there is a short verse, two verse numbers appear in the same
 line. This causes a crash between the two marginal verse numbers. One way around
-this is to tell the ptx macros to bridge two verses. This can be done using, for
-example:
+this is to tell the ptx macros to bridge two verses and depending on the horizontal
+space available may cause the verses to stack vertically. This can be done using, 
+for example:
 
 ```tex
-\bridgeVerses ROM3.17-18.
-
+\bridgeVerses ACT13.30-31.
+\bridgeVerses ACT23.26-27.
+\bridgeVerses ROM1.22-23.
+\bridgeVerses ROM3.15-16.
 ```
 
 The structure of this command is very precise. The book must be the 3 letter
@@ -342,6 +444,63 @@ hyphen must be the next verse after the first verse and there must be a final
 period to complete the specification. Apart from all that, this is a very
 convenient way to bridge verses without having to edit the source text. It may
 also be used not in a marginal verses context.
+
+Also note that if you want to suppress the hyphen that normally comes between 
+bridged verses, you can turn off the verse hyphen in this context with this
+line which should be placed before the \bridgeVerses lines:
+
+```tex
+\versehyphenfalse
+```
+
+## Change Strong's numbers from the 4-digit cell into a 4-in-a-line number
+
+The 4-digit cell numbers for Strong's cross-references are a very handy and compact
+form, but these are not searchable in the PDF. If you want to see the 'unpacked'
+version of these numbers then add a new style \\myxts which can be styled as needed
+and add this snippet.
+
+```tex
+\catcode`\@=11
+\def\mystrong#1{\get@ttribute{strong}\ifx\attr@b\relax\else\cstyle{#1}{\attr@b}\fi}
+\sethook{start}{xts}{\ifinn@te\proc@strong{xts}\else\mystrong{myxts}\fi}
+
+% or use this sethook instead if you want ALL Strong's numbers to 
+% be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).
+%\sethook{start}{xts}{\mystrong{myxts}}
+```
+
+### Implementation
+
+The `\mystrong` macro gets hold of the Strong's number from the attribute and
+then formats it according to the character style marker passed as `#1`. Then we
+replace the start hook for xts (which previously just called internal code to
+process the Strong's number). This new hook decides whether we are in the cross
+reference `\ifinn@te` and if so, calls the normal internal code, otherwise we
+are in the main text and so `\mystrong` should be called.
+
+Of course if you always want inline numbers even in cross references, then the
+hook can be simplified and `\mystrong` always called.
+
+## Special page numbering for a book
+"I want the page number for the glossary to restart numbers at one, and
+be prefixed with G-" 
+```tex
+\setbookhook{GLO}{start}{\pageno=1 \def\pagenumber{G-\folio}}
+```
+
+First, we reset the page number to one,  and then redefine the macro that
+prints the pagenumber.  (`\folio` prints lower case roman numerals if the page
+number is negative, and numbers starting from 1 if positive).
+
+## Move colophon to after included pages
+```
+\sethook{bookend}{final}{\layoutstylebreak\pagebreak}
+\sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
+```
+
+The first line replaces the normal colophon including code with code that will output the 
+page. The second line puts the normal colophon including code after any included documents.
 
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are

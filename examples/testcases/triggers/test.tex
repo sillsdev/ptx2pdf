@@ -10,6 +10,8 @@
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
+\tracing{sk}
+\tracing{sh}
 %\tracing{sc}
 %\tracing{sC}
 %\tracing{C}
@@ -52,10 +54,14 @@
 %\sethook{end}{m}{\endadd\endadd}
 \sethook{before}{add}{|}
 \sethook{after}{add}{|}
+\sethook{before}{id:TST|add}{->}
+\sethook{after}{id:TST|add}{<-}
 \sethook{start}{add}{\beginadd}
 \sethook{end}{add}{\endadd}
-\sethook{start}{cat:foo|cat}{}
 \sethook{end}{cat:foo|cat}{foo_hook>>}
+\sethook{start}{cat:foo|cat}{<<foo_hook}
+\sethook{start}{cat:foo|cat}{}
+\sethook{page}{2}{\p HERE WE ARE ON PAGE 2}
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 \relax

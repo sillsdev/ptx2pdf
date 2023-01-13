@@ -6,8 +6,8 @@ def updatedata(pytestconfig):
     return pytestconfig.option.update
 
 @pytest.fixture(scope="session")
-def pypy(pytestconfig):
-    return pytestconfig.option.pypy
+def logging(pytestconfig):
+    return pytestconfig.option.logging
 
 @pytest.fixture(scope="session")
 def starttime(pytestconfig):
@@ -16,7 +16,7 @@ def starttime(pytestconfig):
 def pytest_addoption(parser):
     parser.addoption("--dir", help="Project root directory to test")
     parser.addoption("-U","--update", action="store_true", default=False)
-    parser.addoption("-P","--pypy")
+    parser.addoption("--logging")
 
 def pytest_generate_tests(metafunc):
     jobs = []
