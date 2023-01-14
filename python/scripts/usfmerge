@@ -13,6 +13,7 @@ parser.add_argument("-k","--keys", help="Input file IDs, e.g -k LRA for 3 input 
 parser.add_argument("-o","--outfile",help="output file")
 parser.add_argument("-a","--astylesheet",default=[],action="append",help="add another stylesheet for infilea")
 parser.add_argument("-b","--bstylesheet",default=[],action="append",help="add another stylesheet for infileb")
+parser.add_argument("-c","--colstylesheet",default=[],nargs=2,action="append",help="A filename : add (another) stylesheet for infile A")
 parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet for both files")
 parser.add_argument("-S","--scores",help="Uneven scoring. A break is forced when the score of break-points is 100 or more. e.g. -S \"70,30,15,15\" will force a break in the 3rd and 4th input files if the first two agree, or in the 2nd if all other files agree.")
 parser.add_argument("-m","--mode",default="doc",help="alignment algorithm: simple, *doc")
@@ -23,16 +24,20 @@ args = parser.parse_args()
 
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
+stylesheets={}
+for k,sheetfile in args.colstylesheet:
+    if stylesheets.haskey(k):
+        stylesheets[k].append(sheetfile)
+    else:
+        stylesheets[k]=[sheetfile]
+
+
 keyarr=list(args.keys)
-if (len(keyarr) != len(args.infile)):
-    raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(args.infile)) )
 
 scorearr={}
 if args.scores:
     scorearr=args.scores.split(",")
-    if (len(scorearr)!=len(keyarr)) :
-        raise ValueError("Cannot have %d keys and %d scores!" % (len(keyarr),len(scorearr)) )
 
 
-usfmerge2(args.infile, keyarr, args.outfile, stylesheetsa=sheetsa, scorearr=scorearr,
-          stylesheetsb=sheetsb, fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug)
+usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, stylesheetsa=sheetsa,stylesheetsb=sheetsb, scorearr=scorearr,
+           fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug)

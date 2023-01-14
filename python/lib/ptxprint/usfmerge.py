@@ -21,8 +21,9 @@ class ChunkType(Enum):
     ID = 6
     TABLE = 7
     VERSE = 8           # A verse chunk, inside a paragraph 
-    MIDVERSEPAR = 9     # A mid-verse paragraph
-    PREVERSEPAR = 10    # A paragrpah where the next content is a verse number
+    PARVERSE = 9           # A verse chunk, inside a paragraph 
+    MIDVERSEPAR = 10     # A verse immediately after a paragraph
+    PREVERSEPAR = 11    # A paragrpah where the next content is a verse number
     NOVERSEPAR = 11     # A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction
 
    
@@ -40,7 +41,7 @@ _marker_modes = {
     'toc1': ChunkType.TITLE,
     'toc2': ChunkType.TITLE,
     'toc3': ChunkType.TITLE,
-
+    'v': ChunkType.VERSE,
     'cl': ChunkType.CHAPTER,
 }
 
@@ -109,26 +110,36 @@ class Collector:
         self.chap = 0
         self.verse = 0
         self.end = 0
+        self.waspar = False
         self.counts = {}
         self.scores = {}
         self.currChunk = None
         self.mode = ChunkType.INTRO
         if (scores==None):
             raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
-        print(type(scores))
+        if debugPrint:
+            print("Scores supplied are: ",  type(scores), scores)
         if synchronise in SyncPoints:
+            if debugPrint:
+                print("Sync points:", synchronise.lower())
             syncpoints=SyncPoints[synchronise.lower()] 
         else:
             syncpoints=SyncPoints['normal'] 
+            if debugPrint:
+                print("Sync points are normal")
 
         if (type(scores)==int):
-            scores={ChunkType.DEFSCORE:scores}
+            tmp=scores
+            scores={ChunkType.DEFSCORE:tmp}
+            if debugPrint:
+                print(f"Default score =  {scores[ChunkType.DEFSCORE]}")
 
         for st in ChunkType:
             if st.value==ChunkType.DEFSCORE:
                 self.scores=scores[st.value]
             else:
-                self.scores[st.value]=scores[st.value] if (st.value in scores) else (scores[ChunkType.DEFSCORE] * (syncpoints[st.value] if (st.value in syncpoints) else 0))
+                self.scores[st.value]=scores[st] if (st in scores) else (scores[ChunkType.DEFSCORE] * (syncpoints[st] if (st in syncpoints) else 0))
+            print(f"Score for {st} -> ",self.scores[st.value])
         if doc is not None:
             self.collect(doc, primary=primary)
             self.reorder()
@@ -143,6 +154,7 @@ class Collector:
     def makeChunk(self, c=None):
         if c is None:
             currChunk = Chunk(mode=self.mode)
+            self.waspar = False
         else:
             if c.name == "cl":
                 mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
@@ -150,15 +162,31 @@ class Collector:
                 mode = ChunkType.ID
             elif c.name == "tr":
                 mode = ChunkType.TABLE
+            elif c.name == "v":
+                if self.waspar:
+                    mode = ChunkType.PARVERSE
+                else:
+                    mode = ChunkType.VERSE
             else:
                 mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
+                if mode == ChunkType.BODY:
+                    if self.currChunk.hasVerse:
+                        mode = ChunkType.MIDVERSEPAR
+                    print('Bodypar:', len(c))
+                    if (len(c)>1):
+                        print('Bodypar:', c[1])
+                        if(isinstance(c[1],sfm.Element)):
+                            print( c[1].name)
+                            if (c[1].name=="v"):
+                                mode = ChunkType.PREVERSEPAR
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
+            self.waspar = ispara(c)
             self.mode = mode
         self.acc.append(currChunk)
         self.currChunk = currChunk
         return currChunk
 
-    def collect(self, root, primary=True):
+    def collect(self, root, primary=True, depth=0):
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
@@ -183,6 +211,24 @@ class Collector:
                 if c.name not in nestedparas and (newmode != self.mode \
                                                   or self.mode not in (ChunkType.HEADING, ChunkType.TITLE)):
                     newchunk = True
+            if isverse(c):
+                vc = re.sub(r"[^0-9\-]", "", c.args[0])
+                try:
+                    if "-" in c.args[0]:
+                        v, e = map(int, vc.split('-'))
+                    else:
+                        v = int(vc)
+                        e = v
+                except (ValueError, TypeError):
+                    v = 0
+                    e = 0
+                self.verse = v
+                self.end = e
+                self.counts = {}
+                self.currChunk.label(self.chap, self.verse, self.end, 0)
+                self.currChunk.hasVerse = True
+            if debugPrint:
+                print(newchunk, c.name, self.mode  if isinstance(c, sfm.Element) else '-' )
             if newchunk:
                 currChunk = self.makeChunk(c)
             if currChunk is not None:
@@ -200,23 +246,7 @@ class Collector:
                     currChunk.verse = 0
                 newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
                 currChunk[-1] = newc
-            elif isverse(c):
-                vc = re.sub(r"[^0-9\-]", "", c.args[0])
-                try:
-                    if "-" in c.args[0]:
-                        v, e = map(int, vc.split('-'))
-                    else:
-                        v = int(vc)
-                        e = v
-                except (ValueError, TypeError):
-                    v = 0
-                    e = 0
-                self.verse = v
-                self.end = e
-                self.counts = {}
-                self.currChunk.label(self.chap, self.verse, self.end, 0)
-                self.currChunk.hasVerse = True
-            currChunk = self.collect(c, primary=primary) or currChunk
+            currChunk = self.collect(c, primary=primary,depth=1+depth) or currChunk
         return currChunk
 
     def reorder(self):
@@ -224,6 +254,8 @@ class Collector:
         ti = None
         bi = None
         for i in range(1, len(self.acc)):
+            if debugPrint:
+                print(i,self.acc[i].type,self.acc[i])
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:
                     bi = i-1
@@ -425,13 +457,37 @@ modes = {
     "simple": alignSimple
 }
 
-def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal"):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal"):
     global debugPrint, debstr
     debugPrint = debug
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
-    stylesheeta = usfm._load_cached_stylesheet('usfm.sty')
-    stylesheetb = {k: v.copy() for k, v in stylesheeta.items()}
     tag_escapes = r"[^a-zA-Z0-9]"
+    # Check input
+    if (len(keyarr) != len(infilearr)):
+        raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(infilearr)) )
+        
+    if debugPrint:
+        print(stylesheetsa, stylesheetsb)
+    
+    # load stylesheets
+    sheets={}
+    for k in keyarr:
+        if debugPrint:
+            print(f"defining stylesheet {k}")
+        sheets[k]=usfm._load_cached_stylesheet('usfm_sb.sty')
+    for s in stylesheetsa:
+        if debugPrint:
+            print(f"Appending {s} to stylesheet {k}")
+        sheets['L']=appendsheet(s, sheets['L'])
+    for s in stylesheetsb:
+        if debugPrint:
+            print(f"Appending {s} to stylesheet {k}")
+        sheets['R']=appendsheet(s, sheets['R'])
+    for k,s in stylesheets:
+        if debugPrint:
+            print(f"Appending {s} to stylesheet {k}")
+        sheets[k] = appendsheet(s,sheet[k])
+    # Set-up potential synch points
     tmp=synchronise.split(",")
     if len(tmp)==1:
         syncarr={k:synchronise for k in keyarr}
@@ -444,19 +500,13 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsec
     if len(scorearr)==0:
         s=int(1+100/len(keyarr))
         scorearr={k:s for k in keyarr}
-        
-    if debugPrint:
-        print(stylesheetsa, stylesheetsb)
-    for s in stylesheetsa:
-        stylesheeta = appendsheet(s, stylesheeta)
-    for s in stylesheetsb:
-        stylesheetb = appendsheet(s, stylesheetb)
-    
+    elif len(scorearr)!=len(keyarr) :
+        raise ValueError("Cannot have %d keys and %d scores!" % (len(keyarr),len(scorearr)) )
 
     def texttype(m):
         res = stylesheet.get(m, {'TextType': 'other'}).get('TextType').lower()
-        if res in ('chapternumber', 'versenumber'):
-            res = 'versetext'
+        #if res in ('chapternumber', 'versenumber'):
+        #   res = 'versetext'
         return res
 
     debstr = lambda s: s
@@ -467,21 +517,22 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheetsa=[], stylesheetsb=[], fsec
     chunklocs={}
     colls={}
     for colkey,infile in zip(keyarr,infilearr):
+        if debugPrint:
+            print(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
-            doc = list(usfm.parser(inf, stylesheet=stylesheeta,
+            doc = list(usfm.parser(inf, stylesheet=sheets[colkey],
                                    canonicalise_footnotes=False, tag_escapes=tag_escapes))
             while len(doc) > 1:
                 if isinstance(doc[0], sfm.Text):
                     doc.pop(0)
                 else:
                     break
-            colls[colkey] = Collector(doc=doc, colkey=colkey, fsecondary=fsecondary, stylesheet=stylesheeta, scores=scorearr[colkey],synchronise=syncarr[colkey])
+            colls[colkey] = Collector(doc=doc, colkey=colkey, fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey])
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
         chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]
 
     f = modes[mode]
     pairs = f(*((colls[k].acc, chunklocs[k]) for k in keyarr))
-    #pairs = alignChunks(pcoll.acc, scoll.acc, mainkeys, secondkeys)
 
     if outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
