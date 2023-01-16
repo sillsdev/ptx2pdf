@@ -1074,7 +1074,7 @@ class ViewModel:
             (sect, name) = k.split("/")
             try:
                 val = config.get(sect, name)
-            except configparser.NoOptionError:
+            except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
