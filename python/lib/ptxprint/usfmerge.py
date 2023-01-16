@@ -54,6 +54,10 @@ class Chunk(list):
         self.end = verse
         self.pnum = pnum
         self.hasVerse = False
+        if mode in (ChunkType.MIDVERSEPAR, ChunkType.VERSE, ChunkType.PARVERSE):
+            self.verseText = True
+        else:
+            self.verseText = False
         self.labelled = False
 
     def label(self, chap, verse, end, pnum):
@@ -110,7 +114,7 @@ class Collector:
         self.chap = 0
         self.verse = 0
         self.end = 0
-        self.waspar = False
+        self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.counts = {}
         self.scores = {}
         self.currChunk = None
@@ -169,16 +173,26 @@ class Collector:
                     mode = ChunkType.VERSE
             else:
                 mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                if mode == ChunkType.BODY:
-                    if self.currChunk.hasVerse:
-                        mode = ChunkType.MIDVERSEPAR
-                    print('Bodypar:', len(c))
-                    if (len(c)>1):
-                        print('Bodypar:', c[1])
-                        if(isinstance(c[1],sfm.Element)):
+                if mode == ChunkType.BODY and ispara(c):
+                    print(f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}:', len(self.acc))
+                    if(len(c)==1 and isinstance(c[0],sfm.Text)):
+                        print(f'Bodypar(simple): ',c.name,  c[0], type(c[0]))
+                        if (len(c[0])>2 and self.currChunk.verseText):
+                            mode = ChunkType.MIDVERSEPAR
+                    elif (len(c)>1):
+                        #Multi-component body paragraph
+                        #print('Bodypar:', c.name, type(c[0]),c[0], type(c[1]), c[1])
+                        if (len(c[0])>2 and self.currChunk.verseText):
+                            mode = ChunkType.MIDVERSEPAR
+                        elif(isinstance(c[1],sfm.Element)):
                             print( c[1].name)
                             if (c[1].name=="v"):
                                 mode = ChunkType.PREVERSEPAR
+                        elif(isinstance(c[1],sfm.Text)):
+                            if self.currChunk.verseText:
+                                mode = ChunkType.MIDVERSEPAR
+                    print(f"Conclusion: bodypar type is {mode}")
+                        
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
             self.waspar = ispara(c)
             self.mode = mode
@@ -190,6 +204,7 @@ class Collector:
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
+        oldmode= None
         elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
@@ -199,7 +214,12 @@ class Collector:
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
         for c in elements:
-            if not isinstance(c, sfm.Element):
+            if not isinstance(c, sfm.Element): 
+                if (isinstance(c,sfm.Text) and len(c)>3):
+                    self.waspar=False
+                if(currChunk): # It's a text node, make sure it's attached to the right place.
+                    currChunk.append(c)
+                    root.remove(c)
                 continue
             if c.name == "fig":
                 if self.fsecondary == primary:
@@ -227,10 +247,17 @@ class Collector:
                 self.counts = {}
                 self.currChunk.label(self.chap, self.verse, self.end, 0)
                 self.currChunk.hasVerse = True
+                newchunk = True
             if debugPrint:
-                print(newchunk, c.name, self.mode  if isinstance(c, sfm.Element) else '-' )
+                print(newchunk, c.name, "context:", oldmode,self.mode  if isinstance(c, sfm.Element) else '-' )
             if newchunk:
+                oldmode=self.mode
                 currChunk = self.makeChunk(c)
+                if isverse(c):
+                    currChunk.hasVerse = True # By definition!
+                    self.currChunk.hasVerse = True
+                #elif (currChunk.type==ChunkType.BODY and ispara(c) and oldmode == ChunkType.MIDVERSEPAR): 
+                    #currChunk.type=ChunkType.MIDVERSEPAR
             if currChunk is not None:
                 currChunk.append(c)
                 if c in root:
