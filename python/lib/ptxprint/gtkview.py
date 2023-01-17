@@ -1587,6 +1587,9 @@ class GtkViewModel(ViewModel):
 
     def lock_widget(self, wid):
         self.locked.add(wid)
+        w = self.builder.get_object(wid)
+        if w is not None:
+            w.set_sensitive(False)
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:

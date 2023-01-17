@@ -194,7 +194,7 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
-    def lock_widget(self):
+    def lock_widget(self, wid):
         pass
 
     def baseTeXPDFnames(self, bks=None, diff=False):
@@ -701,14 +701,16 @@ class ViewModel:
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
-        for opath, locked in  ((os.path.join(self.configPath(cfgname, makePath=False), "ptxprint_override.cfg"), True),
-                (os.path.join(self.configPath(cfgname, makePath=False), '..', 'ptxprint_project.cfg'), False)):
+        cp = self.configPath(cfgname, makePath=False)
+        for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
+                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser()
+            oconfig.read(opath, encoding="utf-8")
             self.versionFwdConfig(oconfig, cfgname)
             self.localiseConfig(oconfig)
-            self.loadConfig(oconfig, lock=locked, updatebklist=False)
+            self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
@@ -1003,13 +1005,14 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
                     self.set(k, v, skipmissing=True)
             def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
-            self.clearvars()
+            if clearvars:
+                self.clearvars()
         for sect in config.sections():
             # if sect == "paper":
                 # import pdb; pdb.set_trace()
@@ -1728,7 +1731,6 @@ set stack_size=32768""".format(self.configName())
         return None
         
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
-        # import pdb; pdb.set_trace()
         inf = BytesIO(zipdata)
         zf = ZipFile(inf, compression=ZIP_DEFLATED)
         os.makedirs(configpath, exist_ok=True)
