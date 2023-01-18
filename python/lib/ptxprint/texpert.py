@@ -28,6 +28,7 @@ texpertOptions = {
     "CalcChapSize":       ["calcchapsize", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")],
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
 
+    "hyphenpenalty":      ["hyphenpenalty", 50, "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
     "vertThumbtabVadj":   ["thumbvvadj", -2., "{0}={1}pt", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")],
     "DefaultSpaceBeside": ["spbeside", 10., "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
     "OptionalBreakPenalty": ["optbkpen", 300, "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
