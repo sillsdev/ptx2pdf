@@ -598,7 +598,7 @@ class ViewModel:
                     # self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
-                    self.builder.get_object("t_txlQuestionsLang").set_text(lngCode)
+                    self.set("t_txlQuestionsLang", lngCode)
             return oldVersion >= 0
         else:
             return True
