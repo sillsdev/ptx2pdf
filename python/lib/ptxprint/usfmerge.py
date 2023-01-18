@@ -4,13 +4,18 @@ import ptxprint.sfm as sfm
 from ptxprint.sfm import usfm
 from ptxprint.sfm import style
 import argparse, difflib, sys
-from enum import Enum
+from enum import Enum,Flag
 from itertools import groupby
 import logging
 
+class MergeF(Flag):
+    ChunkOnVerses=1
+    NoSplitNB=2
+    HeadWithText=4
+
+settings=MergeF.ChunkOnVerses | MergeF.NoSplitNB
 logger = logging.getLogger(__name__)
 debugPrint = False
-
 class ChunkType(Enum):
     DEFSCORE = 0        # Value for default scores
     CHAPTER = 1
@@ -24,9 +29,14 @@ class ChunkType(Enum):
     PARVERSE = 9           # A verse chunk, inside a paragraph 
     MIDVERSEPAR = 10     # A verse immediately after a paragraph
     PREVERSEPAR = 11    # A paragrpah where the next content is a verse number
-    NOVERSEPAR = 11     # A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction
+    NOVERSEPAR = 12     # A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction
+    NPARA = 13          # A nested paragraph 
+    NB = 14             # A nobreak mark 
+    NBCHAPTER = 15      # A chapter that is followed by an NB
 
-   
+splitpoints={
+        ChunkType.VERSE:True
+} 
 _textype_map = {
     "ChapterNumber":   ChunkType.CHAPTER,
     "Section":   ChunkType.HEADING,
@@ -43,6 +53,7 @@ _marker_modes = {
     'toc3': ChunkType.TITLE,
     'v': ChunkType.VERSE,
     'cl': ChunkType.CHAPTER,
+    'nb': ChunkType.NB
 }
 
 class Chunk(list):
@@ -59,6 +70,7 @@ class Chunk(list):
         else:
             self.verseText = False
         self.labelled = False
+        self.score = None
 
     def label(self, chap, verse, end, pnum):
         if self.labelled:
@@ -71,10 +83,15 @@ class Chunk(list):
         self.labelled = True
 
     @property
+    def position(self):
+        return((self.chap,self.verse,self.pnum,self.type.name if self.type.name != 'VERSE' else '@VERSE'))
+        #return("%03d:%03d:%04d:%s" % (self.chap,self.verse,self.pnum,self.type.name))
+
+    @property
     def ident(self):
         if len(self) == 0:
-            return ("", 0, 0) # , 0, 0)
-        return (self.type.name, self.chap, self.verse) # , self.end, self.pnum)
+            return ("", 0, 0,0) # , 0, 0)
+        return (self.type.name, self.chap, self.verse, self.pnum) # , self.end, self.pnum)
 
     def __str__(self):
         #return "".join(repr(x) for x in self)
@@ -85,9 +102,9 @@ class Chunk(list):
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl', 'nb'))
 
 SyncPoints = {
-    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1} # split at every verse
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.NBCHAPTER:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.NBCHAPTER:0}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.NBCHAPTER:1} # split at every verse
 }
 
 def ispara(c):
@@ -119,6 +136,7 @@ class Collector:
         self.scores = {}
         self.currChunk = None
         self.mode = ChunkType.INTRO
+        self.oldmode= None
         if (scores==None):
             raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
         if debugPrint:
@@ -140,10 +158,16 @@ class Collector:
 
         for st in ChunkType:
             if st.value==ChunkType.DEFSCORE:
-                self.scores=scores[st.value]
+                self.scores[st.value]=scores[st]
             else:
                 self.scores[st.value]=scores[st] if (st in scores) else (scores[ChunkType.DEFSCORE] * (syncpoints[st] if (st in syncpoints) else 0))
-            print(f"Score for {st} -> ",self.scores[st.value])
+            #if (self.scores[st.value]):
+            #    splitpoints[st] = True
+            #else:
+            #    if (st not in splitpoints):
+            #        splitpoints[st] = False
+            if debugPrint:
+                print(f"Score for {st} -> ",self.scores[st.value], splitpoints[st] if st in splitpoints else '-' )
         if doc is not None:
             self.collect(doc, primary=primary)
             self.reorder()
@@ -151,8 +175,14 @@ class Collector:
     def pnum(self, c):
         if c is None:
             return 0
-        res = self.counts.get(c.name, 1)
-        self.counts[c.name] = res + 1
+        if hasattr(c,'name') :
+            n=c.name
+        else:
+            n=c
+        res = self.counts.get(n, 0)
+        if debugPrint:
+             print(n,res)
+        self.counts[n] = res + 1
         return res
 
     def makeChunk(self, c=None):
@@ -164,8 +194,12 @@ class Collector:
                 mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
             elif c.name == "id":
                 mode = ChunkType.ID
+            elif c.name == "nb":
+                mode = ChunkType.NB
             elif c.name == "tr":
                 mode = ChunkType.TABLE
+            elif c.name in nestedparas:
+                mode = ChunkType.NPARA
             elif c.name == "v":
                 if self.waspar:
                     mode = ChunkType.PARVERSE
@@ -174,26 +208,31 @@ class Collector:
             else:
                 mode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
                 if mode == ChunkType.BODY and ispara(c):
-                    print(f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}:', len(self.acc))
+                    if debugPrint:
+                        print(f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}:', len(self.acc))
                     if(len(c)==1 and isinstance(c[0],sfm.Text)):
-                        print(f'Bodypar(simple): ',c.name,  c[0], type(c[0]))
+                        if debugPrint:
+                            print(f'Bodypar(simple): ',c.name,  c[0], type(c[0]))
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                     elif (len(c)>1):
                         #Multi-component body paragraph
-                        #print('Bodypar:', c.name, type(c[0]),c[0], type(c[1]), c[1])
+                        if debugPrint:
+                            print('Bodypar:', c.name, type(c[0]),c[0], type(c[1]), c[1])
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                         elif(isinstance(c[1],sfm.Element)):
-                            print( c[1].name)
+                            #if debugPrint:
+                                #print( c[1].name)
                             if (c[1].name=="v"):
                                 mode = ChunkType.PREVERSEPAR
                         elif(isinstance(c[1],sfm.Text)):
                             if self.currChunk.verseText:
                                 mode = ChunkType.MIDVERSEPAR
-                    print(f"Conclusion: bodypar type is {mode}")
+                    if debugPrint:
+                        print(f"Conclusion: bodypar type is {mode}")
                         
-            currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(c))
+            currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             self.waspar = ispara(c)
             self.mode = mode
         self.acc.append(currChunk)
@@ -204,7 +243,8 @@ class Collector:
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
         currChunk = None
-        oldmode= None
+        if depth==0:
+            self.type=None
         elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
@@ -245,18 +285,22 @@ class Collector:
                 self.verse = v
                 self.end = e
                 self.counts = {}
-                self.currChunk.label(self.chap, self.verse, self.end, 0)
                 self.currChunk.hasVerse = True
-                newchunk = True
+                if MergeF.ChunkOnVerses in settings:
+                    newchunk = True
+                else:
+                    self.currChunk.label(self.chap, self.verse, self.end, 0)
             if debugPrint:
-                print(newchunk, c.name, "context:", oldmode,self.mode  if isinstance(c, sfm.Element) else '-' )
+                print(newchunk, c.name, "context:", self.oldmode,self.mode  if isinstance(c, sfm.Element) else '-' )
             if newchunk:
-                oldmode=self.mode
+                self.oldmode=self.mode
                 currChunk = self.makeChunk(c)
-                if isverse(c):
-                    currChunk.hasVerse = True # By definition!
-                    self.currChunk.hasVerse = True
-                #elif (currChunk.type==ChunkType.BODY and ispara(c) and oldmode == ChunkType.MIDVERSEPAR): 
+                if MergeF.ChunkOnVerses in settings:
+                    if isverse(c):
+                        currChunk.hasVerse = True # By definition!
+                        self.currChunk.label(self.chap, self.verse, self.end, 0)
+                        self.currChunk.hasVerse = True
+                #elif (currChunk.type==ChunkType.BODY and ispara(c) and self.oldmode == ChunkType.MIDVERSEPAR): 
                     #currChunk.type=ChunkType.MIDVERSEPAR
             if currChunk is not None:
                 currChunk.append(c)
@@ -277,24 +321,70 @@ class Collector:
         return currChunk
 
     def reorder(self):
-        # Merge contiguous title and table chunks
+        # Merge contiguous title and table chunks, Merge in nested paragraphs
         ti = None
         bi = None
+        ni = None
+        #for i in range(0, 10):
+            #print(i,self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-' ,self.acc[i].type,self.acc[i])
         for i in range(1, len(self.acc)):
-            if debugPrint:
-                print(i,self.acc[i].type,self.acc[i])
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:
                     bi = i-1
                 self.acc[bi].extend(self.acc[i])
                 self.acc[i].deleteme = True
                 ti = None
+                ni = None
             elif self.acc[i].type == ChunkType.TABLE and self.acc[i-1].type == ChunkType.TABLE:
                 if ti is None:
                     ti = i - 1
                 self.acc[ti].extend(self.acc[i])
                 self.acc[i].deleteme = True
                 bi = None
+                ni = None
+            elif self.acc[i].type == ChunkType.NPARA and self.acc[i-1].type != None:
+                if ni is None:
+                    ni = i - 1
+                self.acc[ni].extend(self.acc[i])
+                self.acc[i].deleteme = True
+                bi = None
+                ti = None
+        # Merge nb with chapter number and 1st verse.
+        for i in range(1, len(self.acc) - 1):
+            if self.acc[i].type is ChunkType.NB and self.acc[i-1].type is ChunkType.CHAPTER:
+                self.acc[i-1].type=ChunkType.NBCHAPTER
+                if MergeF.NoSplitNB in settings:
+                    self.acc[i-1].extend(self.acc[i])
+                    self.acc[i].deleteme = True
+                    #print("NB met",self.acc[i-2].type ,self.acc[i-1].type ,self.acc[i].type )
+                    if self.acc[i+1].type == ChunkType.PARVERSE:
+                        self.acc[i-1].verse=self.acc[i+1].verse
+                        self.acc[i-1].extend(self.acc[i+1])
+                        self.acc[i+1].deleteme = True
+                    if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
+                        self.acc[i-2].extend(self.acc[i-1])
+                        self.acc[i-1].deleteme = True
+                        
+
+        # Merge pre-verse paragraph and verses.
+        for i in range(1, len(self.acc) - 1):
+            if self.acc[i].type == ChunkType.PARVERSE:
+                if  self.acc[i-1].type in (ChunkType.PREVERSEPAR, ChunkType.NB):
+                    # A PARVERSE gives its address and content up to the preceeding PREVERSEPAR, as the two may not be seperated
+                    if bi is None:
+                        bi=i-1
+                    self.acc[bi].verse=self.acc[i].verse
+                    self.acc[bi].pnum=self.acc[i].pnum
+                    self.acc[bi].extend(self.acc[i])
+                    self.acc[i].deleteme = True
+                elif (self.acc[i-1].type in (ChunkType.CHAPTER, ChunkType.NBCHAPTER)):
+                    pass 
+                else:
+                    print(F"Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: {self.acc[i-1].type} {self.acc[i].type}")
+                    print(self.acc[i-1], self.acc[i])
+                    #raise ValueError("Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: %,%" %  (self.acc[i-1].type, self.acc[i].type))
+            else:
+                bi=None
         # make headings in the intro into intro
         for i in range(1, len(self.acc) - 1):
             c = self.acc[i+1]
@@ -345,7 +435,25 @@ class Collector:
         logger.debug("Chunks before reordering: {}".format(len(self.acc)))
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
         logger.debug("Chunks after reordering: {}".format(len(self.acc)))
-
+        if debugPrint:
+            for i in range(0, len(self.acc)):
+                print(i,self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-' ,self.acc[i].type,self.acc[i])
+    def score(self,results={}):
+        """Calculate the scores for each chunk, returning an array of non-zero scores (potential break points)
+        If the results parameter is given, then the return value is a summation
+        """
+        for i in range(0, len(self.acc)):
+            t=self.acc[i].type.value
+            scval=self.scores[t]
+            self.acc[i].score=scval
+            pos=self.acc[i].position
+            if pos in results:
+                results[pos]+=scval
+                print("%s  + %d = %d" % (pos,scval, results[pos]))
+            else:
+                results[pos]=scval
+                print(pos, "=", scval)
+        return(results)
 
 def appendpair(pairs, ind, chunks):
     if len(pairs) and pairs[-1][ind] is not None:
@@ -435,10 +543,14 @@ def alignChunks(primary, secondary):
 def alignSimple(primary, *others):
     # import pdb; pdb.set_trace()
     pchunks, pkeys = primary
+    if isinstance(pchunks, Collector):
+        pchunks=pchunks.acc
     numkeys = len(pkeys)
     runs = [[[x, x]] for x in range(numkeys)]
     runindices = list(range(numkeys))
     for ochunks, okeys in others:
+        if isinstance(pchunks, Collector):
+            ochunks=ochunks.acc
         runs = [x + [None] for x in runs]
         diff = difflib.SequenceMatcher(None, pkeys, okeys)
         for op in diff.get_opcodes():
@@ -473,6 +585,57 @@ def alignSimple(primary, *others):
         results.append(res)
     return results
 
+def alignScores(*columns):
+    merged={}
+    for ochunks, okeys in columns:
+        merged=ochunks.score(merged)
+    positions=[k for k,v in merged.items()]
+    positions.sort()
+    # Ensure headings get split from preceding text if there's a coming break
+    for i in range (0,len(positions)-1):
+        if(positions[i][3]=='HEADING') and (merged[positions[i+1]]>99):
+            a=0
+            while positions[i-a-1][3]=='HEADING':
+                a+=1
+            print(f"Spliting between positions {positions[i-a]} and {positions[i+1]}")
+            merged[positions[i-a]]=100
+            if MergeF.HeadWithText in settings:
+                merged[positions[i+1]]=0
+    del positions
+    syncpositions=[k for k,v in merged.items() if v>=100]
+    syncpositions.sort()
+    print(syncpositions, sep=" ")
+    results=[]
+    colkeys={}
+    for i in range(0,len(columns)):
+        colkeys[columns[i][0].colkey]=i
+    print("colkeys:", colkeys)
+    ofs={}
+    blank={}
+    lim={}
+    for c,i in colkeys.items():
+        ofs[c]=0
+        blank[c]=None
+        lim[c]=len(columns[i][0].acc)
+    syncpositions.append((999,999,999))
+    for posn in syncpositions:
+        chunks=blank.copy()
+        for c,i in colkeys.items():
+            print ("CHUNK:\n",posn, c,ofs[c],lim[c])
+            while (ofs[c]<lim[c]) and (columns[i][0].acc[ofs[c]].position < posn): 
+                thispos=columns[i][0].acc[ofs[c]].position
+                print(ofs[c], thispos, merged[thispos] if thispos in merged else '0' ,  sep='=', end=" ",flush=True)
+                if chunks[c]:
+                    chunks[c].append(columns[i][0].acc[ofs[c]])
+                else:
+                    chunks[c]=columns[i][0].acc[ofs[c]]
+                ofs[c]+=1
+            print()
+            if (chunks[c]):
+                print(*chunks[c])
+        results.append({c:chunks[c] for c in colkeys})
+    return results
+
 def appendsheet(fname, sheet):
     if os.path.exists(fname):
         with open(fname) as s:
@@ -481,11 +644,12 @@ def appendsheet(fname, sheet):
 
 modes = {
     "doc": alignChunks,
-    "simple": alignSimple
+    "simple": alignSimple,
+    "scores" : alignScores
 }
 
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal"):
-    global debugPrint, debstr
+    global debugPrint, debstr,settings
     debugPrint = debug
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
@@ -543,6 +707,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     chunks={}
     chunklocs={}
     colls={}
+    if (mode == "scores") or ("verse"  in syncarr) or ("chapter" in syncarr) : #Score-based splitting may force the break-up of an NB, the others certainly will.
+        settings =  settings & (~MergeF.NoSplitNB)
     for colkey,infile in zip(keyarr,infilearr):
         if debugPrint:
             print(f"Reading {colkey}: {infile}")
@@ -559,13 +725,21 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]
 
     f = modes[mode]
-    pairs = f(*((colls[k].acc, chunklocs[k]) for k in keyarr))
+    pairs = f(*((colls[k], chunklocs[k]) for k in keyarr))
 
     if outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
     else:
         outf = sys.stdout
+    for i, p in enumerate(pairs):
+        for col,data in p.items():
+            if data is not None:
+                outf.write("\n\\polyglotcolumn %c\n" % col)
+                for d in data:
+                    outf.write(str(d))   
+        outf.write("\n\\polyglotendcols\n")
 
+if 0:
     isright = True
     for i, p in enumerate(pairs):
         if p[0] is not None and len(p[0]):
