@@ -28223,7 +28223,7 @@ after any front matter material).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_variables">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -28353,7 +28353,7 @@ table of variable names and values.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="b_delzvar">
+                              <object class="GtkButton" id="btn_delzvar">
                                 <property name="label" translatable="yes">Del</property>
                                 <property name="name">Delete a peripheral variable</property>
                                 <property name="width-request">60</property>
@@ -28372,7 +28372,7 @@ selected variable(s).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="b_addzvar">
+                              <object class="GtkButton" id="btn_addzvar">
                                 <property name="label" translatable="yes">Add</property>
                                 <property name="name">Add a peripheral variable</property>
                                 <property name="width-request">60</property>

@@ -194,6 +194,9 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
+    def paint_widget(self, wid):
+        pass
+
     def lock_widget(self, wid):
         pass
 
@@ -1015,7 +1018,12 @@ class ViewModel:
             # if sect == "paper":
                 # import pdb; pdb.set_trace()
             for opt in config.options(sect):
-                key = "{}/{}".format(sect, opt)
+                if len(opt) != len(opt.strip("*")):
+                    editableOverride = True
+                    print(f"Found {opt} to be an editable override")
+                else:
+                    editableOverride = False
+                key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
                 if key in ModelMap:
                     v = ModelMap[key]
@@ -1045,7 +1053,12 @@ class ViewModel:
                             if val is not None:
                                 setv(v[0], val)
                             if lock:
-                                self.lock_widget(v[0])
+                                if editableOverride:
+                                    # print(f"Painting widget: {v[0]}")
+                                    self.paint_widget(v[0])
+                                else:
+                                    self.lock_widget(v[0])
+                                    print(f"Locked {opt}={v[0]}")
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":

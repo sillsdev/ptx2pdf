@@ -168,6 +168,11 @@ tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestio
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+tb_Peripherals gr_importFrontPDF gr_importBackPDF 
+bx_ToC c_autoToC t_tocTitle 
+fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
+c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
+c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
 """.split()
@@ -1584,6 +1589,11 @@ class GtkViewModel(ViewModel):
                 break
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
+
+    def paint_widget(self, wid):
+        # self.painted.add(wid)
+        if wid is not None:
+            self.highlightwidget(wid, True)
 
     def lock_widget(self, wid):
         self.locked.add(wid)
