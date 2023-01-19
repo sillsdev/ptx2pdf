@@ -563,6 +563,8 @@ class GtkViewModel(ViewModel):
         logger.debug("Glade loaded in gtkview")
         self.isDisplay = True
         self.searchWidget = []
+        self.painted = set()
+        self.locked = set()
         self.config_dir = None
         self.booklistKeypressed = False
         self.configKeypressed = False
@@ -581,7 +583,6 @@ class GtkViewModel(ViewModel):
         self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
-        self.locked = set()
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -1519,9 +1520,11 @@ class GtkViewModel(ViewModel):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", "Default")
 
-    def loadConfig(self, config, **kw):
+    def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
-        super(GtkViewModel, self).loadConfig(config, **kw)
+        if clearvars:
+            self.unpaintUnlock()
+        super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
         for k, v in _sensitivities.items():
             if k.startswith("r_"):
                 continue
@@ -1590,16 +1593,30 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
-    def paint_widget(self, wid):
-        # self.painted.add(wid)
-        if wid is not None:
-            self.highlightwidget(wid, True)
-
-    def lock_widget(self, wid):
-        self.locked.add(wid)
+    def paintLock(self, wid, lock, editableOverride):
         w = self.builder.get_object(wid)
-        if w is not None:
-            w.set_sensitive(False)
+        if w is None:
+            return
+        if lock and not editableOverride:
+            if w.get_sensitive():
+                self.locked.add(wid)
+                w.set_sensitive(False)
+        elif editableOverride:
+            self.painted.add(wid)
+            w.get_style_context().add_class("highlighted")
+
+    def unpaintUnlock(self):
+        for wid in self.painted:
+            if wid.startswith("txbf_"):
+                pass
+            else:
+                w = self.builder.get_object(wid)
+                w.get_style_context().remove_class("highlighted")
+        self.painted.clear()
+        for wid in self.locked:
+            w = self.builder.get_object(wid)
+            w.set_sensitive(True)
+        self.locked.clear()
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:

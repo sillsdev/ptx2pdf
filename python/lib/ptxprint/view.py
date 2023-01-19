@@ -194,10 +194,7 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
-    def paint_widget(self, wid):
-        pass
-
-    def lock_widget(self, wid):
+    def paintLock(self, wid, lock, editableOverride):
         pass
 
     def baseTeXPDFnames(self, bks=None, diff=False):
@@ -1020,7 +1017,6 @@ class ViewModel:
             for opt in config.options(sect):
                 if len(opt) != len(opt.strip("*")):
                     editableOverride = True
-                    print(f"Found {opt} to be an editable override")
                 else:
                     editableOverride = False
                 key = "{}/{}".format(sect, opt.strip("*"))
@@ -1052,13 +1048,8 @@ class ViewModel:
                                 val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
-                            if lock:
-                                if editableOverride:
-                                    # print(f"Painting widget: {v[0]}")
-                                    self.paint_widget(v[0])
-                                else:
-                                    self.lock_widget(v[0])
-                                    print(f"Locked {opt}={v[0]}")
+                            if not clearvars:
+                                self.paintLock(v[0], lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
