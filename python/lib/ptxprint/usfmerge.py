@@ -56,6 +56,16 @@ _marker_modes = {
     'nb': ChunkType.NB
 }
 
+_canonical_order={
+    ChunkType.ID:0,
+    ChunkType.PREVERSEPAR:1,
+    ChunkType.PARVERSE:1,
+    ChunkType.VERSE:2,
+    ChunkType.MIDVERSEPAR:3,
+    ChunkType.HEADING:4,
+}
+    
+
 class Chunk(list):
     def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0):
         super(Chunk, self).__init__(a)
@@ -84,7 +94,7 @@ class Chunk(list):
 
     @property
     def position(self):
-        return((self.chap,self.verse,self.pnum,self.type.name if self.type.name != 'VERSE' else '@VERSE'))
+        return((self.chap,self.verse,self.pnum,_canonical_order[self.type] if self.type in _canonical_order else 9,self.type.name if self.type.name != 'VERSE' else '@VERSE'))
         #return("%03d:%03d:%04d:%s" % (self.chap,self.verse,self.pnum,self.type.name))
 
     @property
@@ -124,6 +134,7 @@ class Collector:
     """
     def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None, colkey=None, scores=None, synchronise=None):
         self.acc = []
+        self.loc = {} # Locations to turn position into offset into acc[] array 
         self.colkey=colkey
         self.fsecondary = fsecondary
         self.stylesheet = stylesheet
@@ -155,6 +166,8 @@ class Collector:
             scores={ChunkType.DEFSCORE:tmp}
             if debugPrint:
                 print(f"Default score =  {scores[ChunkType.DEFSCORE]}")
+        else:
+            pass
 
         for st in ChunkType:
             if st.value==ChunkType.DEFSCORE:
@@ -221,10 +234,11 @@ class Collector:
                             print('Bodypar:', c.name, type(c[0]),c[0], type(c[1]), c[1])
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
+                        elif(isinstance(c[0],sfm.Element)):
+                            if (c[0].name=="v" ):
+                                mode = ChunkType.PREVERSEPAR
                         elif(isinstance(c[1],sfm.Element)):
-                            #if debugPrint:
-                                #print( c[1].name)
-                            if (c[1].name=="v"):
+                            if (c[1].name=="v" ):
                                 mode = ChunkType.PREVERSEPAR
                         elif(isinstance(c[1],sfm.Text)):
                             if self.currChunk.verseText:
@@ -245,6 +259,9 @@ class Collector:
         currChunk = None
         if depth==0:
             self.type=None
+        else:
+            if debugPrint:
+                print("{" * depth)
         elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
@@ -318,6 +335,8 @@ class Collector:
                 newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
                 currChunk[-1] = newc
             currChunk = self.collect(c, primary=primary,depth=1+depth) or currChunk
+        if debugPrint:
+            print("}" * depth)
         return currChunk
 
     def reorder(self):
@@ -459,13 +478,26 @@ class Collector:
             scval=self.scores[t]
             self.acc[i].score=scval
             pos=self.acc[i].position
+            self.loc[pos]=i
             if pos in results:
                 results[pos]+=scval
                 print("%s  + %d = %d" % (pos,scval, results[pos]))
             else:
                 results[pos]=scval
                 print(pos, "=", scval)
-        return(results)
+        return results
+    def getofs(self,pos, incremental=True):
+        """Return the index into acc[] of the (end-point) pos. If an exact match for pos cannot be found, return the index of the next highest point. If incremental is true, it assumes that calls to this are always done in increasing sequence.
+        """
+        if (pos in self.loc):
+            self.lastloc=self.loc[pos]
+        else:
+            if (self.lastloc is None) or (not incremental):
+                self.lastloc=0
+            lim=len(self.acc)
+            while self.lastloc< lim and self.acc[self.lastloc].position < pos:
+                self.lastloc+=1
+        return self.lastloc
 
 def appendpair(pairs, ind, chunks):
     if len(pairs) and pairs[-1][ind] is not None:
@@ -568,7 +600,7 @@ def alignSimple(primary, *others):
         for op in diff.get_opcodes():
             (action, ab, ae, bb, be) = op
             if debugPrint:
-                print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+                print(op, debstr(pkeys[ab:ae]), debstr(okeys[bb:be]))
             if action == "equal":
                 for i in range(ae-ab):
                     ri = runindices[ab+i]
@@ -598,6 +630,7 @@ def alignSimple(primary, *others):
     return results
 
 def alignScores(*columns):
+    # get the basic scores.
     merged={}
     for ochunks, okeys in columns:
         merged=ochunks.score(merged)
@@ -625,22 +658,33 @@ def alignScores(*columns):
     ofs={}
     blank={}
     lim={}
+    acc={}
+    coln={}
     for c,i in colkeys.items():
         ofs[c]=0
         blank[c]=None
         lim[c]=len(columns[i][0].acc)
+        coln[c]=columns[i][0]
+        acc[c]=coln[c].acc
     syncpositions.append((999,999,999))
     for posn in syncpositions:
         chunks=blank.copy()
         for c,i in colkeys.items():
-            print ("CHUNK:\n",posn, c,ofs[c],lim[c])
-            while (ofs[c]<lim[c]) and (columns[i][0].acc[ofs[c]].position < posn): 
-                thispos=columns[i][0].acc[ofs[c]].position
+            nxt=coln[c].getofs(posn) # Get the next offset.
+            if debugPrint:
+                print ("CHUNK:\n",posn, c,ofs[c],nxt, lim[c])
+                if (ofs[c]==nxt):
+                    print (nxt,'=',acc[c][nxt].position)
+            if (nxt>lim[c]):
+                raise ValueError(f"This shouldn't happen, {nxt} > {lim[c]}!")
+            p=merged
+            while (ofs[c]<lim[c]) and (ofs[c]<nxt): 
+                thispos=acc[c][ofs[c]].position
                 print(ofs[c], thispos, merged[thispos] if thispos in merged else '0' ,  sep='=', end=" ",flush=True)
                 if chunks[c]:
-                    chunks[c].append(columns[i][0].acc[ofs[c]])
+                    chunks[c].append(acc[c][ofs[c]])
                 else:
-                    chunks[c]=[columns[i][0].acc[ofs[c]]]
+                    chunks[c]=[acc[c][ofs[c]]]
                 ofs[c]+=1
             print()
             if (chunks[c]):
@@ -669,6 +713,15 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     if (len(keyarr) != len(infilearr)):
         raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(infilearr)) )
         
+    if type(scorearr)==list:
+        tmp=zip(keyarr,scorearr)
+        scorearr={}
+        for k,v in tmp:
+            if k in scorearr:
+                raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
+            scorearr[k]=int(v)
+        del tmp
+    print(type(scorearr),scorearr)
     if debugPrint:
         print(stylesheetsa, stylesheetsb)
     
@@ -699,6 +752,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
             raise ValueError("Cannot have %d keys and %d synchronisation modes!" % (len(keyarr),len(tmp)) )
         else:
             syncarr=tmp
+
 
     if len(scorearr)==0:
         s=int(1+100/len(keyarr))
@@ -739,38 +793,38 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     f = modes[mode]
     pairs = f(*((colls[k], chunklocs[k]) for k in keyarr))
 
-    if outfile is not None:
-        outf = open(outfile, "w", encoding="utf-8")
+    if mode=="scores":
+        if outfile is not None:
+            outf = open(outfile, "w", encoding="utf-8")
+        else:
+            outf = sys.stdout
+        for i, p in enumerate(pairs):
+            for col,data in p.items():
+                if data is not None:
+                    outf.write("\\polyglotcolumn %c\n" % col)
+                    for d in data:
+                        outf.write(str(d))
+            outf.write("\n\\polyglotendcols\n")
     else:
-        outf = sys.stdout
-    for i, p in enumerate(pairs):
-        for col,data in p.items():
-            if data is not None:
-                outf.write("\n\\polyglotcolumn %c\n" % col)
-                for d in data:
-                    outf.write(str(d))   
-        outf.write("\n\\polyglotendcols\n")
-
-if 0:
-    isright = True
-    for i, p in enumerate(pairs):
-        if p[0] is not None and len(p[0]):
-            if isright:
-                outf.write("\\lefttext\n")
+        isright = True
+        for i, p in enumerate(pairs):
+            if p[0] is not None and len(p[0]):
+                if isright:
+                    outf.write("\\lefttext\n")
+                    isright = False
+                outf.write(str(p[0]))
+                if p[0].type != ChunkType.HEADING and p[0].type != ChunkType.TITLE:
+                    outf.write("\\p\n")
+            elif i != 0 and isright and p[1] is not None and len(p[1]):
+                outf.write("\\nolefttext\n")
                 isright = False
-            outf.write(str(p[0]))
-            if p[0].type != ChunkType.HEADING and p[0].type != ChunkType.TITLE:
-                outf.write("\\p\n")
-        elif i != 0 and isright and p[1] is not None and len(p[1]):
-            outf.write("\\nolefttext\n")
-            isright = False
-        if p[1] is not None and len(p[1]):
-            if not isright:
-                outf.write("\\righttext\n")
-                isright = True
-            outf.write(str(p[1]))
-            if p[1].type != ChunkType.HEADING and p[1].type != ChunkType.TITLE:
-                outf.write("\\p\n")
-        elif not isright:
-            outf.write("\\norighttext\n")
+            if p[1] is not None and len(p[1]):
+                if not isright:
+                    outf.write("\\righttext\n")
+                    isright = True
+                outf.write(str(p[1]))
+                if p[1].type != ChunkType.HEADING and p[1].type != ChunkType.TITLE:
+                    outf.write("\\p\n")
+            elif not isright:
+                outf.write("\\norighttext\n")
 

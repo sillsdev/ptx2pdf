@@ -8,8 +8,9 @@ except ImportError:
     from ptxprint.usfmerge import usfmerge2
 
 parser = argparse.ArgumentParser()
+stdkeylist="LRABCDEFGHIJKMN"
 parser.add_argument("infile", help="Input USFM file(s)",nargs='+',default=[])
-parser.add_argument("-k","--keys", help="Input file IDs, e.g -k LRA for 3 input files to be used as columns L, R and A.",default="LR")
+parser.add_argument("-k","--keys", help=F"Input file IDs, e.g -k LRA for 3 input files to be used as columns L, R and A. If not supplied it will default to however much of the standard list ({stdkeylist}) is required. Users wanting more than { len(stdkeylist) } columns must provide their own lists.",default=None)
 parser.add_argument("-o","--outfile",help="output file")
 parser.add_argument("-a","--astylesheet",default=[],action="append",help="add another stylesheet for infilea")
 parser.add_argument("-b","--bstylesheet",default=[],action="append",help="add another stylesheet for infileb")
@@ -22,6 +23,15 @@ parser.add_argument("--fsecondary",action="store_true",help="Use fig elements fr
 parser.add_argument("--debug",action="store_true",help="Print out debug statements")
 args = parser.parse_args()
 
+if args.keys is None:
+    if len(args.infile)> len(stdkeylist):
+        raise ValueError("Too many files for implicit list. Supply -k argument")
+    keyarr=list(stdkeylist[0:len(args.infile)])
+else:
+    keyarr=list(args.keys)
+
+print(keyarr)
+
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
 stylesheets={}
@@ -31,13 +41,9 @@ for k,sheetfile in args.colstylesheet:
     else:
         stylesheets[k]=[sheetfile]
 
-
-keyarr=list(args.keys)
-
 scorearr={}
 if args.scores:
     scorearr=args.scores.split(",")
-
 
 usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, stylesheetsa=sheetsa,stylesheetsb=sheetsb, scorearr=scorearr,
            fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug)
