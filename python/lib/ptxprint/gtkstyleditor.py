@@ -294,7 +294,6 @@ class StyleEditorView(StyleEditor):
         self.editMarker()
 
     def selectMarker(self, marker):
-        print("Got to selectMarker")
         root = self.treestore.get_iter_first()
         it = self._searchMarker(self.treestore, root, marker)
         path = self.treestore.get_path(it)
