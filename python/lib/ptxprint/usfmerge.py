@@ -99,7 +99,7 @@ class Chunk(list):
         return sfm.generate(self)
 
 
-nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl', 'nb'))
+nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.NBCHAPTER:1}, # Just split at chapters
@@ -180,8 +180,8 @@ class Collector:
         else:
             n=c
         res = self.counts.get(n, 0)
-        if debugPrint:
-             print(n,res)
+        #if debugPrint:
+             #print(n,res)
         self.counts[n] = res + 1
         return res
 
@@ -335,6 +335,8 @@ class Collector:
                 self.acc[i].deleteme = True
                 ti = None
                 ni = None
+                if debug:
+                    print('Merged.1:', 'deleteme' in self.acc[bi], self.acc[bi])
             elif self.acc[i].type == ChunkType.TABLE and self.acc[i-1].type == ChunkType.TABLE:
                 if ti is None:
                     ti = i - 1
@@ -342,6 +344,8 @@ class Collector:
                 self.acc[i].deleteme = True
                 bi = None
                 ni = None
+                if debugPrint:
+                    print('Merged.2:', 'deleteme' in self.acc[ti], self.acc[ti])
             elif self.acc[i].type == ChunkType.NPARA and self.acc[i-1].type != None:
                 if ni is None:
                     ni = i - 1
@@ -349,6 +353,8 @@ class Collector:
                 self.acc[i].deleteme = True
                 bi = None
                 ti = None
+                if debugPrint:
+                    print('Merged.3:', 'deleteme' in self.acc[ni], self.acc[ni])
         # Merge nb with chapter number and 1st verse.
         for i in range(1, len(self.acc) - 1):
             if self.acc[i].type is ChunkType.NB and self.acc[i-1].type is ChunkType.CHAPTER:
@@ -388,7 +394,7 @@ class Collector:
         # make headings in the intro into intro
         for i in range(1, len(self.acc) - 1):
             c = self.acc[i+1]
-            if c.type in (ChunkType.CHAPTER, ChunkType.BODY):
+            if c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
                 break
             c = self.acc[i]
             if c.type == ChunkType.HEADING:
@@ -398,15 +404,21 @@ class Collector:
             if self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
                 self.acc[i].extend(self.acc[i-1])
                 self.acc[i-1].deleteme = True
+                if debugPrint:
+                    print('Merged.4:', 'deleteme' in self.acc[i], self.acc[i])
             elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i-1].extend(self.acc[i])
                 self.acc[i].deleteme = True
+                if debugPrint:
+                    print('Merged.5:', 'deleteme' in self.acc[i-1], str(self.acc[i-1]))
         # Merge all chunks between \c and not including \v.
         if 0:
             for i in range(1, len(self.acc)):
                 if self.acc[i-1].type == ChunkType.CHAPTER and not self.acc[i].hasVerse:
                     self.acc[i-1].extend(self.acc[i])
                     self.acc[i].deleteme = True
+                    if debugPrint:
+                        print('Merged.6:', 'deleteme' in self.acc[i-1], self.acc[i-1])
         # merge \c with body chunk following
         if 0:
             lastchunk = None
@@ -628,11 +640,11 @@ def alignScores(*columns):
                 if chunks[c]:
                     chunks[c].append(columns[i][0].acc[ofs[c]])
                 else:
-                    chunks[c]=columns[i][0].acc[ofs[c]]
+                    chunks[c]=[columns[i][0].acc[ofs[c]]]
                 ofs[c]+=1
             print()
             if (chunks[c]):
-                print(*chunks[c])
+                print(*chunks[c], sep="")
         results.append({c:chunks[c] for c in colkeys})
     return results
 
