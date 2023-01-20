@@ -1053,9 +1053,9 @@ class ViewModel:
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect == "vars":
-                    setvar(opt, val or "", None)
+                    setvar(opt.strip("*"), val or "", None)
                 elif sect == "strongsvars":
-                    setvar(opt, val or "", "strongs")
+                    setvar(opt.strip("*"), val or "", "strongs")
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
