@@ -8506,27 +8506,34 @@ unbalanced lines on the page.</property>
       <column type="gchararray"/>
       <!-- column-name Value -->
       <column type="gchararray"/>
+      <!-- column-name Visible -->
+      <column type="gboolean"/>
     </columns>
     <data>
       <row>
         <col id="0">maintitle</col>
         <col id="1">God's Word</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">subtitle</col>
         <col id="1">The New Testament with Psalms and Proverbs</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">copiesprinted</col>
         <col id="1">50</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">languagename</col>
         <col id="1">Wakawaka</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">verseident</col>
         <col id="1" translatable="yes" comments="This is the letter (or abbreviation) for &quot;verse&quot;. So in English we use 'v' to refer to verse; so v16 points us to verse 16 of the (same) chapter. Used in external cross-reference lists, particularly in Strong's list.">v</col>
+        <col id="2">True</col>
       </row>
     </data>
   </object>
@@ -8537,6 +8544,8 @@ unbalanced lines on the page.</property>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name disabled -->
       <column type="gboolean"/>
     </columns>
   </object>
@@ -28315,6 +28324,7 @@ table of variable names and values.</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_zvar_name"/>
                                               <attributes>
+                                                <attribute name="sensitive">2</attribute>
                                                 <attribute name="text">0</attribute>
                                               </attributes>
                                             </child>

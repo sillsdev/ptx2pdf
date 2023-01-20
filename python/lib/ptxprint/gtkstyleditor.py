@@ -163,7 +163,7 @@ class StyleEditorView(StyleEditor):
         self.filter.set_visible_func(self.apply_filter)
         self.treeview.set_model(self.filter)
         cr = Gtk.CellRendererText()
-        tvc = Gtk.TreeViewColumn("Marker", cr, text=1)
+        tvc = Gtk.TreeViewColumn("Marker", cr, text=1, strikethrough=3)
         self.treeview.append_column(tvc)
         tself = self.treeview.get_selection()
         tself.connect("changed", self.onSelected)
@@ -266,6 +266,7 @@ class StyleEditorView(StyleEditor):
         allStyles = self.allStyles()
         for k, v in sorted(d.items(), key=keyfn):
             ismarker = True
+            isdisabled = False
             if k in allStyles:
                 # n = self.sheet[k].get('name', k)
                 n = self.getval(k, 'name') or "{} - Other".format(k)
@@ -274,12 +275,13 @@ class StyleEditorView(StyleEditor):
                     pass
                 elif b[0] != k or any(b[0].startswith(x) for x in ('OBSOLETE', 'DEPRECATED')):
                     n = "{} - {}".format(k, " - ".join(b[1:]))
+                isdisabled = 'nonpublishable' in (x.lower() for x in self.getval(k, 'TextProperties', ""))
             elif k not in self.basesheet:
                 ismarker = False
                 n = k
             else:
                 n = k
-            s = [str(k), str(n), ismarker]
+            s = [str(k), str(n), ismarker, isdisabled]
             this = self.treestore.append(parent, s)
             if len(v):
                 self._fill_store(v, this)
@@ -537,6 +539,8 @@ class StyleEditorView(StyleEditor):
             except KeyError:
                 pass
             props.add(add+'publishable')
+            (model, selecti) = self.treeview.get_selection().get_selected()
+            model.set_value(selecti, 3, val)
             return
         elif key in self.stylediverts:
             newk = self.stylediverts[key][0]
@@ -661,13 +665,13 @@ class StyleEditorView(StyleEditor):
                 while selecti:
                     r = self.treestore[selecti]
                     if r[0] == cat:
-                        selecti = self.treestore.append(selecti, [key, name, True])
+                        selecti = self.treestore.append(selecti, [key, name, True, False])
                         logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
                         break
                     selecti = self.treestore.iter_next(selecti)
                 else:
-                    selecti = self.treestore.append(None, [cat, cat, False])
-                    selecti = self.treestore.append(selecti, [key, name, True])
+                    selecti = self.treestore.append(None, [cat, cat, False, False])
+                    selecti = self.treestore.append(selecti, [key, name, True, False])
                     logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
             else:
                 self.treestore.set_value(selecti, 1, name)
