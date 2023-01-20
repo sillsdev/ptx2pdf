@@ -1008,7 +1008,7 @@ class ViewModel:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
                     self.set(k, v, skipmissing=True)
-            def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
+            def setvar(opt, val, dest, editable): self.setvar(opt, val, dest=dest, editable=editable)
             if clearvars:
                 self.clearvars()
         for sect in config.sections():
@@ -1052,10 +1052,11 @@ class ViewModel:
                                 self.paintLock(v[0], lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
-                elif sect == "vars":
-                    setvar(opt.strip("*"), val or "", None)
-                elif sect == "strongsvars":
-                    setvar(opt.strip("*"), val or "", "strongs")
+                elif sect in ("vars", "strongsvar"):
+                    if opt is not None and opt.startswith("*"):
+                        setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True)
+                    else:
+                        setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock)
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy

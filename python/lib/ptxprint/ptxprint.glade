@@ -7302,23 +7302,29 @@ maintains its proportions.</property>
       <column type="gchararray"/>
       <!-- column-name Value -->
       <column type="gchararray"/>
+      <!-- column-name Editable -->
+      <column type="gboolean"/>
     </columns>
     <data>
       <row>
         <col id="0">index_book_title</col>
         <col id="1">Strong's Number Index</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">hebrew_section_title</col>
         <col id="1">Hebrew Words</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">greek_section_title</col>
         <col id="1">Greek Words</col>
+        <col id="2">True</col>
       </row>
       <row>
         <col id="0">reverse_index_title</col>
         <col id="1">Reversal Index</col>
+        <col id="2">True</col>
       </row>
     </data>
   </object>
@@ -7990,6 +7996,7 @@ to be displayed, select an appropriate option.</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="cr_strvar_name"/>
                                   <attributes>
+                                    <attribute name="sensitive">2</attribute>
                                     <attribute name="text">0</attribute>
                                   </attributes>
                                 </child>
@@ -8009,6 +8016,7 @@ to be displayed, select an appropriate option.</property>
                                     <signal name="edited" handler="onvarEdit" object="tv_strvarEdit" swapped="no"/>
                                   </object>
                                   <attributes>
+                                    <attribute name="sensitive">2</attribute>
                                     <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
@@ -28346,6 +28354,7 @@ table of variable names and values.</property>
                                                 <signal name="edited" handler="onvarEdit" object="tv_zvarEdit" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="sensitive">2</attribute>
                                                 <attribute name="text">1</attribute>
                                               </attributes>
                                             </child>
