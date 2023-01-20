@@ -1181,10 +1181,12 @@ class TexModel:
                     if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
                         scriptf.seek(0)
                         gs = globals().copy()
-                        ls = {}
                         sys._argv = sys.argv
                         sys.argv = [script, infpath, outfpath]
-                        exec(scriptf.read(), gs, ls)
+                        # "Remember that at the module level, globals and locals are the same dictionary.
+                        # If exec gets two separate objects as globals and locals, the code will be executed
+                        # as if it were embedded in a class definition."
+                        exec(scriptf.read(), gs)
                         sys.argv = sys._argv
                         hasrun = True
             if not hasrun:

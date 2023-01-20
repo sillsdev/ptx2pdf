@@ -168,6 +168,11 @@ tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestio
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
+tb_Peripherals gr_importFrontPDF gr_importBackPDF 
+bx_ToC c_autoToC t_tocTitle 
+fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
+c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
+c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
 """.split()
@@ -558,6 +563,8 @@ class GtkViewModel(ViewModel):
         logger.debug("Glade loaded in gtkview")
         self.isDisplay = True
         self.searchWidget = []
+        self.painted = set()
+        self.locked = set()
         self.config_dir = None
         self.booklistKeypressed = False
         self.configKeypressed = False
@@ -576,7 +583,6 @@ class GtkViewModel(ViewModel):
         self.thickActive = False
         self.printReason = 0
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
-        self.locked = set()
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
@@ -1140,7 +1146,7 @@ class GtkViewModel(ViewModel):
                 return r[1]
         return default
 
-    def setvar(self, k, v, dest=None):
+    def setvar(self, k, v, dest=None, editable=True, colour=None):
         if dest is None:
             varlist = self.pubvarlist
         elif dest == "strongs":
@@ -1150,9 +1156,12 @@ class GtkViewModel(ViewModel):
         for r in varlist:
             if r[0] == k:
                 r[1] = v
+                r[2] = editable
+                if colour is not None:
+                    r[3] = colour
                 break
         else:
-            varlist.append([k, v])
+            varlist.append([k, v, editable, colour])
 
     def allvars(self, dest=None):
         if dest is None:
@@ -1514,9 +1523,11 @@ class GtkViewModel(ViewModel):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", "Default")
 
-    def loadConfig(self, config, **kw):
+    def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
-        super(GtkViewModel, self).loadConfig(config, **kw)
+        if clearvars:
+            self.unpaintUnlock()
+        super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
         for k, v in _sensitivities.items():
             if k.startswith("r_"):
                 continue
@@ -1585,8 +1596,30 @@ class GtkViewModel(ViewModel):
         ac = " color='"+col+"'" if ad else ""
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
-    def lock_widget(self, wid):
-        self.locked.add(wid)
+    def paintLock(self, wid, lock, editableOverride):
+        w = self.builder.get_object(wid)
+        if w is None:
+            return
+        if lock and not editableOverride:
+            if w.get_sensitive():
+                self.locked.add(wid)
+                w.set_sensitive(False)
+        elif editableOverride:
+            self.painted.add(wid)
+            w.get_style_context().add_class("highlighted")
+
+    def unpaintUnlock(self):
+        for wid in self.painted:
+            if wid.startswith("txbf_"):
+                pass
+            else:
+                w = self.builder.get_object(wid)
+                w.get_style_context().remove_class("highlighted")
+        self.painted.clear()
+        for wid in self.locked:
+            w = self.builder.get_object(wid)
+            w.set_sensitive(True)
+        self.locked.clear()
 
     def sensiVisible(self, k, focus=False, state=None):
         if state is None:

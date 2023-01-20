@@ -1740,7 +1740,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.2.44</property>
+    <property name="version">Version 2.2.47</property>
     <property name="copyright">© 2020-2022, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -7302,23 +7302,35 @@ maintains its proportions.</property>
       <column type="gchararray"/>
       <!-- column-name Value -->
       <column type="gchararray"/>
+      <!-- column-name Editable -->
+      <column type="gboolean"/>
+      <!-- column-name Background -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">index_book_title</col>
         <col id="1">Strong's Number Index</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">hebrew_section_title</col>
         <col id="1">Hebrew Words</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">greek_section_title</col>
         <col id="1">Greek Words</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">reverse_index_title</col>
         <col id="1">Reversal Index</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
     </data>
   </object>
@@ -7990,6 +8002,8 @@ to be displayed, select an appropriate option.</property>
                                 <child>
                                   <object class="GtkCellRendererText" id="cr_strvar_name"/>
                                   <attributes>
+                                    <attribute name="sensitive">2</attribute>
+                                    <attribute name="background">3</attribute>
                                     <attribute name="text">0</attribute>
                                   </attributes>
                                 </child>
@@ -8009,6 +8023,8 @@ to be displayed, select an appropriate option.</property>
                                     <signal name="edited" handler="onvarEdit" object="tv_strvarEdit" swapped="no"/>
                                   </object>
                                   <attributes>
+                                    <attribute name="sensitive">2</attribute>
+                                    <attribute name="background">3</attribute>
                                     <attribute name="text">1</attribute>
                                   </attributes>
                                 </child>
@@ -8506,27 +8522,41 @@ unbalanced lines on the page.</property>
       <column type="gchararray"/>
       <!-- column-name Value -->
       <column type="gchararray"/>
+      <!-- column-name Visible -->
+      <column type="gboolean"/>
+      <!-- column-name Background -->
+      <column type="gchararray"/>
     </columns>
     <data>
       <row>
         <col id="0">maintitle</col>
         <col id="1">God's Word</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">subtitle</col>
         <col id="1">The New Testament with Psalms and Proverbs</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">copiesprinted</col>
         <col id="1">50</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">languagename</col>
         <col id="1">Wakawaka</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
       <row>
         <col id="0">verseident</col>
         <col id="1" translatable="yes" comments="This is the letter (or abbreviation) for &quot;verse&quot;. So in English we use 'v' to refer to verse; so v16 points us to verse 16 of the (same) chapter. Used in external cross-reference lists, particularly in Strong's list.">v</col>
+        <col id="2">True</col>
+        <col id="3" translatable="yes"/>
       </row>
     </data>
   </object>
@@ -8537,6 +8567,8 @@ unbalanced lines on the page.</property>
       <!-- column-name name -->
       <column type="gchararray"/>
       <!-- column-name active -->
+      <column type="gboolean"/>
+      <!-- column-name disabled -->
       <column type="gboolean"/>
     </columns>
   </object>
@@ -28223,7 +28255,7 @@ after any front matter material).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkFrame">
+                      <object class="GtkFrame" id="fr_variables">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -28315,6 +28347,8 @@ table of variable names and values.</property>
                                             <child>
                                               <object class="GtkCellRendererText" id="cr_zvar_name"/>
                                               <attributes>
+                                                <attribute name="sensitive">2</attribute>
+                                                <attribute name="background">3</attribute>
                                                 <attribute name="text">0</attribute>
                                               </attributes>
                                             </child>
@@ -28336,6 +28370,8 @@ table of variable names and values.</property>
                                                 <signal name="edited" handler="onvarEdit" object="tv_zvarEdit" swapped="no"/>
                                               </object>
                                               <attributes>
+                                                <attribute name="sensitive">2</attribute>
+                                                <attribute name="background">3</attribute>
                                                 <attribute name="text">1</attribute>
                                               </attributes>
                                             </child>
@@ -28353,7 +28389,7 @@ table of variable names and values.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="b_delzvar">
+                              <object class="GtkButton" id="btn_delzvar">
                                 <property name="label" translatable="yes">Del</property>
                                 <property name="name">Delete a peripheral variable</property>
                                 <property name="width-request">60</property>
@@ -28372,7 +28408,7 @@ selected variable(s).</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkButton" id="b_addzvar">
+                              <object class="GtkButton" id="btn_addzvar">
                                 <property name="label" translatable="yes">Add</property>
                                 <property name="name">Add a peripheral variable</property>
                                 <property name="width-request">60</property>

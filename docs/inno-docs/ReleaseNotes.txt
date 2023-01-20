@@ -1,7 +1,27 @@
-PTXprint 2.2.44 Release Notes
-11 Jan 2023
+PTXprint 2.2.47 Release Notes
+20 Jan 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+
+Bug fixes and improvements in 2.2.47 (20 Jan 2023)
+
+  * Override settiings can now be locked (disabled) or *Editable (painted peach)
+
+Bug fixes and improvements in 2.2.46 (18 Jan 2023)
+
+  * Fixed layer violation between view and gtkview in updateProjectSettings
+
+Bug fixes and improvements in 2.2.45 (18 Jan 2023)
+
+  * Config settings overrides are now possible to lock down specific settings
+      Project-overrides: \shared\ptxprint\ptxprint_project.cfg
+      Config-overrides:  \shared\ptxprint\<configName>/ptxprint_override.cfg
+
+  * Handle unpublishable periph sections better
+
+  * Fixed xobject ornaments
+
+  * Added logging to PDF reprocessing
 
 Bug fixes and improvements in 2.2.44 (11 Jan 2023)
 

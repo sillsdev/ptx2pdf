@@ -213,7 +213,7 @@ class TTFontCache:
 
     def get(self, name, style=None):
         if self.busy:
-            self.thread.join()
+            self.wait()
         f = self.cache.get(name, None)
         if f is None:
             return f

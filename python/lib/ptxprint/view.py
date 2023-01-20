@@ -29,8 +29,8 @@ from difflib import Differ
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.44"
-GitVersionStr = "2.2.44"
+VersionStr = "2.2.47"
+GitVersionStr = "2.2.47"
 ConfigVersion = "2.12"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -194,7 +194,7 @@ class ViewModel:
     def clearvars(self):
         self.pubvars = {}
 
-    def lock_widget(self):
+    def paintLock(self, wid, lock, editableOverride):
         pass
 
     def baseTeXPDFnames(self, bks=None, diff=False):
@@ -594,11 +594,9 @@ class ViewModel:
             self.loadPics(mustLoad=False)
             pts = self._getPtSettings()
             if pts is not None:
-                # if self.get("t_copyrightStatement") == "":
-                    # self.builder.get_object("t_copyrightStatement").set_text(pts.get('Copyright', ""))
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
                 if self.get("t_txlQuestionsLang") == "":
-                    self.builder.get_object("t_txlQuestionsLang").set_text(lngCode)
+                    self.set("t_txlQuestionsLang", lngCode)
             return oldVersion >= 0
         else:
             return True
@@ -701,14 +699,16 @@ class ViewModel:
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
-        for opath, locked in  ((os.path.join(self.configPath(cfgname, makePath=False), "ptxprint_override.cfg"), True),
-                (os.path.join(self.configPath(cfgname, makePath=False), '..', 'ptxprint_project.cfg'), False)):
+        cp = self.configPath(cfgname, makePath=False)
+        for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
+                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser()
+            oconfig.read(opath, encoding="utf-8")
             self.versionFwdConfig(oconfig, cfgname)
             self.localiseConfig(oconfig)
-            self.loadConfig(oconfig, lock=locked, updatebklist=False)
+            self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
@@ -1003,18 +1003,21 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
                     self.set(k, v, skipmissing=True)
-            def setvar(opt, val, dest): self.setvar(opt, val, dest=dest)
-            self.clearvars()
+            def setvar(opt, val, dest, editable, colour): self.setvar(opt, val, dest=dest, editable=editable, colour=colour)
+            if clearvars:
+                self.clearvars()
+        varcolour = "#FFDAB9" if not clearvars else None
         for sect in config.sections():
             # if sect == "paper":
                 # import pdb; pdb.set_trace()
             for opt in config.options(sect):
-                key = "{}/{}".format(sect, opt)
+                editableOverride = len(opt) != len(opt.strip("*"))
+                key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
                 if key in ModelMap:
                     v = ModelMap[key]
@@ -1043,14 +1046,15 @@ class ViewModel:
                                 val = FontRef.fromConfig(val)
                             if val is not None:
                                 setv(v[0], val)
-                            if lock:
-                                self.lock_widget(v[0])
+                            if not clearvars:
+                                self.paintLock(v[0], lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
-                elif sect == "vars":
-                    setvar(opt, val or "", None)
-                elif sect == "strongsvars":
-                    setvar(opt, val or "", "strongs")
+                elif sect in ("vars", "strongsvar"):
+                    if opt is not None and opt.startswith("*"):
+                        setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True)
+                    else:
+                        setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, varcolour if not lock else None)
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
@@ -1074,7 +1078,7 @@ class ViewModel:
             (sect, name) = k.split("/")
             try:
                 val = config.get(sect, name)
-            except configparser.NoOptionError:
+            except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
@@ -1728,7 +1732,6 @@ set stack_size=32768""".format(self.configName())
         return None
         
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
-        # import pdb; pdb.set_trace()
         inf = BytesIO(zipdata)
         zf = ZipFile(inf, compression=ZIP_DEFLATED)
         os.makedirs(configpath, exist_ok=True)

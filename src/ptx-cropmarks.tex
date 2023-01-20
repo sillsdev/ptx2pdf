@@ -50,12 +50,12 @@
       \vrule height -\topm@rgin depth \dimen0 width 15pt
       \kern 15pt
       \hss
-      \raise12pt \vtop{\hsize\PaperWidth \everypar={}
+      \raise12pt \vtop{{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
-        \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=0pt
-        \noindent \beginL\idf@nt \jobname\ :: \timestamp\endL\par
+        \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
+        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp\endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
-          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}%
+          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}%
       \hss
       \vrule height 30pt depth -5pt width .4pt
       \kern 4.8pt
