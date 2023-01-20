@@ -966,7 +966,7 @@
   \tmpcount=\lastnodetype
   \ifintrial
     %\showlists
-    \message{!!! EEK. Internal error detected. #1 met during trial}%
+    \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
   \fi
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
@@ -1005,7 +1005,7 @@
   % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
   \relax
   \ifintrial 
-    \message{EEK! Still in trial! on page \the\pageno. Expect synchronisation and text loss}%
+    \message{EEK! Still in trial! on page \the\pageno, somewhere near \c@rref. Expect synchronisation and text loss}%
   \fi
   \let\t@mpc@mmand=\n@xtc@mmand% This bit may process the collected input. 
   \x@\xdef\csname c@rrfontsize\@ldstat\endcsname{\c@rrfontsize}% Remember the fontsize before column-swap
