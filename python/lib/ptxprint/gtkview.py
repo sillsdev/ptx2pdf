@@ -1146,7 +1146,7 @@ class GtkViewModel(ViewModel):
                 return r[1]
         return default
 
-    def setvar(self, k, v, dest=None, editable=True):
+    def setvar(self, k, v, dest=None, editable=True, colour=None):
         if dest is None:
             varlist = self.pubvarlist
         elif dest == "strongs":
@@ -1156,14 +1156,12 @@ class GtkViewModel(ViewModel):
         for r in varlist:
             if r[0] == k:
                 r[1] = v
-                if id(varlist) == id(self.pubvarlist):
-                    r[2] = editable
+                r[2] = editable
+                if colour is not None:
+                    r[3] = colour
                 break
         else:
-            if id(varlist) == id(self.pubvarlist):
-                varlist.append([k, v, editable])
-            else:
-                varlist.append([k, v])
+            varlist.append([k, v, editable, colour])
 
     def allvars(self, dest=None):
         if dest is None:

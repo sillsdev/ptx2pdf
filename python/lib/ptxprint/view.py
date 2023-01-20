@@ -1008,17 +1008,15 @@ class ViewModel:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
                     self.set(k, v, skipmissing=True)
-            def setvar(opt, val, dest, editable): self.setvar(opt, val, dest=dest, editable=editable)
+            def setvar(opt, val, dest, editable, colour): self.setvar(opt, val, dest=dest, editable=editable, colour=colour)
             if clearvars:
                 self.clearvars()
+        varcolour = "#FFDAB9" if not clearvars else None
         for sect in config.sections():
             # if sect == "paper":
                 # import pdb; pdb.set_trace()
             for opt in config.options(sect):
-                if len(opt) != len(opt.strip("*")):
-                    editableOverride = True
-                else:
-                    editableOverride = False
+                editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
                 if key in ModelMap:
@@ -1056,7 +1054,7 @@ class ViewModel:
                     if opt is not None and opt.startswith("*"):
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True)
                     else:
-                        setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock)
+                        setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, varcolour if not lock else None)
                 elif sect in FontModelMap:
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
