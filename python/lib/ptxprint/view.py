@@ -179,7 +179,7 @@ class ViewModel:
         elif dest == "strongs":
             return self.strongsvars.get(k, default)
 
-    def setvar(self, k, v, dest=None):
+    def setvar(self, k, v, dest=None, **kw):
         if dest is None:
             self.pubvars[k] = v
         elif dest == "strongs":
