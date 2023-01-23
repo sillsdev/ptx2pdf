@@ -53,6 +53,8 @@
 \newif\ifuseRightMarks %Do we use them from the right column
 \newif\ifunprintable % The 'correct' logic results in a page that won't fit. Something breaks.
 \newif\ifdiglotDebugFollowContents% Fill the log with showboxes
+\newif\ifdiglotcolh@scontent % Set false at start of column, made true by \everyparhooks
+\addtoeveryparhooks{\global\diglotcolh@scontenttrue}
 \useLeftMarkstrue
 \useRightMarkstrue
 \diglotDebugFollowContentsfalse
@@ -995,15 +997,20 @@
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
-  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi}%
+  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent diglolcolh@scontent\fi}%
+  \ifdiglotcolh@scontent\else
+    \del@from@digl@tc@ntentlist{\c@rrdstat}%
+  \fi
   %\showlists
   %\global\savedpenalty=0 % avoid cross-contamination
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
-  \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
-  % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
-  \relax
+  \ifdiglotcolh@scontent
+    \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
+    % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
+    \relax
+  \fi
   \ifintrial 
     \message{EEK! Still in trial! on page \the\pageno, somewhere near \c@rref. Expect synchronisation and text loss}%
   \fi
@@ -1169,6 +1176,21 @@
    \xdef\n@xtdstat{#1}%
    }%
 
+\def\filter@list#1{%Add #1 to  @results if it is NOT \test
+  \edef\t@st{#1}\ifx\t@st\test\else
+    \edef\@results{\@results#1}%
+  \fi
+}
+  
+\def\del@from@digl@tc@ntentlist#1{% This column had no context, despite what we expected
+  \ifx\digl@tc@ntentlist\empty\else
+    \edef\test{#1}\let\@results\empty%
+    \let\col@do=\filter@list
+    \x@\each@col\digl@tc@ntentlist\E
+    \global\let\digl@tc@ntentlist\@results
+  \fi
+}
+
 \def\check@dup#1{%set temptrue if \test is the same as #1
   \edef\t@st{#1}\ifx\t@st\test\temptrue\fi
 }
@@ -1203,6 +1225,7 @@
  \add@to@digl@tc@ntentlist{#1}%
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
+ \global\diglotcolh@scontentfalse
  \trace{D}{end of swap@diglot: lsl=\the\lineskiplimit, ts=\the\topskip, bs=\the\baselineskip}%
 }%
 
