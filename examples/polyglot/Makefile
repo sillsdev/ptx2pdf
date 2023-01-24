@@ -44,7 +44,15 @@ mergedJhn2.usfm: Makefile $(SCRIPTDIR)/polyglot_merge.pl 44JHNOGNT.SFM  44JHNSGA
 	rm merged.out
 
 mergedJhn.usfm: Makefile $(SCRIPTDIR)/usfmerge $(SCRIPTDIR)/../lib/ptxprint/usfmerge.py 44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM
-	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m scores -S 34,34,100,34,34 -o $@  44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM  > merge.log
+	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m scores -S 34,34,70,34,34 -o $@  44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM  > merge.log
+
+mergedJhn-d.usfm: Makefile $(SCRIPTDIR)/usfmerge $(SCRIPTDIR)/../lib/ptxprint/usfmerge.py 44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM
+	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m doc  -o $@  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  > merge.log
+
+mergedJhn-s.usfm: Makefile $(SCRIPTDIR)/usfmerge $(SCRIPTDIR)/../lib/ptxprint/usfmerge.py 44JHNOGNT.SFM  44JHNSGA.txt  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM
+	$(SCRIPTDIR)/usfmerge --debug -p nb 100 -m simple -o $@  44JHNWEBorig.SFM  44JHNWSGBTpub.SFM  44JHNWSGdev.SFM  > merge.log
+
+mergedJhn-all: mergedJhn.usfm mergedJhn-d.usfm mergedJhn-s.usfm mergedJhn2.usfm 
 
 mergedGal.usfm: Gal_wyc.usfm Gal_web.usfm Gal_grk.usfm Makefile $(SCRIPTDIR)/polyglot_merge.pl 
 	DEBUG=merge.dbg $(SCRIPTDIR)/polyglot_merge.pl -s -p -C -L merge.log -o merged.out Gal_web.usfm Gal_grk.usfm Gal_wyc.usfm 

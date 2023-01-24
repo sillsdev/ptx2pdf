@@ -35,6 +35,7 @@ class ChunkType(Enum):
     NBCHAPTER = 15      # A chapter that is followed by an NB
     CHAPTERPAR = 16      # A PREVERSEPAR that is following a chapter - never a good sync point!
     CHAPTERHEAD=17      #A Heading that is (was) following a chapter 
+    PREVERSEHEAD=18      #A Heading that is just before  a verse 
 
 splitpoints={
         ChunkType.VERSE:True
@@ -63,12 +64,13 @@ _canonical_order={
     ChunkType.CHAPTER:0,
     ChunkType.NBCHAPTER:0,
     ChunkType.CHAPTERHEAD:1,
-    ChunkType.PREVERSEPAR:2,
-    ChunkType.CHAPTERPAR:3,
-    ChunkType.PARVERSE:4,
-    ChunkType.VERSE:5,
-    ChunkType.MIDVERSEPAR:6,
-    ChunkType.HEADING:6,
+    ChunkType.PREVERSEHEAD:2, # Takes the verse nr of its verse
+    ChunkType.PREVERSEPAR:3, # Takes the verse nr of its verse
+    ChunkType.CHAPTERPAR:4,
+    ChunkType.PARVERSE:5,
+    ChunkType.VERSE:6,
+    ChunkType.MIDVERSEPAR:7,
+    ChunkType.HEADING:7,
 }
     
 
@@ -119,9 +121,9 @@ _validatedhpi=False
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
 SyncPoints = {
-    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1} # split at every verse
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1} # split at every verse
 }
 
 def ispara(c):
@@ -447,13 +449,24 @@ class Collector:
             else:
                 bi=None
         # make headings in the intro into intro
-        for i in range(1, len(self.acc) - 1):
-            c = self.acc[i+1]
-            if c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
-                break
-            c = self.acc[i]
+        for i in range(1, len(self.acc)):
+            c = self.acc[i-1]
             if c.type == ChunkType.HEADING:
-                c.type == ChunkType.INTRO
+                cn = self.acc[i]
+                if debugPrint:
+                    print('Compare.6:',c.position, c.type,cn.type)
+                if cn.type == ChunkType.PREVERSEPAR:
+                    c.verse=cn.verse
+                    c.pnum=cn.pnum
+                    c.type=ChunkType.PREVERSEHEAD
+                    # c.extend(cn)
+                    # cn.deleteme = True
+                    if debugPrint:
+                        print('Merged.6:', 'deleteme' in c, c.position)
+                elif c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
+                    pass
+                else:
+                    c.type == ChunkType.INTRO
         # Swap chapter and heading first
         if 0:
           for i in range(1, len(self.acc)):
@@ -461,14 +474,14 @@ class Collector:
                 self.acc[i].extend(self.acc[i-1])
                 self.acc[i-1].deleteme = True
                 if debugPrint:
-                    print('Merged.6:', 'deleteme' in self.acc[i], self.acc[i])
+                    print('Merged.7:', 'deleteme' in self.acc[i], self.acc[i])
             elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i].type=ChunkType.CHAPTERHEAD
                 tmp=self.acc[i-1]
                 self.acc[i-1]=self.acc[i]
                 self.acc[i]=tmp
                 if debugPrint:
-                    print('Swapped.7:', 'deleteme' in self.acc[i-1], str(self.acc[i-1]), str(self.acc[i]))
+                    print('Swapped:', 'deleteme' in self.acc[i-1], str(self.acc[i-1]), str(self.acc[i]))
         # Merge all chunks between \c and not including \v.
         if 0:
             for i in range(1, len(self.acc)):
@@ -594,6 +607,10 @@ def alignChunks(primary, secondary):
     pchunks, pkeys = primary
     schunks, skeys = secondary
     pairs = []
+    if isinstance(pchunks, Collector):
+        pchunks=pchunks.acc
+    if isinstance(schunks, Collector):
+        schunks=schunks.acc
     diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
@@ -639,8 +656,6 @@ def alignSimple(primary, *others):
     runs = [[[x, x]] for x in range(numkeys)]
     runindices = list(range(numkeys))
     for ochunks, okeys in others:
-        if isinstance(pchunks, Collector):
-            ochunks=ochunks.acc
         runs = [x + [None] for x in runs]
         diff = difflib.SequenceMatcher(None, pkeys, okeys)
         for op in diff.get_opcodes():
@@ -671,7 +686,7 @@ def alignSimple(primary, *others):
     for r in runs:
         res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type)]
         for i, (ochunks, okeys) in enumerate(others, 1):
-            res.append(Chunk(*sum(ochunks[r[i][0]:r[i][1]+1], []), mode=ochunks[r[i][1]].type))
+            res.append(Chunk(*sum(ochunks.acc[r[i][0]:r[i][1]+1], []), mode=ochunks.acc[r[i][1]].type))
         results.append(res)
     return results
 
@@ -686,10 +701,10 @@ def alignScores(*columns):
     oldconfl=None
     conflicts=[]
     for i in range (0,len(positions)-1):
-        if(positions[i][_headingidx]=='HEADING'):
+        if(positions[i][_headingidx] in ('HEADING','PREVERSEHEAD')):
             if (merged[positions[i+1]]>99):
                 a=0
-                while positions[i-a-1][3]=='HEADING':
+                while positions[i-a-1][3] in ('HEADING','PREVERSEHEAD'):
                     a+=1
                 print(f"Splitting between positions {positions[i-a]} and {positions[i+1]}")
                 merged[positions[i-a]]=100
@@ -712,16 +727,22 @@ def alignScores(*columns):
         else:
             if len(conflicts)>1:
                 tot=0
-                includescpar = False
+                includesCPar = False
+                includesHead = False
+                includesMVPar = False
                 for p in conflicts:
                     tot+=merged[p]
                     if (p[_headingidx] == 'CHAPTERPAR'):
-                        includescpar = True
-                if not includescpar:
+                        includesCPar = True
+                    if (p[_headingidx] in ( 'HEADING','PREVERSEHEAD')):
+                        includesHead = True
+                    if (p[_headingidx] == 'MIDVERSEPAR'):
+                        includesMVPar = True
+                if (not includesCPar) and not (includesMVPar and includesHead):
                     for p in conflicts:
                         del(merged[p])
                     merged[confl]=tot
-                    print(f'Combined score at {conflicts} set to {tot}')
+                    print(f'Combined score at {confl} ({conflicts}) set to {tot}')
             conflicts=[positions[i]]
         oldconfl=confl
     del positions
@@ -790,6 +811,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
+    sheets={}
+    if len(keyarr)==0:
+        keyarr=['L','R']
     if (len(keyarr) != len(infilearr)):
         raise ValueError("Cannot have %d keys and %d files!" % (len(keyarr),len(infilearr)) )
         
@@ -802,14 +826,14 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
             scorearr[k]=int(v)
         del tmp
     print(type(scorearr),scorearr)
+    print(type(keyarr),keyarr)
     if debugPrint:
         print(stylesheetsa, stylesheetsb)
     
     # load stylesheets
-    sheets={}
-    for k in keyarr:
-        if debugPrint:
-            print(f"defining stylesheet {k}")
+    for k in keyarr[:]:
+        #if debugPrint:
+        print(f"defining stylesheet {k}")
         sheets[k]=usfm._load_cached_stylesheet('usfm_sb.sty')
     for s in stylesheetsa:
         if debugPrint:
@@ -873,11 +897,12 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     f = modes[mode]
     pairs = f(*((colls[k], chunklocs[k]) for k in keyarr))
 
-    if mode=="scores":
-        if outfile is not None:
-            outf = open(outfile, "w", encoding="utf-8")
-        else:
-            outf = sys.stdout
+    if outfile is not None:
+        outf = open(outfile, "w", encoding="utf-8")
+    else:
+        outf = sys.stdout
+
+    if mode in ('scores'):
         for i, p in enumerate(pairs):
             for col,data in p.items():
                 if data is not None:

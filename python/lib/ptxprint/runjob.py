@@ -541,6 +541,8 @@ class RunJob:
             # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
             right = os.path.join(self.tmpdir, digout)
+            inputfiles=[left,right]
+            keyarr=["L","R"]
             outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
             logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
@@ -548,7 +550,7 @@ class RunJob:
             sheetsb = diginfo.printer.getStyleSheets()
             logger.debug(f"usfmerge2({left}, {right})")
             try:
-                usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
+                usfmerge2(inputfiles,keyarr,outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
             except SyntaxError as e:
                 syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
             except Exception as e:
