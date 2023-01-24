@@ -1161,7 +1161,7 @@ class GtkViewModel(ViewModel):
                     r[3] = colour
                 break
         else:
-            varlist.append([k, v, editable])
+            varlist.append([k, v, editable, colour])
 
     def allvars(self, dest=None):
         if dest is None:
