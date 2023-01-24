@@ -152,7 +152,7 @@ class parser(sfm.parser):
         self._schema = schema
         default_meta = self._mapping_type(super().default_meta)
         metas = self._mapping_type({k: default_meta for k in schema.fields})
-        super().__init__(source, stylesheet=metas, error_level=error_level)
+        super().__init__(source, stylesheet=metas, error_level=error_level, quiet=True)
 
     def __iter__(self):
         start, fields = self._schema

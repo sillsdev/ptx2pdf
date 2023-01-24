@@ -522,7 +522,8 @@ class parser(collections.abc.Iterable):
                  private_prefix=None, error_level=ErrorLevel.Content,
                  tag_escapes=r'\\',
                  tokeniser=None,
-                 debug=False):
+                 debug=False,
+                 quiet=False):
         """
         Create a SFM parser object. This object is an interator over SFM
         Element trees. For simple unstructured documents this is one element
@@ -565,6 +566,7 @@ class parser(collections.abc.Iterable):
         self._error_level = error_level
         self._escaped_tag = re.compile(rf'^\\{tag_escapes}', re.DOTALL | re.UNICODE)
         self.debug = debug
+        self.quiet = quiet
 
         # Compute end marker stylesheet definitions
         em_def = {'TextType': None, 'Endmarker': None}
@@ -598,7 +600,8 @@ class parser(collections.abc.Iterable):
         pathstr = " ["+" ".join(reversed(path))+"]" if len(path) else ""
         msg = (f'{self.source}: line {ev.pos.line},{ev.pos.col}{pathstr}: ' +
                str(msg).format(token=ev,source=self.source, *args,**kwds))
-        logger.debug(msg)
+        if not self.quiet:
+            logger.warn(msg)
         if severity >= 0 and severity >= self._error_level:
             raise SyntaxError(msg)
         elif severity < 0 and severity < self._error_level:

@@ -1709,6 +1709,8 @@ set stack_size=32768""".format(self.configName())
             if not os.path.exists(ind):
                 continue
             for f in os.listdir(ind):
+                if "_override" in f:
+                    continue
                 fpath = os.path.realpath(os.path.join(ind, f))
                 if os.path.isfile(fpath):
                     res.write(fpath, f if d is None else os.path.join(d, f))
