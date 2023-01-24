@@ -473,7 +473,7 @@ class ViewModel:
     def _mergecfg(self, srcp, destp, mergep, **kw):
         configs = []
         for a in (destp, srcp, mergep):
-            config = configparser.ConfigParser()
+            config = configparser.ConfigParser(interpolation=None)
             with open(a, encoding="utf-8", errors="ignore") as inf:
                 config.read_file(inf)
             configs.append(config)
@@ -692,7 +692,7 @@ class ViewModel:
         path = os.path.join(self.configPath(cfgname, makePath=False), "ptxprint.cfg")
         if not os.path.exists(path):
             return -1
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(interpolation=None)
         with open(path, encoding="utf-8", errors="ignore") as inf:
             config.read_file(inf)
         (oldversion, forcerewrite) = self.versionFwdConfig(config, cfgname)
@@ -704,7 +704,7 @@ class ViewModel:
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
             if not os.path.exists(opath):
                 continue
-            oconfig = configparser.ConfigParser()
+            oconfig = configparser.ConfigParser(interpolation=None)
             oconfig.read(opath, encoding="utf-8")
             self.versionFwdConfig(oconfig, cfgname)
             self.localiseConfig(oconfig)
@@ -777,7 +777,7 @@ class ViewModel:
         self.set("_gitversion", GitVersionStr)
         for a in (("_prjid", self.prjid), ("_cfgid", self.configName())):
             self.set(a[0], a[1])
-        config = configparser.ConfigParser()
+        config = configparser.ConfigParser(interpolation=None)
         for k, v in sorted(ModelMap.items(), key=sortkeys):
             if v[0] is None or k.endswith("_"):
                 continue
@@ -1738,7 +1738,7 @@ set stack_size=32768""".format(self.configName())
         zf.extractall(path=configpath)
         cfgf = os.path.join(configpath, "ptxprint.cfg")
         if os.path.exists(cfgf):
-            c = configparser.ConfigParser()
+            c = configparser.ConfigParser(interpolation=None)
             with open(cfgf, encoding="utf-8", errors="ignore") as inf:
                 c.read_file(inf)
             oldprjid = c.get("project", "id", fallback=prjid)

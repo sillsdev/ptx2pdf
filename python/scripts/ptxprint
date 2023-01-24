@@ -139,7 +139,7 @@ if args.paratext is None:
         args.paratext = get_ptsettings()
 
 conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_user.cfg")
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(interpolation=None)
 if os.path.exists(conffile):
     config.read(conffile, encoding="utf-8")
     if args.pid is None and config.has_option("init", "project"):
