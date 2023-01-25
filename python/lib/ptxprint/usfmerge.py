@@ -36,6 +36,7 @@ class ChunkType(Enum):
     CHAPTERPAR = 16      # A PREVERSEPAR that is following a chapter - never a good sync point!
     CHAPTERHEAD=17      #A Heading that is (was) following a chapter 
     PREVERSEHEAD=18      #A Heading that is just before  a verse 
+    USERSYNC=19        #A preprocessing-inserted break point.
 
 splitpoints={
         ChunkType.VERSE:True
@@ -71,6 +72,7 @@ _canonical_order={
     ChunkType.VERSE:6,
     ChunkType.MIDVERSEPAR:7,
     ChunkType.HEADING:7,
+    ChunkType.USERSYNC:7,
 }
     
 
@@ -121,9 +123,9 @@ _validatedhpi=False
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
 SyncPoints = {
-    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1} # split at every verse
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1} # split at every verse
 }
 
 def ispara(c):
@@ -155,7 +157,7 @@ class Collector:
         self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.waschap = False # Was the previous item a chapter number?
         self.counts = {}
-        self.scores = {}
+        self.scores = {ChunkType.USERSYNC.value:100} # a usersync is always a sync-point
         self.currChunk = None
         self.mode = ChunkType.INTRO
         self.oldmode= None
@@ -232,6 +234,8 @@ class Collector:
                 mode = ChunkType.NB
             elif c.name == "tr":
                 mode = ChunkType.TABLE
+            elif sfm.text_properties('diglotsync')(c):
+                mode = ChunkType.USERSYNC
             elif c.name in nestedparas:
                 mode = ChunkType.NPARA
             elif c.name == "v":
@@ -285,6 +289,8 @@ class Collector:
     def collect(self, root, primary=True, depth=0):
         ischap = sfm.text_properties('chapter')
         isverse = sfm.text_properties('verse')
+        issync = sfm.text_properties('diglotsync')
+
         currChunk = None
         if depth==0:
             self.type=None
@@ -317,6 +323,8 @@ class Collector:
                 if c.name not in nestedparas and (newmode != self.mode \
                                                   or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE)):
                     newchunk = True
+            if issync(c):
+                newchunk = True
             if isverse(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
