@@ -44,8 +44,8 @@ class PicChecks:
     pubfname = "picChecks.txt"
 
     def __init__(self, parent):
-        self.cfgShared = configparser.ConfigParser()
-        self.cfgProject = configparser.ConfigParser()
+        self.cfgShared = configparser.ConfigParser(interpolation=None)
+        self.cfgProject = configparser.ConfigParser(interpolation=None)
         self.parent = parent
         self.src = None
 

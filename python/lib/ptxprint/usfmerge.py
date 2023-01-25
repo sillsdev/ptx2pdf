@@ -914,22 +914,16 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         isright = True
         for i, p in enumerate(pairs):
             if p[0] is not None and len(p[0]):
-                if isright:
-                    outf.write("\\lefttext\n")
-                    isright = False
+                outf.write("\\polyglotcolumn L\n")
                 outf.write(str(p[0]))
                 if p[0].type != ChunkType.HEADING and p[0].type != ChunkType.TITLE:
                     outf.write("\\p\n")
-            elif i != 0 and isright and p[1] is not None and len(p[1]):
-                outf.write("\\nolefttext\n")
-                isright = False
             if p[1] is not None and len(p[1]):
-                if not isright:
-                    outf.write("\\righttext\n")
-                    isright = True
+                outf.write("\\polyglotcolumn R\n")
+                isright = True
                 outf.write(str(p[1]))
                 if p[1].type != ChunkType.HEADING and p[1].type != ChunkType.TITLE:
                     outf.write("\\p\n")
-            elif not isright:
-                outf.write("\\norighttext\n")
+            outf.write("\\polyglotendcols\n")
+
 

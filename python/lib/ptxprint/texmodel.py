@@ -933,10 +933,12 @@ class TexModel:
             else:
                 sanitiseme = True
             use = outpath
-            if sanitiseme:
-                if not sanitise(f.as_posix(), Path(outpath).as_posix(), forced=False):
-                    use = f
-            outps.append(use)
+            if os.path.exists(f):
+                if sanitiseme:
+                    if not sanitise(f.as_posix(), Path(outpath).as_posix(), forced=False):
+                        use = f
+            if os.path.exists(use):
+                outps.append(use)
         self.dict[restag] = "\n".join('\\includepdf{{{}}}'.format(Path(s).as_posix()) for s in outps)
 
     def updateStyles(self):
