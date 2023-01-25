@@ -123,7 +123,7 @@ nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1}, # Just split at chapters
     "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1} # split at every verse
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1} # split at every verse
 }
 
 def ispara(c):
@@ -177,12 +177,11 @@ class Collector:
             scores={ChunkType.DEFSCORE:tmp}
             if debugPrint:
                 print(f"Default score =  {scores[ChunkType.DEFSCORE]}")
-        else:
-            pass
         if 'nb' in self.protect:
             print(f"Protecing nbchapter, like nb")
             self.scores[ChunkType.NBCHAPTER.value]=-self.protect['nb']
-
+        if debugPrint:
+            print (self.scores)
         for st in ChunkType:
             if st.value==ChunkType.DEFSCORE:
                 self.scores[st.value]=scores[st]
@@ -192,14 +191,15 @@ class Collector:
                 if (st in scores):
                     self.scores[st.value]+=scores[st] 
                 elif (st in syncpoints):
-                    self.scores[st.value]+=scores[ChunkType.DEFSCORE] * (syncpoints[st])
+                    self.scores[st.value]+=scores[ChunkType.DEFSCORE] * syncpoints[st]
+ 
             #if (self.scores[st.value]):
             #    splitpoints[st] = True
             #else:
             #    if (st not in splitpoints):
             #        splitpoints[st] = False
             if debugPrint:
-                print(f"Score for {st} -> ",self.scores[st.value], splitpoints[st] if st in splitpoints else '-' )
+                print(f"Score for {st}({st.value}) -> ",self.scores[st.value], syncpoints[st] if st in syncpoints else '-' )
         if doc is not None:
             self.collect(doc, primary=primary)
             self.reorder()
