@@ -1090,7 +1090,7 @@
   \fi
 }
 
-\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\diglotfalse\else\x@\monoglotcolumn\x@{\tmp}\fi}
+\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\diglotfalse\global\let\c@rrdstat\empty\else\x@\monoglotcolumn\x@{\tmp}\fi}
 
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
