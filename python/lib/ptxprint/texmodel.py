@@ -701,6 +701,11 @@ class TexModel:
             if a not in self.dict:
                 self.dict[a] = ''
 
+        # Any more absolute paths?
+        for a in ('diglot/ptxprintstyfile_',):
+            if (len(self.dict[a])):
+                    self.dict[a] = rel(self.dict[a],docdir)
+
         if self.dict.get('paper/cropmarks', False) and int(self.dict.get('finishing/pgsperspread', 1)) < 2:
             self.dict['paper/ifcropmarks'] = "true"
         else:
