@@ -1158,7 +1158,12 @@
     \else 
       \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
     \fi
-    \leavevmode\str@t                                                           %(1)
+    \ifhmode
+      \unskip\let\aft@rnb\space
+    \else
+      \let\aft@rnb\empty
+      \leavevmode\str@t                                                           %(1)
+    \fi
     \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \t@stpublishability{c}\ifn@npublishable
      \setbox\ch@pterbox=\box\voidb@x
@@ -1185,6 +1190,7 @@
      \dr@ppednumbertrue
      \add@pending{chapter}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\ch@pterwd}{2}{\t@std@lay}{\ifRTL R\else L\fi}%
      \run@pending
+     \aft@rnb
     \fi
   \fi}
 
