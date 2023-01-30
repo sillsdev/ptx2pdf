@@ -922,7 +922,7 @@ class RunJob:
             picinfos.set_destinations(fn=carefulCopy, keys=j, cropme=cropme)
         missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
-        outfname = info.printer.baseTeXPDFnames(books)[0] + ".piclist"
+        outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".piclist"
         for k, v in list(picinfos.items()):
             m = v.get('media', '')
             if m and 'p' not in m:
