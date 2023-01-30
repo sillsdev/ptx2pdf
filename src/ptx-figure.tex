@@ -1242,14 +1242,16 @@
 
 \def\openpicpages "#1"{%set up a .picpages file, and check for changes at the end of the run.
   \ifpicp@gefile\else
+    \trace{g}{openpicpages "#1"}%
     \inputpicp@ges "#1"
     \picp@gefiletrue
     \addtoendhooks{\finishpicp@ges "#1"}%
-    \openout\picp@ges="#1" % test to see if the file exists
+    \immediate\openout\picp@ges="#1" % test to see if the file exists
   \fi
 }
 \def\l@stfignum{0}
 \def\finishpicp@ges "#1"{\immediate\closeout\picp@ges % close the picpages file, then re-read it and check for changes
+   \trace{g}{finishpicp@ges}%
    \tempfalse
    \trace{g}{lastfignum was \l@stfignum, count now:\the\im@gecount}%
    \ifnum\im@gecount=\l@stfignum\else
