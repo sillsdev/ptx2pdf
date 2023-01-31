@@ -14,6 +14,7 @@ class Snippet:
 class PDFx1aOutput(Snippet):
 
     def generateTex(self, model, diglotSide=""):
+        docdir,docdirbase=model.docdir()
         res = r"""
 \bgroup
 \catcode`\#=12 
@@ -175,10 +176,10 @@ class PDFx1aOutput(Snippet):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             res += "\\Actionsfalse\n"
         if pdftype in ("Screen", "Digital"):
-            model.dict["/iccfpath"] = os.path.join(libpath, "sRGB.icc").replace("\\","/")
+            model.dict["/iccfpath"] = os.path.relpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "3"
         if pdftype == "Gray":
-            model.dict['/iccfpath'] = os.path.join(libpath, "default_gray.icc").replace("\\","/")
+            model.dict['/iccfpath'] = os.path.relpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"

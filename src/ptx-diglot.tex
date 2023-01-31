@@ -970,11 +970,13 @@
     %\showlists
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
   \fi
+  \traceNum{D}{Initial savepenalty \the\savedpenalty}%
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
   \x@\ifnum\csname saved\c@rrdstat penalty\endcsname=-10000
+    \trace{D}{restoring savedpenalty (was\the\savedpenalty) to -10000 from saved\c@rrdstat penalty}%
     \global\savedpenalty=-10000
   \fi
   \endlastp@rstyle{p}%
