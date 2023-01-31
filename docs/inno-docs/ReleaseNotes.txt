@@ -1,8 +1,34 @@
 PTXprint 2.2.49 Release Notes
-24 Jan 2023
+31 Jan 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.50 (31 Jan 2023)
+
+  * Apply a space after nb processing is done, since \c kills spaces (#819)
+  
+  * Added several snippets to documentation
+
+  * Handle fractional nb raise adjustments [MH]
+  
+  * Don't save overrides in PDFs
+
+  * Protect from missing image files
+
+  * Quieten SFM parser for stylesheets
+  
+  * Fixed adding variables
+
+  * Avoid problems with lefttext, righttext
+
+  * Make c@rrdstat empty if zglot disables no-glot
+
+  * Try to avoid absolute paths in tex file
+
+  * Fixed local piclist filename generation
+  
+  * Fixed missing picpages file (ensure immediate file opens)
+  
 Bug fixes and improvements in 2.2.49 (24 Jan 2023)
 
   * Fixed editable in setvar problem
