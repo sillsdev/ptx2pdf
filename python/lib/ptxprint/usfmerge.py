@@ -38,6 +38,30 @@ class ChunkType(Enum):
     PREVERSEHEAD=18      #A Heading that is just before  a verse 
     USERSYNC=19        #A preprocessing-inserted break point.
 
+
+_chunkClass_map = {
+ChunkType.DEFSCORE:'',
+ChunkType.CHAPTER:'CHAPTER',
+ChunkType.HEADING:'HEADING',
+ChunkType.TITLE:'TITLE',
+ChunkType.INTRO:'INTRO',
+ChunkType.BODY:'BODY',
+ChunkType.ID:'ID',
+ChunkType.TABLE:'TABLE',
+ChunkType.VERSE:'VERSE',
+ChunkType.PARVERSE:'VERSE',
+ChunkType.MIDVERSEPAR:'BODY',
+ChunkType.PREVERSEPAR:'BODY',
+ChunkType.NOVERSEPAR:'BODY',
+ChunkType.NPARA:'BODY',
+ChunkType.NB:'BODY',
+ChunkType.NBCHAPTER:'CHAPTER',
+ChunkType.CHAPTERPAR:'BODY',
+ChunkType.CHAPTERHEAD:'HEADING',
+ChunkType.PREVERSEHEAD:'HEADING',
+ChunkType.USERSYNC:'BODY'
+}
+
 splitpoints={
         ChunkType.VERSE:True
 } 
@@ -111,7 +135,7 @@ class Chunk(list):
     def ident(self):
         if len(self) == 0:
             return ("", 0, 0,0) # , 0, 0)
-        return (self.type.name, self.chap, self.verse, self.pnum) # , self.end, self.pnum)
+        return (_chunkClass_map[self.type], self.chap, self.verse, self.pnum) # , self.end, self.pnum)
 
     def __str__(self):
         #return "".join(repr(x) for x in self)
