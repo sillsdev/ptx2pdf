@@ -964,7 +964,14 @@
 \def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
-  \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifdiglotcolh@scontent %Only actually save lastpenalty if there is some real content before it. 
+    \global\savedpenalty=\tmpcount
+  \else
+    \ifdim\pagetotal>0pt
+      \global\savedpenalty=\tmpcount
+    \fi
+  \fi
   \tmpcount=\lastnodetype
   \ifintrial
     %\showlists
@@ -989,7 +996,7 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty}%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal}%
   %\ifnum\outputpenalty=-10000 %User-pagebreak
   %  \global\savedpenalty=\outputpenalty
   %\fi
@@ -999,7 +1006,7 @@
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
-  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent diglolcolh@scontent\fi}%
+  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi}%
   \ifdiglotcolh@scontent\else
     \del@from@digl@tc@ntentlist{\c@rrdstat}%
   \fi
@@ -1008,7 +1015,9 @@
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
-  \ifdiglotcolh@scontent
+  \ifdiglotcolh@scontent \temptrue \fi
+  \ifnum\savedpenalty=-10000 \temptrue\fi
+  \iftemp
     \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
     % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
     \relax
