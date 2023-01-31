@@ -1022,7 +1022,7 @@
     \ifx\t@str@ise\relax
       \trace{C}{PARLOC:ok}%
     \else
-       \ifnum\t@str@ise=0\else
+       \ifdim\t@str@ise pt=0pt\else
          \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
        \fi
     \fi
@@ -1174,7 +1174,7 @@
      %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
      \raise@test{chapter}%
-     \ifx\t@str@ise\else\ifnum \t@str@ise=1
+     \ifx\t@str@ise\else\ifdim \t@str@ise pt=1pt
       \vadjust pre {\nobreak}% Prevent break before this line if the box is raised
      \fi\fi
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)
