@@ -1242,6 +1242,15 @@
  \@setside{#1}%Ought to be needless
  \@@switchstyles{#1}% Set up fonts and things.
  \add@to@digl@tc@ntentlist{#1}%
+ \ifnum\@numcuts>0
+   \x@\let\x@\tmp\csname @#1egap\endcsname
+   \ifdim \tmp >\baselineskip
+     \count255=\dimexpr \tmp / \baselineskip\relax
+     \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
+     \prevgraf=\the\count255 
+     \cutoutcarryover
+   \fi
+ \fi
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
  \global\diglotcolh@scontentfalse
@@ -2351,6 +2360,14 @@
     \dimen1=\t@st
   \fi
 }
+\def\delta@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifx\t@st\relax
+    \trace{dP}{Eh? \v@lpfx#1\v@lsfx undefined}%
+  \else
+    \x@\xdef\csname\v@lopfx#1\v@losfx\endcsname{\the\dimexpr \dimen1 - \t@st\relax}%
+    \trace{dP}{\v@lopfx#1\v@losfx \x@=  \csname \v@lopfx#1\v@losfx\endcsname}%
+  \fi
+}
 %Sum values (for averaging)
 \def\sum@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \advance\dimen1 by \t@st\relax
@@ -2406,6 +2423,7 @@
     \fi
   \fi
 }
+
 
 \def\reb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
   \ifdim\ht\t@mp=\dimen1 \else
@@ -2667,6 +2685,12 @@
     \triall@@pcount=1
     \diglot@run@nxt@trial
   \fi
+  \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}\def\v@lopfx{@}\def\v@losfx{egap}%
+  \dimen1=0pt
+  \let\col@do=\max@val\dimen1=0pt
+  \x@\each@col\diglot@list\E
+  \let\col@do=\delta@val
+  \x@\each@col\diglot@list\E % Find 'skip' after each chunk
 }
 
 \def\empty@partials{%Empty (eventually store?) partialX
