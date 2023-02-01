@@ -315,6 +315,36 @@ Setting `\pretolerance=1` forces the paragraph builder to do the extra passes it
 might not have done otherwise, to give a more accurate result. And then we
 reset the value for the next paragraph and following.
 
+## Nudge chapter number down at \nb chapters
+
+The Burmese digit 6 rises rather high and crashes into the previous
+line when an \nb (no-break para) is used after a \c chapter. This
+snippet demonstrates how to lower the \nb chapter number by a smidgen
+for the given references (in this example: JHN 16, 2CO 6, HEB 6).
+
+```tex
+\expandafter\def\csname raise-chapter.JHN16.0\endcsname{-0.3}
+\expandafter\def\csname raise-chapter.2CO6.0\endcsname{-0.3}
+\expandafter\def\csname raise-chapter.HEB6.0\endcsname{-0.3}
+```
+
+## Horiz rule to fill left and right edges of \s2 titles
+
+```tex
+\sethook{start}{s2}{\leaders\vrule height 2.5pt depth -2.25pt \hfill \kern.3em\null}
+\sethook{end}{s2}{\kern.3em\leaders\vrule height 2.5pt depth -2.25pt \hfill \null}
+```
+
+## This applies the specified rounded rectangular box to bridged verses
+
+```tex
+\SeparateVerseAdornmentsfalse
+\newbox\stretchedversestarbox
+\setbox\stretchedversestarbox=\hbox{\XeTeXpdffile "c:/pathtofile/BridgedVerseRoundedBox.pdf" scaled 760 \relax}
+\def\AdornVerseNumber#1{\beginL\rlap{\hbox to \ifadorningrange\wd\stretchedversestarbox\else\wd\versestarbox\fi{\hfil #1\hfil}}%
+    \raise -4.5pt\ifadorningrange\copy\stretchedversestarbox\else\copy\versestarbox\fi\endL}
+```
+
 ## Table of Contents right-align column 2
 
 ```tex
@@ -322,14 +352,15 @@ reset the value for the next paragraph and following.
 ```
 
 ## Add extra  TOC entries 
+
 Additional TOC entries can be specified to appear before or after an automatic table of
 contents. As this is done by seting values that are used while `\ztoc` runs, it must occur 
 *before* the call to ztoc:
+
 ```tex
-\ztocafter
-\tr \tc1 Maps\tc2 \tcr3 479
-\tr \tc1 Unusual animals mentioned in scripture\tc2 (animals)\tcr3 483
-\ztocafter*
+\ztocafter\tr \tc1 Maps\tc2 \tcr3 479\ztocafter*
+  OR
+\ztocafter\tr \tc1 Unusual animals mentioned in scripture\tc2 (animals)\tcr3 483\ztocafter*
 
 \ztoc|main\*
 
@@ -337,9 +368,7 @@ contents. As this is done by seting values that are used while `\ztoc` runs, it 
 For the 'before' variant, you must set the style of the table:
 ```tex
 For before
-\ztocbefore
-\tr \cat toc\cat*\tc1 Index\tc2\tcr3 i
-\ztocbefore*
+\ztocbefore\tr \cat toc\cat*\tc1 Index\tc2\tcr3 i\ztocbefore*
 
 \ztocafter....
 ```
