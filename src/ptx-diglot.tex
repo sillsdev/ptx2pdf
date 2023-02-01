@@ -114,8 +114,8 @@
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
-\def\LRspecificCountFixed{curr@djpar,p@rnum} 
-\def\LRspecificCountBroken{}
+\def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts} 
+\def\LRspecificCountBroken{@numcuts}
 \let\LRspecificCount\LRspecificCountFixed
 
 
@@ -1007,7 +1007,12 @@
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi}%
-  \ifdiglotcolh@scontent\else
+  \edef\tmp{#2}
+  \ifdiglotcolh@scontent
+    \ifx\tmp\empty\else
+      \save@cutouts{\c@rrdstat}%
+    \fi
+  \else
     \del@from@digl@tc@ntentlist{\c@rrdstat}%
   \fi
   %\showlists
@@ -1015,6 +1020,9 @@
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
+  \ifx\tmp\empty\else
+    \restore@cutouts{#2}%
+  \fi
   \ifdiglotcolh@scontent \temptrue \fi
   \ifnum\savedpenalty=-10000 \temptrue\fi
   \iftemp
@@ -1079,7 +1087,7 @@
 
 \def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
-  \pr@sideswitch{endcols}{L}%
+  \pr@sideswitch{endcols}{\empty}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
 }
