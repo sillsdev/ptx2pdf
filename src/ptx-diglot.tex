@@ -2355,9 +2355,11 @@
 \def\mkrev@list#1{\x@\xdef\csname rev@\list@type @list\endcsname{#1\csname rev@\list@type @list\endcsname}}
 
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
-  \ifdim\dimen1<\t@st
-     \edef\m@x@at@col{#1}%
-    \dimen1=\t@st
+  \ifx\t@st\relax\else
+    \ifdim\dimen1<\t@st
+       \edef\m@x@at@col{#1}%
+      \dimen1=\t@st
+    \fi
   \fi
 }
 \def\delta@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
