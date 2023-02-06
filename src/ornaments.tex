@@ -192,15 +192,21 @@
 
 \def\s@tornamenttransform#1#2#3#4{%
   \def\pdf@aa{#1}\def\pdf@ab{#2}\def\pdf@ba{#3}\def\pdf@bb{#4}%
-  \def\pdf@xo{-\x@bjpadding}\def\pdf@yo{-\x@bjpadding}%
+  \ifXformOrnaments
+    \edef\pdf@xo{\strip@pt{\dimexpr -\x@bjpadding\relax}}\edef\pdf@yo{\strip@pt{\dimexpr -\x@bjpadding\relax}}%
+  \else
+    \edef\pdf@xo{0}\edef\pdf@yo{0}%
+  \fi
   \calc@ornamentdim
   \ifdim\dimen0<0pt
     \dimen0=-\dimen0
     \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0\relax}}%
+    \trace{orn}{xshift \pdf@xo}%
   \fi
   \ifdim\dimen1<0pt
     \dimen1=-\dimen1
     \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1\relax}}%
+    \trace{orn}{yshift \pdf@yo}%
   \fi
   \edef\pdf@matrix{}%
   \def\pdf@apply@transform{}%
@@ -217,6 +223,7 @@
     \def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
     \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
     \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY\relax}%
+    \relax
   \fi
 }
 \def\orn@qpoint#1#2{%Apply x and y scaling to dimensinons
