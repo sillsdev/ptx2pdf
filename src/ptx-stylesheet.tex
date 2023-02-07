@@ -419,7 +419,7 @@
    \s@tph@name{#1\ifdiglot\c@rrdstat\fi}%
 }
 \def\s@tpp@name#1{%
-   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1\ifx\f@ntextend\empty\else|\f@ntextend\fi}%
+   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
 }
 \def\setpp@name#1{%
    \s@tpp@name{#1\ifdiglot\c@rrdstat\fi}%

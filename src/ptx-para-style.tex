@@ -407,7 +407,7 @@
 }
 
 \def\@@p@rstyle{
-  \ifx\n@xt |
+  \ifx\n@xt =
     \let\n@xt\@@@p@rstyle
   \else
     \global\let\f@ntextend\empty
@@ -415,7 +415,7 @@
   \fi
   \x@\n@xt\x@{\newp@rstyle}%
 }
-\def\@@@p@rstyle#1|#2 {
+\def\@@@p@rstyle#1=#2 {
   \xdef\f@ntextend{#2}%
   \x@\@p@rstyle\x@{#1}%
 }
