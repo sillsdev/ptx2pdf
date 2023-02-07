@@ -130,7 +130,7 @@
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}}}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
-\def \Underline      #1\relax{\defbinp@ram{underline}{#1}}
+\def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
@@ -183,6 +183,7 @@
 \def\edefp@ram#1#2{\x@\edef\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{sa}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
+\def\deftrip@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\ifx\t@mp\tw@\defp@ram{#1}{#2}\else\defp@ram{#1}{true}\fi\fi}
 \def\setp@ram#1#2#3{
   \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{sa}{set \c@tprefix#2\ds@ffix:#1 -> #3}
   \should@xist{#2\ds@ffix}%Ensure that the marker is in the exists list
