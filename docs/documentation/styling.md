@@ -113,6 +113,25 @@ Then not leaving anything unspecified, the book name `Holy Bible` is formatted:
 As paragraph styling does not affect a footnote, the stylestack for inside a footnote ends at the `\f` or `\x`
 Similarly, the style-stack in force outside a sidebar does not affect anything inside.
 
+## Double underlining
+If underlining is recommended against, double-unlerlineing is doubly so. But it has been asked for, so it is now
+implemented. To specify it, pass the *exact* value of 2 to the `\Underline` 'boolean'.
+```
+\Marker wj
+\Underline 2
+```
+
+Note that while single-underlining of spaces works quite nicely, for double-underlining of spaces the underline must be made from multiple 
+line-fragments. These may look ugly on PDF viewers, but hopefully print OK.
+
+###Underlining parameters (TeX file):
+```
+\def\DoubleUnderlineSpaceQuantum{0.05ex} %  how long are the chunks that get added together to underline a variable width space
+\def\DoubleUnderlineSep{0.05em} % How separate are the lines
+\def\UnderlineLower{0.1em} % How much lower is the (top of the) underline from the decender?
+\def\UnderlineThickness{0.05em} % Line thickness
+\UnderlineSpacetrie % or false 
+```
 
 ## Styling of ranged milestones with and without attributes
 Milestones such as `\qt-s \* ... \qt-e \*` define a range of text that cuts
