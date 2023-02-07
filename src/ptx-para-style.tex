@@ -402,7 +402,25 @@
 }
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
- \endlastp@rstyle{#1}%
+ \edef\newp@rstyle{#1}%
+ \futurelet\n@xt\@@p@rstyle % look at following character and call \@@p@rstyle
+}
+
+\def\@@p@rstyle{
+  \ifx\n@xt |
+    \let\n@xt\@@@p@rstyle
+  \else
+    \global\let\f@ntextend\empty
+    \let\n@xt\@p@rstyle
+  \fi
+  \x@\n@xt\x@{\newp@rstyle}%
+}
+\def\@@@p@rstyle#1|#2 {
+  \xdef\f@ntextend{#2}%
+  \x@\@p@rstyle\x@{#1}%
+}
+\def\@p@rstyle#1{
+ \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%

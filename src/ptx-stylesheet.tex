@@ -419,7 +419,7 @@
    \s@tph@name{#1\ifdiglot\c@rrdstat\fi}%
 }
 \def\s@tpp@name#1{%
-   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1}%
+   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1\ifx\f@ntextend\empty\else|\f@ntextend\fi}%
 }
 \def\setpp@name#1{%
    \s@tpp@name{#1\ifdiglot\c@rrdstat\fi}%
@@ -558,12 +558,16 @@
 
 
 \def\r@setparam{=[]}
-
+\let\f@ntextend\empty
 \def\st@rtswithsl@sh#1#2\E{\if#1/\temptrue\else\tempfalse\fi}
 \x@\def\csname getthep@ram-fontfeatures\endcsname#1{%
   \trace{sa}{getthep@ram-fontfeatures}%
   \let\d@gettheparam=\d@
   \let\r@s\empty
+  \ifx\f@ntextend\empty\else
+    \trace{sa}{Fontextend set! =\f@ntextend}%
+    \xdef\r@s{[extend=\f@ntextend]\space }%
+  \fi
   \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
     \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
       \ifx\p@ram\relax\else

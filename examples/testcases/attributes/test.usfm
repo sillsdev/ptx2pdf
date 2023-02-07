@@ -51,9 +51,8 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to page \zpage|Spirit\*.
 \p
 \zmine-s\* 
-\s T 
-A test of a custom milestone
-\p 
+\s T A test of a custom milestone
+\p
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
 \v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
 
