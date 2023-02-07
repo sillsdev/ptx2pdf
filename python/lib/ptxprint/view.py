@@ -377,8 +377,10 @@ class ViewModel:
         def asmm(v): return v * 25.4 / 72.27
         hfont = self.styleEditor.getval("h", "FontName")
         if hfont is None:
+            # print("hfont is None")
             hfont = self.get("bl_fontR")
             if hfont is None:
+                # print("hfont is STILL None")
                 return (0, 0, 0, 0, 0, 0, 0, 0)
         hfont = hfont.getTtfont()
         #fontheight = 1. + float(font.descent) / font.upem
@@ -386,6 +388,7 @@ class ViewModel:
         fontsizemms = asmm(float(self.get("s_fontsize")))
         linespacemms = asmm(float(self.get("s_linespacing")))
         hfontsizemms = asfloat(self.styleEditor.getval("h", "FontSize"), 1.) * fontsizemms
+        # print(f"{hfontheight=} {fontsizemms=} {hfontsizemms=}")
         marginmms = float(self.get("s_margins"))
         # in the macros, topmargin is set to topmargin - baselineskip + 12*FontSizeUnit
         # Reverse that here, so that what appears on the page is what they ask for.
@@ -397,6 +400,7 @@ class ViewModel:
         # report top of TeX headerbox then add that box back on and remove the 'true' height of the font
         headerlabel = headerposmms - (hfontheight - 0.7) * hfontsizemms
         footerlabel = (bottommarginmms - footerposmms - hfontheight * hfontsizemms) # * 72.27 / 25.4
+        # print(f"{headerposmms=} {footerposmms=} {headerlabel=} {footerlabel=} ")
         # simply subtract ruler gap from header gap
         rulerposmms = asmm(float(self.get("s_headerposition")) - float(self.get("s_rhruleposition")))
         return (marginmms, topmarginmms, bottommarginmms, headerposmms, footerposmms, rulerposmms, headerlabel, footerlabel)

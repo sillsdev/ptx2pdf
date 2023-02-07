@@ -372,7 +372,7 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_notebooks = ("Main", "Viewer", "PicList", "fnxr")
+_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import")
 
 # Vertical Thumb Tab Orientation options L+R
 _vertical_thumb = {
@@ -3365,6 +3365,24 @@ class GtkViewModel(ViewModel):
             if chkbx:
                 btn.set_sensitive(False)
                 self.set("c_"+ident, False)
+                
+    def onImportSegmentClicked(self, w):
+        name = Gtk.Buildable.get_name(w)[2:]
+        mpgnum = self.notebooks['Import'].index("tb_"+name)
+        self.builder.get_object("nbk_Import").set_current_page(mpgnum)
+
+    def onImportClicked(self, btn_importPDF):
+        dialog = self.builder.get_object("dlg_importSettings")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            # MH to do something magic here
+            # (depending on the options set within Import dialog)
+            pass
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
@@ -4679,15 +4697,16 @@ class GtkViewModel(ViewModel):
 
     def onRequestPicturePermission(self, btn):
         pics = []
-        for artist in self.artpgs.keys():
-            if artist == "co":
-                for series in self.artpgs[artist].keys():
-                    for a,v in self.artpgs[artist][series]:
-                        pics += [v]
+        if self.artpgs is not None:
+            for artist in self.artpgs.keys():
+                if artist == "co":
+                    for series in self.artpgs[artist].keys():
+                        for a,v in self.artpgs[artist][series]:
+                            pics += [v]
         picount = len(pics)
         if picount == 0:
             _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("However none were detected in this publication.")
+                       _("No DCC illustrations were detected. Hit Print first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
