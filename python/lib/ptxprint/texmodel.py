@@ -974,7 +974,18 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra=""):
+    def _doptxfile(self, fname, dname):
+        res = []
+        if dname is not None:
+            res.append(r"\zglot|l\*")
+        res.append(r"\ptxfile{{{}}}".format(fname))
+        if dname is not None:
+            res.append(r"\zglot|r\*")
+            res.append(r"\ptxprile{{{}}}".format(dname))
+            res.append(r"\zglot|\*")
+        return res
+
+    def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", digtexmodel=None):
         for k, v in self._settingmappings.items():
             if self.dict[k] == "":
                 self.dict[k] = self.ptsettings.dict.get(v, "a,b,c,d,e,f,g,h,i,j,k,l,m,n,o,p,q,r,s,t,u,v,w,x,y,z")
@@ -1007,12 +1018,15 @@ class TexModel:
                     res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
+                        dname = None
+                        if digtexmodel is not None and f in self._peripheralBooks:
+                            dname = digtexmodel.dict['project/books'][i]
+                        elif extra != "":
+                            fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if self.dict.get('project/sectintros'):
                             inserttext = self._getinsert(f)
                             if len(inserttext):
                                 res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
-                        if extra != "":
-                            fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if i == len(self.dict['project/bookids']) - 1: 
                           res.append(r"\lastptxfiletrue")
                           if self.dict['project/ifcolophon'] == "":
@@ -1027,16 +1041,16 @@ class TexModel:
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
-                            res.append(r"\ptxfile{{{}}}".format(fname))
+                            res.extend(self._doptxfile(fname, dname))
                             res.append(r"\OmitChapterNumberfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.append(r"\ptxfile{{{}}}".format(fname))
+                            res.extend(self._doptxfile(fname, dname))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.append(r"\ptxfile{{{}}}".format(fname))
+                            res.extend(self._doptxfile(fname, dname))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
@@ -1614,7 +1628,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?\r?\n)", flags=regex.M), ""))
 
         if self.asBool("document/ch1pagebreak"):
-            self.localChanges.append((None, regex.compile(r"(\\c 1 ?\r?\n)", flags=regex.M), r"\pagebreak\r\n\1"))
+            self.localChanges.append((None, regex.compile(r"(\\c 1 ?)(\r?\n)", flags=regex.M), r"\pagebreak\2\1\2"))
 
         if self.asBool("document/glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u2000\1")) 

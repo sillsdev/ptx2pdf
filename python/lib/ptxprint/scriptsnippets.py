@@ -124,6 +124,17 @@ class thai(ScriptSnippet):
                (nonbody, re.compile('\u200B'), "")]
         return res
 
+class lana(ScriptSnippet):
+    @classmethod
+    def regexes(cls, view):
+        res = [(None, re.compile(r'(\s)/'), r'\1'),
+               (None, re.compile('/([\\s\u1AA7])'), r'\1'),
+               (None, re.compile(r'/'), "\u200B"),
+               (None, re.compile(r'([^\u1A20-\u1A7F])\u200B'), r'\1'),
+               (None, re.compile(r'\u200B([^\\\u1A20-\u1A7F])'), r'\1'),
+               (nonbody, re.compile('\u200B'), "")]
+        return res
+
 class arab(ScriptSnippet):
     dialogstruct = [
         MiniCheckButton("c_scrarabrefs", _("First verse on left"))

@@ -231,7 +231,7 @@ class RunJob:
         self.tmpdir = os.path.join(self.prjdir, 'local', 'ptxprint', configid)
         os.makedirs(self.tmpdir, exist_ok=True)
         bks = self.printer.getBooks(files=True)
-        jobs = []
+        jobs = []       # [(bkid, False) or (RefList, True)] 
         if self.printer.bookrefs is None:
             jobs = [(b, False) for b in bks]
         else:
@@ -538,24 +538,27 @@ class RunJob:
             else:
                 digdonebooks.append(digout)
             
-            # Now merge the secondary text (right) into the primary text (left) 
             left = os.path.join(self.tmpdir, out)
             right = os.path.join(self.tmpdir, digout)
-            outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
-            logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
+            if b not in info._peripheralBooks:
+                # Now merge the secondary text (right) into the primary text (left) 
+                outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
+                logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
 
-            sheetsa = info.printer.getStyleSheets()
-            sheetsb = diginfo.printer.getStyleSheets()
-            logger.debug(f"usfmerge2({left}, {right})")
-            try:
-                usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
-            except SyntaxError as e:
-                syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
-            except Exception as e:
-                syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
-                print_traceback(f=1)
-            for f in [left, right, outFile, logFile]:
-                texfiles += [os.path.join(self.tmpdir, f)]
+                sheetsa = info.printer.getStyleSheets()
+                sheetsb = diginfo.printer.getStyleSheets()
+                logger.debug(f"usfmerge2({left}, {right}) -> {outFile} with {logFile=}")
+                try:
+                    usfmerge2(left, right, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
+                except SyntaxError as e:
+                    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
+                except Exception as e:
+                    syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
+                    print_traceback(f=1)
+                for f in [left, right, outFile, logFile]:
+                    texfiles += [left, right, outFile, logFile]
+            else:
+                texfiles += [left, right]
 
         if not len(donebooks) or not len(digdonebooks):
             unlockme()
@@ -579,11 +582,11 @@ class RunJob:
             info.printer.set(k, diginfo.printer.get(v))
         info["document/diglotcfgrpath"] = os.path.relpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
-        res = self.sharedjob(jobs, info, extra="-diglot")
+        res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
         texfiles += res
         return texfiles
 
-    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra=""):
+    def sharedjob(self, jobs, info, prjid=None, prjdir=None, extra="", digtexmodel=None):
         genfiles = []
         if prjid is None:
             prjid = self.prjid
@@ -601,7 +604,7 @@ class RunJob:
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
-        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra)
+        texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
         genfiles += [os.path.join(self.tmpdir, outfname.replace(".tex", x)) for x in (".tex", ".xdv")]
