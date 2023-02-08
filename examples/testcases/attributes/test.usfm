@@ -3,7 +3,7 @@
 \periph Hello|intro
 \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
 \zendperiph
-
+\ip Introductory paragraph 
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
@@ -62,7 +62,7 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 
 
 \c 3
-\p=0.789
+\p^102
 \v  1 There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:
 \v  2 The same came to Jesus by night, and said unto him, Rabbi, we know that
 thou art a teacher come from God: for no man can do these miracles that thou
