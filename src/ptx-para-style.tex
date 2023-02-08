@@ -403,23 +403,59 @@
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
  \edef\newp@rstyle{#1}%
+ \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
+ \catcode13=12 % ditto for <return>
+ \catcode`\^=12
  \futurelet\n@xt\@@p@rstyle % look at following character and call \@@p@rstyle
 }
 
-\def\@@p@rstyle{
-  \ifx\n@xt =
+\def\dop@rstyle#1{\trace{ss}{dop@rstyle: #1, onto stack: \mcstack}%
+ \edef\newp@rstyle{#1}\global\let\f@ntextend\empty
+ \@p@rstyle{#1}%
+}
+
+\catcode`\^=12
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
+\lccode`\|=`\\
+\let\thisch@rstyle\empty
+\lowercase{
+%-cchar_docharstyle_intro
+%+cchar_docharstyle
+ \let\@@st@risk*
+ \let\@@spc~
+ \let\@@nl_
+\def\@@p@rstyle{%
+  \catcode32=10 % reset <space> to act like a space again
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
+  \trace{s}{parstyle: \newp@rstyle, next=\n@xt}%
+  \ifx \n@xt^\relax
     \let\n@xt\@@@p@rstyle
   \else
     \global\let\f@ntextend\empty
-    \let\n@xt\@p@rstyle
+    \ifx\n@xt\@@spc\let\n@xt\@p@rstyle@spc\trace{ss}{space delimiter for \newp@rstyle, after \thisp@rstyle}\else
+      \ifx\n@xt\@@nl\let\n@xt\@p@rstyle@nl\trace{ss}{nl delimiter for \newp@rstyle}\else
+        \let\n@xt\@p@rstyle
+    \fi\fi
   \fi
   \x@\n@xt\x@{\newp@rstyle}%
 }
-\def\@@@p@rstyle#1=#2 {
-  \xdef\f@ntextend{#2}%
+\def\@p@rstyle@spc#1~{\@p@rstyle{#1}}
+\def\@p@rstyle@nl#1_{\@p@rstyle{#1}}
+}
+
+\def\p@rcent #1#2#3#4\E{\ifx #3x.#1#2\else #1.#2#3\fi}
+\def\@@@p@rstyle#1^#2 {%
+  \xdef\f@ntextend{\p@rcent #2xx\E}%
+  %\xdef\f@ntextend{#2}%
+  \trace{s}{extending [\f@ntextend]}%
   \x@\@p@rstyle\x@{#1}%
 }
-\def\@p@rstyle#1{
+\catcode`\^=7
+\catcode`\_=11
+
+\def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
+\def\@p@rstyle#1{%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \mcpushunderms{P}{#1}%
