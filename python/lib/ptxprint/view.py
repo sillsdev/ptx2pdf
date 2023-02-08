@@ -989,15 +989,16 @@ class ViewModel:
                 self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
                 self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
-        if v < 2.13:
+        if v < 2.13 and config.getboolean("project", "usechangesfile", False):
             path = os.path.join(self.configPath(cfgname), "changes.txt")
             if os.path.exists(path):
                 with open(path, encoding="utf-8") as inf:
                     lines = list(inf.readlines())
+                if any("_" in l for l in lines if not l.startswith("#")):
                     lines.append(r'"(\\[a-z0-9]+)_([0-9]+)" > "\1^\2"' + "\n")
-                with open(path, "w", encoding="utf-8") as outf:
-                    for l in lines:
-                        outf.write(l)
+                    with open(path, "w", encoding="utf-8") as outf:
+                        for l in lines:
+                            outf.write(l)
         self._configset(config, "config/version", ConfigVersion)
             
         styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
