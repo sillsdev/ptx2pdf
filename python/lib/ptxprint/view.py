@@ -75,6 +75,7 @@ class ViewModel:
         "fancy/versedecoratorpdf":  ("versedecorator", False, "lb_inclVerseDecorator"),
         "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
+        "import/impsourcepdf":      ("impSourcePDF", False, "lb_impSource_pdf"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
     _settingmappings = {
@@ -82,7 +83,8 @@ class ViewModel:
         "notes/fncallers": "footnotes"
     }
     _activekeys = {
-        "document/diglotsecprj": "updateDiglotConfigList"
+        "document/diglotsecprj": "updateDiglotConfigList",
+        "import/project":        "updateimpProjectConfigList"
     }
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
                        "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
@@ -95,7 +97,8 @@ class ViewModel:
         self.args = args
         for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
-                     customFigFolder customOutputFolder prjid configId diglotView usfms picinfos bookrefs""").split():
+                     customFigFolder customOutputFolder impSourcePDF
+                     prjid configId diglotView usfms picinfos bookrefs""").split():
             setattr(self, v, None)
         self.isDiglot = False
         self.isDisplay = False
@@ -409,6 +412,9 @@ class ViewModel:
         pass
 
     def updateDiglotConfigList(self):
+        pass
+
+    def updateimpProjectConfigList(self):
         pass
 
     def updateBookList(self):

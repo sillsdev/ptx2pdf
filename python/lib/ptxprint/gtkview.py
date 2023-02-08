@@ -167,6 +167,7 @@ fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapte
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
+fcb_impProject ecb_impConfig
 l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
 tb_Peripherals gr_importFrontPDF gr_importBackPDF 
 bx_ToC c_autoToC t_tocTitle 
@@ -603,6 +604,7 @@ class GtkViewModel(ViewModel):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
+        self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
         for k, v in _object_classes.items():
             for a in v:
                 w = self.builder.get_object(a)
@@ -716,6 +718,7 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
@@ -1522,6 +1525,17 @@ class GtkViewModel(ViewModel):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", "Default")
+
+    def updateimpProjectConfigList(self):
+        self.ecb_impConfig.remove_all()
+        imprj = self.get("fcb_impProject")
+        if imprj is None:
+            return
+        impConfigs = self.getConfigList(imprj)
+        if len(impConfigs):
+            for cfgName in sorted(impConfigs):
+                self.ecb_impConfig.append_text(cfgName)
+            self.set("ecb_impConfig", "Default")
 
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
@@ -3583,6 +3597,9 @@ class GtkViewModel(ViewModel):
         b.set_visible(False)
         b.set_label(lbl)
         b.set_visible(True)
+        
+    def onimpProjectChanged(self, btn):
+        self.updateimpProjectConfigList()
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
