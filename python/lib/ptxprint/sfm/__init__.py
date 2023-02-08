@@ -350,10 +350,11 @@ class ErrorLevel(IntEnum):
 
 class Tag(NamedTuple):
     name: str
-    nested: bool = False
+    nested: bool
+    fullname: str
 
     def __str__(self) -> str:
-        return f"\\{'+' if self.nested else ''}{self.name}"
+        return f"\\{'+' if self.nested else ''}{self.fullname}"
 
     @property
     def endmarker(self) -> bool:
@@ -661,10 +662,12 @@ class parser(collections.abc.Iterable):
             return None
 
         tok = tok[1:]
-        tag = Tag(tok.lstrip('+'), tok[0] == '+')
+        extindex = tok.find("^")
+        ttok = tok[:extindex] if extindex >= 0 else tok
+        tag = Tag(ttok.lstrip('+'), tok[0] == '+', tok.lstrip('+'))
         if parent is None:
             return tag
-        stype = self._sty.get(tok.lstrip('+'),{}).get('StyleType', None)
+        stype = self._sty.get(ttok.lstrip('+'),{}).get('StyleType', None)
         if stype == 'Standalone':
             return None
 
@@ -675,7 +678,7 @@ class parser(collections.abc.Iterable):
                 cut = len(parent.meta['Endmarker'])
                 rest = tag.name[cut:]
                 if rest:
-                    tag = Tag(tag.name[:cut], tag.nested)
+                    tag = Tag(tag.name[:cut], tag.nested, tag.fullname[cut:])
                     if self._tokens.peek()[0] != '\\':
                         # If the next token isn't a marker, coaleces the
                         # remainder with it into a single text node.
@@ -719,7 +722,7 @@ class parser(collections.abc.Iterable):
                     sub_parser = getattr(self, '_'+sub_parser+'_',
                                          self._default_)
                     # Spawn a sub-node
-                    e = Element(tag.name, tok.pos, parent=parent, meta=meta)
+                    e = Element(tag.fullname, tok.pos, parent=parent, meta=meta)
                     # and recurse
                     if tag.nested:
                         e.annotations['nested'] = True

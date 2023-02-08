@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Bump this number up in order to reset everyone's Cached files
-DataVersion = 4
+DataVersion = 5
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -451,7 +451,6 @@ def runChanges(changes, bk, dat):
             return res
         return proc
     for c in changes:
-        #import pdb; pdb.set_trace()
         if bk is not None:
             logger.debug("Change: {}".format(c))
         if c[0] is None:
