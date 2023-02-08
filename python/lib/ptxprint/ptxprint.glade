@@ -3845,11 +3845,15 @@ settings for a similar project.</property>
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="btn_sty_ok1">
+              <object class="GtkButton" id="button2">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">NOTE: This feature has not yet been implemented!</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="always-show-image">True</property>
                 <accelerator key="Return" signal="activate" modifiers="GDK_MOD1_MASK"/>
               </object>
@@ -3860,11 +3864,13 @@ settings for a similar project.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_sty_cancel1">
+              <object class="GtkButton" id="button3">
                 <property name="label">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="always-show-image">True</property>
                 <accelerator key="w" signal="activate" modifiers="GDK_CONTROL_MASK"/>
               </object>
@@ -4000,7 +4006,7 @@ settings will be imported.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="l_diglotSecProject1">
+                          <object class="GtkLabel" id="l_impProject">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Select the project from which the
@@ -4015,7 +4021,7 @@ settings will be imported.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="l_diglotSecConfig1">
+                          <object class="GtkLabel" id="l_impConfig">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Select a configuration from the
@@ -4163,7 +4169,7 @@ settings (as enabled on the Finishing tab).</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
@@ -4183,13 +4189,13 @@ settings (as enabled on the Finishing tab).</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
-                        <property name="fill">True</property>
+                        <property name="fill">False</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
                       <!-- n-columns=2 n-rows=3 -->
-                      <object class="GtkGrid">
+                      <object class="GtkGrid" id="gr_picElements">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -4280,6 +4286,7 @@ settings (as enabled on the Finishing tab).</property>
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="tab-fill">False</property>
@@ -4477,7 +4484,7 @@ You may want to reset the current configuration before importing styles.</proper
                     </child>
                     <child>
                       <!-- n-columns=4 n-rows=4 -->
-                      <object class="GtkGrid">
+                      <object class="GtkGrid" id="gr_impOther">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -4665,6 +4672,7 @@ You may want to reset the current configuration before importing styles.</proper
                     <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
+                    <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="position">4</property>
@@ -4688,8 +4696,8 @@ You may want to reset the current configuration before importing styles.</proper
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">btn_sty_ok1</action-widget>
-      <action-widget response="-6">btn_sty_cancel1</action-widget>
+      <action-widget response="-5">button2</action-widget>
+      <action-widget response="-6">button3</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_featsLangs">
@@ -4740,6 +4748,8 @@ You may want to reset the current configuration before importing styles.</proper
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
@@ -10540,16 +10550,17 @@ the Notes field below.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_selectImportPDF">
-                                    <property name="name">Import Config from PDF</property>
+                                  <object class="GtkButton" id="btn_importSettings">
+                                    <property name="name">Import settings from other PDFs or other Configurations</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Import Config from PDF
+                                    <property name="tooltip-text" translatable="yes">Import settings from other PDFs 
+or from other Configurations
 
-If a PTXprint-produced PDF has the settings
-embedded in it, this button will import those
-settings into the current Config.</property>
+Select which settings should be imported
+from another PDF (or another Configuration)
+into the current Configuration.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>

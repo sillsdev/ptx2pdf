@@ -167,7 +167,6 @@ fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapte
 tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestionsLang t_txlQuestionsLang
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
-fcb_impProject ecb_impConfig
 l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
 tb_Peripherals gr_importFrontPDF gr_importBackPDF 
 bx_ToC c_autoToC t_tocTitle 
@@ -176,6 +175,8 @@ c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
+btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
+c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
 # removed from list above: r_pictureRes_High r_pictureRes_Low
@@ -289,6 +290,13 @@ _sensitivities = {
     "c_makeCoverPage":         ["bx_cover"],
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
+    "r_impSource": {
+        "r_impSource_pdf":     ["btn_selectImpSource_pdf", "lb_impSource_pdf"],
+        "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
+    "c_impPictures":           ["tb_impPictures"],
+    "r_impPics": {
+        "r_impPics_elements":  ["gr_picElements"]},
+    "c_impOther":              ["gr_impOther"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
