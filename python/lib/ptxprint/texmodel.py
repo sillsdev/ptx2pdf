@@ -295,16 +295,16 @@ class TexModel:
         modelmap.get = lambda k: self[k]
         for k in a:
             v = ModelMap[k]
-            val = self.printer.get(v[0], skipmissing=k.startswith("scripts/")) if v[0] is not None else None
-            if v[1] is None:
+            val = self.printer.get(v.widget, skipmissing=k.startswith("scripts/")) if v.widget is not None else None
+            if v.process is None:
                 self.dict[k] = val
             else:
                 try:
-                    sig = signature(v[1])
+                    sig = signature(v.process)
                     if len(sig.parameters) == 2:
-                        self.dict[k] = v[1](self.printer, val)
+                        self.dict[k] = v.process(self.printer, val)
                     else:
-                        self.dict[k] = v[1](self.printer, val, self)
+                        self.dict[k] = v.process(self.printer, val, self)
                 except Exception as e:
                     raise type(e)("In TeXModel with key {}, ".format(k) + str(e))
 

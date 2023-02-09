@@ -1,9 +1,17 @@
 import re
 from ptxprint.utils import f2s, coltoonemax, asfloat
+from dataclasses import dataclass
+from typing import Callable, Optional
+
+@dataclass
+class ModelInfo:
+    texname: str
+    widget: str
+    process: Callable | None
 
 def get(k): return k
 
-ModelMap = {
+_map = {
     "L_":                       ("c_diglot", lambda w,v: "L" if v else ""),
     "R_":                       ("c_diglot", lambda w,v: "R" if v else ""),
     "date_":                    ("_date", None),
@@ -455,3 +463,5 @@ ModelMap = {
     
     "color/spotcolrange":       ("s_spotColorTolerance", None),
 }
+
+ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}

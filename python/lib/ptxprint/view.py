@@ -790,7 +790,7 @@ class ViewModel:
             self.set(a[0], a[1])
         config = configparser.ConfigParser(interpolation=None)
         for k, v in sorted(ModelMap.items(), key=sortkeys):
-            if v[0] is None or k.endswith("_"):
+            if v.widget is None or k.endswith("_"):
                 continue
             if k in self._attributes:
                 v = self._attributes[k]
@@ -1059,16 +1059,16 @@ class ViewModel:
                             setattr(self, w[0], val)
                     else:
                         try: # Safeguarding from changed/missing keys in .cfg  or v[0].startswith("f_") 
-                            if v[0].startswith("s_"):
+                            if v.widget.startswith("s_"):
                                 val = float(val) if val is not None and val != '' else 0
-                            elif v[0].startswith("c_"):
+                            elif v.widget.startswith("c_"):
                                 val = config.getboolean(sect, opt) if val else False
-                            elif v[0].startswith("bl_"):
+                            elif v.widget.startswith("bl_"):
                                 val = FontRef.fromConfig(val)
                             if val is not None:
-                                setv(v[0], val)
+                                setv(v.widget, val)
                             if not clearvars:
-                                self.paintLock(v[0], lock, editableOverride)
+                                self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect in ("vars", "strongsvar"):
@@ -1100,7 +1100,7 @@ class ViewModel:
             try:
                 val = config.get(sect, name)
             except (configparser.NoOptionError, configparser.NoSectionError):
-                setv(ModelMap[k][0], self.ptsettings.dict.get(v, ""))
+                setv(ModelMap[k].widget, self.ptsettings.dict.get(v, ""))
         if not dummyload and self.get("c_thumbtabs"):
             self.updateThumbLines()
         self.updateFont2BaselineRatio()
