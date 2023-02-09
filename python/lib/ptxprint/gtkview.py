@@ -524,7 +524,7 @@ class GtkViewModel(ViewModel):
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
         self.allControls = []
-        modelbtns = set([v[0] for v in ModelMap.values() if v[0] is not None and v[0].startswith("btn_")])
+        modelbtns = set([v.widget for v in ModelMap.values() if v.widget is not None and v.widget.startswith("btn_")])
         self.btnControls = set()
         self.finddata = {}
         self.widgetnames = {}
@@ -981,24 +981,24 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self, addtooltips=False):
         self.initValues = {}
-        allentries = list(ModelMap.items()) + [("", [v]) for v in self.btnControls]
+        allentries = [(x.texname, x.widget) for x in ModelMap.values()] + [("", b) for b in self.btnControls]
         for k, v in allentries:
-            if v[0] is None:
+            if v is None:
                 continue
             if addtooltips and not k.endswith("_"):
-                w = self.builder.get_object(v[0])
+                w = self.builder.get_object(v)
                 if w is not None:
                     try:
                         t = w.get_tooltip_text()
                     except AttributeError:
                         continue
                     if t is not None:
-                        t += "\n{}({})".format(k, v[0])
+                        t += "\n{}({})".format(k, v)
                     else:
-                        t = "{}({})".format(k, v[0])
+                        t = "{}({})".format(k, v)
                     w.set_tooltip_text(t)
-            if k and not v[0].startswith("r_"):
-                self.initValues[v[0]] = self.get(v[0], skipmissing=True)
+            if k and not v.startswith("r_"):
+                self.initValues[v] = self.get(v, skipmissing=True)
         for r, a in self.radios.items():
             for v in a:
                 w = self.builder.get_object("r_{}_{}".format(r, v))

@@ -797,19 +797,19 @@ class ViewModel:
                 val = getattr(self, v[0])
                 if val is None:
                     continue
-                if v[1]:
+                if v.process:
                     val = "\n".join(x.withvars(self) for x in val)
                 else:
                     val = val.withvars(self)
-            elif v[0].startswith("bl_"):
-                    vfont = self.get(v[0], skipmissing=True)
+            elif v.widget.startswith("bl_"):
+                    vfont = self.get(v.widget, skipmissing=True)
                     if vfont is None:
                         continue
                     val = vfont.asConfig()
             else:
-                if v[0] is None:
+                if v.widget is None:
                     continue
-                val = self.get(v[0], asstr=True, skipmissing=True)
+                val = self.get(v.widget, asstr=True, skipmissing=True)
             if k in self._settingmappings:
                 if val == "" or val == self.ptsettings.dict.get(self._settingmappings[k], ""):
                     continue
