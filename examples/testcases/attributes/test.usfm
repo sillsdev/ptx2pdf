@@ -98,4 +98,5 @@ I want paragraph 2 as a right-justified paragraph
 \zright-e\*
 \p I want paragraph 4 as a normal pargraph
 
-\p What happens if I put a slash in a \w word|lemma="attri\'bute"\w* Surely not much?
+\p What happens if I put a slash in a \w word|lemma="attri\'bute" strongs="1234"\w* Surely not much?
+What about nested attributed words? \w \+pn like this word|type="underline"\+pn*|lemma="lemming" strongs="1234"\w*. It works..

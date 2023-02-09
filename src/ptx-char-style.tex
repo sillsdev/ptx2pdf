@@ -261,8 +261,9 @@
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \tempfalse
    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
+   \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
    \ifx\@ttriblist\empty\else
-     %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
+     \trace{A}{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
    \global\let\h@@kstyst@k\styst@k
