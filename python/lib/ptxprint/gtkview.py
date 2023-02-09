@@ -32,7 +32,8 @@ from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
-from ptxprint.texmodel import TexModel, ModelMap
+from ptxprint.texmodel import TexModel
+from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert

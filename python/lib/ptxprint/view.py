@@ -1,6 +1,7 @@
 
 import configparser, os, re, regex, random, collections
-from ptxprint.texmodel import ModelMap, TexModel, Borders
+from ptxprint.texmodel import TexModel, Borders
+from ptxprint.modelmap import ModelMap
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
@@ -989,7 +990,7 @@ class ViewModel:
                 self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
                 self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
-        if v < 2.13 and config.getboolean("project", "usechangesfile", False):
+        if v < 2.13 and config.getboolean("project", "usechangesfile", fallback=False):
             path = os.path.join(self.configPath(cfgname), "changes.txt")
             if os.path.exists(path):
                 with open(path, encoding="utf-8") as inf:
