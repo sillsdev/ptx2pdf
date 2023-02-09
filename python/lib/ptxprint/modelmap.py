@@ -8,7 +8,7 @@ class ModelInfo:
     texname: str
     widget: str
     category: str
-    process: Callable | None
+    process: Optional[Callable]
 
 def get(k): return k
 

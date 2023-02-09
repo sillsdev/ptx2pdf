@@ -797,7 +797,7 @@ class ViewModel:
                 val = getattr(self, v[0])
                 if val is None:
                     continue
-                if v.process:
+                if v[1]:
                     val = "\n".join(x.withvars(self) for x in val)
                 else:
                     val = val.withvars(self)
