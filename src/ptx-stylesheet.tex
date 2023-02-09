@@ -467,7 +467,7 @@
      %\tracingifs=1
      \ifg@ttingspecificparam % Avoid lookup loops.
        \trace{sa}{No recursion}%
-       \gettop@aram{#1}%
+       \gettop@param{#1}%
      \else
        \g@ttingspecificparamtrue
        \csname getthep@ram-#1\endcsname{#1}%
@@ -477,7 +477,7 @@
      %\tracingassigns=0
      %\tracingmacros=0
    \else
-     \gettop@aram{#1}%
+     \gettop@param{#1}%
    \fi
    \global\let\p@@r@m=\p@ram % Need to return outside the brackets
    }%
@@ -487,7 +487,7 @@
  \ifnotracestacks\poptracing\fi
 }
 
-\def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
+\def\gettop@param#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
    \ifx\p@ramcheck\empty\else
      \trace{sa}{Checking for #1 in \p@ssParams}%
