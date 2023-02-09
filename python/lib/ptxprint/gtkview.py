@@ -177,6 +177,7 @@ c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
 btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
+c_imp_ResetConfig tb_impLayout tb_impFontsScript tb_impStyles
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 

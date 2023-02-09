@@ -3907,7 +3907,7 @@ settings for a similar project.</property>
                     <property name="can-focus">False</property>
                     <property name="left-padding">12</property>
                     <child>
-                      <!-- n-columns=4 n-rows=6 -->
+                      <!-- n-columns=4 n-rows=7 -->
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -4100,6 +4100,19 @@ settings (as enabled on the Finishing tab).</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
+                            <property name="top-attach">6</property>
+                            <property name="width">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparator">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">3</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
                             <property name="top-attach">5</property>
                             <property name="width">4</property>
                           </packing>
@@ -4141,7 +4154,6 @@ settings (as enabled on the Finishing tab).</property>
               <object class="GtkNotebook" id="nbk_Import">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="halign">start</property>
                 <property name="margin-bottom">6</property>
                 <child>
                   <object class="GtkBox" id="tb_impPictures">
@@ -4318,12 +4330,6 @@ column-layout, margins, header and footer, and related settings.</property>
                         <property name="position">0</property>
                       </packing>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                   <packing>
                     <property name="position">1</property>
@@ -4372,12 +4378,6 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="position">0</property>
                       </packing>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                   <packing>
                     <property name="position">2</property>
@@ -4425,12 +4425,6 @@ You may want to reset the current configuration before importing styles.</proper
                         <property name="fill">True</property>
                         <property name="position">0</property>
                       </packing>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
                     </child>
                   </object>
                   <packing>
@@ -27370,9 +27364,10 @@ body text size as specified in layout.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the underline. 
-Negative values move it down.
-Positive values move it up.</property>
+(in ems) of the underline relative
+to the bottom of any descenders. 
+Negative values raise it.
+Positive values lower it.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
@@ -27573,9 +27568,10 @@ Thickness (em):</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the text underline. 
-Negative values move it down.
-Positive values move it up.</property>
+(in ems) of the underline relative
+to the bottom of any descenders. 
+Negative values raise it.
+Positive values lower it.</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">Underline Vertical
 Position (em):</property>
