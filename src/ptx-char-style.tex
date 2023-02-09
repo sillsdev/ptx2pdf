@@ -185,13 +185,14 @@
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
     \getmcp@ramR{background}%
+    \def\xtr@{}% Any extra code to run at the start of the group
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
     \ifx\@ttriblist\empty\else\temptrue\fi 
     \getmcp@ram{underline}%
-      \ifx\p@ram\tru@\temptrue\fi
-      \ifx\p@ram\tw@\temptrue\fi
-    \iftemp\setbox0=\hbox\bgroup \fi                     %(3)
+    \ifx\p@ram\tru@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \iftemp\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
@@ -216,9 +217,10 @@
     \let\@ulsp@ce\space
   \fi
   \setbox\ulb@x\box\voidb@x
-  {\dimen0=\UnderlineLower\ifdim\dimen0<0pt \dimen0=-\dimen0\else \advance\dimen0\dp#1\fi\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf\@do@underline}%
+  {\dimen0=\UnderlineLower\relax \ifdim\dimen0<0pt \dimen0=-\dimen0\else \advance\dimen0\dp#1\fi\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf\@do@underline}%
   %\showbox#1
   %\showbox\ulb@x
+  %Last resort... something couldn't be unwrapped:
   \ifdim \wd#1=0pt \else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
     \unhbox#1\@ulsp@ce\fi
   }%

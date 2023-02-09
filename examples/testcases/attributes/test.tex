@@ -21,9 +21,10 @@
 \stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
+\XeTeXuseglyphmetrics=0
 %\PaperHeight=210mm
 %\PaperWidth=296.9mm
-
+%\def\UnderlineLower{-0.1em}
 \catcode`\@=11
 \gdef\b@okShort{}
 %\def\doLines{\doGraphPaper}
@@ -46,7 +47,7 @@
 \def\URLLinkBorderstyle{/S/U/W 1} % Underline
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
-\sethook{first}{c}{\zrule\*}
+\sethook{first}{c}{\zrule|width="0.6"\*}
 \makeatother
 \ptxfile{test.usfm}
 \bye
