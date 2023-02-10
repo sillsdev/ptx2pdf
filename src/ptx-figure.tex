@@ -385,6 +385,8 @@
   \unvbox\c@ptionbox
 }
 
+\def\FigCaptionAdjust{0pt}
+
 \def\setc@ptionbox{%
  \setbox\c@ptionbox\vbox{%
   \ifDoCaptions
@@ -790,7 +792,11 @@
       \hsize=\p@cinswid
     \fi
     \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
-    \ifCaptionFirst\d@caption\else
+    \ifCaptionFirst\d@caption
+      \ifdim\FigCaptionAdjust=0pt\else
+	\vskip \FigCaptionAdjust\relax
+      \fi
+    \else
       \tempfalse
       %\ifpicUsesIns\temptrue\fi
       \ifx\picl@c\loc@Inl\temptrue\fi
@@ -800,7 +806,7 @@
         \vskip0.3\baselineskip
       \fi
     \fi
-	% insert picture based on PicPath and file name, scaled to \p@cwidth
+    % insert picture based on PicPath and file name, scaled to \p@cwidth
     \let\picfilecomm@nd=\XeTeXpicfile
     \edef\f@lename{\csname figparam-src\endcsname}%
     \edef\mirr@r{\csname figparam-mirror\endcsname}%
@@ -876,7 +882,12 @@
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
       \else\hbox to \p@cinswid{\hss\box\newpicb@x\hss}\fi
     \fi
-    \ifCaptionFirst\vskip 0.5\onel@neunit\else\d@caption\fi
+    \ifCaptionFirst\vskip 0.5\onel@neunit\else
+      \ifdim\FigCaptionAdjust=0pt\else
+	\vskip \FigCaptionAdjust\relax
+      \fi
+      \d@caption
+    \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}% 
   }% END of box0
