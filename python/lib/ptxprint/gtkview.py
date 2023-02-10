@@ -4723,6 +4723,10 @@ class GtkViewModel(ViewModel):
         self.wiggleCurrentTabLabel()
 
     def onRequestPicturePermission(self, btn):
+        metadata = {"country": "<Country>",             "languagename":  "<Language>",
+                    "langiso": "<Ethnologue code>",     "maintitle":     "<Title>",
+                    "pubtype": "<[Portion|NT|Bible]>",  "copiesprinted": "<99>",
+                    "requester": "<Requester's Name>",  "pubentity":     "<Publishing Entity>"}
         pics = []
         if self.artpgs is not None:
             for artist in self.artpgs.keys():
@@ -4735,6 +4739,21 @@ class GtkViewModel(ViewModel):
             _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
                        _("No DCC illustrations were detected. Hit Print first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+            return
+        # See if any of the meta-data fields are missing in the zvars, and if so
+        # add them and ask the user to fill them in.
+        missing = False
+        for k, v in metadata.items():
+            if self.getvar(k, default=None) is None:
+                missing = True
+                self.setvar(k, v)
+        if missing:
+            mpgnum = self.notebooks['Main'].index("tb_Peripherals")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            _errText = _("Please fill in any missing <Values> on") + "\n" + \
+                       _("the Peripherals tab and then try again.")
+            self.doError("Missing details for request letter", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
         picturelist = ", ".join(pics)
@@ -4759,12 +4778,13 @@ I am writing to request permission to use the following David C Cook illustratio
 5. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
 \t{} illustrations:\n{}\n{}
 Thank you,
-<Requester's Name>
-<SIL Entity>
-""".format(self.getvar("country", "<Country>"),            self.getvar("languagename",  "<Language>"), \
-           self.getvar("langiso", "<Ethnologue code>"),    self.getvar("maintitle",     "<Title>"), \
-           self.getvar("pubtype", "<[Portion|NT|Bible]>"), self.getvar("copiesprinted", "<99>"), \
-           picount, picturelist, sensitive)
+{}
+{}
+""".format(self.getvar("country", ""), self.getvar("languagename",  ""), \
+           self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
+           self.getvar("pubtype", ""), self.getvar("copiesprinted", ""), \
+           picount, picturelist, sensitive, \
+           self.getvar("requester", ""), self.getvar("pubentity", ""))
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \
                       who2email="scripturepicturepermissions_intl@sil.org")
