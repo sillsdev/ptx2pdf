@@ -27363,11 +27363,14 @@ body text size as specified in layout.</property>
                                     <property name="name">Underline vertical position (raise or lower)</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the underline relative
-to the bottom of any descenders. 
-Negative values raise it.
-Positive values lower it.</property>
+                                    <property name="tooltip-text" translatable="yes">This sets how far (in ems) the underline 
+is below the text and what it is relative to. 
+
+If negative, it is the distance below 
+the baseline.
+
+If positive (or zero), it is the distance
+below the bottom of any descenders.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="width-chars">5</property>
@@ -27567,11 +27570,14 @@ Thickness (em):</property>
                                       <object class="GtkLabel" id="l_underlinePosition">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="tooltip-text" translatable="yes">This sets the vertical position
-(in ems) of the underline relative
-to the bottom of any descenders. 
-Negative values raise it.
-Positive values lower it.</property>
+                                        <property name="tooltip-text" translatable="yes">This sets how far (in ems) the underline 
+is below the text and what it is relative to. 
+
+If negative, it is the distance below 
+the baseline.
+
+If positive (or zero), it is the distance
+below the bottom of any descenders.</property>
                                         <property name="halign">start</property>
                                         <property name="label" translatable="yes">Underline Vertical
 Position (em):</property>

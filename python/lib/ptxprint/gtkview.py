@@ -3624,6 +3624,7 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadPics()
+        self.updateDialogTitle()
         
     def onGenerateHyphenationListClicked(self, btn):
         scrsnpt = self.getScriptSnippet()
