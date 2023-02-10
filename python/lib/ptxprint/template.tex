@@ -6,8 +6,8 @@
 {cover/makecoverpage}\makeatother
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
-\diglottrue
-{document/ifdiglot}\diglotfalse
+{document/ifdiglot}\diglottrue
+{document/ifndiglot}\diglotfalse
 {document/ifdiglot}\diglotcolumns
 {document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
@@ -150,7 +150,7 @@
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fneachnewline}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
-{document/ifdiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
+{document/ifndiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
 
@@ -165,7 +165,7 @@
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
-{document/ifdiglot}{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+{document/ifndiglot}{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
 {notes/xrlocation}\def\XrefNotes{{x}}\XrefNotesMargin={notes/xrguttermargin}pt \XrefNotesWidth={notes/xrcentrecolwidth}pt\def\XrefSide{{{notes/xrcolside}}}
 \XrefSideAlign{notes/xrcolalign}
 \ColNotes{notes/columnnotes_}

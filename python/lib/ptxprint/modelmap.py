@@ -230,7 +230,8 @@ _map = {
     "document/diffcolayoutbooks":   ("t_differentColBookList", "body", None),
     "document/cloptimizepoetry":    ("c_optimizePoetryLayout", "body", None),
 
-    "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
+    "document/ifdiglot":            ("c_diglot", "diglot", lambda w,v : "" if v else "%"),
+    "document/ifndiglot":           ("c_diglot", "diglot", lambda w,v : "%" if v else ""),
     "document/diglotprifraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round((float(v)/100), 3) if v is not None else "0.550"),
     "document/diglotsecfraction":   ("s_diglotPriFraction", "diglot", lambda w,v : round(1 - (float(v)/100), 3) if v is not None else "0.450"),
     "document/diglotsecprj":        ("fcb_diglotSecProject", "diglot", None),
