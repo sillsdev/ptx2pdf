@@ -6,7 +6,8 @@
 {cover/makecoverpage}\makeatother
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
-{document/ifdiglot}\diglottrue
+\diglottrue
+{document/ifdiglot}\diglotfalse
 {document/ifdiglot}\diglotcolumns
 {document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
@@ -149,7 +150,7 @@
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fneachnewline}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
-{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
+{document/ifdiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
 
@@ -164,7 +165,7 @@
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
-{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+{document/ifdiglot}{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
 {notes/xrlocation}\def\XrefNotes{{x}}\XrefNotesMargin={notes/xrguttermargin}pt \XrefNotesWidth={notes/xrcentrecolwidth}pt\def\XrefSide{{{notes/xrcolside}}}
 \XrefSideAlign{notes/xrcolalign}
 \ColNotes{notes/columnnotes_}
@@ -297,7 +298,6 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
-{document/ifdiglot}\diglotfalse
 \NoBodytrue
 {document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
@@ -306,7 +306,6 @@
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 \BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
-{document/ifdiglot}\diglottrue
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}
 \useTOCthree{document/usetoc3}

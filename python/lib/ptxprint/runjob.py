@@ -495,7 +495,7 @@ class RunJob:
                            "paper/headerposition", "paper/footerposition", "paper/ruleposition",
                            "document/ch1pagebreak", "document/bookintro", "document/introoutline", 
                            "document/parallelrefs", "document/elipsizemptyvs", "notes/iffootnoterule",
-                           "notes/xrlocation", "notes/includefootnotes", "notes/includexrefs", 
+                           "notes/xrlocation",
                            "notes/fneachnewline", "notes/xreachnewline", "document/filterglossary", 
                            "document/chapfrom", "document/chapto", "document/ifcolorfonts", "document/ifshow1chbooknum"]
         diginfo["project/bookids"] = [r[0][0].first.book for r in jobs if r[1]]
