@@ -1109,15 +1109,24 @@
   \fi
 }
 
-\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\diglotfalse\global\let\c@rrdstat\empty\else\x@\monoglotcolumn\x@{\tmp}\fi}
+\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}%
+  \ifx\tmp\empty\diglotfalse
+    \ifinptxfile\else\gdef\atn@xtptxfile{}\fi
+    \global\let\c@rrdstat\empty
+  \else\x@\monoglotcolumn\x@{\tmp}\fi}
 
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
   \ifcsname #1isDiglotColumn\endcsname % 
-    \endlastp@rstyle{p}%
-    \diglottrue
-    \@setside{#1}%
-    \@@switchstyles{#1}%
+    \ifinptxfile
+      \endlastp@rstyle{p}%
+      \diglottrue
+      \@setside{#1}%
+      \@@switchstyles{#1}%
+    \else
+      \diglotfalse
+      \gdef\atn@xtptxfile{\monoglotcolumn{#1}}%
+    \fi
   \else
     \errmessage{zglot must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
   \fi

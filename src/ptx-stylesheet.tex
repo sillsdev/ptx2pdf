@@ -1705,6 +1705,7 @@
 }
 %-csty_ptxfile_intro
 %+csty_ptxfile_start
+\newif\ifinptxfile
 \def\ptxfile#1{
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
@@ -1723,11 +1724,12 @@
  \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-     \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
+     \else \closein\t@stread \def\n@xt{\inptxfiletrue \atn@xtptxfile \input "\the\PtxFilePath#1"\relax \inptxfilefalse}\fi
    \n@xt
  \fi
  \postptxfile
 }
+\gdef\atn@xtptxfile{}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
 \def\postptxfile{%
