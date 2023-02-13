@@ -472,3 +472,13 @@ _map = {
 
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
+ImportCategories = {
+    'c_oth_Body': 'body',
+    'c_oth_NotesRefs': 'noteref',
+    'c_oth_HeaderFooter': 'headfoot',
+    'c_oth_TabsBorders': 'tabsborders',
+    'c_oth_Advanced': 'advanced',
+    'c_oth_FrontMatter': 'front',
+    'c_oth_Cover': 'cover',
+    'c_impLayout': 'layout'
+}

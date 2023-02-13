@@ -1,7 +1,7 @@
 
 import configparser, os, re, regex, random, collections
 from ptxprint.texmodel import TexModel, Borders
-from ptxprint.modelmap import ModelMap
+from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
@@ -706,18 +706,18 @@ class ViewModel:
         config = configparser.ConfigParser(interpolation=None)
         with open(path, encoding="utf-8", errors="ignore") as inf:
             config.read_file(inf)
-        (oldversion, forcerewrite) = self.versionFwdConfig(config, cfgname)
+        cp = self.configPath(cfgname, makePath=False)
+        (oldversion, forcerewrite) = self.versionFwdConfig(config, cp)
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
-        cp = self.configPath(cfgname, makePath=False)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
                                (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser(interpolation=None)
             oconfig.read(opath, encoding="utf-8")
-            self.versionFwdConfig(oconfig, cfgname)
+            self.versionFwdConfig(oconfig, cp)
             self.localiseConfig(oconfig)
             self.loadConfig(oconfig, lock=locked, updatebklist=False, clearvars=False)
         if self.get("ecb_book") == "":
@@ -834,7 +834,7 @@ class ViewModel:
             return fallback
         return conv(v)
 
-    def versionFwdConfig(self, config, cfgname):
+    def versionFwdConfig(self, config, cfgpath):
         version = self._config_get(config, "config", "version", conv=float, fallback=ConfigVersion)
         forcerewrite = False
         v = float(version)
@@ -857,15 +857,16 @@ class ViewModel:
                 p = os.path.join(self.configPath(cfgname), d)
                 if not os.path.exists(p):
                     continue
-                for f in os.listdir(p):
-                    if "-draft" in f:
-                        newf = os.path.join(p, f.replace("-draft", "-"+cfgname))
-                        if not os.path.exists(newf):
-                            move(os.path.join(p, f), newf)
-        if v < 1.290:
-            path = os.path.join(self.configPath(cfgname), "ptxprint.sty")
+                if cfgpath is not None:
+                    for f in os.listdir(p):
+                        if "-draft" in f:
+                            newf = os.path.join(p, f.replace("-draft", "-"+os.path.basename(cfgpath)))
+                            if not os.path.exists(newf):
+                                move(os.path.join(p, f), newf)
+        if v < 1.290 and cfgpath is not None:
+            path = os.path.join(cfgpath, "ptxprint.sty")
             if not os.path.exists(path):
-                modpath = os.path.join(self.configPath(cfgname), "ptxprint-mods.sty")
+                modpath = os.path.join(cfgpath, "ptxprint-mods.sty")
                 if os.path.exists(modpath):
                     move(modpath, path)
                     with open(modpath, "w") as outf:
@@ -874,8 +875,8 @@ class ViewModel:
             indent = config.getfloat("document", "indentunit", fallback="2.000")
             if indent == 2.0 and config.getboolean("paper", "columns", fallback=True):
                     self._configset(config, "document/indentunit", "1.000")
-        if v < 1.403:   # no need to bump version for this and merge this with a later version test
-            f = os.path.join(self.configPath(cfgname), "NestedStyles.sty")
+        if v < 1.403 and cfgpath is not None:   # no need to bump version for this and merge this with a later version test
+            f = os.path.join(cfgpath, "NestedStyles.sty")
             if os.path.exists(f):
                 os.remove(f)
         if v < 1.404:
@@ -964,8 +965,8 @@ class ViewModel:
             diffcolbooks = config.get("document", "clsinglecolbooks", fallback="FRT INT PSA PRO BAK GLO")
             self._configset(config, "document/diffcolayoutbooks", diffcolbooks)
         if v < 2.07:
-            if config.getboolean("project", "usechangesfile", fallback=False):
-                cfile = os.path.join(self.configPath(cfgname), "changes.txt")
+            if cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+                cfile = os.path.join(cfgpath, "changes.txt")
                 if not os.path.exists(cfile):
                     with open(cfile, "w", encoding="utf-8") as outf:
                         outf.write(chgsHeader)
@@ -990,8 +991,8 @@ class ViewModel:
                 self._configset(config, "document/odiffcolor", x)
                 y = coltoonemax(x)
                 self._configset(config, "document/ndiffcolor", "rgb({},{},{})".format(*[int(255 * y[-i]) for i in range(1, 4)]))
-        if v < 2.13 and config.getboolean("project", "usechangesfile", fallback=False):
-            path = os.path.join(self.configPath(cfgname), "changes.txt")
+        if v < 2.13 and cfgpath is not None and config.getboolean("project", "usechangesfile", fallback=False):
+            path = os.path.join(cfgpath, "changes.txt")
             if os.path.exists(path):
                 with open(path, encoding="utf-8") as inf:
                     lines = list(inf.readlines())
@@ -1001,11 +1002,12 @@ class ViewModel:
                         for l in lines:
                             outf.write(l)
         self._configset(config, "config/version", ConfigVersion)
-            
-        styf = os.path.join(self.configPath(cfgname), "ptxprint.sty")
-        if not os.path.exists(styf):
-            with open(styf, "w", encoding="utf-8") as outf:
-                outf.write("# This file left intentionally blank\n")
+
+        if cfgpath is not None:
+            styf = os.path.join(cfgpath, "ptxprint.sty")
+            if not os.path.exists(styf):
+                with open(styf, "w", encoding="utf-8") as outf:
+                    outf.write("# This file left intentionally blank\n")
         return (v, forcerewrite)
 
     def localiseConfig(self, config):
@@ -1792,6 +1794,33 @@ set stack_size=32768""".format(self.configName())
                                 except (OSError, FileNotFoundError, PermissionError) as E:
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
+
+    def importConfig(self, zipfile):
+        ''' Imports another config into this one based on import settings '''
+        # assemble list of categories to import from ptxprint.cfg
+        hasOther = self.get("c_impOther")
+        useCats = set()
+        for k, v in ImportCategories.items():
+            if not hasOther and k.startswith("c_oth_"):
+                continue
+            if self.get(k):
+                useCats.add(v)
+
+        # import settings with those categories
+        config = configparser.ConfigParser(interpolation=None)
+        with zipfile.open("ptxprint.cfg") as inf:
+            config.read_file(inf)
+        (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
+        self.loadingConfig = True
+        self.localiseConfig(config)
+        self.loadConfig(config, updatebklist=False)
+        
+
+        # import pictures according to import settings
+
+        # merge ptxprint.sty adding missing
+
+        # merge cover
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

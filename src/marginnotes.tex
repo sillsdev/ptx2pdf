@@ -90,16 +90,15 @@
   \x@\write\x@\m@rginnotes\x@{\t@mp{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}%
 }
 
-\def\d@marginnote#1#2#3{%
-% #1 = vbox, #2 = reference, #3 = marker
-  \getp@ram{posn}{#3}{#3}%,\styst@k}%
-  \edef\p@s{\p@ram}%
+\def\d@marginnote#1#2#3#4{%
+% #1 = vbox, #2 = reference, #3 = marker #4 = side
+  \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
   \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else\edef\p@geno{\the\pageno}\fi
-  \ifx\p@ram\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
-  \else\ifx\p@ram\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
-  \else\ifx\p@ram\relax\let\s@de\l@ft\else\let\s@de\p@ram\fi\fi\fi
-  \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was \p@ram, col=\csname marginnote-#2@#3:colno\endcsname}%
+  \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
+  \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
+  \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
+  \trace{M}{marginnote #2 #3, pageno=\p@geno, side=\s@de, was #4, col=\csname marginnote-#2@#3:colno\endcsname}%
   \getp@ram{leftmargin}{#3}{\styst@k}%
   %\ifx\p@ram\relax\dimen0=1pt\else\dimen0=-\p@ram\IndentUnit\fi
   \dimen0=0pt
