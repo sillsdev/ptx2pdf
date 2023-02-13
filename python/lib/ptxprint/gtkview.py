@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
-import time, locale, urllib.request, json
+import time, locale, urllib.request, json, hashlib
 from ptxprint.utils import universalopen, refKey, chgsHeader
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -1765,6 +1765,9 @@ class GtkViewModel(ViewModel):
             pw = ""
         else:
             return
+        m = hashlib.md5()
+        m.update(pw)
+        pw = m.digest()
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
             self.builder.get_object("t_invisiblePassword").set_text(pw)
