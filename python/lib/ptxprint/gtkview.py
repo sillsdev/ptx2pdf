@@ -1749,9 +1749,6 @@ class GtkViewModel(ViewModel):
             w2 = w1[:4]+s
             self.builder.get_object(w2).set_active(status)
 
-    # def onReloadConfigClicked(self, btn_reloadConfig):
-        # self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
-
     def onLockUnlockSavedConfig(self, btn):
         if self.configName() == "Default":
             self.builder.get_object("btn_lockunlock").set_sensitive(False)
@@ -1770,14 +1767,13 @@ class GtkViewModel(ViewModel):
         m.update(pw.encode("utf-8"))
         pw = m.digest()
         invPW = b64decode(self.get("t_invisiblePassword") or "")
-        if invPW == None or invPW == "": # No existing PW, so set a new one
-            self.builder.get_object("t_invisiblePassword").set_text(b64encode(pw))
-            # self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
+        logger.debug(f"{pw=} {invPW=}")
+        if invPW == None or not len(invPW): # No existing PW, so set a new one
+            self.builder.get_object("t_invisiblePassword").set_text(b64encode(pw).decode("UTF-8"))
             self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                # self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
@@ -1791,17 +1787,10 @@ class GtkViewModel(ViewModel):
             status = True
             img = Gtk.Image.new_from_icon_name("changes-allow-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
             lockBtn.set_image(img)
-            # o = self.builder.get_object("icon_unlocked")
-            # print(f"{o=}")
-            # lockBtn.set_image(o)
         else:
             status = False
-            # o = self.builder.get_object("icon_locked")
-            # print(f"{o=}")
-            # lockBtn.set_image(o)
             img = Gtk.Image.new_from_icon_name("changes-prevent-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
             lockBtn.set_image(img)
-            # lockBtn.set_image(self.builder.get_object("icon_locked"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
@@ -1813,8 +1802,6 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def onBookSelectorChange(self, btn):
-        # status = self.sensiVisible("r_book_multiple")
-        # if status and self.get("ecb_booklist") == "" and self.prjid is not None:
         if self.get("ecb_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:

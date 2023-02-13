@@ -1004,10 +1004,11 @@ class ViewModel:
                             outf.write(l)
         if v < 2.14:
             pw = config.get("config", "pwd", fallback=None)
-            if pw is not None:
+            if pw is not None and len(pw):
                 m = hashlib.md5()
                 m.update(pw.encode("utf-8"))
-                self._configset(config, "config/pwd", b64encode(m.digest()))
+                self._configset(config, "config/pwd", b64encode(m.digest()).decode("UTF-8"))
+                print(f'fwdConfig-Updating pw to: {b64encode(m.digest()).decode("UTF-8")}')
 
         self._configset(config, "config/version", ConfigVersion)
 
