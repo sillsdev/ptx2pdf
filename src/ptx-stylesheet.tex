@@ -1617,9 +1617,11 @@
  % The last comment on all matters
  \catcode`\%=12
  \m@kedigitsletters
+ \inptxfiletrue  
 }
 
 \def\unprepusfm{
+ \inptxfilefalse  
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
@@ -1659,6 +1661,7 @@
    \dimen0=\baselineskip
    \global\topskip=2\baselineskip
    \global\splittopskip=0pt
+   \gdef\atn@xtptxfile{}% This can't carry over.
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
    \def\col@do##1{% Per-column setup
@@ -1724,7 +1727,7 @@
  \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-     \else \closein\t@stread \def\n@xt{\inptxfiletrue \atn@xtptxfile \input "\the\PtxFilePath#1"\relax \inptxfilefalse}\fi
+     \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
    \n@xt
  \fi
  \postptxfile
@@ -1739,6 +1742,7 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \ifdiglot\enddigl@t\fi
+ \inptxfilefalse  
  \iflastptxfile \global\lastpagetrue\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi
