@@ -40,6 +40,7 @@ from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
+from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
@@ -1768,9 +1769,9 @@ class GtkViewModel(ViewModel):
         m = hashlib.md5()
         m.update(pw.encode("utf-8"))
         pw = m.digest()
-        invPW = self.get("t_invisiblePassword")
+        invPW = b64decode(self.get("t_invisiblePassword") or "")
         if invPW == None or invPW == "": # No existing PW, so set a new one
-            self.builder.get_object("t_invisiblePassword").set_text(pw)
+            self.builder.get_object("t_invisiblePassword").set_text(b64encode(pw))
             # self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
             self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
