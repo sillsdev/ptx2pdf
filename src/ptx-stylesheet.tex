@@ -1736,13 +1736,13 @@
 %-csty_ptxfile_start
 %+csty_ptxfile_end
 \def\postptxfile{%
+ \inptxfilefalse  
  \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \ifdiglot\enddigl@t\fi
- \inptxfilefalse  
  \iflastptxfile \global\lastpagetrue\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi

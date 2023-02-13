@@ -1119,7 +1119,8 @@
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
   \ifcsname #1isDiglotColumn\endcsname % 
     \ifinptxfile
-      \endlastp@rstyle{p}%
+      \ifsk@pping\egroup\fi
+      \endlastp@rstyle{monoglotcol}%
       \diglottrue
       \@setside{#1}%
       \@@switchstyles{#1}%
