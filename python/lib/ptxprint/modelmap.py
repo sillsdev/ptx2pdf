@@ -452,6 +452,8 @@ _map = {
     "import/fontsscript":       ("c_impFontsScript", "import", None),
     "import/styles":            ("c_impStyles", "import", None),
     "import/pictures":          ("c_impPictures", "import", None),
+    "import/addnewpics":        ("c_impPicsAddNew", "import", None),
+    "import/deloldpics":        ("c_impPicsDelOld", "import", None),
     "import/imppics":           ("r_impPics", "import", None),
     "import/captions":          ("c_pic_Captions", "import", None),
     "import/sizeposn":          ("c_pic_SizePosn", "import", None),

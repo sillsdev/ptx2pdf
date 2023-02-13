@@ -2702,25 +2702,12 @@ class GtkViewModel(ViewModel):
                 v = opt[1]
                 tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             elif wname.startswith("s_"):
-                if len(opt) < 6:
-                    base = opt[1]
-                    upper = base*10
-                    lower = base/10
-                    if base < 0:
-                        upper = -base*10
-                        lower = base*10
-                        base = -base
-                    elif base == 0:
-                        base = 1
-                        upper = 10
-                        lower = 0
-                    adj = Gtk.Adjustment(upper=upper, lower=lower, step_increment=base/5, page_increment=base)
-                else:
-                    a = opt[5]
-                    adj = Gtk.Adjustment(lower=a[0], upper=a[1], step_increment=a[2], page_increment=a[3])
+                x = opt[1]
+                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
+                adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
-                v = str(opt[1])
+                v = str(x[0])
                 tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             l.set_tooltip_text(tiptext)
             obj.set_tooltip_text(tiptext)
@@ -4724,10 +4711,16 @@ class GtkViewModel(ViewModel):
         self.wiggleCurrentTabLabel()
 
     def onRequestPicturePermission(self, btn):
-        metadata = {"country": "<Country>",             "languagename":  "<Language>",
-                    "langiso": "<Ethnologue code>",     "maintitle":     "<Title>",
-                    "pubtype": "<[Portion|NT|Bible]>",  "copiesprinted": "<99>",
-                    "requester": "<Requester's Name>",  "pubentity":     "<Publishing Entity>"}
+        metadata = {"country":       "<Country>", 
+                    "langiso":       "<Ethnologue code>", 
+                    "languagename":  "<Language>", 
+                    "maintitle":     "<Title>", 
+                    "englishtitle" : "<Title in English>",
+                    "pubtype":       "<[Portion|NT|Bible]>",
+                    "copiesprinted": "<99>",
+                    "requester":     "<Requester's Name>", 
+                    "pubentity":     "<Publishing Entity>"}
+
         pics = []
         if self.artpgs is not None:
             for artist in self.artpgs.keys():
@@ -4772,19 +4765,21 @@ I am writing to request permission to use the following David C Cook illustratio
 \t{}, {}, {}\n
 2. The title of the book in the vernacular:
 \t{}\n
-3. The kind of book:
+3. The title of the book in English:
 \t{}\n
-4. The number of books to be printed:
+4. The kind of book:
+\t{}\n
+5. The number of books to be printed:
 \t{} copies\n
-5. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
+6. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
 \t{} illustrations:\n{}\n{}
 Thank you,
 {}
 {}
 """.format(self.getvar("country", ""), self.getvar("languagename",  ""), \
            self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
-           self.getvar("pubtype", ""), self.getvar("copiesprinted", ""), \
-           picount, picturelist, sensitive, \
+           self.getvar("englishtitle", ""), self.getvar("pubtype", ""), \
+           self.getvar("copiesprinted", ""), picount, picturelist, sensitive, \
            self.getvar("requester", ""), self.getvar("pubentity", ""))
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \

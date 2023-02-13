@@ -27,21 +27,20 @@ texpertOptions = {
     # "AttrMilestoneMatchesUnattr": ["attrmsmatchunattr", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")],
     "CalcChapSize":       ["calcchapsize", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")],
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
-
-    "hyphenpenalty":      ["hyphenpenalty", 50, "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
-    "hyphenpenalty":      ["hyphenpenalty", 50, "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
-    "vertThumbtabVadj":   ["thumbvvadj", -2., "{0}={1}pt", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")],
-    "FigCaptionAdjust":   ["captionadj", 0., "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
-    "DefaultSpaceBeside": ["spbeside", 10., "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
-    "OptionalBreakPenalty": ["optbkpen", 300, "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
-    "badspacepenalty":    ["badsppen", 100, "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]
+    # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
+    "hyphenpenalty":      ["hyphenpenalty", (50, 0, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
+    "vertThumbtabVadj":   ["thumbvvadj", (-2., -10, 50, 1,5), "{0}={1}pt", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")],
+    "FigCaptionAdjust":   ["captionadj", (0., -10, 20, 1, 5), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
+    "DefaultSpaceBeside": ["spbeside", (10., 0, 100, 1, 5), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
+    "OptionalBreakPenalty": ["optbkpen", (300, 0, 10000, 10, 100), "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
+    "badspacepenalty":    ["badsppen", (100, 0, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]
 }
 
 def widgetName(opt):
     t = opt[1]
     if isinstance(t, bool):
         pref = "c_"
-    elif isinstance(t, (float, int)):
+    elif isinstance(t, tuple):
         pref = "s_"
     return pref + opt[0]
 
@@ -80,7 +79,7 @@ class TeXpert:
                 if v is not None and opt[1] != v:
                     res.append(f'\\{k}{"true" if v else "false"}')
             elif n.startswith("s_"):
-                if v is not None and float(v) != opt[1]:
+                if v is not None and float(v) != opt[1][0]:
                     res.append(opt[2].format("\\"+k, v))
         return "\n".join(res)
 
