@@ -1766,7 +1766,7 @@ class GtkViewModel(ViewModel):
         else:
             return
         m = hashlib.md5()
-        m.update(pw)
+        m.update(pw.encode("utf-8"))
         pw = m.digest()
         invPW = self.get("t_invisiblePassword")
         if invPW == None or invPW == "": # No existing PW, so set a new one
