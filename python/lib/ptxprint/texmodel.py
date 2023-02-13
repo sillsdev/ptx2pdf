@@ -532,7 +532,7 @@ class TexModel:
         if dname is not None:
             res.append(r"\zglot|R\*")
             res.append(r"\ptxfile{{{}}}".format(dname))
-            res.append(r"\zglot\*")
+            res.append(r"\zglot|\*")
         return res
 
     def asTex(self, template="template.tex", filedir=".", jobname="Unknown", extra="", digtexmodel=None):
@@ -569,7 +569,7 @@ class TexModel:
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
                         dname = None
-                        if digtexmodel is not None and f in self._peripheralBooks:
+                        if digtexmodel is not None and f in self._nonScriptureBooks:
                             dname = digtexmodel.dict['project/books'][i]
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)

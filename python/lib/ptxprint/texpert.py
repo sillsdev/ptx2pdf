@@ -29,7 +29,9 @@ texpertOptions = {
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
 
     "hyphenpenalty":      ["hyphenpenalty", 50, "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
+    "hyphenpenalty":      ["hyphenpenalty", 50, "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
     "vertThumbtabVadj":   ["thumbvvadj", -2., "{0}={1}pt", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")],
+    "FigCaptionAdjust":   ["captionadj", 0., "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
     "DefaultSpaceBeside": ["spbeside", 10., "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
     "OptionalBreakPenalty": ["optbkpen", 300, "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
     "badspacepenalty":    ["badsppen", 100, "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]

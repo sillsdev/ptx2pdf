@@ -540,7 +540,7 @@ class RunJob:
             
             left = os.path.join(self.tmpdir, out)
             right = os.path.join(self.tmpdir, digout)
-            if b not in info._peripheralBooks:
+            if b not in info._nonScriptureBooks:
                 # Now merge the secondary text (right) into the primary text (left) 
                 outFile = re.sub(r"^([^.]*).(.*)$", r"\1-diglot.\2", left)
                 logFile = os.path.join(self.tmpdir, "ptxprint-merge.log")
