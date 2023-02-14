@@ -333,6 +333,9 @@
     \ch@ckislocation{\thismil@stone}% Non-locations can be multiple use, so their value is kept. Sets keeptrigger true if this is not a location. 
     \ifsuppresstr@gger\else
       \runtrigg@rs{\mkp@cref{\id@@@}{\x@\detokenize\x@{\attr@b}}}%
+      \ifdiglot
+	\runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{\x@\detokenize\x@{\attr@b}}}%
+      \fi
       \runtrigg@rs{ms:\thismil@stone=\x@\detokenize\x@{\attr@b}}%
       \ifkeeptrigger% Not a location, leave c@rref what it used to be
         \global\let\c@rref\oldc@rref\global\let\dc@rref\olddc@rref
