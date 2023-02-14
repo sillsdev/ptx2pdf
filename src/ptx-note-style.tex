@@ -39,8 +39,9 @@
 % with its own \insert number (see TeXbook!)
 %
 \def\m@ken@tecl@ss#1{%
+  \trace{n}{m@ken@tecl@ss #1}%
   \newcl@sstrue
-  \def\n@wcl@ss{#1}
+  \def\n@wcl@ss{#1}%
   \let\\=\ch@ckifcl@ss \the\n@tecl@sses % check if this note class is already defined
   \ifnewcl@ss \allocatecl@ss{#1} \fi
 }

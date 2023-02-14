@@ -291,6 +291,7 @@ stylesheet parameters `\SpaceBefore` and `\SpaceAfter` will alter the
 default value for all figures inserted via the `\fig` mechanism (including figures 
 from piclists). Sidebars similarly have these stylesheet parameters.
 
+
 ### x-xetex Attribute - Rotation control and PDF page selection 
 #### Rotation
 To allow further transforming of images when inserting into the publication,
@@ -528,6 +529,12 @@ in the normal manner in the style sheet, via the `fig` marker, even though offic
 The text will align to the standard page edge, unless the margins are modified
 as above. There is no support for controlling indentation of the first line or
 other paragraphing style elements.
+
+### Caption Gap Adjustment
+The gap between the caption and the figure can be adjusted by the following definition:
+```
+\def\FigCaptionAdjust{0.0pt}
+```
 
 ### Caption font and size
 

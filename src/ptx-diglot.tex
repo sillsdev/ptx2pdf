@@ -114,8 +114,8 @@
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
-\def\LRspecificCountFixed{curr@djpar,p@rnum} 
-\def\LRspecificCountBroken{}
+\def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts} 
+\def\LRspecificCountBroken{@numcuts}
 \let\LRspecificCount\LRspecificCountFixed
 
 
@@ -964,7 +964,14 @@
 \def\ztmoff{\tracingassigns=0 \tracingmacros=0}
 % Change which side we're adding to
 \def\pr@sideswitch#1#2{%
-  \global\savedpenalty=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \tmpcount=\lastpenalty% This MUST be first (at least, before any writes), or the last /thing/ won't be a penalty
+  \ifdiglotcolh@scontent %Only actually save lastpenalty if there is some real content before it. 
+    \global\savedpenalty=\tmpcount
+  \else
+    \ifdim\pagetotal>0pt
+      \global\savedpenalty=\tmpcount
+    \fi
+  \fi
   \tmpcount=\lastnodetype
   \ifintrial
     %\showlists
@@ -989,7 +996,7 @@
       \showlists
     \fi
   \fi%
-  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty}%
+  \trace{d}{pr@sideswitch #1 #2, sp:\the\savedpenalty\space lnt:\the\tmpcount, op:\the\outputpenalty, pg: \the\pagegoal, pt:\the\pagetotal}%
   %\ifnum\outputpenalty=-10000 %User-pagebreak
   %  \global\savedpenalty=\outputpenalty
   %\fi
@@ -999,8 +1006,13 @@
     \x@\let\csname m@rker\c@rrdstat\endcsname\last@popped@parstyle %save the old (paragraph-style) marker 
   \fi
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
-  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent diglolcolh@scontent\fi}%
-  \ifdiglotcolh@scontent\else
+  \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi}%
+  \edef\tmp{#2}
+  \ifdiglotcolh@scontent
+    \ifx\tmp\empty\else
+      \save@cutouts{\c@rrdstat}%
+    \fi
+  \else
     \del@from@digl@tc@ntentlist{\c@rrdstat}%
   \fi
   %\showlists
@@ -1008,7 +1020,12 @@
   \global\output={\diglotCollect}%Why woudn't it be? Don't know, but sometimes it's not.
   \let\@ldstat=\c@rrdstat
   \@@setside{#2}%Set the side to occur after the next swapcols penalty
-  \ifdiglotcolh@scontent
+  \ifx\tmp\empty\else
+    \restore@cutouts{#2}%
+  \fi
+  \ifdiglotcolh@scontent \temptrue \fi
+  \ifnum\savedpenalty=-10000 \temptrue\fi
+  \iftemp
     \endgraf\penalty\dgl@tPenColSwap\relax %Trigger collection of text.
     % <<< Diglot collect runs HERE! (and sets n@xtc@mmand
     \relax
@@ -1070,7 +1087,7 @@
 
 \def\polyglotendcols{%
   \global\allNeedEmptyingtrue% Text before the swap needs emptying
-  \pr@sideswitch{endcols}{L}%
+  \pr@sideswitch{endcols}{\empty}%
   \diglot@run@trials
   \global\allNeedEmptyingfalse
 }
@@ -1092,15 +1109,25 @@
   \fi
 }
 
-\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}\ifx\tmp\empty\diglotfalse\global\let\c@rrdstat\empty\else\x@\monoglotcolumn\x@{\tmp}\fi}
+\def\zglot|#1\*{\edef\tmp{\zap@space #1 \empty}%
+  \ifx\tmp\empty\diglotfalse
+    \ifinptxfile\else\gdef\atn@xtptxfile{}\fi
+    \global\let\c@rrdstat\empty
+  \else\x@\monoglotcolumn\x@{\tmp}\fi}
 
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
   \ifcsname #1isDiglotColumn\endcsname % 
-    \endlastp@rstyle{p}%
-    \diglottrue
-    \@setside{#1}%
-    \@@switchstyles{#1}%
+    \ifinptxfile
+      \ifsk@pping\egroup\fi
+      \endlastp@rstyle{monoglotcol}%
+      \diglottrue
+      \@setside{#1}%
+      \@@switchstyles{#1}%
+    \else
+      \diglotfalse
+      \gdef\atn@xtptxfile{\monoglotcolumn{#1}}%
+    \fi
   \else
     \errmessage{zglot must be followed by a sensible argument. '#1' Hasn't been specified as a polyglot column (with newPolyglotCol), before any USFM files are read.}%
   \fi
@@ -1225,6 +1252,15 @@
  \@setside{#1}%Ought to be needless
  \@@switchstyles{#1}% Set up fonts and things.
  \add@to@digl@tc@ntentlist{#1}%
+ \ifnum\@numcuts>0
+   \x@\let\x@\tmp\csname @#1egap\endcsname
+   \ifdim \tmp >\baselineskip
+     \count255=\dimexpr \tmp / \baselineskip\relax
+     \trace{C}{Cutout \c@rrdstat \space needs to be adjusted by (\tmp / \the\baselineskip) \the\count255}%
+     \prevgraf=\the\count255 
+     \cutoutcarryover
+   \fi
+ \fi
  \x@\let\x@\w@dth\csname column#1width\endcsname
  \global\hsize=\w@dth\relax
  \global\diglotcolh@scontentfalse
@@ -2329,9 +2365,19 @@
 \def\mkrev@list#1{\x@\xdef\csname rev@\list@type @list\endcsname{#1\csname rev@\list@type @list\endcsname}}
 
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
-  \ifdim\dimen1<\t@st
-     \edef\m@x@at@col{#1}%
-    \dimen1=\t@st
+  \ifx\t@st\relax\else
+    \ifdim\dimen1<\t@st
+       \edef\m@x@at@col{#1}%
+      \dimen1=\t@st
+    \fi
+  \fi
+}
+\def\delta@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifx\t@st\relax
+    \trace{dP}{Eh? \v@lpfx#1\v@lsfx undefined}%
+  \else
+    \x@\xdef\csname\v@lopfx#1\v@losfx\endcsname{\the\dimexpr \dimen1 - \t@st\relax}%
+    \trace{dP}{\v@lopfx#1\v@losfx \x@=  \csname \v@lopfx#1\v@losfx\endcsname}%
   \fi
 }
 %Sum values (for averaging)
@@ -2403,8 +2449,8 @@
     \dimen1=\dimen0
   \fi
 }
-  
-  
+
+
 
 % Set boxes to be dimen1 high
 \def\reb@xht#1{\x@\let\x@\t@mp\csname \v@lpfx#1\v@lsfx\endcsname
@@ -2667,6 +2713,12 @@
     \triall@@pcount=1
     \diglot@run@nxt@trial
   \fi
+  \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}\def\v@lopfx{@}\def\v@losfx{egap}%
+  \dimen1=0pt
+  \let\col@do=\max@val\dimen1=0pt
+  \x@\each@col\diglot@list\E
+  \let\col@do=\delta@val
+  \x@\each@col\diglot@list\E % Find 'skip' after each chunk
 }
 
 \def\empty@partials{%Empty (eventually store?) partialX

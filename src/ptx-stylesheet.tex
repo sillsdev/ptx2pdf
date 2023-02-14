@@ -130,7 +130,7 @@
 \def \Bold           #1\relax{\defbinp@ram{bold}{#1}}
 \def \Superscript    #1\relax{\condp@ram{#1}{\defp@ram{raise}{\SuperscriptRaise}\defp@ram{fontfactor}{\SuperscriptFactor}}{\defp@ram{fontfactor}{1}}}
 \def \Raise          #1\relax{\defp@ram{raise}{#1}}
-\def \Underline      #1\relax{\defbinp@ram{underline}{#1}}
+\def \Underline      #1\relax{\deftrip@ram{underline}{#1}}
 \let \underline\Underline
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
@@ -183,6 +183,7 @@
 \def\edefp@ram#1#2{\x@\edef\csname\c@tprefix\m@rker\ds@ffix:#1\endcsname{#2}\trace{sa}{def \c@tprefix\m@rker\ds@ffix:#1 -> #2}}
 \def\condp@ram#1#2#3{\edef\t@mp{#1}\ifx\t@mp\h@phen\relax\def\t@mp{#3}\else\def\t@mp{#2}\fi\t@mp}
 \def\defbinp@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\defp@ram{#1}{true}\fi}
+\def\deftrip@ram#1#2{\edef\t@mp{#2}\ifx\t@mp\h@phen\defp@ram{#1}{false}\else\ifx\t@mp\tw@\defp@ram{#1}{#2}\else\defp@ram{#1}{true}\fi\fi}
 \def\setp@ram#1#2#3{
   \x@\xdef\csname\c@tprefix#2\ds@ffix:#1\endcsname{#3}\trace{sa}{set \c@tprefix#2\ds@ffix:#1 -> #3}
   \should@xist{#2\ds@ffix}%Ensure that the marker is in the exists list
@@ -419,7 +420,7 @@
    \s@tph@name{#1\ifdiglot\c@rrdstat\fi}%
 }
 \def\s@tpp@name#1{%
-   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1}%
+   \xdef\pp@name{pPrms-\c@tprefix\mspr@fix#1\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
 }
 \def\setpp@name#1{%
    \s@tpp@name{#1\ifdiglot\c@rrdstat\fi}%
@@ -466,7 +467,7 @@
      %\tracingifs=1
      \ifg@ttingspecificparam % Avoid lookup loops.
        \trace{sa}{No recursion}%
-       \gettop@aram{#1}%
+       \gettop@param{#1}%
      \else
        \g@ttingspecificparamtrue
        \csname getthep@ram-#1\endcsname{#1}%
@@ -476,7 +477,7 @@
      %\tracingassigns=0
      %\tracingmacros=0
    \else
-     \gettop@aram{#1}%
+     \gettop@param{#1}%
    \fi
    \global\let\p@@r@m=\p@ram % Need to return outside the brackets
    }%
@@ -486,7 +487,7 @@
  \ifnotracestacks\poptracing\fi
 }
 
-\def\gettop@aram#1{%Check list of acceptable parameters and return the first one found.
+\def\gettop@param#1{%Check list of acceptable parameters and return the first one found.
    \edef\p@ramcheck{#1}%
    \ifx\p@ramcheck\empty\else
      \trace{sa}{Checking for #1 in \p@ssParams}%
@@ -558,12 +559,16 @@
 
 
 \def\r@setparam{=[]}
-
+\let\f@ntextend\empty
 \def\st@rtswithsl@sh#1#2\E{\if#1/\temptrue\else\tempfalse\fi}
 \x@\def\csname getthep@ram-fontfeatures\endcsname#1{%
   \trace{sa}{getthep@ram-fontfeatures}%
   \let\d@gettheparam=\d@
   \let\r@s\empty
+  \ifx\f@ntextend\empty\else
+    \trace{sa}{Fontextend set! =\f@ntextend}%
+    \xdef\r@s{[extend=\f@ntextend]\space }%
+  \fi
   \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
     \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
       \ifx\p@ram\relax\else
@@ -916,6 +921,9 @@
  % Define a macro to process space delimited chapter number
  % ## is necessary because this is a nested macro definition
  \def\@c@ ##1 {\ifsk@pping \egroup \fi % if we were skipping, stop it
+   \ifx\ch@pter\z@ro
+     \message{First chapter for \id@@@}\op@ninghooks{first}{c}{c+\styst@k}%
+   \fi
    \gdef\ch@pter{##1}% remember chapter number
    \gdef\ch@ptert@xt{##1}% the chapter number we will actually output
    \gdef\v@rse{}% clear verse number
@@ -951,7 +959,7 @@
        \trace{c}{No chapter label in use : \ch@pter}%
      \else % if \cl present, output chapter label here
        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
-       \p@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
+       \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
        \pdfb@@kmark \pdfch@ptermark
      \fi
    \fi}
@@ -1575,7 +1583,7 @@
  \let\periph\@periph
  %\global\lastptxfiletrue
  \ifLogFonts
-   \global\openout\f@ntl@g="\j@bname.fontusage"
+   \immediate\openout\f@ntl@g="\j@bname.fontusage"
  \fi
  \opentriglist "\j@bname.triggers"
  \let\@netimesetup=\relax}                                                      %(1)
@@ -1609,9 +1617,11 @@
  % The last comment on all matters
  \catcode`\%=12
  \m@kedigitsletters
+ \inptxfiletrue  
 }
 
 \def\unprepusfm{
+ \inptxfilefalse  
  \m@kedigitsother
  \deactiv@tecustomch@rs
  \catcode13=5
@@ -1651,6 +1661,7 @@
    \dimen0=\baselineskip
    \global\topskip=2\baselineskip
    \global\splittopskip=0pt
+   \gdef\atn@xtptxfile{}% This can't carry over.
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
    \def\col@do##1{% Per-column setup
@@ -1676,6 +1687,7 @@
        \fi
      \egroup
    }
+   \trace{d}{DiglotSides = \diglot@list}%
    \x@\each@col\diglot@list\E 
    \baselineskip=\dimen0
    \egroup
@@ -1696,6 +1708,7 @@
 }
 %-csty_ptxfile_intro
 %+csty_ptxfile_start
+\newif\ifinptxfile
 \def\ptxfile#1{
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
@@ -1714,14 +1727,16 @@
  \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
-     \else \closein\t@stread \def\n@xt{\input "\the\PtxFilePath#1"\relax}\fi
+     \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
    \n@xt
  \fi
  \postptxfile
 }
+\gdef\atn@xtptxfile{}
 %-csty_ptxfile_start
 %+csty_ptxfile_end
 \def\postptxfile{%
+ \inptxfilefalse  
  \trace{o}{postptxfile \iflastptxfile LAST ptx file\fi}%
  \ifhmode \unskip\end@llpoppedstyles{P}\par \fi
  \ifsk@pping\egroup\fi

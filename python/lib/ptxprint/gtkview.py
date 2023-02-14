@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
-import time, locale, urllib.request, json
+import time, locale, urllib.request, json, hashlib
 from ptxprint.utils import universalopen, refKey, chgsHeader
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -32,13 +32,15 @@ from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
 from ptxprint.gtkstyleditor import StyleEditorView
 from ptxprint.styleditor import aliases
 from ptxprint.runjob import isLocked, unlockme
-from ptxprint.texmodel import TexModel, ModelMap
+from ptxprint.texmodel import TexModel
+from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
+from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
@@ -175,6 +177,9 @@ c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
+btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
+c_imp_ResetConfig tb_impLayout tb_impFontsScript tb_impStyles
+c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
 # removed from list above: r_pictureRes_High r_pictureRes_Low
@@ -288,6 +293,13 @@ _sensitivities = {
     "c_makeCoverPage":         ["bx_cover"],
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
+    "r_impSource": {
+        "r_impSource_pdf":     ["btn_selectImpSource_pdf", "lb_impSource_pdf"],
+        "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
+    "c_impPictures":           ["tb_impPictures"],
+    "r_impPics": {
+        "r_impPics_elements":  ["gr_picElements"]},
+    "c_impOther":              ["gr_impOther"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -372,7 +384,7 @@ _defaultDigColophon = r"""\usediglot\empty\pc \zcopyright
 \pc \zimagecopyrights
 """
 
-_notebooks = ("Main", "Viewer", "PicList", "fnxr")
+_notebooks = ("Main", "Viewer", "PicList", "fnxr", "Import")
 
 # Vertical Thumb Tab Orientation options L+R
 _vertical_thumb = {
@@ -514,7 +526,7 @@ class GtkViewModel(ViewModel):
         GObject.type_register(GtkSource.Buffer)
         tree = et.parse(gladefile)
         self.allControls = []
-        modelbtns = set([v[0] for v in ModelMap.values() if v[0] is not None and v[0].startswith("btn_")])
+        modelbtns = set([v.widget for v in ModelMap.values() if v.widget is not None and v.widget.startswith("btn_")])
         self.btnControls = set()
         self.finddata = {}
         self.widgetnames = {}
@@ -603,6 +615,7 @@ class GtkViewModel(ViewModel):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
+        self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
         for k, v in _object_classes.items():
             for a in v:
                 w = self.builder.get_object(a)
@@ -716,6 +729,7 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("fcb_project").set_wrap_width(1)
         self.builder.get_object("fcb_project").set_wrap_width(wide)
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
+        self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
@@ -969,24 +983,24 @@ class GtkViewModel(ViewModel):
 
     def getInitValues(self, addtooltips=False):
         self.initValues = {}
-        allentries = list(ModelMap.items()) + [("", [v]) for v in self.btnControls]
+        allentries = [(x.texname, x.widget) for x in ModelMap.values()] + [("", b) for b in self.btnControls]
         for k, v in allentries:
-            if v[0] is None:
+            if v is None:
                 continue
             if addtooltips and not k.endswith("_"):
-                w = self.builder.get_object(v[0])
+                w = self.builder.get_object(v)
                 if w is not None:
                     try:
                         t = w.get_tooltip_text()
                     except AttributeError:
                         continue
                     if t is not None:
-                        t += "\n{}({})".format(k, v[0])
+                        t += "\n{}({})".format(k, v)
                     else:
-                        t = "{}({})".format(k, v[0])
+                        t = "{}({})".format(k, v)
                     w.set_tooltip_text(t)
-            if k and not v[0].startswith("r_"):
-                self.initValues[v[0]] = self.get(v[0], skipmissing=True)
+            if k and not v.startswith("r_"):
+                self.initValues[v] = self.get(v, skipmissing=True)
         for r, a in self.radios.items():
             for v in a:
                 w = self.builder.get_object("r_{}_{}".format(r, v))
@@ -1523,6 +1537,17 @@ class GtkViewModel(ViewModel):
                 self.ecb_diglotSecConfig.append_text(cfgName)
             self.set("ecb_diglotSecConfig", "Default")
 
+    def updateimpProjectConfigList(self):
+        self.ecb_impConfig.remove_all()
+        imprj = self.get("fcb_impProject")
+        if imprj is None:
+            return
+        impConfigs = self.getConfigList(imprj)
+        if len(impConfigs):
+            for cfgName in sorted(impConfigs):
+                self.ecb_impConfig.append_text(cfgName)
+            self.set("ecb_impConfig", "Default")
+
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
         if clearvars:
@@ -1724,9 +1749,6 @@ class GtkViewModel(ViewModel):
             w2 = w1[:4]+s
             self.builder.get_object(w2).set_active(status)
 
-    # def onReloadConfigClicked(self, btn_reloadConfig):
-        # self.updateProjectSettings(self.prjid, configName = self.configName(), readConfig=True)
-
     def onLockUnlockSavedConfig(self, btn):
         if self.configName() == "Default":
             self.builder.get_object("btn_lockunlock").set_sensitive(False)
@@ -1741,15 +1763,17 @@ class GtkViewModel(ViewModel):
             pw = ""
         else:
             return
-        invPW = self.get("t_invisiblePassword")
-        if invPW == None or invPW == "": # No existing PW, so set a new one
-            self.builder.get_object("t_invisiblePassword").set_text(pw)
-            # self.builder.get_object("btn_showMoreOrLess").set_sensitive(False)
+        m = hashlib.md5()
+        m.update(pw.encode("utf-8"))
+        pw = m.digest()
+        invPW = b64decode(self.get("t_invisiblePassword") or "")
+        logger.debug(f"{pw=} {invPW=}")
+        if invPW == None or not len(invPW): # No existing PW, so set a new one
+            self.builder.get_object("t_invisiblePassword").set_text(b64encode(pw).decode("UTF-8"))
             self.onSaveConfig(None, force=True)     # Always save the config when locking
         else: # try to unlock the settings by removing the settings
             if pw == invPW:
                 self.builder.get_object("t_invisiblePassword").set_text("")
-                # self.builder.get_object("btn_showMoreOrLess").set_sensitive(True)
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
@@ -1763,17 +1787,10 @@ class GtkViewModel(ViewModel):
             status = True
             img = Gtk.Image.new_from_icon_name("changes-allow-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
             lockBtn.set_image(img)
-            # o = self.builder.get_object("icon_unlocked")
-            # print(f"{o=}")
-            # lockBtn.set_image(o)
         else:
             status = False
-            # o = self.builder.get_object("icon_locked")
-            # print(f"{o=}")
-            # lockBtn.set_image(o)
             img = Gtk.Image.new_from_icon_name("changes-prevent-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
             lockBtn.set_image(img)
-            # lockBtn.set_image(self.builder.get_object("icon_locked"))
         for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
@@ -1785,8 +1802,6 @@ class GtkViewModel(ViewModel):
         self.onViewerChangePage(None, None, pg, forced=True)
 
     def onBookSelectorChange(self, btn):
-        # status = self.sensiVisible("r_book_multiple")
-        # if status and self.get("ecb_booklist") == "" and self.prjid is not None:
         if self.get("ecb_booklist") == "" and self.prjid is not None:
             self.updateDialogTitle()
         else:
@@ -2678,25 +2693,12 @@ class GtkViewModel(ViewModel):
                 v = opt[1]
                 tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             elif wname.startswith("s_"):
-                if len(opt) < 6:
-                    base = opt[1]
-                    upper = base*10
-                    lower = base/10
-                    if base < 0:
-                        upper = -base*10
-                        lower = base*10
-                        base = -base
-                    elif base == 0:
-                        base = 1
-                        upper = 10
-                        lower = 0
-                    adj = Gtk.Adjustment(upper=upper, lower=lower, step_increment=base/5, page_increment=base)
-                else:
-                    a = opt[5]
-                    adj = Gtk.Adjustment(lower=a[0], upper=a[1], step_increment=a[2], page_increment=a[3])
+                x = opt[1]
+                # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
+                adj = Gtk.Adjustment(upper=x[2], lower=x[1], step_increment=x[3], page_increment=x[4])
                 obj = Gtk.SpinButton()
                 obj.set_adjustment(adj)
-                v = str(opt[1])
+                v = str(x[0])
                 tiptext = "{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             l.set_tooltip_text(tiptext)
             obj.set_tooltip_text(tiptext)
@@ -3365,6 +3367,24 @@ class GtkViewModel(ViewModel):
             if chkbx:
                 btn.set_sensitive(False)
                 self.set("c_"+ident, False)
+                
+    def onImportSegmentClicked(self, w):
+        name = Gtk.Buildable.get_name(w)[2:]
+        mpgnum = self.notebooks['Import'].index("tb_"+name)
+        self.builder.get_object("nbk_Import").set_current_page(mpgnum)
+
+    def onImportClicked(self, btn_importPDF):
+        dialog = self.builder.get_object("dlg_importSettings")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            # MH to do something magic here
+            # (depending on the options set within Import dialog)
+            pass
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
@@ -3566,6 +3586,9 @@ class GtkViewModel(ViewModel):
         b.set_label(lbl)
         b.set_visible(True)
         
+    def onimpProjectChanged(self, btn):
+        self.updateimpProjectConfigList()
+        
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
@@ -3579,6 +3602,7 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.loadPics()
+        self.updateDialogTitle()
         
     def onGenerateHyphenationListClicked(self, btn):
         scrsnpt = self.getScriptSnippet()
@@ -4678,17 +4702,43 @@ class GtkViewModel(ViewModel):
         self.wiggleCurrentTabLabel()
 
     def onRequestPicturePermission(self, btn):
+        metadata = {"country":       "<Country>", 
+                    "langiso":       "<Ethnologue code>", 
+                    "languagename":  "<Language>", 
+                    "maintitle":     "<Title>", 
+                    "englishtitle" : "<Title in English>",
+                    "pubtype":       "<[Portion|NT|Bible]>",
+                    "copiesprinted": "<99>",
+                    "requester":     "<Requester's Name>", 
+                    "pubentity":     "<Publishing Entity>"}
+
         pics = []
-        for artist in self.artpgs.keys():
-            if artist == "co":
-                for series in self.artpgs[artist].keys():
-                    for a,v in self.artpgs[artist][series]:
-                        pics += [v]
+        if self.artpgs is not None:
+            for artist in self.artpgs.keys():
+                if artist == "co":
+                    for series in self.artpgs[artist].keys():
+                        for a,v in self.artpgs[artist][series]:
+                            pics += [v]
         picount = len(pics)
         if picount == 0:
             _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("However none were detected in this publication.")
+                       _("No DCC illustrations were detected. Hit Print first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+            return
+        # See if any of the meta-data fields are missing in the zvars, and if so
+        # add them and ask the user to fill them in.
+        missing = False
+        for k, v in metadata.items():
+            if self.getvar(k, default=None) is None:
+                missing = True
+                self.setvar(k, v)
+        if missing:
+            mpgnum = self.notebooks['Main'].index("tb_Peripherals")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            _errText = _("Please fill in any missing <Values> on") + "\n" + \
+                       _("the Peripherals tab and then try again.")
+            self.doError("Missing details for request letter", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
         picturelist = ", ".join(pics)
@@ -4706,19 +4756,22 @@ I am writing to request permission to use the following David C Cook illustratio
 \t{}, {}, {}\n
 2. The title of the book in the vernacular:
 \t{}\n
-3. The kind of book:
+3. The title of the book in English:
 \t{}\n
-4. The number of books to be printed:
+4. The kind of book:
+\t{}\n
+5. The number of books to be printed:
 \t{} copies\n
-5. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
+6. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
 \t{} illustrations:\n{}\n{}
 Thank you,
-<Requester's Name>
-<SIL Entity>
-""".format(self.getvar("country", "<Country>"),            self.getvar("languagename",  "<Language>"), \
-           self.getvar("langiso", "<Ethnologue code>"),    self.getvar("maintitle",     "<Title>"), \
-           self.getvar("pubtype", "<[Portion|NT|Bible]>"), self.getvar("copiesprinted", "<99>"), \
-           picount, picturelist, sensitive)
+{}
+{}
+""".format(self.getvar("country", ""), self.getvar("languagename",  ""), \
+           self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
+           self.getvar("englishtitle", ""), self.getvar("pubtype", ""), \
+           self.getvar("copiesprinted", ""), picount, picturelist, sensitive, \
+           self.getvar("requester", ""), self.getvar("pubentity", ""))
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \
                       who2email="scripturepicturepermissions_intl@sil.org")

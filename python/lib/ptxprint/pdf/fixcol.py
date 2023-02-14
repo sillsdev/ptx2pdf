@@ -162,7 +162,7 @@ class PageCMYKState(PdfStreamParser):
         rgb = [float(x) for x in operands[-3:]]
         diffs = sum([(rgb[0] - x) * (rgb[0] - x) for x in rgb[1:]])
         if diffs < 0.05:
-            return ["{:.2f}".format(rgb[0] / 255.), ('g' if op.lower() == op else "G")]
+            return ["{:.2f}".format(rgb[0]), ('g' if op.lower() == op else "G")]
         self.hascolor = True
         cmyk = self.rgb2cmyk(*rgb)
         newop = "k" if op.lower() == op else "K"

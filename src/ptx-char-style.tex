@@ -185,12 +185,14 @@
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
     \getmcp@ramR{background}%
+    \def\xtr@{}% Any extra code to run at the start of the group
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
     \ifx\@ttriblist\empty\else\temptrue\fi 
     \getmcp@ram{underline}%
-	\ifx\p@ram\tru@\temptrue\fi
-    \iftemp\setbox0=\hbox\bgroup \fi                     %(3)
+    \ifx\p@ram\tru@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \iftemp\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
@@ -198,19 +200,27 @@
 %-cchar_startcharstyle
 \newbox\ulb@x
 \newif\ifUnderlineSpaces\UnderlineSpacestrue
-\def\ulsp@ce{\discretionary{}{}{\vtop{\hbox{\space}\kern\UnderlineLower\hrule height\UnderlineThickness}}}
+
+\def\Dulsp@ce{\leaders\vtop{\hbox to \DoubleUnderlineSpaceQuantum{\hss}\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\hskip 1ex plus 0.2ex minus 0.2ex}
 \def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip 1ex plus 0.2ex minus 0.2ex}
-\def\@do@underline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\@do@Sunderline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\@do@Dunderline{\let\@@@do\@do@Dunderline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
+\let\@do@underline\@do@Sunderline
 \def\d@underline#1{\showboxbreadth=99
   \ifUnderlineSpaces
-    \let\@ulsp@ce\ulsp@ce
+    \ifx\@do@underline\@do@Dunderline
+      \let\@ulsp@ce\Dulsp@ce
+    \else
+      \let\@ulsp@ce\ulsp@ce
+    \fi
   \else
     \let\@ulsp@ce\space
   \fi
   \setbox\ulb@x\box\voidb@x
-  {\dimen0=\UnderlineLower\advance\dimen0\dp#1\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf\@do@underline}%
+  {\dimen0=\UnderlineLower\relax \ifdim\dimen0<0pt \dimen0=-\dimen0\else \advance\dimen0\dp#1\fi\dimen1=\dimen0\advance\dimen0\UnderlineThickness\everypar={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf\@do@underline}%
   %\showbox#1
   %\showbox\ulb@x
+  %Last resort... something couldn't be unwrapped:
   \ifdim \wd#1=0pt \else\setbox#1\hbox{\vtop{\box#1\kern\UnderlineLower\hrule height\UnderlineThickness}}%
     \unhbox#1\@ulsp@ce\fi
   }%
@@ -251,8 +261,9 @@
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \tempfalse
    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
+   \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
    \ifx\@ttriblist\empty\else
-     %\message{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
+     \trace{A}{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
    \global\let\h@@kstyst@k\styst@k
@@ -272,7 +283,13 @@
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
      \ifx\@ttriblist\empty\trace{s}{No attributes}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
      \getmcp@ramR{underline}%
-     \ifx\p@ram\tru@\temptrue\global\let\p@ram\p@ram\fi
+     \ifx\p@ram\tru@\temptrue\global\let\ulp@ram\p@ram
+     \else
+       \ifx\p@ram\tw@\temptrue\global\let\ulp@ram\p@ram
+       \else
+        \global\let\ulp@ram\relax
+       \fi
+     \fi
      \global\tmpt@ks{}%
      \ifbox@run
        \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\temptrue
@@ -283,7 +300,10 @@
      \iftemp\egroup
        \let\newch@rstyle\@newch@rstyle
        \the\tmpt@ks
-       \ifx\p@ram\tru@ \d@underline{0}\fi
+       \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{0}\else
+         \ifx\ulp@ram\tw@ \let\@do@underline\@do@Dunderline\d@underline{0}%
+         \message{Double underline  for \newch@rstyle}%
+       \fi\fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
        \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
@@ -335,6 +355,8 @@
 \def\SuperscriptRaise{0.85ex} % note that this is in terms of the scaled-down superscript font size
 \def\UnderlineLower{0.1em}
 \def\UnderlineThickness{0.05em}
+\def\DoubleUnderlineSep{0.07em}
+\def\DoubleUnderlineSpaceQuantum{0.05ex} % double-underlineing spaces use line-fragments. How long are they?
 
 %
 % end all character styles in effect within the current note or paragraph
@@ -374,14 +396,14 @@
  \let\d@@=\d@
  \getp@ram{fontsize}{#1}{#2}%
  %\def\d@##1+##2+##3\E{\edef\tmp{##2}\ifx\cmpf@ntstyle\tmp \getmcfonts@ze\else
-			%\csname d@code-##1\endcsname
-                        %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
-                        %\else\global\let\c@rrfontsize=\p@ram\fi\fi}%
+   %\csname d@code-##1\endcsname
+   %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
+     %\else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  %\mctop
  \let\d@=\d@@
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
  \x@\stystacksplit#2+\E% redo the split because it's not preserved.
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi}%
+ \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
  \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
 }
 

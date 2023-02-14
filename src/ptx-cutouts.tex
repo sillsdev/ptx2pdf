@@ -53,21 +53,27 @@
   \@index=0
   \loop \ifnum\@index<\@numcuts \advance\@index by 1
     \trace{C}{Saving cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
-    \expandafter\let\csname cut@side\the\@index#1\x@\endcsname\csname cut@side\the\@index\endcsname
-    \expandafter\let\csname cut@width\the\@index#1\x@\endcsname\csname cut@width\the\@index\endcsname
-    \expandafter\let\csname cut@after\the\@index#1\x@\endcsname\csname cut@after\the\@index\endcsname
-    \expandafter\let\csname cut@lines\the\@index#1\x@\endcsname\csname cut@lines\the\@index\endcsname
+    \expandafter\global\expandafter\let\csname cut@side\the\@index#1\x@\endcsname\csname cut@side\the\@index\endcsname
+    \expandafter\global\expandafter\let\csname cut@width\the\@index#1\x@\endcsname\csname cut@width\the\@index\endcsname
+    \expandafter\global\expandafter\let\csname cut@after\the\@index#1\x@\endcsname\csname cut@after\the\@index\endcsname
+    \expandafter\global\expandafter\let\csname cut@lines\the\@index#1\x@\endcsname\csname cut@lines\the\@index\endcsname
   \repeat
+  \x@\xdef\csname cut@numcuts#1\endcsname{\the\@numcuts}%
+  \trace{C}{Saved \the\@numcuts cutouts for #1}%
 }
 \def\restore@cutouts#1{%
   \@index=0
-  \loop \ifnum\@index<\@numcuts \advance\@index by 1
-    \x@\global\x@\let\csname cut@side\the\@index\x@\endcsname\csname cut@side\the\@index#1\endcsname
-    \x@\global\x@\let\csname cut@width\the\@index\x@\endcsname\csname cut@width\the\@index#1\endcsname
-    \x@\global\x@\let\csname cut@after\the\@index\x@\endcsname\csname cut@after\the\@index#1\endcsname
-    \x@\global\x@\let\csname cut@lines\the\@index\x@\endcsname\csname cut@lines\the\@index#1\endcsname
-    \trace{C}{restored cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
-  \repeat
+  \ifcsname cut@numcuts#1\endcsname
+    \global\@numcuts=\csname cut@numcuts#1\endcsname
+    \trace{C}{Restoring \the\@numcuts \space cutouts for #1}%
+    \loop \ifnum\@index<\@numcuts \advance\@index by 1
+      \x@\global\x@\let\csname cut@side\the\@index\x@\endcsname\csname cut@side\the\@index#1\endcsname
+      \x@\global\x@\let\csname cut@width\the\@index\x@\endcsname\csname cut@width\the\@index#1\endcsname
+      \x@\global\x@\let\csname cut@after\the\@index\x@\endcsname\csname cut@after\the\@index#1\endcsname
+      \x@\global\x@\let\csname cut@lines\the\@index\x@\endcsname\csname cut@lines\the\@index#1\endcsname
+      \trace{C}{restored cutout \the\@index: \csname cut@side\the\@index\endcsname/\csname cut@width\the\@index\endcsname/\csname cut@lines\the\@index\endcsname}%
+    \repeat
+  \fi
 }
 
 \newcount\@numcuts

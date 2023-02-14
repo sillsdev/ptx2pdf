@@ -402,7 +402,61 @@
 }
 
 \def\p@rstyle#1{\trace{ss}{p@rstyle: #1, onto stack: \mcstack}%
- \endlastp@rstyle{#1}%
+ \edef\newp@rstyle{#1}%
+ \catcode32=12 % make <space> an "other" character, so it won't be skipped by \futurelet
+ \catcode13=12 % ditto for <return>
+ \catcode`\^=12
+ \futurelet\n@xt\@@p@rstyle % look at following character and call \@@p@rstyle
+}
+
+\def\dop@rstyle#1{\trace{ss}{dop@rstyle: #1, onto stack: \mcstack}%
+ \edef\newp@rstyle{#1}\global\let\f@ntextend\empty
+ \@p@rstyle{#1}%
+}
+
+\catcode`\^=12
+\catcode`\~=12 \lccode`\~=32 % we'll use \lowercase{~} when we need a category-12 space
+\catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
+\lccode`\|=`\\
+\let\thisch@rstyle\empty
+\lowercase{
+%-cchar_docharstyle_intro
+%+cchar_docharstyle
+ \let\@@st@risk*
+ \let\@@spc~
+ \let\@@nl_
+\def\@@p@rstyle{%
+  \catcode32=10 % reset <space> to act like a space again
+  \catcode13=10 % and <return> is also a space (we don't want blank line -> \par)
+  \trace{s}{parstyle: \newp@rstyle, next=\meaning\n@xt}%
+  \ifx \n@xt^\relax
+    \let\n@xt\@@@p@rstyle
+  \else
+    \global\let\f@ntextend\empty
+    \ifx\n@xt\@@spc\let\n@xt\@p@rstyle@spc\trace{ss}{space delimiter for \newp@rstyle, after \thisp@rstyle}\else
+      \ifx\n@xt\@@nl\let\n@xt\@p@rstyle@nl\trace{ss}{nl delimiter for \newp@rstyle}\else
+        \let\n@xt\@p@rstyle
+    \fi\fi
+  \fi
+  \x@\n@xt\x@{\newp@rstyle}%
+}
+\def\@p@rstyle@spc#1~{\@p@rstyle{#1}}
+\def\@p@rstyle@nl#1_{\@p@rstyle{#1}}
+}
+
+\def\p@rcent #1#2#3#4\E{\ifx #3x.#1#2\else #1.#2#3\fi}
+\def\@@@p@rstyle#1^#2 {%
+  \xdef\f@ntextend{\p@rcent #2xx\E}%
+  %\xdef\f@ntextend{#2}%
+  \trace{s}{extending [\f@ntextend]}%
+  \x@\@p@rstyle\x@{#1}%
+}
+\catcode`\^=7
+\catcode`\_=11
+
+\def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
+\def\@p@rstyle#1{%
+ \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
@@ -1022,7 +1076,7 @@
     \ifx\t@str@ise\relax
       \trace{C}{PARLOC:ok}%
     \else
-       \ifnum\t@str@ise=0\else
+       \ifdim\t@str@ise pt=0pt\else
          \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
        \fi
     \fi
@@ -1174,7 +1228,7 @@
      %\ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      %\x@\c@tcmd\x@{\the\ch@pterwd}{\t@std@lay}{2}%
      \raise@test{chapter}%
-     \ifx\t@str@ise\else\ifnum \t@str@ise=1
+     \ifx\t@str@ise\else\ifdim \t@str@ise pt=1pt
       \vadjust pre {\nobreak}% Prevent break before this line if the box is raised
      \fi\fi
      \vadjust{\vbox to 0pt{\kern-\dp\str@tbox \kern-\ht\ch@pterbox              %(2)

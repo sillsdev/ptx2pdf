@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Bump this number up in order to reset everyone's Cached files
-DataVersion = 4
+DataVersion = 5
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -451,7 +451,6 @@ def runChanges(changes, bk, dat):
             return res
         return proc
     for c in changes:
-        #import pdb; pdb.set_trace()
         if bk is not None:
             logger.debug("Change: {}".format(c))
         if c[0] is None:
@@ -563,6 +562,37 @@ class Path(pathlib.Path):
             return "${"+bestk+"}/"+rpath.as_posix()
         else:
             return self.as_posix()
+
+
+class UnzipDir:
+    ''' Emulates some of zipfile but backed by a simple filesystem directory '''
+    def __init__(self, file, mode='r', **kw):
+        self.dir = file
+        self.mode = mode
+
+    def infolist(self):
+        res = []
+        for dp, dn, fn in os.walk(self.dir):
+            for f in fn:
+                fp = os.path.join(dp, f)
+                dt = time.localtime(os.stat(os.path.join(self.dir, fp)).st_mtime)[0:6]
+                res.append(ZipInfo(fp, dt))
+        return res
+
+    def namelist(self):
+        res = []
+        for dp, dn, fn in os.walk(self.dir):
+            res.extend([os.path.join(dp, f) for f in fn])
+        return res
+
+    def open(self, name, mode='r', **kw):
+        return open(os.path.join(self.dir, name), mode)
+
+    def read(self, name, **kw):
+        with open(os.path.join(self.dir, name), 'r') as inf:
+            res = inf.read()
+        return res
+
 
 def brent(left, right, mid, fn, tol, log=None, maxiter=20):
     '''Brent method, see Numerical Recipes in C Ed. 2 p404'''

@@ -7,6 +7,7 @@
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
+{document/ifndiglot}\diglotfalse
 {document/ifdiglot}\diglotcolumns
 {document/ifdiglot}\diglotInnerOuter{header/mirrorlayout}
 {document/ifdiglot}\diglotSepNotes{document/diglotsepnotes}
@@ -18,14 +19,13 @@
 \stylesheet{{ptx2pdf.sty}}
 
 {document/ifdiglot}{ifusediglotcustomsty_}\stylesheet{R_}{{{/ptxrpath}/{document/diglotsecprj}/custom.sty}}
-{project/ifusecustomsty}{/nocustomsty}\stylesheet{{{/ptxrpath}/{project/id}/custom.sty}}
+{project/ifusecustomsty}{/nocustomsty}\stylesheet{L_}{{{/ptxrpath}/{project/id}/custom.sty}}
 
-%{document/ifdiglot}\stylesheet{{{/cfgrpath}/ptxprint.sty}}
-\stylesheet{{{/cfgrpath}/ptxprint.sty}}
+\stylesheet{L_}{{{/cfgrpath}/ptxprint.sty}}
 {document/ifdiglot}\stylesheet{R_}{{{diglot/ptxprintstyfile_}}}
 
 {document/ifdiglot}{ifusediglotmodsty_}\stylesheet{R_}{{{document/diglotcfgrpath}/ptxprint-mods.sty}} % Right-side/Diglot Secondary stylesheet override settings
-{project/ifusemodssty}\stylesheet{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
+{project/ifusemodssty}\stylesheet{L_}{{{/cfgrpath}/ptxprint-mods.sty}} % Left-side stylesheet override settings
 
 %%%%% Page Setup %%%%%
 % Dimensions
@@ -149,7 +149,7 @@
 {notes/fnomitcaller}\OmitCallerInNote{{f}}
 {notes/fneachnewline}\ParagraphedNotes{{f}}
 %\NumericCallers{{f}}
-{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
+{document/ifndiglot}{notes/includefootnotes}\expandafter\def\csname f:properties\endcsname{{nonpublishable}}
 %%%{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
 %%%{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
 
@@ -164,7 +164,7 @@
 {notes/xromitcaller}\OmitCallerInNote{{x}}
 {notes/xreachnewline}\ParagraphedNotes{{x}}
 %\NumericCallers{{x}}
-{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
+{document/ifndiglot}{notes/includexrefs}{notes/ifxrexternalist}\expandafter\def\csname x:properties\endcsname{{nonpublishable}}
 {notes/xrlocation}\def\XrefNotes{{x}}\XrefNotesMargin={notes/xrguttermargin}pt \XrefNotesWidth={notes/xrcentrecolwidth}pt\def\XrefSide{{{notes/xrcolside}}}
 \XrefSideAlign{notes/xrcolalign}
 \ColNotes{notes/columnnotes_}
@@ -297,16 +297,15 @@
 %%%%% Front Matter PDF file(s) get included here %%%%%
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
-{document/ifdiglot}\diglotfalse
 \NoBodytrue
 {document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {frontincludes_}
+{document/ifdiglot}\diglotfalse
 \ptxfile{{{project/frontfile}}}
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
 \BodyColumns={paper/columns}     % But ensure it goes back to the chosen Single/Double setting for the main body text
-{document/ifdiglot}\diglottrue
 \useTOCone{document/usetoc1}
 \useTOCtwo{document/usetoc2}
 \useTOCthree{document/usetoc3}
@@ -317,6 +316,7 @@
 \XeTeXdefaultencoding "utf-8"
 \def\closeadjlist{{\relax}}
 \def\closepiclist{{\relax}}
+{document/ifdiglot}\diglottrue
 % job files:
 %\ptxfile{{PrintDraft/41MATprojid-draft.SFM}}
 

@@ -2267,11 +2267,13 @@
   \openin\t@mpfile="#1"
   \ifeof\t@mpfile\closein\t@mpfile
     \immediate\write-1{Optional file "#1" Cannot be found}%
+    \let\n@xt\relax
   \else
     \closein\t@mpfile
     \immediate\write-1{Reading optional file "#1"}%
-    \input "#1"
-  \fi}
+    \def\n@xt{\traceifset{#1}\input "#1"\traceifcheck{#1}}%
+  \fi
+  \n@xt}
 
 
 \def\includepdf{\@netimesetup % in case \ptxfile hasn't been used yet

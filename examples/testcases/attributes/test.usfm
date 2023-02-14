@@ -3,7 +3,7 @@
 \periph Hello|intro
 \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
 \zendperiph
-
+\ip Introductory paragraph. The \nd Lord\nd* is \em King\em*
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
@@ -41,7 +41,7 @@ consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit ess
 \s A test \w foo|demo\w* of word attributes
 \p
 \v 3b Now here is a \w link|link-href="Http://localhost"\w* and this isn't.
-\p
+\p\cat 70\cat*
 \v 4 At vero eos \bd et \+w gratuitous slash-w|akkumulator\+w* et iusto odio \bd*
 dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
@@ -51,9 +51,8 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to page \zpage|Spirit\*.
 \p
 \zmine-s\* 
-\s T 
-A test of a custom milestone
-\p 
+\s T A test of a custom milestone
+\p
 \v 6 Maybe this is disputed text or something \zmine-e\* but this isn't
 \v 7 And then \zmine2-s\* another type of custom milestone \zmine-s\* text\zmine-e\* \zmine2-e\*
 
@@ -63,7 +62,7 @@ A test of a custom milestone
 
 
 \c 3
-\p
+\p^102
 \v  1 There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:
 \v  2 The same came to Jesus by night, and said unto him, Rabbi, we know that
 thou art a teacher come from God: for no man can do these miracles that thou
@@ -99,3 +98,5 @@ I want paragraph 2 as a right-justified paragraph
 \zright-e\*
 \p I want paragraph 4 as a normal pargraph
 
+\p What happens if I put a slash in a \w word|lemma="attri\'bute" strongs="1234"\w* Surely not much?
+What about nested attributed words? \w \+pn like this word|type="underline"\+pn*|lemma="lemming" strongs="1234"\w*. It works..

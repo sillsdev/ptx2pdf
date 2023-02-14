@@ -222,6 +222,10 @@ class Diglot(Snippet):
 {diglot/ifletter}\newskip\intercharskipR \intercharskipR=0pt plus {diglot/letterstretch:.2f}em minus {diglot/lettershrink:.2f}em
 {diglot/ifletter}\def\letterspaceR{{\leavevmode\nobreak\hskip\intercharskipR}}
 {diglot/ifletter}\DefineActiveChar{{^^^^fdd1}}{{\letterspaceR}}
+{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
+{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
+{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
+{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 \catcode `@=12
 
 """

@@ -358,7 +358,7 @@ class PicInfo(dict):
                     pic['media'] = 'paw' if default is None else default
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
-        isperiph = bk in TexModel._peripheralBooks
+        isperiph = bk in TexModel._nonScriptureBooks
         with universalopen(fname) as inf:
             dat = inf.read()
             if isperiph:
