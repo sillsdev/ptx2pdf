@@ -662,7 +662,10 @@ class RunJob:
                     os.remove(opdffile)
                 if os.path.exists(ipdffile):
                     logger.debug(f"Rename {ipdffile} to {opdffile}")
-                    os.rename(ipdffile, opdffile)
+                    try:
+                        os.rename(ipdffile, opdffile)
+                    except OSError:
+                        pass
         if self.nothreads:
             self.run_xetex(outfname, pdffile, info)
         else:
