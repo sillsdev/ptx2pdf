@@ -1035,7 +1035,7 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True, categories=None):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
@@ -1822,10 +1822,18 @@ set stack_size=32768""".format(self.configName())
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
         self.localiseConfig(config)
-        self.loadConfig(config, updatebklist=False)
-        
+        self.loadConfig(config, updatebklist=False, categories=useCats)
+        cfgid = config.get("config", "name", fallback=None)
+        prjid = config.get("project", "id", fallback=None)
 
         # import pictures according to import settings
+        if self.get("c_impPics"):
+            otherpics = PicInfo()
+            picfile = "{}-{}.piclist".format(prjid, cfgid)
+            with zipfile.open(picfile) as inf:
+                otherpics.read_piclist(inf, "B")
+            fields = {x[6:]: self.get(x) for x in ModelMap.keys if x.startswith("c_pic_")}
+            self.picinfos.merge_fields(otherpics, **fields)
 
         # merge ptxprint.sty adding missing
 

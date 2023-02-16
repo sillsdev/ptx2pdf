@@ -14,6 +14,12 @@ _defaults = {
     'scale':    "1.000"
 }
 
+_parmCategories = {
+    "Caption": ["caption", "captionR"],
+    "SizePosn": ["pgpos", "mirror", "scale"],
+    "CopyRight": ["copy"]
+}
+
 _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
 def newBase(fpath):
@@ -260,6 +266,7 @@ class PicInfo(dict):
                             break
                 del indat[k]
 
+
     def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
         for bk, bkp in bks.items():
@@ -295,32 +302,37 @@ class PicInfo(dict):
     def read_piclist(self, fname, suffix=""):
         if not os.path.exists(fname):
             return
-        with universalopen(fname) as inf:
-            for l in (x.strip() for x in inf.readlines()):
-                if not len(l) or l.startswith("%"):
-                    continue
-                m = l.split("|")
-                r = m[0].split(maxsplit=2)
-                if not len(r):  # no id, what to do? Ignore entry? Create an id?
-                    continue    # skip the entry. Pretty radical.
-                if suffix.startswith("B"):
-                    s = r[0][3:4] or suffix[1:]
-                else:
-                    s = suffix
-                if len(r) > 1:
-                    k = "{}{} {}".format(r[0][:3], s, r[1])
-                else:
-                    k = "{}{}".format(r[0], s)
-                pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
-                self[self.newkey(suffix)] = pic
-                if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
-                    for i, f in enumerate(m[1:]):
-                        if i < len(posparms)-1:
-                            pic[posparms[i+1]] = f
-                    self._fixPicinfo(pic)
-                else: # otherwise USFM3, so find all the named params
-                    for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
-                        pic[d[0]] = d[1]
+        if isinstance(fname, str):
+            inf = universalopen(fname)
+        else:
+            inf = fname
+        for l in (x.strip() for x in inf.readlines()):
+            if not len(l) or l.startswith("%"):
+                continue
+            m = l.split("|")
+            r = m[0].split(maxsplit=2)
+            if not len(r):  # no id, what to do? Ignore entry? Create an id?
+                continue    # skip the entry. Pretty radical.
+            if suffix.startswith("B"):
+                s = r[0][3:4] or suffix[1:]
+            else:
+                s = suffix
+            if len(r) > 1:
+                k = "{}{} {}".format(r[0][:3], s, r[1])
+            else:
+                k = "{}{}".format(r[0], s)
+            pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
+            self[self.newkey(suffix)] = pic
+            if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
+                for i, f in enumerate(m[1:]):
+                    if i < len(posparms)-1:
+                        pic[posparms[i+1]] = f
+                self._fixPicinfo(pic)
+            else: # otherwise USFM3, so find all the named params
+                for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
+                    pic[d[0]] = d[1]
+        if isinstance(fname, str):
+            inf.close()
         self.rmdups()
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):

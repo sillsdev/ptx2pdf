@@ -524,13 +524,16 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def _doptxfile(self, fname, dname):
+    def _doptxfile(self, fname, dname, beforelast):
         res = []
         if dname is not None:
             res.append(r"\zglot|L\*")
+        else:
+            res.extend(beforelast)
         res.append(r"\ptxfile{{{}}}".format(fname))
         if dname is not None:
             res.append(r"\zglot|R\*")
+            res.extend(beforelast)
             res.append(r"\ptxfile{{{}}}".format(dname))
             res.append(r"\zglot|\*")
         return res
@@ -569,6 +572,7 @@ class TexModel:
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
                         dname = None
+                        beforelast = []
                         if digtexmodel is not None and f in self._nonScriptureBooks:
                             dname = digtexmodel.dict['project/books'][i]
                         elif extra != "":
@@ -578,10 +582,9 @@ class TexModel:
                             if len(inserttext):
                                 res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
                         if i == len(self.dict['project/bookids']) - 1: 
-                          res.append(r"\lastptxfiletrue")
-                          if self.dict['project/ifcolophon'] == "":
-                            if self.dict['project/pgbreakcolophon'] != '%':
-                               res.append(r"\endbooknoejecttrue")
+                            beforelast.append(r"\lastptxfiletrue")
+                            if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
+                                beforelast.append(r"\endbooknoejecttrue")
                         if not resetPageDone and f not in self._nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
@@ -591,16 +594,16 @@ class TexModel:
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname), beforelast)
                             res.append(r"\OmitChapterNumberfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname), beforelast)
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname), beforelast)
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])

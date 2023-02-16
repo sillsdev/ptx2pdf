@@ -575,8 +575,7 @@ class UnzipDir:
         for dp, dn, fn in os.walk(self.dir):
             for f in fn:
                 fp = os.path.join(dp, f)
-                dt = time.localtime(os.stat(os.path.join(self.dir, fp)).st_mtime)[0:6]
-                res.append(ZipInfo(fp, dt))
+                res.append(ZipInfo.from_file(os.path.join(self.dir, fp), arcname=fp))
         return res
 
     def namelist(self):

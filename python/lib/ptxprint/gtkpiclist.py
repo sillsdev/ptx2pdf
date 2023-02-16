@@ -312,6 +312,7 @@ class PicList:
             i = len(self.model) - 1
         if i >= 0:
             treeiter = self.model.get_iter_from_string(str(i))
+            self.selection.unselect_all()
             self.selection.select_iter(treeiter)
 
     def mask_media(self, row):
@@ -446,17 +447,18 @@ class PicList:
     def add_row(self):
         global newrowcounter
         model, sel = self.selection.get_selected_rows()
-        if sel is not None and len(sel):
-            sel = model.convert_path_to_child_path(sel[0])
-        if sel is not None and len(self.model) > 0:
-            row = self.model[self.model.get_iter(sel)][:]
-        else:
-            row = self.get_row_from_items()
+        #if sel is not None and len(sel):
+        #    sel = model.convert_path_to_child_path(sel[0])
+        #if sel is not None and len(self.model) > 0:
+        #    row = self.model[self.model.get_iter(sel)][:]
+        #else:
+        row = self.get_row_from_items()
         row[_pickeys['key']] = "row{}".format(newrowcounter)
         logger.debug(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
         newrowcounter += 1
         self.coremodel.append(row)
         self.select_row(len(self.model)-1)
+        self.row_select(self.selection)
 
     def del_row(self):
         model, paths = self.selection.get_selected_rows()
