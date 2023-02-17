@@ -1229,7 +1229,8 @@ class GtkViewModel(ViewModel):
             Gtk.main_iteration_do(False)
         
     def setPrintBtnStatus(self, idnty, txt=""):
-        if not txt:
+        logger.debug(f"{idnty=} {len(txt) if txt is not None else 'None'} {getcaller(1)}")
+        if txt is None or not len(txt):
             self.printReason &= ~idnty
         else:
             self.printReason |= idnty
@@ -1242,6 +1243,7 @@ class GtkViewModel(ViewModel):
         self.setPrintBtnStatus(4, "")
         for f in ['R','B','I','BI']:
             if self.get("bl_font" + f) is None:
+                logger.debug(f"bl_font: {f} is None. {getcaller()}")
                 self.setPrintBtnStatus(4, _("Font(s) not set"))
                 return True
         return False
@@ -3033,6 +3035,7 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
+        self.checkFontsMissing()
         logger.debug(f"Changed project to {prjid} {configName=}")
 
     def enableTXLoption(self):
@@ -3070,7 +3073,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
         cpath = self.configPath(cfgname=self.configName(), makePath=False)
         if cpath is not None and os.path.exists(cpath):
-            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
+            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName(), readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
 
     def onConfigKeyPressed(self, btn, *a):

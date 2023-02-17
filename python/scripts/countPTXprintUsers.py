@@ -82,11 +82,9 @@ def age(filepath):
     try:
         info = os.lstat(filepath)
     except FileNotFoundError:
-        # print(f"FILE NOT FOUND: {str(filepath)}")
         return 9999
     created = dt.datetime.fromtimestamp(info.st_mtime)
     ageInDays = (now-created).days
-    # print(f"{filepath} {ageInDays}")
     return ageInDays
 
 def categorizeByAge(filepath, countdict):
@@ -129,7 +127,6 @@ parser.add_argument("-o", "--outfile", default="PTxprintUsageStats.json", help="
 parser.add_argument("-a", "--all", action="store_true", help="Process ALL projects, not just Standard translation type")
 parser.add_argument("-p", "--pdfs", action="store_true", help="Also count how many PDFs were produced (only possible if Local)")
 parser.add_argument("-v", "--byverse", action="store_true", help="Verse-level granularity instead of by chapter")
-# parser.add_argument("-s", "--scripts", action="store_true", help="Also produce count of the 10 Indic scripts")
 args = parser.parse_args()
 # -------------------------------------------------------------------------------------------
 # This is where the main work is done - cycle through all the folders looking for valid projects
@@ -177,7 +174,7 @@ for d in os.listdir(args.indir):
         # totalPages = 0
         cfgCount = 0
         # Initialize the "latest" file so there is something to compare with
-        # latestConfig = args.indir
+        # [need to find a file that is older than PTXprint itself]
         latestConfig = os.path.join(args.indir, "eng.vrs")
         incHashRef(ptxpusers, "Using PTXprint")
         for cfg in os.listdir(shrptxp):
@@ -225,11 +222,6 @@ for d in os.listdir(args.indir):
     # except: OSError:
         # pass
 
-# To flip the structure to be ref-based instead of img-based
-# for pic, dat in img2ref.items():
-    # for k, v in dat.items():
-        # ref2img.setdefault(k, {})[pic]=v
-        
 print("\nWriting JSON file:", args.outfile)
 writeFile(args.outfile, NumberOfProjects=ptxpusers, projectypes=prjtypes, PDFtypes=pdftypes, PDFsizes=pdfsizes, PDFages=pdfage, ConfigAge=cfgage, LastUse=lastuse)
 print("Done harvesting PTXprint Usage statistics.")
@@ -252,5 +244,6 @@ if args.pdfs:
 print("\n")
 print(prjtypes)
 
+# Other specific questions that we could answer IF we query the .cfg files
 # How many are diglots?
 # How many are interlinear?
