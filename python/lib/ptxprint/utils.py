@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Bump this number up in order to reset everyone's Cached files
-DataVersion = 5
+DataVersion = 6
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -48,6 +48,8 @@ _allbooks = ["FRT", "INT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
+
+nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
 
 def booknum(bookcode):
     if len(bookcode):

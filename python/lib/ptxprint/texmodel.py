@@ -10,7 +10,7 @@ from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path
+                            runChanges, booknumbers, Path, nonScriptureBooks
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -45,7 +45,6 @@ Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 pa
 
 
 class TexModel:
-    _nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -573,7 +572,7 @@ class TexModel:
                         fname = self.dict['project/books'][i]
                         dname = None
                         beforelast = []
-                        if digtexmodel is not None and f in self._nonScriptureBooks:
+                        if digtexmodel is not None and f in nonScriptureBooks:
                             dname = digtexmodel.dict['project/books'][i]
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
@@ -585,7 +584,7 @@ class TexModel:
                             beforelast.append(r"\lastptxfiletrue")
                             if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
                                 beforelast.append(r"\endbooknoejecttrue")
-                        if not resetPageDone and f not in self._nonScriptureBooks: 
+                        if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
@@ -1137,7 +1136,7 @@ class TexModel:
         if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
             self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
             
-        if self.asBool("document/ifinclfigs") and bk in self._nonScriptureBooks:
+        if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
@@ -1177,7 +1176,7 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
         # By default, HIDE chapter numbers for all non-scripture (Peripheral) books (unless "Show... is checked)
-        if not self.asBool("document/showxtrachapnums") and bk in TexModel._nonScriptureBooks:
+        if not self.asBool("document/showxtrachapnums") and bk in nonScriptureBooks:
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?\r?\n)", flags=regex.M), ""))
 
         if self.asBool("document/ch1pagebreak"):
@@ -1248,7 +1247,7 @@ class TexModel:
                     self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
-        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in self._nonScriptureBooks \
+        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
            and self.dict["fancy/endofbookpdf"].lower().endswith('.pdf'):
             self.localChanges.append((None, regex.compile(r"\Z", flags=regex.M), r"\r\n\z"))
         
@@ -1266,7 +1265,7 @@ class TexModel:
                 self.dict[k] = self.printer.get(c[0])
                 v = c[1](self.dict[k])
             if v: # if the c_checkbox is true then extend the list with those changes
-                if k == "snippets/fancyintro" and bk in self._nonScriptureBooks: # Only allow fancyIntros for scripture books
+                if k == "snippets/fancyintro" and bk in nonScriptureBooks: # Only allow fancyIntros for scripture books
                     pass
                 else:
                     self.localChanges.extend(c[2].regexes)
@@ -1332,7 +1331,7 @@ class TexModel:
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.dict["/ptxpath"], prjid)
         for bk in printer.getBooks():
-            if bk not in TexModel._nonScriptureBooks:
+            if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
                 fpath = os.path.join(prjdir, fname)
                 if os.path.exists(fpath):

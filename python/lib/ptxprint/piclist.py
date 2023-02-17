@@ -1,6 +1,5 @@
 
-from ptxprint.utils import refKey, universalopen, print_traceback
-from ptxprint.texmodel import TexModel
+from ptxprint.utils import refKey, universalopen, print_traceback, nonScriptureBooks
 from threading import Thread
 import configparser
 import regex, re
@@ -243,7 +242,7 @@ class PicInfo(dict):
             return False
         return True
 
-    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None, nonMergedBooks=None):
         ''' Used for merging piclists from diglots into the main piclist'''
         if indat is None:
             indat = self
@@ -254,7 +253,7 @@ class PicInfo(dict):
             if v['anchor'][3:].startswith(tgtpre):
                 tgts.setdefault(v['anchor'][:3] + ("" if bkanchors else v['anchor'][3+len(tgtpre):]), []).append(v)
         for k, v in list(indat.items()):
-            if v['anchor'][3:].startswith(srcpre):
+            if v['anchor'][3:].startswith(srcpre) and (nonMergedBooks is None or v['anchor'][:3] not in nonMergedBooks):
                 a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
                 if mergeCaptions:
                     for s in tgts.get(a, []):
@@ -370,7 +369,7 @@ class PicInfo(dict):
                     pic['media'] = 'paw' if default is None else default
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
-        isperiph = bk in TexModel._nonScriptureBooks
+        isperiph = bk in nonScriptureBooks
         with universalopen(fname) as inf:
             dat = inf.read()
             if isperiph:

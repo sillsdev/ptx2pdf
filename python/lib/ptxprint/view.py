@@ -6,7 +6,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges, coltoonemax
+                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -1184,9 +1184,9 @@ class ViewModel:
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                  self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
             if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn)
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
             elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn)
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):

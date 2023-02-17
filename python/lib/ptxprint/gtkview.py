@@ -1813,12 +1813,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
         self.updatePicList()
 
-    def _getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
-        if self.picListView.isEmpty():
-            return super()._getFigures(bk, suffix=suffix, sfmonly=sfmonly, media=media,
-                                      usepiclists=usepiclists)
-        return self.picListView.getinfo()
-
     def updatePicList(self, bks=None, priority="Both", output=False):
         super().updatePicList(bks=bks, priority=priority, output=output)
         if self.picinfos is None:
@@ -1843,7 +1837,6 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
-        # import pdb; pdb.set_trace()
         if self.diglotView is not None:
             pref = "L"
             digpics = PicInfo(self.diglotView)
