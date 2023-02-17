@@ -1184,9 +1184,9 @@ class ViewModel:
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                  self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
             if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
             elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
