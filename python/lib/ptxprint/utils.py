@@ -281,6 +281,12 @@ elif sys.platform == "win32":
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
+def saferelpath(p, r="."):
+    try:
+        return os.path.relpath(p, r)
+    except ValueError:
+        return p
+
 def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))
 

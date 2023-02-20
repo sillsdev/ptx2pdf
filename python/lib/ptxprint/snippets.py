@@ -2,7 +2,7 @@ import re, os
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
-from .utils import pycodedir, htmlprotect
+from .utils import pycodedir, htmlprotect, saferelpath
 
 class Snippet:
     order = 0
@@ -176,10 +176,10 @@ class PDFx1aOutput(Snippet):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             res += "\\Actionsfalse\n"
         if pdftype in ("Screen", "Digital"):
-            model.dict["/iccfpath"] = os.path.relpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
+            model.dict["/iccfpath"] = saferelpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "3"
         if pdftype == "Gray":
-            model.dict['/iccfpath'] = os.path.relpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
+            model.dict['/iccfpath'] = saferelpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"
