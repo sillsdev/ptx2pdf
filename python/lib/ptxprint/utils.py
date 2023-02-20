@@ -284,7 +284,7 @@ elif sys.platform == "win32":
 def saferelpath(p, r="."):
     try:
         return os.path.relpath(p, r)
-    except ValueError:
+    except ValueError:      # different drives on Windows
         return p
 
 def pycodedir():

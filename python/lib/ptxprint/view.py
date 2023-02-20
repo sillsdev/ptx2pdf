@@ -1173,7 +1173,7 @@ class ViewModel:
             procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
-        mrgCptn = self.get("c_diglot2captions")
+        mrgCptn = self.get("c_diglot2captions", False)
         if self.diglotView is None:
             PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
         else:
@@ -1184,9 +1184,9 @@ class ViewModel:
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                  self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
             if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
             elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1213,7 +1213,12 @@ class ViewModel:
             res = self.picinfos.load_files(self, suffix="L")
             digpicinfos = PicInfo(self.diglotView)
             if digpicinfos.load_files(self.diglotView, suffix="R"):
-                self.picinfos.merge("L", "R", digpicinfos, mergeCaptions=self.get("c_diglot2captions", False))
+                mrgCptn = self.get("c_diglot2captions", False)
+                mode = self.get("fcb_diglotPicListSources")
+                if mode == "pri":
+                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+                elif mode == "sec":
+                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
         if res:
             self.savePics(fromdata=fromdata)
         elif mustLoad:
