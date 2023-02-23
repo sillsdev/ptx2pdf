@@ -668,13 +668,19 @@ class ViewModel:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
 
-    def picMedia(self, src):
+    def picMedia(self, src, loc=None):
         if self.copyrightInfo is None:
             self.readCopyrights()
+        if loc is not None and any(x not in 'paw' for x in loc):
+            loc = None
         m = re.match(self.getPicRe(), src)
         if m is not None and m.group(1).lower() in self.copyrightInfo['copyrights']:
             media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
-            return (media['default'], media['limit'])
+            limit = media['limit']
+            default = media['default']
+            if loc is not None and len(loc):
+                default = "".join(x for x in loc if x in limit)
+            return (default, limit)
         return (None, None)
     
     def configFRT(self):

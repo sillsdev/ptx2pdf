@@ -365,7 +365,7 @@ class PicInfo(dict):
                     k,v = l.split("=")
                     pic[k.strip()] = v.strip('"')
                 if 'media' not in pic:
-                    default, limit = parent.picMedia(pic.get('src', ''))
+                    default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                     pic['media'] = 'paw' if default is None else default
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
