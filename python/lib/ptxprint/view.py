@@ -6,7 +6,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks
+                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -1184,9 +1184,9 @@ class ViewModel:
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                  self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
             if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
             elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1216,9 +1216,9 @@ class ViewModel:
 #                mrgCptn = self.get("c_diglot2captions", False)
 #                mode = self.get("fcb_diglotPicListSources")
 #                if mode == "pri":
-#                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+#                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
 #                elif mode == "sec":
-#                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+#                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         if res:
             self.savePics(fromdata=fromdata)
         elif mustLoad:
@@ -1576,7 +1576,7 @@ class ViewModel:
 
         # config files - take the whole tree even if not needed
         for dp, dn, fn in os.walk(basecfpath):
-            op = os.path.join(cfpath, os.path.relpath(dp, basecfpath))
+            op = os.path.join(cfpath, saferelpath(dp, basecfpath))
             for f in fn:
                 if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != basecfpath:
                     res[os.path.join(dp, f)] = os.path.join(op, f)
@@ -1659,13 +1659,13 @@ class ViewModel:
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
-                outfname = os.path.relpath(pf, self.settings_dir)
+                outfname = saferelpath(pf, self.settings_dir)
                 zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(os.path.relpath(dp, ptxmacrospath), f))
+                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
         if res:

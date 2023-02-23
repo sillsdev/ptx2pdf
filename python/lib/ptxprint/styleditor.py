@@ -2,7 +2,7 @@
 import re, os
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path
+from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath
 from copy import deepcopy
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
@@ -140,7 +140,7 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
 def fromFileName(self, v, mrk=None, model=None):
     if model is not None:
         rpath = model.configPath()
-        return os.path.abspath(os.path.relpath(v, rpath))
+        return os.path.abspath(saferelpath(v, rpath))
     else:
         return v
 
