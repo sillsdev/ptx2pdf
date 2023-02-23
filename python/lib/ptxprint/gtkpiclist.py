@@ -134,9 +134,9 @@ class PicList:
                     elif e == "media":
                         val = v.get(e, None)
                         if val is None:
-                            val = self.view.picMedia(v.get('src', ''))[0]
+                            val = self.parent.picMedia(v.get('src', ''))[0]
                         else:
-                            limit = self.view.picMedia(v.get('src',''))[1]
+                            limit = self.parent.picMedia(v.get('src',''))[1]
                             val = "".join(x for x in val if x in limit)
                     else:
                         val = v.get(e, "")

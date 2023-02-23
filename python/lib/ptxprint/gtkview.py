@@ -4506,6 +4506,7 @@ class GtkViewModel(ViewModel):
         
     def onSBimageClicked(self, btn):
         btname = Gtk.Buildable.get_name(btn)
+        self.set("lb_sbFilename", "")
         isbg = btname == "btn_sbBGIDia"
         self.styleEditor.sidebarImageDialog(isbg)
         
