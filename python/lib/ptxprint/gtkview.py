@@ -1632,7 +1632,7 @@ class GtkViewModel(ViewModel):
         for wid in wids:
             w = self.builder.get_object(wid)
             if w is None:
-                return
+                continue
             if lock and not editableOverride:
                 if w.get_sensitive():
                     self.locked.add(wid)

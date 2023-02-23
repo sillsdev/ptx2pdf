@@ -184,7 +184,7 @@ class ViewModel:
         elif dest == "strongs":
             return self.strongsvars.get(k, default)
 
-    def setvar(self, k, v, dest=None, **kw):
+    def setvar(self, k, v, dest=None, editable=True, colour=None, **kw):
         if dest is None:
             self.pubvars[k] = v
         elif dest == "strongs":
@@ -721,7 +721,7 @@ class ViewModel:
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
-                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
+                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser(interpolation=None)
@@ -1091,7 +1091,7 @@ class ViewModel:
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect in ("vars", "strongsvar"):
-                    if opt is not None and opt.startswith("*"):
+                    if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
                     else:
                         setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, None)
