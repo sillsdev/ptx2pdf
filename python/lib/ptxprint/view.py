@@ -1210,15 +1210,15 @@ class ViewModel:
         if self.diglotView is None:
             res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(self, suffix="L")
-            digpicinfos = PicInfo(self.diglotView)
-            if digpicinfos.load_files(self.diglotView, suffix="R"):
-                mrgCptn = self.get("c_diglot2captions", False)
-                mode = self.get("fcb_diglotPicListSources")
-                if mode == "pri":
-                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
-                elif mode == "sec":
-                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+            res = self.picinfos.load_files(self, suffix="B")
+#            digpicinfos = PicInfo(self.diglotView)
+#            if digpicinfos.load_files(self.diglotView, suffix="R"):
+#                mrgCptn = self.get("c_diglot2captions", False)
+#                mode = self.get("fcb_diglotPicListSources")
+#                if mode == "pri":
+#                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
+#                elif mode == "sec":
+#                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonScriptureBooks=nonScriptureBooks)
         if res:
             self.savePics(fromdata=fromdata)
         elif mustLoad:
