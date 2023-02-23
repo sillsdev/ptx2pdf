@@ -1624,16 +1624,22 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
     def paintLock(self, wid, lock, editableOverride):
-        w = self.builder.get_object(wid)
-        if w is None:
-            return
-        if lock and not editableOverride:
-            if w.get_sensitive():
-                self.locked.add(wid)
-                w.set_sensitive(False)
-        elif editableOverride:
-            self.painted.add(wid)
-            w.get_style_context().add_class("highlighted")
+        wids = []
+        if wid.startswith("r_"):
+            wids = ["{}_{}".format(wid, v) for v in self.radios.get(wid[2:], [])]
+        if not len(wids):
+            wids = [wid]
+        for wid in wids:
+            w = self.builder.get_object(wid)
+            if w is None:
+                return
+            if lock and not editableOverride:
+                if w.get_sensitive():
+                    self.locked.add(wid)
+                    w.set_sensitive(False)
+            elif editableOverride:
+                self.painted.add(wid)
+                w.get_style_context().add_class("highlighted")
 
     def unpaintUnlock(self):
         for wid in self.painted:
