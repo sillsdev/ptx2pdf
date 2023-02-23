@@ -680,7 +680,7 @@ class ViewModel:
             default = media['default']
         else:
             limit = "paw"
-            default = None
+            default = "paw"
         if loc is not None and len(loc):
             default = "".join(x for x in loc if x in limit)
         return (default, limit)
