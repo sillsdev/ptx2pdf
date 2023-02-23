@@ -678,10 +678,12 @@ class ViewModel:
             media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
             limit = media['limit']
             default = media['default']
-            if loc is not None and len(loc):
-                default = "".join(x for x in loc if x in limit)
-            return (default, limit)
-        return (None, None)
+        else:
+            limit = "paw"
+            default = None
+        if loc is not None and len(loc):
+            default = "".join(x for x in loc if x in limit)
+        return (default, limit)
     
     def configFRT(self):
         return os.path.join(self.configPath(self.configName()), "FRTlocal.sfm")
