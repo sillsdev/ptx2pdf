@@ -8503,7 +8503,7 @@ in the Strong's index when it is generated.</property>
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">6</property>
-                    <property name="width">2</property>
+                    <property name="width">3</property>
                   </packing>
                 </child>
                 <child>
@@ -8715,7 +8715,7 @@ c) Use the Biblical Term's definition (in English)</property>
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">10</property>
-                    <property name="width">2</property>
+                    <property name="width">3</property>
                     <property name="height">2</property>
                   </packing>
                 </child>
@@ -8843,6 +8843,7 @@ to the term rendering(s).</property>
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">7</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
@@ -8864,7 +8865,7 @@ these from showing in the Strong's index.</property>
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">9</property>
-                    <property name="width">2</property>
+                    <property name="width">3</property>
                   </packing>
                 </child>
                 <child>
@@ -9185,6 +9186,7 @@ unbalanced lines on the page.</property>
                   <packing>
                     <property name="left-attach">1</property>
                     <property name="top-attach">12</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
                 <child>
@@ -9193,30 +9195,15 @@ unbalanced lines on the page.</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">This is the Description field from the
+project's Biblical Terms renderings.</property>
+                    <property name="margin-end">6</property>
                     <property name="draw-indicator">True</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
                     <property name="top-attach">8</property>
                   </packing>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
-                </child>
-                <child>
-                  <placeholder/>
                 </child>
                 <child>
                   <placeholder/>
