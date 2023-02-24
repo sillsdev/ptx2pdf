@@ -53,10 +53,6 @@ constraints = {
     'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone', 'Standalone', ''),
     'fontsize': _CRange(1.),
     'fontscale': _CRange(0.1),
-    'italic': _CEnum('', '-'),
-    'bold': _CEnum('', '-'),
-    'superscript': _CEnum('', '-'),
-    'smallcaps': _CEnum('', '-'),
     'raise': _CNot(_CValue(0.)),
     'linespacing': _CRange(0.05),
 }
