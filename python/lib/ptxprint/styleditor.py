@@ -48,9 +48,9 @@ class _CNot:
         return not v in self.constraint
 
 constraints = {
-    'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other',
-                        'ChapterNumber', 'VerseNumber'),
-    'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone'),
+    'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
+                        'ChapterNumber', 'VerseNumber', 'Unspecified', 'Standalone'),
+    'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone', 'Standalone', ''),
     'fontsize': _CRange(1.),
     'fontscale': _CRange(0.1),
     'italic': _CEnum('', '-'),
