@@ -3919,11 +3919,20 @@ settings for a similar project.</property>
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkRadioButton" id="r_impSource_pdf">
-                            <property name="label" translatable="yes">An Existing PDF file (which has PTXprint settings within it)</property>
-                            <property name="name">Import: From existing PDF file</property>
+                            <property name="label" translatable="yes">PDF file or ZIP archive (with PTXprint settings)</property>
+                            <property name="name">Import: From existing PDF file or ZIP archive</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">Even though it sounds strange, it is possible to
+import the settings from an existing PDF file
+which was produced earlier by PTXprint. But 
+this only works if the PDF contains the settings
+(as can be enabled on the Finishing tab).
+
+Importing from a PTXprint ZIP archive is
+another valid option (these are created
+on the Help tab).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -4044,9 +4053,11 @@ settings will be imported.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Select a PDF to import the settings from.
-Note that this will only work if the PDF
-contains the PTXprint configuration
+                            <property name="tooltip-text" translatable="yes">Select either a PTXprint PDF or ZIP archive
+to import the settings from.
+
+Importing from a PDF will only work if the
+PDF contains the PTXprint configuration
 settings (as enabled on the Finishing tab).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
@@ -4063,7 +4074,7 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="label" translatable="yes">Path to PDF file.</property>
+                            <property name="label" translatable="yes">Path to PDF file of ZIP archive.</property>
                             <property name="ellipsize">middle</property>
                             <attributes>
                               <attribute name="foreground" value="#5e5e5c5c6464"/>
@@ -10535,11 +10546,9 @@ for this configuration.</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">When Config is UNLOCKED:
 Click to set a password to prevent
-anyone from deleting the saved
-settings. It also prevents changes
-being made to this configuration
-and then being re-saved with the
-same name.
+anyone from accidentally changing
+the saved settings or deleting the
+configuration.
 
 When Config is LOCKED:
 Click to enter the password to unlock this
@@ -31307,7 +31316,7 @@ runs.</property>
                             <property name="column-spacing">3</property>
                             <child>
                               <object class="GtkComboBox" id="fcb_outputFormat">
-                                <property name="name">PDF output format</property>
+                                <property name="name">PDF output format (Screen, RGB, CMYK, B/W, spot)</property>
                                 <property name="width-request">150</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
