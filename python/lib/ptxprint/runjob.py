@@ -350,10 +350,19 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
-        elif self.res > 2:
+        elif self.res == 3:
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary=_("Faulty PDF, could not parse") if self.res == 3 else \
-                              _("Bad xdvi file, probably failed to load a picture or font"),
+                    secondary=_("Faulty PDF, could not parse"),
+                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
+        elif self.res == 4:
+            logpath = os.path.join(self.tmpdir, outfname.replace(".tex", ".xdvi_log"))
+            if os.path.exists(logpath):
+                with open(logpath) as inf:
+                    loglines = inf.readlines()
+            else:
+                loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary="".join(loglines[-10:]),
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
@@ -759,11 +768,12 @@ class RunJob:
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             tmppdf = self.procpdfFile(outfname, pdffile, info)
-            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-o", tmppdf]
+            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
-            cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
-            runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir)
+            #cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
+            with open(outfname.replace(".tex", ".xdvi_log"), "w") as outf:
+                runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, stdout=outf, stderr=outf)
             logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")
