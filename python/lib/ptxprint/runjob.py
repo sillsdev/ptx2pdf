@@ -351,8 +351,11 @@ class RunJob:
                             title=_("PTXprint [{}] - Warning!").format(VersionStr),
                             threaded=True)
 
-        elif self.res == 3:
-            pass
+        elif self.res > 2:
+            self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
+                    secondary=_("Faulty PDF, could not parse") if self.res == 3 else \
+                              _("Bad xdvi file, probably failed to load a picture or font"),
+                    title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
@@ -771,7 +774,9 @@ class RunJob:
                     #runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
-                    self.res = runner.returncode
+                self.res = runner.returncode or 4
+            else:
+                self.res = runner or 4
             if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
