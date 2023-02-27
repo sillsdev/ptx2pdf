@@ -318,7 +318,6 @@ class RunJob:
                 ndiffcolor = self.printer.get("col_ndiffColor")
                 odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
-                # import pdb; pdb.set_trace()
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
                     diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor)
@@ -774,9 +773,9 @@ class RunJob:
                     #runner.wait(self.args.timeout)
                 except subprocess.TimeoutExpired:
                     print("Timed out!")
-                self.res = runner.returncode or 4
+                self.res = 4 if runner.returncode else 0
             else:
-                self.res = runner or 4
+                self.res = 4 if runner else 0
             if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
