@@ -777,7 +777,7 @@ class RunJob:
                 self.res = runner.returncode or 4
             else:
                 self.res = runner or 4
-            if not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
+            if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
 
