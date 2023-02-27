@@ -411,7 +411,7 @@
 %\notlocation{zuseperiph}
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
 \def\m@kenumb@r#1={\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
-\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{ #2}}
+\def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
 \x@\def\csname MS:zrule\endcsname{%
   \endgraf
   \bgroup
@@ -595,6 +595,31 @@
 
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
+
+\x@\def\csname MS:zifhook\endcsname{%
+  %Check to see if there are start/end hooks for the specified marker
+  %and run the appropriate text / command
+  \get@ttribute{marker}%
+  \ifx\attr@b\relax
+    \trace{m}{zifhook: no attribute supplied!}%
+  \else
+    \tempfalse
+    \ifcsname begin-\attr@b\endcsname\temptrue\fi
+    \ifcsname start-\attr@b\endcsname\temptrue\fi
+    \ifcsname end-\attr@b\endcsname\temptrue\fi
+    \ifcsname after-\attr@b\endcsname\temptrue\fi
+    \trace{m}{zifhook: [\attr@b] = \iftemp true\else false\fi}%
+    \tracingassigns=1
+    \iftemp
+      \gdef\ztruetext##1\ztruetext*{\r@gurgitatedtrue\p@sheof\scantokens{##1}\p@peof\r@gurgitatedfalse}%
+      \gdef\zfalsetext##1\zfalsetext*{}%
+    \else
+      \gdef\ztruetext##1\ztruetext*{}%
+      \gdef\zfalsetext##1\zfalsetext*{\r@gurgitatedtrue\scantokens{##1}\r@gurgitatedfalse}%
+    \fi
+    \tracingassigns=0
+  \fi
+}
 
 %ISBN and barcode routines
 %
