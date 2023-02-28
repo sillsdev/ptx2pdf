@@ -362,6 +362,8 @@ class StyleEditorView(StyleEditor):
             old['LineSpacing'] = "1"
             if 'LineSpacing' not in data and 'BaseLine' not in data:
                 data['LineSpacing'] = "1"
+        oldisLoading = self.isLoading
+        self.isLoading = True
         for k, v in stylemap.items():
             if k == 'Marker':
                 val = "\\" + self.marker
@@ -463,7 +465,7 @@ class StyleEditorView(StyleEditor):
                             pgname = usfmpgname.get(urlmkr[:i])
                             continue
                 self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
-        self.isLoading = False
+        self.isLoading = oldisLoading
         # Sensitize font size, line spacing, etc. for \paragraphs
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
