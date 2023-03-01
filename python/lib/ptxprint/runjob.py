@@ -572,7 +572,7 @@ class RunJob:
             else:
                 texfiles += [left, right]
 
-        if info['project/iffrontmatter'] != '%':
+        if info['project/iffrontmatter'] != '%' or info["project/sectintros"]:
             diginfo.addInt()
         
         if not len(donebooks) or not len(digdonebooks):
@@ -618,6 +618,8 @@ class RunJob:
             frtfname = os.path.join(self.tmpdir, outfname.replace(".tex", "_FRT.SFM"))
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
+        if info["project/sectintros"]:
+            info.addInt()
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:

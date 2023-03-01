@@ -268,6 +268,8 @@ class ViewModel:
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
+                    elif b.first.book == "INT":
+                        pass
                     else:
                         res.append(b)
             res.simplify(sort=False)

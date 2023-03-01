@@ -1490,7 +1490,7 @@ class GtkViewModel(ViewModel):
         # if self.ptsettings is not None:
         bks = self.getAllBooks()
         for b in bks:
-            if b != "FRT": # We no longer list the FRT book in the book chooser(s)
+            if b not in ("FRT", "INT"): # We no longer list the FRT book in the book chooser(s)
                 # ind = books.get(b, 0)-1
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])

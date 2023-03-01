@@ -480,17 +480,15 @@ class TexModel:
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
-    def _getinsert(self, bk):
+    def _getinsertname(self, bk):
         res = []
         bki = booknumbers.get(bk, 200)
         for b, i in self._bookinserts:
             r = [booknumbers[s] for s in b.split("-")]
             if i not in self.inserts and r[0] <= bki <= r[1]:
                 self.inserts[i] = bk
-                t = self._doperiph(i)
-                if t != "":
-                    res.append(t)
-        return "\n".join(res)
+                return i
+        return ""
 
     def prep_pdfs(self, files, restag="frontIncludes_", file_dir="."):
         # for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
@@ -524,17 +522,17 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def _doptxfile(self, fname, dname, beforelast):
+    def _doptxfile(self, fname, dname, template, beforelast):
         res = []
         if dname is not None:
             res.append(r"\zglot|L\*")
         else:
             res.extend(beforelast)
-        res.append(r"\ptxfile{{{}}}".format(fname))
+        res.append(template.format(fname))
         if dname is not None:
             res.append(r"\zglot|R\*")
             res.extend(beforelast)
-            res.append(r"\ptxfile{{{}}}".format(dname))
+            res.append(template.format(dname))
             res.append(r"\zglot|\*")
         return res
 
@@ -578,9 +576,11 @@ class TexModel:
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if self.dict.get('project/sectintros'):
-                            inserttext = self._getinsert(f)
-                            if len(inserttext):
-                                res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
+                            insertname = self._getinsertname(f)
+                            if len(insertname):
+                                res.append(r"\prepusfm\n")
+                                res.extend(self._doptxfile(insertname, insertname, r"\getperiph{{{}}}", ""))
+                                res.append(r"\unprepusfm\n")
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
                             if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
@@ -594,16 +594,16 @@ class TexModel:
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
-                            res.extend(self._doptxfile(fname, dname, beforelast))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                             res.append(r"\OmitChapterNumberfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, dname, beforelast))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, dname, beforelast))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
