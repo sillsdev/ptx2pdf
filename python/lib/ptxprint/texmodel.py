@@ -743,11 +743,10 @@ class TexModel:
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 
-    def addInt(self):
+    def addInt(self, docdir):
         intfname = self.printer.getBookFilename('INT')
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
-            docdir, docbase = self.docdir()
             self.dict['project/intfile'] = saferelpath(os.path.dirname(intfile), docdir).replace("\\", "/") + "/" + intfname
 
     def flattenModule(self, infpath, outdir, usfm=None):
