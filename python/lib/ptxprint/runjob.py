@@ -122,6 +122,7 @@ _diglot = {
 "ifdiglotincludefootnotes_":"notes/includefootnotes",
 "ifdiglotincludexrefs_":    "notes/includexrefs",
 
+"diglot/intfile":           "project/intfile",
 # "diglot/colorfonts" :       "document/ifcolorfonts",
 "diglot/ifrtl" :            "document/ifrtl",
 "diglot/ifshow1chbooknum":  "document/ifshow1chbooknum",
@@ -571,6 +572,9 @@ class RunJob:
             else:
                 texfiles += [left, right]
 
+        if info['project/iffrontmatter'] != '%':
+            diginfo.addInt()
+        
         if not len(donebooks) or not len(digdonebooks):
             unlockme()
             return []

@@ -275,6 +275,8 @@
 %\def\SuperscriptRaise{{0.85ex}}  % in terms of the scaled-down superscript font size
 %\def\SuperscriptFactor{{0.75}} % fontsize scale for a superscript char
 
+\def\addInt{{\ptxfile{{{project/intfile}}}}}
+
 %%%%% all normal settings, etc. before this line %%%%%
 
 {document/imageCopyrights}
@@ -303,6 +305,7 @@
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {frontincludes_}
 {document/ifdiglot}\diglotfalse
+\StoreAllPeriphstrue\addInt\StoreAllPeriphsfalse
 \ptxfile{{{project/frontfile}}}
 {document/toc}{document/hasnofront_}\preptxfile\prepusfm\id FRT -- toc
 {document/toc}{document/hasnofront_}\is {document/toctitle} \ip \ztoc |main\*\ip \postptxfile
