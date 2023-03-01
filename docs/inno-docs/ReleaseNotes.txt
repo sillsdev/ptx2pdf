@@ -77,7 +77,15 @@ Bug fixes and improvements in 2.2.51 (1 Mar 2023)
   
   * Fixed FG BG image filename display issue
   
-  * 
+  * Improved Add constraint testing to values coming in from stylesheets
+  
+  * Improved Be more informative when xdvi or pdf fails to process (add xdvipdfmx logging)
+  
+  * Catch failed PDF loads, well don't load them
+  
+  * Add lock around changing marker in styleeditor so no changes propagate to old marker
+  
+  *
   
   *
   
