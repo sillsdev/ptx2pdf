@@ -97,7 +97,7 @@ Ignoring the original aspect ratio, fit the image to the `bleed` box:
 ```
 \BgImageScale inner|1x1
 ```
-Ignoring the original aspect ratio, fit the image to the `bleed` box:
+Ignoring the original aspect ratio, fit the image to the `inner` box:
 
 ![innerx1](coverpics/cover_inner1x1.jpg "inner|1x1")
 
