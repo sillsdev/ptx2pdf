@@ -1,8 +1,88 @@
 PTXprint 2.2.50 Release Notes
-31 Jan 2023
+1 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and improvements in 2.2.51 (1 Mar 2023)
+
+  * Fixed Textborder only showing bottom corner element (#826)
+    (repair non-xobj border placement)
+  
+  * Fixed Space above/below illustrations is no longer adjustable (#828)
+  
+  * Added control to adjust gap between caption and figure (TeXpert Hacks)
+  
+  * Fixed persistent pagebreak (#814)
+  
+  * Fixed Cutouts in diglots/polyglots get it wrong if they cross a chunk (#680)
+  
+  * Fixed stray space in \literalkerns (Caused off-centre book title)
+  
+  * Fixed accidental bug breaking LogFonts
+  
+  * Implement double underline
+  
+  * Improved stretch+shrink (changed \p_95 into \p^95 where multiple styles
+    no longer need to be manually defined for all possible _NN values)
+
+  * Implemented hook for first chapter e.g.: \sethook{first}{c}{\zrule\*}
+  
+  * Refactored ModelMap entries to be a class; added import category to ModelInfo
+  
+  * Fixed bug where XeTeXuseglyphmetrics=0 was breaking underline positioning
+    (Negative UnderlineLower as being below baseline, as opposed to below descenders)
+  
+  * Added per diglot footnote controls
+  
+  * Fixed attributes of char styles which include other styles (with attrs)
+  
+  * Improved Permission Request letter and ensure user fills in missing zvars
+  
+  * Fixed diglot file chaining
+  
+  * Fixed Use L for diglot stylesheet loading
+  
+  * Fixed marginal verses esp. for reader's editions
+  
+  * Improved Config password is now hashed (to avoid being readable)
+  
+  * Improved Make zglot work outside ptxfiles
+  
+  * Turn inptxfile on and off in (un)prepusfm, so zglot works in colophon
+  
+  * Ensure that FRT is loaded with diglot off
+  
+  * make \zfiga and \k trigger diglot-marked figures
+  
+  * Fixed Ensure switching between projects reads the config and checks fonts
+  
+  * Improved Don't merge pictures for non scripture diglot (peripheral books
+    don't get merged as diglot, so get their own pictures)
+  
+  * Ensure we pull in pictures from secondary for non scripture books
+  
+  * Improved relative path guessing to not fail when switching drives
+  
+  * Add Notes (Description field in Paratext) to Strong's index generation
+  
+  * Added Import Settings dialog (currently incompleted feature)
+  
+  * Handle pic loc p/a/w permission overrides
+  
+  * Handle loc p/a/w values for pictures with irregular sources
+  
+  * Fix saving and reading picture media settings
+  
+  * Improvement Make project overrides lock the same way config overrides do
+  
+  * Fixed FG BG image filename display issue
+  
+  * 
+  
+  *
+  
+  *
+  
 Bug fixes and improvements in 2.2.50 (31 Jan 2023)
 
   * Apply a space after nb processing is done, since \c kills spaces (#819)
