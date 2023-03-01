@@ -1480,11 +1480,11 @@
 \newif\ifc@ntinue
 \def\c@tegory{}
 \newread\styl@sheet
-\newif\ifnewstyles
-\newstylestrue
+\newif\ifdigl@tinuse % Have any styles been loaded with diglottrue?
+\digl@tinusefalse
 
 \def\stylesheet#1{
- \newstylestrue
+ \ifdiglot\global\digl@tinusetrue\fi
  \let\oldc@tegory=\c@tegory
  \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
@@ -1652,16 +1652,18 @@
  \fi
  \@netimesetup
  \global\let\periph@@@\empty
- \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
+ \ifdigl@tinuse\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \diglots@tup
    \ifx\PDFBookMarkColumn\relax
      \def\col@do##1{\xdef\PDFBookMarkColumn{##1}}%Very crude... set PDFBookMarkColumn to last column
      \x@\each@col\diglot@list\E
    \fi
    \dimen0=\baselineskip
-   \global\topskip=2\baselineskip
-   \global\splittopskip=0pt
    \gdef\atn@xtptxfile{}% This can't carry over.
+   \ifdiglot
+     \global\topskip=2\baselineskip
+     \global\splittopskip=0pt
+   \fi
    \message{Setting up column-specific values for columns: \diglot@list}%
    \global\baselineDelta=-\maxdimen
    \def\col@do##1{% Per-column setup
@@ -1691,6 +1693,8 @@
    \x@\each@col\diglot@list\E 
    \baselineskip=\dimen0
    \egroup
+ \fi
+ \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else
    \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
@@ -1710,6 +1714,7 @@
 %+csty_ptxfile_start
 \newif\ifinptxfile
 \def\ptxfile#1{
+ \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi}%
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
