@@ -863,7 +863,7 @@ class ViewModel:
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
         if v < 1.201:
             for d in ('PicLists', 'AdjLists'):
-                p = os.path.join(self.configPath(cfgname), d)
+                p = os.path.join(cfgpath, d)
                 if not os.path.exists(p):
                     continue
                 if cfgpath is not None:
