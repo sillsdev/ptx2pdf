@@ -486,9 +486,10 @@ class TexModel:
         for b, i in self._bookinserts:
             r = [booknumbers[s] for s in b.split("-")]
             if i not in self.inserts and r[0] <= bki <= r[1]:
-                self.inserts[i] = bk
-                return i
-        return ""
+                if self._doperiph(i) != "":
+                    self.inserts[i] = bk
+                    res.append(i)
+        return res
 
     def prep_pdfs(self, files, restag="frontIncludes_", file_dir="."):
         # for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
@@ -576,18 +577,18 @@ class TexModel:
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if self.dict.get('project/sectintros'):
-                            insertname = self._getinsertname(f)
-                            if len(insertname):
+                            insertnames = self._getinsertname(f)
+                            if len(insertnames):
                                 if digtexmodel is not None:
-                                    digname = insertname
-                                    res.append("\\diglotfalse")
-                                else:
-                                    digname = None
-                                res.append("\\prepusfm\n")
-                                res.extend(self._doptxfile(insertname, digname, r"\zgetperiph|{}\*", ""))
-                                res.append("\\unprepusfm\n")
+                                    res.append(r"\diglotfalse")
+                                res.append(r"\prepusfm")
+                                for ins in insertnames:
+                                    res.extend(self._doptxfile(insname, None if digtexmodel is None else insname, 
+                                            (r"\pb" if self.dict['project/periphpagebreak'] else "")
+                                            + r"\zgetperiph|{}\*", ""))
+                                res.append(r"\unprepusfm")
                                 if digtexmodel is not None:
-                                    res.append("\\diglottrue")
+                                    res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
                             beforelast.append(r"\lastptxfiletrue")
                             if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
