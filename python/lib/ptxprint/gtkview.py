@@ -304,6 +304,9 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
+    "c_coverBorder":           ["ecb_coverBorder", "l_coverBorder", "col_coverBorder"],
+    "c_coverShading":          ["col_coverShading"],
+    "c_coverSelectImage":      ["btn_coverSelectImage", "lb_coverImageFilename"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -321,6 +324,12 @@ _nonsensitivities = {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
         "r_xrpos_centre" :    []},
+    "r_cover": {
+        "r_cover_advanced" :   [],
+        "r_cover_standard":    ["c_coverSelectImage", "btn_coverSelectImage", "lb_coverImageFilename"],
+        "r_cover_basic":       ["c_coverSelectImage", "btn_coverSelectImage", "lb_coverImageFilename",
+                                "c_coverBorder", "ecb_coverBorder", "l_coverBorder", "col_coverBorder",
+                                "c_coverShading", "col_coverShading"]},
 }
 
 _object_classes = {
@@ -420,6 +429,7 @@ _dlgtriggers = {
     "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
+    "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked"
 }
 
@@ -4268,6 +4278,18 @@ class GtkViewModel(ViewModel):
                         os.startfile(fpath)
                     elif sys.platform == "linux":
                         subprocess.call(('xdg-open', fpath))
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
+        
+    def onGenerateCoverClicked(self, btn):
+        dialog = self.builder.get_object("dlg_generateCover")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK: # Create Cover Settings clicked
+            pass
+            # This is where the hard work needs to happen.
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
