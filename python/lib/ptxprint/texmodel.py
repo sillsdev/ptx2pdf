@@ -1360,7 +1360,7 @@ class TexModel:
                 dat = inf.read()
                 ge = re.findall(r"\\\S+ \\k (.+)\\k\* .+?\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
-            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?\r?\n".format(delGloEntry), flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
