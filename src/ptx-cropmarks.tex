@@ -53,7 +53,7 @@
       \raise12pt \vtop{{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
-        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp\endL\par
+        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi \endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
           \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}%
       \hss
@@ -401,6 +401,13 @@
     \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ]>> }\fi
+    \getm@rknum{pdftag}%Tag pages if pdftag mark is active issued.
+    \xdef\@@pdftag{\topmarks\m@rknum}%
+    \ifx\@@pdftag\empty\else
+      \special {pdf:put @thispage <</PieceInfo <</ptxprint 
+          <</LastModified /D:20221126103720Z /Private <</Insertion /\@@pdftag>> >>
+      >> >>}%
+    \fi
   \egroup
 }
 
