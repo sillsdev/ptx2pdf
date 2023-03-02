@@ -156,22 +156,23 @@ class ParatextSettings:
                     bookspresent[v-1] = 1
                     self.bookmap[k] = fname
                     booksfound.add(fname)
-        for f in os.listdir(path):
-            if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
-                continue
-            with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
-                l = inf.readline()
-                m = re.match(r"^\uFEFF?\\id\s+(\S{3})\s*", l)
-                if m:
-                    bkid = m.group(1).upper()
-                    self.bookmap[bkid] = f
-                    booksfound.add(f)
-                    try:
-                        v = int(bookcodes.get(bkid, -1))
-                    except ValueError:
-                        v = -1
-                    if 0 <= v < len(allbooks):
-                        bookspresent[v-1] = 1
+        else:
+            for f in os.listdir(path):
+                if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
+                    continue
+                with open(os.path.join(path, f), encoding="utf-8", errors="ignore") as inf:
+                    l = inf.readline()
+                    m = re.match(r"^\uFEFF?\\id\s+(\S{3})\s*", l)
+                    if m:
+                        bkid = m.group(1).upper()
+                        self.bookmap[bkid] = f
+                        booksfound.add(f)
+                        try:
+                            v = int(bookcodes.get(bkid, -1))
+                        except ValueError:
+                            v = -1
+                        if 0 <= v < len(allbooks):
+                            bookspresent[v-1] = 1
         self.dict['BooksPresent'] = "".join(str(x) for x in bookspresent)
 
     def getBookFilename(self, bk):
