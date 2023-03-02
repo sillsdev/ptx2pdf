@@ -175,7 +175,8 @@
   %\global\rhr@lefalse
  \else
     \trace{h}{Testing for \t@tle\space in \t@st}%
-    \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
+    %\ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
+    \ifp@geone
       \ifodd\pageno\the\titleoddhead\else\the\titleevenhead\fi
       \global\rhr@lefalse
     \else
