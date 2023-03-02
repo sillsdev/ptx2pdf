@@ -267,9 +267,12 @@
    \ifodd\pageno \the\noVoddfoot \else 
      \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
  \else
-   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi \else
-     \ifodd\pageno \the\oddfoot \else
-       \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
+   %\ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
+   \ifp@geone
+     \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi
+     \else
+       \ifodd\pageno \the\oddfoot \else
+         \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
  \fi\fi\fi
  \mcpop\mcpop
 }}
