@@ -1785,7 +1785,7 @@
   \def\t@mp{\noexpand#2} \lowercase{\edef~{\relax\t@mp}}}
 \newtoks\do@ctive
 
-\def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
+\def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
   \catcode\the\count255=\active\relax}
 \def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
 
