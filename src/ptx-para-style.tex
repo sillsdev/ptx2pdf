@@ -352,6 +352,7 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
+    \if@ntro\mark{\intr@}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
     \ifx\spaceafterp@ram\relax \else
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
