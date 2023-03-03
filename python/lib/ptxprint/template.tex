@@ -4,6 +4,7 @@
 
 {cover/makecoverpage}\makeatletter \include cover.tex 
 {cover/makecoverpage}\makeatother
+{fancy/enableornaments}\stylesheet{{standardborders.sty}}
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
@@ -265,6 +266,8 @@
 \let\pb=\pagebreak
 {project/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 
+{fancy/enableornaments}\SwitchOrnamentsFamily{{pgfhan}}
+{fancy/enableornaments}\SwitchOrnamentsFamily{{vectorian}}
 %%%%% Set hooks to allow Poetical books more freedom when column-balancing
 %\optimizepoetry
 

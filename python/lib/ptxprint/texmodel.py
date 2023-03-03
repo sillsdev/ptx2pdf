@@ -558,12 +558,17 @@ class TexModel:
                 self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
-        if self.dict['project/plugins']:
-            p = self.dict['project/plugins']
-            if p.startswith("\\"):
-                res.append(p)
+        p = self.dict.get('project/plugins', None)
+        if p is not None and p.startswith("\\"):
+            res.append(p)
+            p = None
+        if self.dict.get('fancy/enableornaments', "%") != "%":
+            if p is not None:
+                p += " ornaments"
             else:
-                res.append("\\def\\pluginlist{{{}}}".format(p))
+                p = "ornaments"
+        if p:
+            res.append("\\def\\pluginlist{{{}}}".format(p))
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
@@ -732,16 +737,8 @@ class TexModel:
         if os.path.exists(infpath):
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
-                # seenperiph = False
                 for l in inf.readlines():
-                    # if l.strip().startswith(r"\periph"):
-                        # if "cover" in l:
-                            # pass
-                        # else:
-                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
-                        # seenperiph = True
-                    # if they incude INT, then this shouldn't be called, otherwise it should
-                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
+                    #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \

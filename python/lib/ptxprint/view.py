@@ -100,7 +100,7 @@ class ViewModel:
         self.args = args
         for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
-                     customFigFolder customOutputFolder impSourcePDF
+                     customFigFolder customOutputFolder impSourcePDF coverImage
                      prjid configId diglotView usfms picinfos bookrefs""").split():
             setattr(self, v, None)
         self.isDiglot = False
@@ -118,6 +118,7 @@ class ViewModel:
         self.strongs = None
         self.artpgs = None
         self.spine = 0
+        self.periphs = {}
 
         # private to this implementation
         self.dict = {}
@@ -1277,6 +1278,34 @@ class ViewModel:
             
         copyfile(srcp, destp)
         return True
+
+    def updateFrontMatter(self):
+        fpath = self.configFRT()
+        fcontent = []
+        usedperiphs = set()
+        logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
+        with open(fpath, encoding="utf-8") as inf:
+            skipping = False
+            for l in inf.readlines():
+                if l.strip().startswith(r"\periph"):
+                    m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                    if m:
+                        periphid = m.group(2) or m.group(1)
+                        if periphid in self.periphs:
+                            fcontent.append(self.periphs[periphid])
+                            usedperiphs.add(periphid)
+                            skipping = True
+                        else:
+                            skipping = False
+                    else:
+                        skipping = False
+                if not skipping:
+                    fcontent.append(l.strip())
+        for k, v in self.periphs.items():
+            if k not in usedperiphs:
+                fcontent.append(v)
+        with open(fpath, "w", encoding="utf-8") as outf:
+            outf.write("\n".join(fcontent))
 
     def generateHyphenationFile(self, inbooks=False, addsyls=False):
         listlimit = 63929

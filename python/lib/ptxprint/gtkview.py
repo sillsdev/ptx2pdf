@@ -4288,8 +4288,43 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK: # Create Cover Settings clicked
-            pass
-            # This is where the hard work needs to happen.
+            # Set background colour
+            self.styleEditor.setval('cat:coverwhole|esb', 'BgColour', self.get('col_coverShading'))
+            # Set foreground (text) colour
+            self.styleEditor.setval('cat:coverfront|mt1', 'Color', self.get('col_coverText'))
+            self.styleEditor.setval('cat:coverfront|mt2', 'Color', self.get('col_coverText'))
+            self.styleEditor.setval('cat:coverspine|mt1', 'Color', self.get('col_coverText'))
+            self.styleEditor.setval('cat:coverspine|mt2', 'Color', self.get('col_coverText'))
+            if self.get('c_coverBorder'):
+                ornaments = self.get('ecb_coverBorder')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
+                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
+            if self.get('c_coverSelectImage'):
+                img = self.get('btn_coverSelectImage')
+                self.styleEditor.setval('cat:coverfront' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
+            self.periphs['coverfront'] = r'''
+\periph front|id="coverfront"
+\zgap|30pt
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\vfill
+\endgraf
+'''
+            self.periphs['coverspine'] = r'''
+\periph spine|id="coverspine"
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\p
+'''
+            self.periphs['coverwhole'] = r'''
+\periph spannedCover|id="coverwhole"
+\zgap|1pt\*
+\vfill
+\pc ~
+\vfill
+\endgraf
+'''
+            self.updateFrontMatter()
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
