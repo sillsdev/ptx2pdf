@@ -2161,6 +2161,7 @@
 
 
 \def\diglots@tup{%
+  \trace{d}{diglots@tup}%
   % reset parameters for diglot-column formatting
   \kill@PossParamCache
   \global\hsize=\columnLwidth % always start with left column
@@ -2256,7 +2257,9 @@
   \global\count\bottomins=\count255
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
   \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
-    \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift\hrule\vskip2\baselineskip\fi\fi\fi
+    \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift
+      \hrule\vskip2\baselineskip
+    \fi\fi\fi
   \fi\fi
   %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
 }%
