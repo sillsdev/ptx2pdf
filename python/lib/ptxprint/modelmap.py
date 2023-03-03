@@ -115,6 +115,7 @@ _map = {
     "grid/xyadvance":           ("s_gridMinorDivisions", "finish", lambda w,v: (1 / max(asfloat(v, 4), 1)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", "finish", None),
     
+    "fancy/enableornaments":    ("c_useOrnaments", "decorate", lambda w,v: "" if v else "%"),
     "fancy/enableborders":      ("c_borders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
@@ -286,6 +287,7 @@ _map = {
     "covergen/useshading":      ("c_coverShading", "cover", None),
     "covergen/shadingcolor":    ("col_coverShading", "cover", None),
     "covergen/useimage":        ("c_coverSelectImage", "cover", None),
+    "covergen/imagefront":      ("c_coverImageFront", "cover", None),
     "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
     # "covergen/imgfname":       ("lb_coverImageFilename", "cover", None),
 

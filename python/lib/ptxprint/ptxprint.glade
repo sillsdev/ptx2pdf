@@ -4244,13 +4244,26 @@ be applied to the front cover page.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_coverImageFront">
+                                <property name="label" translatable="yes">Only on Front Cover</property>
+                                <property name="name">Generate cover: Enable Background Image</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Enable this option to only place the
+selected image on the front cover (so
+it does not wrap around onto the back
+cover). If using this option it would be 
+helpful to use a portrait image.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="draw-indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">2</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">3</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>
@@ -15333,8 +15346,9 @@ between books. For example:
   \periph Old Testament Introduction|id="intot"
   \periph New Testament Introduction|id="intnt"
   \periph Gospels Introduction|id="intgospels"</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
+                                    <property name="margin-start">24</property>
                                     <property name="margin-end">3</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
@@ -15451,18 +15465,25 @@ numbers then check this option.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel">
+                                  <object class="GtkCheckButton" id="c_useOrnaments">
+                                    <property name="label" translatable="yes">Enable Ornaments</property>
+                                    <property name="name">Enable ornamental borders and rules</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Enable this option to make use of
+ornamental borders and rules.</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-right">3</property>
+                                    <property name="margin-start">24</property>
+                                    <property name="margin-end">3</property>
+                                    <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
                                     <property name="top-attach">3</property>
+                                    <property name="width">2</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

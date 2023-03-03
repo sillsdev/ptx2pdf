@@ -905,7 +905,7 @@
 \Marker cat:coverwhole|esb
 \Name cat:coverwhole - Cover - Category for styling the whole of the combined cover pagef
 \Position Fcf
-\BgColour x1f0000
+\BgColour 1 1 1
 \BoxPadding 0
 \BorderPadding -2
 
@@ -915,20 +915,96 @@
 \BoxPadding 0
 \BorderPadding -1
 \Rotation r
-\BgColour xff7f7f
+\BgColour 1 1 1
+
+\Marker cat:coverfront|mt1
+\Name cat:coverfront|mt1 - Cover - Styling the main title of the front cover 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\StyleType Paragraph
+\FontSize 34
+\Bold
+\Justification Center
+\SpaceBefore 2
+\SpaceAfter 4
+
+\Marker cat:coverfront|mt2
+\Name cat:coverfront|mt2 - Cover - Styling the main title of the front cover 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_2
+\TextType Title
+\StyleType Paragraph
+\FontSize 27
+\Bold
+\Justification Center
+\SpaceAfter 2
+
+\Marker cat:coverspine|mt1
+\Name cat:coverspine|mt1 - Cover - Styling the main title on the spine 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\StyleType Paragraph
+\FontSize 20
+\Bold
+\Justification Left
+
+\Marker cat:coverspine|mt2
+\Name cat:coverspine|mt2 - Cover - Styling the main title on the spine 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_2
+\TextType Title
+\StyleType Paragraph
+\FontSize 15
+\Bold
+\Justification Left
 
 \Marker cat:coverfront|esb
 \Name cat:coverfront - Cover - Category for styling the outside front cover 
 \Position Fcf
-\BgColour x7fff7f
+\Alpha 0.0
+\BgColour 1 1 1
 \BoxPadding 0
 \BorderPadding -2
-\Border All
+\BoxBPadding 30
+\BorderWidth 22
+\BoxVPadding 45
+\BoxHPadding 45
+\BorderHPadding -40
+\BorderVPadding -40
+\Border None
 
 \Marker cat:coverback|esb
 \Name cat:coverfront - Cover - Category for styling the outside back cover 
 \Position Fcf
-\BgColour x7f7fff
+\Alpha 0.0
+\BgColour 1 1 1
 \BoxPadding 0
 \BorderPadding -0
-\Border All
+\BorderFillColour None
+\BorderLineWidth 0.5
+\BorderPadding -15
+\BorderWidth 5
+\BoxTPadding 2
+\BoxHPadding 20
+\BoxBPadding 10
+\Border None 
+
+\Marker cat:ISBNbox|esb
+\Name cat:ISBNbox - Cover - Category for styling the ISBN box 
+\Position hr
+\SpaceBefore 100
+\SpaceAfter 0
+\BorderWidth 0.05
+\BgColour 1 1 1
+\BoxHPadding 5
+\BoxVPadding 5
+\BorderRPadding 0
+\Scale 0.6
+\Alpha 1.0
+\Border None
