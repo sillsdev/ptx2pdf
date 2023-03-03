@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap
+            _, f_, textocol, _allbkmap, coltotex
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -4288,13 +4288,16 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK: # Create Cover Settings clicked
+            # Enable ESBs
+            self.set("c_sidebars", True)
             # Set background colour
-            self.styleEditor.setval('cat:coverwhole|esb', 'BgColour', self.get('col_coverShading'))
+            self.styleEditor.setval('cat:coverwhole|esb', 'BgColour', coltotex(self.get('col_coverShading')))
             # Set foreground (text) colour
-            self.styleEditor.setval('cat:coverfront|mt1', 'Color', self.get('col_coverText'))
-            self.styleEditor.setval('cat:coverfront|mt2', 'Color', self.get('col_coverText'))
-            self.styleEditor.setval('cat:coverspine|mt1', 'Color', self.get('col_coverText'))
-            self.styleEditor.setval('cat:coverspine|mt2', 'Color', self.get('col_coverText'))
+            fg = coltotex(self.get('col_coverText'))
+            self.styleEditor.setval('cat:coverfront|mt1', 'Color', fg)
+            self.styleEditor.setval('cat:coverfront|mt2', 'Color', fg)
+            self.styleEditor.setval('cat:coverspine|mt1', 'Color', fg)
+            self.styleEditor.setval('cat:coverspine|mt2', 'Color', fg)
             if self.get('c_coverBorder'):
                 ornaments = self.get('ecb_coverBorder')
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
@@ -4304,7 +4307,7 @@ class GtkViewModel(ViewModel):
                 self.styleEditor.setval('cat:coverfront' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
-\zgap|30pt
+\zgap|30pt\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \vfill
@@ -4315,6 +4318,13 @@ class GtkViewModel(ViewModel):
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \p
+'''
+            self.periphs['coverback'] = r'''
+\periph back|id="coverback"
+\zgap|1pt\*
+\pc ~
+\vfill
+\endgraf
 '''
             self.periphs['coverwhole'] = r'''
 \periph spannedCover|id="coverwhole"

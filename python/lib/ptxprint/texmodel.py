@@ -563,7 +563,7 @@ class TexModel:
             res.append(p)
             p = None
         if self.dict.get('fancy/enableornaments', "%") != "%":
-            if p is not None:
+            if p is not None and len(p):
                 p += " ornaments"
             else:
                 p = "ornaments"
