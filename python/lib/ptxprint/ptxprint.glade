@@ -945,8 +945,9 @@ text contained within the sidebar.</property>
                         <property name="name">Borders dialog: Horizontal border padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">The horizontal space between the (inside) edge 
-of the border and the edge of the border.</property>
+                        <property name="tooltip-text" translatable="yes">The horizontal space between the inside 
+edge of the border and the outside edge 
+of the box inside it.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="text">0</property>
@@ -968,8 +969,9 @@ of the border and the edge of the border.</property>
                         <property name="name">Borders dialog: Vertical border padding </property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="tooltip-text" translatable="yes">The vertical space between the (inside) edge 
-of the border and the edge of the border.</property>
+                        <property name="tooltip-text" translatable="yes">The vertical space between the inside 
+edge of the border and the outside edge 
+of the box inside it.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
                         <property name="text">0</property>
@@ -3847,8 +3849,7 @@ settings for a similar project.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="margin-left">3</property>
-            <property name="margin-right">3</property>
+            <property name="halign">end</property>
             <property name="margin-start">3</property>
             <property name="margin-end">3</property>
             <property name="margin-top">3</property>
@@ -3860,12 +3861,14 @@ settings for a similar project.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="halign">end</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
@@ -3874,12 +3877,14 @@ settings for a similar project.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="halign">end</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
           </object>
@@ -4141,6 +4146,7 @@ be applied to the front cover page.</property>
                                 <property name="receives-default">True</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <signal name="clicked" handler="onCoverSelectImageClicked" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
@@ -31339,7 +31345,7 @@ the inner backing sheet. (Units: mm)</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="halign">start</property>
-                                                <property name="margin-end">12</property>
+                                                <property name="margin-end">20</property>
                                                 <property name="label" translatable="yes">Crop Marks + Bleed Settings</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
@@ -31401,6 +31407,7 @@ on the Styles tab for the Front Cover.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
+                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                 <signal name="toggled" handler="onCoverSettingsChanged" swapped="no"/>
                               </object>
                             </child>
@@ -31703,7 +31710,28 @@ two sets of sequential pages.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
+                                  <object class="GtkCheckButton" id="c_coverSeparatePDF">
+                                    <property name="label" translatable="yes">Create Cover as 
+a Separate PDF</property>
+                                    <property name="name">Pagination: Create the cover as a stand-alone PDF</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">This option is only available if Create Cover is
+enabled on the Cover tab. Enable this option if
+you plan to print the outer (wrapper) cover
+separately from the book's content. This is often
+the case if cardstock, or a colour cover is used.</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="active">True</property>
+                                    <property name="draw-indicator">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
                                 </child>
                               </object>
                             </child>

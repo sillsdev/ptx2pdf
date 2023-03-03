@@ -290,7 +290,7 @@ _sensitivities = {
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
     # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
-    "c_makeCoverPage":         ["bx_cover"],
+    "c_makeCoverPage":         ["bx_cover", "c_coverSeparatePDF"],
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
     "r_impSource": {
@@ -4546,6 +4546,21 @@ class GtkViewModel(ViewModel):
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
+
+    def onCoverSelectImageClicked(self, btn):
+        picpath = os.path.join(self.settings_dir, self.prjid)
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+            return pixbuf
+
+        picfiles = self.fileChooser(_("Choose Image"),
+                                  filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                   multiple=False, basedir=picpath, preview=update_preview)
+        self.set("lb_coverImageFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []
