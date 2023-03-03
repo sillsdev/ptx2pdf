@@ -450,7 +450,8 @@
   \xdef\f@ntextend{\p@rcent #2xx\E}%
   %\xdef\f@ntextend{#2}%
   \trace{s}{extending [\f@ntextend]}%
-  \x@\@p@rstyle\x@{#1}%
+  \ifcsname #1^#2\endcsname\x@\@p@rstyle\x@{#1^#2}\else
+  \x@\@p@rstyle\x@{#1}\fi
 }
 \catcode`\^=7
 \catcode`\_=11
