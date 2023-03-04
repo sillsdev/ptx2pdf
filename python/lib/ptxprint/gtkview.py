@@ -190,7 +190,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Cover", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
 
@@ -579,9 +579,9 @@ class GtkViewModel(ViewModel):
         #    self.builder.set_translation_domain(APP)
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
-        if self.args.extras & 16 != 0:
-            _ui_keepHidden.remove("tb_Cover")
-            self.builder.get_object("tb_Cover").set_no_show_all(False)
+        # if self.args.extras & 16 != 0:
+            # _ui_keepHidden.remove("tb_Cover")
+            # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
         self.isDisplay = True
         self.searchWidget = []
@@ -4299,6 +4299,7 @@ class GtkViewModel(ViewModel):
             self.styleEditor.setval('cat:coverspine|mt1', 'Color', fg)
             self.styleEditor.setval('cat:coverspine|mt2', 'Color', fg)
             if self.get('c_coverBorder'):
+                self.set("c_useOrnaments", True)
                 ornaments = self.get('ecb_coverBorder')
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
@@ -4338,6 +4339,14 @@ class GtkViewModel(ViewModel):
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
+        # Switch briefly to the Front Matter tab so that the updated content is activated and
+        # gets saved/updated. But then switch back to the Cover tab immediately after so the 
+        # view is back to where they clicked on the Generate Cover button to begin with.
+        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        self.builder.get_object("nbk_Viewer").set_current_page(0)
+        mpgnum = self.notebooks['Main'].index("tb_Cover")
+        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
