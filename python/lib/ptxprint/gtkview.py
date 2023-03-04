@@ -4290,23 +4290,29 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK: # Create Cover Settings clicked
             # Enable ESBs
             self.set("c_sidebars", True)
-            # Set background colour
-            self.styleEditor.setval('cat:coverwhole|esb', 'BgColour', coltotex(self.get('col_coverShading')))
-            # Set border colour
-            bc = coltotex(self.get('col_coverBorder'))
-            # Set foreground (text) colour
+            # Scale the font size of mt1 and mt2 for front and spine
+            scaleText = float(self.get('s_coverTextScale'))
+            # Set foreground (text) color
             fg = coltotex(self.get('col_coverText'))
-            self.styleEditor.setval('cat:coverfront|mt1', 'Color', fg)
-            self.styleEditor.setval('cat:coverfront|mt2', 'Color', fg)
-            self.styleEditor.setval('cat:coverspine|mt1', 'Color', fg)
-            self.styleEditor.setval('cat:coverspine|mt2', 'Color', fg)
+            for m in ['mt1', 'mt2']:
+                sz = float(self.styleEditor.getval(m, 'FontSize', 12))
+                for cvr in ['front', 'spine']:
+                    sf = 1 if cvr == 'front' else 0.75
+                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf)
+                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
+            # Set background color
+            self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
+            # self.styleEditor.setval('cat:coverfront|mt2', 'Color', fg)
+            # self.styleEditor.setval('cat:coverspine|mt1', 'Color', fg)
+            # self.styleEditor.setval('cat:coverspine|mt2', 'Color', fg)
             if self.get('c_coverBorder'):
+                # Set border colour
+                bc = coltotex(self.get('col_coverBorder'))
                 self.set("c_useOrnaments", True)
                 ornaments = self.get('ecb_coverBorder')
-                # self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderColour', bc)
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
             if self.get('c_coverSelectImage'):
                 img = self.get('btn_coverSelectImage')
@@ -4317,41 +4323,36 @@ class GtkViewModel(ViewModel):
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \vfill
-\endgraf
-'''
+\endgraf'''
             self.periphs['coverspine'] = r'''
 \periph spine|id="coverspine"
-\mt1 \zvar|maintitle\*
-\mt2 \zvar|subtitle\*
-\p
-'''
+\mt1 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
+\p'''
             self.periphs['coverback'] = r'''
 \periph back|id="coverback"
 \zgap|1pt\*
-\pc Checking that this works 'coverback'
+\pc ~
 \vfill
-\endgraf
-'''
+\endgraf'''
             self.periphs['coverwhole'] = r'''
 \periph spannedCover|id="coverwhole"
 \zgap|1pt\*
 \vfill
-\pc Checking that this works 'coverwhole'
+\pc ~
 \vfill
-\endgraf
-'''
+\endgraf'''
             self.updateFrontMatter()
+            # Switch briefly to the Front Matter tab so that the updated content is activated and
+            # gets saved/updated. But then switch back to the Cover tab immediately after so the 
+            # view is back to where they clicked on the Generate Cover button to begin with.
+            mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(0)
+            mpgnum = self.notebooks['Main'].index("tb_Cover")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
-        # Switch briefly to the Front Matter tab so that the updated content is activated and
-        # gets saved/updated. But then switch back to the Cover tab immediately after so the 
-        # view is back to where they clicked on the Generate Cover button to begin with.
-        mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        self.builder.get_object("nbk_Viewer").set_current_page(0)
-        mpgnum = self.notebooks['Main'].index("tb_Cover")
-        self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):

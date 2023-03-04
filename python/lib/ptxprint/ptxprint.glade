@@ -3869,12 +3869,29 @@ settings for a similar project.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="halign">end</property>
             <property name="margin-start">3</property>
             <property name="margin-end">3</property>
             <property name="margin-top">3</property>
             <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">start</property>
+                <property name="label" translatable="yes">Note that the color chooser
+dialog may be hidden behind.</property>
+                <attributes>
+                  <attribute name="scale" value="0.80000000000000004"/>
+                  <attribute name="foreground" value="#616135358383"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="btn_gnr8cover_ok">
                 <property name="label">Create Cover Settings</property>
@@ -3887,7 +3904,7 @@ settings for a similar project.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -3903,7 +3920,7 @@ settings for a similar project.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
@@ -4078,6 +4095,7 @@ this setting to increase size of such titles.</property>
                                 <property name="halign">start</property>
                                 <property name="title" translatable="yes">Border Color</property>
                                 <property name="rgba">rgb(0,0,0)</property>
+                                <signal name="color-set" handler="onstyColorSet" swapped="no"/>
                               </object>
                               <packing>
                                 <property name="left-attach">4</property>
@@ -31754,9 +31772,10 @@ two sets of sequential pages.</property>
                                     <property name="label" translatable="yes">Create Cover as 
 a Separate PDF</property>
                                     <property name="name">Pagination: Create the cover as a stand-alone PDF</property>
-                                    <property name="visible">True</property>
+                                    <property name="sensitive">False</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
+                                    <property name="no-show-all">True</property>
                                     <property name="tooltip-text" translatable="yes">This option is only available if Create Cover is
 enabled on the Cover tab. Enable this option if
 you plan to print the outer (wrapper) cover

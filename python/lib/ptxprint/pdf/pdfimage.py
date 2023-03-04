@@ -103,8 +103,10 @@ class PDFImage:
         self.cs = self.colorspace[0] if isinstance(self.colorspace, PdfArray) else self.colorspace
         if self.cs == "/ICCBased":
             uncompress([self.colorspace[1]])
-            self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream.encode("Latin-1")))
-            #self.icc = ImageCms.ImageCmsProfile(io.BytesIO(self.colorspace[1].stream))
+            cstream = self.colorspace[1].stream
+            if isinstance(cstream, str):
+                cstream = cstream.encode("Latin-1")
+            self.icc = ImageCms.ImageCmsProfile(io.BytesIO(cstream))
             compress([self.colorspace[1]])
         self.height = int(xobj['/Height'])
         self.width = int(xobj['/Width'])
