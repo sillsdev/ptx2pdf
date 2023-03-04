@@ -1,48 +1,37 @@
 PTXprint 2.2.50 Release Notes
-1 Mar 2023
+4 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
-Bug fixes and improvements in 2.2.51 (1 Mar 2023)
+Additions, Improvements and Bug fixes in 2.2.51 (4 Mar 2023)
 
-  * Fixed Textborder only showing bottom corner element (#826)
-    (repair non-xobj border placement)
+  * Added Generate Cover feature (still under construction)
   
-  * Fixed Space above/below illustrations is no longer adjustable (#828)
+  * Added Import Settings dialog (currently incompleted feature)
+  
+  * Added Notes (Description field in Paratext) to Strong's index generation
+  
+  * Added Per diglot footnote controls
+  
+  * Added Hook for first chapter e.g.: \sethook{first}{c}{\zrule\*}
   
   * Added control to adjust gap between caption and figure (TeXpert Hacks)
   
-  * Fixed persistent pagebreak (#814)
+  * Added ability to use double underline (but not recommended)
   
-  * Fixed Cutouts in diglots/polyglots get it wrong if they cross a chunk (#680)
+  * Ensure pictures are pulled in from secondary project for non scripture books
   
-  * Fixed stray space in \literalkerns (Caused off-centre book title)
+  * Don't merge pictures for non scripture diglot (peripheral books
+    don't get merged as a diglot, so get their own L & R pictures)
   
-  * Fixed accidental bug breaking LogFonts
-  
-  * Implement double underline
-  
-  * Improved stretch+shrink (changed \p_95 into \p^95 where multiple styles
+  * Improved stretch+shrink (changed \p_95 into \p^95 so multiple styles
     no longer need to be manually defined for all possible _NN values)
 
-  * Implemented hook for first chapter e.g.: \sethook{first}{c}{\zrule\*}
+  * Improved relative path guessing to not fail when switching drives
   
-  * Refactored ModelMap entries to be a class; added import category to ModelInfo
-  
-  * Fixed bug where XeTeXuseglyphmetrics=0 was breaking underline positioning
-    (Negative UnderlineLower as being below baseline, as opposed to below descenders)
-  
-  * Added per diglot footnote controls
-  
-  * Fixed attributes of char styles which include other styles (with attrs)
-  
+  * Improved Read INT before FRT so that it has the periphs
+
   * Improved Permission Request letter and ensure user fills in missing zvars
-  
-  * Fixed diglot file chaining
-  
-  * Fixed Use L for diglot stylesheet loading
-  
-  * Fixed marginal verses esp. for reader's editions
   
   * Improved Config password is now hashed (to avoid being readable)
   
@@ -50,46 +39,68 @@ Bug fixes and improvements in 2.2.51 (1 Mar 2023)
   
   * Turn inptxfile on and off in (un)prepusfm, so zglot works in colophon
   
-  * Ensure that FRT is loaded with diglot off
+  * Fixed Ensure that FRT is loaded with diglot off
   
-  * make \zfiga and \k trigger diglot-marked figures
-  
-  * Fixed Ensure switching between projects reads the config and checks fonts
-  
-  * Improved Don't merge pictures for non scripture diglot (peripheral books
-    don't get merged as diglot, so get their own pictures)
-  
-  * Ensure we pull in pictures from secondary for non scripture books
-  
-  * Improved relative path guessing to not fail when switching drives
-  
-  * Add Notes (Description field in Paratext) to Strong's index generation
-  
-  * Added Import Settings dialog (currently incompleted feature)
-  
-  * Handle pic loc p/a/w permission overrides
-  
-  * Handle loc p/a/w values for pictures with irregular sources
-  
-  * Fix saving and reading picture media settings
+  * Make \zfiga and \k trigger diglot-marked figures
   
   * Improvement Make project overrides lock the same way config overrides do
   
-  * Fixed FG BG image filename display issue
-  
   * Improved Add constraint testing to values coming in from stylesheets
+  
+  * Improvements Add lock around changing marker in style editor so no changes propagate to old marker
+  
+  * Improved Handle headers as well as footers at the start of books (#782)
+  
+  * Handle loc p/a/w values for pictures with irregular sources
+
+  * Handle pic loc p/a/w permission overrides
   
   * Improved Be more informative when xdvi or pdf fails to process (add xdvipdfmx logging)
   
-  * Catch failed PDF loads, well don't load them
+  * Obey page breaks for inter book peripherals
   
-  * Add lock around changing marker in styleeditor so no changes propagate to old marker
+  * Catch failed PDF loads, and don't load them
   
-  *
+  * Insert section intros for diglots
   
-  *
+  * Refactored ModelMap entries to be a class; added import category to ModelInfo
   
-  *
+  * Fixed Textborder only showing bottom corner element (#826)
+    (repair non-xobj border placement)
+  
+  * Fixed Space above/below illustrations is no longer adjustable (#828)
+  
+  * Fixed Persistent pagebreak (#814)
+  
+  * Fixed Cutouts in diglots/polyglots get it wrong if they cross a chunk (#680)
+  
+  * Fixed stray space in \literalkerns (Caused off-centre book title)
+  
+  * Fixed accidental bug breaking LogFonts
+  
+  * Fixed bug where XeTeXuseglyphmetrics=0 was breaking underline positioning
+    (Negative UnderlineLower as being below baseline, as opposed to below descenders)
+  
+  * Fixed attributes of char styles which include other styles (with attrs)
+  
+  * Fixed diglot file chaining
+  
+  * Fixed Use L for diglot stylesheet loading
+  
+  * Fixed marginal verses esp. for reader's editions
+  
+  * Fixed Ensure switching between projects reads the config and checks fonts
+  
+  * Fixed saving and reading picture media settings
+  
+  * Fixed FG BG image filename display issue
+  
+  * Fixed monoglot files in diglot environment
+  
+  * Fixed Prevent multiple activation of custom chars from killing original catcode
+  
+  * Fixed Don't delete the chapter marks along with glossary enties 
+   (when the glossary chapter marks get pushed onto the next line)
   
 Bug fixes and improvements in 2.2.50 (31 Jan 2023)
 

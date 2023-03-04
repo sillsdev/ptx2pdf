@@ -4292,6 +4292,8 @@ class GtkViewModel(ViewModel):
             self.set("c_sidebars", True)
             # Set background colour
             self.styleEditor.setval('cat:coverwhole|esb', 'BgColour', coltotex(self.get('col_coverShading')))
+            # Set border colour
+            bc = coltotex(self.get('col_coverBorder'))
             # Set foreground (text) colour
             fg = coltotex(self.get('col_coverText'))
             self.styleEditor.setval('cat:coverfront|mt1', 'Color', fg)
@@ -4301,7 +4303,10 @@ class GtkViewModel(ViewModel):
             if self.get('c_coverBorder'):
                 self.set("c_useOrnaments", True)
                 ornaments = self.get('ecb_coverBorder')
-                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
+                # self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', ornaments)
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderColour', bc)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
             if self.get('c_coverSelectImage'):
                 img = self.get('btn_coverSelectImage')
@@ -4323,7 +4328,7 @@ class GtkViewModel(ViewModel):
             self.periphs['coverback'] = r'''
 \periph back|id="coverback"
 \zgap|1pt\*
-\pc ~
+\pc Checking that this works 'coverback'
 \vfill
 \endgraf
 '''
@@ -4331,7 +4336,7 @@ class GtkViewModel(ViewModel):
 \periph spannedCover|id="coverwhole"
 \zgap|1pt\*
 \vfill
-\pc ~
+\pc Checking that this works 'coverwhole'
 \vfill
 \endgraf
 '''

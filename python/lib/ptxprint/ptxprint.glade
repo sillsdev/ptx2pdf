@@ -3798,7 +3798,13 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Han2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">HanN</col>
+        <col id="0" translatable="yes">Han3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Han4</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Han5</col>
       </row>
       <row>
         <col id="0" translatable="yes">Vectorian1</col>
@@ -3807,7 +3813,10 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">Vectorian2</col>
       </row>
       <row>
-        <col id="0" translatable="yes">VectorianN</col>
+        <col id="0" translatable="yes">Vectorian3</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Vectorian4</col>
       </row>
       <row>
         <col id="0" translatable="yes">v85</col>
@@ -3819,7 +3828,19 @@ settings for a similar project.</property>
         <col id="0" translatable="yes">v85out</col>
       </row>
       <row>
-        <col id="0" translatable="yes">...etc...</col>
+        <col id="0" translatable="yes">v86c</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">c86out</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">v88</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">v88r</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">v88c</col>
       </row>
       <row>
         <col id="0" translatable="yes">v88out</col>
@@ -4094,7 +4115,7 @@ be applied to the front cover page.</property>
                                 <property name="has-entry">True</property>
                                 <property name="entry-text-column">0</property>
                                 <property name="id-column">1</property>
-                                <property name="active-id">f</property>
+                                <property name="active-id">Vectorian2</property>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
                                     <property name="can-focus">True</property>
@@ -30406,6 +30427,11 @@ text orientation.
                                         <property name="id-column">1</property>
                                         <property name="active-id">1</property>
                                         <signal name="changed" handler="onCoverSettingsChanged" swapped="no"/>
+                                        <child internal-child="entry">
+                                          <object class="GtkEntry">
+                                            <property name="can-focus">False</property>
+                                          </object>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="left-attach">4</property>
