@@ -288,9 +288,11 @@ class TexModel:
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
-        self.dict['cover/spinewidth_'] = self.printer.spine
+        if self.asBool('cover/includespine'):
+            self.dict['cover/spinewidth_'] = self.printer.spine
+        else:
+            self.dict['cover/spinewidth_'] = -0.1
         self.dict['project/intfile'] = ''
-
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
