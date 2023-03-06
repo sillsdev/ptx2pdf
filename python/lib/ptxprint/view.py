@@ -1296,7 +1296,7 @@ class ViewModel:
                     if m:
                         periphid = m.group(2) or m.group(1)
                         if periphid in self.periphs:
-                            fcontent.append(self.periphs[periphid])
+                            fcontent.append(self.periphs[periphid].strip())
                             usedperiphs.add(periphid)
                             skipping = True
                         else:
@@ -1307,7 +1307,7 @@ class ViewModel:
                     fcontent.append(l.strip())
         for k, v in self.periphs.items():
             if k not in usedperiphs:
-                fcontent.append(v)
+                fcontent.append(v.strip())
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
