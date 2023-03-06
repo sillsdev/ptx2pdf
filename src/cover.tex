@@ -171,13 +171,13 @@
   %  
 }
 \def\d@spine{{%
+ \let\sp@ne\empty
+ \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname<0pt 1\else 0\fi\else 0\fi ==1
   \ifcsname periphcontents=coverspine\endcsname
     \x@\let\x@\sp@ne\csname periphcontents=coverspine\endcsname
   \else
     \ifcsname periphcontents=coverspine\endcsname
       \x@\let\x@\sp@ne\csname periphcontents=spine\endcsname
-    \else
-      \let\sp@ne\empty
     \fi
   \fi
   \ifrotatespine
@@ -229,6 +229,7 @@
     \trace{cov}{NOT Rotating spine \the\ht0+\the\dp0 x \the\wd0}%
     \box0
   \fi
+ \fi
 }}
 
 \def\topedgeble@d{\ifdim\wholec@vrtpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
