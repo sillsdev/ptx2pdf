@@ -273,7 +273,7 @@ _map = {
     "cover/spineoverlapback":   ("s_spineOverlapBack", "cover", None),
     "cover/spineoverlapfront":  ("s_spineOverlapFront", "cover", None),
     "cover/papercalcunits":     ("r_paperCalc", "cover", None),
-    "cover/impsource":          ("c_coverCropMarks", "cover", None),
+    "cover/covercropmarks":     ("c_coverCropMarks", "cover", None),
     "cover/coverbleed":         ("s_coverBleed", "cover", None),
     "cover/coverartbleed":      ("s_coverArtBleed", "cover", None),
     "cover/makeseparatePDF":    ("c_coverSeparatePDF", "cover", None),

@@ -172,7 +172,7 @@
 }
 \def\d@spine{{%
  \let\sp@ne\empty
- \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname<0pt 1\else 0\fi\else 0\fi ==1
+ \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname>0pt 1\else 0\fi\else 0\fi =1
   \ifcsname periphcontents=coverspine\endcsname
     \x@\let\x@\sp@ne\csname periphcontents=coverspine\endcsname
   \else

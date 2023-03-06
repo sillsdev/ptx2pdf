@@ -858,7 +858,7 @@
     \trace{o}{p@ = \the\p@}\offinterlineskip
     \vbox to \PaperHeight{\vss \box#2\vss}
     \vss
-    \ifdim #3>0pt
+    \ifdim #3<0pt\else
       \vbox to 0pt{
         %\kern\dimen0 \moveright\dimen0
         \copy\instopcr@p

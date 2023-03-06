@@ -291,8 +291,13 @@ class TexModel:
         if self.asBool('cover/includespine'):
             self.dict['cover/spinewidth_'] = self.printer.spine
         else:
-            self.dict['cover/spinewidth_'] = -0.1
+            if self.asBool('cover/covercropmarks'):
+                self.dict['cover/spinewidth_'] = 0
+            else:
+                self.dict['cover/spinewidth_'] = -0.1
         self.dict['project/intfile'] = ''
+        if self.dict['cover/makecoverpage'] != "%":
+            self.dict['transparency_'] = "false"
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]

@@ -30605,7 +30605,7 @@ automatically but can also be
 manually adjusted.</property>
                                         <property name="halign">end</property>
                                         <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                        <signal name="clicked" handler="onOverridePageCountClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>

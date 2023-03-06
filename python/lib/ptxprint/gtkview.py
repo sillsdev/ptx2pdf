@@ -4875,3 +4875,18 @@ Thank you,
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \
                       who2email="scripturepicturepermissions_intl@sil.org")
+
+    def onOverridePageCountClicked(self, btn):
+        override = self.sensiVisible('c_overridePageCount')
+        if not override:
+            self.set('s_totalPages', self.getPageCount())
+        # else:
+            # self.set('s_totalPages', 0)
+            
+
+    def getPageCount(self):
+        xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
+        if os.path.exists(xdvname):
+            return xdvigetpages(xdvname)
+        else:
+            return 99
