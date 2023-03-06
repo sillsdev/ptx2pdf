@@ -28622,7 +28622,7 @@ PTXprint from accessing the internet.</property>
                                         <property name="tooltip-text" translatable="yes">Some advanced features load extra code
 that is not normally needed. List them
 here if you need to use them.
-e.g. polyglot-simplepages, ornaments</property>
+e.g. polyglot-simplepages</property>
                                         <property name="label" translatable="yes">Plugins:</property>
                                       </object>
                                       <packing>

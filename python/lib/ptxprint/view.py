@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.2.51"
 GitVersionStr = "2.2.51"
-ConfigVersion = "2.14"
+ConfigVersion = "2.15"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1014,13 +1014,17 @@ class ViewModel:
                     with open(path, "w", encoding="utf-8") as outf:
                         for l in lines:
                             outf.write(l)
-        if v < 2.14:
+        if v < 2.15:
             pw = config.get("config", "pwd", fallback=None)
             if pw is not None and len(pw):
                 m = hashlib.md5()
                 m.update(pw.encode("utf-8"))
                 self._configset(config, "config/pwd", b64encode(m.digest()).decode("UTF-8"))
                 forcerewrite = True
+            plg = config.get("project", "plugins", fallback="")
+            if "ornaments" in plg:
+                self._configset(config, "fancy/enableornaments", True)
+                self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
 
         self._configset(config, "config/version", ConfigVersion)
 
