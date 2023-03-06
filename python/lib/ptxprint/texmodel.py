@@ -1198,9 +1198,6 @@ class TexModel:
         if not self.asBool("document/showxtrachapnums") and bk in nonScriptureBooks:
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?\r?\n)", flags=regex.M), ""))
 
-        if self.asBool("document/ch1pagebreak"):
-            self.localChanges.append((None, regex.compile(r"(\\c 1 ?)(\r?\n)", flags=regex.M), r"\pagebreak\2\1\2"))
-
         if self.asBool("document/glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u2000\1")) 
         

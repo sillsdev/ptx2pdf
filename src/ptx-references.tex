@@ -165,7 +165,7 @@
  \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
-  \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi}%
+  \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
     \ifodd\pageno
       \the\noVoddhead
       \trace{h}{using noVoddhead}% 

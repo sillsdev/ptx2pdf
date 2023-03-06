@@ -977,7 +977,7 @@
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
     \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
-    \ifdim\dimen0>\PageFullFactor\textheight
+    \ifnum\ifdim\dimen0>\PageFullFactor\textheight 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
@@ -2231,7 +2231,7 @@
     %LOTS happens before this line is reached!
     %\tempfalse
     \trace{o}{SingleColumn: \the\ht\partial > \PageFullFactor\space x \the\textheight ?\iflastpage (ignored as this is last page)\fi}%
-    \ifdim\ht\partial>\PageFullFactor\textheight 
+    \ifnum\ifdim\ht\partial>\PageFullFactor\textheight 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1 
       \iflastpage\else %Don't force a break before a colophon
         \setbox14=\makefootbox
         \twocolp@geout %Set up pagecontents and call \plainoutput
