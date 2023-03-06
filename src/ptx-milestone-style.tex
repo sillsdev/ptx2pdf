@@ -279,7 +279,7 @@
 
 % Stand alone milestones are mainly triggers for other code, figure insertion or similar things.
 % trigger-ms:\thismil@stone and trigger-ms:\thismil@stone=attrib  are user-supplied triggers, and are expected to be USFM. They self-destruct
-% ms:\thismil@stone=attrib is defined by e.g. setzvar and is expected to be simple text. They may self-destruct
+% ms:\thismil@stone=attrib is defined by e.g. defzvar and is expected to be simple text. They may self-destruct
 % MS:\thismilestone is TeX code to generate zgaps, zrules etc. They never self-destruct.
 
 \def\st@ndalonemilestone{% 
@@ -596,28 +596,64 @@
 \x@\def\csname start-zgetperiph\endcsname{\let\periph@@@\attr@b}
 \x@\def\csname end-zgetperiph\endcsname{\let\periph@@@\empty}
 
+\x@\def\csname MS:zifvarset\endcsname{% Attributes var, emptyok
+  % set ztruetext or zfalsetext to produce output, depending on result.
+  % testing is of zvar variable var, if the variable is non-empty, the result is true.
+  % If it's set but empty, then if emptyok is given but not "F", then the
+  % varible having been defined *at all* is sufficent to be considered true.
+  %
+  \message{MSzifvarset}%
+  \get@ttribute{var}%
+  \tempfalse
+  \ifx\attr@b\relax
+    \trace{m}{zifvarset: no attribute supplied!}%
+  \else
+    \ifcsname ms:zvar=\attr@b\endcsname
+      \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
+      \ifx\tmp\empty
+        \get@ttribute{emptyok}%
+        \x@\uppercase\x@{\x@\edef\x@\attr@b\x@{\attr@b}}% Allow lower case as well.
+        \ifx\attr@b\relax\else
+          \message{\meaning\attr@b\meaning\false}%
+          \ifx\attr@b\false
+          \else
+            \temptrue % Empty but defined variable
+          \fi
+        \fi
+      \else
+        \ifx\tmp\relax\else\temptrue\fi % non-empty
+      \fi
+    \fi
+  \fi
+  \s@ttruefalsetext
+}
+
 \x@\def\csname MS:zifhook\endcsname{%
   %Check to see if there are start/end hooks for the specified marker
   %and run the appropriate text / command
   \get@ttribute{marker}%
+  \tempfalse
   \ifx\attr@b\relax
     \trace{m}{zifhook: no attribute supplied!}%
   \else
-    \tempfalse
     \ifcsname begin-\attr@b\endcsname\temptrue\fi
     \ifcsname start-\attr@b\endcsname\temptrue\fi
     \ifcsname end-\attr@b\endcsname\temptrue\fi
     \ifcsname after-\attr@b\endcsname\temptrue\fi
     \trace{m}{zifhook: [\attr@b] = \iftemp true\else false\fi}%
-    \tracingassigns=1
-    \iftemp
-      \gdef\ztruetext##1\ztruetext*{\r@gurgitatedtrue\p@sheof\scantokens{##1}\p@peof\r@gurgitatedfalse}%
-      \gdef\zfalsetext##1\zfalsetext*{}%
-    \else
-      \gdef\ztruetext##1\ztruetext*{}%
-      \gdef\zfalsetext##1\zfalsetext*{\r@gurgitatedtrue\scantokens{##1}\r@gurgitatedfalse}%
-    \fi
-    \tracingassigns=0
+  \fi
+  %\tracingassigns=1
+  \s@ttruefalsetext
+  %\tracingassigns=0
+}
+
+\def\s@ttruefalsetext{%
+  \iftemp
+    \gdef\ztruetext##1\ztruetext*{\r@gurgitatedtrue\p@sheof\scantokens{##1}\p@peof\r@gurgitatedfalse}%
+    \gdef\zfalsetext##1\zfalsetext*{}%
+  \else
+    \gdef\ztruetext##1\ztruetext*{}%
+    \gdef\zfalsetext##1\zfalsetext*{\r@gurgitatedtrue\scantokens{##1}\r@gurgitatedfalse}%
   \fi
 }
 
