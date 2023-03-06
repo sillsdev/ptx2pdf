@@ -298,6 +298,12 @@ class TexModel:
         self.dict['project/intfile'] = ''
         if self.dict['cover/makecoverpage'] != "%":
             self.dict['transparency_'] = "false"
+        p = self.dict['project/plugins'].strip()
+        if len(p) and not p.strip().startswith("\\"):
+            self.plugins = set(re.split("[ ,]+", p))
+            self.dict['project/plugins'] = ''
+        else:
+            self.plugins = set()
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
@@ -565,17 +571,11 @@ class TexModel:
                 self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
-        p = self.dict.get('project/plugins', None)
-        if p is not None and p.startswith("\\"):
-            res.append(p)
-            p = None
         if self.dict.get('fancy/enableornaments', "%") != "%":
-            if p is not None and len(p):
-                p += " ornaments"
-            else:
-                p = "ornaments"
-        if p:
-            res.append("\\def\\pluginlist{{{}}}".format(p))
+            self.plugins.add('ornaments')
+        if self.dict['cover/makecoverpage'] != "%":
+            self.plugins.add('cover')
+        self.dict['plugins_'] = ",".join(sorted(self.plugins))
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
@@ -745,6 +745,7 @@ class TexModel:
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
                 for l in inf.readlines():
+                    l = runChanges(self.changes, "FRT", l)
                     #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
@@ -755,11 +756,16 @@ class TexModel:
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 
-    def addInt(self, docdir):
+    def addInt(self, outfname):
         intfname = self.printer.getBookFilename('INT')
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
-            self.dict['project/intfile'] = saferelpath(os.path.dirname(intfile), docdir).replace("\\", "/") + "/" + intfname
+            self.dict['project/intfile'] = os.path.basename(outfname)
+            with open(intfile, encoding="utf-8") as inf:
+                dat = inf.read()
+            dat = runChanges(self.changes, "INT", dat)
+            with open(outfile, encoding="utf-8") as outf:
+                outf.write(dat)
 
     def flattenModule(self, infpath, outdir, usfm=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
