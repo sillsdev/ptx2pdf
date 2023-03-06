@@ -9,7 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -260,10 +260,6 @@ class RunJob:
         self.docreatediff = self.printer.docreatediff
         if not self.inArchive:
             self.checkForMissingDecorations(info)
-        info["document/piclistfile"] = ""
-        if info.asBool("document/ifinclfigs"):
-            self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext)
-            # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         
         if True: # info.asBool("project/combinebooks"):
             joblist = [jobs]
@@ -621,6 +617,10 @@ class RunJob:
         if info["project/sectintros"]:
             info.addInt(self.tmpdir)
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
+        info["document/piclistfile"] = ""
+        if info.asBool("document/ifinclfigs"):
+            self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext, digtexmodel=digtexmodel)
+            # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
             texf.write(texfiledat)
@@ -924,7 +924,7 @@ class RunJob:
             self.printer.doError(_("Warning: Could not locate decorative PDF(s):"),
                     secondary="\n".join(warnings))
 
-    def gatherIllustrations(self, info, jobs, ptfolder):
+    def gatherIllustrations(self, info, jobs, ptfolder, digtexmodel=None):
         logger.debug("Gathering illustrations")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
@@ -953,6 +953,11 @@ class RunJob:
             m = v.get('media', '')
             if m and 'p' not in m:
                 del picinfos[k]
+                continue
+            if t := v.get('caption', ''):
+                v['caption'] = runChanges(info.changes, k[:3], t)
+            if digtexmodel and (t := v.get('captionR', '')):
+                v['captionR'] = runChanges(digtexmodel.changes, k[:3], t)
         picinfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname
