@@ -602,7 +602,7 @@
   % If it's set but empty, then if emptyok is given but not "F", then the
   % varible having been defined *at all* is sufficent to be considered true.
   %
-  \message{MSzifvarset}%
+  %\message{MSzifvarset}%
   \get@ttribute{var}%
   \tempfalse
   \ifx\attr@b\relax
@@ -614,7 +614,7 @@
         \get@ttribute{emptyok}%
         \x@\uppercase\x@{\x@\edef\x@\attr@b\x@{\attr@b}}% Allow lower case as well.
         \ifx\attr@b\relax\else
-          \message{\meaning\attr@b\meaning\false}%
+          %\message{\meaning\attr@b\meaning\false}%
           \ifx\attr@b\false
           \else
             \temptrue % Empty but defined variable

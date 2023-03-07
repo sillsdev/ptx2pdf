@@ -105,8 +105,10 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \zifvarset|var="checkme" emptyok="F"\*
 \p
 \ztruetext
-  Variable checkme is set to \zvar|checkme\*
+\esb \cat maynotwork\cat*\p Variable checkme is set to \zvar|checkme\*\esbe
 \ztruetext*
 \zfalsetext
-\esb \cat maynotwork\cat*\p Variable checkme is not set \p Testing \esbe
+\esb \cat maynotwork\cat*\p Variable checkme is not set \p Testing 
+\zISBNbarcode|isbn="zvar::isbn"\*
+\esbe
 \zfalsetext*
