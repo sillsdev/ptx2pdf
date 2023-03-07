@@ -52,7 +52,8 @@ ends with a complete stylesheet that could be used to set the above text.
 ## TeX Parameters
 
 ```tex
-\expandafter\edef\csname cover-bleed\endcsname{3mm}   % Bleed dimension
+\edef\figbleed{5pt} % Bleed dimension for  figures.
+\expandafter\edef\csname cover-bleed\endcsname{3mm}   % Bleed dimension for background colours
 \expandafter\edef\csname cover-spine\endcsname{11.23mm}   % Actual spine width = book thickness, endpapers, board thickness, etc.
 \expandafter\edef\csname cover-y\endcsname{21cm} % spine/book height 
 \expandafter\edef\csname cover-x\endcsname{14.85cm} % Front/back cover
@@ -72,7 +73,8 @@ the image should be scaled to. (Note that these are so-far untested on other
 sidebars).
 
 The relevant options are:
-* bleed - overflow the page into the cropped area.
+* bleed - overflow the page into the cropped area by `\figbleed`.
+* colbleed - overflow the page into the cropped area as much as the colours do (normally figures bleed less).
 * box - the coloured box
 * border - the outer edge of the border
 * outer - the outermost of the coloured box or the border.
