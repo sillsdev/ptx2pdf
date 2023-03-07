@@ -39,8 +39,8 @@
 %\font\idf@nt="Times New Roman" at 10pt % FIXME: Use something not bitmap?
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
-  \trace{cov}{makecrops bleeds=\the\bl@eds}%
-  \global\setbox\topcr@p=\vbox to 0pt{\vss
+  \trace{cov}{makecrops bleeds=\the\bl@eds, pw=\the\PaperWidth}%
+  \global\setbox\topcr@p=\vbox to 0pt{\toks0=\everypar\everypar={}\vss
     \hbox to \PaperWidth{%
       \kern -30pt \kern -\bl@eds
       \vrule height .2pt depth .2pt width 25pt  % top of page (left)
@@ -70,8 +70,9 @@
       \vrule height -\topm@rgin depth \dimen0 width 15pt    % top margin (right)
       \kern -30pt \kern-\bl@eds
     }%
-  }\dp\topcr@p=0pt % end \vbox for \topcr@p
-  \global\setbox\bottomcr@p=\vbox to 0pt{%
+  \everypar=\toks0}\dp\topcr@p=0pt % end \vbox for \topcr@p
+  \trace{cov}{topcrop done}%
+  \global\setbox\bottomcr@p=\vbox to 0pt{\hsize=\PaperWidth \toks0=\everypar\def\par{}\everypar={}%
     \setbox0=\hbox to \PaperWidth{%
       \dimen0=\bottomm@rgin \advance\dimen0 by 0.4pt
       \kern -30pt \kern -\bl@eds
@@ -84,7 +85,7 @@
       \vrule height \dimen1 depth \dimen0 width .4pt    % left page (bottom)
       \kern -0.2pt
       \ifdim\sp@newidth>0pt\lower \dimexpr 6pt + \bl@eds \hbox to 0pt{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
-        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\hss\fi
+        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt\hss}\fi
       \hss
       \vrule height \dimen1 depth \dimen0 width .4pt    % right page (bottom)
       \kern 4.8pt \kern\bl@eds
@@ -96,6 +97,7 @@
     }%
     \dp0=0pt \ht0=0pt \box0
   }\ht\bottomcr@p=0pt \dp\bottomcr@p=0pt% end \vbox for \bottomcr@p
+  \trace{cov}{makecrops done}%
 }
 %-c_makecropmarks
 
