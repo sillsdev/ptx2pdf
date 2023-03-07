@@ -3932,8 +3932,8 @@ dialog may be hidden behind.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkFrame">
-            <property name="width-request">270</property>
+          <!-- n-columns=1 n-rows=2 -->
+          <object class="GtkGrid">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="halign">start</property>
@@ -3941,392 +3941,54 @@ dialog may be hidden behind.</property>
             <property name="margin-end">6</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
-            <property name="label-xalign">0.019999999552965164</property>
+            <property name="row-spacing">6</property>
+            <property name="column-spacing">6</property>
             <child>
-              <object class="GtkAlignment">
+              <object class="GtkFrame" id="fr_coverSettings">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">start</property>
-                <property name="left-padding">12</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">6</property>
+                <property name="margin-bottom">6</property>
+                <property name="label-xalign">0.029999999329447746</property>
                 <child>
-                  <!-- n-columns=2 n-rows=4 -->
+                  <!-- n-columns=5 n-rows=5 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">start</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
                     <property name="row-spacing">6</property>
                     <property name="column-spacing">6</property>
                     <child>
-                      <object class="GtkRadioButton" id="r_cover_basic">
-                        <property name="label" translatable="yes">BASIC: Plain monochrome text</property>
-                        <property name="name">Generate cover: BASIC (plain text)</property>
+                      <object class="GtkSpinButton" id="s_coverTextScale">
+                        <property name="name">Generate cover: Scale Text Size</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">This option will create a simple cover
-containing the title, subtitle (if present)
-and the language name on the rear cover.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">end</property>
-                        <property name="draw-indicator">True</property>
-                        <property name="group">r_cover_standard</property>
-                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="r_cover_standard">
-                        <property name="label" translatable="yes">STANDARD: +Borders, Shading, Color</property>
-                        <property name="name">Generate cover: STANDARD (text with border and shading)</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">This option will create a stylized cover
-containing the title, subtitle (if present),
-an optional ornamental border, and a
-few additional details on the rear cover.</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="draw-indicator">True</property>
-                        <property name="group">r_cover_advanced</property>
-                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkRadioButton" id="r_cover_advanced">
-                        <property name="label" translatable="yes">ADVANCED: +Pictures, ISBN code, Layers</property>
-                        <property name="name">Generate cover: ADVANCED (complex and fragile)</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">This option provides the greatest level of
-flexibility allowing quite sophisticated covers
-to be created. However this brings a greater
-level of complexity and fragility.</property>
+                        <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
+title and subtitle on the cover page. Use
+this setting to increase size of such titles.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
-                        <property name="draw-indicator">True</property>
-                        <property name="group">r_cover_standard</property>
-                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                        <property name="width-chars">6</property>
+                        <property name="text">1.00</property>
+                        <property name="xalign">1</property>
+                        <property name="input-purpose">number</property>
+                        <property name="adjustment">a_coverTextScale</property>
+                        <property name="climb-rate">0.10</property>
+                        <property name="digits">2</property>
+                        <property name="numeric">True</property>
+                        <property name="update-policy">if-valid</property>
+                        <property name="value">1.7</property>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkFrame" id="fr_coverSettings">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">start</property>
-                        <property name="margin-start">6</property>
-                        <property name="margin-end">6</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="label-xalign">0.029999999329447746</property>
-                        <child>
-                          <!-- n-columns=5 n-rows=5 -->
-                          <object class="GtkGrid">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="margin-start">6</property>
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="row-spacing">6</property>
-                            <property name="column-spacing">6</property>
-                            <child>
-                              <object class="GtkSpinButton" id="s_coverTextScale">
-                                <property name="name">Generate cover: Scale Text Size</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
-title and subtitle on the cover page. Use
-this setting to increase size of such titles.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">start</property>
-                                <property name="width-chars">6</property>
-                                <property name="text">1.00</property>
-                                <property name="xalign">1</property>
-                                <property name="input-purpose">number</property>
-                                <property name="adjustment">a_coverTextScale</property>
-                                <property name="climb-rate">0.10</property>
-                                <property name="digits">2</property>
-                                <property name="numeric">True</property>
-                                <property name="update-policy">if-valid</property>
-                                <property name="value">1.7</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Text Color:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_coverText">
-                                <property name="name">Generate cover: Text Color</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Set the color of the title and subtitle text.</property>
-                                <property name="halign">start</property>
-                                <property name="title" translatable="yes">Border Color</property>
-                                <property name="rgba">rgb(0,0,0)</property>
-                                <signal name="color-set" handler="onstyColorSet" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_coverTextScale">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
-title and subtitle on the cover page. Use
-this setting to increase size of such titles.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="label" translatable="yes">Scale Text Size:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkComboBox" id="ecb_coverBorder">
-                                <property name="name">Generate cover: Select Ornamental Border</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="can-default">True</property>
-                                <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
-to choose from, or a custom-made border may
-be applied to the front cover page.</property>
-                                <property name="halign">start</property>
-                                <property name="model">ls_coverBorder</property>
-                                <property name="wrap-width">1</property>
-                                <property name="has-entry">True</property>
-                                <property name="entry-text-column">0</property>
-                                <property name="id-column">1</property>
-                                <property name="active-id">Vectorian2</property>
-                                <child internal-child="entry">
-                                  <object class="GtkEntry">
-                                    <property name="can-focus">True</property>
-                                    <property name="width-chars">22</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_coverShading">
-                                <property name="name">Generate cover: Select Background Shading</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
-                                <property name="halign">start</property>
-                                <property name="title" translatable="yes">Border Color</property>
-                                <property name="rgba">rgb(255,255,255)</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="l_coverBorder">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin-start">12</property>
-                                <property name="label" translatable="yes">Border Color:</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="btn_coverSelectImage">
-                                <property name="label" translatable="yes">Select...</property>
-                                <property name="name">Generate cover: Select Background Image</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <signal name="clicked" handler="onCoverSelectImageClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel" id="lb_coverImageFilename">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="margin-start">50</property>
-                                <property name="margin-end">6</property>
-                                <property name="label" translatable="yes">C:\Filepath\to\image.jpg</property>
-                                <property name="ellipsize">middle</property>
-                                <attributes>
-                                  <attribute name="scale" value="0.84999999999999998"/>
-                                </attributes>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">4</property>
-                                <property name="width">5</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkColorButton" id="col_coverBorder">
-                                <property name="name">Generate cover: Select Border Color</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
-                                <property name="halign">start</property>
-                                <property name="title" translatable="yes">Border Color</property>
-                                <property name="rgba">rgb(94,92,100)</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">4</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_coverBorder">
-                                <property name="label" translatable="yes">Ornamental Border:</property>
-                                <property name="name">Generate cover: Enable Ornamental Border</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
-to choose from, or a custom-made border may
-be applied to the front cover page.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_coverShading">
-                                <property name="label" translatable="yes">Background Shading:</property>
-                                <property name="name">Generate cover: Enable Background Shading</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_coverSelectImage">
-                                <property name="label" translatable="yes">Background Image:</property>
-                                <property name="name">Generate cover: Enable Background Image</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                                <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                              </object>
-                              <packing>
-                                <property name="left-attach">0</property>
-                                <property name="top-attach">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkCheckButton" id="c_coverImageFront">
-                                <property name="label" translatable="yes">Only on Front Cover</property>
-                                <property name="name">Generate cover: Enable Background Image</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Enable this option to only place the
-selected image on the front cover (so
-it does not wrap around onto the back
-cover). If using this option it would be 
-helpful to use a portrait image.</property>
-                                <property name="halign">start</property>
-                                <property name="valign">center</property>
-                                <property name="draw-indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">3</property>
-                                <property name="width">3</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                          </object>
-                        </child>
-                        <child type="label">
-                          <object class="GtkLabel">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Cover Page Settings</property>
-                          </object>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">0</property>
                         <property name="width">2</property>
                       </packing>
                     </child>
@@ -4334,38 +3996,305 @@ helpful to use a portrait image.</property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Text Color:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkColorButton" id="col_coverText">
+                        <property name="name">Generate cover: Text Color</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Set the color of the title and subtitle text.</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">Note that when you click on Create 
-Cover Settings, it will overwrite the 
-following \periph definitions in the 
-Front Matter (see View+Edit tab):
-   id='coverfront', id='coverspine', 
-   id='coverback, id='coverwhole'.</property>
-                        <attributes>
-                          <attribute name="foreground" value="#cccc00000000"/>
-                        </attributes>
+                        <property name="title" translatable="yes">Border Color</property>
+                        <property name="rgba">rgb(0,0,0)</property>
+                        <signal name="color-set" handler="onstyColorSet" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverTextScale">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
+title and subtitle on the cover page. Use
+this setting to increase size of such titles.</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Scale Text Size:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="ecb_coverBorder">
+                        <property name="name">Generate cover: Select Ornamental Border</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
+to choose from, or a custom-made border may
+be applied to the front cover page.</property>
+                        <property name="halign">start</property>
+                        <property name="margin-top">10</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="model">ls_coverBorder</property>
+                        <property name="wrap-width">1</property>
+                        <property name="has-entry">True</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">Vectorian2</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">0</property>
-                        <property name="height">3</property>
+                        <property name="top-attach">1</property>
+                        <property name="width">2</property>
                       </packing>
+                    </child>
+                    <child>
+                      <object class="GtkColorButton" id="col_coverShading">
+                        <property name="name">Generate cover: Select Background Shading</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
+                        <property name="halign">start</property>
+                        <property name="title" translatable="yes">Border Color</property>
+                        <property name="rgba">rgb(255,255,255)</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverBorder">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">12</property>
+                        <property name="label" translatable="yes">Border Color:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">3</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="btn_coverSelectImage">
+                        <property name="label" translatable="yes">Select...</property>
+                        <property name="name">Generate cover: Select Background Image</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <signal name="clicked" handler="onCoverSelectImageClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="lb_coverImageFilename">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">50</property>
+                        <property name="margin-end">6</property>
+                        <property name="label" translatable="yes">C:\Filepath\to\image.jpg</property>
+                        <property name="ellipsize">middle</property>
+                        <attributes>
+                          <attribute name="scale" value="0.84999999999999998"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkColorButton" id="col_coverBorder">
+                        <property name="name">Generate cover: Select Border Color</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
+                        <property name="halign">start</property>
+                        <property name="margin-top">10</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="title" translatable="yes">Border Color</property>
+                        <property name="rgba">rgb(94,92,100)</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">4</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_coverShading">
+                        <property name="label" translatable="yes">Background Shading:</property>
+                        <property name="name">Generate cover: Enable Background Shading</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_coverSelectImage">
+                        <property name="label" translatable="yes">Background Image:</property>
+                        <property name="name">Generate cover: Enable Background Image</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_coverImageFront">
+                        <property name="label" translatable="yes">Only on Front Cover</property>
+                        <property name="name">Generate cover: Enable Background Image</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Enable this option to only place the
+selected image on the front cover (so
+it does not wrap around onto the back
+cover). If using this option it would be 
+helpful to use a portrait image.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <child>
+                          <object class="GtkCheckButton" id="c_coverBorder">
+                            <property name="label" translatable="yes">Ornamental Border:</property>
+                            <property name="name">Generate cover: Enable Ornamental Border</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
+to choose from, or a custom-made border may
+be applied to the front cover page.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLinkButton" id="lb_openCatalog">
+                            <property name="label">Open Catalog</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="focus-on-click">False</property>
+                            <property name="receives-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Click to Open a PDF containing a catalog
+of the various Ornamental Borders (pgs 4-7).</property>
+                            <property name="halign">end</property>
+                            <property name="valign">start</property>
+                            <property name="relief">none</property>
+                            <property name="uri">Click to view the Styles tab</property>
+                            <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
+                <child type="label">
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="label" translatable="yes">Cover Page Settings</property>
+                  </object>
+                </child>
               </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">0</property>
+              </packing>
             </child>
-            <child type="label">
+            <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Generate Cover</property>
+                <property name="halign">end</property>
+                <property name="label" translatable="yes">Note that when you click on Create Cover Settings, it will overwrite the 
+following \periph definitions in the Front Matter (see View+Edit tab):
+   id='coverfront', id='coverspine', id='coverback, id='coverwhole'.</property>
+                <attributes>
+                  <attribute name="foreground" value="#cccc00000000"/>
+                </attributes>
               </object>
+              <packing>
+                <property name="left-attach">0</property>
+                <property name="top-attach">1</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="fill">True</property>
             <property name="position">1</property>
           </packing>
         </child>
@@ -30348,6 +30277,7 @@ main scripture pages.</property>
                     <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <property name="homogeneous">True</property>
+                    <signal name="focus" handler="onGotCoverFocus" swapped="no"/>
                     <child>
                       <object class="GtkFrame">
                         <property name="visible">True</property>
@@ -31373,6 +31303,7 @@ where to trim the publication.</property>
                                                 <property name="margin-bottom">6</property>
                                                 <property name="active">True</property>
                                                 <property name="draw-indicator">True</property>
+                                                <signal name="clicked" handler="onCropMarksClicked" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>

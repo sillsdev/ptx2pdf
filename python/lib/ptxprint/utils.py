@@ -460,7 +460,7 @@ def runChanges(changes, bk, dat):
         return proc
     for c in changes:
         if bk is not None:
-            logger.debug("Change: {}".format(c))
+            logger.debug("at {} Change: {}".format(bk, c))
         if c[0] is None:
             dat = c[1].sub(wrap(c[2]), dat)
         elif isinstance(c[0], str):

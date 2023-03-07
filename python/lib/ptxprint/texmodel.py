@@ -764,7 +764,7 @@ class TexModel:
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes, "INT", dat)
-            with open(outfile, encoding="utf-8") as outf:
+            with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
 
     def flattenModule(self, infpath, outdir, usfm=None):
