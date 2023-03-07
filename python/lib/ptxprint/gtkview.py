@@ -320,16 +320,11 @@ _nonsensitivities = {
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
+    "c_inclSpine":             ["c_coverCropMarks"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
         "r_xrpos_centre" :    []},
-    "r_cover": {
-        "r_cover_advanced" :   [],
-        "r_cover_standard":    ["c_coverSelectImage", "btn_coverSelectImage", "lb_coverImageFilename"],
-        "r_cover_basic":       ["c_coverSelectImage", "btn_coverSelectImage", "lb_coverImageFilename",
-                                "c_coverBorder", "ecb_coverBorder", "l_coverBorder", "col_coverBorder",
-                                "c_coverShading", "col_coverShading"]},
 }
 
 _object_classes = {
@@ -4787,8 +4782,10 @@ class GtkViewModel(ViewModel):
         self.spine = (thck * pgs / 2000) + adj
 
         showSpine = self.sensiVisible("c_inclSpine")
+        self.set('c_coverCropMarks', showSpine)
         for w in ["vp_spine", "lb_style_cat:coverspine|esb"]:
             self.builder.get_object(w).set_visible(showSpine)
+            
         self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
         thick = self.spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
@@ -4887,3 +4884,28 @@ Thank you,
             return xdvigetpages(xdvname)
         else:
             return 99
+
+    def onCatalogClicked(self,btn):
+        catpdf = os.path.join(pycodedir(), "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        if os.path.exists(catpdf):
+            if sys.platform == "win32":
+                os.startfile(catpdf)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', catpdf))
+        else:
+            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
+            if os.path.exists(catpdf):
+                if sys.platform == "win32":
+                    os.startfile(catpdf)
+                elif sys.platform == "linux":
+                    subprocess.call(('xdg-open', catpdf))
+
+    def onCropMarksClicked(self, btn):
+        if not self.get("c_coverCropMarks"):
+            self.set("s_coverBleed", 0)
+            self.set("s_coverArtBleed", 0)
+
+    def onGotCoverFocus(self, widget, event):
+        print("Got focus for COVER tab")
+        if not self.get('c_overridePageCount'):
+            self.set('s_totalPages', self.getPageCount())
