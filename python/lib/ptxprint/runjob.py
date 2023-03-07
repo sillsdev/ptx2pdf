@@ -765,6 +765,7 @@ class RunJob:
                 tailoring = self.printer.ptsettings.getCollation()
                 ducet = tailored(tailoring.text) if tailoring else None
                 bklist = self.printer.getBooks()
+                copyfile(tocfname, tocfname.replace(".", "_org."))
                 toc = TOC(tocfname)
                 newtoc = generateTex(toc.createtocvariants(bklist, ducet=ducet))
                 with open(tocfname, "w", encoding="utf-8") as outf:
