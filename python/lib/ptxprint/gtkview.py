@@ -304,7 +304,7 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
-    "c_coverBorder":           ["ecb_coverBorder", "l_coverBorder", "col_coverBorder"],
+    "c_coverBorder":           ["fcb_coverBorder", "l_coverBorder", "col_coverBorder"],
     "c_coverShading":          ["col_coverShading"],
     "c_coverSelectImage":      ["btn_coverSelectImage", "lb_coverImageFilename"],
 }
@@ -4295,23 +4295,46 @@ class GtkViewModel(ViewModel):
                     sf = 1 if cvr == 'front' else 0.75
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf)
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
-            # Set background color
-            self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
-            # self.styleEditor.setval('cat:coverfront|mt2', 'Color', fg)
-            # self.styleEditor.setval('cat:coverspine|mt1', 'Color', fg)
-            # self.styleEditor.setval('cat:coverspine|mt2', 'Color', fg)
+
             if self.get('c_coverBorder'):
+                print(f"{self.get('c_coverBorder')=}")
                 # Set border colour
                 bc = coltotex(self.get('col_coverBorder'))
                 self.set("c_useOrnaments", True)
-                ornaments = self.get('ecb_coverBorder')
+                ornaments = self.get('fcb_coverBorder')
+                print(f"{ornaments=}")
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
+            else:
+                print(f"{self.get('c_coverBorder')=}")
+                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'None')
+
+            # Set background color
+            if self.get('c_coverShading'):
+                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
+            else:
+                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
+                
             if self.get('c_coverSelectImage'):
+                # Warning: img is still broken!!!
                 img = self.get('btn_coverSelectImage')
-                self.styleEditor.setval('cat:coverfront' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
+            else:
+                self.styleEditor.setval('cat:coverfront|esb', 'BgImage', 'F')
+                self.styleEditor.setval('cat:coverwhole|esb', 'BgImage', 'F')
+
+            if self.get('c_coverShading') or self.get('c_coverSelectImage'):
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'Alpha', 1.0)
+            else:
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', 0.0)
+
+            if self.get('c_RTLbookBinding'):
+                self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hl')
+            else:
+                self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hr')
+
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
 \zgap|30pt\*
@@ -4328,7 +4351,14 @@ class GtkViewModel(ViewModel):
 \zgap|1pt\*
 \pc ~
 \vfill
-\endgraf'''
+\endgraf
+\zifvarset|var="isbn" emptyok="F"\*
+\ztruetext
+\esb \cat ISBNbox\cat*
+\pc \zISBNbarcode|var="isbn" height="short"\*
+\esbe
+\ztruetext*
+\zgap|36pt\*'''
             self.periphs['coverwhole'] = r'''
 \periph spannedCover|id="coverwhole"
 \zgap|1pt\*
@@ -4449,12 +4479,11 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         
     def onvarEdit(self, tv, path, text): #cr, path, text, tv):
-        if len(text) > 0:
-            model = tv.get_model()
-            it = model.get_iter_from_string(path)
-            if it:
-                model.set(it, 1, text)
-                self.setvar(model.get(it, 0)[0], text)
+        model = tv.get_model()
+        it = model.get_iter_from_string(path)
+        if it:
+            model.set(it, 1, text.strip())
+            self.setvar(model.get(it, 0)[0], text.strip())
 
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):
@@ -4771,6 +4800,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_spineTitle").set_label(_("Spine Title"))
         else:
             self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
+        if rotateDegrees == 90:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'l')
+        elif rotateDegrees == 270:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'r')
+        else:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'F')
         
         pgs = float(self.get("s_totalPages"))
         adj = float(self.get("s_coverAdjust"))
@@ -4790,6 +4825,11 @@ class GtkViewModel(ViewModel):
         thick = self.spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
         self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
+
+        if self.get('c_RTLbookBinding'):
+            self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hl')
+        else:
+            self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hr')
 
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]
@@ -4887,18 +4927,13 @@ Thank you,
 
     def onCatalogClicked(self,btn):
         catpdf = os.path.join(pycodedir(), "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        if not os.path.exists(catpdf):
+            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
         if os.path.exists(catpdf):
             if sys.platform == "win32":
                 os.startfile(catpdf)
             elif sys.platform == "linux":
                 subprocess.call(('xdg-open', catpdf))
-        else:
-            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
-            if os.path.exists(catpdf):
-                if sys.platform == "win32":
-                    os.startfile(catpdf)
-                elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', catpdf))
 
     def onCropMarksClicked(self, btn):
         if not self.get("c_coverCropMarks"):
@@ -4906,6 +4941,13 @@ Thank you,
             self.set("s_coverArtBleed", 0)
 
     def onGotCoverFocus(self, widget, event):
-        print("Got focus for COVER tab")
         if not self.get('c_overridePageCount'):
             self.set('s_totalPages', self.getPageCount())
+            
+    def isCoverTabOpen(self):
+        if not self.get("c_makeCoverPage"):
+            return False
+        if self.builder.get_object("nbk_Main").get_current_page() == self.notebooks["Main"].index("tb_Cover"):
+            return True
+        else:
+            return False

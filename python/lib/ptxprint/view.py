@@ -1935,3 +1935,5 @@ set stack_size=32768""".format(self.configName())
                     wanal=wanal)
         return self.strongs
 
+    def isCoverTabOpen(self):
+        return False

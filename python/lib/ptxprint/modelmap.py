@@ -263,7 +263,7 @@ _map = {
     "document/printarchive":    ("c_printArchive", "finish", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", "cover", lambda w,v: "" if v else "%"),
-    "cover/rtlbookbinding":     ("c_RTLbookBinding", "cover", None),
+    "cover/rtlbookbinding":     ("c_RTLbookBinding", "cover", lambda w,v: "true" if v else "false"),
     "cover/includespine":       ("c_inclSpine", "cover", None),
     "cover/rotatespine":        ("fcb_rotateSpineText", "cover", None),
     "cover/overridepagecount":  ("c_overridePageCount", "cover", None),
@@ -282,7 +282,7 @@ _map = {
     "covergen/textscale":       ("s_coverTextScale", "cover", None),
     "covergen/textcolor":       ("col_coverText", "cover", None),
     "covergen/useborder":       ("c_coverBorder", "cover", None),
-    "covergen/borderstyle":     ("ecb_coverBorder", "cover", None),
+    "covergen/borderstyle":     ("fcb_coverBorder", "cover", None),
     "covergen/bordercolor":     ("col_coverBorder", "cover", None),
     "covergen/useshading":      ("c_coverShading", "cover", None),
     "covergen/shadingcolor":    ("col_coverShading", "cover", None),

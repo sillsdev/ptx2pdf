@@ -205,6 +205,7 @@ class RunJob:
         # self.onlydiffs = True
         # self.diffPdf = None
         self.rerunReasons = []
+        self.coverfile = None
 
     def fail(self, txt):
         self.printer.set("l_statusLine", txt)
@@ -328,10 +329,14 @@ class RunJob:
                         self.printer.set("l_statusLine", _("No differences found"))
                 self.printer.docreatediff = False
             elif not self.noview and self.printer.isDisplay and os.path.exists(pdfname):
+                if self.printer.isCoverTabOpen():
+                    startname = self.coverfile or pdfname
+                else:
+                    startname = pdfname
                 if sys.platform == "win32":
-                    os.startfile(pdfname)
+                    os.startfile(startname)
                 elif sys.platform == "linux":
-                    subprocess.call(('xdg-open', pdfname))
+                    subprocess.call(('xdg-open', startname))
 
             if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                 fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
@@ -811,6 +816,7 @@ class RunJob:
     def procpdf(self, outfname, pdffile, info, **kw):
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
+        self.coverfile = None
         if kw.get('cover', False):
             inpdf = PdfReader(opath)
             covpdfname = pdffile.replace(".pdf", "_cover.pdf")
@@ -827,6 +833,7 @@ class RunJob:
                 for v in eps:
                     v.Parent = covpdf.Root.Pages
                 fixpdffile(covpdf, covpdfname, colour="cmyk")
+                self.coverfile = covpdfname
             outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}

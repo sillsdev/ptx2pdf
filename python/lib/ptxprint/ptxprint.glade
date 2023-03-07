@@ -4039,7 +4039,7 @@ this setting to increase size of such titles.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkComboBox" id="ecb_coverBorder">
+                      <object class="GtkComboBox" id="fcb_coverBorder">
                         <property name="name">Generate cover: Select Ornamental Border</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -4052,10 +4052,16 @@ be applied to the front cover page.</property>
                         <property name="margin-bottom">10</property>
                         <property name="model">ls_coverBorder</property>
                         <property name="wrap-width">1</property>
+                        <property name="active">0</property>
                         <property name="has-entry">True</property>
                         <property name="entry-text-column">0</property>
-                        <property name="id-column">1</property>
-                        <property name="active-id">Vectorian2</property>
+                        <property name="id-column">0</property>
+                        <property name="active-id">Han1</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="can-focus">False</property>
+                          </object>
+                        </child>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -4255,6 +4261,12 @@ of the various Ornamental Borders (pgs 4-7).</property>
                         <property name="left-attach">0</property>
                         <property name="top-attach">1</property>
                       </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                     <child>
                       <placeholder/>
@@ -30369,11 +30381,10 @@ text orientation.
                                         <property name="halign">start</property>
                                         <property name="model">ls_rotateSpineText</property>
                                         <property name="wrap-width">1</property>
-                                        <property name="active">2</property>
                                         <property name="has-entry">True</property>
                                         <property name="entry-text-column">0</property>
                                         <property name="id-column">1</property>
-                                        <property name="active-id">1</property>
+                                        <property name="active-id">270</property>
                                         <signal name="changed" handler="onCoverSettingsChanged" swapped="no"/>
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
@@ -30771,6 +30782,209 @@ of overlap here (mm).</property>
                                 <property name="vexpand">True</property>
                                 <property name="spacing">6</property>
                                 <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="orientation">vertical</property>
+                                    <property name="spacing">12</property>
+                                    <child>
+                                      <object class="GtkButton" id="btn_coverGenerate">
+                                        <property name="label" translatable="yes">Generate Cover...</property>
+                                        <property name="name">Generate Cover (Basic settings to create a cover)</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Creating a cover from nothing takes a lot of effort.
+This tool enables you to create various kinds of
+covers which can easily be enhanced. </property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">start</property>
+                                        <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkExpander">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="expanded">True</property>
+                                        <child>
+                                          <!-- n-columns=2 n-rows=3 -->
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="margin-end">6</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="margin-bottom">6</property>
+                                            <property name="row-spacing">6</property>
+                                            <property name="column-spacing">3</property>
+                                            <child>
+                                              <object class="GtkSpinButton" id="s_coverArtBleed">
+                                                <property name="name">Generate cover: Art Bleed setting</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
+and is the setting which enables images to go
+beyond the size of the cover in order to wrap
+around the hard cover and stuck down under
+the inner backing sheet. (Units: mm)</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="width-chars">6</property>
+                                                <property name="text" translatable="yes">5.0</property>
+                                                <property name="xalign">1</property>
+                                                <property name="adjustment">a_coverArtBleed</property>
+                                                <property name="climb-rate">1</property>
+                                                <property name="digits">1</property>
+                                                <property name="value">5</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSpinButton" id="s_coverBleed">
+                                                <property name="name">Generate cover: Bleed setting</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
+goes beyond where the paper is cut. 
+This ensures that the image goes right
+to the edge of the cover after it has 
+been trimmed. (Units: mm)</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="width-chars">6</property>
+                                                <property name="text" translatable="yes">5.0</property>
+                                                <property name="xalign">1</property>
+                                                <property name="adjustment">a_coverBleed</property>
+                                                <property name="climb-rate">1</property>
+                                                <property name="digits">1</property>
+                                                <property name="value">5</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
+goes beyond where the paper is cut. 
+This ensures that the image goes right
+to the edge of the cover after it has 
+been trimmed. (Units: mm)</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="label" translatable="yes">Bleed:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">1</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="c_coverCropMarks">
+                                                <property name="label" translatable="yes">Show Crop Marks</property>
+                                                <property name="name">Generate cover: Include bleed area and cropmarks</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="tooltip-text" translatable="yes">When printing and binding books in bulk
+crop marks are usually required to indicate
+where to trim the publication.</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="margin-end">6</property>
+                                                <property name="margin-top">6</property>
+                                                <property name="margin-bottom">6</property>
+                                                <property name="active">True</property>
+                                                <property name="draw-indicator">True</property>
+                                                <signal name="clicked" handler="onCropMarksClicked" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
+                                                <property name="width">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
+and is the setting which enables images to go
+beyond the size of the cover in order to wrap
+around the hard cover and stuck down under
+the inner backing sheet. (Units: mm)</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="label" translatable="yes">Art Bleed:</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <child type="label">
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="margin-end">20</property>
+                                            <property name="label" translatable="yes">Crop Marks + Bleed Settings</property>
+                                            <attributes>
+                                              <attribute name="weight" value="bold"/>
+                                              <attribute name="foreground" value="#72729f9ecfcf"/>
+                                            </attributes>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
+                                        <property name="label">Edit Cover Spread Settings</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Front Cover.</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">end</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">True</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkViewport" id="vp_coverBack">
                                     <property name="width-request">180</property>
                                     <property name="visible">True</property>
@@ -30945,7 +31159,7 @@ on the Styles tab for the Back Cover.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">0</property>
+                                    <property name="position">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -31015,7 +31229,7 @@ on the Styles tab for the Spine.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">1</property>
+                                    <property name="position">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -31169,208 +31383,6 @@ on the Styles tab for the Front Cover.</property>
                                           </object>
                                         </child>
                                       </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">2</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkBox">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="orientation">vertical</property>
-                                    <property name="spacing">12</property>
-                                    <child>
-                                      <object class="GtkButton" id="btn_coverGenerate">
-                                        <property name="label" translatable="yes">Generate Cover...</property>
-                                        <property name="name">Generate Cover (Basic settings to create a cover)</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Creating a cover from nothing takes a lot of effort.
-This tool enables you to create various kinds of
-covers which can easily be enhanced. </property>
-                                        <property name="halign">start</property>
-                                        <property name="valign">start</property>
-                                        <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkExpander">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <child>
-                                          <!-- n-columns=2 n-rows=3 -->
-                                          <object class="GtkGrid">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="margin-start">6</property>
-                                            <property name="margin-end">6</property>
-                                            <property name="margin-top">6</property>
-                                            <property name="margin-bottom">6</property>
-                                            <property name="row-spacing">6</property>
-                                            <property name="column-spacing">3</property>
-                                            <child>
-                                              <object class="GtkSpinButton" id="s_coverArtBleed">
-                                                <property name="name">Generate cover: Art Bleed setting</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
-and is the setting which enables images to go
-beyond the size of the cover in order to wrap
-around the hard cover and stuck down under
-the inner backing sheet. (Units: mm)</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="width-chars">6</property>
-                                                <property name="text" translatable="yes">5.0</property>
-                                                <property name="xalign">1</property>
-                                                <property name="adjustment">a_coverArtBleed</property>
-                                                <property name="climb-rate">1</property>
-                                                <property name="digits">1</property>
-                                                <property name="value">5</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkSpinButton" id="s_coverBleed">
-                                                <property name="name">Generate cover: Bleed setting</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
-goes beyond where the paper is cut. 
-This ensures that the image goes right
-to the edge of the cover after it has 
-been trimmed. (Units: mm)</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="width-chars">6</property>
-                                                <property name="text" translatable="yes">5.0</property>
-                                                <property name="xalign">1</property>
-                                                <property name="adjustment">a_coverBleed</property>
-                                                <property name="climb-rate">1</property>
-                                                <property name="digits">1</property>
-                                                <property name="value">5</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Bleed is the section of artwork that 
-goes beyond where the paper is cut. 
-This ensures that the image goes right
-to the edge of the cover after it has 
-been trimmed. (Units: mm)</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Bleed:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_coverCropMarks">
-                                                <property name="label" translatable="yes">Show Crop Marks</property>
-                                                <property name="name">Generate cover: Include bleed area and cropmarks</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">When printing and binding books in bulk
-crop marks are usually required to indicate
-where to trim the publication.</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-end">6</property>
-                                                <property name="margin-top">6</property>
-                                                <property name="margin-bottom">6</property>
-                                                <property name="active">True</property>
-                                                <property name="draw-indicator">True</property>
-                                                <signal name="clicked" handler="onCropMarksClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                                <property name="width">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">Art Bleed is specifically for hard cover binding
-and is the setting which enables images to go
-beyond the size of the cover in order to wrap
-around the hard cover and stuck down under
-the inner backing sheet. (Units: mm)</property>
-                                                <property name="halign">end</property>
-                                                <property name="valign">center</property>
-                                                <property name="label" translatable="yes">Art Bleed:</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                          </object>
-                                        </child>
-                                        <child type="label">
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="margin-end">20</property>
-                                            <property name="label" translatable="yes">Crop Marks + Bleed Settings</property>
-                                            <attributes>
-                                              <attribute name="weight" value="bold"/>
-                                              <attribute name="foreground" value="#72729f9ecfcf"/>
-                                            </attributes>
-                                          </object>
-                                        </child>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
-                                        <property name="label">Edit Cover Spread Settings</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Front Cover.</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">end</property>
-                                        <property name="relief">none</property>
-                                        <property name="uri">Click to view the Styles tab</property>
-                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">True</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">2</property>
-                                      </packing>
                                     </child>
                                   </object>
                                   <packing>

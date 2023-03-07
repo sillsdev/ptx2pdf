@@ -717,9 +717,10 @@
   \bgroup
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
-  \ifx\attr@b\empty
+  \ifx\attr@b\relax
     \get@ttribute{var}\ifcsname ms:zvar=\attr@b\endcsname
-      \x@\let\x@\attr@b\csname ms:zvar=\attr@b\encsname
+      \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
+      \let\attr@b\tmp
     \fi
   \fi
   \m@kenumber{\attr@b}%
