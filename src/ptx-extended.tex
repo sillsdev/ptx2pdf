@@ -1094,12 +1094,17 @@
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%
+   \x@\setsbp@ram{#1figspec}{}%
  \else
-   \let\c@tfigname\p@ram
-   %\getbp@r@m{#1figscale}%
-   \edef\tmp{\c@tfigname|}%
-   \x@\setsbp@ram{#1figspec}{\tmp}%
-   \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
+   \ifx\p@ram\false
+    \x@\setsbp@ram{#1figspec}{}%
+   \else
+     \let\c@tfigname\p@ram
+     %\getbp@r@m{#1figscale}%
+     \edef\tmp{\c@tfigname|}%
+     \x@\setsbp@ram{#1figspec}{\tmp}%
+     \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
+   \fi
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3\E{%
