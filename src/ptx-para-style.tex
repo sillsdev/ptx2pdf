@@ -200,16 +200,24 @@
 \newif\ifrotate \rotatefalse
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
-\def\par{\ifhmode
+\def\par{%
+  \ifhmode
    \makecutouts
    \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
+   \trace{j}{Ending marker: \m@rker (\styst@kfirst)}%
    \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
+   \def\@@@st@t{}%
+   \ifhmode\def\@@@st@t{hmode}\fi
+   \ifvmode\edef\@@@st@t{vmode \@@@st@t}\fi
+   \ifinner\edef\@@@st@t{inner \@@@st@t}\fi
+   \trace{j}{(gt:\the\currentgrouptype) \@@@st@t\space  doingt@ble\ifdoingt@ble true\else false\fi\space inn@te\ifinn@te true\else false\fi [\styst@k]}%
    \ifdoingt@ble\else
      \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
        %\s@tsideskips{\m@rker}% 
      \else\ifinn@te\else
        \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
+       \trace{j}{[\styst@kfirst] hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
      \fi\fi
    \fi
    \endgraf

@@ -288,7 +288,12 @@
   \else 
     \get@ttribute{\attrid}%
   \fi
-  \trace{m}{st@ndalonemilestone(\thismil@stone) \attrid=\attr@b}%
+  \edef\tmp{\thismil@stone}%
+  %\relax\trace{m}{st@ndalonemilestone(\meaning\tmp, \meaning\zv@@r) \attrid=\attr@b}%
+  \ifx\tmp\zv@@r       
+    \trace{m}{Leaving vmode for zvar}%  Special case... things get confused if the par is started by the milestone.
+    \leavevmode
+  \fi
   \mcpush{\ss@Mstn}{\thismil@stone}%
   \trace{m}{Milestone stacked, \mcstack}%
   \t@stpublishability{\thismil@stone}%
