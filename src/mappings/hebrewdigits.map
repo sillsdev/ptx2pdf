@@ -1,4 +1,16 @@
-﻿;   Conversion Type = Unicode_to_from_Unicode
+﻿; This file was edited using TECkitMappingEditorU.exe v5.0.0.0 on 8/03/2023.
+;   Conversion Type = Unicode_to_from_Unicode
+;   Left-hand side font = Arial Unicode MS;11.25
+;   Right-hand side font = SBL Hebrew;11.25
+;   Main Window Position = 0,0,658,713
+;   Left-hand side Character Map Window Position = 658,0,457,447
+;   Right-hand side Character Map Window Position = 658,447,457,447
+;   Left-hand side code page = 0
+;   Right-hand side code page = 0
+;   Left-hand range = 0000-007F
+;   Right-hand range = 0000-007F
+
+;   Conversion Type = Unicode_to_from_Unicode
 ;   Left-hand side font = Arial Unicode MS;11.25
 ;   Right-hand side font = SBL Hebrew;11.25
 ; FC ... 
@@ -1003,9 +1015,9 @@ pass(Unicode)
 '18'  <>  'יח'
 '17'  <>  'יז'
 ;'16'  <>  'יו'
-'16'  <>  'ט״ז'
+'16'  <>  'טז'
 ;'15'  <>  'יה'
-'15'  <>  'ט״ו'
+'15'  <>  'טו'
 '14'  <>  'יד'
 '13'  <>  'יג'
 '12'  <>  'יב'

@@ -599,6 +599,7 @@ class GtkViewModel(ViewModel):
         # self.warnedSIL = False
         self.thickActive = False
         self.printReason = 0
+        self.warnedMissingZvars = False
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -2077,7 +2078,7 @@ class GtkViewModel(ViewModel):
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 logger.debug(f"Front matter from {fpath} does not exist")
-                self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
+                self.uneditedText[pgnum] = _("%%% Click the Generate button (above) to start the process of creating Front Matter...")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 fpath = None
             if self.get("t_invisiblePassword") == "":
@@ -4278,11 +4279,22 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         
     def onGenerateCoverClicked(self, btn):
+        metadata = {"langiso":       "<Ethnologue code>", 
+                    "languagename":  "<Language>", 
+                    "maintitle":     "<Title>", 
+                    "subtitle" :     "<Subtitle>", 
+                    "isbn":          ""}
+    
         dialog = self.builder.get_object("dlg_generateCover")
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
-        if response == Gtk.ResponseType.OK: # Create Cover Settings clicked
+        if response == Gtk.ResponseType.CANCEL:
+            if sys.platform == "win32":
+                dialog.set_keep_above(False)
+            dialog.hide()
+            return
+        elif response == Gtk.ResponseType.OK: # Create Cover Settings clicked
             # Enable ESBs
             self.set("c_sidebars", True)
             # Scale the font size of mt1 and mt2 for front and spine
@@ -4317,23 +4329,18 @@ class GtkViewModel(ViewModel):
             else:
                 self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
                 
+            for c in ['front', 'whole']:
+                for p in ['BgImage', 'BgImageScale']:
+                    self.styleEditor.setval(f'cat:cover{c}|esb', p, '')
             if self.get('c_coverSelectImage'):
-                # Warning: img is still broken!!!
-                img = self.get('btn_coverSelectImage')
+                img = self.get('lb_coverImageFilename')
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
-            else:
-                self.styleEditor.setval('cat:coverfront|esb', 'BgImage', 'F')
-                self.styleEditor.setval('cat:coverwhole|esb', 'BgImage', 'F')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', 'bleed|1x1')
 
-            if self.get('c_coverShading') or self.get('c_coverSelectImage'):
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'Alpha', 1.0)
-            else:
-                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', 0.0)
-
-            if self.get('c_RTLbookBinding'):
-                self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hl')
-            else:
-                self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hr')
+            # if self.get('c_coverShading') or self.get('c_coverSelectImage'):
+                # self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'Alpha', '1.0')
+            # else:
+                # self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', '0.0')
 
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
@@ -4351,14 +4358,10 @@ class GtkViewModel(ViewModel):
 \zgap|1pt\*
 \pc ~
 \vfill
-\endgraf
 \zifvarset|var="isbn" emptyok="F"\*
 \ztruetext
-\esb \cat ISBNbox\cat*
-\pc \zISBNbarcode|var="isbn" height="short"\*
-\esbe
-\ztruetext*
-\zgap|36pt\*'''
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\ztruetext*'''
             self.periphs['coverwhole'] = r'''
 \periph spannedCover|id="coverwhole"
 \zgap|1pt\*
@@ -4367,6 +4370,27 @@ class GtkViewModel(ViewModel):
 \vfill
 \endgraf'''
             self.updateFrontMatter()
+            if sys.platform == "win32":
+                dialog.set_keep_above(False)
+            dialog.hide()
+            # See if any of the meta-data fields are missing in the zvars, and if so
+            # add them and ask the user to fill them in.
+            if not self.warnedMissingZvars:
+                missing = False
+                for k, v in metadata.items():
+                    if self.getvar(k, default=None) is None:
+                        missing = True
+                        self.setvar(k, v)
+                if missing:
+                    mpgnum = self.notebooks['Main'].index("tb_Peripherals")
+                    self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                    _errText = _("Please fill in any missing <Values> on") + "\n" + \
+                               _("the Peripherals tab before proceeding.") + "\n" + \
+                               _("Update the ISBN number or deleted the entry.")
+                    self.doError("Missing details for cover page", secondary=_errText, \
+                              title="PTXprint", copy2clip=False, show=True)
+                    self.warnedMissingZvars = True
+                    return
             # Switch briefly to the Front Matter tab so that the updated content is activated and
             # gets saved/updated. But then switch back to the Cover tab immediately after so the 
             # view is back to where they clicked on the Generate Cover button to begin with.
@@ -4375,9 +4399,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Viewer").set_current_page(0)
             mpgnum = self.notebooks['Main'].index("tb_Cover")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.hide()
         
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
@@ -4826,11 +4847,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
         self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
 
-        if self.get('c_RTLbookBinding'):
-            self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hl')
-        else:
-            self.styleEditor.setval('cat:ISBNbox|esb', 'Position', 'hr')
-
     def editCoverSidebarStyle(self, btn, foo):
         posn = Gtk.Buildable.get_name(btn)[3:]
         self.styleEditor.selectMarker(f"cat:cover{posn}|esb")
@@ -4874,7 +4890,7 @@ class GtkViewModel(ViewModel):
             mpgnum = self.notebooks['Main'].index("tb_Peripherals")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             _errText = _("Please fill in any missing <Values> on") + "\n" + \
-                       _("the Peripherals tab and then try again.")
+                       _("the Peripherals tab before proceeding.")
             self.doError("Missing details for request letter", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
