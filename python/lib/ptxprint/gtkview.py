@@ -4292,9 +4292,26 @@ class GtkViewModel(ViewModel):
                 self.set("btn_coverSelectImage", img)
                 self.set("c_coverImageFront", a[1])
                 break
+        if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
+            ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
+            self.set('fcb_coverBorder', ornaments)
+            bc = textocol(self.styleEditor.getval('cat:coverfront|esb', 'BorderColor', 'xFFFFFF'))
+            self.set('col_coverBorder', bc)
+            self.set('c_coverBorder', True)
+        else:
+            self.set('c_coverBorder', False)
+        fgc = textocol(self.styleEditor.getval('cat:coverwhole|esb', 'BgColor', 'xFFFFFF'))
+        self.set('col_coverShading', fgc)
+        self.set('c_coverShading', fgc != "rgb(255,255,255)")
+        mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 12))
+        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
+        self.set('s_coverTextScale', fsize / mtsize)
+        self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
+
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
+
         if response == Gtk.ResponseType.CANCEL:
             if sys.platform == "win32":
                 dialog.set_keep_above(False)
