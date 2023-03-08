@@ -1,8 +1,26 @@
 PTXprint 2.2.51 Release Notes
-4 Mar 2023
+8 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 
+Bug fixes and Improvements in 2.2.52 (8 Mar 2023)
+
+  * Multiple improvements to cover generation (still a work in progress)
+  
+  * Run captions through changes.txt
+  
+  * Added Hebrew digit mapping
+  
+  * Added conditional marker \zifvarset (useful for auto ISBN display on covers)
+  
+  * Added new scope modifiers for changes.txt BKK[CAP/REF] (e.g. GLOCAP and GLOREF)
+  
+  * Introduced Figure bleed (\figbleed) for covers
+
+  * Fixed config file with newly hashed password needs to autosave on open
+  
+  * Fix up forced break before chapter 1, now with an ifPBOnBody
+  
 Additions, Improvements and Bug fixes in 2.2.51 (4 Mar 2023)
 
   * Added Generate Cover PDF (some features are still under construction)
