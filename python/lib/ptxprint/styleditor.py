@@ -190,11 +190,7 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
     return res
 
 def fromFileName(self, v, mrk=None, model=None):
-    if model is not None:
-        rpath = model.configPath()
-        return os.path.abspath(saferelpath(v, rpath))
-    else:
-        return v
+    return v
 
 def toFileName(self, v, mrk=None, model=None, parm=None):
     return v

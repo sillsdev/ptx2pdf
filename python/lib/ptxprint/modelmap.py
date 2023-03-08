@@ -278,7 +278,6 @@ _map = {
     "cover/coverartbleed":      ("s_coverArtBleed", "cover", None),
     "cover/makeseparatePDF":    ("c_coverSeparatePDF", "cover", None),
 
-    "covergen/covertype":       ("r_cover", "cover", None),
     "covergen/textscale":       ("s_coverTextScale", "cover", None),
     "covergen/textcolor":       ("col_coverText", "cover", None),
     "covergen/useborder":       ("c_coverBorder", "cover", None),
@@ -286,9 +285,11 @@ _map = {
     "covergen/bordercolor":     ("col_coverBorder", "cover", None),
     "covergen/useshading":      ("c_coverShading", "cover", None),
     "covergen/shadingcolor":    ("col_coverShading", "cover", None),
+    "covergen/shadingalpha":    ("s_coverShadingAlpha", "cover", None),
+    "covergen/imagealpha":      ("s_coverImageAlpha", "cover", None),
     "covergen/useimage":        ("c_coverSelectImage", "cover", None),
-    "covergen/imagefront":      ("c_coverImageFront", "cover", None),
-    "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
+    # "covergen/imagefront":      ("c_coverImageFront", "cover", None),
+    # "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
     # "covergen/imgfname":       ("lb_coverImageFilename", "cover", None),
 
     "document/keepversions":    ("s_keepVersions", "finish", None),

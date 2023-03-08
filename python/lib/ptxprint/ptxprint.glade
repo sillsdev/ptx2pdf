@@ -165,6 +165,18 @@ THE SOFTWARE.
     <property name="step-increment">0.5</property>
     <property name="page-increment">1</property>
   </object>
+  <object class="GtkAdjustment" id="a_coverImageAlpha">
+    <property name="upper">1</property>
+    <property name="value">0.69999999999999996</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">0.10</property>
+  </object>
+  <object class="GtkAdjustment" id="a_coverShadingAlpha">
+    <property name="upper">1</property>
+    <property name="value">0.5</property>
+    <property name="step-increment">0.10</property>
+    <property name="page-increment">0.10</property>
+  </object>
   <object class="GtkAdjustment" id="a_coverTextScale">
     <property name="lower">0.20</property>
     <property name="upper">10</property>
@@ -4130,9 +4142,9 @@ be applied to the front cover page.</property>
                         </attributes>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
+                        <property name="left-attach">1</property>
                         <property name="top-attach">4</property>
-                        <property name="width">5</property>
+                        <property name="width">4</property>
                       </packing>
                     </child>
                     <child>
@@ -4189,7 +4201,8 @@ be applied to the front cover page.</property>
                     </child>
                     <child>
                       <object class="GtkCheckButton" id="c_coverImageFront">
-                        <property name="label" translatable="yes">Only on Front Cover</property>
+                        <property name="label" translatable="yes">Picture only 
+on Front</property>
                         <property name="name">Generate cover: Enable Background Image</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
@@ -4199,14 +4212,13 @@ selected image on the front cover (so
 it does not wrap around onto the back
 cover). If using this option it would be 
 helpful to use a portrait image.</property>
-                        <property name="halign">start</property>
+                        <property name="halign">end</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left-attach">2</property>
-                        <property name="top-attach">3</property>
-                        <property name="width">3</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -4263,13 +4275,55 @@ of the various Ornamental Borders (pgs 4-7).</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkScale" id="s_coverImageAlpha">
+                        <property name="name">Generate cover: Set Transparency of Background Image</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Set the transparency (Alpha) of the 
+background image which appears
+behind any shading if any.
+ </property>
+                        <property name="valign">center</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">a_coverImageAlpha</property>
+                        <property name="lower-stepper-sensitivity">on</property>
+                        <property name="upper-stepper-sensitivity">on</property>
+                        <property name="fill-level">1</property>
+                        <property name="round-digits">1</property>
+                        <property name="draw-value">False</property>
+                        <property name="value-pos">left</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">3</property>
+                        <property name="width">3</property>
+                      </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkScale" id="s_coverShadingAlpha">
+                        <property name="name">Generate cover: Set Transparency of Background Shading</property>
+                        <property name="height-request">4</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="tooltip-text" translatable="yes">Set the transparency (Alpha) of the 
+background shading which appears
+on top of the image if there is one.
+ </property>
+                        <property name="valign">center</property>
+                        <property name="hexpand">True</property>
+                        <property name="adjustment">a_coverShadingAlpha</property>
+                        <property name="lower-stepper-sensitivity">on</property>
+                        <property name="upper-stepper-sensitivity">on</property>
+                        <property name="fill-level">1</property>
+                        <property name="round-digits">1</property>
+                        <property name="draw-value">False</property>
+                        <property name="value-pos">left</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">3</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
@@ -4291,8 +4345,10 @@ of the various Ornamental Borders (pgs 4-7).</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
-                <property name="label" translatable="yes">Note that when you click on Create Cover Settings, it will overwrite the 
-following \periph definitions in the Front Matter (see View+Edit tab):
+                <property name="label" translatable="yes">Note that when you click on Create Cover Settings, PTXprint will
+ (a) update the Cover style definitions (Style Editor settings), and
+ (b) overwrite the \periph definitions listed below (see the Front
+Matter settings on the View+Edit tab):
    id='coverfront', id='coverspine', id='coverback, id='coverwhole'.</property>
                 <attributes>
                   <attribute name="foreground" value="#cccc00000000"/>

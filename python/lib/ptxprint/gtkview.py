@@ -4290,8 +4290,9 @@ class GtkViewModel(ViewModel):
             img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
             if img:
                 self.set("btn_coverSelectImage", img)
+                self.set("lb_coverImageFilename", img)
                 self.set("c_coverImageFront", a[1])
-                break
+                # break
         if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
             ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
             self.set('fcb_coverBorder', ornaments)
@@ -4332,7 +4333,6 @@ class GtkViewModel(ViewModel):
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
 
             if self.get('c_coverBorder'):
-                print(f"{self.get('c_coverBorder')=}")
                 # Set border colour
                 bc = coltotex(self.get('col_coverBorder'))
                 self.set("c_useOrnaments", True)
@@ -4343,7 +4343,6 @@ class GtkViewModel(ViewModel):
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
             else:
-                print(f"{self.get('c_coverBorder')=}")
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'None')
 
             # Set background color
@@ -4360,10 +4359,14 @@ class GtkViewModel(ViewModel):
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', 'bleed|1x1')
 
-            # if self.get('c_coverShading') or self.get('c_coverSelectImage'):
-                # self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'Alpha', '1.0')
-            # else:
-                # self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', '0.0')
+            if self.get('c_coverShading'):
+                s = self.get('s_coverShadingAlpha')
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
+
+            if self.get('c_coverSelectImage'):
+                i = self.get('s_coverImageAlpha')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageAlpha', i)
+                self.styleEditor.setval('cat:coverwhole|esb' if self.get('c_coverImageFront') else 'cat:coverfront|esb', 'BgImageAlpha', 1.0 - float(i))
 
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
@@ -4393,6 +4396,7 @@ class GtkViewModel(ViewModel):
 \vfill
 \endgraf'''
             self.updateFrontMatter()
+            self.set("c_frontmatter", True)
             if sys.platform == "win32":
                 dialog.set_keep_above(False)
             dialog.hide()
