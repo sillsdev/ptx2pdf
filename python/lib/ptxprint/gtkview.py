@@ -4286,6 +4286,12 @@ class GtkViewModel(ViewModel):
                     "isbn":          ""}
     
         dialog = self.builder.get_object("dlg_generateCover")
+        for a in (('front', True), ('whole', False)):
+            img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
+            if img:
+                self.set("btn_coverSelectImage", img)
+                self.set("c_coverImageFront", a[1])
+                break
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
