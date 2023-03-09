@@ -595,7 +595,7 @@ class TexModel:
                                     res.append(r"\diglotfalse")
                                 res.append(r"\prepusfm")
                                 for ins in insertnames:
-                                    res.extend(self._doptxfile(insname, None if digtexmodel is None else insname, 
+                                    res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
                                             (r"\pb" if self.dict['project/periphpagebreak'] else "")
                                             + r"\zgetperiph|{}\*", ""))
                                 res.append(r"\unprepusfm")
