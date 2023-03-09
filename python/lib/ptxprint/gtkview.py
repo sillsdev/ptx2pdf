@@ -4328,7 +4328,7 @@ class GtkViewModel(ViewModel):
             for m in ['mt1', 'mt2']:
                 sz = float(self.styleEditor.getval(m, 'FontSize', 12))
                 for cvr in ['front', 'spine']:
-                    sf = 1 if cvr == 'front' else 0.75
+                    sf = 1 if cvr == 'front' else 0.65
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf)
                     self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
 
@@ -4343,6 +4343,9 @@ class GtkViewModel(ViewModel):
                 self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
             else:
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', '')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', '')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', '')
                 self.styleEditor.setval('cat:coverfront|esb', 'Border', 'None')
 
             # Set background color
