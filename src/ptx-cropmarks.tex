@@ -39,54 +39,65 @@
 %\font\idf@nt="Times New Roman" at 10pt % FIXME: Use something not bitmap?
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
-  \global\setbox\topcr@p=\vbox to 0pt{\vss
+  \trace{cov}{makecrops bleeds=\the\bl@eds, pw=\the\PaperWidth}%
+  \global\setbox\topcr@p=\vbox to 0pt{\toks0=\everypar\everypar={}\vss
     \hbox to \PaperWidth{%
-      \kern -30pt
-      \vrule height .2pt depth .2pt width 25pt
-      \kern 4.8pt
-      \vrule height 30pt depth -5pt width .4pt
-      \kern -30.4pt
+      \kern -30pt \kern -\bl@eds
+      \vrule height .2pt depth .2pt width 25pt  % top of page (left)
+      \kern 4.8pt \kern\bl@eds
+      \dimen0=30pt \advance\dimen0 \bl@eds
+      \dimen1=-5pt \advance\dimen1 -\bl@eds
+      \vrule height \dimen0 depth \dimen1 width .4pt    % left page (top)
+      \kern -30.4pt \kern -\bl@eds
       \dimen0=\topm@rgin \advance\dimen0 by .4pt
-      \vrule height -\topm@rgin depth \dimen0 width 15pt
-      \kern 15pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt    % top margin (left)
+      \kern 15pt \kern \bl@eds
       \hss
-      \raise12pt \vtop{{\hsize\PaperWidth \everypar={}
+      \raise\dimexpr 12pt + \bl@eds \hbox to 0pt{\hss\vtop{{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
-        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp\endL\par
+        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi \endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
-          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}%
+          \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}\hss}%
       \hss
-      \vrule height 30pt depth -5pt width .4pt
-      \kern 4.8pt
-      \vrule height .2pt depth .2pt width 25pt
+      \dimen0=30pt \advance\dimen0 \bl@eds
+      \dimen1=-5pt \advance\dimen1 -\bl@eds
+      \vrule height \dimen0 depth \dimen1 width .4pt    % right page (top)
+      \kern 4.8pt \kern\bl@eds
+      \vrule height .2pt depth .2pt width 25pt      % top of page (right)
       \kern -15pt
-      \vrule height -\topm@rgin depth \dimen0 width 15pt
-      \kern -30pt
+      \dimen0=\topm@rgin \advance\dimen0 by .4pt
+      \vrule height -\topm@rgin depth \dimen0 width 15pt    % top margin (right)
+      \kern -30pt \kern-\bl@eds
     }%
-  }\dp\topcr@p=0pt % end \vbox for \topcr@p
-  \global\setbox\bottomcr@p=\vbox to 0pt{%
+  \everypar=\toks0}\dp\topcr@p=0pt % end \vbox for \topcr@p
+  \trace{cov}{topcrop done}%
+  \global\setbox\bottomcr@p=\vbox to 0pt{\hsize=\PaperWidth \toks0=\everypar\def\par{}\everypar={}%
     \setbox0=\hbox to \PaperWidth{%
       \dimen0=\bottomm@rgin \advance\dimen0 by 0.4pt
-      \kern -30pt
-      \vrule height .2pt depth .2pt width 25pt
+      \kern -30pt \kern -\bl@eds
+      \vrule height .2pt depth .2pt width 25pt  % bottom of page (left)
       \kern -15pt
-      \vrule height \dimen0 depth -\bottomm@rgin width 15pt
-      \kern 4.8pt
-      \vrule height -5pt depth 30pt width .4pt
+      \vrule height \dimen0 depth -\bottomm@rgin width 15pt     % bottom margin (left)
+      \kern 4.8pt \kern\bl@eds
+      \dimen0=30pt \advance\dimen0 \bl@eds
+      \dimen1=-5pt \advance\dimen1 -\bl@eds
+      \vrule height \dimen1 depth \dimen0 width .4pt    % left page (bottom)
       \kern -0.2pt
-      \ifdim\sp@newidth>0pt\lower 6pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
-        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\hss\fi
+      \ifdim\sp@newidth>0pt\lower \dimexpr 6pt + \bl@eds \hbox to 0pt{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\kern -0.2pt \vrule height 6pt depth .5pt width .4pt
+        \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt\hss}\fi
       \hss
-      \vrule height -5pt depth 30pt width .4pt
-      \kern 4.8pt
-      \vrule height \dimen0 depth -\bottomm@rgin width 15pt
+      \vrule height \dimen1 depth \dimen0 width .4pt    % right page (bottom)
+      \kern 4.8pt \kern\bl@eds
+      \dimen0=\bottomm@rgin \advance\dimen0 by 0.4pt
+      \vrule height \dimen0 depth -\bottomm@rgin width 15pt % bottom margin (right)
       \kern -15pt
-      \vrule height .2pt depth .2pt width 25pt
-      \kern -30pt
+      \vrule height .2pt depth .2pt width 25pt      % bottom page (right)
+      \kern -30pt \kern-\bl@eds
     }%
     \dp0=0pt \ht0=0pt \box0
   }\ht\bottomcr@p=0pt \dp\bottomcr@p=0pt% end \vbox for \bottomcr@p
+  \trace{cov}{makecrops done}%
 }
 %-c_makecropmarks
 
@@ -401,6 +412,13 @@
     \else\special {pdf:put @thispage <</MediaBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ]>> }\fi
+    \getm@rknum{pdftag}%Tag pages if pdftag mark is active issued.
+    \xdef\@@pdftag{\topmarks\m@rknum}%
+    \ifx\@@pdftag\empty\else
+      \special {pdf:put @thispage <</PieceInfo <</ptxprint 
+          <</LastModified /D:20221126103720Z /Private <</Insertion /\@@pdftag>> >>
+      >> >>}%
+    \fi
   \egroup
 }
 
@@ -501,7 +519,7 @@
 %+c_docropmarks
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
-      \ifvoid\topcr@p \makecr@ps \fi % create them (first time)
+      \ifvoid\topcr@p \bl@eds=0pt \makecr@ps \fi % create them (first time)
       \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
         \kern\dimen0
@@ -791,9 +809,9 @@
 
 \newbox\instopcr@p
 \newbox\insbottomcr@p
-\newdimen\sp@newidth
+\newdimen\sp@newidth \newdimen\bl@eds
 \def\ship@utcoverinsert#1#2#3#4{%
-  \trace{cov}{ship@utcoverinsert #1 \the\wd#2 \space x \the\ht#2 \space #3 #4}%
+  \trace{cov}{ship@utcoverinsert #1, \the\wd#2 \space x \the\ht#2, #3, #4}%
 % #1 - insertion name, #2 - box, #3 - spine width, #4 - bleed
 % make cropmarks if spine width >=0pt, if -ve, no cropmarks
   \dimen5=\PaperWidth \dimen6=\PaperHeight
@@ -803,7 +821,7 @@
     \dimen0=0pt
   \else
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
-    \sp@newidth=#3 \makecr@ps
+    \sp@newidth=#3 \bl@eds=#4 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
     \setbox\topcr@p=\box1 \setbox\bottomcr@p=\box2
     \dimen0=0.5in
@@ -818,10 +836,10 @@
   \pdfpagewidth=\PaperWidth
   \pdfpageheight=\PaperHeight
   \hoffset=-1in \voffset=-1in% shift the origin to (0,0)
-  \ifdim #4>\dimen0\relax \dimen0=#4\advance\hoffset #4 \advance\voffset #4
-  \else\advance\hoffset \dimen0\advance\voffset \dimen0\fi %\else\advance\hoffset -#4 \advance\voffset -#4\fi
-  \advance\pdfpagewidth 2\dimen0
-  \advance\pdfpageheight 2\dimen0
+  \advance\hoffset #4 \advance\voffset #4
+  \advance\hoffset \dimen0\advance\voffset \dimen0
+  \advance\pdfpagewidth 2\dimen0 \advance\pdfpagewidth #4 \advance\pdfpagewidth #4
+  \advance\pdfpageheight 2\dimen0 \advance\pdfpageheight #4 \advance\pdfpageheight #4
   %\pdfpagewidth=0.99626401\pdfpagewidth
   %\pdfpageheight=0.99626401\pdfpageheight
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
@@ -842,7 +860,7 @@
     \trace{o}{p@ = \the\p@}\offinterlineskip
     \vbox to \PaperHeight{\vss \box#2\vss}
     \vss
-    \ifdim #3>0pt
+    \ifdim #3<0pt\else
       \vbox to 0pt{
         %\kern\dimen0 \moveright\dimen0
         \copy\instopcr@p

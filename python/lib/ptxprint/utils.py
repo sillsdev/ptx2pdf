@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Bump this number up in order to reset everyone's Cached files
-DataVersion = 5
+DataVersion = 7
 
 # For future Reference on how Paratext treats this list:
 # G                                     M M                         RT                P        X      FBO    ICGTND          L  OT X NT DC  -  X Y  -  Z  --  L
@@ -48,6 +48,8 @@ _allbooks = ["FRT", "INT",
             "PHM", "HEB", "JAS", "1PE", "2PE", "1JN", "2JN", "3JN", "JUD", "REV", 
             "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG", "XXS",
             "GLO", "TDX", "NDX", "CNC", "OTH", "BAK"]
+
+nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
 
 def booknum(bookcode):
     if len(bookcode):
@@ -279,6 +281,14 @@ elif sys.platform == "win32":
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
 
+def saferelpath(p, r="."):
+    if p is None or not len(p):
+        return p
+    try:
+        return os.path.relpath(p, r)
+    except ValueError:      # different drives on Windows
+        return p
+
 def pycodedir():
     return os.path.abspath(os.path.dirname(__file__))
 
@@ -452,7 +462,7 @@ def runChanges(changes, bk, dat):
         return proc
     for c in changes:
         if bk is not None:
-            logger.debug("Change: {}".format(c))
+            logger.debug("at {} Change: {}".format(bk, c))
         if c[0] is None:
             dat = c[1].sub(wrap(c[2]), dat)
         elif isinstance(c[0], str):
@@ -575,8 +585,7 @@ class UnzipDir:
         for dp, dn, fn in os.walk(self.dir):
             for f in fn:
                 fp = os.path.join(dp, f)
-                dt = time.localtime(os.stat(os.path.join(self.dir, fp)).st_mtime)[0:6]
-                res.append(ZipInfo(fp, dt))
+                res.append(ZipInfo.from_file(os.path.join(self.dir, fp), arcname=fp))
         return res
 
     def namelist(self):

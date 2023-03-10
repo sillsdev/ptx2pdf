@@ -44,7 +44,7 @@
 \newif\ifOmitBookRef
 \def\f@rstref#1{\edef\t@st{#1}%
  \ifx\t@st\empty\else
-  \ifx\t@st\t@tle\else
+  \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
     \ifx\@book\empty\else
      \ifOmitBookRef\else\@book\ \fi
@@ -54,7 +54,7 @@
       \@verse
      \fi
    \fi
-  \fi
+  \fi\fi
  \fi}
 
 %
@@ -62,19 +62,19 @@
 % (same as above unless there are bridged verses)
 %
 \def\l@stref#1{\edef\t@st{#1}%
- \ifx\t@st\empty\else\ifx\t@st\t@tle\else
+ \ifx\t@st\empty\else\ifx\t@st\t@tle\else\ifx\t@st\intr@\else
    \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
- \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi
- \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi
+ \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi\fi
+ \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
   \ifOmitBookRef\else\@book\ \fi
@@ -162,10 +162,10 @@
  \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \trace{h}{page \the\pageno (h), first mark=\t@st}%
+ \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
- \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else 0\fi =1
-  \trace{h}{no p@gefirstmark. Page 1 is \ifp@geone True\else False\fi}%
+ \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
+  \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
     \ifodd\pageno
       \the\noVoddhead
       \trace{h}{using noVoddhead}% 
@@ -267,9 +267,11 @@
    \ifodd\pageno \the\noVoddfoot \else 
      \ifDoubleSided \the\noVevenfoot \else \the\noVoddfoot \fi\fi
  \else
-   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1 \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi \else
-     \ifodd\pageno \the\oddfoot \else
-       \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
+   \ifnum\ifx\t@st\t@tle 1\else\ifp@geone 1\else 0\fi\fi =1
+     \ifodd\pageno\the\titleoddfoot\else\the\titleevenfoot\fi
+     \else
+       \ifodd\pageno \the\oddfoot \else
+         \ifDoubleSided \the\evenfoot \else \the\oddfoot \fi
  \fi\fi\fi
  \mcpop\mcpop
 }}

@@ -2,7 +2,7 @@ import re, os
 import regex
 from .texmodel import universalopen
 from .ptsettings import bookcodes
-from .utils import pycodedir, htmlprotect
+from .utils import pycodedir, htmlprotect, saferelpath
 
 class Snippet:
     order = 0
@@ -176,10 +176,10 @@ class PDFx1aOutput(Snippet):
             extras['_gtspdfx'] = "/GTS_PDFXVersion(PDF/X-1a:2003)%\n/GTS_PDFXConformance(PDF/X-1a:2003)%\n"
             res += "\\Actionsfalse\n"
         if pdftype in ("Screen", "Digital"):
-            model.dict["/iccfpath"] = os.path.relpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
+            model.dict["/iccfpath"] = saferelpath(os.path.join(libpath, "sRGB.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "3"
         if pdftype == "Gray":
-            model.dict['/iccfpath'] = os.path.relpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
+            model.dict['/iccfpath'] = saferelpath(os.path.join(libpath, "default_gray.icc"),docdir).replace("\\","/")
             extras['_iccnumcols'] = "1"
         else:
             extras['_iccnumcols'] = "4"
@@ -226,6 +226,10 @@ class Diglot(Snippet):
 {notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 {ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
+\def\addInt{{
+\zglot|L\*\ptxfile{{{project/intfile}}}
+\zglot|R\*\ptxfile{{{diglot/intfile}}}
+\zglot|\*}}
 \catcode `@=12
 
 """

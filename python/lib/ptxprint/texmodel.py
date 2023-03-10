@@ -10,7 +10,7 @@ from ptxprint.sfm import usfm, style, Text
 from ptxprint.usfmutils import Usfm, Sheets, isScriptureText, Module
 from ptxprint.utils import _, universalopen, localhdrmappings, pluralstr, multstr, \
                             chaps, books, bookcodes, allbooks, oneChbooks, f2s, cachedData, pycodedir, \
-                            runChanges, booknumbers, Path
+                            runChanges, booknumbers, Path, nonScriptureBooks, saferelpath
 from ptxprint.dimension import Dimension
 import ptxprint.scriptsnippets as scriptsnippets
 from ptxprint.interlinear import Interlinear
@@ -45,7 +45,6 @@ Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 pa
 
 
 class TexModel:
-    _nonScriptureBooks = ["FRT", "INT", "GLO", "TDX", "NDX", "CNC", "OTH", "BAK", "XXA", "XXB", "XXC", "XXD", "XXE", "XXF", "XXG"]
     _peripheralBooks = ["FRT", "INT"]
     _bookinserts = (("GEN-REV", "intbible"), ("GEN-MAL", "intot"), ("GEN-DEU", "intpent"), ("JOS-EST", "inthistory"),
                     ("JOB-SNG", "intpoetry"), ("ISA-MAL", "intprophecy"), ("TOB-LAO", "intdc"), 
@@ -187,7 +186,7 @@ class TexModel:
     def update(self):
         """ Update model from UI """
         j = os.path.join
-        rel = lambda x, y:os.path.relpath(x, y).replace("\\", "/")
+        rel = lambda x, y:saferelpath(x, y).replace("\\", "/")
         self.printer.setDate()  # Update date/time to now
         cpath = self.printer.configPath(self.printer.configName())
         rcpath = self.printer.configPath("")
@@ -289,8 +288,22 @@ class TexModel:
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
-        self.dict['cover/spinewidth_'] = self.printer.spine
-
+        if self.asBool('cover/includespine'):
+            self.dict['cover/spinewidth_'] = self.printer.spine
+        else:
+            if self.asBool('cover/covercropmarks'):
+                self.dict['cover/spinewidth_'] = 0
+            else:
+                self.dict['cover/spinewidth_'] = -0.1
+        self.dict['project/intfile'] = ''
+        if self.dict['cover/makecoverpage'] != "%":
+            self.dict['transparency_'] = "false"
+        p = self.dict['project/plugins'].strip()
+        if len(p) and not p.strip().startswith("\\"):
+            self.plugins = set(re.split("[ ,]+", p))
+            self.dict['project/plugins'] = ''
+        else:
+            self.plugins = set()
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
@@ -480,17 +493,16 @@ class TexModel:
     def texfix(self, path):
         return path.replace(" ", r"\ ")
 
-    def _getinsert(self, bk):
+    def _getinsertname(self, bk):
         res = []
         bki = booknumbers.get(bk, 200)
         for b, i in self._bookinserts:
             r = [booknumbers[s] for s in b.split("-")]
             if i not in self.inserts and r[0] <= bki <= r[1]:
-                self.inserts[i] = bk
-                t = self._doperiph(i)
-                if t != "":
-                    res.append(t)
-        return "\n".join(res)
+                if self._doperiph(i) != "":
+                    self.inserts[i] = bk
+                    res.append(i)
+        return res
 
     def prep_pdfs(self, files, restag="frontIncludes_", file_dir="."):
         # for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
@@ -524,14 +536,17 @@ class TexModel:
             self.printer.styleEditor.setval("v", "Position", self.dict["document/marginalposn"])
             self.printer.saveStyles()
 
-    def _doptxfile(self, fname, dname):
+    def _doptxfile(self, fname, dname, template, beforelast):
         res = []
         if dname is not None:
             res.append(r"\zglot|L\*")
-        res.append(r"\ptxfile{{{}}}".format(fname))
+        else:
+            res.extend(beforelast)
+        res.append(template.format(fname))
         if dname is not None:
             res.append(r"\zglot|R\*")
-            res.append(r"\ptxfile{{{}}}".format(dname))
+            res.extend(beforelast)
+            res.append(template.format(dname))
             res.append(r"\zglot|\*")
         return res
 
@@ -556,33 +571,41 @@ class TexModel:
                 self.prep_pdfs(files, restag=a[2], file_dir=filedir)
             else:
                 self.dict[a[2]] = ""
-        if self.dict['project/plugins']:
-            p = self.dict['project/plugins']
-            if p.startswith("\\"):
-                res.append(p)
-            else:
-                res.append("\\def\\pluginlist{{{}}}".format(p))
+        if self.dict.get('fancy/enableornaments', "%") != "%":
+            self.plugins.add('ornaments')
+        if self.dict['cover/makecoverpage'] != "%":
+            self.plugins.add('cover')
+        self.dict['plugins_'] = ",".join(sorted(self.plugins))
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
-                    res.append(r"\PtxFilePath={"+os.path.relpath(filedir, docdir).replace("\\","/")+"/}")
+                    res.append(r"\PtxFilePath={"+saferelpath(filedir, docdir).replace("\\","/")+"/}")
                     for i, f in enumerate(self.dict['project/bookids']):
                         fname = self.dict['project/books'][i]
                         dname = None
-                        if digtexmodel is not None and f in self._nonScriptureBooks:
+                        beforelast = []
+                        if digtexmodel is not None and f in nonScriptureBooks:
                             dname = digtexmodel.dict['project/books'][i]
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
                         if self.dict.get('project/sectintros'):
-                            inserttext = self._getinsert(f)
-                            if len(inserttext):
-                                res.append(r"\prepusfm\n{}\unprepusfm\n".format(inserttext))
+                            insertnames = self._getinsertname(f)
+                            if len(insertnames):
+                                if digtexmodel is not None:
+                                    res.append(r"\diglotfalse")
+                                res.append(r"\prepusfm")
+                                for ins in insertnames:
+                                    res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
+                                            (r"\pb" if self.dict['project/periphpagebreak'] else "")
+                                            + r"\zgetperiph|{}\*", ""))
+                                res.append(r"\unprepusfm")
+                                if digtexmodel is not None:
+                                    res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
-                          res.append(r"\lastptxfiletrue")
-                          if self.dict['project/ifcolophon'] == "":
-                            if self.dict['project/pgbreakcolophon'] != '%':
-                               res.append(r"\endbooknoejecttrue")
-                        if not resetPageDone and f not in self._nonScriptureBooks: 
+                            beforelast.append(r"\lastptxfiletrue")
+                            if self.dict['project/ifcolophon'] == "" and self.dict['project/pgbreakcolophon'] != '%':
+                                beforelast.append(r"\endbooknoejecttrue")
+                        if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
@@ -591,16 +614,16 @@ class TexModel:
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
                             res.append(r"\OmitChapterNumbertrue")
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                             res.append(r"\OmitChapterNumberfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
                             res.append(r"\BodyColumns={}".format('2' if cols == '1' else '1'))
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                             res.append(r"\BodyColumns={}".format(cols))
                         else:
-                            res.extend(self._doptxfile(fname, dname))
+                            res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
                 elif l.startswith(r"%\extrafont") and self.dict["document/fontextraregular"]:
                     spclChars = re.sub(r"\[uU]([0-9a-fA-F]{4,6})", lambda m:chr(int(m.group(1), 16)),
                                                                             self.dict["paragraph/missingchars"])
@@ -721,16 +744,9 @@ class TexModel:
         if os.path.exists(infpath):
             fcontent = []
             with open(infpath, encoding="utf-8") as inf:
-                # seenperiph = False
                 for l in inf.readlines():
-                    # if l.strip().startswith(r"\periph"):
-                        # if "cover" in l:
-                            # pass
-                        # else:
-                        # l = r"\pb" if self.dict['project/periphpagebreak'] and seenperiph else ""
-                        # seenperiph = True
-                    # if they incude INT, then this shouldn't be called, otherwise it should
-                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
+                    l = runChanges(self.changes, "FRT", l)
+                    #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
@@ -739,6 +755,17 @@ class TexModel:
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
+
+    def addInt(self, outfname):
+        intfname = self.printer.getBookFilename('INT')
+        intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
+        if os.path.exists(intfile):
+            self.dict['project/intfile'] = os.path.basename(outfname)
+            with open(intfile, encoding="utf-8") as inf:
+                dat = inf.read()
+            dat = runChanges(self.changes, "INT", dat)
+            with open(outfname, "w", encoding="utf-8") as outf:
+                outf.write(dat)
 
     def flattenModule(self, infpath, outdir, usfm=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
@@ -1134,7 +1161,7 @@ class TexModel:
         if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
             self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
             
-        if self.asBool("document/ifinclfigs") and bk in self._nonScriptureBooks:
+        if self.asBool("document/ifinclfigs") and bk in nonScriptureBooks:
             # Remove any illustrations which don't have a |p| 'loc' field IF this setting is on
             if self.asBool("document/iffigexclwebapp"):
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
@@ -1174,11 +1201,8 @@ class TexModel:
             self.localChanges.append((None, regex.compile(r"(\\v \d+([-,]\d+)? [\w]{1,3}) ", flags=regex.M), r"\1\u00A0")) 
 
         # By default, HIDE chapter numbers for all non-scripture (Peripheral) books (unless "Show... is checked)
-        if not self.asBool("document/showxtrachapnums") and bk in TexModel._nonScriptureBooks:
+        if not self.asBool("document/showxtrachapnums") and bk in nonScriptureBooks:
             self.localChanges.append((None, regex.compile(r"(\\c \d+ ?\r?\n)", flags=regex.M), ""))
-
-        if self.asBool("document/ch1pagebreak"):
-            self.localChanges.append((None, regex.compile(r"(\\c 1 ?)(\r?\n)", flags=regex.M), r"\pagebreak\2\1\2"))
 
         if self.asBool("document/glueredupwords"): # keep reduplicated words together
             self.localChanges.append((None, regex.compile(r"(?<=[ ])(\w{3,}) \1(?=[\s,.!?])", flags=regex.M), r"\1\u2000\1")) 
@@ -1245,7 +1269,7 @@ class TexModel:
                     self.localChanges.append((None, regex.compile(r"(\\toc{} .+)".format(c), flags=regex.M), ""))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
-        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in self._nonScriptureBooks \
+        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
            and self.dict["fancy/endofbookpdf"].lower().endswith('.pdf'):
             self.localChanges.append((None, regex.compile(r"\Z", flags=regex.M), r"\r\n\z"))
         
@@ -1263,7 +1287,7 @@ class TexModel:
                 self.dict[k] = self.printer.get(c[0])
                 v = c[1](self.dict[k])
             if v: # if the c_checkbox is true then extend the list with those changes
-                if k == "snippets/fancyintro" and bk in self._nonScriptureBooks: # Only allow fancyIntros for scripture books
+                if k == "snippets/fancyintro" and bk in nonScriptureBooks: # Only allow fancyIntros for scripture books
                     pass
                 else:
                     self.localChanges.extend(c[2].regexes)
@@ -1329,7 +1353,7 @@ class TexModel:
         prjid = self.dict['project/id']
         prjdir = os.path.join(self.dict["/ptxpath"], prjid)
         for bk in printer.getBooks():
-            if bk not in TexModel._nonScriptureBooks:
+            if bk not in nonScriptureBooks:
                 fname = printer.getBookFilename(bk, prjid)
                 fpath = os.path.join(prjdir, fname)
                 if os.path.exists(fpath):
@@ -1343,7 +1367,7 @@ class TexModel:
                 dat = inf.read()
                 ge = re.findall(r"\\\S+ \\k (.+)\\k\* .+?\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
-            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?\r?\n".format(delGloEntry), flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":

@@ -100,3 +100,15 @@ I want paragraph 2 as a right-justified paragraph
 
 \p What happens if I put a slash in a \w word|lemma="attri\'bute" strongs="1234"\w* Surely not much?
 What about nested attributed words? \w \+pn like this word|type="underline"\+pn*|lemma="lemming" strongs="1234"\w*. It works..
+
+\p
+\zifvarset|var="checkme" emptyok="F"\*
+\p
+\ztruetext
+\esb \cat maynotwork\cat*\p Variable checkme is set to \zvar|checkme\*\esbe
+\ztruetext*
+\zfalsetext
+\esb \cat maynotwork\cat*\p Variable checkme is not set \p Testing 
+\zISBNbarcode|isbn="zvar::isbn"\*
+\esbe
+\zfalsetext*

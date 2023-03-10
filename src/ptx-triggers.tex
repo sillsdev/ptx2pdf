@@ -151,6 +151,10 @@
 \def\runtrigg@rsother#1{%
     \trace{T}{runtrigg@rsother #1}%
     \runtrigg@rs{\mkp@cref{\id@@@}{#1}}%
+    \ifdiglot
+      \runtrigg@rs{\mkp@cref{\id@@@\c@rrdstat}{#1}}%
+      \xdef\dc@rref{\id@@@\c@rrdstat#1}% 
+    \fi
     \xdef\c@rref{\id@@@#1}\global\p@rnum=1% Paragraph number (for triggers) resets on keywords
 }
 

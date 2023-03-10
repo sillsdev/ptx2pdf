@@ -1,6 +1,5 @@
 
-from ptxprint.utils import refKey, universalopen, print_traceback
-from ptxprint.texmodel import TexModel
+from ptxprint.utils import refKey, universalopen, print_traceback, nonScriptureBooks
 from threading import Thread
 import configparser
 import regex, re
@@ -12,6 +11,12 @@ pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", 
 
 _defaults = {
     'scale':    "1.000"
+}
+
+_parmCategories = {
+    "Caption": ["caption", "captionR"],
+    "SizePosn": ["pgpos", "mirror", "scale"],
+    "CopyRight": ["copy"]
 }
 
 _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
@@ -237,7 +242,7 @@ class PicInfo(dict):
             return False
         return True
 
-    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None):
+    def merge(self, tgtpre, srcpre, indat=None, mergeCaptions=True, bkanchors=False, captionpre=None, nonMergedBooks=None):
         ''' Used for merging piclists from diglots into the main piclist'''
         if indat is None:
             indat = self
@@ -248,7 +253,7 @@ class PicInfo(dict):
             if v['anchor'][3:].startswith(tgtpre):
                 tgts.setdefault(v['anchor'][:3] + ("" if bkanchors else v['anchor'][3+len(tgtpre):]), []).append(v)
         for k, v in list(indat.items()):
-            if v['anchor'][3:].startswith(srcpre):
+            if v['anchor'][3:].startswith(srcpre) and (nonMergedBooks is None or v['anchor'][:3] not in nonMergedBooks):
                 a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
                 if mergeCaptions:
                     for s in tgts.get(a, []):
@@ -259,6 +264,7 @@ class PicInfo(dict):
                                 s['ref'+captionpre] = v['ref']
                             break
                 del indat[k]
+
 
     def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
@@ -295,32 +301,37 @@ class PicInfo(dict):
     def read_piclist(self, fname, suffix=""):
         if not os.path.exists(fname):
             return
-        with universalopen(fname) as inf:
-            for l in (x.strip() for x in inf.readlines()):
-                if not len(l) or l.startswith("%"):
-                    continue
-                m = l.split("|")
-                r = m[0].split(maxsplit=2)
-                if not len(r):  # no id, what to do? Ignore entry? Create an id?
-                    continue    # skip the entry. Pretty radical.
-                if suffix.startswith("B"):
-                    s = r[0][3:4] or suffix[1:]
-                else:
-                    s = suffix
-                if len(r) > 1:
-                    k = "{}{} {}".format(r[0][:3], s, r[1])
-                else:
-                    k = "{}{}".format(r[0], s)
-                pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
-                self[self.newkey(suffix)] = pic
-                if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
-                    for i, f in enumerate(m[1:]):
-                        if i < len(posparms)-1:
-                            pic[posparms[i+1]] = f
-                    self._fixPicinfo(pic)
-                else: # otherwise USFM3, so find all the named params
-                    for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
-                        pic[d[0]] = d[1]
+        if isinstance(fname, str):
+            inf = universalopen(fname)
+        else:
+            inf = fname
+        for l in (x.strip() for x in inf.readlines()):
+            if not len(l) or l.startswith("%"):
+                continue
+            m = l.split("|")
+            r = m[0].split(maxsplit=2)
+            if not len(r):  # no id, what to do? Ignore entry? Create an id?
+                continue    # skip the entry. Pretty radical.
+            if suffix.startswith("B"):
+                s = r[0][3:4] or suffix[1:]
+            else:
+                s = suffix
+            if len(r) > 1:
+                k = "{}{} {}".format(r[0][:3], s, r[1])
+            else:
+                k = "{}{}".format(r[0], s)
+            pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
+            self[self.newkey(suffix)] = pic
+            if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
+                for i, f in enumerate(m[1:]):
+                    if i < len(posparms)-1:
+                        pic[posparms[i+1]] = f
+                self._fixPicinfo(pic)
+            else: # otherwise USFM3, so find all the named params
+                for d in re.findall(r'(\S+)\s*=\s*"([^"]+)"', m[-1]):
+                    pic[d[0]] = d[1]
+        if isinstance(fname, str):
+            inf.close()
         self.rmdups()
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
@@ -354,11 +365,11 @@ class PicInfo(dict):
                     k,v = l.split("=")
                     pic[k.strip()] = v.strip('"')
                 if 'media' not in pic:
-                    default, limit = parent.picMedia(pic.get('src', ''))
+                    default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                     pic['media'] = 'paw' if default is None else default
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
-        isperiph = bk in TexModel._nonScriptureBooks
+        isperiph = bk in nonScriptureBooks
         with universalopen(fname) as inf:
             dat = inf.read()
             if isperiph:

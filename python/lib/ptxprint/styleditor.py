@@ -2,8 +2,60 @@
 import re, os
 from ptxprint.usfmutils import Sheets
 from ptxprint.font import FontRef
-from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path
+from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
 from copy import deepcopy
+import logging
+
+logger = logging.getLogger(__name__)
+
+class _CEnum:
+    def __init__(self, *vals):
+        self.vals = vals
+
+    def __contains__(self, v):
+        return v in self.vals
+
+class _CRange:
+    def __init__(self, first, last=None):
+        self.first = first
+        self.last = last
+
+    def __contains__(self, v):
+        v = asfloat(v, None)
+        if v is None:
+            return False
+        if v < self.first:
+            return False
+        if self.last is not None and v > self.last:
+            return False
+        return True
+
+class _CValue:
+    def __init__(self, val):
+        self.value = val
+
+    def __contains__(self, v):
+        v = asfloat(v, None)
+        if v is None:
+            return False
+        return v == self.value
+
+class _CNot:
+    def __init__(self, constraint):
+        self.constraint = constraint
+
+    def __contains__(self, v):
+        return not v in self.constraint
+
+constraints = {
+    'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
+                        'ChapterNumber', 'VerseNumber', 'Unspecified', 'Standalone'),
+    'styletype': _CEnum('Paragraph', 'Character', 'Note', 'Milestone', 'Standalone', ''),
+    'fontsize': _CRange(1.),
+    'fontscale': _CRange(0.1),
+    'raise': _CNot(_CValue(0.)),
+    'linespacing': _CRange(0.05),
+}
 
 mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextProperties', 'FontName',
                 'FontSize', 'FirstLineIndent', 'LeftMargin', 'RightMargin',
@@ -13,7 +65,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImagePos', 'BgImageLow',
                 'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
                 'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding', 
-                'BoxVPadding', 'BoxHPadding', 'NonJustifiedFill')}
+                'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderRef', 'NonJustifiedFill')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
@@ -138,11 +190,7 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
     return res
 
 def fromFileName(self, v, mrk=None, model=None):
-    if model is not None:
-        rpath = model.configPath()
-        return os.path.abspath(os.path.relpath(v, rpath))
-    else:
-        return v
+    return v
 
 def toFileName(self, v, mrk=None, model=None, parm=None):
     return v
@@ -255,7 +303,17 @@ class StyleEditor:
             return
         foundp = False
         self.basesheet = Sheets(sheetfiles[:-1])
+        self.test_constraints(self.basesheet)
         self.sheet = Sheets(sheetfiles[-1:], base = "")
+        self.test_constraints(self.sheet)
+
+    def test_constraints(self, sheet):
+        for m, s in sheet.items():
+            for k, v in list(s.items()):
+                c = constraints.get(k.lower(), None)
+                if c is not None and not v in c:
+                    logger.info(f"Failed constraint: {m}/{k} = {v}")
+                    del s[k]
 
     def _convertabs(self, key, val):
         baseline = float(self.model.get("s_linespacing", 1.))

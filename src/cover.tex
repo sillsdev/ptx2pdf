@@ -171,13 +171,13 @@
   %  
 }
 \def\d@spine{{%
+ \let\sp@ne\empty
+ \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname>0pt 1\else 0\fi\else 0\fi =1
   \ifcsname periphcontents=coverspine\endcsname
     \x@\let\x@\sp@ne\csname periphcontents=coverspine\endcsname
   \else
     \ifcsname periphcontents=coverspine\endcsname
       \x@\let\x@\sp@ne\csname periphcontents=spine\endcsname
-    \else
-      \let\sp@ne\empty
     \fi
   \fi
   \ifrotatespine
@@ -229,6 +229,9 @@
     \trace{cov}{NOT Rotating spine \the\ht0+\the\dp0 x \the\wd0}%
     \box0
   \fi
+ \else
+   \hbox{}% In case something needs a real box0
+ \fi
 }}
 
 \def\topedgeble@d{\ifdim\wholec@vrtpad<.1pt \csname cover-bleed\endcsname\else 0pt\fi}
@@ -288,6 +291,19 @@
   \iftemp
          %\tracingassigns=1
     \cover@maths
+    \ifRTL
+      %\message{RTL is set}%
+      \let\@@bR\beginR
+      \let\@@bL\beginL
+      \let\@@sR\RTLtrue
+      \let\@@rR\RTLfalse
+    \else
+      \let\@@bR\empty
+      \let\@@bL\empty
+      \let\@@sR\relax
+      \let\@@rR\relax
+    \fi
+    \RTLfalse
     %\tracingassigns=0
     \setbox0\vbox to \csname cover-Y-whole\endcsname{\topskip=0pt \lineskip=0pt%
       %\vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil
@@ -301,36 +317,57 @@
       \BoxLikeBordertrue
       \c@verbit{whole}{\topskip=0pt \lineskip=0pt
         %\vskip-\wholec@vrtpad
+        \@@sR
         \ifcsname  periphcontents=coverwhole\endcsname
           \vbox to 0pt{\vbox to \dimexpr \csname cover-Y-whole\endcsname -\wholec@vrtpad -\wholec@vrbpad\relax{%
               \csname periphcontents=coverwhole\endcsname}\vss}%
         \fi
+        \@@rR
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{\c@verfront}%
+          \hbox{{\leftble@d\c@verbit{front}{%
+                \@@sR
+                \c@verfront
+                \@@rR
+              }%
             }%
             {%
               \ble@dtrue
+              \@@sR
               \d@spine
+              \@@rR
             }%
             {\rightble@d
               %\ble@dtrue
-              \c@verbit{back}{\csname periphcontents=coverback\endcsname}}%
+              \c@verbit{back}{%
+                \@@sR
+                \csname periphcontents=coverback\endcsname
+                \@@rR}}%
           }%
         \else
           \hbox{\setbox0\hbox{\leftble@d
               \ble@dtrue
-              \c@verbit{back}{\csname periphcontents=coverback\endcsname}%
+              \c@verbit{back}{%\ifRTL\beginR\fi
+                \@@sR
+                \csname periphcontents=coverback\endcsname
+                \@@rR
+              }%
             }%
             \box0
             {%
+              \@@sR
               \ble@dtrue
               \d@spine
+              \@@rR
             }%
             \setbox0\hbox{\rightble@d
               \ble@dtrue
-              \c@verbit{front}{\c@verfront}}%
+              \c@verbit{front}{%\ifRTL\beingR\fi
+                \@@sR
+                \c@verfront
+                \@@rR
+            }}%
             \trace{cov}{front cover is \l@gdims0}%
             \box0
           }%
@@ -340,12 +377,13 @@
       %\ifble@d \vskip -\csname cover-bleed\endcsname plus 1fil minus 1fil \fi
       %\vfill
     }%%
+    \@@sR
     %\def\pagecontents{\copy0}\plainoutput
     \ifnum\interactionmode=2
       \showbox0
     \fi
     \trace{cov}{ship@utcoverinsert{cover}{}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname} \space box is (\the\ht0+\the\dp0)x\the\wd0}%
-    \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\ifble@d \csname cover-bleed\endcsname \else 0pt\fi}%
+    \ship@utcoverinsert{cover}{0}{\csname cover-spine\endcsname}{\csname cover-bleed\endcsname}%
   \else
     \message{No cover produced, as periphery missing (state: \ifcsname periphcontents=coverfront\endcsname\else No coverfront (or cover). \fi\ifcsname periphcontents=coverback\endcsname\else, No coverback \fi \ifcsname periphcontents=coverspine\endcsname\else \ifcsname periphcontents=spine\endcsname\else, No coverspine (or spine).\fi\fi)}%
   \fi

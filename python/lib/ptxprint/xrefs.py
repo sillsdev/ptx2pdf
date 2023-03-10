@@ -285,6 +285,7 @@ components = [
     ("c_strongsTranslit", r"\wl {translit}\wl*", "translit"),
     ("c_strongsRenderings", r"\k {_defn}\k*;", "_defn"),
     ("c_strongsDefn", r"{trans};", "trans"),
+    ("c_strongsNotes", r"{notes};", "notes"),
     ("c_strongsKeyVref", r"\xt $a({head})\xt*", "head")
 ]
 
@@ -352,7 +353,7 @@ class StrongsXrefs(XMLXrefs):
                     self.wfi[stem] = WordForms(stem)
                 self.wfi[stem].merge(stem, suffix, prefix)
 
-    def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, addfilter=False):
+    def _readTermRenderings(self, localfile, strongs, revwds, btmap, key, nkey="notes", addfilter=False):
         if addfilter:
             self.strongsfilter = set()
         localdoc = et.parse(localfile)
@@ -365,6 +366,9 @@ class StrongsXrefs(XMLXrefs):
             if addfilter:
                 self.strongsfilter.add(st)
             strongs[st][key] = rend.split("||")
+            rdesc = (r.findtext('Notes') or "").strip()
+            if len(rdesc):
+                strongs[st][nkey] = rdesc
             if revwds is not None:
                 for w in strongs[st][key]:
                     revwds.setdefault(w.lower(), set()).add(st)

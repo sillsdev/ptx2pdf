@@ -17,6 +17,7 @@ try:
 except ImportError:
     sys.path.append(os.path.join(os.path.dirname(__file__), "..", "lib"))
     import ptxprint
+from ptxprint.utils import saferelpath
 
 from pathlib import Path
 
@@ -175,7 +176,7 @@ else:
 config.set("init", "paratext", str(args.paratext))
 
 if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
-    pidpath = os.path.relpath(args.pid, args.paratext).replace("\\", "/")
+    pidpath = saferelpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
         pidpath = os.path.abspath(args.pid).replace("\\", "/")
     pidbits = pidpath.split("/")

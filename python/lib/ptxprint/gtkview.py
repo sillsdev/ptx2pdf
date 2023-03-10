@@ -6,7 +6,7 @@ gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
 import time, locale, urllib.request, json, hashlib
-from ptxprint.utils import universalopen, refKey, chgsHeader
+from ptxprint.utils import universalopen, refKey, chgsHeader, saferelpath
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
 if getattr(sys, "frozen", False) and hasattr(sys, "_MEIPASS"):
@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap
+            _, f_, textocol, _allbkmap, coltotex
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -100,7 +100,7 @@ _cjkLangs = {
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Devanagari", 
-    "Ethiopic", "Extended-Arabic", "Fullwidth", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Javanese", "Kannada", 
+    "Ethiopic", "Extended-Arabic", "Fullwidth", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Hebrew", "Javanese", "Kannada", 
     "Kayah-Li", "Khmer", "Khudawadi", "Lao", "Lepcha", "Limbu", "Malayalam", "Masaram-Gondi", "Meetei-Mayek", "Modi", "Mongolian", 
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
     "Osmanya", "Pahawh-Hmong", "Rumi", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
@@ -190,7 +190,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Cover", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
 
@@ -290,7 +290,7 @@ _sensitivities = {
     "c_txlQuestionsInclude":   ["gr_txlQuestions"],
     # "c_txlQuestionsOverview":  ["c_txlBoldOverview"],
     "c_filterCats":            ["gr_filterCats"],
-    "c_makeCoverPage":         ["bx_cover"],
+    "c_makeCoverPage":         ["bx_cover", "c_coverSeparatePDF"],
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
     "r_impSource": {
@@ -304,6 +304,9 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
+    "c_coverBorder":           ["fcb_coverBorder", "l_coverBorder", "col_coverBorder"],
+    "c_coverShading":          ["col_coverShading"],
+    "c_coverSelectImage":      ["btn_coverSelectImage", "lb_coverImageFilename"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -317,6 +320,7 @@ _nonsensitivities = {
     # "c_lockFontSize2Baseline": ["l_linespacing", "s_linespacing", "btn_adjust_spacing"],
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
+    "c_inclSpine":             ["c_coverCropMarks"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -420,6 +424,7 @@ _dlgtriggers = {
     "dlg_DBLbundle":        "onDBLbundleClicked",
     "dlg_overlayCredit":    "onOverlayCreditClicked",
     "dlg_strongsGenerate":  "onGenerateStrongsClicked",
+    "dlg_generateCover":    "onGenerateCoverClicked",
     "dlg_borders":          "onSBborderClicked"
 }
 
@@ -569,9 +574,9 @@ class GtkViewModel(ViewModel):
         #    self.builder.set_translation_domain(APP)
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
-        if self.args.extras & 16 != 0:
-            _ui_keepHidden.remove("tb_Cover")
-            self.builder.get_object("tb_Cover").set_no_show_all(False)
+        # if self.args.extras & 16 != 0:
+            # _ui_keepHidden.remove("tb_Cover")
+            # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
         self.isDisplay = True
         self.searchWidget = []
@@ -594,6 +599,7 @@ class GtkViewModel(ViewModel):
         # self.warnedSIL = False
         self.thickActive = False
         self.printReason = 0
+        self.warnedMissingZvars = False
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -1229,7 +1235,8 @@ class GtkViewModel(ViewModel):
             Gtk.main_iteration_do(False)
         
     def setPrintBtnStatus(self, idnty, txt=""):
-        if not txt:
+        logger.debug(f"{idnty=} {len(txt) if txt is not None else 'None'} {getcaller(1)}")
+        if txt is None or not len(txt):
             self.printReason &= ~idnty
         else:
             self.printReason |= idnty
@@ -1242,6 +1249,7 @@ class GtkViewModel(ViewModel):
         self.setPrintBtnStatus(4, "")
         for f in ['R','B','I','BI']:
             if self.get("bl_font" + f) is None:
+                logger.debug(f"bl_font: {f} is None. {getcaller()}")
                 self.setPrintBtnStatus(4, _("Font(s) not set"))
                 return True
         return False
@@ -1488,7 +1496,7 @@ class GtkViewModel(ViewModel):
         # if self.ptsettings is not None:
         bks = self.getAllBooks()
         for b in bks:
-            if b != "FRT": # We no longer list the FRT book in the book chooser(s)
+            if b not in ("FRT", "INT"): # We no longer list the FRT book in the book chooser(s)
                 # ind = books.get(b, 0)-1
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])
@@ -1622,16 +1630,22 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Advanced").set_markup("<span{}>".format(ac)+_("Advanced")+"</span>")
 
     def paintLock(self, wid, lock, editableOverride):
-        w = self.builder.get_object(wid)
-        if w is None:
-            return
-        if lock and not editableOverride:
-            if w.get_sensitive():
-                self.locked.add(wid)
-                w.set_sensitive(False)
-        elif editableOverride:
-            self.painted.add(wid)
-            w.get_style_context().add_class("highlighted")
+        wids = []
+        if wid.startswith("r_"):
+            wids = ["{}_{}".format(wid, v) for v in self.radios.get(wid[2:], [])]
+        if not len(wids):
+            wids = [wid]
+        for wid in wids:
+            w = self.builder.get_object(wid)
+            if w is None:
+                continue
+            if lock and not editableOverride:
+                if w.get_sensitive():
+                    self.locked.add(wid)
+                    w.set_sensitive(False)
+            elif editableOverride:
+                self.painted.add(wid)
+                w.get_style_context().add_class("highlighted")
 
     def unpaintUnlock(self):
         for wid in self.painted:
@@ -1811,12 +1825,6 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object("ecb_examineBook").set_active_id(bks[0])
         self.updatePicList()
 
-    def _getFigures(self, bk, suffix="", sfmonly=False, media=None, usepiclists=False):
-        if self.picListView.isEmpty():
-            return super()._getFigures(bk, suffix=suffix, sfmonly=sfmonly, media=media,
-                                      usepiclists=usepiclists)
-        return self.picListView.getinfo()
-
     def updatePicList(self, bks=None, priority="Both", output=False):
         super().updatePicList(bks=bks, priority=priority, output=output)
         if self.picinfos is None:
@@ -1841,7 +1849,6 @@ class GtkViewModel(ViewModel):
         self.picListView.setCheckFilter(self.get('c_picCheckInvFilter'), f)
 
     def onUpdatePicCaptionsClicked(self, btn):
-        # import pdb; pdb.set_trace()
         if self.diglotView is not None:
             pref = "L"
             digpics = PicInfo(self.diglotView)
@@ -2071,7 +2078,7 @@ class GtkViewModel(ViewModel):
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 logger.debug(f"Front matter from {fpath} does not exist")
-                self.uneditedText[pgnum] = _("Click the Generate button (above) to start the process of creating Front Matter...")
+                self.uneditedText[pgnum] = _("%%% Click the Generate button (above) to start the process of creating Front Matter...")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 fpath = None
             if self.get("t_invisiblePassword") == "":
@@ -3033,6 +3040,7 @@ class GtkViewModel(ViewModel):
         self.updateMarginGraphics()
         self.enableTXLoption()
         self.onBodyHeightChanged(None)
+        self.checkFontsMissing()
         logger.debug(f"Changed project to {prjid} {configName=}")
 
     def enableTXLoption(self):
@@ -3070,7 +3078,7 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
         cpath = self.configPath(cfgname=self.configName(), makePath=False)
         if cpath is not None and os.path.exists(cpath):
-            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName()) # False means DON'T Save!
+            self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName(), readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
 
     def onConfigKeyPressed(self, btn, *a):
@@ -3305,7 +3313,7 @@ class GtkViewModel(ViewModel):
                            "All Files": {"pattern": "*"}},
                 multiple = False, basedir=tgtfldr)
         if moduleFile is not None:
-            moduleFile = [Path(os.path.relpath(x, prjdir)) for x in moduleFile]
+            moduleFile = [Path(saferelpath(x, prjdir)) for x in moduleFile]
             self.moduleFile = moduleFile[0]
             self.builder.get_object("lb_bibleModule").set_label(os.path.basename(moduleFile[0]))
             self.builder.get_object("btn_chooseBibleModule").set_tooltip_text(str(moduleFile[0]))
@@ -4270,6 +4278,158 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
         
+    def onGenerateCoverClicked(self, btn):
+        metadata = {"langiso":       "<Ethnologue code>", 
+                    "languagename":  "<Language>", 
+                    "maintitle":     "<Title>", 
+                    "subtitle" :     "<Subtitle>", 
+                    "isbn":          ""}
+    
+        dialog = self.builder.get_object("dlg_generateCover")
+        for a in (('front', True), ('whole', False)):
+            img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
+            if img:
+                self.set("btn_coverSelectImage", img)
+                self.set("lb_coverImageFilename", img)
+                self.set("c_coverImageFront", a[1])
+                # break
+        if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
+            ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
+            self.set('fcb_coverBorder', ornaments)
+            bc = textocol(self.styleEditor.getval('cat:coverfront|esb', 'BorderColor', 'xFFFFFF'))
+            self.set('col_coverBorder', bc)
+            self.set('c_coverBorder', True)
+        else:
+            self.set('c_coverBorder', False)
+        fgc = textocol(self.styleEditor.getval('cat:coverwhole|esb', 'BgColor', 'xFFFFFF'))
+        self.set('col_coverShading', fgc)
+        self.set('c_coverShading', fgc != "rgb(255,255,255)")
+        mtsize = float(self.styleEditor.getval('mt1', 'FontSize', 12))
+        fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
+        self.set('s_coverTextScale', fsize / mtsize)
+        self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
+
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+
+        if response == Gtk.ResponseType.CANCEL:
+            if sys.platform == "win32":
+                dialog.set_keep_above(False)
+            dialog.hide()
+            return
+        elif response == Gtk.ResponseType.OK: # Create Cover Settings clicked
+            # Enable ESBs
+            self.set("c_sidebars", True)
+            # Scale the font size of mt1 and mt2 for front and spine
+            scaleText = float(self.get('s_coverTextScale'))
+            # Set foreground (text) color
+            fg = coltotex(self.get('col_coverText'))
+            for m in ['mt1', 'mt2']:
+                sz = float(self.styleEditor.getval(m, 'FontSize', 12))
+                for cvr in ['front', 'spine']:
+                    sf = 1 if cvr == 'front' else 0.65
+                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'FontSize', sz*scaleText*sf)
+                    self.styleEditor.setval(f'cat:cover{cvr}|{m}', 'Color', fg)
+
+            if self.get('c_coverBorder'):
+                # Set border colour
+                bc = coltotex(self.get('col_coverBorder'))
+                self.set("c_useOrnaments", True)
+                ornaments = self.get('fcb_coverBorder')
+                print(f"{ornaments=}")
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', 'ornaments')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', ornaments)
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', bc)
+                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'All')
+            else:
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderStyle', '')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderRef', '')
+                self.styleEditor.setval('cat:coverfront|esb', 'BorderColor', '')
+                self.styleEditor.setval('cat:coverfront|esb', 'Border', 'None')
+
+            # Set background color
+            if self.get('c_coverShading'):
+                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
+            else:
+                self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
+                
+            for c in ['front', 'whole']:
+                for p in ['BgImage', 'BgImageScale']:
+                    self.styleEditor.setval(f'cat:cover{c}|esb', p, '')
+            if self.get('c_coverSelectImage'):
+                img = self.get('lb_coverImageFilename')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', 'bleed|1x1')
+
+            if self.get('c_coverShading'):
+                s = self.get('s_coverShadingAlpha')
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
+
+            if self.get('c_coverSelectImage'):
+                i = self.get('s_coverImageAlpha')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageAlpha', i)
+                self.styleEditor.setval('cat:coverwhole|esb' if self.get('c_coverImageFront') else 'cat:coverfront|esb', 'BgImageAlpha', 1.0 - float(i))
+
+            self.periphs['coverfront'] = r'''
+\periph front|id="coverfront"
+\zgap|30pt\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\vfill
+\endgraf'''
+            self.periphs['coverspine'] = r'''
+\periph spine|id="coverspine"
+\mt1 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
+\p'''
+            self.periphs['coverback'] = r'''
+\periph back|id="coverback"
+\zgap|1pt\*
+\pc ~
+\vfill
+\zifvarset|var="isbn" emptyok="F"\*
+\ztruetext
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\ztruetext*'''
+            self.periphs['coverwhole'] = r'''
+\periph spannedCover|id="coverwhole"
+\zgap|1pt\*
+\vfill
+\pc ~
+\vfill
+\endgraf'''
+            self.updateFrontMatter()
+            self.set("c_frontmatter", True)
+            if sys.platform == "win32":
+                dialog.set_keep_above(False)
+            dialog.hide()
+            # See if any of the meta-data fields are missing in the zvars, and if so
+            # add them and ask the user to fill them in.
+            if not self.warnedMissingZvars:
+                missing = False
+                for k, v in metadata.items():
+                    if self.getvar(k, default=None) is None:
+                        missing = True
+                        self.setvar(k, v)
+                if missing:
+                    mpgnum = self.notebooks['Main'].index("tb_Peripherals")
+                    self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+                    _errText = _("Please fill in any missing <Values> on") + "\n" + \
+                               _("the Peripherals tab before proceeding.") + "\n" + \
+                               _("Update the ISBN number or deleted the entry.")
+                    self.doError("Missing details for cover page", secondary=_errText, \
+                              title="PTXprint", copy2clip=False, show=True)
+                    self.warnedMissingZvars = True
+                    return
+            # Switch briefly to the Front Matter tab so that the updated content is activated and
+            # gets saved/updated. But then switch back to the Cover tab immediately after so the 
+            # view is back to where they clicked on the Generate Cover button to begin with.
+            mpgnum = self.notebooks['Main'].index("tb_ViewerEditor")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+            self.builder.get_object("nbk_Viewer").set_current_page(0)
+            mpgnum = self.notebooks['Main'].index("tb_Cover")
+            self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+        
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
             if self.get("c_letterSpacing"):
@@ -4370,12 +4530,11 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
         
     def onvarEdit(self, tv, path, text): #cr, path, text, tv):
-        if len(text) > 0:
-            model = tv.get_model()
-            it = model.get_iter_from_string(path)
-            if it:
-                model.set(it, 1, text)
-                self.setvar(model.get(it, 0)[0], text)
+        model = tv.get_model()
+        it = model.get_iter_from_string(path)
+        if it:
+            model.set(it, 1, text.strip())
+            self.setvar(model.get(it, 0)[0], text.strip())
 
     def onzvarAdd(self, btn):
         def responseToDialog(entry, dialog, response):
@@ -4504,6 +4663,7 @@ class GtkViewModel(ViewModel):
         
     def onSBimageClicked(self, btn):
         btname = Gtk.Buildable.get_name(btn)
+        self.set("lb_sbFilename", "")
         isbg = btname == "btn_sbBGIDia"
         self.styleEditor.sidebarImageDialog(isbg)
         
@@ -4521,6 +4681,21 @@ class GtkViewModel(ViewModel):
                                   filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
+
+    def onCoverSelectImageClicked(self, btn):
+        picpath = os.path.join(self.settings_dir, self.prjid)
+        def update_preview(dialog):
+            picpath = dialog.get_preview_filename()
+            try:
+                pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(picpath, 200, 300)
+            except Exception as e:
+                pixbuf = None
+            return pixbuf
+
+        picfiles = self.fileChooser(_("Choose Image"),
+                                  filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                   multiple=False, basedir=picpath, preview=update_preview)
+        self.set("lb_coverImageFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
     def onDeleteTempFolders(self, btn):
         notDeleted = []
@@ -4676,6 +4851,12 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("lb_spineTitle").set_label(_("Spine Title"))
         else:
             self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
+        if rotateDegrees == 90:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'l')
+        elif rotateDegrees == 270:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'r')
+        else:
+            self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'F')
         
         pgs = float(self.get("s_totalPages"))
         adj = float(self.get("s_coverAdjust"))
@@ -4687,8 +4868,10 @@ class GtkViewModel(ViewModel):
         self.spine = (thck * pgs / 2000) + adj
 
         showSpine = self.sensiVisible("c_inclSpine")
+        self.set('c_coverCropMarks', showSpine)
         for w in ["vp_spine", "lb_style_cat:coverspine|esb"]:
             self.builder.get_object(w).set_visible(showSpine)
+            
         self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
         thick = self.spine * 4
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
@@ -4737,7 +4920,7 @@ class GtkViewModel(ViewModel):
             mpgnum = self.notebooks['Main'].index("tb_Peripherals")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             _errText = _("Please fill in any missing <Values> on") + "\n" + \
-                       _("the Peripherals tab and then try again.")
+                       _("the Peripherals tab before proceeding.")
             self.doError("Missing details for request letter", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
@@ -4775,3 +4958,42 @@ Thank you,
         self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
                       title="PTXprint", copy2clip=True, show=True, \
                       who2email="scripturepicturepermissions_intl@sil.org")
+
+    def onOverridePageCountClicked(self, btn):
+        override = self.sensiVisible('c_overridePageCount')
+        if not override:
+            self.set('s_totalPages', self.getPageCount())
+
+    def getPageCount(self):
+        xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
+        if os.path.exists(xdvname):
+            return xdvigetpages(xdvname)
+        else:
+            return 99
+
+    def onCatalogClicked(self,btn):
+        catpdf = os.path.join(pycodedir(), "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        if not os.path.exists(catpdf):
+            catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
+        if os.path.exists(catpdf):
+            if sys.platform == "win32":
+                os.startfile(catpdf)
+            elif sys.platform == "linux":
+                subprocess.call(('xdg-open', catpdf))
+
+    def onCropMarksClicked(self, btn):
+        if not self.get("c_coverCropMarks"):
+            self.set("s_coverBleed", 0)
+            self.set("s_coverArtBleed", 0)
+
+    def onGotCoverFocus(self, widget, event):
+        if not self.get('c_overridePageCount'):
+            self.set('s_totalPages', self.getPageCount())
+            
+    def isCoverTabOpen(self):
+        if not self.get("c_makeCoverPage"):
+            return False
+        if self.builder.get_object("nbk_Main").get_current_page() == self.notebooks["Main"].index("tb_Cover"):
+            return True
+        else:
+            return False

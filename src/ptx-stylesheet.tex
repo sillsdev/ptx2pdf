@@ -1237,7 +1237,7 @@
     \p@sheof\r@gurgitatedtrue%
     \x@\@k\scantokens{ ##1\ignorespaces}\endch@rstylen*%
     \r@gurgitatedfalse\p@peof%
-    \runtrigg@rs{\id@@@ k.\kr@f}%
+    \runtrigg@rs{\id@@@\ifdiglot\c@rrdstat\fi k.\kr@f}%
   }%}
  \def\k{%\k processing
    \deactiv@tecustomch@rs% no CR here
@@ -1480,11 +1480,11 @@
 \newif\ifc@ntinue
 \def\c@tegory{}
 \newread\styl@sheet
-\newif\ifnewstyles
-\newstylestrue
+\newif\ifdigl@tinuse % Have any styles been loaded with diglottrue?
+\digl@tinusefalse
 
 \def\stylesheet#1{
- \newstylestrue
+ \ifdiglot\global\digl@tinusetrue\fi
  \let\oldc@tegory=\c@tegory
  \m@kedigitsother
  \let\save@regular=\regular \let\regular=\Regular
@@ -1565,9 +1565,9 @@
  \ifdiglot
   \trace{d}{Onetimesetup, (\c@rrdstat)}%
  \else
-   \ifRTL
-     \BookOpenLefttrue
-   \fi
+%   \ifRTL
+%     \BookOpenLefttrue
+%   \fi
  \fi
  \origb@selineskip=\baselineskip
  \s@tupsizes
@@ -1652,45 +1652,49 @@
  \fi
  \@netimesetup
  \global\let\periph@@@\empty
- \ifdiglot\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
-   \diglots@tup
+ \ifdigl@tinuse\bgroup%This must be outside of @onetimesetup as there's no guarantee that diglot will be true for all ptxfiles.
    \ifx\PDFBookMarkColumn\relax
      \def\col@do##1{\xdef\PDFBookMarkColumn{##1}}%Very crude... set PDFBookMarkColumn to last column
      \x@\each@col\diglot@list\E
    \fi
    \dimen0=\baselineskip
-   \global\topskip=2\baselineskip
-   \global\splittopskip=0pt
-   \gdef\atn@xtptxfile{}% This can't carry over.
-   \message{Setting up column-specific values for columns: \diglot@list}%
-   \global\baselineDelta=-\maxdimen
-   \def\col@do##1{% Per-column setup
-     \setc@rdstat{##1}%
-     \showLRspecific
-     \setLRspecific\s@tb@dyb@seline{##1}%
-     \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
-     \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
-       \global\baselineDelta=\csname baselineDelta##1\endcsname
-     \fi
-     \saveLRspecificSide{##1}%
-     \bgroup 
-       \let\mcstack\mcstack@mpty
-       \s@tfont{p}{p}%
-       \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}{v+p}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
-            \ifx\p@ram\relax\else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
-       \hss}%
-       %\showbox\f@@tstrut
-       \trace{d}{Saving font ascent for ##1 as \the\ht\f@@tstrut}%
-       \x@\xdef\csname gridding@scent##1\endcsname{\the\ht\f@@tstrut}%
-       \ifdim\ht\f@@tstrut > \baselineskip
-         \message{Paragraph font for ##1 including a verse number claims it is taller (\the\ht\f@@tstrut) than baseline (\the\baselineskip)}%
+   %\gdef\atn@xtptxfile{}% This can't carry over.
+   \ifdiglot
+     \diglots@tup
+     \global\topskip=2\baselineskip
+     \global\splittopskip=0pt
+     \message{Setting up column-specific values for columns: \diglot@list}%
+     \global\baselineDelta=-\maxdimen
+     \def\col@do##1{% Per-column setup
+       \setc@rdstat{##1}%
+       \showLRspecific
+       \setLRspecific\s@tb@dyb@seline{##1}%
+       \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
+       \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
+         \global\baselineDelta=\csname baselineDelta##1\endcsname
        \fi
-     \egroup
-   }
-   \trace{d}{DiglotSides = \diglot@list}%
-   \x@\each@col\diglot@list\E 
-   \baselineskip=\dimen0
+       \saveLRspecificSide{##1}%
+       \bgroup 
+         \let\mcstack\mcstack@mpty
+         \s@tfont{p}{p}%
+         \setbox\f@@tstrut=\hbox to 0pt{\XeTeXuseglyphmetrics=0\hbox{\char32}\s@tfont{v}{v+p}\getp@r@m{raise}{v}\setbox0\hbox{\char32}
+              \ifx\p@ram\relax\else\dimen9=\p@ram\ifdim\dimen9<0pt\lower-\dimen9 \else\raise\dimen9 \fi\box0 \fi
+         \hss}%
+         %\showbox\f@@tstrut
+         \trace{d}{Saving font ascent for ##1 as \the\ht\f@@tstrut}%
+         \x@\xdef\csname gridding@scent##1\endcsname{\the\ht\f@@tstrut}%
+         \ifdim\ht\f@@tstrut > \baselineskip
+           \message{Paragraph font for ##1 including a verse number claims it is taller (\the\ht\f@@tstrut) than baseline (\the\baselineskip)}%
+         \fi
+       \egroup
+     }
+     \trace{d}{DiglotSides = \diglot@list}%
+     \x@\each@col\diglot@list\E 
+     \baselineskip=\dimen0
+   \fi
    \egroup
+ \fi
+ \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else
    \ifsquashgridbox\global\let\gridb@x\gr@db@@x\else\global\let\gridb@x\gr@db@x\fi % liberated from onetimesetup, as it might not be one-time.
@@ -1710,6 +1714,7 @@
 %+csty_ptxfile_start
 \newif\ifinptxfile
 \def\ptxfile#1{
+ \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi}%
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
@@ -1725,10 +1730,12 @@
  \prepusfm
  \edef\t@st{#1}%
  \ifx\t@st\empty\else %opening empty file causes problems with some paths. 
+   \trace{d}{\meaning\atn@xtptxfile}%
    \openin\t@stread="\the\PtxFilePath#1"
      \ifeof\t@stread \def\n@xt{\MSG{USFM file "\the\PtxFilePath#1" not found -- ignored}}
      \else \closein\t@stread \def\n@xt{\atn@xtptxfile \input "\the\PtxFilePath#1"\relax}\fi
    \n@xt
+   \gdef\atn@xtptxfile{}% This can't carry over.
  \fi
  \postptxfile
 }
@@ -1780,7 +1787,7 @@
   \def\t@mp{\noexpand#2} \lowercase{\edef~{\relax\t@mp}}}
 \newtoks\do@ctive
 
-\def\@ctivate{\x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}%
+\def\@ctivate{\ifcsname save-cat-\the\count255\endcsname\else \x@\edef\csname save-cat-\the\count255\endcsname{\the\catcode\count255}\fi%Only define the old value once
   \catcode\the\count255=\active\relax}
 \def\de@ctivate{\catcode\the\count255=\csname save-cat-\the\count255\endcsname\relax}
 

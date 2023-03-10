@@ -123,6 +123,7 @@
   \ifinperiph\endp@riph\inperiphfalse\fi}
 
 \newif\ifStorePeriph\StorePeriphtrue % are *any* periphs stored?
+\newif\ifStoreAllPeriphs \StoreAllPeriphsfalse
 \newif\ifPagebreakAfterPeriph\PagebreakAfterPeriphtrue
 
 \def\@@@periph #1|#2|#3\E{%
@@ -147,6 +148,7 @@
   \trace{per}{idhooks run}%
   \tempfalse
   \def\tmp{}%
+  \ifStoreAllPeriphs\temptrue\fi
   \ifStorePeriph
     \ifcsname storeperiph-\attr@b\endcsname 
       \def\tmp{(periph type)}\temptrue

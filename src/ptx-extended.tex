@@ -605,6 +605,7 @@
 
 \newif\ifsb@rfillpage
 
+\def\figbleed{5pt}
 \def\@@sbe{%The real meat of an esbe
    \getsbp@ram{posn}%
    \gdef\pic@lign{c}% How does the sidebar align within the box?
@@ -664,6 +665,10 @@
   %Does the box have a defined size? 
   %
   % Reference dimensions
+  \edef\flble@d{\ifdim \lble@d > \figbleed \figbleed\else\lble@d\fi}% Figure bleeds
+  \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
+  \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
+  \edef\fbble@d{\ifdim \bble@d > \figbleed \figbleed\else\bble@d\fi}%
   \edef\text@ref@w@dth{\the\wd\extb@x}%
   \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
   \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
@@ -677,7 +682,8 @@
   \def\@@box@ofs{\fb@lpadding}%
   \def\@@border@ofs{\b@dr@left@pad}%
   \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
-  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
+  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
+  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
   %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
   \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
   \ifx\cp@ram\relax
@@ -694,9 +700,13 @@
     \edef\border@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding +\b@drwidth pt * \b@drvsides \relax}%
     \edef\box@ref@h@ight{\the\dimexpr \cp@ram\relax}%
     \ifble@d
-      \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
-      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \lble@d + \rble@d\relax}%
+      \edef\colbleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%
+      \edef\colbleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \lble@d + \rble@d\relax}%
+      \edef\bleed@ref@h@ight{\the\dimexpr \cp@ram + \ftble@d + \fbble@d\relax}%
+      \edef\bleed@ref@w@dth{\the\dimexpr \outer@ref@w@dth + \flble@d + \frble@d\relax}%
     \else
+      \let\colbleed@ref@h@ight\outer@ref@h@ight
+      \let\colbleed@ref@w@dth\outer@ref@w@dth
       \let\bleed@ref@h@ight\outer@ref@h@ight
       \let\bleed@ref@w@dth\outer@ref@w@dth
     \fi
@@ -774,7 +784,7 @@
       \edef\sb@rheightspec{to \the\ht\extb@x}%
     \fi
     \setbox\extb@x\vbox\sb@rheightspec{\lineskiplimit=0pt \baselineskip=0pt
-      \vbox to 0pt{\vbox \sb@rheightspec{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}}\vss}\vss}%
+      \vbox to 0pt{\vbox \sb@rheightspec{\vss \hbox to \wd\extb@x{\f@intthing{\bgf@galpha}{\bgf@gcol}{\hbox{\hskip-\sb@leftshift\unhbox\newpicb@x\hskip-\sb@rightshift}}\hss}\vss}\vss}%
       \vbox\sb@rheightspec{\unvbox\extb@x}%
     }%
     \let\bgf@gsp@c\relax %used it, so delete it. If it were still there later, we'd use it.
@@ -1084,12 +1094,17 @@
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%
+   \x@\setsbp@ram{#1figspec}{}%
  \else
-   \let\c@tfigname\p@ram
-   %\getbp@r@m{#1figscale}%
-   \edef\tmp{\c@tfigname|}%
-   \x@\setsbp@ram{#1figspec}{\tmp}%
-   \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
+   \ifx\p@ram\false
+    \x@\setsbp@ram{#1figspec}{}%
+   \else
+     \let\c@tfigname\p@ram
+     %\getbp@r@m{#1figscale}%
+     \edef\tmp{\c@tfigname|}%
+     \x@\setsbp@ram{#1figspec}{\tmp}%
+     \trace{e}{figspec for \c@tprefix\m@rker:  \tmp}%
+   \fi
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3\E{%

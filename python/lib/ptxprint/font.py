@@ -1,4 +1,5 @@
 from ptxprint.runner import fclist, checkoutput
+from ptxprint.utils import saferelpath
 import struct, re, os, sys
 # from gi.repository import Pango
 from pathlib import Path
@@ -186,7 +187,7 @@ class TTFontCache:
             theseitems = list(c.items())
             for k, v in theseitems:
                 try:
-                    rp = os.path.relpath(v, path)
+                    rp = saferelpath(v, path)
                 except ValueError:
                     rp = v
                 if "/" not in rp.replace("\\", "/"):
@@ -1037,7 +1038,7 @@ class FontRef:
             if inarchive:
                 fname = f"../../../shared/fonts/{f.filename.name}"
             elif root is not None:
-                fname = os.path.relpath(f.filename, root)
+                fname = saferelpath(f.filename, root)
             else:
                 fname = f.filename.as_posix()
             name = "[{}]".format(fname)

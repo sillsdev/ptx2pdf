@@ -247,15 +247,36 @@
 \x@\newcount\csname p@rnumL\endcsname % Used for triggers
 \x@\newcount\csname p@rnumR\endcsname % Used for triggers
 
+\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
+\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
+\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 \def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
   \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
   \x@\def\csname #1false\endcsname{\x@\let\csname if#1\endcsname\iffalse}%
   \x@\def\csname #1default\endcsname{\x@\let\csname if#1\endcsname\undefined}%
 }
-\newsideSpecificIf{OmitChapterNumberL}
-\newsideSpecificIf{OmitVerseNumberOneL}
-\newsideSpecificIf{OmitChapterNumberR}
-\newsideSpecificIf{OmitVerseNumberOneR}
+
+\def\initcolumndef@ults#1{%
+    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
+    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
+    \empty@cseq{old#1mark}%last X mark 
+    \empty@cseq{first#1mark}%First X mark on this pave
+    \empty@cseq{bot#1mark}%bottom X mark on this page
+    \empty@cseq{oldfirst#1mark}%old First X mark on this pave
+    \empty@cseq{oldbot#1mark}%old First X mark on this pave
+    \empty@cseq{book#1}% Name of book to put in PDF.
+    \empty@cseq{ch@plabel#1}% Chapter label
+    \empty@cseq{@ch@pter#1}% Chapter Nuber
+    \empty@cseq{@v@rse#1}% verse label
+    \newsideSpecificIf{OmitChapterNumber#1} % Control option
+    \newsideSpecificIf{OmitVerseNumberOne#1} % Control option
+    \xdef@cseq{@cur#1ht}{0pt}% 
+    \xdef@cseq{@cur#1dp}{0pt}% 
+    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
+    \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
+}
+\initcolumndef@ults{L}%
+\initcolumndef@ults{R}%
 
 \def\doVisTrace#1{%
   \setbox0=\vtop to 0pt{\hrule height 0pt depth 0.5pt width 15pt \hbox{\VisTracefont #1 \the\TRACEcount}\vss}\ht0=0pt \dp0=0pt
@@ -2869,9 +2890,6 @@
 %%%%%%%% This might one day be moved to polyglot-simplecols.tex
 % Below here are pieces of code that extend the basic diglot2 (2 column) layout into more columns.
 %
-\def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
-\def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
-\def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
 
 \def\newPolyglotCol#1{%
   \ifcsname #1isDiglotColumn\endcsname
@@ -2912,30 +2930,17 @@
     \x@\xdef\csname m@rker#1\endcsname{}%
     \x@\xdef\csname mcstack#1\endcsname{\mcstack@mpty}%
     \newsp@cialpen{dgl@tPen#1trialEnd}%
-    \empty@cseq{n@xtbot#1mark}% Last X mark in the next chunk 
-    \empty@cseq{n@xtfirst#1mark}%First X mark in the next chunk 
-    \empty@cseq{old#1mark}%last X mark 
-    \empty@cseq{first#1mark}%First X mark on this pave
-    \empty@cseq{bot#1mark}%bottom X mark on this page
-    \empty@cseq{book#1}% Name of book to put in PDF.
-    \empty@cseq{ch@plabel#1}% Chapter label
-    \empty@cseq{@ch@pter#1}% Chapter Nuber
-    \empty@cseq{@v@rse#1}% verse label
-    \newsideSpecificIf{OmitChapterNumber#1} % Control option
-    \newsideSpecificIf{OmitVerseNumberOne#1} % Control option
-    \xdef@cseq{@cur#1ht}{0pt}% 
-    \xdef@cseq{@cur#1dp}{0pt}% 
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
-    \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
-    \x@\def\csname addTo#1Hooks\endcsname{\addToSideHooks{#1}}
+    \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
 % UI!
 % The column-delta totals should be per-column, and be summed as cross-column deltas compared to the average.
   \fi
 }
+
 \def\extra@insert@alias#1#2{% Assumption: #1 is already in the form \foo, #2 is in the form \csname something\endcsname
     \x@\x@\x@\gdef\x@\x@\x@\alias@inserts\x@\x@\x@{\x@\alias@inserts\x@\let\x@#1#2}}
 

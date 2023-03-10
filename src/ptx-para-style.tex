@@ -65,6 +65,7 @@
   \global\t@tletrue\global\@ntrofalse\global\b@dyfalse\fi}
 
 \newif\iftob@dy \tob@dyfalse
+\newif\ifPBOnBody \PBOnBodyfalse
 \def\st@rtbody{%\endhe@dings
  % \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
  \traceifset{st@rtbody}%
@@ -199,16 +200,24 @@
 \newif\ifrotate \rotatefalse
 %+cpar_par
 % end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
-\def\par{\ifhmode
+\def\par{%
+  \ifhmode
    \makecutouts
    \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
+   \trace{j}{Ending marker: \m@rker (\styst@kfirst)}%
    \trace{j}{hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
+   \def\@@@st@t{}%
+   \ifhmode\def\@@@st@t{hmode}\fi
+   \ifvmode\edef\@@@st@t{vmode \@@@st@t}\fi
+   \ifinner\edef\@@@st@t{inner \@@@st@t}\fi
+   \trace{j}{(gt:\the\currentgrouptype) \@@@st@t\space  doingt@ble\ifdoingt@ble true\else false\fi\space inn@te\ifinn@te true\else false\fi [\styst@k]}%
    \ifdoingt@ble\else
      \ifx\styst@k\empty% If we have an empty stystack, then should we do nothing or fall back to using m@rker? it seems to be anomalous
        %\s@tsideskips{\m@rker}% 
      \else\ifinn@te\else
        \s@tsideskips{\styst@kfirst}%%Need this for when \everypar gets fired from within a group. (e.g. from a trigger or milestone)
+       \trace{j}{[\styst@kfirst] hs=\the\hsize, bs=\the\baselineskip, loose=\the\looseness, ls=\the\leftskip, rs=\the\rightskip, pf=\the\parfillskip, par after \m@rker (\styst@k), intercharstate=\the\XeTeXinterchartokenstate}%
      \fi\fi
    \fi
    \endgraf
@@ -352,6 +361,7 @@
   \setbox\j@nkbox=\vbox\bgroup\def\m@rker{#1}\sk@ppingtrue % and if so, start a box to consume and discard the text
  \else % else we need to actually process it!
   \ifx\m@rker\relax\else
+    \if@ntro\mark{\intr@}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\intr@}\fi\fi
     \ifx\spaceafterp@ram\relax \else
       \ifhe@dings\nobreak\fi
       \vskip\spaceafterp@ram\verticalsp@ceunit                                              %(1)
@@ -433,7 +443,7 @@
     \let\n@xt\@@@p@rstyle
   \else
     \global\let\f@ntextend\empty
-    \ifx\n@xt\@@spc\let\n@xt\@p@rstyle@spc\trace{ss}{space delimiter for \newp@rstyle, after \thisp@rstyle}\else
+    \ifx\n@xt\@@spc\let\n@xt\@p@rstyle@spc\trace{ss}{space delimiter for \newp@rstyle, after \m@rker}\else
       \ifx\n@xt\@@nl\let\n@xt\@p@rstyle@nl\trace{ss}{nl delimiter for \newp@rstyle}\else
         \let\n@xt\@p@rstyle
     \fi\fi
@@ -449,7 +459,8 @@
   \xdef\f@ntextend{\p@rcent #2xx\E}%
   %\xdef\f@ntextend{#2}%
   \trace{s}{extending [\f@ntextend]}%
-  \x@\@p@rstyle\x@{#1}%
+  \ifcsname #1^#2\endcsname\x@\@p@rstyle\x@{#1^#2}\else
+  \x@\@p@rstyle\x@{#1}\fi
 }
 \catcode`\^=7
 \catcode`\_=11

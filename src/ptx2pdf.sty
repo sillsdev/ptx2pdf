@@ -597,6 +597,40 @@
 \StyleType Milestone
 \Attributes id
 
+\Marker zifvarset
+\Name Conditional text
+\Name zifhook - Milestones - Optional text output (ztruetext,zfalsetext) based on whether the named variable is set / non-empty
+\Description Anchor point for piclist when there are no verse refs to anchor to
+\OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
+\StyleType Milestone
+\Attributes var emptyok 
+
+\Marker zifhook
+\Name Conditional text
+\Name zifhook - Milestones - Optional text output (ztruetext,zfalsetext) if there are any hooks set on a marker
+\Description Anchor point for piclist when there are no verse refs to anchor to
+\OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
+\StyleType Milestone
+\Attributes marker 
+
+\Marker ztruetext
+\Endmarker ztruetext*
+\Name ztruetext - Conditional text - Text to output if the zifhook test is true
+\Description Conditional text - true result
+\OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+
+\Marker zfalsetext
+\Endmarker zfalsetext*
+\Name zfalsetext - Conditional text - Text to output if the zifhook test is false
+\Description Conditional text - false result
+\OccursUnder imt imt1 imt2 imt3 imt4 imte imte1 imte2 is is1 is2 ili ili1 ili2 ip im ipi imi ipq imq ipr iq iq1 iq2 iq3 io io1 io2 io3 io4 ms ms1 ms2 s s1 s2 s3 s4 cd sp d lh li li1 li2 li3 li4 lf lim lim1 lim2 lim3 lim4 m mi nb p pc ph phi pi pi1 pi2 pi3 pr pmo pm pmc pmr po q q1 q2 q3 q4 qc qr qd qm qm1 qm2 qm3 tr th1 th2 th3 th4 thr1 thr2 thr3 thr4 tc1 tc2 tc3 tc4 tcr1 tcr2 tcr3 tcr4 f fe 
+\TextProperties vernacular publishable
+\TextType NoteText
+\StyleType Character
+
 \Marker ztoc
 \Name ztoc - Milestones - Table Of Contents 
 \OccursUnder id periph
@@ -631,7 +665,7 @@
 \StyleType Milestone
 \TextProperties vernacular publishable
 #Show a 13digit ISBN.  Valid height values: normal medium short
-\Attributes isbn height
+\Attributes isbn height var
 
 \Marker x-credit
 \Name x-credit - Auxiliary - Figure credit box styling
@@ -881,34 +915,65 @@
 \Marker cat:coverwhole|esb
 \Name cat:coverwhole - Cover - Category for styling the whole of the combined cover pagef
 \Position Fcf
-\BgColour x1f0000
-\BoxPadding 0
-\BorderPadding -2
-\Border All
+\BgColor 1 1 1
+\Alpha 0.8
+\Border None
 
 \Marker cat:coverspine|esb
 \Name cat:coverspine - Cover - Category for styling the spine of the cover
 \Position Fcf
+\Alpha 0.8
 \BoxPadding 0
 \BorderPadding -1
-\Border All
 \Rotation r
-\BgColour xff7f7f
+\BgColor 1 1 1
+\Border None
 
 \Marker cat:coverfront|esb
 \Name cat:coverfront - Cover - Category for styling the outside front cover 
 \Position Fcf
-\BgColour x7fff7f
+\Alpha 0.8
+\BgColor 1 1 1
 \BoxPadding 0
 \BorderPadding -2
-\Border All
+\BorderFillColour None
+\BorderLineWidth 0.5
+\BoxBPadding 30
+\BorderWidth 22
+\BoxVPadding 45
+\BoxHPadding 45
+\BorderHPadding -40
+\BorderVPadding -40
+\Border None
 
 \Marker cat:coverback|esb
 \Name cat:coverfront - Cover - Category for styling the outside back cover 
 \Position Fcf
-\BgColour x7f7fff
+\Alpha 0.8
+\BgColor 1 1 1
 \BoxPadding 0
 \BorderPadding -0
+\BorderFillColour None
+\BorderLineWidth 0.5
+\BorderPadding -15
+\BorderWidth 5
+\BoxTPadding 2
+\BoxHPadding 20
+\BoxBPadding 10
+\Border None 
+
+\Marker cat:ISBNbox|esb
+\Name cat:ISBNbox - Cover - Category for styling the ISBN box 
+\Position hr
+\SpaceBefore 100
+\SpaceAfter 0
+\BorderWidth 0.05
+\BgColor 1 1 1
+\BoxHPadding 5
+\BoxVPadding 5
+\BorderRPadding 0
+\Scale 0.6
+\Alpha 1.0
 \Border All
 
 \Marker zcolsync
@@ -920,3 +985,55 @@
 \StyleType Milestone
 \FontSize 12
 
+\Marker cat:coverfront|mt1
+\Name cat:coverfront|mt1 - Cover - Styling the main title of the front cover 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\StyleType Paragraph
+\FontSize 34
+\Bold
+\Justification Center
+\SpaceBefore 2
+\SpaceAfter 4
+
+\Marker cat:coverfront|mt2
+\Name cat:coverfront|mt2 - Cover - Styling the main title of the front cover 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_2
+\TextType Title
+\StyleType Paragraph
+\FontSize 27
+\Bold
+\Justification Center
+\SpaceAfter 2
+
+\Marker cat:coverspine|mt1
+\Name cat:coverspine|mt1 - Cover - Styling the main title on the spine 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_1
+\TextType Title
+\StyleType Paragraph
+\FontSize 18
+\Bold
+\Justification Left
+\LeftMargin 1.5
+\SpaceAfter -1.2
+\SpaceBefore -6
+
+\Marker cat:coverspine|mt2
+\Name cat:coverspine|mt2 - Cover - Styling the main title on the spine 
+\OccursUnder id
+\Rank 3
+\TextProperties paragraph publishable vernacular level_2
+\TextType Title
+\StyleType Paragraph
+\FontSize 15
+\Bold
+\Justification Left
+\LeftMargin 1.5
+\SpaceAfter -1.2
+\SpaceBefore -6

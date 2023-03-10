@@ -307,7 +307,16 @@
   \fi
 }
 
-\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}} %simple access function
+
+\def\@checkzvar#1#2::#3::#4\E{%
+  \trace{A}{@checkzvar '#1' '#2' '#3'}%
+  \edef\tmp{#2}\ifx\tmp\zv@r
+    \edef#1{\csname ms:zvar=#3\endcsname}%
+    \trace{A}{attrib '#1' is '\attr@b'}%
+  \fi
+}
+\def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}%
+  \x@\@checkzvar\x@{\x@\attr@b\x@}\attr@b ::::\E} %simple access function
 \def\set@ttribute#1#2{%
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.

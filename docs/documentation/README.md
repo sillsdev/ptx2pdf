@@ -497,6 +497,41 @@ the above special characters will copied into the output.  The default value
 for `show` is `b\_c:v`, giving an output such as "Genesis 1:1".
 WARNING: spaces in the string are ignored (due to a peculiarity of TeX). 
 
+## Other special-purpose milestones
+### Vertical space
+`\zbl|3\*` insert 3 blank lines
+`\zgap|1in\*` insert glue occupying 1inch
+`\zgap|1in plus 2in minus 0.3in\*` insert flexible glue.
+
+### Misc. milestones
+`\zfiga|anchor\*` An anchor point for a figure from the piclist. See
+figures.md. It can also be used as a trigger point.
+`\zvar|value\*` Output a stored string (defined in the user interface / tex file).
+`\zgetperiph|id\* Output a stored periphery section. See [earlier](#ptx2pdf-Periph).
+
+### Conditional text
+There are (so far) two tests which set up the pseudo-character styles
+`\ztruetext ...\ztruetext*`  and `\falsetext...\zfalsetext*`
+Note that these are **not** true character styles, and they cannot be nest.
+All content (including paragraph markers, sidebars, etc) within them is
+swallowed as a TeX parameter and if the result of the test was true or false
+(as appropriate) it is re-read and re-processed.
+
+#### Tests for conditional text.
+`\zifhooks|marker` Sets up the conditional text code depending if there have
+been hooks set up for a given marker. This can be useful if markers for `\add`
+or `\sls` are inserting code via hooks.
+
+`\zifvarset|var="varname"\*`   Sets up the conditional text code depending if the zvar  
+`varname` has been set. The optional parameter `emptyok="T"` determines whether
+an empty variable should be treated as unset (the default, if emptyok is not
+specified) or as set (any value for emptyok except "F"). i.e., an empty varible will 
+give the following results:
+* `\zifvarset|var="varname"\*`   -> false
+* `\zifvarset|var="varname" emptyok="F"\*`   -> false
+* `\zifvarset|var="varname" emptyok="t"\*`   -> true
+* `\zifvarset|var="varname" emptyok=""\*`   -> true
+* `\zifvarset|var="varname" emptyok="rabbit"\*`   -> true
 
 ### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>
 

@@ -6,7 +6,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges, coltoonemax
+                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -31,9 +31,9 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.2.50"
-GitVersionStr = "2.2.50"
-ConfigVersion = "2.14"
+VersionStr = "2.2.52"
+GitVersionStr = "2.2.52"
+ConfigVersion = "2.15"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -78,6 +78,7 @@ class ViewModel:
         "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "import/impsourcepdf":      ("impSourcePDF", False, "lb_impSource_pdf"),
+        "covergen/imagefile":       ("coverImage", False, "lb_coverImageFilename"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
     _settingmappings = {
@@ -99,7 +100,7 @@ class ViewModel:
         self.args = args
         for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
-                     customFigFolder customOutputFolder impSourcePDF
+                     customFigFolder customOutputFolder impSourcePDF coverImage
                      prjid configId diglotView usfms picinfos bookrefs""").split():
             setattr(self, v, None)
         self.isDiglot = False
@@ -117,6 +118,7 @@ class ViewModel:
         self.strongs = None
         self.artpgs = None
         self.spine = 0
+        self.periphs = {}
 
         # private to this implementation
         self.dict = {}
@@ -184,7 +186,7 @@ class ViewModel:
         elif dest == "strongs":
             return self.strongsvars.get(k, default)
 
-    def setvar(self, k, v, dest=None, **kw):
+    def setvar(self, k, v, dest=None, editable=True, colour=None, **kw):
         if dest is None:
             self.pubvars[k] = v
         elif dest == "strongs":
@@ -268,6 +270,8 @@ class ViewModel:
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
+                    elif b.first.book == "INT":
+                        pass
                     else:
                         res.append(b)
             res.simplify(sort=False)
@@ -668,14 +672,22 @@ class ViewModel:
                     self.doError(_("Json parsing error in {}").format(fname),
                                  secondary = _("{} at line {} col {}").format(e.msg, e.lineno, e.colno))
 
-    def picMedia(self, src):
+    def picMedia(self, src, loc=None):
         if self.copyrightInfo is None:
             self.readCopyrights()
+        if loc is not None and any(x not in 'paw' for x in loc):
+            loc = None
         m = re.match(self.getPicRe(), src)
         if m is not None and m.group(1).lower() in self.copyrightInfo['copyrights']:
             media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
-            return (media['default'], media['limit'])
-        return (None, None)
+            limit = media['limit']
+            default = media['default']
+        else:
+            limit = "paw"
+            default = "paw"
+        if loc is not None and len(loc):
+            default = "".join(x for x in loc if x in limit)
+        return (default, limit)
     
     def configFRT(self):
         return os.path.join(self.configPath(self.configName()), "FRTlocal.sfm")
@@ -713,7 +725,7 @@ class ViewModel:
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=updatebklist)
         for opath, locked in  ((os.path.join(cp, "ptxprint_override.cfg"), True),
-                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), False)):
+                               (os.path.join(cp, '..', 'ptxprint_project.cfg'), True)):
             if not os.path.exists(opath):
                 continue
             oconfig = configparser.ConfigParser(interpolation=None)
@@ -744,7 +756,7 @@ class ViewModel:
                 except (OSError, PermissionError):
                     pass
         if forcerewrite:
-            self.writeConfig(cfgname=cfgname)
+            self.writeConfig(cfgname=cfgname, force=forcerewrite)
         return oldversion
 
     def writeConfig(self, cfgname=None, force=False):
@@ -855,7 +867,7 @@ class ViewModel:
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
         if v < 1.201:
             for d in ('PicLists', 'AdjLists'):
-                p = os.path.join(self.configPath(cfgname), d)
+                p = os.path.join(cfgpath, d)
                 if not os.path.exists(p):
                     continue
                 if cfgpath is not None:
@@ -1002,13 +1014,17 @@ class ViewModel:
                     with open(path, "w", encoding="utf-8") as outf:
                         for l in lines:
                             outf.write(l)
-        if v < 2.14:
+        if v < 2.15:
             pw = config.get("config", "pwd", fallback=None)
             if pw is not None and len(pw):
                 m = hashlib.md5()
                 m.update(pw.encode("utf-8"))
                 self._configset(config, "config/pwd", b64encode(m.digest()).decode("UTF-8"))
-                print(f'fwdConfig-Updating pw to: {b64encode(m.digest()).decode("UTF-8")}')
+                forcerewrite = True
+            plg = config.get("project", "plugins", fallback="")
+            if "ornaments" in plg:
+                self._configset(config, "fancy/enableornaments", True)
+                self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
 
         self._configset(config, "config/version", ConfigVersion)
 
@@ -1035,7 +1051,7 @@ class ViewModel:
                 s = local2globalhdr(s)
                 config.set(sect, opt, s)
 
-    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True):
+    def loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, lock=False, clearvars=True, categories=None):
         if setv is None:
             def setv(k, v):
                 if updatebklist or k not in self._nonresetcontrols:
@@ -1083,7 +1099,7 @@ class ViewModel:
                         except AttributeError:
                             pass # ignore missing keys
                 elif sect in ("vars", "strongsvar"):
-                    if opt is not None and opt.startswith("*"):
+                    if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
                     else:
                         setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, None)
@@ -1173,7 +1189,7 @@ class ViewModel:
             procbks = ab.keys()
         rnd = self.get("c_randomPicPosn")
         cols = 2 if self.get("c_doublecolumn") else 1
-        mrgCptn = self.get("c_diglot2captions")
+        mrgCptn = self.get("c_diglot2captions", False)
         if self.diglotView is None:
             PicInfoUpdateProject(self, procbks, ab, self.picinfos, random=rnd, cols=cols, doclear=doclear, clearsuffix=True)
         else:
@@ -1184,9 +1200,9 @@ class ViewModel:
             PicInfoUpdateProject(self.diglotView, procbks, diallbooks,
                                  self.picinfos, suffix="R", random=rnd, cols=cols, doclear=False)
             if mode == "pri":
-                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn)
+                self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
             elif mode == "sec":
-                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn)
+                self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         self.updatePicList(procbks)
 
     def savePics(self, fromdata=True, force=False):
@@ -1210,10 +1226,15 @@ class ViewModel:
         if self.diglotView is None:
             res = self.picinfos.load_files(self)
         else:
-            res = self.picinfos.load_files(self, suffix="L")
-            digpicinfos = PicInfo(self.diglotView)
-            if digpicinfos.load_files(self.diglotView, suffix="R"):
-                self.picinfos.merge("L", "R", digpicinfos, mergeCaptions=self.get("c_diglot2captions", False))
+            res = self.picinfos.load_files(self, suffix="B")
+#            digpicinfos = PicInfo(self.diglotView)
+#            if digpicinfos.load_files(self.diglotView, suffix="R"):
+#                mrgCptn = self.get("c_diglot2captions", False)
+#                mode = self.get("fcb_diglotPicListSources")
+#                if mode == "pri":
+#                    self.picinfos.merge("L", "R", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
+#                elif mode == "sec":
+#                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         if res:
             self.savePics(fromdata=fromdata)
         elif mustLoad:
@@ -1261,6 +1282,34 @@ class ViewModel:
             
         copyfile(srcp, destp)
         return True
+
+    def updateFrontMatter(self):
+        fpath = self.configFRT()
+        fcontent = []
+        usedperiphs = set()
+        logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
+        with open(fpath, encoding="utf-8") as inf:
+            skipping = False
+            for l in inf.readlines():
+                if l.strip().startswith(r"\periph"):
+                    m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                    if m:
+                        periphid = m.group(2) or m.group(1)
+                        if periphid in self.periphs:
+                            fcontent.append(self.periphs[periphid].strip())
+                            usedperiphs.add(periphid)
+                            skipping = True
+                        else:
+                            skipping = False
+                    else:
+                        skipping = False
+                if not skipping:
+                    fcontent.append(l.strip())
+        for k, v in self.periphs.items():
+            if k not in usedperiphs:
+                fcontent.append(v.strip())
+        with open(fpath, "w", encoding="utf-8") as outf:
+            outf.write("\n".join(fcontent))
 
     def generateHyphenationFile(self, inbooks=False, addsyls=False):
         listlimit = 63929
@@ -1571,7 +1620,7 @@ class ViewModel:
 
         # config files - take the whole tree even if not needed
         for dp, dn, fn in os.walk(basecfpath):
-            op = os.path.join(cfpath, os.path.relpath(dp, basecfpath))
+            op = os.path.join(cfpath, saferelpath(dp, basecfpath))
             for f in fn:
                 if f not in ('ptxprint.sty', 'ptxprint.cfg') or dp != basecfpath:
                     res[os.path.join(dp, f)] = os.path.join(op, f)
@@ -1654,13 +1703,13 @@ class ViewModel:
         for f in set(self.tempFiles + runjob.picfiles + temps):
             pf = os.path.join(self.working_dir, f)
             if os.path.exists(pf):
-                outfname = os.path.relpath(pf, self.settings_dir)
+                outfname = saferelpath(pf, self.settings_dir)
                 zf.write(pf, outfname)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
                 if f[-4:].lower() in ('.tex', '.sty', '.tec') and f != "usfm.sty":
-                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(os.path.relpath(dp, ptxmacrospath), f))
+                    zf.write(os.path.join(dp, f), self.prjid+"/src/"+os.path.join(saferelpath(dp, ptxmacrospath), f))
         self._archiveSupportAdd(zf, [x for x in self.tempFiles if x.endswith(".tex")])
         zf.close()
         if res:
@@ -1822,10 +1871,18 @@ set stack_size=32768""".format(self.configName())
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
         self.localiseConfig(config)
-        self.loadConfig(config, updatebklist=False)
-        
+        self.loadConfig(config, updatebklist=False, categories=useCats)
+        cfgid = config.get("config", "name", fallback=None)
+        prjid = config.get("project", "id", fallback=None)
 
         # import pictures according to import settings
+        if self.get("c_impPics"):
+            otherpics = PicInfo()
+            picfile = "{}-{}.piclist".format(prjid, cfgid)
+            with zipfile.open(picfile) as inf:
+                otherpics.read_piclist(inf, "B")
+            fields = {x[6:]: self.get(x) for x in ModelMap.keys if x.startswith("c_pic_")}
+            self.picinfos.merge_fields(otherpics, **fields)
 
         # merge ptxprint.sty adding missing
 
@@ -1878,3 +1935,5 @@ set stack_size=32768""".format(self.configName())
                     wanal=wanal)
         return self.strongs
 
+    def isCoverTabOpen(self):
+        return False

@@ -6,6 +6,7 @@
 \mt3 The 
 \mt1 Test-case Bible
 \esbe
+\mt1 Example file
 \vfill
 \pc |<-------\hfil \the\hsize \hfil ------->|
 \p ~
@@ -15,7 +16,7 @@
 \esbe
 \p ~
 
-\periph spine|spine
+\periph spine|coverspine
 \pc The Test-Case Bible
 
 \periph wholecover|coverwhole
