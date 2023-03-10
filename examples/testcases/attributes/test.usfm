@@ -3,7 +3,9 @@
 \periph Hello|intro
 \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
 \zendperiph
-\ip Introductory paragraph. The \nd Lord\nd* is \em King\em*
+\ip Introductory paragraph. 
+\ip The \nd Lord\nd* is \em King\em*
+\ip \nd The Lord\nd* is king
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
