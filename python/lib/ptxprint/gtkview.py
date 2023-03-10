@@ -304,9 +304,9 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
-    "c_coverBorder":           ["fcb_coverBorder", "l_coverBorder", "col_coverBorder"],
-    "c_coverShading":          ["col_coverShading"],
-    "c_coverSelectImage":      ["btn_coverSelectImage", "lb_coverImageFilename"],
+    "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder"],
+    "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "fcb_coverShadingSize"],
+    "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -334,6 +334,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
+    "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -737,6 +738,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
+        self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
+        self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
@@ -772,6 +775,7 @@ class GtkViewModel(ViewModel):
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .smallbutton {font-size: 10px; min-height: 0pt; min-width:0px;  padding:1px;}
             .fontbutton {font-size: 12px}
+            .scale-slider trough {min-height: 5px}
             tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
