@@ -564,13 +564,13 @@ class RunJob:
                 sheetsa = info.printer.getStyleSheets()
                 sheetsb = diginfo.printer.getStyleSheets()
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=}")
-                try:
-                    usfmerge2(inputfiles,keyarr,outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
-                except SyntaxError as e:
-                    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
-                except Exception as e:
-                    syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
-                    print_traceback(f=1)
+                #try:
+                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
+                #except SyntaxError as e:
+                #    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
+                #except Exception as e:
+                #    syntaxErrors.append("{} {} Error: {}".format(self.prjid, b, str(e)))
+                #    print_traceback()
                 texfiles += [outFile, logFile]
 
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"

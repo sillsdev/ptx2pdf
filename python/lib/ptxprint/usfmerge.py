@@ -187,27 +187,22 @@ class Collector:
         self.oldmode= None
         if (scores==None):
             raise ValueError("Scores can be integer or ChunkType:Score values, but must be supplied!")
-        if debugPrint:
-            print("Scores supplied are: ",  type(scores), scores)
+        logger.debug(f"Scores supplied are: {type(scores)}, {scores=}")
         if synchronise in SyncPoints:
-            if debugPrint:
-                print("Sync points:", synchronise.lower())
+            logger.debug(f"Sync points: {synchronise.lower()}")
             syncpoints=SyncPoints[synchronise.lower()] 
         else:
             syncpoints=SyncPoints['normal'] 
-            if debugPrint:
-                print("Sync points are normal")
+            logger.debug("Sync points are normal")
 
         if (type(scores)==int):
             tmp=scores
             scores={ChunkType.DEFSCORE:tmp}
-            if debugPrint:
-                print(f"Default score =  {scores[ChunkType.DEFSCORE]}")
+            logger.debug(f"Default score = {scores[ChunkType.DEFSCORE]}")
         if 'nb' in self.protect:
-            print(f"Protecing nbchapter, like nb")
+            logger.debug(f"Protecing nbchapter, like nb")
             self.scores[ChunkType.NBCHAPTER.value]=-self.protect['nb']
-        if debugPrint:
-            print (self.scores)
+            logger.debug(self.scores)
         for st in ChunkType:
             if st.value==ChunkType.DEFSCORE:
                 self.scores[st.value]=scores[st]
@@ -224,8 +219,7 @@ class Collector:
             #else:
             #    if (st not in splitpoints):
             #        splitpoints[st] = False
-            if debugPrint:
-                print(f"Score for {st}({st.value}) -> ",self.scores[st.value], syncpoints[st] if st in syncpoints else '-' )
+            logger.debug(f"Score for {st}({st.value}) -> {self.scores[st.value]}, {syncpoints[st] if st in syncpoints else '-'}")
         if doc is not None:
             self.collect(doc, primary=primary)
             self.reorder()
@@ -273,17 +267,14 @@ class Collector:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
                 elif mode == ChunkType.BODY and ispara(c):
-                    if debugPrint:
-                        print(f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}:', len(self.acc))
-                    if(len(c)==1 and isinstance(c[0],sfm.Text)):
-                        if debugPrint:
-                            print(f'Bodypar(simple): ',c.name,  c[0], type(c[0]))
+                    logger.log(7, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
+                    if len(c)==1 and isinstance(c[0],sfm.Text):
+                        logger.log(7, f'Bodypar(simple): {c.name} {c[0]} {type(c[0])}')
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                     elif (len(c)>1):
                         #Multi-component body paragraph
-                        if debugPrint:
-                            print('Bodypar:', c.name, type(c[0]),c[0], type(c[1]), c[1])
+                        logger.log(7, f'Bodypar: {c.name}, {type(c[0])}, {c[0]}, {type(c[1])}, {c[1]}')
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                         elif(isinstance(c[0],sfm.Element)):
@@ -295,8 +286,7 @@ class Collector:
                         elif(isinstance(c[1],sfm.Text)):
                             if self.currChunk.verseText:
                                 mode = ChunkType.MIDVERSEPAR
-                    if debugPrint:
-                        print(f"Conclusion: bodypar type is {mode}")
+                    logger.log(7, f"Conclusion: bodypar type is {mode}")
                         
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             if not _validatedhpi:
@@ -319,8 +309,7 @@ class Collector:
         if depth==0:
             self.type=None
         else:
-            if debugPrint:
-                print("{" * depth)
+            logger.debug("{" * depth)
         elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
@@ -368,8 +357,7 @@ class Collector:
                     newchunk = True
                 else:
                     self.currChunk.label(self.chap, self.verse, self.end, 0)
-            if debugPrint:
-                print(self.chap, self.verse, c.name, newchunk, "context:", self.oldmode,self.mode  if isinstance(c, sfm.Element) else '-' )
+                logger.log(7, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if newchunk:
                 self.oldmode=self.mode
                 currChunk = self.makeChunk(c)
@@ -397,8 +385,7 @@ class Collector:
                 newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
                 currChunk[-1] = newc
             currChunk = self.collect(c, primary=primary,depth=1+depth) or currChunk
-        if debugPrint:
-            print("}" * depth)
+        logger.debug("}" * depth)
         return currChunk
 
     def reorder(self):
@@ -416,8 +403,7 @@ class Collector:
                 self.acc[i].deleteme = True
                 ti = None
                 ni = None
-                if debug:
-                    print('Merged.1:', 'deleteme' in self.acc[bi], self.acc[bi])
+                logger.debug(f"Merged.1: {'deleteme' in self.acc[bi]}, {self.acc[bi]}")
             elif self.acc[i].type == ChunkType.TABLE and self.acc[i-1].type == ChunkType.TABLE:
                 if ti is None:
                     ti = i - 1
@@ -425,8 +411,7 @@ class Collector:
                 self.acc[i].deleteme = True
                 bi = None
                 ni = None
-                if debugPrint:
-                    print('Merged.2:', 'deleteme' in self.acc[ti], self.acc[ti])
+                logger.debug(f"Merged.2: {'deleteme' in self.acc[ti]}, {self.acc[ti]}")
             elif self.acc[i].type == ChunkType.NPARA and self.acc[i-1].type != None:
                 if ni is None:
                     ni = i - 1
@@ -434,8 +419,7 @@ class Collector:
                 self.acc[i].deleteme = True
                 bi = None
                 ti = None
-                if debugPrint:
-                    print('Merged.3:', 'deleteme' in self.acc[ni], self.acc[ni])
+                logger.debug(f"Merged.3: {'deleteme' in self.acc[ni]}, {self.acc[ni]}")
         # Merge nb with chapter number and 1st verse.
         for i in range(1, len(self.acc) - 1):
             if self.acc[i].type is ChunkType.NB:
@@ -447,14 +431,13 @@ class Collector:
                     if self.acc[i+1].type == ChunkType.PARVERSE:
                         self.acc[i-1].verse=self.acc[i+1].verse
                         self.acc[i-1].extend(self.acc[i+1])
-                        print('Merged.4a')
+                        logger.debug('Merged.4a')
                         self.acc[i+1].deleteme = True
                     if i>2 and self.acc[i-2].type in (ChunkType.VERSE, ChunkType.MIDVERSEPAR, ChunkType.PARVERSE, ChunkType.PREVERSEPAR):
                         self.acc[i-2].extend(self.acc[i-1])
                         self.acc[i-1].deleteme = True
-                        print('Merged.4b')
-                    if debugPrint:
-                        print('Merged.4:', 'deleteme' in self.acc[i-1], self.acc[i-1])
+                        logger.debug('Merged.4b')
+                    logger.debug(f"Merged.4: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]}")
                         
 
         # Merge pre-verse paragraph and verses.
@@ -468,15 +451,14 @@ class Collector:
                     self.acc[bi].pnum=self.acc[i].pnum
                     self.acc[bi].extend(self.acc[i])
                     self.acc[i].deleteme = True
-                    if debugPrint:
-                        print('Merged.5:', 'deleteme' in self.acc[bi], self.acc[bi].position)
+                    logger.debug(f"Merged.5: {'deleteme' in self.acc[bi]}, {self.acc[bi].position}")
                     if bi>1 and self.acc[bi-1].type == ChunkType.CHAPTER:
                         self.acc[bi].type=ChunkType.CHAPTERPAR
                 elif (self.acc[i-1].type in (ChunkType.CHAPTER, ChunkType.NBCHAPTER)):
                     pass 
                 else:
-                    print(F"Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: {self.acc[i-1].type} {self.acc[i].type}")
-                    print(self.acc[i-1], self.acc[i])
+                    logger.debug(f"Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: {self.acc[i-1].type} {self.acc[i].type}")
+                    logger.debug(f"{self.acc[i-1]=}, {self.acc[i]=}")
                     #raise ValueError("Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: %,%" %  (self.acc[i-1].type, self.acc[i].type))
             else:
                 bi=None
@@ -485,16 +467,14 @@ class Collector:
             c = self.acc[i-1]
             if c.type == ChunkType.HEADING:
                 cn = self.acc[i]
-                if debugPrint:
-                    print('Compare.6:',c.position, c.type,cn.type)
+                logger.debug(f"Compare.6: {c.position=}, {c.type,cn.type=}")
                 if cn.type == ChunkType.PREVERSEPAR:
                     c.verse=cn.verse
                     c.pnum=cn.pnum
                     c.type=ChunkType.PREVERSEHEAD
                     # c.extend(cn)
                     # cn.deleteme = True
-                    if debugPrint:
-                        print('Merged.6:', 'deleteme' in c, c.position)
+                    logger.debug(f"Merged.6: {'deleteme' in c}, {c.position}")
                 elif c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
                     pass
                 else:
@@ -505,15 +485,13 @@ class Collector:
             if  self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
                 self.acc[i].extend(self.acc[i-1])
                 self.acc[i-1].deleteme = True
-                if debugPrint:
-                    print('Merged.7:', 'deleteme' in self.acc[i], self.acc[i])
+                logger.debug(f"Merged.7: {'deleteme' in self.acc[i]}, {self.acc[i]}")
             elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
                 self.acc[i].type=ChunkType.CHAPTERHEAD
                 tmp=self.acc[i-1]
                 self.acc[i-1]=self.acc[i]
                 self.acc[i]=tmp
-                if debugPrint:
-                    print('Swapped:', 'deleteme' in self.acc[i-1], str(self.acc[i-1]), str(self.acc[i]))
+                logger.debug(f"Swapped: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]=}, {self.acc[i]=}")
         # Merge all chunks between \c and not including \v.
         if 0:
             for i in range(1, len(self.acc)):
@@ -550,32 +528,29 @@ class Collector:
         logger.debug("Chunks before reordering: {}".format(len(self.acc)))
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
         logger.debug("Chunks after reordering: {}".format(len(self.acc)))
-        if debugPrint:
-            for i in range(0, len(self.acc)):
-                print(i,self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-' ,self.acc[i].type,self.acc[i])
+        for i in range(0, len(self.acc)):
+            logger.log(7, f"{i}, {self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-'}, {self.acc[i].type=}, {self.acc[i]=}")
     def score(self,results={}):
         """Calculate the scores for each chunk, returning an array of non-zero scores (potential break points)
         If the results parameter is given, then the return value is a summation
         """
         global debugPrint
-        if debugPrint:
-            print("SCORES")
+        logger.debug("SCORES")
         for i in range(0, len(self.acc)):
             t=self.acc[i].type.value
             scval=self.scores[t]
             if self.acc[i][0].name in self.protect:
-                if debugPrint:
-                    print(f"Protecting \\{self.acc[i][0].name}")
+                logger.debug(f"Protecting \\{self.acc[i][0].name}")
                 scval -= self.protect[self.acc[i][0].name]
             self.acc[i].score=scval
             pos=self.acc[i].position
             self.loc[pos]=i
             if pos in results:
                 results[pos]+=scval
-                print("%s(%s)  + %d = %d" % (pos,self.acc[i][0].name, scval, results[pos]))
+                logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].name, scval, results[pos]))
             else:
                 results[pos]=scval
-                print(pos, "=", scval)
+                logger.debug(f"{pos} = {scval}")
         return results
     def getofs(self,pos, incremental=True):
         """Return the index into acc[] of the (end-point) pos. If an exact match for pos cannot be found, return the index of the next highest point. If incremental is true, it assumes that calls to this are always done in increasing sequence.
@@ -646,8 +621,7 @@ def alignChunks(primary, secondary):
     diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
-        if debugPrint:
-            print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+        logger.log(7, f"{op}, {debstr(pkeys[ab:ae])}, {debstr(skeys[bb:be])}")
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -660,8 +634,7 @@ def alignChunks(primary, secondary):
             diffg = difflib.SequenceMatcher(a=pgk, b=sgk)
             for opg in diffg.get_opcodes():
                 (actiong, abg, aeg, bbg, beg) = opg
-                if debugPrint:
-                    print("--- ", opg, debstr(pgk[abg:aeg]), debstr(sgk[bbg:beg]))
+                logger.log(7, f"--- {opg}, {debstr(pgk[abg:aeg])}, {debstr(sgk[bbg:beg])}")
                 if actiong == "equal":
                     appendpairs(pairs, sum(pgg[abg:aeg], []), sum(sgg[bbg:beg], []))
                 elif action == "delete":
@@ -692,8 +665,7 @@ def alignSimple(primary, *others):
         diff = difflib.SequenceMatcher(None, pkeys, okeys)
         for op in diff.get_opcodes():
             (action, ab, ae, bb, be) = op
-            if debugPrint:
-                print(op, debstr(pkeys[ab:ae]), debstr(okeys[bb:be]))
+            logger.log(f"{op}, {debstr(pkeys[ab:ae])}, {debstr(okeys[bb:be])}")
             if action == "equal":
                 for i in range(ae-ab):
                     ri = runindices[ab+i]
@@ -738,12 +710,11 @@ def alignScores(*columns):
                 a=0
                 while positions[i-a-1][3] in ('HEADING','PREVERSEHEAD'):
                     a+=1
-                print(f"Splitting between positions {positions[i-a]} and {positions[i+1]}")
+                logger.debug(f"Splitting between positions {positions[i-a]} and {positions[i+1]}")
                 merged[positions[i-a]]=100
                 if MergeF.HeadWithText in settings:
                     merged[positions[i+1]]=0
-            elif debugPrint:
-                print(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
+                logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
         elif(positions[i][_headingidx]=='CHAPTERHEAD'):
             a=1
             while(positions[i+a][_headingidx]=='CHAPTERHEAD'):
@@ -800,14 +771,12 @@ def alignScores(*columns):
     syncpositions.append((999,999,999))
     for posn in syncpositions:
         chunks=blank.copy()
-        if debugPrint:
-            print ("CHUNK:",posn, merged[posn] if posn in merged else '-')
+        logger.log(7, f"CHUNK: {posn}, {merged[posn] if posn in merged else '-'}")
         for c,i in colkeys.items():
             nxt=coln[c].getofs(posn) # Get the next offset.
-            if debugPrint:
-                print (c,ofs[c],nxt, lim[c])
-                if (ofs[c]==nxt and nxt<lim[c]):
-                    print ("not yet:",nxt,'=',acc[c][nxt].position)
+            logger.log(7, f"{c=}, {ofs[c]=} ,{nxt=}, {lim[c]=}")
+            if (ofs[c]==nxt and nxt<lim[c]):
+                logger.log(7, f"not yet: {nxt} = {acc[c][nxt].position}")
             if (nxt>lim[c]):
                 raise ValueError(f"This shouldn't happen, {nxt} > {lim[c]}!")
             p=merged
@@ -839,7 +808,6 @@ modes = {
 
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal",protect={}):
     global debugPrint, debstr,settings
-    debugPrint = debug
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
@@ -857,27 +825,22 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 raise ValueError("Cannot have reapeated entries in key array! (%c already seen)" %(k))
             scorearr[k]=int(v)
         del tmp
-    print(type(scorearr),scorearr)
-    print(type(keyarr),keyarr)
-    if debugPrint:
-        print(stylesheetsa, stylesheetsb)
+    logger.debug(f"{type(scorearr)}, {scorearr=}")
+    logger.debug(f"{type(keyarr)}, {keyarr=}")
+    logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
     
     # load stylesheets
     for k in keyarr[:]:
-        #if debugPrint:
-        print(f"defining stylesheet {k}")
+        logger.debug(f"defining stylesheet {k}")
         sheets[k]=usfm._load_cached_stylesheet('usfm_sb.sty')
     for s in stylesheetsa:
-        if debugPrint:
-            print(f"Appending {s} to stylesheet {k}")
+        logger.log(7, f"Appending {s} to stylesheet L")
         sheets['L']=appendsheet(s, sheets['L'])
     for s in stylesheetsb:
-        if debugPrint:
-            print(f"Appending {s} to stylesheet {k}")
+        logger.log(7, f"Appending {s} to stylesheet R")
         sheets['R']=appendsheet(s, sheets['R'])
     for k,s in stylesheets:
-        if debugPrint:
-            print(f"Appending {s} to stylesheet {k}")
+        logger.log(7, f"Appending {s} to stylesheet {k}")
         sheets[k] = appendsheet(s,sheet[k])
     # Set-up potential synch points
     tmp=synchronise.split(",")
@@ -912,8 +875,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     if (mode == "scores") or ("verse"  in syncarr) or ("chapter" in syncarr) : #Score-based splitting may force the break-up of an NB, the others certainly will.
         settings =  settings & (~MergeF.NoSplitNB)
     for colkey,infile in zip(keyarr,infilearr):
-        if debugPrint:
-            print(f"Reading {colkey}: {infile}")
+        logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
             doc = list(usfm.parser(inf, stylesheet=sheets[colkey],
                                    canonicalise_footnotes=False, tag_escapes=tag_escapes))
