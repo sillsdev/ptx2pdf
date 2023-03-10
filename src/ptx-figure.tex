@@ -413,6 +413,7 @@
     \leftskip=0pt plus \hsize \rightskip=\leftskip \parfillskip=0pt
     \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\r@ght\rightskip=0pt\fi
+    \ifx\p@ram\l@ftb@l\leftskip=0pt\fi
     \ifx\p@ram\l@ft\leftskip=0pt\fi
     \getp@ram{leftmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
