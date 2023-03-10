@@ -304,8 +304,8 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
-    "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder"],
-    "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "fcb_coverShadingSize"],
+    "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder", "l_coverBorder"],
+    "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
     "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled

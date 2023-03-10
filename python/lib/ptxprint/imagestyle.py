@@ -14,6 +14,7 @@ bgfieldmap = {
     "color":    "col_sbiBgColor",
     "alpha":    "s_sbiAlpha",
     "low":      "fcb_sbiLayerOrder",
+    "scaleto":  "fcb_sbiScaleTo",
     "oversize": "fcb_sbiOversize"
 }
 
