@@ -4144,7 +4144,6 @@ be applied to the front cover page.</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="margin-start">50</property>
                         <property name="margin-end">6</property>
                         <property name="label" translatable="yes">C:\Filepath\to\image.jpg</property>
                         <property name="ellipsize">middle</property>
