@@ -4066,6 +4066,7 @@ title and subtitle on the cover page. Use
 this setting to increase size of such titles.</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
+                        <property name="margin-bottom">10</property>
                         <property name="label" translatable="yes">Scale Text Size:</property>
                       </object>
                       <packing>
@@ -4411,7 +4412,20 @@ of the various Ornamental Borders (pgs 4-7).</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
+                      <object class="GtkLabel" id="l_coverTextScale1">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
+title and subtitle on the cover page. Use
+this setting to increase size of such titles.</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Scale Picure To:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">6</property>
+                      </packing>
                     </child>
                     <child>
                       <placeholder/>
