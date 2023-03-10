@@ -212,7 +212,7 @@
      \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
     \else\ifx\p@ram\r@ght
      \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-    \fi\fi\fi
+    \fi\fi\fi\fi
     \getp@ram{leftmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
     \getp@ram{rightmargin}{#1}{#1}%
@@ -632,7 +632,7 @@
      \rightskip=\noteRag
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
-  \fi\fi\fi
+  \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph

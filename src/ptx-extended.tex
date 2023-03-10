@@ -64,8 +64,10 @@
 \setsbp@ram{bgfigscale}{1}%
 \setsbp@ram{fgfigsize}{box}%What is image scaled to?
 \setsbp@ram{fgfigscale}{0.2}%
+\setsbp@ram{fgfigscaleto}{text}%
 \setsbp@ram{fgfigpos}{cl}%Default is cutout left
 \setsbp@ram{bgfigscale}{1}%Full size
+\setsbp@ram{bgfigscaleto}{text}%
 \setsbp@ram{bgfigpos}{pc}%Horizontally centred
 \setsbp@ram{hascol}{F}%No default colour.
 \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
@@ -518,7 +520,13 @@
 \def\bg@scale@ref{text}
 
 \def\f@grefdim#1{%
-  \x@\let\x@\scale@ref\csname #1@scale@ref\endcsname
+  \traceifset{@f@grefdim}%
+  \ifcsname #1@scale@ref\endcsname
+    \x@\let\x@\scale@ref\csname #1@scale@ref\endcsname
+  \else
+    \getsbp@ram{#1figscaleto}\let\scale@ref\cp@ram
+  \fi
+  \traceifcheck{@f@grefdim}%
   \ifcsname \scale@ref @ref@w@dth\endcsname
     \trace{e}{Scaling #1 image to \scale@ref}%
     \x@\let\x@\scale@height\csname\scale@ref @ref@h@ight\endcsname
@@ -1070,8 +1078,10 @@
 \def\FgImage      #1\relax{\initc@t\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
 \def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
+\def\FgImageScaleTo   #1\relax{\initc@t\setsbp@ram{fgfigscaleto}{#1}\GenC@tFig{fg}}
 \def\BgImage      #1\relax{\initc@t\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
+\def\BgImageScaleTo   #1\relax{\initc@t\setsbp@ram{bgfigscaleto}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
 \def\BgImageLow   #1\relax{\initc@t\uppercase{\edef\t@st{#1}}\setsbp@ram{bgfiglow}{\t@st}}% What's the right sequence for colour layer and background image
 \def\BgImageColour       #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{bgfigcolour}{\rgb@out}}
