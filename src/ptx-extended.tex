@@ -506,8 +506,14 @@
 
 
 \def\@p@rsef@gsc@le#1|#2|#3\E{% \v@lpfx  fg or bg, params scale which might be of form Xscale x Yscale
-  \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
   \edef\tmp{#2}\ifx\tmp\empty
+    \getsbp@ram{\v@lpfx figscaleto}%
+    \ifx\cp@ram\relax 
+      \x@\edef\csname \v@lpfx @scale@ref\endcsname{text}%
+    \else
+      \trace{e}{Figure will be scaled relative to \v@lpfx}%
+      \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{\cp@ram}}%
+    \fi
     \p@rsef@gsc@le #1xx\E
   \else
     \trace{e}{Figure will be scaled relative to #1}%
@@ -521,12 +527,8 @@
 
 \def\f@grefdim#1{%
   \traceifset{@f@grefdim}%
-  \ifcsname #1@scale@ref\endcsname
-    \x@\let\x@\scale@ref\csname #1@scale@ref\endcsname
-  \else
-    \getsbp@ram{#1figscaleto}\let\scale@ref\cp@ram
-  \fi
   \traceifcheck{@f@grefdim}%
+  \x@\let\x@\scale@ref\csname #1@scale@ref\endcsname
   \ifcsname \scale@ref @ref@w@dth\endcsname
     \trace{e}{Scaling #1 image to \scale@ref}%
     \x@\let\x@\scale@height\csname\scale@ref @ref@h@ight\endcsname
