@@ -171,7 +171,8 @@
   %  
 }
 \def\d@spine{{%
- \vrule height \PaperHeight depth 0pt width 0pt  % Spine always defines the book height
+  \trace{cov}{d@spine ph:\the\PaperHeight, th:\the\textheight, cy:\c@vY}%
+ \vrule height \c@vY depth 0pt width 0pt  % Spine always defines the book height
  \let\sp@ne\empty
  \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname>0pt 1\else 0\fi\else 0\fi =1
   \ifcsname periphcontents=coverspine\endcsname
