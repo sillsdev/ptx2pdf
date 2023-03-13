@@ -171,6 +171,7 @@
   %  
 }
 \def\d@spine{{%
+ \vrule height \PaperHeight depth 0pt width 0pt  % Spine always defines the book height
  \let\sp@ne\empty
  \ifnum\ifcsname cover-spine\endcsname\x@\ifdim\csname cover-spine\endcsname>0pt 1\else 0\fi\else 0\fi =1
   \ifcsname periphcontents=coverspine\endcsname
@@ -229,8 +230,6 @@
     \trace{cov}{NOT Rotating spine \the\ht0+\the\dp0 x \the\wd0}%
     \box0
   \fi
- \else
-   \hbox{}% In case something needs a real box0
  \fi
 }}
 

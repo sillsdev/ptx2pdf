@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.2.52"
 GitVersionStr = "2.2.52"
-ConfigVersion = "2.15"
+ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1163,6 +1163,11 @@ class ViewModel:
                         if k in s:
                             s[newk] = s[k]
                             del s[k]
+        elif version < 2.16:
+            for k in self.styleEditor.allStyles():
+                j = self.styleEditor.getval(k, 'Justification')
+                if j == "Left":
+                    self.styleEditor.setval(k, 'Justification', 'LeftBal')
 
         if self.get('r_xrpos') == "blend":
             self.styleEditor.setval('x', 'NoteBlendInto', 'f')

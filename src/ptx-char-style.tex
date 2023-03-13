@@ -201,8 +201,8 @@
 \newbox\ulb@x
 \newif\ifUnderlineSpaces\UnderlineSpacestrue
 
-\def\Dulsp@ce{\leaders\vtop{\hbox to \DoubleUnderlineSpaceQuantum{\hss}\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\hskip 1ex plus 0.2ex minus 0.2ex}
-\def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip 1ex plus 0.2ex minus 0.2ex}
+\def\Dulsp@ce{\leaders\vtop{\hbox to \DoubleUnderlineSpaceQuantum{\hss}\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\hskip \fontdimen2\font plus \fontdimen3\font minus\fontdimen4\font}
+\def\ulsp@ce{\leaders\hrule depth\dimen0 height-\dimen1\hskip \fontdimen2\font plus \fontdimen3\font minus\fontdimen4\font}
 \def\@do@Sunderline{\let\@@@do\@do@underline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
 \def\@do@Dunderline{\let\@@@do\@do@Dunderline\unskip\unpenalty\setbox0\lastbox\dimen2=\dp0\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\vtop{\hbox{\unhbox0}\kern-\dimen2\kern\dimen1\hrule height\UnderlineThickness\kern\DoubleUnderlineSep\hrule height\UnderlineThickness}\ifvoid\ulb@x\else\@ulsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
 \let\@do@underline\@do@Sunderline

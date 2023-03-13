@@ -3859,6 +3859,40 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_coverImageSize">
+    <columns>
+      <!-- column-name description -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">bleed: overflow the page into the cropped area</col>
+        <col id="1">bleed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)</col>
+        <col id="1">colbleed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">inner: the area that text could cover (vertically this extends to the inner edge of the border)</col>
+        <col id="1">inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">outer: the outermost of the coloured box or the border</col>
+        <col id="1">outer</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">border: the outer edge of the border</col>
+        <col id="1">border</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">box: the coloured box</col>
+        <col id="1">box</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkDialog" id="dlg_generateCover">
     <property name="can-focus">False</property>
     <property name="halign">start</property>
@@ -3966,7 +4000,7 @@ dialog may be hidden behind.</property>
                 <property name="margin-bottom">6</property>
                 <property name="label-xalign">0.029999999329447746</property>
                 <child>
-                  <!-- n-columns=5 n-rows=5 -->
+                  <!-- n-columns=4 n-rows=7 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -3975,7 +4009,7 @@ dialog may be hidden behind.</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">6</property>
                     <property name="margin-bottom">6</property>
-                    <property name="row-spacing">6</property>
+                    <property name="row-spacing">2</property>
                     <property name="column-spacing">6</property>
                     <child>
                       <object class="GtkSpinButton" id="s_coverTextScale">
@@ -3987,6 +4021,7 @@ title and subtitle on the cover page. Use
 this setting to increase size of such titles.</property>
                         <property name="halign">start</property>
                         <property name="valign">start</property>
+                        <property name="margin-bottom">10</property>
                         <property name="width-chars">6</property>
                         <property name="text">1.00</property>
                         <property name="xalign">1</property>
@@ -4001,20 +4036,6 @@ this setting to increase size of such titles.</property>
                       <packing>
                         <property name="left-attach">1</property>
                         <property name="top-attach">0</property>
-                        <property name="width">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="valign">center</property>
-                        <property name="label" translatable="yes">Text Color:</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">3</property>
-                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
@@ -4025,12 +4046,14 @@ this setting to increase size of such titles.</property>
                         <property name="receives-default">True</property>
                         <property name="tooltip-text" translatable="yes">Set the color of the title and subtitle text.</property>
                         <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-bottom">10</property>
                         <property name="title" translatable="yes">Border Color</property>
                         <property name="rgba">rgb(0,0,0)</property>
                         <signal name="color-set" handler="onstyColorSet" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="left-attach">4</property>
+                        <property name="left-attach">3</property>
                         <property name="top-attach">0</property>
                       </packing>
                     </child>
@@ -4043,6 +4066,7 @@ title and subtitle on the cover page. Use
 this setting to increase size of such titles.</property>
                         <property name="halign">end</property>
                         <property name="valign">center</property>
+                        <property name="margin-bottom">10</property>
                         <property name="label" translatable="yes">Scale Text Size:</property>
                       </object>
                       <packing>
@@ -4061,7 +4085,6 @@ to choose from, or a custom-made border may
 be applied to the front cover page.</property>
                         <property name="halign">start</property>
                         <property name="margin-top">10</property>
-                        <property name="margin-bottom">10</property>
                         <property name="model">ls_coverBorder</property>
                         <property name="wrap-width">1</property>
                         <property name="active">0</property>
@@ -4072,13 +4095,13 @@ be applied to the front cover page.</property>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="can-focus">False</property>
+                            <property name="width-chars">12</property>
                           </object>
                         </child>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
                         <property name="top-attach">1</property>
-                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
@@ -4089,42 +4112,30 @@ be applied to the front cover page.</property>
                         <property name="receives-default">True</property>
                         <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
                         <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-bottom">10</property>
                         <property name="title" translatable="yes">Border Color</property>
                         <property name="rgba">rgb(255,255,255)</property>
                       </object>
                       <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkLabel" id="l_coverBorder">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="halign">end</property>
-                        <property name="valign">center</property>
-                        <property name="margin-start">12</property>
-                        <property name="label" translatable="yes">Border Color:</property>
-                      </object>
-                      <packing>
                         <property name="left-attach">3</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkButton" id="btn_coverSelectImage">
                         <property name="label" translatable="yes">Select...</property>
-                        <property name="name">Generate cover: Select Background Image</property>
+                        <property name="name">Generate cover: Select Background Picure (or Image)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
-                        <property name="halign">start</property>
+                        <property name="halign">end</property>
                         <property name="valign">center</property>
                         <signal name="clicked" handler="onCoverSelectImageClicked" swapped="no"/>
                       </object>
                       <packing>
-                        <property name="left-attach">1</property>
-                        <property name="top-attach">3</property>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -4133,7 +4144,6 @@ be applied to the front cover page.</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="margin-start">50</property>
                         <property name="margin-end">6</property>
                         <property name="label" translatable="yes">C:\Filepath\to\image.jpg</property>
                         <property name="ellipsize">middle</property>
@@ -4143,8 +4153,8 @@ be applied to the front cover page.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">4</property>
-                        <property name="width">4</property>
+                        <property name="top-attach">5</property>
+                        <property name="width">3</property>
                       </packing>
                     </child>
                     <child>
@@ -4155,13 +4165,12 @@ be applied to the front cover page.</property>
                         <property name="receives-default">True</property>
                         <property name="tooltip-text" translatable="yes">Set the background color for the cover.</property>
                         <property name="halign">start</property>
-                        <property name="margin-top">10</property>
-                        <property name="margin-bottom">10</property>
+                        <property name="valign">center</property>
                         <property name="title" translatable="yes">Border Color</property>
                         <property name="rgba">rgb(94,92,100)</property>
                       </object>
                       <packing>
-                        <property name="left-attach">4</property>
+                        <property name="left-attach">3</property>
                         <property name="top-attach">1</property>
                       </packing>
                     </child>
@@ -4179,42 +4188,25 @@ be applied to the front cover page.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkCheckButton" id="c_coverSelectImage">
-                        <property name="label" translatable="yes">Background Image:</property>
-                        <property name="name">Generate cover: Enable Background Image</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">False</property>
-                        <property name="halign">start</property>
-                        <property name="valign">center</property>
-                        <property name="draw-indicator">True</property>
-                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
                         <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkCheckButton" id="c_coverImageFront">
-                        <property name="label" translatable="yes">Picture only 
-on Front</property>
-                        <property name="name">Generate cover: Enable Background Image</property>
+                      <object class="GtkCheckButton" id="c_coverSelectImage">
+                        <property name="label" translatable="yes">Background Picture:</property>
+                        <property name="name">Generate cover: Enable Background Picture (or Image)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
-                        <property name="tooltip-text" translatable="yes">Enable this option to only place the
-selected image on the front cover (so
-it does not wrap around onto the back
-cover). If using this option it would be 
-helpful to use a portrait image.</property>
-                        <property name="halign">end</property>
+                        <property name="tooltip-text" translatable="yes">Enable this option to place a picture
+(or image) on the entire cover (so
+it wraps around onto the back cover).
+Use a landscape-oriented image.</property>
+                        <property name="halign">start</property>
                         <property name="valign">center</property>
+                        <property name="margin-top">10</property>
                         <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -4222,68 +4214,38 @@ helpful to use a portrait image.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkCheckButton" id="c_coverImageFront">
+                        <property name="label" translatable="yes">Only on Front Cover</property>
+                        <property name="name">Generate cover: Enable Background Picture (or Image)</property>
                         <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkCheckButton" id="c_coverBorder">
-                            <property name="label" translatable="yes">Ornamental Border:</property>
-                            <property name="name">Generate cover: Enable Ornamental Border</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
-to choose from, or a custom-made border may
-be applied to the front cover page.</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="draw-indicator">True</property>
-                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLinkButton" id="lb_openCatalog">
-                            <property name="label">Open Catalog</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="focus-on-click">False</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Click to Open a PDF containing a catalog
-of the various Ornamental Borders (pgs 4-7).</property>
-                            <property name="halign">end</property>
-                            <property name="valign">start</property>
-                            <property name="relief">none</property>
-                            <property name="uri">Click to view the Styles tab</property>
-                            <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Enable this option to only place the
+selected image on the front cover (so
+it does not wrap onto the back cover). 
+Use a portrait-oriented image.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-top">10</property>
+                        <property name="draw-indicator">True</property>
                       </object>
                       <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">2</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScale" id="s_coverImageAlpha">
-                        <property name="name">Generate cover: Set Transparency of Background Image</property>
+                        <property name="name">Generate cover: Set Transparency of Background Picture</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">Set the transparency (Alpha) of the 
-background image which appears
+background picture which appears
 behind any shading if any.
  </property>
                         <property name="valign">center</property>
+                        <property name="margin-top">10</property>
                         <property name="hexpand">True</property>
                         <property name="adjustment">a_coverImageAlpha</property>
                         <property name="lower-stepper-sensitivity">on</property>
@@ -4294,15 +4256,14 @@ behind any shading if any.
                         <property name="value-pos">left</property>
                       </object>
                       <packing>
-                        <property name="left-attach">2</property>
-                        <property name="top-attach">3</property>
-                        <property name="width">3</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScale" id="s_coverShadingAlpha">
                         <property name="name">Generate cover: Set Transparency of Background Shading</property>
-                        <property name="height-request">4</property>
+                        <property name="width-request">120</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="tooltip-text" translatable="yes">Set the transparency (Alpha) of the 
@@ -4320,10 +4281,156 @@ on top of the image if there is one.
                         <property name="value-pos">left</property>
                       </object>
                       <packing>
-                        <property name="left-attach">2</property>
-                        <property name="top-attach">2</property>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkComboBox" id="fcb_coverImageSize">
+                        <property name="name">Generate cover: Select Scale Picture To Area</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="can-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Select where the image should extend to.</property>
+                        <property name="valign">center</property>
+                        <property name="model">ls_coverImageSize</property>
+                        <property name="wrap-width">1</property>
+                        <property name="has-entry">True</property>
+                        <property name="entry-text-column">0</property>
+                        <property name="id-column">1</property>
+                        <property name="active-id">inner</property>
+                        <child internal-child="entry">
+                          <object class="GtkEntry">
+                            <property name="can-focus">True</property>
+                            <property name="width-chars">10</property>
+                          </object>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">6</property>
                         <property name="width">3</property>
                       </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverText">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="label" translatable="yes">Text Color:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverBorder">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="margin-top">10</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="label" translatable="yes">Border Color:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverShading">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="margin-bottom">10</property>
+                        <property name="label" translatable="yes">Shading Color:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">3</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_coverBorder">
+                        <property name="label" translatable="yes">Ornamental Border:</property>
+                        <property name="name">Generate cover: Enable Ornamental Border</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">A selection of ornamental borders are available
+to choose from, or a custom-made border may
+be applied to the front cover page.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-top">10</property>
+                        <property name="draw-indicator">True</property>
+                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="width-request">150</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="margin-top">35</property>
+                        <property name="label" translatable="yes">Transparency</property>
+                        <attributes>
+                          <attribute name="style" value="italic"/>
+                        </attributes>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLinkButton" id="lb_openCatalog">
+                        <property name="label">Open Catalog of
+Ornamental Borders</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="focus-on-click">False</property>
+                        <property name="receives-default">True</property>
+                        <property name="tooltip-text" translatable="yes">Click to Open a PDF containing a catalog
+of the various Ornamental Borders (pgs 4-7).</property>
+                        <property name="halign">end</property>
+                        <property name="valign">start</property>
+                        <property name="relief">none</property>
+                        <property name="uri">Click to view the Styles tab</property>
+                        <signal name="clicked" handler="onCatalogClicked" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel" id="l_coverTextScale1">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The \mt1 and \mt2 styles are used for the
+title and subtitle on the cover page. Use
+this setting to increase size of such titles.</property>
+                        <property name="halign">end</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">Scale Picure To:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
@@ -7838,6 +7945,40 @@ information, position and other parameters.</property>
       </row>
     </data>
   </object>
+  <object class="GtkListStore" id="ls_sbiScaleTo">
+    <columns>
+      <!-- column-name description -->
+      <column type="gchararray"/>
+      <!-- column-name value -->
+      <column type="gchararray"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0" translatable="yes">bleed: overflow the page into the cropped area</col>
+        <col id="1">bleed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)</col>
+        <col id="1">colbleed</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">inner: the area that text could cover (vertically this extends to the inner edge of the border)</col>
+        <col id="1">inner</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">outer: the outermost of the coloured box or the border</col>
+        <col id="1">outer</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">border: the outer edge of the border</col>
+        <col id="1">border</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">box: the coloured box</col>
+        <col id="1">box</col>
+      </row>
+    </data>
+  </object>
   <object class="GtkListStore" id="ls_sbi_posn_above">
     <columns>
       <!-- column-name Position -->
@@ -8458,7 +8599,7 @@ and 3, 4, 6, or 12 for inches.</property>
                     <property name="margin-bottom">6</property>
                     <property name="label-xalign">0.029999999329447746</property>
                     <child>
-                      <!-- n-columns=5 n-rows=2 -->
+                      <!-- n-columns=5 n-rows=3 -->
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -8496,7 +8637,7 @@ black will become a darker shade of green, not grey.</property>
                           </object>
                           <packing>
                             <property name="left-attach">4</property>
-                            <property name="top-attach">0</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -8519,7 +8660,7 @@ that might produce unexpected results.</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -8545,7 +8686,7 @@ that might produce unexpected results.</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
-                            <property name="top-attach">0</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -8565,7 +8706,7 @@ black will become a darker shade of green, not grey.</property>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
-                            <property name="top-attach">0</property>
+                            <property name="top-attach">1</property>
                             <property name="width">2</property>
                           </packing>
                         </child>
@@ -8586,7 +8727,7 @@ Order:</property>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -8618,7 +8759,7 @@ as .JPG images do not have transparency.</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
                             <property name="width">2</property>
                           </packing>
                         </child>
@@ -8637,7 +8778,7 @@ Oversized:</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -8667,7 +8808,46 @@ being too large for a given sidebar.</property>
                           </object>
                           <packing>
                             <property name="left-attach">4</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="fcb_sbiScaleTo">
+                            <property name="name">Sidebar background image: Scale Image to Inner/Outer/Bleed area </property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="can-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Select where the image should extend to.</property>
+                            <property name="valign">center</property>
+                            <property name="model">ls_sbiScaleTo</property>
+                            <property name="wrap-width">1</property>
+                            <property name="has-entry">True</property>
+                            <property name="entry-text-column">0</property>
+                            <property name="id-column">1</property>
+                            <property name="active-id">inner</property>
+                            <child internal-child="entry">
+                              <object class="GtkEntry">
+                                <property name="can-focus">True</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left-attach">1</property>
+                            <property name="top-attach">0</property>
+                            <property name="width">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="halign">end</property>
+                            <property name="valign">center</property>
+                            <property name="label" translatable="yes">Scale To:</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">0</property>
+                            <property name="top-attach">0</property>
                           </packing>
                         </child>
                       </object>
@@ -9868,6 +10048,10 @@ project's Biblical Terms renderings.</property>
       <row>
         <col id="0" translatable="yes">Left</col>
         <col id="1">Left</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">LeftBal</col>
+        <col id="1">LeftBal</col>
       </row>
       <row>
         <col id="0" translatable="yes">Center</col>
@@ -11254,7 +11438,7 @@ into the current Configuration.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
-                                    <signal name="clicked" handler="onImportClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
@@ -29126,7 +29310,7 @@ without a confirmation check.</property>
                         <child>
                           <object class="GtkScale" id="s_viewEditFontSize">
                             <property name="name">Adjust display font size </property>
-                            <property name="width-request">70</property>
+                            <property name="width-request">80</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Use this slider to adjust
@@ -30445,6 +30629,7 @@ text orientation.
                                         <child internal-child="entry">
                                           <object class="GtkEntry">
                                             <property name="can-focus">False</property>
+                                            <property name="width-chars">14</property>
                                           </object>
                                         </child>
                                       </object>
@@ -31056,7 +31241,6 @@ on the Styles tab for the Front Cover.</property>
                                             <property name="can-focus">False</property>
                                             <property name="hexpand">True</property>
                                             <property name="orientation">vertical</property>
-                                            <property name="homogeneous">True</property>
                                             <child>
                                               <object class="GtkLabel">
                                                 <property name="visible">True</property>
@@ -31073,7 +31257,7 @@ on the Styles tab for the Front Cover.</property>
                                               <object class="GtkLabel" id="l_coverBackBlurb1">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">Back Cover Text</property>
+                                                <property name="label" translatable="yes">Back Cover</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
                                                   <attribute name="stretch" value="expanded"/>
@@ -31090,7 +31274,13 @@ on the Styles tab for the Front Cover.</property>
                                               <object class="GtkLabel" id="l_coverBackBlurb2">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">The text for this</property>
+                                                <property name="label" translatable="yes">
+The text for this
+section can be set
+in the Front Matter
+settings of the
+View+Edit tab.
+</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
                                                   <attribute name="stretch" value="expanded"/>
@@ -31104,55 +31294,13 @@ on the Styles tab for the Front Cover.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="l_coverBackBlurb3">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">section can be set</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                  <attribute name="stretch" value="expanded"/>
-                                                  <attribute name="scale" value="1"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">3</property>
-                                              </packing>
+                                              <placeholder/>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="l_coverBackBlurb4">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">in the FRT settings</property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                  <attribute name="stretch" value="expanded"/>
-                                                  <attribute name="scale" value="1"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">4</property>
-                                              </packing>
+                                              <placeholder/>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="l_coverBackBlurb5">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="label" translatable="yes">of the View+Edit tab. </property>
-                                                <attributes>
-                                                  <attribute name="weight" value="bold"/>
-                                                  <attribute name="stretch" value="expanded"/>
-                                                  <attribute name="scale" value="1"/>
-                                                </attributes>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">5</property>
-                                              </packing>
+                                              <placeholder/>
                                             </child>
                                             <child>
                                               <object class="GtkLabel">

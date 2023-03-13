@@ -304,9 +304,9 @@ _sensitivities = {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
         "r_sbiPosn_cutout":    ["fcb_sbi_posn_cutout", "s_sbiCutoutLines", "l_sbiCutoutLines"]},
-    "c_coverBorder":           ["fcb_coverBorder", "l_coverBorder", "col_coverBorder"],
-    "c_coverShading":          ["col_coverShading"],
-    "c_coverSelectImage":      ["btn_coverSelectImage", "lb_coverImageFilename"],
+    "c_coverBorder":           ["fcb_coverBorder", "col_coverBorder", "l_coverBorder"],
+    "c_coverShading":          ["col_coverShading", "s_coverShadingAlpha", "l_coverShading"],
+    "c_coverSelectImage":      ["fcb_coverImageSize", "c_coverImageFront", "s_coverImageAlpha", "btn_coverSelectImage", "lb_coverImageFilename"],
 }
 # Checkboxes and the different objects they make (in)sensitive when toggled
 # These function OPPOSITE to the ones above (they turn OFF/insensitive when the c_box is active)
@@ -334,6 +334,7 @@ _object_classes = {
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
+    "scale-slider":("s_diglotPriFraction", "s_viewEditFontSize", "s_coverShadingAlpha", "s_coverImageAlpha"),
     "thumbtabs":   ("l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"),
     "stylinks":    ("lb_style_c", "lb_style__v", "lb_style_s", "lb_style_r", "lb_style_v", "lb_style_f", "lb_style_x", "lb_style_fig",
                     "lb_style_rb", "lb_style_gloss|rb", "lb_style_toc3", "lb_style_x-credit", "lb_omitPics",
@@ -737,6 +738,8 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("fcb_diglotSecProject").set_wrap_width(wide)
         self.builder.get_object("fcb_impProject").set_wrap_width(wide)
         self.builder.get_object("fcb_strongsFallbackProj").set_wrap_width(wide)
+        self.builder.get_object("s_coverShadingAlpha").set_size_request(50, -1)
+        self.builder.get_object("s_coverImageAlpha").set_size_request(50, -1)
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
@@ -772,6 +775,7 @@ class GtkViewModel(ViewModel):
             .sbimgbutton:active { background-color: lightskyblue; font-weight: bold}
             .smallbutton {font-size: 10px; min-height: 0pt; min-width:0px;  padding:1px;}
             .fontbutton {font-size: 12px}
+            .scale-slider trough {min-height: 5px}
             tooltip {color: rgb(255,255,255); background-color: rgb(64,64,64)} 
             .stylinks {font-weight: bold; text-decoration: None; padding: 1px 1px}
             .stybutton {font-size: 12px; padding: 4px 6px}
@@ -3381,18 +3385,19 @@ class GtkViewModel(ViewModel):
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
 
-    def onImportClicked(self, btn_importPDF):
-        dialog = self.builder.get_object("dlg_importSettings")
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
+    # Not yet ready for prime time!
+    # def onImportClicked(self, btn_importPDF):
+        # dialog = self.builder.get_object("dlg_importSettings")
+        # if sys.platform == "win32":
+            # dialog.set_keep_above(True)
+        # response = dialog.run()
+        # if response == Gtk.ResponseType.OK:
             # MH to do something magic here
             # (depending on the options set within Import dialog)
-            pass
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.hide()
+            # pass
+        # if sys.platform == "win32":
+            # dialog.set_keep_above(False)
+        # dialog.hide()
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
@@ -4288,11 +4293,13 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_generateCover")
         for a in (('front', True), ('whole', False)):
             img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
+            scl = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo', '')
             if img:
                 self.set("btn_coverSelectImage", img)
                 self.set("lb_coverImageFilename", img)
                 self.set("c_coverImageFront", a[1])
-                # break
+                self.set("fcb_coverImageSize", self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo ', scl))
+                break
         if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
             ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
             self.set('fcb_coverBorder', ornaments)
@@ -4350,27 +4357,36 @@ class GtkViewModel(ViewModel):
 
             # Set background color
             if self.get('c_coverShading'):
+                s = self.get('s_coverShadingAlpha')
                 self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
             else:
                 self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', '0.001')
                 
             for c in ['front', 'whole']:
-                for p in ['BgImage', 'BgImageScale']:
+                for p in ['BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImageAlpha']:
                     self.styleEditor.setval(f'cat:cover{c}|esb', p, '')
             if self.get('c_coverSelectImage'):
                 img = self.get('lb_coverImageFilename')
+                scaleto = self.get('fcb_coverImageSize')
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', 'bleed|1x1')
-
-            if self.get('c_coverShading'):
-                s = self.get('s_coverShadingAlpha')
-                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', '1x1')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScaleTo', scaleto)
 
             if self.get('c_coverSelectImage'):
                 i = self.get('s_coverImageAlpha')
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageAlpha', i)
-                self.styleEditor.setval('cat:coverwhole|esb' if self.get('c_coverImageFront') else 'cat:coverfront|esb', 'BgImageAlpha', 1.0 - float(i))
-
+                invi = 1.001 - float(i)
+                frnt = self.get('c_coverImageFront')
+                self.styleEditor.setval('cat:coverfront|esb' if frnt else 'cat:coverwhole|esb', 'BgImageAlpha', i)
+                self.styleEditor.setval('cat:coverwhole|esb' if frnt else 'cat:coverfront|esb', 'BgImageAlpha', invi)
+                # if not frnt:
+                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 0.001)
+                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 0.001)
+                # else:
+                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 1)
+                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
+                
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
 \zgap|30pt\*
@@ -4965,6 +4981,8 @@ Thank you,
             self.set('s_totalPages', self.getPageCount())
 
     def getPageCount(self):
+        if self.getBooks() == []:
+            return
         xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
         if os.path.exists(xdvname):
             return xdvigetpages(xdvname)

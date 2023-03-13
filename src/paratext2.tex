@@ -206,11 +206,13 @@
     \getp@ram{justification}{#1}{#1}%
     \ifx\p@ram\c@nter
      \leftskip=\noteRag \rightskip=\leftskip \parfillskip=0pt
+    \else\ifx\p@ram\l@ftb@l
+     \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
     \else\ifx\p@ram\l@ft
      \rightskip=\noteRag \ifRTL\parfillskip=0pt \fi
     \else\ifx\p@ram\r@ght
      \leftskip=\noteRag \ifRTL\else\parfillskip=0pt \fi
-    \fi\fi\fi
+    \fi\fi\fi\fi
     \getp@ram{leftmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
     \getp@ram{rightmargin}{#1}{#1}%
@@ -624,11 +626,13 @@
   \getp@ram{justification}{#2}{#2}%
   \ifx\p@ram\c@nter
      \leftskip=\noteRag\rightskip=\noteRag
+  \else\ifx\p@ram\l@ftb@l
+     \rightskip=\noteRag
   \else\ifx\p@ram\l@ft
      \rightskip=\noteRag
   \else\ifx\p@ram\r@ght
      \leftskip=\noteRag
-  \fi\fi\fi
+  \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3
   \noindent % starting making new paragraph
