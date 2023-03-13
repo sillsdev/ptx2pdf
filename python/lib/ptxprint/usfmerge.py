@@ -12,8 +12,9 @@ class MergeF(Flag):
     ChunkOnVerses=1
     NoSplitNB=2
     HeadWithText=4
+    SwapChapterHead=8
 
-settings=MergeF.ChunkOnVerses | MergeF.NoSplitNB
+settings= MergeF.NoSplitNB
 logger = logging.getLogger(__name__)
 debugPrint = False
 class ChunkType(Enum):
@@ -480,7 +481,7 @@ class Collector:
                 else:
                     c.type == ChunkType.INTRO
         # Swap chapter and heading first
-        if 0:
+        if MergeF.SwapChapterHead in settings:
           for i in range(1, len(self.acc)):
             if  self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
                 self.acc[i].extend(self.acc[i-1])
@@ -665,7 +666,7 @@ def alignSimple(primary, *others):
         diff = difflib.SequenceMatcher(None, pkeys, okeys)
         for op in diff.get_opcodes():
             (action, ab, ae, bb, be) = op
-            logger.log(f"{op}, {debstr(pkeys[ab:ae])}, {debstr(okeys[bb:be])}")
+            logger.log(7,f"{op}, {debstr(pkeys[ab:ae])}, {debstr(okeys[bb:be])}")
             if action == "equal":
                 for i in range(ae-ab):
                     ri = runindices[ab+i]
@@ -782,13 +783,13 @@ def alignScores(*columns):
             p=merged
             while (ofs[c]<lim[c]) and (ofs[c]<nxt): 
                 thispos=acc[c][ofs[c]].position
-                print(ofs[c], thispos, merged[thispos] if thispos in merged else '0' ,  sep='=', end=" ",flush=True)
+                logger.log(7,"=".join(ofs[c], thispos, merged[thispos] if thispos in merged else '0' ))  
                 if chunks[c]:
                     chunks[c].append(acc[c][ofs[c]])
                 else:
                     chunks[c]=[acc[c][ofs[c]]]
                 ofs[c]+=1
-            print()
+            #print()
             if (chunks[c]):
                 print(*chunks[c], sep="")
         results.append({c:chunks[c] for c in colkeys})
@@ -874,6 +875,10 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     colls={}
     if (mode == "scores") or ("verse"  in syncarr) or ("chapter" in syncarr) : #Score-based splitting may force the break-up of an NB, the others certainly will.
         settings =  settings & (~MergeF.NoSplitNB)
+    if (mode == "scores") or ("verse"  in syncarr):
+        settings= settings | MergeF.ChunkOnVerses
+    if (mode != "scores"):
+        settings = settings | MergeF.SwapChapterHead
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
