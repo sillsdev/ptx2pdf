@@ -3385,18 +3385,19 @@ class GtkViewModel(ViewModel):
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
 
-    def onImportClicked(self, btn_importPDF):
-        dialog = self.builder.get_object("dlg_importSettings")
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
-        response = dialog.run()
-        if response == Gtk.ResponseType.OK:
+    # Not yet ready for prime time!
+    # def onImportClicked(self, btn_importPDF):
+        # dialog = self.builder.get_object("dlg_importSettings")
+        # if sys.platform == "win32":
+            # dialog.set_keep_above(True)
+        # response = dialog.run()
+        # if response == Gtk.ResponseType.OK:
             # MH to do something magic here
             # (depending on the options set within Import dialog)
-            pass
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
-        dialog.hide()
+            # pass
+        # if sys.platform == "win32":
+            # dialog.set_keep_above(False)
+        # dialog.hide()
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
@@ -4292,11 +4293,13 @@ class GtkViewModel(ViewModel):
         dialog = self.builder.get_object("dlg_generateCover")
         for a in (('front', True), ('whole', False)):
             img = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImage', '')
+            scl = self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo', '')
             if img:
                 self.set("btn_coverSelectImage", img)
                 self.set("lb_coverImageFilename", img)
                 self.set("c_coverImageFront", a[1])
-                # break
+                self.set("fcb_coverImageSize", self.styleEditor.getval(f'cat:cover{a[0]}|esb', 'BgImageScaleTo ', scl))
+                break
         if self.styleEditor.getval('cat:coverfront|esb', 'Border', '') == 'All':
             ornaments = self.styleEditor.getval('cat:coverfront|esb', 'BorderRef', '')
             self.set('fcb_coverBorder', ornaments)
@@ -4354,27 +4357,36 @@ class GtkViewModel(ViewModel):
 
             # Set background color
             if self.get('c_coverShading'):
+                s = self.get('s_coverShadingAlpha')
                 self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', coltotex(self.get('col_coverShading')))
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
             else:
                 self.styleEditor.setval('cat:coverwhole|esb', 'BgColor', '1 1 1')
+                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', '0.001')
                 
             for c in ['front', 'whole']:
-                for p in ['BgImage', 'BgImageScale']:
+                for p in ['BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImageAlpha']:
                     self.styleEditor.setval(f'cat:cover{c}|esb', p, '')
             if self.get('c_coverSelectImage'):
                 img = self.get('lb_coverImageFilename')
+                scaleto = self.get('fcb_coverImageSize')
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', 'bleed|1x1')
-
-            if self.get('c_coverShading'):
-                s = self.get('s_coverShadingAlpha')
-                self.styleEditor.setval('cat:coverwhole|esb', 'Alpha', s)
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', '1x1')
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScaleTo', scaleto)
 
             if self.get('c_coverSelectImage'):
                 i = self.get('s_coverImageAlpha')
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageAlpha', i)
-                self.styleEditor.setval('cat:coverwhole|esb' if self.get('c_coverImageFront') else 'cat:coverfront|esb', 'BgImageAlpha', 1.0 - float(i))
-
+                invi = 1.001 - float(i)
+                frnt = self.get('c_coverImageFront')
+                self.styleEditor.setval('cat:coverfront|esb' if frnt else 'cat:coverwhole|esb', 'BgImageAlpha', i)
+                self.styleEditor.setval('cat:coverwhole|esb' if frnt else 'cat:coverfront|esb', 'BgImageAlpha', invi)
+                # if not frnt:
+                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 0.001)
+                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 0.001)
+                # else:
+                    # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 1)
+                    # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
+                
             self.periphs['coverfront'] = r'''
 \periph front|id="coverfront"
 \zgap|30pt\*
@@ -4969,6 +4981,8 @@ Thank you,
             self.set('s_totalPages', self.getPageCount())
 
     def getPageCount(self):
+        if self.getBooks() == []:
+            return
         xdvname = os.path.join(self.working_dir, self.baseTeXPDFnames()[0] + ".xdv")
         if os.path.exists(xdvname):
             return xdvigetpages(xdvname)
