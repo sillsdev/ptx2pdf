@@ -11438,7 +11438,7 @@ into the current Configuration.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
-                                    <signal name="clicked" handler="onImportClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
