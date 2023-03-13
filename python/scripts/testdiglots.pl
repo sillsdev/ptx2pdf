@@ -3,19 +3,22 @@ use strict;
 use File::Basename;
 use File::Spec;
 
+my @modes=qw/doc simple/;
 if ($#ARGV<0) {
-  print STDERR "usage $0 dir\n dir specifies the output directory for merged files\n";
+  print STDERR "usage $0 [-m mode [-m mode]] dir\n dir specifies the output directory for merged files\n";
   exit(1);
+}
+while ($ARGV[0]=~/-m(.*)/) {
+  shift;
+  push @modes,$1||shift;
 }
 my $outdir=$ARGV[0];
 if (! -d $outdir) {
   mkdir($outdir) || die($outdir.':'.$!);
 }
-
 my $exedir=dirname(__FILE__);
 my $rootdir= File::Spec->catfile(File::Spec->updir(File::Spec->updir($exedir)),'test','projects');
 my @source=qw/OGNT WEBorig WSG WSGdev WSGBTpub/;
-my @modes=qw/doc simple/;
 my @entries;
 my @counts;
 
