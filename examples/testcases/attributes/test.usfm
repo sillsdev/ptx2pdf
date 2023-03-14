@@ -4,8 +4,10 @@
 \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
 \zendperiph
 \ip Introductory paragraph. 
-\ip The \nd Lord\nd* is \em King\em*
-\ip \nd The Lord\nd* is king
+\ip The \ul \+nd Lord\+nd*\ul* God is \em king\em*
+\ip \ul The \+nd Lord\+nd*\ul* God is \em king\em*
+\ip The \ul \+nd Lord\+nd* God\ul* is \em king\em*
+
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
@@ -114,3 +116,9 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \zISBNbarcode|isbn="zvar::isbn"\*
 \esbe
 \zfalsetext*
+
+\c 4
+\p
+\v 1 This verse is \zwide normal\zwide*
+\p^95
+\v 2 This verse is \zwide set narrow\zwide*
