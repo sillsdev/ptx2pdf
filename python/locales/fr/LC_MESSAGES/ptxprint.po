@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-10 18:00+0700\n"
-"PO-Revision-Date: 2023-03-10 11:00\n"
+"POT-Creation-Date: 2023-03-14 05:50-0400\n"
+"PO-Revision-Date: 2023-03-14 09:50\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -306,8 +306,8 @@ msgstr "Impossible de supprimer le dossier du disque!"
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Le dossier de sortie non standard doit être supprimé manuellement"
 
-#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3460
-#: lib/ptxprint/gtkview.py:3476 lib/ptxprint/runjob.py:314 temp.glade:32015
+#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3461
+#: lib/ptxprint/gtkview.py:3477 lib/ptxprint/runjob.py:314 temp.glade:32015
 msgid "Previous PDF (_1)"
 msgstr "PDF précédent (_1)"
 
@@ -407,7 +407,7 @@ msgstr "\n\n"
 
 #: lib/ptxprint/gtkview.py:2085
 msgid "%%% Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr "%%% Cliquez sur le bouton Générer (ci-dessus) pour lancer le processus de création des pages liminaires..."
 
 #: lib/ptxprint/gtkview.py:2124 lib/ptxprint/gtkview.py:2130
 msgid "View Only..."
@@ -487,136 +487,136 @@ msgstr "Sélectionnez l'emplacement et le nom du fichier d'archive"
 msgid "Select the folder containing image files"
 msgstr "Sélectionnez le dossier contenant des fichiers d’image"
 
-#: lib/ptxprint/gtkview.py:3402
+#: lib/ptxprint/gtkview.py:3403
 msgid "Select a PDF to import the settings from"
 msgstr "Sélectionnez un PDF à partir duquel importer les paramètres"
 
-#: lib/ptxprint/gtkview.py:3409
+#: lib/ptxprint/gtkview.py:3410
 msgid "Overwite current Configuration?"
 msgstr "Remplacer la configuration actuelle ?"
 
-#: lib/ptxprint/gtkview.py:3410
+#: lib/ptxprint/gtkview.py:3411
 msgid "WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\n"
 "Do you wish to continue?"
 msgstr "AVERTISSEMENT : L'importation des paramètres à partir du PDF sélectionné écrasera la configuration actuelle.\n\n"
 "Voulez-vous continuer ?"
 
-#: lib/ptxprint/gtkview.py:3413
+#: lib/ptxprint/gtkview.py:3414
 msgid "PDF Config Import Error"
 msgstr "Erreur d'importation de la configuration PDF"
 
-#: lib/ptxprint/gtkview.py:3414
+#: lib/ptxprint/gtkview.py:3415
 msgid "Sorry - Can't find any settings to import from the selected PDF.\n\n"
 msgstr "Désolé - Impossible de trouver les paramètres à importer depuis le PDF sélectionné.\n\n"
 
-#: lib/ptxprint/gtkview.py:3415
+#: lib/ptxprint/gtkview.py:3416
 msgid "Only PDFs created with PTXprint version 2.3 or later contain settings\n"
 msgstr "Seuls les PDFs créés avec PTXprint version 2.3 ou ultérieure contiennent les paramètres\n"
 
-#: lib/ptxprint/gtkview.py:3416
+#: lib/ptxprint/gtkview.py:3417
 msgid "if created with 'Include Config Settings Within PDF' option enabled."
 msgstr "s'il est créé avec l'option \"Inclure les paramètres de configuration dans le PDF\" activée."
 
-#: lib/ptxprint/gtkview.py:3421
+#: lib/ptxprint/gtkview.py:3422
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Sélectionnez un ou plusieurs fichiers PDF(s) pour les pages liminaires"
 
-#: lib/ptxprint/gtkview.py:3426
+#: lib/ptxprint/gtkview.py:3427
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Sélectionnez un ou plusieurs PDF(s) pour les annexes"
 
-#: lib/ptxprint/gtkview.py:3431
+#: lib/ptxprint/gtkview.py:3432
 msgid "Select Watermark PDF file"
 msgstr "Sélectionnez un fichier PDF pour le filigrane"
 
-#: lib/ptxprint/gtkview.py:3436
+#: lib/ptxprint/gtkview.py:3437
 msgid "Select Page Border PDF file"
 msgstr "Sélectionnez le fichier PDF de la bordure de la page"
 
-#: lib/ptxprint/gtkview.py:3441
+#: lib/ptxprint/gtkview.py:3442
 msgid "Select Section Header PDF file"
 msgstr "Sélectionnez le fichier PDF de l'en-tête de section"
 
-#: lib/ptxprint/gtkview.py:3446
+#: lib/ptxprint/gtkview.py:3447
 msgid "Select End of Book PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de fin de livre"
 
-#: lib/ptxprint/gtkview.py:3451
+#: lib/ptxprint/gtkview.py:3452
 msgid "Select Verse Decorator PDF file"
 msgstr "Sélectionnez le fichier PDF de décoration de numéro de verset"
 
-#: lib/ptxprint/gtkview.py:3456
+#: lib/ptxprint/gtkview.py:3457
 msgid "Select a PDF file to compare with"
 msgstr "Sélectionnez un fichier PDF à comparer avec"
 
-#: lib/ptxprint/gtkview.py:3577
+#: lib/ptxprint/gtkview.py:3578
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Basculer vers l'autre\n"
 "projet Diglot"
 
-#: lib/ptxprint/gtkview.py:3579 temp.glade:33634
+#: lib/ptxprint/gtkview.py:3580 temp.glade:33634
 msgid "Print (Make PDF)"
 msgstr "Imprimer (Créer le PDF)"
 
-#: lib/ptxprint/gtkview.py:3585
+#: lib/ptxprint/gtkview.py:3586
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Enregistrer et revenir\n"
 "au projet Diglot"
 
-#: lib/ptxprint/gtkview.py:3587
+#: lib/ptxprint/gtkview.py:3588
 msgid "Return to Primary"
 msgstr "Retour au primaire"
 
-#: lib/ptxprint/gtkview.py:3645
+#: lib/ptxprint/gtkview.py:3646
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "PVI : La police régulière prend déjà en charge tous les caractères du texte."
 
-#: lib/ptxprint/gtkview.py:3646
+#: lib/ptxprint/gtkview.py:3647
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Une police de repli n'est pas nécessaire donc\n"
 "l'option 'Utiliser une police de repli' sera désactivée."
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "USFM syntax error"
 msgstr "Erreur de syntaxe USFM"
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "Syntax error: {}"
 msgstr "Erreur de syntaxe : {}"
 
-#: lib/ptxprint/gtkview.py:3940 lib/ptxprint/gtkview.py:4684
-#: lib/ptxprint/gtkview.py:4699
+#: lib/ptxprint/gtkview.py:3941 lib/ptxprint/gtkview.py:4696
+#: lib/ptxprint/gtkview.py:4711
 msgid "Choose Image"
 msgstr "Choisir une image"
 
-#: lib/ptxprint/gtkview.py:4095
+#: lib/ptxprint/gtkview.py:4096
 msgid "Unsupported Locale"
 msgstr "Locale non prise en charge"
 
-#: lib/ptxprint/gtkview.py:4096
+#: lib/ptxprint/gtkview.py:4097
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Cette locale n'est pas prise en charge sur votre système, vous devrez peut-être l'installer"
 
-#: lib/ptxprint/gtkview.py:4273
+#: lib/ptxprint/gtkview.py:4274
 msgid "Strong's Index generated in: {}"
 msgstr "Index Strongs généré en : {}"
 
-#: lib/ptxprint/gtkview.py:4421 lib/ptxprint/gtkview.py:4926
+#: lib/ptxprint/gtkview.py:4433 lib/ptxprint/gtkview.py:4938
 msgid "Please fill in any missing <Values> on"
 msgstr "Veuillez remplir tous les <Values> manquants sur"
 
-#: lib/ptxprint/gtkview.py:4422 lib/ptxprint/gtkview.py:4927
+#: lib/ptxprint/gtkview.py:4434 lib/ptxprint/gtkview.py:4939
 msgid "the Peripherals tab before proceeding."
-msgstr ""
+msgstr "l'onglet Périphériques avant de continuer."
 
-#: lib/ptxprint/gtkview.py:4423
+#: lib/ptxprint/gtkview.py:4435
 msgid "Update the ISBN number or deleted the entry."
-msgstr ""
+msgstr "Mettre à jour le numéro ISBN ou supprimer l'entrée."
 
-#: lib/ptxprint/gtkview.py:4441
+#: lib/ptxprint/gtkview.py:4453
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -624,67 +624,67 @@ msgstr "Pour info : cette option Interlinéaire n'est pas compatible avec\n"
 "'Ajustement de l'espacement entre les lettres' sur la page Polices+Écriture.\n"
 "Cette option donc vient d'être désactivée."
 
-#: lib/ptxprint/gtkview.py:4473
+#: lib/ptxprint/gtkview.py:4485
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Une version plus récente de PTXprint ({}) est disponible.\n"
 "Cliquez pour visiter la page de téléchargement sur le site web."
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "Internet Access Disabled"
 msgstr "Accès Internet désactivé"
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Toutes les URLs Internet ont été désactivées \n"
 "en utilisant l'option de l'onglet Avancé"
 
-#: lib/ptxprint/gtkview.py:4530
+#: lib/ptxprint/gtkview.py:4542
 msgid "<Type Value Here>"
 msgstr "<Saisir la valeur ici>"
 
-#: lib/ptxprint/gtkview.py:4547
+#: lib/ptxprint/gtkview.py:4559
 msgid "Variable Name"
 msgstr "Nom de variable"
 
-#: lib/ptxprint/gtkview.py:4613
+#: lib/ptxprint/gtkview.py:4625
 msgid "Category Name"
 msgstr "Nom de catégorie"
 
-#: lib/ptxprint/gtkview.py:4714
+#: lib/ptxprint/gtkview.py:4726
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Attention : Impossible de supprimer complètement\n"
 "certains dossier(s) temporaires:"
 
-#: lib/ptxprint/gtkview.py:4814
+#: lib/ptxprint/gtkview.py:4826
 msgid "What did Mary say that God had done?"
 msgstr "Qu'est-ce que Marie a dit que Dieu avait fait ?"
 
-#: lib/ptxprint/gtkview.py:4817
+#: lib/ptxprint/gtkview.py:4829
 msgid "What does it means to bless someone?"
 msgstr "Qu'est-ce que cela signifie de bénir quelqu'un ?"
 
-#: lib/ptxprint/gtkview.py:4818
+#: lib/ptxprint/gtkview.py:4830
 msgid "What do you know about the high priest?"
 msgstr "Que savez-vous du grand prêtre ?"
 
-#: lib/ptxprint/gtkview.py:4855 temp.glade:31389
+#: lib/ptxprint/gtkview.py:4867 temp.glade:31389
 msgid "Spine Title"
 msgstr "Titre du dos"
 
-#: lib/ptxprint/gtkview.py:4857
+#: lib/ptxprint/gtkview.py:4869
 msgid "Spine\n"
 "Title"
 msgstr "Titre\n"
 "du dos"
 
-#: lib/ptxprint/gtkview.py:4911
+#: lib/ptxprint/gtkview.py:4923
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr "Cette fonctionnalité est limitée aux demandes d'autorisation pour les illustrations de David C Cook. "
 
-#: lib/ptxprint/gtkview.py:4912
+#: lib/ptxprint/gtkview.py:4924
 msgid "No DCC illustrations were detected. Hit Print first and then try again."
 msgstr "Aucune illustration DCC n'a été détectée. Appuyez d'abord sur Imprimer, puis réessayez."
 
@@ -851,11 +851,11 @@ msgstr "Impossible de créer : "
 
 #: lib/ptxprint/runjob.py:357
 msgid "Faulty PDF, could not parse"
-msgstr ""
+msgstr "PDF défectueux, impossible d'analyser"
 
 #: lib/ptxprint/runjob.py:365
 msgid "Bad xdvi file, probably failed to load a picture or font"
-msgstr ""
+msgstr "Mauvais fichier xdvi, probablement un échec de chargement d'une image ou d'une police"
 
 #: lib/ptxprint/runjob.py:376
 msgid "Rerun to fix: "
@@ -1145,11 +1145,11 @@ msgstr "Déplacer le texte des onglets de pouce"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Space between picture & caption"
-msgstr ""
+msgstr "Espace entre l'image et la légende"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Increase/Reduce the gap between figures and their captions"
-msgstr ""
+msgstr "Augmenter/réduire l'écart entre les figures et leurs légendes"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Default space beside picture"
@@ -1449,7 +1449,9 @@ msgstr "Dialogue des bordures : Rembourrage des bordures horizontales "
 msgid "The horizontal space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "L'espace horizontal entre le bord intérieur\n"
+"de la bordure et le bord extérieur\n"
+"de la boîte à son intérieur."
 
 #: temp.glade:980
 msgid "Borders dialog: Vertical border padding "
@@ -1459,7 +1461,9 @@ msgstr "Dialogue des bordures : Rembourrage des bordures verticales "
 msgid "The vertical space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "L'espace vertical entre le bord intérieur\n"
+"de la bordure et le bord extérieur\n"
+"de la boîte à son intérieur."
 
 #: temp.glade:1006
 msgid "The space between the (inside) edge of the border\n"
@@ -2238,148 +2242,153 @@ msgstr "Par défaut"
 
 #: temp.glade:3807
 msgid "Han1"
-msgstr ""
+msgstr "Han1"
 
 #: temp.glade:3810
 msgid "Han2"
-msgstr ""
+msgstr "Han2"
 
 #: temp.glade:3813
 msgid "Han3"
-msgstr ""
+msgstr "Han3"
 
 #: temp.glade:3816
 msgid "Han4"
-msgstr ""
+msgstr "Han4"
 
 #: temp.glade:3819
 msgid "Han5"
-msgstr ""
+msgstr "Han5"
 
 #: temp.glade:3822
 msgid "Vectorian1"
-msgstr ""
+msgstr "Vectorian1"
 
 #: temp.glade:3825
 msgid "Vectorian2"
-msgstr ""
+msgstr "Vectorian2"
 
 #: temp.glade:3828
 msgid "Vectorian3"
-msgstr ""
+msgstr "Vectorian3"
 
 #: temp.glade:3831
 msgid "Vectorian4"
-msgstr ""
+msgstr "Vectorian4"
 
 #: temp.glade:3834
 msgid "v85"
-msgstr ""
+msgstr "v85"
 
 #: temp.glade:3837
 msgid "v85r"
-msgstr ""
+msgstr "v85r"
 
 #: temp.glade:3840
 msgid "v85out"
-msgstr ""
+msgstr "v85out"
 
 #: temp.glade:3843
 msgid "v86c"
-msgstr ""
+msgstr "v86c"
 
 #: temp.glade:3846
 msgid "c86out"
-msgstr ""
+msgstr "c86out"
 
 #: temp.glade:3849
 msgid "v88"
-msgstr ""
+msgstr "v88"
 
 #: temp.glade:3852
 msgid "v88r"
-msgstr ""
+msgstr "v88r"
 
 #: temp.glade:3855
 msgid "v88c"
-msgstr ""
+msgstr "v88c"
 
 #: temp.glade:3858
 msgid "v88out"
-msgstr ""
+msgstr "v88out"
 
 #: temp.glade:3871 temp.glade:7957
 msgid "bleed: overflow the page into the cropped area"
-msgstr ""
+msgstr "fond perdu : déborde la page dans la zone rongée"
 
 #: temp.glade:3875 temp.glade:7961
 msgid "colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)"
-msgstr ""
+msgstr "fond perdu couleur : déborde la page dans la zone rognée autant que les couleurs le font (normalement, les images débordent moins)"
 
 #: temp.glade:3879 temp.glade:7965
 msgid "inner: the area that text could cover (vertically this extends to the inner edge of the border)"
-msgstr ""
+msgstr "intérieur : la zone que le texte peut couvrir (verticalement, elle s'étend jusqu'au bord intérieur de la bordure)"
 
 #: temp.glade:3883 temp.glade:7969
 msgid "outer: the outermost of the coloured box or the border"
-msgstr ""
+msgstr "extérieur : la partie la plus extérieure de la boîte colorée ou de la bordure"
 
 #: temp.glade:3887 temp.glade:7973
 msgid "border: the outer edge of the border"
-msgstr ""
+msgstr "bordure : le bord extérieur de la bordure"
 
 #: temp.glade:3891 temp.glade:7977
 msgid "box: the coloured box"
-msgstr ""
+msgstr "boîte : la boîte colorée"
 
 #: temp.glade:3900
 msgid "PTXprint: Generate Cover"
-msgstr ""
+msgstr "PTXprint : Générer la couverture"
 
 #: temp.glade:3928
 msgid "Note that the color chooser\n"
 "dialog may be hidden behind."
-msgstr ""
+msgstr "Notez que la boîte de dialogue du sélecteur\n"
+"de couleur peut être cachée derrière."
 
 #: temp.glade:4016
 msgid "Generate cover: Scale Text Size"
-msgstr ""
+msgstr "Générer la couverture : Adapter la taille du texte"
 
 #: temp.glade:4019 temp.glade:4064 temp.glade:4417
 msgid "The \\mt1 and \\mt2 styles are used for the\n"
 "title and subtitle on the cover page. Use\n"
 "this setting to increase size of such titles."
-msgstr ""
+msgstr "Les styles \\mt1 et \\mt2 sont utilisés pour le titre et\n"
+"le sous-titre de la page de couverture. Utilisez\n"
+"ce paramètre pour augmenter la taille de ces titres."
 
 #: temp.glade:4043
 msgid "Generate cover: Text Color"
-msgstr ""
+msgstr "Générer la couverture : Couleur du texte"
 
 #: temp.glade:4047
 msgid "Set the color of the title and subtitle text."
-msgstr ""
+msgstr "Définir la couleur du texte du titre et du sous-titre."
 
 #: temp.glade:4070
 msgid "Scale Text Size:"
-msgstr ""
+msgstr "Adapter la taille du texte :"
 
 #: temp.glade:4079
 msgid "Generate cover: Select Ornamental Border"
-msgstr ""
+msgstr "Générer la couverture : Sélectionner une bordure ornementale"
 
 #: temp.glade:4083 temp.glade:4362
 msgid "A selection of ornamental borders are available\n"
 "to choose from, or a custom-made border may\n"
 "be applied to the front cover page."
-msgstr ""
+msgstr "Choisir d’une sélection de bordures ornementales\n"
+"qui est disponible, ou appliquer une bordure\n"
+"personnalisée pour la page de couverture."
 
 #: temp.glade:4109
 msgid "Generate cover: Select Background Shading"
-msgstr ""
+msgstr "Générer la couverture : Sélectionner l'ombrage d'arrière-plan"
 
 #: temp.glade:4113 temp.glade:4166
 msgid "Set the background color for the cover."
-msgstr ""
+msgstr "Définir la couleur d'arrière-plan de la couverture."
 
 #: temp.glade:4127 temp.glade:4760 temp.glade:6581 temp.glade:8256
 #: temp.glade:17518 temp.glade:24982 temp.glade:25142 temp.glade:25263
@@ -2390,116 +2399,125 @@ msgstr "Sélectionner..."
 
 #: temp.glade:4128
 msgid "Generate cover: Select Background Picure (or Image)"
-msgstr ""
+msgstr "Générer la couverture : Sélectionner une image d'arrière-plan"
 
 #: temp.glade:4148
 msgid "C:\\Filepath\\to\\image.jpg"
-msgstr ""
+msgstr "C:\\Chemin\\pour\\image.jpg"
 
 #: temp.glade:4162
 msgid "Generate cover: Select Border Color"
-msgstr ""
+msgstr "Générer la couverture : Sélectionner la couleur de bordure"
 
 #: temp.glade:4179
 msgid "Background Shading:"
-msgstr ""
+msgstr "Ombrage de l'arrière-plan :"
 
 #: temp.glade:4180
 msgid "Generate cover: Enable Background Shading"
-msgstr ""
+msgstr "Générer la couverture : Activer l'ombrage d'arrière-plan"
 
 #: temp.glade:4196
 msgid "Background Picture:"
-msgstr ""
+msgstr "Image d'arrière-plan :"
 
 #: temp.glade:4197 temp.glade:4219
 msgid "Generate cover: Enable Background Picture (or Image)"
-msgstr ""
+msgstr "Générer la couverture : Activer l'image d'arrière-plan"
 
 #: temp.glade:4201
 msgid "Enable this option to place a picture\n"
 "(or image) on the entire cover (so\n"
 "it wraps around onto the back cover).\n"
 "Use a landscape-oriented image."
-msgstr ""
+msgstr "Activer cette option pour placer une image\n"
+"(orientation paysage) sur la couverture entière\n"
+"(donc elle s'enveloppe les deux couvertures)."
 
 #: temp.glade:4218
 msgid "Only on Front Cover"
-msgstr ""
+msgstr "Seulement sur la couverture avant"
 
 #: temp.glade:4223
 msgid "Enable this option to only place the\n"
 "selected image on the front cover (so\n"
 "it does not wrap onto the back cover). \n"
 "Use a portrait-oriented image."
-msgstr ""
+msgstr "Activez cette option pour placer l'image sélectionnée\n"
+"(orientation portrait) uniquement sur la couverture avant\n"
+"(de sorte qu’elle ne s'étende pas à la couverture derrière)."
 
 #: temp.glade:4240
 msgid "Generate cover: Set Transparency of Background Picture"
-msgstr ""
+msgstr "Générer la couverture : Définir la transparence de l'image d'arrière-plan"
 
 #: temp.glade:4243
 msgid "Set the transparency (Alpha) of the \n"
 "background picture which appears\n"
 "behind any shading if any.\n"
 " "
-msgstr ""
+msgstr "Définit la transparence (Alpha) de l'image d'arrière-plan\n"
+"qui apparaît derrière l’ombrage, s’il y en a.\n"
+" "
 
 #: temp.glade:4265
 msgid "Generate cover: Set Transparency of Background Shading"
-msgstr ""
+msgstr "Générer la couverture : Définir la transparence de l'ombrage d'arrière-plan"
 
 #: temp.glade:4269
 msgid "Set the transparency (Alpha) of the \n"
 "background shading which appears\n"
 "on top of the image if there is one.\n"
 " "
-msgstr ""
+msgstr "Définir la transparence (Alpha) de\n"
+"l'arrière-plan qui apparaît au-dessus\n"
+"de l'image s'il y en a une."
 
 #: temp.glade:4290
 msgid "Generate cover: Select Scale Picture To Area"
-msgstr ""
+msgstr "Générer une couverture : Adapter l'image à la zone"
 
 #: temp.glade:4294 temp.glade:8820
 msgid "Select where the image should extend to."
-msgstr ""
+msgstr "Sélectionnez où l'image doit s'étendre."
 
 #: temp.glade:4321
 msgid "Text Color:"
-msgstr ""
+msgstr "Couleur du texte :"
 
 #: temp.glade:4335
 msgid "Border Color:"
-msgstr ""
+msgstr "Couleur de bordure :"
 
 #: temp.glade:4348
 msgid "Shading Color:"
-msgstr ""
+msgstr "Couleur d'ombrage :"
 
 #: temp.glade:4357
 msgid "Ornamental Border:"
-msgstr ""
+msgstr "Bordure ornementale :"
 
 #: temp.glade:4358
 msgid "Generate cover: Enable Ornamental Border"
-msgstr ""
+msgstr "Générer la couverture : Activer la bordure ornementale"
 
 #: temp.glade:4382
 msgid "Transparency"
-msgstr ""
+msgstr "Transparence"
 
 #: temp.glade:4400
 msgid "Click to Open a PDF containing a catalog\n"
 "of the various Ornamental Borders (pgs 4-7)."
-msgstr ""
+msgstr "Cliquez pour ouvrir un PDF contenant un catalogue\n"
+"des différentes bordures ornementales (pgs 4-7)."
 
 #: temp.glade:4422
 msgid "Scale Picure To:"
-msgstr ""
+msgstr "Redimensionner l'image à :"
 
 #: temp.glade:4441
 msgid "Cover Page Settings"
-msgstr ""
+msgstr "Paramètres de la page de couverture"
 
 #: temp.glade:4455
 msgid "Note that when you click on Create Cover Settings, PTXprint will\n"
@@ -2507,7 +2525,13 @@ msgid "Note that when you click on Create Cover Settings, PTXprint will\n"
 " (b) overwrite the \\periph definitions listed below (see the Front\n"
 "Matter settings on the View+Edit tab):\n"
 "   id='coverfront', id='coverspine', id='coverback, id='coverwhole'."
-msgstr ""
+msgstr "Notez que lorsque vous cliquez sur Créer les\n"
+"paramètres de la couverture, PTXprint\n"
+" (a) met à jour les définitions de style de la couverture\n"
+"      (paramètres de l'Éditeur de style) et\n"
+" (b) écrase les définitions \\periph énumérées ci-dessous\n"
+"      (voir les paramètres Pages liminaires dans l'onglet Voir+Modifier) :\n"
+"      id='coverfront', id='coverspine', id='coverback, id='coverwhole'."
 
 #: temp.glade:4496
 msgid "Arabic-Hindi"
@@ -2543,11 +2567,11 @@ msgstr "NOTE : Cette fonctionnalité n'a pas encore été implémentée !"
 
 #: temp.glade:4631
 msgid "PDF file or ZIP archive (with PTXprint settings)"
-msgstr ""
+msgstr "Fichier PDF ou archive ZIP (avec paramètres PTXprint)"
 
 #: temp.glade:4632
 msgid "Import: From existing PDF file or ZIP archive"
-msgstr ""
+msgstr "Importer : À partir d'un fichier PDF ou d'une archive ZIP existant"
 
 #: temp.glade:4636
 msgid "Even though it sounds strange, it is possible to\n"
@@ -2558,7 +2582,14 @@ msgid "Even though it sounds strange, it is possible to\n"
 "Importing from a PTXprint ZIP archive is\n"
 "another valid option (these are created\n"
 "on the Help tab)."
-msgstr ""
+msgstr "Même si cela peut paraître étrange, il est possible\n"
+"d'importer les paramètres d'un fichier PDF existant\n"
+"qui a été produit auparavant par PTXprint. Mais cela\n"
+"ne fonctionne que si le PDF contient les paramètres\n"
+"(ce qui peut être activé dans l'onglet Finition).\n\n"
+"L'importation à partir d'une archive ZIP PTXprint est\n"
+"une autre option valable (ces archives sont créées\n"
+"dans l'onglet Aide)."
 
 #: temp.glade:4660
 msgid "A Previously Saved Configuration:"
@@ -2612,11 +2643,15 @@ msgid "Select either a PTXprint PDF or ZIP archive\n"
 "Importing from a PDF will only work if the\n"
 "PDF contains the PTXprint configuration\n"
 "settings (as enabled on the Finishing tab)."
-msgstr ""
+msgstr "Sélectionnez un PDF PTXprint ou une archive ZIP\n"
+"pour importer les paramètres.\n\n"
+"L'importation à partir d'un PDF ne fonctionnera que si le\n"
+"PDF contient les paramètres de configuration PTXprint\n"
+"(comme activé dans l'onglet Finition)."
 
 #: temp.glade:4786
 msgid "Path to PDF file of ZIP archive."
-msgstr ""
+msgstr "Chemin vers le fichier PDF ou l'archive ZIP."
 
 #: temp.glade:4812
 msgid "Reset current configuration to Default values before importing settings"
@@ -2660,15 +2695,15 @@ msgstr "Informations sur les droits d'auteur"
 
 #: temp.glade:5051
 msgid "How to handle differences:"
-msgstr ""
+msgstr "Comment gérer les différences :"
 
 #: temp.glade:5061
 msgid "Add Any New Pictures"
-msgstr ""
+msgstr "Ajouter des nouvelles images"
 
 #: temp.glade:5078
 msgid "Remove Any Old Pictures"
-msgstr ""
+msgstr "Enlever toutes les anciennes images"
 
 #: temp.glade:5134
 msgid "Enabling this option will import (overwrite) the page size, \n"
@@ -3836,11 +3871,11 @@ msgstr "Image d'arrière-plan de la barre latérale : Gestion des surtailles"
 
 #: temp.glade:8816
 msgid "Sidebar background image: Scale Image to Inner/Outer/Bleed area "
-msgstr ""
+msgstr "Image d'arrière-plan de la barre latérale : Adapter l'image à la zone intérieure/extérieure/fond perdu"
 
 #: temp.glade:8846
 msgid "Scale To:"
-msgstr ""
+msgstr "Redimensionner à :"
 
 #: temp.glade:8859
 msgid "Background Image Advanced Settings"
@@ -4262,12 +4297,13 @@ msgstr "0"
 
 #: temp.glade:9991
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: temp.glade:9995
 msgid "This is the Description field from the\n"
 "project's Biblical Terms renderings."
-msgstr ""
+msgstr "Ceci est le champ Description des\n"
+"équivalents des Termes bibliques du projet."
 
 #: temp.glade:10045
 msgid "Justified"
@@ -4275,7 +4311,7 @@ msgstr "Justifié"
 
 #: temp.glade:10053
 msgid "LeftBal"
-msgstr ""
+msgstr "BalGauche"
 
 #: temp.glade:10145
 msgid "Gridded Center"
@@ -4675,7 +4711,9 @@ msgstr "(Facultatif) Notes sur la configuration"
 msgid "Dots indicate that a\n"
 "password has been set\n"
 "for this configuration."
-msgstr ""
+msgstr "Les points indiquent qu'un\n"
+"mot de passe a été défini\n"
+"pour cette configuration."
 
 #: temp.glade:11333
 msgid "Lock configuration"
@@ -4693,7 +4731,18 @@ msgid "When Config is UNLOCKED:\n"
 "saved or the configuration to be deleted.\n\n"
 "Note that the Default config cannot be\n"
 "locked."
-msgstr ""
+msgstr "Lorsque la configuration est DÉVERROUILLÉE :\n"
+"Cliquez pour définir un mot de passe afin d'empêcher\n"
+"toute personne de modifier par erreur les paramètres\n"
+"enregistrés ou de supprimer la configuration\n"
+".\n\n"
+"Lorsque la configuration est VERROUILLÉE :\n"
+"Cliquez pour entrer le mot de passe afin de\n"
+"déverrouiller cette configuration et de permettre\n"
+"l'enregistrement des modifications ou la\n"
+"suppression de la configuration.\n\n"
+"Notez que la configuration par défaut\n"
+"ne peut pas être verrouillée."
 
 #: temp.glade:11363
 msgid "Copy configuration to other projects "
@@ -6901,16 +6950,17 @@ msgstr "Les livres périphériques ont souvent plus d'un\n"
 
 #: temp.glade:15693
 msgid "Enable Ornaments"
-msgstr ""
+msgstr "Activer les ornements"
 
 #: temp.glade:15694
 msgid "Enable ornamental borders and rules"
-msgstr ""
+msgstr "Activer les bordures ornementales et les règles"
 
 #: temp.glade:15698
 msgid "Enable this option to make use of\n"
 "ornamental borders and rules."
-msgstr ""
+msgstr "Activez cette option pour utiliser les\n"
+"bordures ornementales et les règles."
 
 #: temp.glade:15721
 msgid "Other Features"
@@ -12320,7 +12370,10 @@ msgid "Some advanced features load extra code\n"
 "that is not normally needed. List them\n"
 "here if you need to use them.\n"
 "e.g. polyglot-simplepages"
-msgstr ""
+msgstr "Certaines fonctionnalités avancées chargent du code\n"
+"supplémentaire qui n'est normalement pas nécessaire.\n"
+"Listez-les ici si vous devez les utiliser.\n"
+"Par exemple polyglot-simplepages"
 
 #: temp.glade:28807
 msgid "Plugins:"
@@ -13292,21 +13345,23 @@ msgstr "Utiliser le dos de livre sur la page de couverture"
 
 #: temp.glade:31033
 msgid "Generate Cover..."
-msgstr ""
+msgstr "Générer la couverture..."
 
 #: temp.glade:31034
 msgid "Generate Cover (Basic settings to create a cover)"
-msgstr ""
+msgstr "Générer la couverture (Paramètres de base pour créer une couverture)"
 
 #: temp.glade:31038
 msgid "Creating a cover from nothing takes a lot of effort.\n"
 "This tool enables you to create various kinds of\n"
 "covers which can easily be enhanced. "
-msgstr ""
+msgstr "Créer une couverture à partir de rien demande beaucoup\n"
+"d'efforts. Cet outil vous permet de créer différents types\n"
+"de couvertures qui peuvent être facilement améliorées."
 
 #: temp.glade:31069
 msgid "Generate cover: Art Bleed setting"
-msgstr ""
+msgstr "Générer la couverture : Paramètre de fond perdu"
 
 #: temp.glade:31072 temp.glade:31164
 msgid "Art Bleed is specifically for hard cover binding\n"
@@ -13314,7 +13369,11 @@ msgid "Art Bleed is specifically for hard cover binding\n"
 "beyond the size of the cover in order to wrap\n"
 "around the hard cover and stuck down under\n"
 "the inner backing sheet. (Units: mm)"
-msgstr ""
+msgstr "Le fond perdu est spécifique à la reliure à couverture rigide\n"
+"et est le paramètre qui permet aux images de dépasser\n"
+"la taille de la couverture afin de s'enrouler\n"
+"autour de la couverture rigide et de se coller sous\n"
+"la feuille de support intérieure. (Unités : mm)"
 
 #: temp.glade:31080 temp.glade:31105
 msgid "5.0"
@@ -13322,7 +13381,7 @@ msgstr "5.0"
 
 #: temp.glade:31094
 msgid "Generate cover: Bleed setting"
-msgstr ""
+msgstr "Générer la couverture : Paramètre de fond perdu"
 
 #: temp.glade:31097 temp.glade:31121
 msgid "Bleed is the section of artwork that \n"
@@ -13330,33 +13389,39 @@ msgid "Bleed is the section of artwork that \n"
 "This ensures that the image goes right\n"
 "to the edge of the cover after it has \n"
 "been trimmed. (Units: mm)"
-msgstr ""
+msgstr "Le fond perdu est la section de la maquette\n"
+"qui dépasse l'endroit où le papier est coupé.\n"
+"Cela permet de s'assurer que l'image va\n"
+"jusqu'à au bord de la couverture après que\n"
+"celle-ci a été découpée. (Unités : mm)"
 
 #: temp.glade:31128
 msgid "Bleed:"
-msgstr ""
+msgstr "Fond perdu :"
 
 #: temp.glade:31137
 msgid "Show Crop Marks"
-msgstr ""
+msgstr "Afficher les marques de rognage"
 
 #: temp.glade:31138
 msgid "Generate cover: Include bleed area and cropmarks"
-msgstr ""
+msgstr "Générer couverture : Inclure la zone de fond perdu et les marques de rognage"
 
 #: temp.glade:31142
 msgid "When printing and binding books in bulk\n"
 "crop marks are usually required to indicate\n"
 "where to trim the publication."
-msgstr ""
+msgstr "Lors de l'impression et de la reliure de livres en masse,\n"
+"des marques de rognage sont généralement nécessaires\n"
+"pour indiquer où couper la publication."
 
 #: temp.glade:31171
 msgid "Art Bleed:"
-msgstr ""
+msgstr "Fond perdu :"
 
 #: temp.glade:31186
 msgid "Crop Marks + Bleed Settings"
-msgstr ""
+msgstr "Marques de regnage + Paramètres de fond perdu"
 
 #: temp.glade:31207 temp.glade:31573
 msgid "Click to edit the Sidebar properties \n"
@@ -13366,7 +13431,7 @@ msgstr "Cliquez pour modifier les propriétés de la barre latérale \n"
 
 #: temp.glade:31260
 msgid "Back Cover"
-msgstr ""
+msgstr "Couverture arrière"
 
 #: temp.glade:31277
 msgid "\n"
@@ -13375,7 +13440,12 @@ msgid "\n"
 "in the Front Matter\n"
 "settings of the\n"
 "View+Edit tab.\n"
-msgstr ""
+msgstr "\n"
+"Le texte de cette\n"
+"section peut être défini\n"
+"dans les paramètres des\n"
+"Pages liminaires dans\n"
+"l'onglet Voir+Modifier.\n"
 
 #: temp.glade:31324
 msgid "ISBN Bar\n"
@@ -13409,11 +13479,11 @@ msgstr "Titre inférieur facultatif"
 
 #: temp.glade:31609
 msgid "Create Cover"
-msgstr ""
+msgstr "Créer une couverture"
 
 #: temp.glade:31610
 msgid "Create an outer Cover"
-msgstr ""
+msgstr "Créer une couverture extérieure"
 
 #: temp.glade:31637
 msgid "Set parameters for the cover\n"
@@ -13592,11 +13662,12 @@ msgstr "Si vous imposez pour une imprimerie équipée d'une plieuse,\n"
 #: temp.glade:31919
 msgid "Create Cover as \n"
 "a Separate PDF"
-msgstr ""
+msgstr "Créer la couverture\n"
+"comme un PDF séparé"
 
 #: temp.glade:31921
 msgid "Pagination: Create the cover as a stand-alone PDF"
-msgstr ""
+msgstr "Pagination : Créer la couverture comme un PDF autonome"
 
 #: temp.glade:31926
 msgid "This option is only available if Create Cover is\n"
@@ -13604,7 +13675,12 @@ msgid "This option is only available if Create Cover is\n"
 "you plan to print the outer (wrapper) cover\n"
 "separately from the book's content. This is often\n"
 "the case if cardstock, or a colour cover is used."
-msgstr ""
+msgstr "Cette option n'est disponible que si l'option Créer\n"
+"une couverture est activée dans l'onglet Couverture.\n"
+"Activez cette option si vous prévoyez d'imprimer la\n"
+"couverture extérieure séparément du contenu du livre.\n"
+"C'est souvent le cas si vous utilisez du papier cartonné\n"
+"ou une couverture en couleur."
 
 #: temp.glade:31950
 msgid "Whether you need a simple booklet\n"
@@ -13769,7 +13845,7 @@ msgstr "Comparer les PDF"
 
 #: temp.glade:32229
 msgid "PDF output format (Screen, RGB, CMYK, B/W, spot)"
-msgstr ""
+msgstr "Format de sortie PDF (écran, RGB, CMYK, N/B, spot)"
 
 #: temp.glade:32234
 msgid "Select the appropriate standard \n"
