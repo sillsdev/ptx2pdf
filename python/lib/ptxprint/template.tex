@@ -253,7 +253,7 @@
 %%%%% Covers
 \catcode`\@=11
 \expandafter\edef\csname cover-bleed\endcsname{{{cover/coverbleed}mm}}   % Bleed dimension
-%\expandafter\edef\csname figbleed\endcsname{{{cover/coverartbleed}mm}}   % Art Bleed dimension
+\expandafter\edef\csname cover-figbleed\endcsname{{{cover/coverartbleed}mm}}   % Art Bleed dimension
 \expandafter\edef\csname cover-spine\endcsname{{{cover/spinewidth_}mm}}   % Actual spine width = book thickness, endpapers, board thickness, etc.
 \expandafter\xdef\csname cover-y\endcsname{{\the\PaperHeight}} % spine/book height 
 \expandafter\xdef\csname cover-x\endcsname{{\the\PaperWidth}} % Front/back cover
