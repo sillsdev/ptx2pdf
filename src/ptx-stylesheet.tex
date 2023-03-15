@@ -585,7 +585,7 @@
     \x@\cstackdown\p@ssParams,\E
   \ifx\f@ntextend\empty\else
     \trace{sa}{Fontextend set! =\f@ntextend}%
-    \xdef\r@s{+[extend=\f@ntextend]\space \r@s}%%Processed left to right, so top level (overrides) go *LAST*
+    \xdef\r@s{\r@s\space+[extend=\f@ntextend]\space}%%Processed left to right, so top level (overrides) go *LAST*
   \fi
   \ifx\r@s\empty
     \let\p@ram\relax
@@ -658,10 +658,18 @@
       \let\d@\rmf@ature
       \trace{sa}{Removing font features #2}%
     \else
-      \let\d@\addf@ature\relax
+      \let\d@\addf@ature
       \if\t@st\equ@ls
         \trace{sa}{Exact font features #2}%
-        \let\f@atureset\cstackempty
+        \ifx\f@atureset\cstackempty\else
+          \trace{sa}{Deleting prior features \f@atureset}%
+          \tracingassigns=1
+          \def\d@##1\E{\x@\let\csname ##1\endcsname\undefined}%
+          \x@\cstackdown \f@atureset,\E
+          \tracingassigns=0
+          \let\d@\addf@ature
+          \let\f@atureset\cstackempty
+        \fi
       \else\if\t@st\pl@sLtr\relax\else
           \message{Unrecognised control flag '\x@\meaning\t@st' \x@\the\x@\catcode\x@`\t@st  in fontfeature definition #1[#2], processing like '+' (valid: +/-/=)}%
         \fi
@@ -678,13 +686,13 @@
 
 \def\rmf@ature#1\E{%
   \x@\decodeff@ature #1==\E
-  \x@\let\csname \@ffname\endcsname\relax
+  \x@\let\csname \@ffname\endcsname\undefined
 }
 \def\addf@ature#1\E{%
   \x@\decodeff@ature #1==\E
   \trace{sa}{\@ffname\space defined as \@ffvalue}%
   \x@\edef\csname \@ffname\endcsname{\@ffvalue}%
-  \edef\f@atureset{\f@atureset,\@ffname}% Duplicate values don't matter, as we'll unset values as the list is generated.
+  \edef\f@atureset{\@ffname,\f@atureset}% Duplicate values don't matter, as we'll unset values as the list is generated.
 }
 
 \def\decodeff@ature#1#2=#3=#4\E{% [+foo] or [foo] adds '+foo' [-foo] removes '+foo',   [foo=bar] adds foo=bar
@@ -715,10 +723,10 @@
     \trace{sa}{Multiplying \csname \@ffname\endcsname by #2}%
     \x@\let\x@\tmp\csname\@ffname\endcsname
     \def\@tmpc#1=##1\E{\m@kenumber{##1}\dimen0=\@@result pt}%Extract value from parameter=value
-    \x@\@tmpc\tmp\E% 
-    \dimen1=#2\dimen0
+    \x@\@tmpc\tmp\E
+    \m@kenumber{#2}\x@\dimen1\x@=\@@result\dimen0
     \xdef\@@mfresult{\strip@pt{\dimen1}}%
-  }\edef\@ffvalue{#1=\@@mfresult}
+  }\edef\@ffvalue{#1=\@@mfresult}%
   \trace{sa}{result is \@@mfresult}%
 }
   

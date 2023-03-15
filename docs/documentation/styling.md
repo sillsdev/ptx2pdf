@@ -298,12 +298,10 @@ feature set. (Or set without referral to earlier settings: `=[features]`)
 ```
 \Marker nd
 \ztexFontFeatures +[smcp,extend=1.1] 
-
 ```
 Using the new style description, the final feature list is built up from features from the paragraph style or outer character style, with 
 additions and subtractions.  Multiple changes to the feature list can be specified on the same line. The different actions should be separated by a space, and features within the brackets by commas. E.g.:
 ```
-
 \Marker zitalic-sc-s
 \EndMarker zitalic-sc-e
 \StyleType Milestone
@@ -311,5 +309,25 @@ additions and subtractions.  Multiple changes to the feature list can be specifi
 ```
 Will add the small-caps and slant features and remove any embolden feature
 currently in force, but as no `=[...]` is given, no change will be made to `extend` or other features.
+
+### Special rules for extend
+Normally, if a feature such as `slant` is included in a paragraph style and
+then specified in the `+[features]` of a character style, then the character
+style's `slant` setting will take priority. One exception to this is `extend`,
+where it is assumed that the correct behaviour is to 
+maintain the visual relationship between characters outside and inside the
+character style, and thus the final result is the *multiplication* of the
+`extend` parameters. If previous `extend` has been removed (`-[extend] +[extend=1.2]` or
+`=[extend=1.2]`) then there is no pre-existing value to multiply with.
+
+If a pre-press paragraph balancing / fitting rule is in place (`\p^95`), then
+this applies (multiplies) all styles in the paragraph, so that it can be of use no matter
+what styles have been applied or where.
+If it is desired to **not** rescale the text for some reason, then the old method of 
+setting the `extend` value in the stylesheet to shrink/expand a custom paragraph
+style can be used. (e.g. `p_95` with has a stylesheet-defined `extend` feature). 
+The parameter give this way *can* be overridden by character style.
+
+
 
 

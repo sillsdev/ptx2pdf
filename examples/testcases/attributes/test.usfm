@@ -118,7 +118,24 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \zfalsetext*
 
 \c 4
+\cl Chapter 4
 \p
-\v 1 This verse is \zwide normal\zwide*
-\p^95
-\v 2 This verse is \zwide set narrow\zwide*
+\v 1 This verse has \zwide wide text\zwide* (cascade) and is set normally
+\p
+\v 2 This verse has \zfwide wide text\zfwide* (fixed) and is set normally
+\p^90
+\v 3 This verse has \zwide wide text\zwide* (cascade) and is set narrow from a p^90
+\p^90
+\v 4 This verse has \zfwide wide text\zfwide* (fixed)  and is set narrow from a p^90
+\p_90
+\v 5 This verse has \zwide wide text\zwide* (cascade) and is set narrow from a p_90
+\p_90
+\v 6 This verse has \zfwide wide text\zfwide* (fixed) and is set narrow from a p_90
+
+\p The so-called '\zfwide fixed\zfwide*' wide character style uses
+=[extend=1.7]  in the style sheet, and thus ignores any features (such as
+extend) inherited from the p_90 paragraph. Equally, -[extend] +[extend=1.7] can
+be used, to ignore previous settings of extend without altering other values.
+The paragraph adjusting rule (^90) always applies, otherwise it might become
+impossible to adjust some
+paragraphs.
