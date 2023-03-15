@@ -316,9 +316,10 @@ class RunJob:
                 ndiffcolor = self.printer.get("col_ndiffColor")
                 odiffcolor = self.printer.get("col_odiffColor")
                 onlydiffs = self.printer.get("c_onlyDiffs")
+                diffpages = int(self.printer.get("s_diffpages") or 0)
                 logger.debug(f"diffing from: {basename=} {pdfname=}")
                 if basename is None or len(basename):
-                    diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor)
+                    diffname = self.createDiff(pdfname, basename, color=odiffcolor, onlydiffs=onlydiffs, oldcolor=ndiffcolor, limit=diffpages)
                     # print(f"{diffname=}")
                     if diffname is not None and not self.noview and self.printer.isDisplay and os.path.exists(diffname):
                         if sys.platform == "win32":

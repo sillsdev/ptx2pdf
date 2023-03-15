@@ -72,7 +72,8 @@ parser.add_argument('-T','--testing',action='store_true',help="Run in testing, o
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
 parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
 parser.add_argument('-A','--action',help="Run view method instead of print")
-parser.add_argument('-F','--diff',help='Create difference PDF against PDF file'),
+parser.add_argument('-F','--difffile',help='Create difference PDF against PDF file'),
+parser.add_argument('--diffpages',type=int,default=0,help="Maximum number of pages to insert in diff file")
 parser.add_argument('-D','--define',action=DictAction,help="set UI component=value. Repeatable")
 parser.add_argument('--debug',action="store_true",help="Give debug output")
 parser.add_argument("-C","--capture",help=argparse.SUPPRESS) # help="Capture interaction events to file. Not to be used yet")
@@ -280,11 +281,13 @@ if args.print or args.action is not None:
         if args.define is not None:
             for k, v in args.define.items():
                 mainw.set(k, v)
-        if args.diff:
-            mainw.set("btn_selectDiffPDF", None if args.diff.lower() == 'last' else os.path.abspath(args.diff))
+        if args.difffile:
+            mainw.set("btn_selectDiffPDF", None if args.difffile.lower() == 'last' else os.path.abspath(args.difffile))
             mainw.set("c_onlyDiffs", True)
+            if args.diffpages > 0:
+                mainw.set("s_diffpages", str(args.diffpages))
             mainw.docreatediff = True
-            if args.diff.lower() == 'last':
+            if args.difffile.lower() == 'last':
                 mainw.set("s_keepVersions", "1")
         mainw.savePics()
         mainw.saveStyles()
