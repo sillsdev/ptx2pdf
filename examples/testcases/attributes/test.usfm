@@ -132,9 +132,12 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \p_90
 \v 6 This verse has \zfwide wide text\zfwide* (fixed) and is set narrow from a p_90
 
+\p The so-called '\zwide cascade\zwide*' wide character style uses +[extend=1.7], allowing it to inherit features set by the paragraph. For extend, this means that a scaling (multiplication) occurs.
 \p The so-called '\zfwide fixed\zfwide*' wide character style uses
-=[extend=1.7]  in the style sheet, and thus ignores any features (such as
-extend) inherited from the p_90 paragraph. Equally, -[extend] +[extend=1.7] can
+=[extend=1.7]  in the style sheet (processed similarly to :extend=1.7 output by
+the UI), which ignores any features (such as extend) that might have been
+inherited from the p_90 paragraph.
+Equally, -[extend] +[extend=1.7] can
 be used, to ignore previous settings of extend without altering other values.
 The paragraph adjusting rule (^90) always applies, otherwise it might become
 impossible to adjust some
