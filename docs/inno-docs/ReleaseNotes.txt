@@ -1,8 +1,20 @@
 PTXprint 2.3 Release Notes
-13 Mar 2023
+15 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
+
+Bug fixes and Improvements in 2.3.1 (15 Mar 2023)
+
+  * p^95 markup seems to override char-style stretch (#839)
+  
+  * Refresh Crowdin localizations (esp. French, Chinese)
+  
+  * Fixed issue relating to \figbleed (when running from command line)
+  
+  * Use correct dimension for moving covers issue
+  
+  * Added script for comparing diglot merge results
 
 Version 2.3 release summary: (changes since last major version 2.2)
 
