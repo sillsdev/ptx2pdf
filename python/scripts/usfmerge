@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, argparse
+import sys, os, logging,argparse
 try:
     from ptxprint.usfmerge import usfmerge2
 except ImportError:
@@ -49,6 +49,8 @@ for k,v in args.protect:
 scorearr={}
 if args.scores:
     scorearr=args.scores.split(",")
-
+if args.debug:
+      parms = {'level': 1, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(levelname)s:%(message)s |%(module)s(%(lineno)d)'}
+      logging.basicConfig(**parms)
 usfmerge2(args.infile, keyarr, args.outfile, stylesheets=stylesheets, stylesheetsa=sheetsa,stylesheetsb=sheetsb, scorearr=scorearr,
            fsecondary=args.fsecondary, mode=args.mode, synchronise=args.synchronise, debug=args.debug, protect=protect)
