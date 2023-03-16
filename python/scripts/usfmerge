@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import sys, os, argparse
+import sys, os, logging,argparse
 try:
     from ptxprint.usfmerge import usfmerge2
 except ImportError:
@@ -21,5 +21,9 @@ args = parser.parse_args()
 
 sheetsa = args.stylesheet + args.astylesheet
 sheetsb = args.stylesheet + args.bstylesheet
+if args.debug:
+      parms = {'level': 1, 'datefmt': '%d/%b/%Y %H:%M:%S', 'format': '%(levelname)s:%(message)s |%(module)s(%(lineno)d)'}
+      logging.basicConfig(**parms)
+
 usfmerge2(args.infilea, args.infileb, args.outfile, stylesheetsa=sheetsa, 
           stylesheetsb=sheetsb, fsecondary=args.fsecondary, mode=args.mode, debug=args.debug)

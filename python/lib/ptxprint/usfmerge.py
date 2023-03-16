@@ -244,6 +244,8 @@ class Collector:
         logger.debug("Chunks before reordering: {}".format(len(self.acc)))
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
         logger.debug("Chunks after reordering: {}".format(len(self.acc)))
+        for i in range(0, len(self.acc)):
+            logger.log(7, f"{i}, {self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-'}, {self.acc[i].type=}, {self.acc[i]=}")
 
 
 def appendpair(pairs, ind, chunks):
@@ -298,8 +300,7 @@ def alignChunks(primary, secondary):
     diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
-        if debugPrint:
-            print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+        logger.debug(f"{op}, {debstr(pkeys[ab:ae])}, {debstr(skeys[bb:be])}")
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -312,8 +313,7 @@ def alignChunks(primary, secondary):
             diffg = difflib.SequenceMatcher(a=pgk, b=sgk)
             for opg in diffg.get_opcodes():
                 (actiong, abg, aeg, bbg, beg) = opg
-                if debugPrint:
-                    print("--- ", opg, debstr(pgk[abg:aeg]), debstr(sgk[bbg:beg]))
+                logger.debug(f"--- {op}, {debstr(pgk[abg:aeg])}, {debstr(sgk[bbg:beg])}")
                 if actiong == "equal":
                     appendpairs(pairs, sum(pgg[abg:aeg], []), sum(sgg[bbg:beg], []))
                 elif action == "delete":
@@ -342,8 +342,7 @@ def alignSimple(primary, *others):
         diff = difflib.SequenceMatcher(None, pkeys, okeys)
         for op in diff.get_opcodes():
             (action, ab, ae, bb, be) = op
-            if debugPrint:
-                print(op, debstr(pkeys[ab:ae]), debstr(skeys[bb:be]))
+            logger.log(7,f"{op}, {debstr(pkeys[ab:ae])}, {debstr(okeys[bb:be])}")
             if action == "equal":
                 for i in range(ae-ab):
                     ri = runindices[ab+i]
