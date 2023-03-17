@@ -3,9 +3,28 @@ use strict;
 use File::Basename;
 use File::Spec;
 
+my @factorials=(1,1,2,6,24);
+sub fact {
+  my ($n)=@_;
+  if (!defined($factorials[$n])) {
+    my $m=$#factorials;
+    while ($m<=$n) {
+      ++$m;
+      $factorials[$m]=$m*$factorials[$m-1];
+      #print ("$m!=".$factorials[$m]."\n");
+    }
+  }
+  return($factorials[$n]);
+}
+#fact(10);
+
 my @modes=qw/doc simple/;
 if ($#ARGV<0) {
-  print STDERR "usage $0 [-m mode [-m mode]] dir\n dir specifies the output directory for merged files\n";
+  print STDERR "usage $0 [-m mode [-m mode]] dir\n dir specifies the output directory for merged files\n". 
+    "Produces multiple merge files using defined modes (".join(",",@modes).") and extras specified for diffing\n".
+    "Example use:\n".
+    "   $0 /tmp/merge-\`git describe\`\n".
+    "   $0 /tmp/merge-\`git branch --show-current\`\n";
   exit(1);
 }
 while ($ARGV[0]=~/-m(.*)/) {
@@ -47,7 +66,7 @@ foreach my $source (@source) {
 
 foreach my $k (grep {defined($counts[$_]) && $counts[$_]>1} (1..$#counts)) {
   my $n=$counts[$k]-1;
-  print($k.":".$n."\n");
+  print("Book $k:".($n+1)." sources ". fact($n) ." merge combination(s)\n");
   while($n>0) {
     my $m=$n-1;
     while ($m>=0) {
@@ -61,3 +80,5 @@ foreach my $k (grep {defined($counts[$_]) && $counts[$_]>1} (1..$#counts)) {
     --$n;
   }
 }
+
+

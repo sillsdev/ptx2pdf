@@ -136,7 +136,7 @@ class Chunk(list):
     def ident(self):
         if len(self) == 0:
             return ("", 0, 0,0) # , 0, 0)
-        return (_chunkClass_map[self.type], self.chap, self.verse, self.pnum) # , self.end, self.pnum)
+        return (_chunkClass_map[self.type], self.chap, self.verse)# , self.pnum) # , self.end, self.pnum)
 
     def __str__(self):
         #return "".join(repr(x) for x in self)
@@ -268,14 +268,14 @@ class Collector:
                     if self.waschap:
                         mode = ChunkType.CHAPTERHEAD
                 elif mode == ChunkType.BODY and ispara(c):
-                    logger.log(7, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
+                    logger.log(8, f'Bodypar: vt?{self.currChunk.verseText} hv?{self.currChunk.hasVerse}: {len(self.acc)}')
                     if len(c)==1 and isinstance(c[0],sfm.Text):
-                        logger.log(7, f'Bodypar(simple): {c.name} {c[0]} {type(c[0])}')
+                        logger.log(8, f'Bodypar(simple): {c.name} {c[0]} {type(c[0])}')
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                     elif (len(c)>1):
                         #Multi-component body paragraph
-                        logger.log(7, f'Bodypar: {c.name}, {type(c[0])}, {c[0]}, {type(c[1])}, {c[1]}')
+                        logger.log(8, f'Bodypar: {c.name}, {type(c[0])}, {c[0]}, {type(c[1])}, {c[1]}')
                         if (len(c[0])>2 and self.currChunk.verseText):
                             mode = ChunkType.MIDVERSEPAR
                         elif(isinstance(c[0],sfm.Element)):
@@ -287,7 +287,7 @@ class Collector:
                         elif(isinstance(c[1],sfm.Text)):
                             if self.currChunk.verseText:
                                 mode = ChunkType.MIDVERSEPAR
-                    logger.log(7, f"Conclusion: bodypar type is {mode}")
+                    logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             if not _validatedhpi:
@@ -310,7 +310,7 @@ class Collector:
         if depth==0:
             self.type=None
         else:
-            logger.debug("{" * depth)
+            logger.log(9-depth,"{" * depth)
         elements = root[:]
         if len(self.acc) == 0:
             if isinstance(root[0], sfm.Element) and root[0].name == "id":
@@ -358,7 +358,7 @@ class Collector:
                     newchunk = True
                 else:
                     self.currChunk.label(self.chap, self.verse, self.end, 0)
-                logger.log(7, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
+                logger.log(8, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if newchunk:
                 self.oldmode=self.mode
                 currChunk = self.makeChunk(c)
@@ -386,7 +386,7 @@ class Collector:
                 newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
                 currChunk[-1] = newc
             currChunk = self.collect(c, primary=primary,depth=1+depth) or currChunk
-        logger.debug("}" * depth)
+        logger.log(9-depth,"}" * depth)
         return currChunk
 
     def reorder(self):
@@ -569,11 +569,11 @@ class Collector:
 def appendpair(pairs, ind, chunks):
     if len(pairs) and pairs[-1][ind] is not None:
         lastp = pairs[-1][ind]
-        lastt = lastp.type
+        lastt = _chunkClass_map[lastp.type]
         end = None
         found = False
         for i, c in enumerate(chunks):
-            if c.type == lastt:
+            if _chunkClass_map[c.type] == lastt:
                 found = True
                 end = i
             elif found:
@@ -591,12 +591,16 @@ def appendpairs(pairs, pchunks, schunks):
     if len(pairs) and pairs[-1][0] is not None and pairs[-1][1] is not None:
         lastp = pairs[-1][0]
         lasts = pairs[-1][1]
-        lastt = lastp.type
-        if lasts.type == lastt:
-            while len(pchunks) and pchunks[0].type == lastt:
+        lastt = _chunkClass_map[lastp.type]
+        logger.debug(f"appendpair:{lastt}")
+        if _chunkClass_map[lasts.type] == lastt:
+            while len(pchunks) and _chunkClass_map[pchunks[0].type] == lastt:
                 lastp.extend(pchunks.pop(0))
-            while len(schunks) and schunks[0].type == lastt:
+                logger.log(7,"P")
+            while len(schunks) and _chunkClass_map[schunks[0].type] == lastt:
                 lasts.extend(schunks.pop(0))
+                logger.log(7,"S")
+    logger.debug(f"P: {len(pchunks)} S: {len(schunks)} p{len(pairs)}")
     if len(pchunks):
         pc = pchunks[0]
         for c in pchunks[1:]:
@@ -619,10 +623,13 @@ def alignChunks(primary, secondary):
         pchunks=pchunks.acc
     if isinstance(schunks, Collector):
         schunks=schunks.acc
+    logger.debug(f"alignChunks: {len(pchunks)}, {len(schunks)}")
+    logger.log(7, "Primary:" + ", ".join(pkeys));
+    logger.log(7, "Secondary:" + ", ".join(skeys));
     diff = difflib.SequenceMatcher(None, pkeys, skeys)
     for op in diff.get_opcodes():
         (action, ab, ae, bb, be) = op
-        logger.log(7, f"{op}, {debstr(pkeys[ab:ae])}, {debstr(skeys[bb:be])}")
+        logger.debug(f"{op}, {debstr(pkeys[ab:ae])}, {debstr(skeys[bb:be])}")
         if action == "equal":
             pairs.extend([[pchunks[ab+i], schunks[bb+i]] for i in range(ae-ab)])
         elif action == "delete":
@@ -630,12 +637,12 @@ def alignChunks(primary, secondary):
         elif action == "insert":
             appendpair(pairs, 1, schunks[bb:be])
         elif action == "replace":
-            pgk, pgg = zip(*[(k, list(g)) for k, g in groupby(pchunks[ab:ae], key=lambda c:c.type)])
-            sgk, sgg = zip(*[(k, list(g)) for k, g in groupby(schunks[bb:be], key=lambda c:c.type)])
+            pgk, pgg = zip(*[(k, list(g)) for k, g in groupby(pchunks[ab:ae], key=lambda c:_chunkClass_map[c.type])])
+            sgk, sgg = zip(*[(k, list(g)) for k, g in groupby(schunks[bb:be], key=lambda c:_chunkClass_map[c.type])])
             diffg = difflib.SequenceMatcher(a=pgk, b=sgk)
             for opg in diffg.get_opcodes():
                 (actiong, abg, aeg, bbg, beg) = opg
-                logger.log(7, f"--- {opg}, {debstr(pgk[abg:aeg])}, {debstr(sgk[bbg:beg])}")
+                logger.debug(f"--- {op}, {debstr(pgk[abg:aeg])}, {debstr(sgk[bbg:beg])}")
                 if actiong == "equal":
                     appendpairs(pairs, sum(pgg[abg:aeg], []), sum(sgg[bbg:beg], []))
                 elif action == "delete":
@@ -651,6 +658,8 @@ def alignChunks(primary, secondary):
                     sg = abg + beg - bbg
                     if sg < aeg:
                         appendpair(pairs, 0, sum(pgg[sg:aeg], []))
+
+    logger.debug(f"alignChunks: {len(pairs)}")
     return pairs
 
 def alignSimple(primary, *others):
