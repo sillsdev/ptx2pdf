@@ -58,7 +58,7 @@ ChunkType.NPARA:'BODY',
 ChunkType.NB:'BODY',
 ChunkType.NBCHAPTER:'CHAPTER',
 ChunkType.CHAPTERPAR:'BODY',
-ChunkType.CHAPTERHEAD:'HEADING',
+ChunkType.CHAPTERHEAD:'CHAPTER',
 ChunkType.PREVERSEHEAD:'HEADING',
 ChunkType.USERSYNC:'BODY'
 }
@@ -334,9 +334,11 @@ class Collector:
             newchunk = False
             if ispara(c):
                 newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                if c.name not in nestedparas and (newmode != self.mode \
-                                                  or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE)):
+                ok= (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
+                if c.name not in nestedparas and ((newmode != self.mode and not ok)\
+                                          or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE)):
                     newchunk = True
+                logger.log(7, f"Para:{c.name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if issync(c):
                 newchunk = True
             if isverse(c):
@@ -481,17 +483,24 @@ class Collector:
                 else:
                     c.type == ChunkType.INTRO
         # Swap chapter and heading first
-        if MergeF.SwapChapterHead in settings:
-          for i in range(1, len(self.acc)):
-            if  self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
+        for i in range(1, len(self.acc)):
+          #logger.debug(debstr(self.acc[i].type));
+          if  self.acc[i].type == ChunkType.CHAPTER and self.acc[i-1].type == ChunkType.HEADING:
+              if not MergeF.SwapChapterHead in settings:
+                self.acc[i-1].type=ChunkType.CHAPTERHEAD
                 self.acc[i].extend(self.acc[i-1])
                 self.acc[i-1].deleteme = True
                 logger.debug(f"Merged.7: {'deleteme' in self.acc[i]}, {self.acc[i]}")
-            elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.HEADING:
-                self.acc[i].type=ChunkType.CHAPTERHEAD
+          elif self.acc[i-1].type == ChunkType.CHAPTER and self.acc[i].type == ChunkType.CHAPTERHEAD:
+              if MergeF.SwapChapterHead in settings:
+                logger.debug("SwapChapterHead");
                 tmp=self.acc[i-1]
                 self.acc[i-1]=self.acc[i]
                 self.acc[i]=tmp
+                logger.debug(f"Merged.7b: {'deleteme' in self.acc[i]}, {self.acc[i]}")
+              else:
+                self.acc[i-1].extend(self.acc[i])
+                self.acc[i].deleteme = True
                 logger.debug(f"Swapped: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]=}, {self.acc[i]=}")
         # Merge all chunks between \c and not including \v.
         if 0:
@@ -886,8 +895,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         settings =  settings & (~MergeF.NoSplitNB)
     if (mode == "scores") or ("verse"  in syncarr):
         settings= settings | MergeF.ChunkOnVerses
-    if (mode != "scores"):
-        settings = settings | MergeF.SwapChapterHead
+    #if (mode != "scores"):
+        #settings = settings | MergeF.SwapChapterHead
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
@@ -922,15 +931,16 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         isright = True
         for i, p in enumerate(pairs):
             if p[0] is not None and len(p[0]):
+                #outf.write("\\rem " + str(p[0].ident) + str(p[0].type) + "\n")
                 outf.write("\\polyglotcolumn L\n")
                 outf.write(str(p[0]))
-                if p[0].type != ChunkType.HEADING and p[0].type != ChunkType.TITLE:
+                if not (p[0].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             if p[1] is not None and len(p[1]):
                 outf.write("\\polyglotcolumn R\n")
                 isright = True
                 outf.write(str(p[1]))
-                if p[1].type != ChunkType.HEADING and p[1].type != ChunkType.TITLE:
+                if not (p[1].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             outf.write("\\polyglotendcols\n")
 
