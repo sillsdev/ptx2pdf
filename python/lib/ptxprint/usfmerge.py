@@ -912,7 +912,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                     doc.pop(0)
                 else:
                     break
-            colls[colkey] = Collector(doc=doc, colkey=colkey, fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey],protect=protect)
+            colls[colkey] = Collector(doc=doc, colkey=colkey, primary=(colkey=='L'), fsecondary=fsecondary, stylesheet=sheets[colkey], scores=scorearr[colkey],synchronise=syncarr[colkey],protect=protect)
         chunks[colkey] = {c.ident: c for c in colls[colkey].acc}
         chunklocs[colkey] = ["_".join(str(x) for x in c.ident) for c in colls[colkey].acc]
 
