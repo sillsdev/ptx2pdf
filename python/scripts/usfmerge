@@ -18,7 +18,7 @@ parser.add_argument("-c","--colstylesheet",default=[],nargs=2,action="append",he
 parser.add_argument("-p","--protect",default=[],action="append",nargs=2,help="mkr score : decrease the score for breakpoints at  \\mkr  by score. Useful to give \\nb extra protection.")
 parser.add_argument("-s","--stylesheet",default=[],action="append",help="add another stylesheet for both files")
 parser.add_argument("-S","--scores",help="Uneven scoring. A break is forced when the score of break-points is 100 or more. e.g. -S \"70,30,15,15\" will force a break in the 3rd and 4th input files if the first two agree, or in the 2nd if all other files agree.")
-parser.add_argument("-m","--mode",default="scores",help="alignment algorithm: simple, *doc")
+parser.add_argument("-m","--mode",default="scores",help="alignment algorithm: simple, doc, *scores")
 parser.add_argument("-y","--synchronise",default="normal",help="synchronise on: chapter, verses, *normal. Single value OR comma-separated list, one per column.")
 parser.add_argument("--fsecondary",action="store_true",help="Use fig elements from secondary not primary source")
 parser.add_argument("--debug",action="store_true",help="Print out debug statements")

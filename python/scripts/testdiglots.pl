@@ -27,11 +27,19 @@ if ($#ARGV<0) {
     "   $0 /tmp/merge-\`git branch --show-current\`\n";
   exit(1);
 }
-while ($ARGV[0]=~/^-m(.*)/) {
-  shift;
-  push @modes, ($1||shift);
-  printf STDERR "Modes list now @modes\n";
-}
+my $debug=0;
+
+while (my ($flag,$rest)=($ARGV[0]=~/^-([md])(.*)/)) {
+    if ($flag eq "m") {
+        shift;
+        push @modes, ($rest||shift);
+        printf STDERR "Modes list now @modes\n";
+    } elsif ($flag eq "d") {
+        $debug=1;
+        shift;
+    }
+} 
+
 my $outdir=$ARGV[0] || die("No output directory supplied");
 if (! -d $outdir) {
   mkdir($outdir) || die($outdir.':'.$!);
@@ -68,14 +76,23 @@ foreach my $source (@source) {
 foreach my $k (grep {defined($counts[$_]) && $counts[$_]>1} (1..$#counts)) {
   my $n=$counts[$k]-1;
   print("Book $k:".($n+1)." sources ". fact($n) ." merge combination(s)\n");
+  if ($debug) {#open(NULL,File::Spec->devnull);
+        $|=1;
+      }
   while($n>0) {
     my $m=$n-1;
     while ($m>=0) {
       my $o=$entries[$k][$m][0]."+".$entries[$k][$n][0]."_".$k;
       print ("$m,$n:$o\n");
-      foreach my $mode (@modes){	
-	system(File::Spec->catfile($exedir,"usfmerge"),"-o",File::Spec->catfile($outdir,$o."-$mode.usfm"),"-m",$mode,$entries[$k][$m][1],$entries[$k][$n][1]);
-	die if ($?);
+      foreach my $mode (@modes){
+        if($debug) {
+          my $lfile=File::Spec->catfile($outdir,$o."-$mode.log");
+          system(join(" ",File::Spec->catfile($exedir,"usfmerge"),"--debug","-o",File::Spec->catfile($outdir,$o."-$mode.usfm"),"-m",$mode,$entries[$k][$m][1],$entries[$k][$n][1],"2> $lfile"));
+          die if ($?);
+        }else{
+          system(File::Spec->catfile($exedir,"usfmerge"),"-o",File::Spec->catfile($outdir,$o."-$mode.usfm"),"-m",$mode,$entries[$k][$m][1],$entries[$k][$n][1]);
+          die if ($?);
+        }
       }
       --$m;
     }

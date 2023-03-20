@@ -11,10 +11,11 @@ import logging
 class MergeF(Flag):
     ChunkOnVerses=1
     NoSplitNB=2
-    HeadWithText=4
+    HeadWithText=4  # Is a heading considered part of the text, or a separate chunk?
     SwapChapterHead=8
+    HeadWithChapter=16  # Is a heading considered part of the chapter, or is it (initially) a separate chunk?
 
-settings= MergeF.NoSplitNB
+settings= MergeF.NoSplitNB | MergeF.HeadWithChapter 
 logger = logging.getLogger(__name__)
 debugPrint = False
 class ChunkType(Enum):
@@ -35,7 +36,7 @@ class ChunkType(Enum):
     NB = 14             # A nobreak mark 
     NBCHAPTER = 15      # A chapter that is followed by an NB
     CHAPTERPAR = 16      # A PREVERSEPAR that is following a chapter - never a good sync point!
-    CHAPTERHEAD=17      #A Heading that is (was) following a chapter 
+    CHAPTERHEAD=17      #A Heading that is (was) following a chapter (and sometimes also the chapter number)
     PREVERSEHEAD=18      #A Heading that is just before  a verse 
     USERSYNC=19        #A preprocessing-inserted break point.
 
@@ -148,9 +149,9 @@ _validatedhpi=False
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
 SyncPoints = {
-    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1} # split at every verse
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1} # split at every verse
 }
 
 def ispara(c):
@@ -171,6 +172,7 @@ class Collector:
     def __init__(self, doc=None, primary=True, fsecondary=False, stylesheet=None, colkey=None, scores=None, synchronise=None, protect={}):
         self.acc = []
         self.loc = {} # Locations to turn position into offset into acc[] array 
+        self.lastloc = None # Locations to turn position into offset into acc[] array 
         self.colkey=colkey
         self.fsecondary = fsecondary
         self.stylesheet = stylesheet
@@ -481,7 +483,7 @@ class Collector:
                 elif c.type in (ChunkType.CHAPTER, ChunkType.BODY, ChunkType.PREVERSEPAR):
                     pass
                 else:
-                    c.type == ChunkType.INTRO
+                    c.type = ChunkType.INTRO
         # Swap chapter and heading first
         for i in range(1, len(self.acc)):
           #logger.debug(debstr(self.acc[i].type));
@@ -499,9 +501,10 @@ class Collector:
                 self.acc[i]=tmp
                 logger.debug(f"Merged.7b: {'deleteme' in self.acc[i]}, {self.acc[i]}")
               else:
-                self.acc[i-1].extend(self.acc[i])
-                self.acc[i].deleteme = True
-                logger.debug(f"Swapped: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]=}, {self.acc[i]=}")
+                if MergeF.HeadWithChapter in settings:
+                    self.acc[i-1].extend(self.acc[i])
+                    self.acc[i].deleteme = True
+                    logger.debug(f"SwapMerged.7c: {'deleteme' in self.acc[i-1]}, {self.acc[i-1]=}")
         # Merge all chunks between \c and not including \v.
         if 0:
             for i in range(1, len(self.acc)):
@@ -509,7 +512,7 @@ class Collector:
                     self.acc[i-1].extend(self.acc[i])
                     self.acc[i].deleteme = True
                     if debugPrint:
-                        print('Merged.8:', 'deleteme' in self.acc[i-1], self.acc[i-1])
+                        logger.debug(f"Merged.8: {deleteme in self.acc[i-1]}, {self.acc[i-1]}")
         # merge \c with body chunk following
         if 0:
             lastchunk = None
@@ -720,6 +723,7 @@ def alignScores(*columns):
         merged=ochunks.score(merged)
     positions=[k for k,v in merged.items()]
     positions.sort()
+    logger.debug("Potiential sync positions:" + " ".join(map(str,positions)))
     # Ensure headings get split from preceding text if there's a coming break
     oldconfl=None
     conflicts=[]
@@ -733,19 +737,22 @@ def alignScores(*columns):
                 merged[positions[i-a]]=100
                 if MergeF.HeadWithText in settings:
                     merged[positions[i+1]]=0
-                logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
+                    logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
         elif(positions[i][_headingidx]=='CHAPTERHEAD'):
             a=1
             while(positions[i+a][_headingidx]=='CHAPTERHEAD'):
                 a+=1
-            if (merged[positions[i+a]]>99):
-                if MergeF.HeadWithText in settings:
-                    merged[positions[i+a]]=0
+            if MergeF.HeadWithText in settings:
+                logger.debug(f"Not splitting head from text between positions {positions[i]} and {positions[i+a]}")
+                merged[positions[i+a]]=0
+            else:
+                logger.debug(f"Splitting head from text between positions {positions[i]} and {positions[i+a]}")
+                merged[positions[i+a]]=100
             
         confl=positions[i][0:(_headingidx)]
         if confl==oldconfl:
             conflicts.append(positions[i])
-            print(f'matching posn {confl}: {conflicts}')
+            logger.debug(f'matching posn {confl}: {conflicts}')
         else:
             if len(conflicts)>1:
                 tot=0
@@ -764,18 +771,18 @@ def alignScores(*columns):
                     for p in conflicts:
                         del(merged[p])
                     merged[confl]=tot
-                    print(f'Combined score at {confl} ({conflicts}) set to {tot}')
+                    logger.debug(f'Combined score at {confl} ({conflicts}) set to {tot}')
             conflicts=[positions[i]]
         oldconfl=confl
     del positions
     syncpositions=[k for k,v in merged.items() if v>=100]
     syncpositions.sort()
-    print(syncpositions, sep=" ")
+    logger.debug("Sync positions:" + " ".join(map(str,syncpositions)))
     results=[]
     colkeys={}
     for i in range(0,len(columns)):
         colkeys[columns[i][0].colkey]=i
-    print("colkeys:", colkeys)
+    logger.debug("colkeys:", colkeys)
     ofs={}
     blank={}
     lim={}
@@ -809,7 +816,7 @@ def alignScores(*columns):
                 ofs[c]+=1
             #print()
             if (chunks[c]):
-                print(*chunks[c], sep="")
+                logger.log(7,"".join(map(str,chunks[c])))
         results.append({c:chunks[c] for c in colkeys})
     return results
 
@@ -900,8 +907,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         settings =  settings & (~MergeF.NoSplitNB)
     if (mode == "scores") or ("verse"  in syncarr):
         settings= settings | MergeF.ChunkOnVerses
-    #if (mode != "scores"):
-        #settings = settings | MergeF.SwapChapterHead
+    if (mode == "scores"):
+        settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
