@@ -827,6 +827,11 @@ modes = {
 
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal",protect={}):
     global debugPrint, debstr,settings
+    if debug:
+      debugPrint=True
+      logger.debug("Writing debug files")
+    else:
+      logger.debug("Not Writing debug files")
     # print(f"{stylesheetsa=}, {stylesheetsb=}, {fsecondary=}, {mode=}, {debug=}")
     tag_escapes = r"[^a-zA-Z0-9]"
     # Check input
@@ -914,6 +919,14 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     f = modes[mode]
     pairs = f(*((colls[k], chunklocs[k]) for k in keyarr))
 
+    debugf={}
+    if debugPrint:
+      logger.debug("opening debug files")
+      for col in keyarr:
+        if outfile is None:
+          debugf[col]=open("mergerewrite-"+col,"w",encoding="utf-8")
+        else:
+          debugf[col]=open(outfile+"-"+col,"w",encoding="utf-8")
     if outfile is not None:
         outf = open(outfile, "w", encoding="utf-8")
     else:
@@ -926,6 +939,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                     outf.write("\\polyglotcolumn %c\n" % col)
                     for d in data:
                         outf.write(str(d))
+                        if debugPrint:
+                          debugf[col].write(str(d))
             outf.write("\n\\polyglotendcols\n")
     else:
         isright = True
@@ -934,12 +949,16 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 #outf.write("\\rem " + str(p[0].ident) + str(p[0].type) + "\n")
                 outf.write("\\polyglotcolumn L\n")
                 outf.write(str(p[0]))
+                if debugPrint:
+                  debugf['L'].write(str(p[0]))
                 if not (p[0].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             if p[1] is not None and len(p[1]):
                 outf.write("\\polyglotcolumn R\n")
                 isright = True
                 outf.write(str(p[1]))
+                if debugPrint:
+                  debugf['R'].write(str(p[1]))
                 if not (p[1].type in  (ChunkType.PREVERSEHEAD, ChunkType.HEADING, ChunkType.TITLE, ChunkType.CHAPTERHEAD)):
                     outf.write("\\p\n")
             outf.write("\\polyglotendcols\n")
