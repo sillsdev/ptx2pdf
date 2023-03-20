@@ -3,7 +3,7 @@ import os
 from PIL import Image, ImageChops, ImageEnhance, ImageOps
 from ptxprint.utils import _
 
-def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, maxdiff=False, oldcolor=None):
+def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True, maxdiff=False, oldcolor=None, limit=0, **kw):
     if color is None:
         color = (240, 0, 0)
     if oldcolor is None:
@@ -41,6 +41,8 @@ def createDiff(pdfname, othername, outname, doError, color=None, onlydiffs=True,
         nimg = enhanceb.enhance(1.5)
         nimg.paste(overlay, (0, 0), dmask)
         results.append(nimg)
+        if limit > 0 and len(results) >= limit:
+            break
     if hasdiffs and len(results):
         results[0].save(outname, format="PDF", save_all=True, append_images=results[1:])
         return outname

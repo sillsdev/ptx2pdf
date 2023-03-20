@@ -4,8 +4,10 @@
 \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
 \zendperiph
 \ip Introductory paragraph. 
-\ip The \nd Lord\nd* is \em King\em*
-\ip \nd The Lord\nd* is king
+\ip The \ul \+nd Lord\+nd*\ul* God is \em king\em*
+\ip \ul The \+nd Lord\+nd*\ul* God is \em king\em*
+\ip The \ul \+nd Lord\+nd* God\ul* is \em king\em*
+
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
@@ -114,3 +116,29 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \zISBNbarcode|isbn="zvar::isbn"\*
 \esbe
 \zfalsetext*
+
+\c 4
+\cl Chapter 4
+\p
+\v 1 This verse has \zwide wide text\zwide* (cascade) and is set normally
+\p
+\v 2 This verse has \zfwide wide text\zfwide* (fixed) and is set normally
+\p^90
+\v 3 This verse has \zwide wide text\zwide* (cascade) and is set narrow from a p^90
+\p^90
+\v 4 This verse has \zfwide wide text\zfwide* (fixed)  and is set narrow from a p^90
+\p_90
+\v 5 This verse has \zwide wide text\zwide* (cascade) and is set narrow from a p_90
+\p_90
+\v 6 This verse has \zfwide wide text\zfwide* (fixed) and is set narrow from a p_90
+
+\p The so-called '\zwide cascade\zwide*' wide character style uses +[extend=1.7], allowing it to inherit features set by the paragraph. For extend, this means that a scaling (multiplication) occurs.
+\p The so-called '\zfwide fixed\zfwide*' wide character style uses
+=[extend=1.7]  in the style sheet (processed similarly to :extend=1.7 output by
+the UI), which ignores any features (such as extend) that might have been
+inherited from the p_90 paragraph.
+Equally, -[extend] +[extend=1.7] can
+be used, to ignore previous settings of extend without altering other values.
+The paragraph adjusting rule (^90) always applies, otherwise it might become
+impossible to adjust some
+paragraphs.

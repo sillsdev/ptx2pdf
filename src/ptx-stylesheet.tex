@@ -565,10 +565,6 @@
   \trace{sa}{getthep@ram-fontfeatures}%
   \let\d@gettheparam=\d@
   \let\r@s\empty
-  \ifx\f@ntextend\empty\else
-    \trace{sa}{Fontextend set! =\f@ntextend}%
-    \xdef\r@s{[extend=\f@ntextend]\space }%
-  \fi
   \def\d@##1\E{\edef\tmpstylen@me{##1}\getp@r@m{regular}{\tmpstylen@me}%
     \ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}%
       \ifx\p@ram\relax\else
@@ -587,6 +583,10 @@
     \else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax
     \fi}%
     \x@\cstackdown\p@ssParams,\E
+  \ifx\f@ntextend\empty\else
+    \trace{sa}{Fontextend set! =\f@ntextend}%
+    \xdef\r@s{\r@s\space+[extend=\f@ntextend]\space}%%Processed left to right, so top level (overrides) go *LAST*
+  \fi
   \ifx\r@s\empty
     \let\p@ram\relax
   \else
@@ -595,6 +595,7 @@
     \let\f@aturen@xt\n@xt
     \trace{sa}{Merging options}%
     \x@\fe@turemaths\r@s[] \E
+    \trace{sa}{Final feature list:\f@atureset}%
     % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
     \let\r@s\empty % MUST start with empy list!
     \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\else:\fi\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
@@ -657,10 +658,18 @@
       \let\d@\rmf@ature
       \trace{sa}{Removing font features #2}%
     \else
-      \let\d@\addf@ature\relax
+      \let\d@\addf@ature
       \if\t@st\equ@ls
         \trace{sa}{Exact font features #2}%
-        \let\f@atureset\cstackempty
+        \ifx\f@atureset\cstackempty\else
+          \trace{sa}{Deleting prior features \f@atureset}%
+          \tracingassigns=1
+          \def\d@##1\E{\x@\let\csname ##1\endcsname\undefined}%
+          \x@\cstackdown \f@atureset,\E
+          \tracingassigns=0
+          \let\d@\addf@ature
+          \let\f@atureset\cstackempty
+        \fi
       \else\if\t@st\pl@sLtr\relax\else
           \message{Unrecognised control flag '\x@\meaning\t@st' \x@\the\x@\catcode\x@`\t@st  in fontfeature definition #1[#2], processing like '+' (valid: +/-/=)}%
         \fi
@@ -677,12 +686,13 @@
 
 \def\rmf@ature#1\E{%
   \x@\decodeff@ature #1==\E
-  \x@\let\csname \@ffname\endcsname\relax
+  \x@\let\csname \@ffname\endcsname\undefined
 }
 \def\addf@ature#1\E{%
   \x@\decodeff@ature #1==\E
+  \trace{sa}{\@ffname\space defined as \@ffvalue}%
   \x@\edef\csname \@ffname\endcsname{\@ffvalue}%
-  \edef\f@atureset{\f@atureset,\@ffname}% Duplicate values don't matter, as we'll unset values as the list is generated.
+  \edef\f@atureset{\@ffname,\f@atureset}% Duplicate values don't matter, as we'll unset values as the list is generated.
 }
 
 \def\decodeff@ature#1#2=#3=#4\E{% [+foo] or [foo] adds '+foo' [-foo] removes '+foo',   [foo=bar] adds foo=bar
@@ -695,9 +705,32 @@
       \fi
     \fi
   \else
-    \edef\@ffname{@@ffname-#1#2}\edef\@ffvalue{#1#2=#3}\E
+    \edef\@ffname{@@ffname-#1#2}%
+    \ifcsname @@fmtype-#1#2\endcsname
+      \ifcsname\@ffname\endcsname
+        \csname @@fmtype-#1#2\endcsname{#1#2}{#3}%
+      \else
+        \edef\@ffvalue{#1#2=#3}%
+      \fi
+    \else
+      \edef\@ffvalue{#1#2=#3}%
+    \fi
   \fi
 }
+
+\def\@multiply@feature#1#2{%
+  {%
+    \trace{sa}{Multiplying \csname \@ffname\endcsname by #2}%
+    \x@\let\x@\tmp\csname\@ffname\endcsname
+    \def\@tmpc#1=##1\E{\m@kenumber{##1}\dimen0=\@@result pt}%Extract value from parameter=value
+    \x@\@tmpc\tmp\E
+    \m@kenumber{#2}\x@\dimen1\x@=\@@result\dimen0
+    \xdef\@@mfresult{\strip@pt{\dimen1}}%
+  }\edef\@ffvalue{#1=\@@mfresult}%
+  \trace{sa}{result is \@@mfresult}%
+}
+  
+\x@\let\csname  @@fmtype-extend\endcsname\@multiply@feature
 
 %Which parameters need to obey the \Regular reset?
 \x@\let\csname getthep@ram-raise\endcsname\getthep@ramObeyRegularTop

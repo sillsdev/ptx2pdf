@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-10 18:00+0700\n"
-"PO-Revision-Date: 2023-03-10 11:00\n"
+"POT-Creation-Date: 2023-03-14 05:50-0400\n"
+"PO-Revision-Date: 2023-03-14 09:50\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -306,8 +306,8 @@ msgstr "¡No se puede eliminar la carpeta del disco!"
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "La carpeta de salida no estándar debe ser eliminada manualmente"
 
-#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3460
-#: lib/ptxprint/gtkview.py:3476 lib/ptxprint/runjob.py:314 temp.glade:32015
+#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3461
+#: lib/ptxprint/gtkview.py:3477 lib/ptxprint/runjob.py:314 temp.glade:32015
 msgid "Previous PDF (_1)"
 msgstr "PDF anterior (_1)"
 
@@ -487,136 +487,136 @@ msgstr "Seleccione la ubicación y el nombre para el archivo"
 msgid "Select the folder containing image files"
 msgstr "Seleccione la carpeta que contiene los archivos de imagen"
 
-#: lib/ptxprint/gtkview.py:3402
+#: lib/ptxprint/gtkview.py:3403
 msgid "Select a PDF to import the settings from"
 msgstr "Seleccione el PDF del que importar la configuración"
 
-#: lib/ptxprint/gtkview.py:3409
+#: lib/ptxprint/gtkview.py:3410
 msgid "Overwite current Configuration?"
 msgstr "¿Sobreescribir configuración actual?"
 
-#: lib/ptxprint/gtkview.py:3410
+#: lib/ptxprint/gtkview.py:3411
 msgid "WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\n"
 "Do you wish to continue?"
 msgstr "ATENCIÓN: La importación de la configuración del PDF seleccionado sobrescribirá la configuración actual.\n\n"
 "¿Desea continuar?"
 
-#: lib/ptxprint/gtkview.py:3413
+#: lib/ptxprint/gtkview.py:3414
 msgid "PDF Config Import Error"
 msgstr "Error de importación de configuración de PDF"
 
-#: lib/ptxprint/gtkview.py:3414
+#: lib/ptxprint/gtkview.py:3415
 msgid "Sorry - Can't find any settings to import from the selected PDF.\n\n"
 msgstr "Lo sentimos - No se encontró ninguna configuración para importar del PDF seleccionado.\n\n"
 
-#: lib/ptxprint/gtkview.py:3415
+#: lib/ptxprint/gtkview.py:3416
 msgid "Only PDFs created with PTXprint version 2.3 or later contain settings\n"
 msgstr "Sólo los PDF creados con la versión 2.3 o posterior de PTXprint contienen ajustes\n"
 
-#: lib/ptxprint/gtkview.py:3416
+#: lib/ptxprint/gtkview.py:3417
 msgid "if created with 'Include Config Settings Within PDF' option enabled."
 msgstr "si se crea con la opción \"Incluir ajustes de configuración en el PDF\" activada."
 
-#: lib/ptxprint/gtkview.py:3421
+#: lib/ptxprint/gtkview.py:3422
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Seleccione uno o más PDF(s) para las páginas iniciales"
 
-#: lib/ptxprint/gtkview.py:3426
+#: lib/ptxprint/gtkview.py:3427
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Seleccione uno o más PDF(s) para las páginas finales"
 
-#: lib/ptxprint/gtkview.py:3431
+#: lib/ptxprint/gtkview.py:3432
 msgid "Select Watermark PDF file"
 msgstr "Seleccione el archivo PDF para la marca de agua"
 
-#: lib/ptxprint/gtkview.py:3436
+#: lib/ptxprint/gtkview.py:3437
 msgid "Select Page Border PDF file"
 msgstr "Seleccione el PDF para el Borde de Página"
 
-#: lib/ptxprint/gtkview.py:3441
+#: lib/ptxprint/gtkview.py:3442
 msgid "Select Section Header PDF file"
 msgstr "Seleccione el PDF para el Encabezado de Sección"
 
-#: lib/ptxprint/gtkview.py:3446
+#: lib/ptxprint/gtkview.py:3447
 msgid "Select End of Book PDF file"
 msgstr "Seleccione el PDF para el Fin de Libro"
 
-#: lib/ptxprint/gtkview.py:3451
+#: lib/ptxprint/gtkview.py:3452
 msgid "Select Verse Decorator PDF file"
 msgstr "Seleccione el PDF para el Decorador de Versículo"
 
-#: lib/ptxprint/gtkview.py:3456
+#: lib/ptxprint/gtkview.py:3457
 msgid "Select a PDF file to compare with"
 msgstr "Seleccione un archivo PDF con el que comparar"
 
-#: lib/ptxprint/gtkview.py:3577
+#: lib/ptxprint/gtkview.py:3578
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Cambiar a otro\n"
 "Proyecto bilingüe"
 
-#: lib/ptxprint/gtkview.py:3579 temp.glade:33634
+#: lib/ptxprint/gtkview.py:3580 temp.glade:33634
 msgid "Print (Make PDF)"
 msgstr "Imprimir (Hacer PDF)"
 
-#: lib/ptxprint/gtkview.py:3585
+#: lib/ptxprint/gtkview.py:3586
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Guardar y volver \n"
 "al proyecto bilingüe"
 
-#: lib/ptxprint/gtkview.py:3587
+#: lib/ptxprint/gtkview.py:3588
 msgid "Return to Primary"
 msgstr "Regreso a las primarias"
 
-#: lib/ptxprint/gtkview.py:3645
+#: lib/ptxprint/gtkview.py:3646
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Para tu información: La Fuente Regular ya soporta todos los caracteres del texto."
 
-#: lib/ptxprint/gtkview.py:3646
+#: lib/ptxprint/gtkview.py:3647
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "No se requiere una fuente alternativa, así que...\n"
 "la opción 'Usar fuente alternativa' estará desactivada."
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "USFM syntax error"
 msgstr "Error de sintaxis de USFM"
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "Syntax error: {}"
 msgstr "Error de sintaxis: {}"
 
-#: lib/ptxprint/gtkview.py:3940 lib/ptxprint/gtkview.py:4684
-#: lib/ptxprint/gtkview.py:4699
+#: lib/ptxprint/gtkview.py:3941 lib/ptxprint/gtkview.py:4696
+#: lib/ptxprint/gtkview.py:4711
 msgid "Choose Image"
 msgstr "Elegir imagen"
 
-#: lib/ptxprint/gtkview.py:4095
+#: lib/ptxprint/gtkview.py:4096
 msgid "Unsupported Locale"
 msgstr "Localidad no admitida"
 
-#: lib/ptxprint/gtkview.py:4096
+#: lib/ptxprint/gtkview.py:4097
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Esta configuración regional no es compatible con su sistema, es posible que tenga que instalarla"
 
-#: lib/ptxprint/gtkview.py:4273
+#: lib/ptxprint/gtkview.py:4274
 msgid "Strong's Index generated in: {}"
 msgstr "Índice de números de Strong generado en: {}"
 
-#: lib/ptxprint/gtkview.py:4421 lib/ptxprint/gtkview.py:4926
+#: lib/ptxprint/gtkview.py:4433 lib/ptxprint/gtkview.py:4938
 msgid "Please fill in any missing <Values> on"
 msgstr "Por favor, rellene cualquier <Values> que falte en"
 
-#: lib/ptxprint/gtkview.py:4422 lib/ptxprint/gtkview.py:4927
+#: lib/ptxprint/gtkview.py:4434 lib/ptxprint/gtkview.py:4939
 msgid "the Peripherals tab before proceeding."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4423
+#: lib/ptxprint/gtkview.py:4435
 msgid "Update the ISBN number or deleted the entry."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4441
+#: lib/ptxprint/gtkview.py:4453
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -624,67 +624,67 @@ msgstr "Información: Esta opción de Interlinear no es compatible con la opció
 "'Ajustes de espaciado entre letras' en la página de Guiones de Fuentes.\n"
 "Así que esa opción acaba de ser desactivada."
 
-#: lib/ptxprint/gtkview.py:4473
+#: lib/ptxprint/gtkview.py:4485
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Una nueva versión de PTXprint ({}) está disponible.\n"
 "Haga clic para visitar la página de descarga en el sitio web."
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "Internet Access Disabled"
 msgstr "Acceso a Internet desactivado"
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Se han desactivado todas las URL de Internet \n"
 "mediante la opción de la pestaña Avanzado"
 
-#: lib/ptxprint/gtkview.py:4530
+#: lib/ptxprint/gtkview.py:4542
 msgid "<Type Value Here>"
 msgstr "<Escriba el valor aquí>"
 
-#: lib/ptxprint/gtkview.py:4547
+#: lib/ptxprint/gtkview.py:4559
 msgid "Variable Name"
 msgstr "Nombre Variable"
 
-#: lib/ptxprint/gtkview.py:4613
+#: lib/ptxprint/gtkview.py:4625
 msgid "Category Name"
 msgstr "Nombre de la categoría"
 
-#: lib/ptxprint/gtkview.py:4714
+#: lib/ptxprint/gtkview.py:4726
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Advertencia: No se pudo eliminar por completo\n"
 "algunas carpetas temporales:"
 
-#: lib/ptxprint/gtkview.py:4814
+#: lib/ptxprint/gtkview.py:4826
 msgid "What did Mary say that God had done?"
 msgstr "¿Qué dijo María que había hecho Dios?"
 
-#: lib/ptxprint/gtkview.py:4817
+#: lib/ptxprint/gtkview.py:4829
 msgid "What does it means to bless someone?"
 msgstr "¿Qué significa bendecir a alguien?"
 
-#: lib/ptxprint/gtkview.py:4818
+#: lib/ptxprint/gtkview.py:4830
 msgid "What do you know about the high priest?"
 msgstr "¿Qué sabes del sumo sacerdote?"
 
-#: lib/ptxprint/gtkview.py:4855 temp.glade:31389
+#: lib/ptxprint/gtkview.py:4867 temp.glade:31389
 msgid "Spine Title"
 msgstr "Título del lomo"
 
-#: lib/ptxprint/gtkview.py:4857
+#: lib/ptxprint/gtkview.py:4869
 msgid "Spine\n"
 "Title"
 msgstr "Título \n"
 "del lomo"
 
-#: lib/ptxprint/gtkview.py:4911
+#: lib/ptxprint/gtkview.py:4923
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr "Esta función está limitada a las solicitudes de permiso para las ilustraciones de David C Cook. "
 
-#: lib/ptxprint/gtkview.py:4912
+#: lib/ptxprint/gtkview.py:4924
 msgid "No DCC illustrations were detected. Hit Print first and then try again."
 msgstr "No se han detectado ilustraciones DCC. Pulse Imprimir primero y vuelva a intentarlo."
 

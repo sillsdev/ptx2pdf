@@ -114,6 +114,7 @@ def pdf(request, projectsdir, project, config, starttime, logging):
         pass
     ptxcmd.insert(-1, '-F')
     ptxcmd.insert(-1, stdpath)
+    ptxcmd.insert(-1, '--diffpages=50')
     res = call(ptxcmd)
     assert res != 1
     request.cls.pdf = PdfInfo(projectsdir, project, config, stddir, pdfpath, stdpath, diffpath, res)

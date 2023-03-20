@@ -260,6 +260,7 @@ _map = {
     "document/odiffcolor":      ("col_odiffColor", "finish", None),
     "document/diffpdf":         ("btn_selectDiffPDF", "finish", lambda w,v: w.diffPDF.as_posix() \
                                  if (w.diffPDF is not None and w.diffPDF != 'None') else ""),
+    "document/diffpages":       ("s_diffpages", "finish", None),
     "document/printarchive":    ("c_printArchive", "finish", None),
 
     "cover/makecoverpage":      ("c_makeCoverPage", "cover", lambda w,v: "" if v else "%"),

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-10 18:00+0700\n"
-"PO-Revision-Date: 2023-03-10 11:00\n"
+"POT-Creation-Date: 2023-03-14 05:50-0400\n"
+"PO-Revision-Date: 2023-03-14 09:50\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -306,8 +306,8 @@ msgstr "Tidak dapat menghapus folder dari komputer!"
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Folder keluaran non-standar perlu dihapus secara manual"
 
-#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3460
-#: lib/ptxprint/gtkview.py:3476 lib/ptxprint/runjob.py:314 temp.glade:32015
+#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3461
+#: lib/ptxprint/gtkview.py:3477 lib/ptxprint/runjob.py:314 temp.glade:32015
 msgid "Previous PDF (_1)"
 msgstr "PDF sebelumnya (_1)"
 
@@ -407,7 +407,7 @@ msgstr "\n\n"
 
 #: lib/ptxprint/gtkview.py:2085
 msgid "%%% Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr "%%% Klik tombol Hasilkan (di atas) untuk memulai proses pembuatan Bagian Depan Buku..."
 
 #: lib/ptxprint/gtkview.py:2124 lib/ptxprint/gtkview.py:2130
 msgid "View Only..."
@@ -487,136 +487,136 @@ msgstr "Pilih tempat dan nama untuk file Arsip"
 msgid "Select the folder containing image files"
 msgstr "Pilih lokasi map file gambar-gambar"
 
-#: lib/ptxprint/gtkview.py:3402
+#: lib/ptxprint/gtkview.py:3403
 msgid "Select a PDF to import the settings from"
 msgstr "Pilih PDF untuk mengimpor pengaturan dari"
 
-#: lib/ptxprint/gtkview.py:3409
+#: lib/ptxprint/gtkview.py:3410
 msgid "Overwite current Configuration?"
 msgstr "Konfigurasi arus berlebih?"
 
-#: lib/ptxprint/gtkview.py:3410
+#: lib/ptxprint/gtkview.py:3411
 msgid "WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\n"
 "Do you wish to continue?"
 msgstr "PERINGATAN: Mengimpor pengaturan dari PDF yang dipilih akan menimpa konfigurasi saat ini.\n\n"
 "Apakah Anda ingin melanjutkan?"
 
-#: lib/ptxprint/gtkview.py:3413
+#: lib/ptxprint/gtkview.py:3414
 msgid "PDF Config Import Error"
 msgstr "Kesalahan Impor Konfigurasi PDF"
 
-#: lib/ptxprint/gtkview.py:3414
+#: lib/ptxprint/gtkview.py:3415
 msgid "Sorry - Can't find any settings to import from the selected PDF.\n\n"
 msgstr "Maaf - Tidak dapat menemukan pengaturan untuk mengimpor dari PDF yang dipilih.\n\n"
 
-#: lib/ptxprint/gtkview.py:3415
+#: lib/ptxprint/gtkview.py:3416
 msgid "Only PDFs created with PTXprint version 2.3 or later contain settings\n"
 msgstr "Hanya PDF yang dibuat dengan PTXprint versi 2.3 atau yang lebih baru yang berisi pengaturan\n"
 
-#: lib/ptxprint/gtkview.py:3416
+#: lib/ptxprint/gtkview.py:3417
 msgid "if created with 'Include Config Settings Within PDF' option enabled."
 msgstr "jika dibuat dengan opsi 'Sertakan Pengaturan Konfigurasi Dalam PDF' diaktifkan."
 
-#: lib/ptxprint/gtkview.py:3421
+#: lib/ptxprint/gtkview.py:3422
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian DEPAN"
 
-#: lib/ptxprint/gtkview.py:3426
+#: lib/ptxprint/gtkview.py:3427
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Pilih salah satu lebih file PDF untuk bagian BELAKAN"
 
-#: lib/ptxprint/gtkview.py:3431
+#: lib/ptxprint/gtkview.py:3432
 msgid "Select Watermark PDF file"
 msgstr "Pilih file PDF sebagai gambar latar belakang"
 
-#: lib/ptxprint/gtkview.py:3436
+#: lib/ptxprint/gtkview.py:3437
 msgid "Select Page Border PDF file"
 msgstr "Pilih file PDF sebagai gambar Bingkai Halaman"
 
-#: lib/ptxprint/gtkview.py:3441
+#: lib/ptxprint/gtkview.py:3442
 msgid "Select Section Header PDF file"
 msgstr "Pilih file PDF sebagai gambar Judul Bagian"
 
-#: lib/ptxprint/gtkview.py:3446
+#: lib/ptxprint/gtkview.py:3447
 msgid "Select End of Book PDF file"
 msgstr "Pilih file PDF sebagai gambar Ujung Kitab"
 
-#: lib/ptxprint/gtkview.py:3451
+#: lib/ptxprint/gtkview.py:3452
 msgid "Select Verse Decorator PDF file"
 msgstr "Pilih file PDF sebagai gambar Hiasan Nomor Ayat"
 
-#: lib/ptxprint/gtkview.py:3456
+#: lib/ptxprint/gtkview.py:3457
 msgid "Select a PDF file to compare with"
 msgstr "Pilih file PDF untuk dibandingkan"
 
-#: lib/ptxprint/gtkview.py:3577
+#: lib/ptxprint/gtkview.py:3578
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Beralih ke Proyek Dua Bahasa\n"
 "yang Lain"
 
-#: lib/ptxprint/gtkview.py:3579 temp.glade:33634
+#: lib/ptxprint/gtkview.py:3580 temp.glade:33634
 msgid "Print (Make PDF)"
 msgstr "Print (Buat PDF)"
 
-#: lib/ptxprint/gtkview.py:3585
+#: lib/ptxprint/gtkview.py:3586
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Simpan dan Kembali ke\n"
 "Proyek Dua Bahasa"
 
-#: lib/ptxprint/gtkview.py:3587
+#: lib/ptxprint/gtkview.py:3588
 msgid "Return to Primary"
 msgstr "Kembali ke yang utama"
 
-#: lib/ptxprint/gtkview.py:3645
+#: lib/ptxprint/gtkview.py:3646
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "Fon Dasar digunakan dalam proyek ini bisa cetak semua huruf dan tanda baca dalam teksnya."
 
-#: lib/ptxprint/gtkview.py:3646
+#: lib/ptxprint/gtkview.py:3647
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Fon pengganti tidak wajib jadi pilihan\n"
 "'Pakai Fon Pengganti' akan dinonaktifkan."
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "USFM syntax error"
 msgstr "Kesalahan sintaksis USFM"
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "Syntax error: {}"
 msgstr "Kesalahan sintaksis: {}"
 
-#: lib/ptxprint/gtkview.py:3940 lib/ptxprint/gtkview.py:4684
-#: lib/ptxprint/gtkview.py:4699
+#: lib/ptxprint/gtkview.py:3941 lib/ptxprint/gtkview.py:4696
+#: lib/ptxprint/gtkview.py:4711
 msgid "Choose Image"
 msgstr "Pilih Gambar"
 
-#: lib/ptxprint/gtkview.py:4095
+#: lib/ptxprint/gtkview.py:4096
 msgid "Unsupported Locale"
 msgstr "Tempat Tidak Didukung"
 
-#: lib/ptxprint/gtkview.py:4096
+#: lib/ptxprint/gtkview.py:4097
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Tempat ini tidak didukung di komputer Anda, mungkin Anda perlu memasangnya"
 
-#: lib/ptxprint/gtkview.py:4273
+#: lib/ptxprint/gtkview.py:4274
 msgid "Strong's Index generated in: {}"
 msgstr "Indeks Kamus Strong dihasilkan di: {}"
 
-#: lib/ptxprint/gtkview.py:4421 lib/ptxprint/gtkview.py:4926
+#: lib/ptxprint/gtkview.py:4433 lib/ptxprint/gtkview.py:4938
 msgid "Please fill in any missing <Values> on"
 msgstr "Silakan isi <Values> yang belum terisi pada"
 
-#: lib/ptxprint/gtkview.py:4422 lib/ptxprint/gtkview.py:4927
+#: lib/ptxprint/gtkview.py:4434 lib/ptxprint/gtkview.py:4939
 msgid "the Peripherals tab before proceeding."
-msgstr ""
+msgstr "tab Sampingan sebelum melanjutkan."
 
-#: lib/ptxprint/gtkview.py:4423
+#: lib/ptxprint/gtkview.py:4435
 msgid "Update the ISBN number or deleted the entry."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4441
+#: lib/ptxprint/gtkview.py:4453
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -624,67 +624,67 @@ msgstr "Pilihan Interlinear ini tidak cocok dengan pilihan\n"
 "'Penyesuaian Spasi Antar Huruf' pada halaman Fon+Tulisan.\n"
 "Jadi pilihan itu telah dinonaktifkan."
 
-#: lib/ptxprint/gtkview.py:4473
+#: lib/ptxprint/gtkview.py:4485
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Versi PTXprint yang lebih baru ({}) tersedia. Klik untuk \n"
 "mengunjungi halaman unduhan di situs internet."
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "Internet Access Disabled"
 msgstr "Akses Internet Dinonaktifkan"
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Semua alamat internet telah dinonaktifkan \n"
 "menggunakan pilihan di Tab Lanjutan"
 
-#: lib/ptxprint/gtkview.py:4530
+#: lib/ptxprint/gtkview.py:4542
 msgid "<Type Value Here>"
 msgstr "<Ketik Nilai Di Sini>"
 
-#: lib/ptxprint/gtkview.py:4547
+#: lib/ptxprint/gtkview.py:4559
 msgid "Variable Name"
 msgstr "Nama Variabel"
 
-#: lib/ptxprint/gtkview.py:4613
+#: lib/ptxprint/gtkview.py:4625
 msgid "Category Name"
 msgstr "Nama Kategori"
 
-#: lib/ptxprint/gtkview.py:4714
+#: lib/ptxprint/gtkview.py:4726
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Peringatan: Tidak dapat menghapus sepenuhnya\n"
 "beberapa folder sementara:"
 
-#: lib/ptxprint/gtkview.py:4814
+#: lib/ptxprint/gtkview.py:4826
 msgid "What did Mary say that God had done?"
 msgstr "Apa yang Maria katakan bahwa Allah telah melakukannya?"
 
-#: lib/ptxprint/gtkview.py:4817
+#: lib/ptxprint/gtkview.py:4829
 msgid "What does it means to bless someone?"
 msgstr "Apa artinya memberkati seseorang?"
 
-#: lib/ptxprint/gtkview.py:4818
+#: lib/ptxprint/gtkview.py:4830
 msgid "What do you know about the high priest?"
 msgstr "Apa yang Anda ketahui tentang Imam Besar?"
 
-#: lib/ptxprint/gtkview.py:4855 temp.glade:31389
+#: lib/ptxprint/gtkview.py:4867 temp.glade:31389
 msgid "Spine Title"
 msgstr "Judul di Jilid"
 
-#: lib/ptxprint/gtkview.py:4857
+#: lib/ptxprint/gtkview.py:4869
 msgid "Spine\n"
 "Title"
 msgstr "Judul\n"
 "Jilid"
 
-#: lib/ptxprint/gtkview.py:4911
+#: lib/ptxprint/gtkview.py:4923
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr "Fitur ini terbatas pada permintaan izin untuk gambar David C Cook. "
 
-#: lib/ptxprint/gtkview.py:4912
+#: lib/ptxprint/gtkview.py:4924
 msgid "No DCC illustrations were detected. Hit Print first and then try again."
 msgstr "Gambar DCC tidak ditemukan. Tekan Cetak terlebih dahulu, lalu coba lagi."
 
@@ -852,11 +852,11 @@ msgstr "Tidak dapat dibuat: "
 
 #: lib/ptxprint/runjob.py:357
 msgid "Faulty PDF, could not parse"
-msgstr ""
+msgstr "PDF rusak, tidak dapat diurai"
 
 #: lib/ptxprint/runjob.py:365
 msgid "Bad xdvi file, probably failed to load a picture or font"
-msgstr ""
+msgstr "File xdvi buruk, mungkin gagal memuat gambar atau font"
 
 #: lib/ptxprint/runjob.py:376
 msgid "Rerun to fix: "
@@ -1146,11 +1146,11 @@ msgstr ""
 
 #: lib/ptxprint/texpert.py:33
 msgid "Space between picture & caption"
-msgstr ""
+msgstr "Ruang di antara gambar & keterangan"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Increase/Reduce the gap between figures and their captions"
-msgstr ""
+msgstr "Tambah/kurangi jarak antara gambar dan keterangannya"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Default space beside picture"
@@ -1450,7 +1450,9 @@ msgstr "Batas: Penambahan ruang horisontal di batas "
 msgid "The horizontal space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Ruang horisontal antara tepi bagian \n"
+"dalam perbatasan dan tepi luar \n"
+"kotak yang di dalamnya."
 
 #: temp.glade:980
 msgid "Borders dialog: Vertical border padding "
@@ -1460,7 +1462,9 @@ msgstr "Batas: Penambahan ruang vertikal di batas "
 msgid "The vertical space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Ruang vertikal antara tepi bagian \n"
+"dalam perbatasan dan tepi luar \n"
+"kotak di dalamnya."
 
 #: temp.glade:1006
 msgid "The space between the (inside) edge of the border\n"
@@ -2319,28 +2323,29 @@ msgstr ""
 
 #: temp.glade:3879 temp.glade:7965
 msgid "inner: the area that text could cover (vertically this extends to the inner edge of the border)"
-msgstr ""
+msgstr "dalam: area yang dapat dicakup oleh teks (secara vertikal, area ini meluas hingga ke tepi bagian dalam batas)"
 
 #: temp.glade:3883 temp.glade:7969
 msgid "outer: the outermost of the coloured box or the border"
-msgstr ""
+msgstr "luar: bagian terluar dari kotak berwarna atau batas"
 
 #: temp.glade:3887 temp.glade:7973
 msgid "border: the outer edge of the border"
-msgstr ""
+msgstr "batas: tepi luar batas"
 
 #: temp.glade:3891 temp.glade:7977
 msgid "box: the coloured box"
-msgstr ""
+msgstr "kotak: kotak berwarna"
 
 #: temp.glade:3900
 msgid "PTXprint: Generate Cover"
-msgstr ""
+msgstr "PTXprint: Hasilkan Sampul"
 
 #: temp.glade:3928
 msgid "Note that the color chooser\n"
 "dialog may be hidden behind."
-msgstr ""
+msgstr "Perhatikan bahwa sarana pemilih warna\n"
+"mungkin tersembunyi di belakang."
 
 #: temp.glade:4016
 msgid "Generate cover: Scale Text Size"
@@ -2350,15 +2355,17 @@ msgstr ""
 msgid "The \\mt1 and \\mt2 styles are used for the\n"
 "title and subtitle on the cover page. Use\n"
 "this setting to increase size of such titles."
-msgstr ""
+msgstr "Gaya \\mt1 dan \\mt2 digunakan untuk judul dan \n"
+"subjudul pada halaman sampul. Gunakan pengaturan \n"
+"ini untuk memperbesar ukuran judul tersebut."
 
 #: temp.glade:4043
 msgid "Generate cover: Text Color"
-msgstr ""
+msgstr "Hasilkan sampul: Warna Teks"
 
 #: temp.glade:4047
 msgid "Set the color of the title and subtitle text."
-msgstr ""
+msgstr "Mengatur warna teks judul dan subjudul."
 
 #: temp.glade:4070
 msgid "Scale Text Size:"
@@ -2366,21 +2373,23 @@ msgstr ""
 
 #: temp.glade:4079
 msgid "Generate cover: Select Ornamental Border"
-msgstr ""
+msgstr "Menghasilkan penutup: Pilih Batas Terhias"
 
 #: temp.glade:4083 temp.glade:4362
 msgid "A selection of ornamental borders are available\n"
 "to choose from, or a custom-made border may\n"
 "be applied to the front cover page."
-msgstr ""
+msgstr "Pilihan batas terhias tersedia untuk dipilih, \n"
+"atau batas yang dibuat khusus dapat\n"
+"digunakan pada halaman sampul depan."
 
 #: temp.glade:4109
 msgid "Generate cover: Select Background Shading"
-msgstr ""
+msgstr "Hasilkan sampul: Pilih Bayangan Latar Belakang"
 
 #: temp.glade:4113 temp.glade:4166
 msgid "Set the background color for the cover."
-msgstr ""
+msgstr "Tetapkan warna latar belakang untuk sampul."
 
 #: temp.glade:4127 temp.glade:4760 temp.glade:6581 temp.glade:8256
 #: temp.glade:17518 temp.glade:24982 temp.glade:25142 temp.glade:25263
@@ -2391,27 +2400,27 @@ msgstr "Pilih..."
 
 #: temp.glade:4128
 msgid "Generate cover: Select Background Picure (or Image)"
-msgstr ""
+msgstr "Hasilkan sampul: Pilih Gambar Latar Belakang (atau Gambar)"
 
 #: temp.glade:4148
 msgid "C:\\Filepath\\to\\image.jpg"
-msgstr ""
+msgstr "C:\\Tempat\\gambar\\disimpan.jpg"
 
 #: temp.glade:4162
 msgid "Generate cover: Select Border Color"
-msgstr ""
+msgstr "Hasilkan sampul: Pilih Warna Batas"
 
 #: temp.glade:4179
 msgid "Background Shading:"
-msgstr ""
+msgstr "Bayangan Latar Belakang:"
 
 #: temp.glade:4180
 msgid "Generate cover: Enable Background Shading"
-msgstr ""
+msgstr "Hasilkan penutup: Aktifkan Bayangan Latar Belakang"
 
 #: temp.glade:4196
 msgid "Background Picture:"
-msgstr ""
+msgstr "Gambar Latar Belakang:"
 
 #: temp.glade:4197 temp.glade:4219
 msgid "Generate cover: Enable Background Picture (or Image)"
@@ -2426,7 +2435,7 @@ msgstr ""
 
 #: temp.glade:4218
 msgid "Only on Front Cover"
-msgstr ""
+msgstr "Hanya di Sampul Depan"
 
 #: temp.glade:4223
 msgid "Enable this option to only place the\n"
@@ -2463,36 +2472,37 @@ msgstr ""
 
 #: temp.glade:4294 temp.glade:8820
 msgid "Select where the image should extend to."
-msgstr ""
+msgstr "Pilih ke mana gambar akan diperpanjang."
 
 #: temp.glade:4321
 msgid "Text Color:"
-msgstr ""
+msgstr "Warna Teks:"
 
 #: temp.glade:4335
 msgid "Border Color:"
-msgstr ""
+msgstr "Warna Batas:"
 
 #: temp.glade:4348
 msgid "Shading Color:"
-msgstr ""
+msgstr "Warna Bayangan:"
 
 #: temp.glade:4357
 msgid "Ornamental Border:"
-msgstr ""
+msgstr "Batas Terhias:"
 
 #: temp.glade:4358
 msgid "Generate cover: Enable Ornamental Border"
-msgstr ""
+msgstr "Hasilkan sampul: Aktifkan Batas Terhias"
 
 #: temp.glade:4382
 msgid "Transparency"
-msgstr ""
+msgstr "Tembus pandang"
 
 #: temp.glade:4400
 msgid "Click to Open a PDF containing a catalog\n"
 "of the various Ornamental Borders (pgs 4-7)."
-msgstr ""
+msgstr "Klik untuk membuka PDF yang berisi katalog\n"
+"yang berisi berbagai Batas Terhias (hal. 4-7)."
 
 #: temp.glade:4422
 msgid "Scale Picure To:"
@@ -2500,7 +2510,7 @@ msgstr ""
 
 #: temp.glade:4441
 msgid "Cover Page Settings"
-msgstr ""
+msgstr "Pengaturan Halaman Sampul"
 
 #: temp.glade:4455
 msgid "Note that when you click on Create Cover Settings, PTXprint will\n"
@@ -2660,15 +2670,15 @@ msgstr "Informasi Hak Cipta"
 
 #: temp.glade:5051
 msgid "How to handle differences:"
-msgstr ""
+msgstr "Bagaimana menangani perbedaan:"
 
 #: temp.glade:5061
 msgid "Add Any New Pictures"
-msgstr ""
+msgstr "Tambahkan Gambar-gambar Baru"
 
 #: temp.glade:5078
 msgid "Remove Any Old Pictures"
-msgstr ""
+msgstr "Hapus Gambar-gambar Lama"
 
 #: temp.glade:5134
 msgid "Enabling this option will import (overwrite) the page size, \n"
@@ -4266,7 +4276,7 @@ msgstr "0"
 
 #: temp.glade:9991
 msgid "Notes"
-msgstr ""
+msgstr "Catatan"
 
 #: temp.glade:9995
 msgid "This is the Description field from the\n"
@@ -6923,16 +6933,17 @@ msgstr "Bahan sampingan seringkali memiliki lebih dari \n"
 
 #: temp.glade:15693
 msgid "Enable Ornaments"
-msgstr ""
+msgstr "Aktifkan Hiasan"
 
 #: temp.glade:15694
 msgid "Enable ornamental borders and rules"
-msgstr ""
+msgstr "Aktifkan batas terhias dan aturannya"
 
 #: temp.glade:15698
 msgid "Enable this option to make use of\n"
 "ornamental borders and rules."
-msgstr ""
+msgstr "Aktifkan pilihan ini untuk menggunakan\n"
+"batas terhias dan aturannya."
 
 #: temp.glade:15721
 msgid "Other Features"
@@ -13337,17 +13348,19 @@ msgstr ""
 
 #: temp.glade:31033
 msgid "Generate Cover..."
-msgstr ""
+msgstr "Hasilkan Sampul..."
 
 #: temp.glade:31034
 msgid "Generate Cover (Basic settings to create a cover)"
-msgstr ""
+msgstr "Hasilkan Sampul (Pengaturan dasar untuk membuat sampul)"
 
 #: temp.glade:31038
 msgid "Creating a cover from nothing takes a lot of effort.\n"
 "This tool enables you to create various kinds of\n"
 "covers which can easily be enhanced. "
-msgstr ""
+msgstr "Menciptakan sampul dari nol membutuhkan banyak usaha.\n"
+"Alat ini memungkinkan Anda untuk membuat berbagai jenis\n"
+"sampul yang dapat dengan mudah disempurnakan. "
 
 #: temp.glade:31069
 msgid "Generate cover: Art Bleed setting"
@@ -13383,7 +13396,7 @@ msgstr ""
 
 #: temp.glade:31137
 msgid "Show Crop Marks"
-msgstr ""
+msgstr "Tampilkan Tanda Pangkas"
 
 #: temp.glade:31138
 msgid "Generate cover: Include bleed area and cropmarks"
@@ -13410,7 +13423,7 @@ msgstr ""
 
 #: temp.glade:31260
 msgid "Back Cover"
-msgstr ""
+msgstr "Sampul Belakang"
 
 #: temp.glade:31277
 msgid "\n"

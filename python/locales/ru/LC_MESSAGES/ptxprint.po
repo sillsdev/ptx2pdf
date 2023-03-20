@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-03-10 18:00+0700\n"
-"PO-Revision-Date: 2023-03-10 11:00\n"
+"POT-Creation-Date: 2023-03-14 05:50-0400\n"
+"PO-Revision-Date: 2023-03-14 09:50\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -306,8 +306,8 @@ msgstr "Невозможно удалить папку с диска!"
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Нестандартная выходная папка должна быть удалена вручную"
 
-#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3460
-#: lib/ptxprint/gtkview.py:3476 lib/ptxprint/runjob.py:314 temp.glade:32015
+#: lib/ptxprint/gtkview.py:1590 lib/ptxprint/gtkview.py:3461
+#: lib/ptxprint/gtkview.py:3477 lib/ptxprint/runjob.py:314 temp.glade:32015
 msgid "Previous PDF (_1)"
 msgstr "Предыдущий PDF (_1)"
 
@@ -485,136 +485,136 @@ msgstr "Выберите расположение и имя файла архи�
 msgid "Select the folder containing image files"
 msgstr "Выберите папку, содержащую файлы изображений"
 
-#: lib/ptxprint/gtkview.py:3402
+#: lib/ptxprint/gtkview.py:3403
 msgid "Select a PDF to import the settings from"
 msgstr "Выберите PDF-файл для импорта настроек из него"
 
-#: lib/ptxprint/gtkview.py:3409
+#: lib/ptxprint/gtkview.py:3410
 msgid "Overwite current Configuration?"
 msgstr "Преодолеть текущую конфигурацию?"
 
-#: lib/ptxprint/gtkview.py:3410
+#: lib/ptxprint/gtkview.py:3411
 msgid "WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\n"
 "Do you wish to continue?"
 msgstr "ВНИМАНИЕ: Импорт настроек из выбранного PDF-файла перезапишет текущую конфигурацию.\n\n"
 "Вы хотите продолжить?"
 
-#: lib/ptxprint/gtkview.py:3413
+#: lib/ptxprint/gtkview.py:3414
 msgid "PDF Config Import Error"
 msgstr "Ошибка импорта конфигурации PDF"
 
-#: lib/ptxprint/gtkview.py:3414
+#: lib/ptxprint/gtkview.py:3415
 msgid "Sorry - Can't find any settings to import from the selected PDF.\n\n"
 msgstr "Извините - не могу найти никаких параметров для импорта из выбранного PDF.\n\n"
 
-#: lib/ptxprint/gtkview.py:3415
+#: lib/ptxprint/gtkview.py:3416
 msgid "Only PDFs created with PTXprint version 2.3 or later contain settings\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3416
+#: lib/ptxprint/gtkview.py:3417
 msgid "if created with 'Include Config Settings Within PDF' option enabled."
 msgstr "если он создан с включенной опцией 'Include Config Settings Within PDF'."
 
-#: lib/ptxprint/gtkview.py:3421
+#: lib/ptxprint/gtkview.py:3422
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Выберите один или несколько PDF (ы) для FRONT вопроса"
 
-#: lib/ptxprint/gtkview.py:3426
+#: lib/ptxprint/gtkview.py:3427
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Выберите один или несколько PDF (ы) для вопросов BACK"
 
-#: lib/ptxprint/gtkview.py:3431
+#: lib/ptxprint/gtkview.py:3432
 msgid "Select Watermark PDF file"
 msgstr "Выберите PDF-файл водяного знака"
 
-#: lib/ptxprint/gtkview.py:3436
+#: lib/ptxprint/gtkview.py:3437
 msgid "Select Page Border PDF file"
 msgstr "Выберите PDF-файл страницы"
 
-#: lib/ptxprint/gtkview.py:3441
+#: lib/ptxprint/gtkview.py:3442
 msgid "Select Section Header PDF file"
 msgstr "Выберите раздел заголовка PDF файла"
 
-#: lib/ptxprint/gtkview.py:3446
+#: lib/ptxprint/gtkview.py:3447
 msgid "Select End of Book PDF file"
 msgstr "Выберите файл конца книги PDF"
 
-#: lib/ptxprint/gtkview.py:3451
+#: lib/ptxprint/gtkview.py:3452
 msgid "Select Verse Decorator PDF file"
 msgstr "Выберите PDF файл стиха Decorator"
 
-#: lib/ptxprint/gtkview.py:3456
+#: lib/ptxprint/gtkview.py:3457
 msgid "Select a PDF file to compare with"
 msgstr "Выберите файл PDF для сравнения"
 
-#: lib/ptxprint/gtkview.py:3577
+#: lib/ptxprint/gtkview.py:3578
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Переключиться на другой проект\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:3579 temp.glade:33634
+#: lib/ptxprint/gtkview.py:3580 temp.glade:33634
 msgid "Print (Make PDF)"
 msgstr "Распечатать (сделать PDF)"
 
-#: lib/ptxprint/gtkview.py:3585
+#: lib/ptxprint/gtkview.py:3586
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Сохранить и вернуться к\n"
 "проекту Diglot"
 
-#: lib/ptxprint/gtkview.py:3587
+#: lib/ptxprint/gtkview.py:3588
 msgid "Return to Primary"
 msgstr "Возврат к странице Первичный"
 
-#: lib/ptxprint/gtkview.py:3645
+#: lib/ptxprint/gtkview.py:3646
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: Обычный шрифт уже поддерживает все символы в тексте."
 
-#: lib/ptxprint/gtkview.py:3646
+#: lib/ptxprint/gtkview.py:3647
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Резервный шрифт не требуется, поэтому\n"
 "опция \"Использовать резервный шрифт\" будет отключена."
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "USFM syntax error"
 msgstr "Синтаксическая ошибка USFM"
 
-#: lib/ptxprint/gtkview.py:3907
+#: lib/ptxprint/gtkview.py:3908
 msgid "Syntax error: {}"
 msgstr "Ошибка синтаксиса: {}"
 
-#: lib/ptxprint/gtkview.py:3940 lib/ptxprint/gtkview.py:4684
-#: lib/ptxprint/gtkview.py:4699
+#: lib/ptxprint/gtkview.py:3941 lib/ptxprint/gtkview.py:4696
+#: lib/ptxprint/gtkview.py:4711
 msgid "Choose Image"
 msgstr "Выбрать изображение"
 
-#: lib/ptxprint/gtkview.py:4095
+#: lib/ptxprint/gtkview.py:4096
 msgid "Unsupported Locale"
 msgstr "Неподдерживаемый языковой стандарт"
 
-#: lib/ptxprint/gtkview.py:4096
+#: lib/ptxprint/gtkview.py:4097
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Этот языковой стандарт не поддерживается в вашей системе, вам может понадобиться ее установить"
 
-#: lib/ptxprint/gtkview.py:4273
+#: lib/ptxprint/gtkview.py:4274
 msgid "Strong's Index generated in: {}"
 msgstr "Индекс Стронга, созданный в: {}"
 
-#: lib/ptxprint/gtkview.py:4421 lib/ptxprint/gtkview.py:4926
+#: lib/ptxprint/gtkview.py:4433 lib/ptxprint/gtkview.py:4938
 msgid "Please fill in any missing <Values> on"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4422 lib/ptxprint/gtkview.py:4927
+#: lib/ptxprint/gtkview.py:4434 lib/ptxprint/gtkview.py:4939
 msgid "the Peripherals tab before proceeding."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4423
+#: lib/ptxprint/gtkview.py:4435
 msgid "Update the ISBN number or deleted the entry."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4441
+#: lib/ptxprint/gtkview.py:4453
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -622,66 +622,66 @@ msgstr "FYI: Эта опция подстрочного интерфейса н�
 "\"Регулировка интервалов между буквами\" на странице шрифтов + скриптов.\n"
 "Эта опция только что была отключена."
 
-#: lib/ptxprint/gtkview.py:4473
+#: lib/ptxprint/gtkview.py:4485
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Доступна более новая версия PTXprint ({}).\n"
 "Нажмите, чтобы посетить страницу загрузки на сайте."
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "Internet Access Disabled"
 msgstr "Доступ в Интернет для инвалидов"
 
-#: lib/ptxprint/gtkview.py:4494
+#: lib/ptxprint/gtkview.py:4506
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Все интернет-адреса были отключены \n"
 "с помощью опции на вкладке Дополнительно"
 
-#: lib/ptxprint/gtkview.py:4530
+#: lib/ptxprint/gtkview.py:4542
 msgid "<Type Value Here>"
 msgstr "<Type Value Here>"
 
-#: lib/ptxprint/gtkview.py:4547
+#: lib/ptxprint/gtkview.py:4559
 msgid "Variable Name"
 msgstr "Имя переменной"
 
-#: lib/ptxprint/gtkview.py:4613
+#: lib/ptxprint/gtkview.py:4625
 msgid "Category Name"
 msgstr "Название категории"
 
-#: lib/ptxprint/gtkview.py:4714
+#: lib/ptxprint/gtkview.py:4726
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Предупреждение: Не удалось полностью удалить\n"
 "некоторую временную папку (папки):"
 
-#: lib/ptxprint/gtkview.py:4814
+#: lib/ptxprint/gtkview.py:4826
 msgid "What did Mary say that God had done?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4817
+#: lib/ptxprint/gtkview.py:4829
 msgid "What does it means to bless someone?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4818
+#: lib/ptxprint/gtkview.py:4830
 msgid "What do you know about the high priest?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4855 temp.glade:31389
+#: lib/ptxprint/gtkview.py:4867 temp.glade:31389
 msgid "Spine Title"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4857
+#: lib/ptxprint/gtkview.py:4869
 msgid "Spine\n"
 "Title"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4911
+#: lib/ptxprint/gtkview.py:4923
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4912
+#: lib/ptxprint/gtkview.py:4924
 msgid "No DCC illustrations were detected. Hit Print first and then try again."
 msgstr ""
 

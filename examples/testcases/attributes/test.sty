@@ -102,6 +102,29 @@
 \StyleType Character
 \Background xc0c0c0
 
+\Marker zwide
+\StyleType Character
+\Color x007f7f
+\ztexFontFeatures +[extend=1.70]
+
+\Marker zfwide
+\StyleType Character
+\Color x7f7f00
+\ztexFontFeatures =[extend=1.70]
+
+\Marker p_90
+\Name p_90 - Paragraph - shrunk - First Line Indent
+\Description Paragraph text, with first line indent (basic)
+\OccursUnder c
+\Rank 4
+\TextType VerseText
+\TextProperties paragraph publishable vernacular
+\StyleType Paragraph
+\FontSize 12
+\FirstLineIndent .125   # 1/8 inch first line indent
+\StyleType Paragraph
+\ztexFontFeatures =[extend=0.90]
+
 \Marker gloss|rb
 \FontScale 0.7
 \Color x7f0000
@@ -132,8 +155,13 @@
 \Color x7f0000
 \Justification Right
 
+
+\Marker ul
+\StyleType Character
+\Underline 
+
 \Marker nd+ip
-\Underline
+\Underline -
 
 \Marker em+ip
 \Underline
