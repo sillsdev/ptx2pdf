@@ -801,7 +801,7 @@ def alignScores(*columns):
             p=merged
             while (ofs[c]<lim[c]) and (ofs[c]<nxt): 
                 thispos=acc[c][ofs[c]].position
-                logger.log(7,"=".join(ofs[c], thispos, merged[thispos] if thispos in merged else '0' ))  
+                logger.log(7,f"{ofs[c]}={thispos} {merged[thispos] if thispos in merged else '0'}")  
                 if chunks[c]:
                     chunks[c].append(acc[c][ofs[c]])
                 else:

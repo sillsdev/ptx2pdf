@@ -27,11 +27,12 @@ if ($#ARGV<0) {
     "   $0 /tmp/merge-\`git branch --show-current\`\n";
   exit(1);
 }
-while ($ARGV[0]=~/-m(.*)/) {
+while ($ARGV[0]=~/^-m(.*)/) {
   shift;
-  push @modes,$1||shift;
+  push @modes, ($1||shift);
+  printf STDERR "Modes list now @modes\n";
 }
-my $outdir=$ARGV[0];
+my $outdir=$ARGV[0] || die("No output directory supplied");
 if (! -d $outdir) {
   mkdir($outdir) || die($outdir.':'.$!);
 }
@@ -74,6 +75,7 @@ foreach my $k (grep {defined($counts[$_]) && $counts[$_]>1} (1..$#counts)) {
       print ("$m,$n:$o\n");
       foreach my $mode (@modes){	
 	system(File::Spec->catfile($exedir,"usfmerge"),"-o",File::Spec->catfile($outdir,$o."-$mode.usfm"),"-m",$mode,$entries[$k][$m][1],$entries[$k][$n][1]);
+	die if ($?);
       }
       --$m;
     }
