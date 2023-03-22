@@ -324,7 +324,13 @@
 \def\zplaceallnotes{\bgroup\setbox0\vbox{\the\plac@ndnotes}\unvbox0\egroup}
 
 \newif\ifnotesEachBook
+\newif\ifEndNotesEarly % When are automatic endnotes inserted?  Before or after
+% the columnswap?   If early, then they occur in 2 column mode and before the
+% bookend- hooks. If late, between bookend-all and bookend-final, and may trigger single column mode, 
+\newif\ifEndNotesSingleCol % Do Endnotes trigger singlecolumn?
 \notesEachBooktrue
+\EndNotesEarlytrue
+\EndNotesSingleColfalse
 \NoteAtEnd{fe}
 
 %-c_endnotes
@@ -2226,6 +2232,7 @@
   \ifrerunsavepartialpaged\trace{o}{rerunsavepartialpaged}\eject\rerunsavepartialpagedfalse\fi}
 \let\layoutstylebreak\layoutstylebreak@singlecolumn
 
+\newif\ifd@nesw@p % set to false to allow singlecolumn to draw a book-end rule 
 \def\singlecolumn{%
   %\tracingmacros=0\tracingassigns=0
   \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \iflastpage LASTPAGE\fi}%\tracingmacros=1
@@ -2260,11 +2267,14 @@
   \global\count\topins=\count255
   \global\count\bottomins=\count255
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
-  \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
-    \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift
-      \hrule\vskip2\baselineskip
-    \fi\fi\fi
-  \fi\fi
+  \ifd@nesw@p\else
+    \d@nesw@ptrue % signal to caller that this has been run
+    \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
+      \ifendbooknoeject\ifx\p@gefirstmark\t@tle \else\vskip\baselineskip\iflastptxfile\else\hskip-\columnshift
+        \hrule\vskip2\baselineskip
+      \fi\fi\fi
+    \fi\fi
+  \fi
   %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
 }%
 %-c_singlecolumn

@@ -1784,20 +1784,21 @@
  \endt@ble
  \ifdiglot\enddigl@t\fi
  \iflastptxfile \global\lastpagetrue\fi
- \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
+ \d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
+ \singlecolumn
+ \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi
- \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookstart-\id@@@\endcsname\else missing\fi}%
+ \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
  \csname bookend-all\endcsname
+ \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly\else \ifEndNotesSingleCol \singlecolumn\fi \zplaceallnotes\fi\fi
  \the\@ndptxhooks
- \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \singlecolumn\zplaceallnotes\fi
  \unprepusfm
  \trace{oh}{hook for bookend-final \ifcsname bookend-final\endcsname exists \x@\meaning\csname bookend-final\endcsname\else missing\fi. This is \iflastptxfile\else not\fi the last book.}%
  \iflastptxfile \trace{o}{running bookend-final}\csname bookend-final\endcsname\par\fi
- \singlecolumn % must come after bookend-final, as that might include 2col content.
+ \ifd@nesw@p\else\singlecolumn \fi% must come after bookend-final, as that might include 2col content (as long as .
  \bookendpagebreak
- %\ifendbooknoeject\else\global\output={\shipout\vbox{\box\partial\box255}}\eject\xdef\p@gefirstmark{}\setbox\partial=\box\voidb@x\fi
  \global\output={\onecol}
- % no idea why we need \noindent here:
  \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space used}\ifdim\ht\partial>0pt \noindent\eject\fi
  \iflastptxfile\closepiclist\fi
  \closeadjlist
