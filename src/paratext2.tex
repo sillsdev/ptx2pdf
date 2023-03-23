@@ -2306,10 +2306,10 @@
   \else\let\n@xt\incl@deno@ptions\fi\n@xt}
 \def\incl@deno@ptions#1{\incl@de@ptions[]{#1}}
 \def\incl@de@ptions[#1]#2{%
-  \totalp@ges=\XeTeXpdfpagecount "#2"\relax
+  \pdfp@ges=\XeTeXpdfpagecount "#2"\relax
   \whichp@ge=0
-  \msg{includepdf #2 pages=\the\totalp@ges}
-  \loop \ifnum\whichp@ge<\totalp@ges
+  \msg{includepdf #2 pages=\the\pdfp@ges}
+  \loop \ifnum\whichp@ge<\pdfp@ges
     \advance\whichp@ge by 1
     \setbox0=\hbox{\mapimagefile{\XeTeXpdffile}{"#2"}{page \whichp@ge #1}}%
     \ifdim\wd0>\pdfpagewidth
@@ -2324,10 +2324,11 @@
     \repeat
   \endgroup % begun in \incl@depdf
 }
-\newcount\totalp@ges
+\newcount\pdfp@ges %Pages in the pdf
 \newcount\whichp@ge
 \newcount\im@gecount
-
+\newcount\totalp@ges % Page count for this entire job, (excluding cover)
+\totalp@ges=0
 \newif\ifendbooknoeject \endbooknoejectfalse
 \def\pagebreak{\leavevmode\message{pagebreak}\ifhmode\par\fi
   \ifsk@pping \egroup \fi%

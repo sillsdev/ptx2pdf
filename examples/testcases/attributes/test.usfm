@@ -142,3 +142,6 @@ be used, to ignore previous settings of extend without altering other values.
 The paragraph adjusting rule (^90) always applies, otherwise it might become
 impossible to adjust some
 paragraphs.
+
+\pb
+\zfillsignature|pages="8" pagenos="do"\*

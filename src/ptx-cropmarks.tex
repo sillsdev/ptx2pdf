@@ -445,6 +445,7 @@
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
   \let\pr@tect=\noexpand
   \trace{G}{\the\pdfpagewidth x \the\pdfpageheight}
+  \global\advance\totalp@ges by 1
   \shipout\vbox to 0pt{% ship the actual page content, with \BindingGutter added if wanted
     \pdfp@geout
     \ifvoid\ornXobjects\else
@@ -499,6 +500,7 @@
   \advance\pdfpageheight by 2\dimen0
   \trace{G}{shipcomplete \the\pdfpagewidth x\the\pdfpageheight}%
   \hoffset=-1in \voffset=-1in % shift the origin to (0,0)
+  \global\advance\totalp@ges by 1
   \shipout\vbox to 0pt{% ship the actual page
     \pdfp@geout
     \offinterlineskip                                                           %(1)

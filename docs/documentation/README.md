@@ -502,7 +502,9 @@ WARNING: spaces in the string are ignored (due to a peculiarity of TeX).
 * `\zNeedOddPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a odd-numbered page.
 * `\zNeedEvenPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a even-numbered page.
 * `\zNeedQuadPage` - Insert 0 to 3 intentionally empty page(s) so that what follows is on page exactly divisible by 4.
-* `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\prefacepages` + "extra" + current page numbmer. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely ommitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
+* `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\afterwordpages` + "extra" + current page count. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely ommitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
+Note that the page count used by this is now the *actual* count of pages
+printed by PTXprint, not the current page number.
 
 ### <a name="space">Vertical space</a>
 `\zbl|3\*` insert 3 blank lines
