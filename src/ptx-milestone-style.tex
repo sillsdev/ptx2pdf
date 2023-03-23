@@ -583,7 +583,11 @@
     \trace{m}{zfillsignature \the\pageno}%
     \expandafter\m@kenumb@r \attr@b =%
     \count255=\@@result
-    \count254=\numexpr \prefacepages + \ifnum \pageno <0 -1\fi \pageno +\prefacepages -1\relax
+    \get@ttribute{extra}% How many extra pages
+    \ifx\attr@b\relax\def\tmppages{0}\else\m@kenumber\attr@b =%
+      \let\tmppages=\@@result
+    \fi
+    \count254=\numexpr \prefacepages + \tmppages + \ifnum \pageno <0 -1\fi \pageno -1\relax
     \count253=\numexpr \count255 - (\count254 - \count255 * \numexpr \count254 / \count255 \relax) \relax
     \trace{m}{\the\count254 pages printed, \the\count253 needed to complete the signature of \the\count255}%
     \get@ttribute{periph}%

@@ -282,10 +282,6 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 ## <a name="ptx2pdf-MacroSetupParameters-Other">Other</a>
 
 *   \IndentAfterHeading```true``` – Remove paragraph indentation on the first paragraph after a section heading (default = false)
-*   ```\def\TPILB{\hfil This Page Intentionally Left Blank}``` Message to appear on intentionally empty pages. The `\hfil` at the start will centre a single line of text. (default empty). 
-*  `\EmptyPage` – Insert an intentionally empty page. The macro `\TPILB` will be used to provide any filler content.  Headers and footers will be the `...noV...` versions.
-
-</a>
 
 ## <a name="ptx2pdf-MacroSetupParameters-Notes">Notes</a>
 
@@ -305,6 +301,8 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 ### End notes
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
 *   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)
+*   \EndNotesEarly`false` – Do automatic endnotes come before the end-hooks for the book or after? Placing them early will put them ahead of any end-of-book markers, and (unless `\EndNotesSingleColtrue` has been given) they will be part of the dual-column text if that is the normal presentation. Placing them late may result in them being positioned single-column, depending on what other hooks do, and after any end-of-book markers, page-breaks, etc. (default=true)
+*   \EndNotesSingleCol`true` – Is a  transition to single-column mode forced before any  automatic endnotes are placed? (default=false)
 *   \def\EndNoteRuleWidth{```0.5```} –  Fraction of column width to make the rule above automatically inserted endnotes (default =```0.5```)
 *   \def\EndNoteRuleThickness{```0.4pt```} – Thickness of the rule above automatically inserted endnotes (default=```0.4pt```)
 *   \def\AboveEndNoteRule{```14 pt```} – Space between the body text and the  end-note separator line.
@@ -497,8 +495,16 @@ the above special characters will copied into the output.  The default value
 for `show` is `b\_c:v`, giving an output such as "Genesis 1:1".
 WARNING: spaces in the string are ignored (due to a peculiarity of TeX). 
 
-## Other special-purpose milestones
-### Vertical space
+## Other special-purpose milestones and commands
+### <a name="Blank">Blank pages</a>
+*   ```\def\TPILB{\hfil This Page Intentionally Left Blank}``` Message to appear on intentionally empty pages. The `\hfil` at the start will centre a single line of text. (default empty).
+*  `\zEmptyPage` – Insert an intentionally empty page. The macro `\TPILB` will be used to provide any filler content.  Headers and footers will be the `...noV...` versions.
+* `\zNeedOddPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a odd-numbered page.
+* `\zNeedEvenPage` - Insert 0 or 1 intentionally empty page(s) so that what follows is on a even-numbered page.
+* `\zNeedQuadPage` - Insert 0 to 3 intentionally empty page(s) so that what follows is on page exactly divisible by 4.
+* `\zfillsignature|pagenums="no" extra="0" pages="8"\*` Calculate `\prefacepages` + "extra" + current page numbmer. Work out how many pages are needed to fill the signature of "pages" pages, and call \zEmptyPage that many times. The pagenums parameter can either be entirely ommitted or contain "do" (`\dopagenums`) or "no" (`\nopagenums`).
+
+### <a name="space">Vertical space</a>
 `\zbl|3\*` insert 3 blank lines
 `\zgap|1in\*` insert glue occupying 1inch
 `\zgap|1in plus 2in minus 0.3in\*` insert flexible glue.
@@ -509,13 +515,15 @@ figures.md. It can also be used as a trigger point.
 `\zvar|value\*` Output a stored string (defined in the user interface / tex file).
 `\zgetperiph|id\* Output a stored periphery section. See [earlier](#ptx2pdf-Periph).
 
-### Conditional text
+### <a name="conditional">Conditional text</a>
 There are (so far) two tests which set up the pseudo-character styles
 `\ztruetext ...\ztruetext*`  and `\falsetext...\zfalsetext*`
-Note that these are **not** true character styles, and they cannot be nest.
+Note that these are **not** true character styles, and they cannot be nested.
 All content (including paragraph markers, sidebars, etc) within them is
 swallowed as a TeX parameter and if the result of the test was true or false
 (as appropriate) it is re-read and re-processed.
+Because of how they operate, no attempt should be made to use them inside hooks
+or other macros.
 
 #### Tests for conditional text.
 `\zifhooks|marker` Sets up the conditional text code depending if there have
