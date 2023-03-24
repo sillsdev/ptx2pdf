@@ -986,8 +986,8 @@
     \global\let\layoutstylebreak\layoutstylebreak@doublecolumn
 	% if single column material already fills 3/4 page, go to next page to start double columns
     \dimen0=\ht\partial
-    \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight}%
-    \ifnum\ifdim\dimen0>\PageFullFactor\textheight 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1
+    \trace{o}{DoubleColumns: partial=\the\dimen0\space > \PageFullFactor\space * \the\textheight? (tob@dy\iftob@dy true\else false\fi)}%
+    \ifnum\ifdim\dimen0>\iftob@dy \dimexpr \textheight - 4\baselineskip\relax \else \PageFullFactor\textheight \fi 1\else\iftob@dy\ifPBOnBody 1\else 0\fi\else 0\fi\fi =1
       \global\output={\onecol} % but output it immediately if 75% full
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
@@ -1183,6 +1183,10 @@
     \fi % dump empty pages (typically at end)
     \tempfalse%
     \ifdim\ht\partial>\PageFullFactor\textheight \temptrue\fi%
+    \iftob@dy
+      \trace{o}{savepartial partial=\the\ht\partial, bottom=\the\ht\verybottomins, page \the\textheight, diff\the\dimexpr \textheight - \ht\partial\relax }%
+      \ifdim\dimexpr \textheight - \ht\partial\relax > 3\baselineskip \tempfalse
+    \fi\fi
     \trace{o}{outputpenalty = \the\outputpenalty}%
     \ifnum\outputpenalty<-10000 \temptrue\fi
     \iftemp\trace{o}{savepartial eject partial=\the\ht\partial, bottom=\the\ht\verybottomins}%
