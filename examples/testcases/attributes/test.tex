@@ -29,6 +29,8 @@
 \catcode`\@=11
 \gdef\b@okShort{}
 %\def\doLines{\doGraphPaper}
+\def\doLines{\doGridLines}
+\tracingoutput=1
 \x@\def\csname complex-w\endcsname{\rubyb{w}{lemma}}
 %\def\dummy{%
    %\box0
@@ -48,8 +50,12 @@
 \def\URLLinkBorderstyle{/S/U/W 1} % Underline
 \def\GOTOLinkBorderCol{.9 .5 .5}% pale red
 \def\URLLinkBorderCol{.5 .5 .5}% Gry
-\sethook{first}{c}{\zrule|width="0.6"\*}
+\BodyColumns=1
+\IntroColumns=1
+\sethook{first}{c}{\zrule|width="0.6" raise="-5pt"\*}
 \makeatother
+\showboxbreadth=99
+\showboxdepth=99
 \defzvar{checkme}{}
 \defzvar{isbn}{987-654-3210-123}
 \ptxfile{test.usfm}

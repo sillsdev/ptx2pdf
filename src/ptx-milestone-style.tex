@@ -444,7 +444,7 @@
       \m@kenumber{\attr@b}%
       \let\rule@thk\@@result%
     \fi
-    \get@ttribute{thick}%A
+    \get@ttribute{raise}%A
     \ifx\attr@b\relax
       \getp@ram{raise}{zrule}{\styst@k}%
       \ifx\p@ram\relax
@@ -481,6 +481,7 @@
     \trace{m}{Rule \rule@wid, thick \rule@thk,  style \rule@style}%
     \csname drawzrule-\rule@style\endcsname
   \egroup 
+  \lastdepth=\prevdepth
 }
 
 \x@\def\csname drawzrule-plain\endcsname{%
