@@ -1,8 +1,30 @@
 PTXprint 2.3.1 Release Notes
-15 Mar 2023
+25 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
+
+Bug fixes and Improvements in 2.3.2 (25 Mar 2023)
+
+  * Add --diffpages to limit size of output diff file
+  
+  * Make feature-maths work properly for p^95 type adjustments.
+  
+  * Enable (diff-friendly) debugging and log output from script
+  
+  * When in debug mode, also output columns to separate files for easy diffing with original
+  
+  * Fixed figures-included-on 2ndary bug
+  
+  * Solved (?) duplicated footnotes on overlarge partial page
+  
+  * Solve double-line issue between books
+  
+  * zfillsignature now getting maths right and using actual page counts
+  
+  * Fix zrule depth problem. Don't switch column layouts needlessly
+  
+  * Bodge a partial fix for separated book titles
 
 Bug fixes and Improvements in 2.3.1 (15 Mar 2023)
 
