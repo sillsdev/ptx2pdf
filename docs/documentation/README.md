@@ -213,6 +213,7 @@ The following parameters are used to specify the information to include in the r
 
 <a name="ptx2pdf-MacroSetupParameters-OddHeader">
 Headers for normal pages with an odd page number, e.g.:
+
 *   \def\RHoddleft{```\empty```}
 *   \def\RHoddcenter{```\rangeref```}
 *   \def\RHoddright{```\pagenumber```}
@@ -223,6 +224,7 @@ Headers for normal pages with an odd page number, e.g.:
 
 <a name="ptx2pdf-MacroSetupParameters-EvenHeader">
 Headers for normal pages with an even page number, e.g.:
+
 *   \def\RHevenleft{```\pagenumber```}
 *   \def\RHevencenter{```\rangeref```}
 *   \def\RHevenright{```\empty```}
