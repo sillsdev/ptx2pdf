@@ -9,8 +9,7 @@ books into four conceptual pieces:
 * The back of the book
 * The spine
 
-Each of them might have a full or inset picture or solid background,
-and it might also have a border.
+Each of them might have a full or inset picture or solid background, and it might also have a border.
 
 PTXprint gives you the ability to define each of these four elements. The whole
 cover is the background for everything, then the front, back and (optionally) spine are put on
@@ -18,7 +17,7 @@ top of that, possibly with their own (solid or transparent) backgrounds, and on 
 any borders and text that has been defined.
 
 The four elements are defined as sidebars, using the normal sidebar styling options, and their
-contents are defined using `\periph` elements.
+contents are defined using `\periph` elements. As sidebars may contain other sidebars, which may themselves have borders, background colours, and so on, the potential designs are quite significant.
 
 The GUI gives access to all of these settings, however the documentation below
 concentrates on the configuration files that it generates.
@@ -90,6 +89,14 @@ cover.
 The final two allow the spine colour / image to wrap onto the
 front / rear cover as is seen in some editions. 
 
+## Position of the main sidebars
+For the cover macro to function as expected, the sidebars must each have their position set to the value set for them in ptx2pdf.sty:
+```tex
+\Position Fcf
+```
+(**F**ull page, **c**entered horizontally, and stretched to the **f**ull height vertically)
+So far, this value cannot be set using the GUI, so the position should **not** be altered.
+
 ## Sizing of Background Images
 Of particular relevance for covers, as well as the 1x1 (X x Y) scaling factors,
 the `\BgImageScaleTo` stylesheet parameter can take a prefix indicating *what*
@@ -97,8 +104,8 @@ the image should be scaled to. (Note that these are so-far untested on other
 sidebars). 
 
 The relevant options are:
-* bleed - overflow the page into the cropped area by `\figbleed`.
-* colbleed - overflow the page into the cropped area as much as the colours do (normally figures bleed less).
+* bleed - overflow the page into the cropped area by at most `\figbleed`. (If there is no bleed, there is no figure bleed either).
+* colbleed - overflow the page into the cropped area as much as the colours do (normally, figures bleed less).
 * box - the coloured box
 * border - the outer edge of the border
 * outer - the outermost of the coloured box or the border.
