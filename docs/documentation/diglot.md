@@ -118,7 +118,10 @@ Column-specific control over chapter and verse numbers. The 'third state' of thi
 Debugging options for really sticky problems; see end of this document.
 
 ### Header macros
-- ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefL,R,A``` and ```\lastrefL,R,A```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheet(s) (```\Marker h```, ```hL``` and ```hR```, as above).
+- ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefX``` and ```\lastrefX```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheets. 
+- Also available: ```\usdateX```, ```\ukdateX```, ```\isodateX```, ```\hrsminsX```, ```\timestampX``` which include font selection.
+- ```\headfootX{...}``` which selects the relevant font
+- ```\bookX `` and ```\bookaltX``` exist but as these are normally used in the rangeref (etc) expressions, they include no font switching, so they would need wrapping in `\headfootX{ }` 
 
 ### Page layout options
 

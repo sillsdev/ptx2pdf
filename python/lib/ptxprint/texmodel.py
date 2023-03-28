@@ -608,6 +608,7 @@ class TexModel:
                         if not resetPageDone and f not in nonScriptureBooks: 
                             if not self.dict['document/noblankpage']:
                                 res.append(r"\ifodd\pageno\else\emptyoutput \fi")
+                            res.append(r"\edef\oldpageno{\the\pageno}% Just in case the user wants it");
                             res.append(r"\pageno={}".format(self.dict['document/startpagenum']))
                             resetPageDone = True
                         if not self.asBool('document/ifshow1chbooknum') and \
