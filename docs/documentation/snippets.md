@@ -576,56 +576,7 @@ with open(sys.argv[2], "w", encoding="utf8") as outf:
 
 ## Creating a fancy front cover with ornaments
 
-This is still a very experimental process, which will hopefully be streamlined
-through the PTXprint UI in the near future.
+Note: The older (and now redundant) description on how to do this has been removed.
 
-Step 1: Wrap the front cover matter text and logo etc. with this milestone:
-
-```
-\esb\cat frontcover\cat*
-
-     [your front cover content markers would be in here]
-
-\esbe
-```
-
-Step 2: Paste the keyword 'ornaments' into the Plugins box (on the Advanced tab)
-
-
-Step 3: Place this snippet into ptxprint-premods.tex
-
-```tex
-\stylesheet{standardborders.sty}
-```
-
-Step 4: Put these lines in ptxprint-mods.tex
-
-```tex
-\SwitchOrnamentsFamily{pgfhan}
-\SwitchOrnamentsFamily{vectorian}
-
-% You can either use a GraphicOrnament
-% \GraphicOrnament{400}{../../../shared/ptxprint/FullBibleWithFRTmatter/corner_hires.png}
-%  OR
-% You can use the OrnamentTest.ttf FONT which needs to be in the 
-% C:\My Paratext 9 Projects\{PrjID}\shared\fonts folder
-\StringOrnament{400}{OrnamentTest}{A}
-```
-
-Step 5: Place this block into the ptxprint-mods.sty file:
-
-```tex
-\Marker cat:frontcover|esb
-\Position Fcf
-\BoxPadding 0
-\BorderHPadding -50
-\BorderVPadding -55
-\Border All
-\BorderStyle ornaments
-\BorderPatternTop 400|||8.0,0||*a,400|h||8.0
-\BorderPatternBot 400|v||8.0,0||*a,400|d||8.0
-\BorderPatternLeft 0|l|*a
-\BorderPatternRight 0|r|*a
-\BorderLineWidth 1
-\BorderWidth 16
-```
+The process has been streamlined through the PTXprint UI where you can create a cover page 
+with ornamental borders etc. using the Cover tab, and selecting Generate Cover...
