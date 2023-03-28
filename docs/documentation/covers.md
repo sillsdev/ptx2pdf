@@ -1,5 +1,29 @@
 # Covers
 
+## Brief overview
+
+You can (if you try!) mentally divide the wrap-around cover of most  
+books into four conceptual pieces:
+* A background colour or image that wraps around everything.
+* The front of the book
+* The back of the book
+* The spine
+
+Each of them might have a full or inset picture or solid background,
+and it might also have a border.
+
+PTXprint gives you the ability to define each of these four elements. The whole
+cover is the background for everything, then the front, back and (optionally) spine are put on
+top of that, possibly with their own (solid or transparent) backgrounds, and on top of that come
+any borders and text that has been defined.
+
+The four elements are defined as sidebars, using the normal sidebar styling options, and their
+contents are defined using `\periph` elements.
+
+The GUI gives access to all of these settings, however the documentation below
+concentrates on the configuration files that it generates.
+
+
 ## General principles
 The cover-generating macro (\\m@kecover) arranges four sidebars to make the cover:
 1. The whole cover : `coverwhole`
@@ -45,7 +69,7 @@ test-file):
 ```
 
 Each sidebar may have the normal array  normal sidebar foreground and
-background images and colours may be defined (but clearly, not all options or 
+background images and colours which may be defined (but clearly, not all options or 
 combinations make sense). Styling is discussed futher down, and this document
 ends with a complete stylesheet that could be used to set the above text.
 
@@ -68,9 +92,9 @@ front / rear cover as is seen in some editions.
 
 ## Sizing of Background Images
 Of particular relevance for covers, as well as the 1x1 (X x Y) scaling factors,
-the `\BgImageScale` stylesheet parameter can take a prefix indicating *what*
+the `\BgImageScaleTo` stylesheet parameter can take a prefix indicating *what*
 the image should be scaled to. (Note that these are so-far untested on other
-sidebars).
+sidebars). 
 
 The relevant options are:
 * bleed - overflow the page into the cropped area by `\figbleed`.
@@ -83,28 +107,32 @@ The relevant options are:
 
 ### Examples
 ```
-\BgImageScale inner|1
+\BgImageScaleTo inner
+\BgImageScale 1
 ```
 Preserving the orginal aspect ratio, fit the image the the width of the `inner` box:
 
 ![inner](coverpics/cover_inner1.jpg "inner|1")
 
 ```
-\BgImageScale bleed|1x1
+\BgImageScaleTo bleed
+\BgImageScale 1x1
 ```
 Ignoring the original aspect ratio, fit the image to the `bleed` box:
 
 ![Bleed](coverpics/cover_bleed1x1.jpg "bleed|1x1")
 
 ```
-\BgImageScale inner|1x1
+\BgImageScaleTo inner
+\BgImageScale 1x1
 ```
 Ignoring the original aspect ratio, fit the image to the `inner` box:
 
 ![innerx1](coverpics/cover_inner1x1.jpg "inner|1x1")
 
 ```
-\BgImageScale outer|1x1
+\BgImageScaleTo outer
+\BgImageScale 1x1
 ```
 Ignoring the original aspect ratio, fit the image to the `outer` box:
 
@@ -147,6 +175,8 @@ variations on the stylesheet below.
 Note the use of the short-hand `\Category` which sets an internal prefix that
 is applied to later style definitions. I.e. `\Marker pc` after `\Category coverwhole` 
 is actually styling `\Marker cat:coverwhole|pc`
+In a manually generated file, `\BgImageScaleTo` and `\BgImageScale` can be conflated as below,
+this use is deprecated, however, as the GUI may not interpret it correctly.
 
 ```tex
 \Category coverfront
