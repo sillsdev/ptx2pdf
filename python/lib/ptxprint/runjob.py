@@ -782,7 +782,7 @@ class RunJob:
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress()
             tmppdf = self.procpdfFile(outfname, pdffile, info)
-            cmd = ["xdvipdfmx", "-E", "-V", "1.4", "-C", "16", "-v", "-o", tmppdf]
+            cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             #cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
