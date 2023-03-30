@@ -832,7 +832,7 @@ modes = {
     "scores" : alignScores
 }
 
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal",protect={}):
+def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}):
     global debugPrint, debstr,settings
     if debug:
       debugPrint=True

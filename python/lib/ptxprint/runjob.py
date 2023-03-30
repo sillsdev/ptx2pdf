@@ -564,9 +564,13 @@ class RunJob:
 
                 sheetsa = info.printer.getStyleSheets()
                 sheetsb = diginfo.printer.getStyleSheets()
-                logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} mode={info['document/diglotmergemode']}")
+                mode = info["document/diglotmergemode"]
+                sync = "normal"
+                if "-" in mode:
+                    (mode, sync) = mode.split("-")
+                logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
                 #try:
-                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
+                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync)
                 #except SyntaxError as e:
                 #    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
                 #except Exception as e:

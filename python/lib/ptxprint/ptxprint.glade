@@ -24260,6 +24260,8 @@ option does not apply at all.</property>
                                   <item id="doc" translatable="yes">Document based</item>
                                   <item id="simple" translatable="yes">Chapter Verse</item>
                                   <item id="scores" translatable="yes">Scored</item>
+                                  <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
+                                  <item id="scores-verse" translatable="yes">Scored (Verse)</item>
                                 </items>
                               </object>
                               <packing>
