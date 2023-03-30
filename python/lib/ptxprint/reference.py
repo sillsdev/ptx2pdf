@@ -537,7 +537,7 @@ class RefList(list):
                     mode = "v"
                     b = b[m.end():]
                     continue
-                if b.startswith("-"):
+                if b[0] in "-\u00AD\u2010\u2011\u2012\u2013\u2014\u2E3A": # anything dash like
                     start = curr
                     curr = start.copy()
                     if start.verse < 0:

@@ -24062,29 +24062,6 @@ be viewed or edited in Paratext.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkCheckButton" id="c_diglotMerge">
-                                <property name="label" translatable="yes">Alternate Merging</property>
-                                <property name="name">Diglot: Use alternative merging (alignment) method</property>
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">This uses an alternative method for
-merging (or aligning) texts which
-have less structure in common.
-It only tries to align at places where 
-paragraphs start in the same verse.</property>
-                                <property name="halign">end</property>
-                                <property name="valign">center</property>
-                                <property name="margin-end">6</property>
-                                <property name="draw-indicator">True</property>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">6</property>
-                                <property name="width">2</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkFrame" id="fr_diglotSeparateNotes">
                                 <property name="width-request">240</property>
                                 <property name="visible">True</property>
@@ -24271,6 +24248,36 @@ option does not apply at all.</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="fcb_diglotMerge">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="active">0</property>
+                                <property name="active-id">doc</property>
+                                <items>
+                                  <item id="doc" translatable="yes">Document based</item>
+                                  <item id="simple" translatable="yes">Chapter Verse</item>
+                                  <item id="score" translatable="yes">Scored</item>
+                                </items>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="label" translatable="yes">Merging
+mode</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">4</property>
+                                <property name="top-attach">6</property>
                               </packing>
                             </child>
                             <child>

@@ -241,7 +241,7 @@ _map = {
     "document/diglotswapside":  ("c_diglotSwapSide", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotsepnotes":  ("c_diglotSeparateNotes", "diglot", lambda w,v: "true" if v else "false"),
     "document/diglotsecconfig": ("ecb_diglotSecConfig", "diglot", None),
-    "document/diglotmergemode": ("c_diglotMerge", "diglot", lambda w,v: "simple" if v else "doc"),
+    "document/diglotmergemode": ("fcb_diglotMerge", "diglot", None),
     "document/diglotadjcenter": ("c_diglotAdjCenter", "diglot", None),
     "document/diglotheaders":   ("c_diglotHeaders", "diglot", None),
     "document/diglotnotesrule": ("c_diglotNotesRule", "diglot", lambda w,v: "true" if v else "false"),

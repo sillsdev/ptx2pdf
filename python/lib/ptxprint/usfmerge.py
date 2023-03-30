@@ -906,7 +906,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     if (mode == "scores") or ("verse"  in syncarr) or ("chapter" in syncarr) : #Score-based splitting may force the break-up of an NB, the others certainly will.
         settings =  settings & (~MergeF.NoSplitNB)
     if (mode == "scores") or ("verse"  in syncarr):
-        settings= settings | MergeF.ChunkOnVerses
+        settings = settings | MergeF.ChunkOnVerses
     if (mode == "scores"):
         settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
     for colkey,infile in zip(keyarr,infilearr):
@@ -939,7 +939,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     else:
         outf = sys.stdout
 
-    if mode in ('scores'):
+    if mode in ('scores',):
         for i, p in enumerate(pairs):
             for col,data in p.items():
                 if data is not None:

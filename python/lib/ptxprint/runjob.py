@@ -564,7 +564,7 @@ class RunJob:
 
                 sheetsa = info.printer.getStyleSheets()
                 sheetsb = diginfo.printer.getStyleSheets()
-                logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=}")
+                logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} mode={info['document/diglotmergemode']}")
                 #try:
                 usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=info["document/diglotmergemode"])
                 #except SyntaxError as e:
