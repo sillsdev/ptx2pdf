@@ -24259,7 +24259,7 @@ option does not apply at all.</property>
                                 <items>
                                   <item id="doc" translatable="yes">Document based</item>
                                   <item id="simple" translatable="yes">Chapter Verse</item>
-                                  <item id="score" translatable="yes">Scored</item>
+                                  <item id="scores" translatable="yes">Scored</item>
                                 </items>
                               </object>
                               <packing>
