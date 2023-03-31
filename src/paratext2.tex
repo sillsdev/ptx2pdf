@@ -791,7 +791,7 @@
   \traceifset{p@geendcontent}%
   \tempfalse
   \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
-  \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}
+  \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
   \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: border=\b@dr@bot@pad notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
@@ -804,7 +804,7 @@
   \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\tmpwrite{verybottomins}\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
-  \iftemp\else\vfil\tmpwrite{pageend}\fi
+  \iftemp\else\tmpwrite{pageend}\fi
   \traceifcheck{p@geendcontent}%
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
@@ -883,7 +883,7 @@
         \fi\fi
         \hbox to \ExtraRMargin{}}%
       \p@geendcontent
-      \ifnoinkinmargin\ifdim\ht14>0pt \box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -1197,7 +1197,7 @@
         \doTextB@rder{\partial}%
         \box\partial\vfil
         \p@geendcontent
-        \ifnoinkinmargin\ifdim\ht14>0pt \box14\fi\fi
+        \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
     \else
       \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
@@ -2024,7 +2024,7 @@
       \doTextB@rder{\colA}%
       \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
       \p@geendcontent
-      \ifnoinkinmargin\ifdim\ht14>0pt \box14\fi\fi
+      \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%
     \global\partialfr@medfalse
     \global\setbox255=\box\voidb@x                                          %(+)

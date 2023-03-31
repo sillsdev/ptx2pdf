@@ -565,6 +565,8 @@ class RunJob:
                 sheetsa = info.printer.getStyleSheets()
                 sheetsb = diginfo.printer.getStyleSheets()
                 mode = info["document/diglotmergemode"]
+                if mode in ('True', 'False') or not mode:
+                    mode = "doc"
                 sync = "normal"
                 if "-" in mode:
                     (mode, sync) = mode.split("-")
