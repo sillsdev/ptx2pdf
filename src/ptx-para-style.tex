@@ -334,9 +334,10 @@
  \mcpop
 }
 
-\def\writep@rstart#1{%Call with #1 = fully expanded baselineskip
+\def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
+   \getp@ram{type}{#2}{#2}%
    \beginL\pdfsavepos
-   \write\p@rlocs{\noexpand\@parstart{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
 \newif\iftoplevelp@r
@@ -580,7 +581,7 @@
    \fi
    \the\@veryparhooks
    \restoresettings
-   \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
+   \x@\writep@rstart\x@{\the\baselineskip}{#1}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
    \s@tsideskips{\styst@kfirst}%Probably need this here in case the par gets ended e.g. by end of book.
@@ -869,13 +870,13 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{%
-  \prev@y=#3\relax
+\def\@parstart#1#2#3#4#5{%
+  \prev@y=#5\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
   \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#3}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
   \this@y=#2\relax
@@ -890,6 +891,8 @@
 }
 
 \def\@parlen#1#2#3{}
+\def\@parpageend#1#2#3{}
+\def\@parnote#1#2#3{}
 
 \def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%

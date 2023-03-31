@@ -144,6 +144,7 @@
           \trace{n}{note caller is \the\wd0 \space wide}%
         \fi
         \getp@ram{callerraise}{\newn@testyle}{\newn@testyle}\ifx\p@ram\relax\box0\else\raise\p@ram\box0\fi % suppress height of caller
+        \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parnote\x@{\newn@testyle}{\the\pdflastxpos}{\the\pdflastypos}}\endL
         \ifnum\pagetracing>0
           \edef\n@tetxt{\b@lance\space note \newn@testyle\space in \n@tebase. \id@@@\space \ch@pter.\v@rse}%
           \x@\x@\x@\write-1\x@{\n@tetxt}%
