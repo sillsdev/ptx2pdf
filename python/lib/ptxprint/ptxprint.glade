@@ -24251,18 +24251,26 @@ option does not apply at all.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkComboBoxText" id="fcb_diglotMerge">
+                              <object class="GtkLabel">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="active">0</property>
-                                <property name="active-id">doc</property>
-                                <items>
-                                  <item id="doc" translatable="yes">Document based</item>
-                                  <item id="simple" translatable="yes">Chapter Verse</item>
-                                  <item id="scores" translatable="yes">Scored</item>
-                                  <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
-                                  <item id="scores-verse" translatable="yes">Scored (Verse)</item>
-                                </items>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Merging mode:</property>
+                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - similar to Document, but uses a different scoring algorithm
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!</property>
                               </object>
                               <packing>
                                 <property name="left-attach">3</property>
@@ -24270,12 +24278,33 @@ option does not apply at all.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkComboBoxText" id="fcb_diglotMerge">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Merging
-mode</property>
+                                <property name="active">0</property>
+                                <property name="active-id">doc</property>
+                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - similar to Document, but uses a different scoring algorithm
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!</property>
+                                <items>
+                                  <item id="doc" translatable="yes">Document based</item>
+                                  <item id="simple" translatable="yes">Chapter Verse</item>
+                                  <item id="scores" translatable="yes">Scored</item>
+                                  <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
+                                  <item id="scores-verse" translatable="yes">Scored (Verse)</item>
+                                </items>
                               </object>
                               <packing>
                                 <property name="left-attach">4</property>
@@ -29263,11 +29292,12 @@ more clearly where changes are being made.</property>
   \zgap|1.5in\*
 
 To include one or more table of contents:
-  \ip \ztoc|&lt;keyword&gt;\*
+  \ztoc|&lt;keyword&gt;\*
 Where &lt;keyword&gt; can be replaced with:
   main – primary, all-inclusive table of contents
   pre – any book prior to scripture (FRT, INT)
   ot – only Old Testament books are listed
+  heb - OT books sorted according to the Hebrew TaNaKh
   dc – only Deutero Canonical books are listed
   nt – only New Testament books are listed
   post – books that occur after REV (GLO, BAK, TDX, NDX, XXA-G)

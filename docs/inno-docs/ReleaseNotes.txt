@@ -1,8 +1,21 @@
 PTXprint 2.3.2 Release Notes
-25 Mar 2023
+31 Mar 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
+
+Bug fixes and Improvements in 2.3.3 (31 Mar 2023)
+
+  * Update cover documentation, and code snippets
+
+  * Preserve the introduction page number
+
+  * Added -V or --pdfversion as a command line option
+    PDF Version to read and write * 10 (default=14)
+
+  * Added extra diglot merging modes (without parameterisation of score mode) 
+
+  * Added more telemetry to .parlocs
 
 Bug fixes and Improvements in 2.3.2 (25 Mar 2023)
 
