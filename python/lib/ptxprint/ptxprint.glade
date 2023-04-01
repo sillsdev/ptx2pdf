@@ -24291,11 +24291,12 @@ algorithms which may be used to obtain the best overall result:
 
 * Document based - attempts to use the document structure to align at 
   paragraphs as far as possible; but alignment is easily confused when 
-  each text has a different paragraph structure.
+  each text has a very different paragraph structure.
 
 * Chapter Verse - aligns on chapters and verses instead of structure
 
-* Scored - similar to Document, but uses a different scoring algorithm
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
 
 * Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
 
@@ -24318,11 +24319,12 @@ algorithms which may be used to obtain the best overall result:
 
 * Document based - attempts to use the document structure to align at 
   paragraphs as far as possible; but alignment is easily confused when 
-  each text has a different paragraph structure.
+  each text has a very different paragraph structure.
 
 * Chapter Verse - aligns on chapters and verses instead of structure
 
-* Scored - similar to Document, but uses a different scoring algorithm
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
 
 * Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
 
