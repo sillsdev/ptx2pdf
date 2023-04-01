@@ -176,6 +176,7 @@ _map = {
     "document/linebreaklocale": ("t_linebreaklocale", "fontscript", lambda w,v: v or ""),
     "document/script":          ("fcb_script", "fontscript", lambda w,v: ":script="+v.lower() if v and v != "Zyyy" else ""),
     "document/ch1pagebreak":    ("c_ch1pagebreak", "body", lambda w,v: "true" if v else "false"),
+    "document/pagebreakallchs": ("c_pagebreakAllChs", "body", None),
     "document/marginalverses":  ("c_marginalverses", "body", lambda w,v: "" if v else "%"),
     "document/marginalposn":    ("fcb_marginVrsPosn", "body", None),
     "document/columnshift":     ("s_columnShift", "layout", lambda w,v: v or "16"),

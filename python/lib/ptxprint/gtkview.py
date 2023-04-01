@@ -150,7 +150,7 @@ l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI
 c_fontFake fr_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
-fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
+fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak c_pagebreakAllChs
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
