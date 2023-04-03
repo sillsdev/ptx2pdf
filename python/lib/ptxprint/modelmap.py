@@ -192,7 +192,7 @@ _map = {
     "document/ifinclfigs":      ("c_includeillustrations", "pictures", lambda w,v: "true" if v else "false"),
     "document/ifusepiclist":    ("c_includeillustrations", "pictures", lambda w,v :"" if v else "%"),
     "document/iffigexclwebapp": ("c_figexclwebapp", "pictures", None),
-    "document/iffigskipmissing": ("c_skipmissingimages", "pictures", None),
+    "document/iffigskipmissing": ("c_skipmissingimages", "pictures", lambda w,v: "true" if v else "false"),
     "document/iffigcrop":       ("c_cropborders", "pictures", None),
     "document/iffigplaceholders": ("c_figplaceholders", "pictures", lambda w,v: "true" if v else "false"),
     "document/iffigshowcaptions": ("c_fighidecaptions", "pictures", lambda w,v: "false" if v else "true"),

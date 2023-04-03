@@ -246,6 +246,7 @@ _sensitivities = {
     "c_grid" :                 ["btn_adjustGrid"],
     "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
+    "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],

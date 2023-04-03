@@ -11958,8 +11958,9 @@ and descent values of the main body font.</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Fine Tune Line Spacing:
 
-Click this button to make PTXprint shrink or expand the line
-spacing slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the line spacing slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the line-spacing will decrease slightly to
@@ -12724,8 +12725,9 @@ above the base line of the first line of the body text.</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Fine Tune Top Margin:
 
-Click this button to make PTXprint shrink or expand the top 
-margin slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the top margin slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the top margin will decrease slightly to
@@ -12758,8 +12760,9 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Fine Tune Bottom Margin:
 
-Click this button to make PTXprint shrink or expand the bottom 
-margin slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the bottom margin slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the bottom margin will decrease slightly to
@@ -14701,6 +14704,7 @@ The break will come right before the \c 1 marker.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -32102,11 +32106,13 @@ options allow plenty of scope.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click to print the regular PDF but
-also generate a PDF showing the 
-differences between the current 
-PDF and the selected previous 
-version. It should open in the 
+                                    <property name="tooltip-text" translatable="yes">When trying to compare a previous PDF version
+with the PDF using the current settings, DO NOT
+click the regular "Print (Make PDF)" button, but
+use this button instead. It will first create the new
+PDF and then also generate a PDF showing the 
+differences between the current PDF and the 
+selected previous version. It should open in the 
 default PDF viewer.
 
 Shortcut: Ctrl-D</property>
