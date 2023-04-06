@@ -308,7 +308,7 @@
 }
 
 
-\def\@checkzvar#1#2::#3::#4\E{%
+\def\@checkzvar#1#2::#3::#4\E{%if the value saves is zvar::something, then return that zvar
   \trace{A}{@checkzvar '#1' '#2' '#3'}%
   \edef\tmp{#2}\ifx\tmp\zv@r
     \edef#1{\csname ms:zvar=#3\endcsname}%
@@ -317,6 +317,20 @@
 }
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}%
   \x@\@checkzvar\x@{\x@\attr@b\x@}\attr@b ::::\E} %simple access function
+
+\def\get@ttributedef#1#2#3{%Gets a (potentially numeric) atttribute, with a default. #1 attribute; #2 csname ; #3 default if not defined
+  \get@ttribute{#1}\ifx\attr@b\relax
+    \ifx#2\undefined 
+      \edef#2{#3}%
+    \else\ifx#2\relax 
+        \edef#2{#3}%
+    \fi\fi
+  \else
+    \m@kenumber{\attr@b}%
+    \let#2\@@result
+  \fi
+}
+
 \def\set@ttribute#1#2{%
   \x@\xdef\csname attr:#1\endcsname{#2}%
   \xdef\attribsus@d{\ifx\attribsus@d\empty\else\attribsus@d,\fi#1}% Keep a list so we can junk it later.

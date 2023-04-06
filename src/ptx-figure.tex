@@ -487,15 +487,16 @@
      \def\r@tSet{\kern\dp0}%
      \count255=-\count255
   \fi
+  \edef\cr@ditr@tn{\the\count255}%
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 \s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
   % positive)
-  \ifnum \count255>45
-    \ifnum \count255<135
+  \ifnum \cr@ditr@tn>45
+    \ifnum \cr@ditr@tn<135
        \dimen0=\ht\newpicb@x
     \else
        \dimen0=\wd\newpicb@x
@@ -542,7 +543,7 @@
     \fi
   \fi
   \ifnum\cr@ditrot=0 \else
-    \ifnum\count255>135
+    \ifnum\cr@ditr@tn>135
       \setbox0=\hbox{\rot@tebzoneeighty}%
     \else
       \setbox0=\hbox{\rot@tebz}%

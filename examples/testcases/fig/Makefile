@@ -1,7 +1,7 @@
 .SUFFIXES: .dvi .pdf
 all: test.pdf
 DIR:=$(shell dirname `find ../../..  -name paratext2.tex`)
-test.pdf:test.tex
+test.pdf:test.tex $(DIR)/*.tex
 	-rm test.delayed
 	TEXINPUTS=.:$(DIR) xetex $< && cp test.pdf test.parlocs test.delayed test.log 1
 	A=1 ; while grep Rerun test.log ; do TEXINPUTS=.:$(DIR) xetex $<  && mkdir $$A ; cp test.pdf test.parlocs test.delayed test.log $$A; A=$$((A+1)); if [ $$A -gt 20 ] ; then break ; fi ;  done ; echo last one: $$A  ; for A in `seq $$A 15` ; do rm $$A/*;done

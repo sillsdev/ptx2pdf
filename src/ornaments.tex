@@ -626,7 +626,7 @@
 \egroup}
 \def\doOrnament#1{%
   \begingroup
-    \orn@setup
+    %\orn@setup
     \x@\ornament@parse#1|||||\E
     \setorn@scale
     \orn@do@ornament
@@ -1121,7 +1121,7 @@
 % 5 rotation: up is -> u=up d=down l=left r=right
 
 \def\UseOrnament#1#2#3#4#5{%
-    \orn@setup
+    %\orn@setup
     \def\ornamentwidth{#2}%
     \def\ornamentheight{#3}%
     \def\ornamentmirror{#4}%
@@ -1139,6 +1139,9 @@
     \orn@setup
     \def\ornXalign{0}%
     \def\ornYalign{0}%
+    \get@ttributedef{linewidth}{\ornamentlinewidth}{0.5}%
+    \get@ttributedef{linecol}{\ornamentlinecol}{0 0 0}%
+    \get@ttributedef{fillcol}{\ornamentfillcol}{NONE}%
     \get@ttribute{size}%
     \ifx\attr@b\relax
       \edef\ornamentheight{\the\dimexpr \c@rrfontsize\dimexpr 0.7\FontSizeUnit\relax\relax}%
@@ -1158,6 +1161,7 @@
     \fi
     \trace{orn}{end of zornament (\@@@result)}%
   \egroup
+  %\aftergroup{\showlists}%
 } 
 \def\n@endsp@ce#1 \E{\def\@@@result{#1}}
 \def\chkset#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\x@\global\x@\let\csname #1\endcsname\tmp\fi}
@@ -1165,13 +1169,13 @@
 % Parameters:
 % 1 stroke width
 % 2 stroke colour (or empty for no change)
-% 3 fill colour (or 'none' for no fill, empty for no change)
+% 3 fill colour (or 'NONE' for no fill, empty for no change)
 \def\SetupOrnament#1#2#3{% Line width / Line colour / Fill colour
   \chkset{ornamentlinewidth}{#1}%
   \chkset{ornamentlinecol}{#2}%
   \chkset{ornamentfillcol}{#3}%
 }
-
+\SetupOrnament{0.5}{0 0 0}{NONE}
 %\tracingassigns=1
 %\tracingmacros=1
 
@@ -1369,7 +1373,7 @@
   \fi
   \getp@ram{borderfillcolour}{zrule}{\styst@k}%
   \ifx\p@ram\relax
-    \def\ornamentfillcol{none}%
+    \let\ornamentfillcol\fill@none
   \else 
     \let\ornamentfillcol\p@ram
   \fi
