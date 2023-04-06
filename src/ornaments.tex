@@ -200,14 +200,14 @@
   \calc@ornamentdim
   \ifdim\dimen0<0pt
     \dimen0=-\dimen0
-    \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0\relax}}%
-    \trace{orn}{xshift \pdf@xo}%
+    \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0 \ifXformOrnaments +\x@bjpadding\fi\relax}}%
   \fi
+  \trace{orn}{xshift \pdf@xo}%
   \ifdim\dimen1<0pt
     \dimen1=-\dimen1
-    \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1\relax}}%
-    \trace{orn}{yshift \pdf@yo}%
+    \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1 \ifXformOrnaments +\x@bjpadding\fi\relax}}%
   \fi
+  \trace{orn}{yshift \pdf@yo}%
   \edef\pdf@matrix{}%
   \def\pdf@apply@transform{}%
   \ifXformOrnaments
@@ -216,9 +216,8 @@
     %\edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\strip@pt{\dimen0}\space \strip@pt{\dimen1}}%
     \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX + \x@bjpadding *2\relax}%
     \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY + \x@bjpadding *2\relax}%
-    \edef\pdf@xo{\strip@pt{\dimexpr \pdf@xo pt + \x@bjpadding \relax}}% Actually bp
-    \edef\pdf@yo{\strip@pt{\dimexpr \pdf@yo pt + \x@bjpadding \relax}}% Actually bp
     \edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\pdf@xo\space\pdf@yo}%
+    \trace{orn}{\pdf@matrix}%
   \else
     \def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
     \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
