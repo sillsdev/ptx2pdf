@@ -1085,7 +1085,7 @@
 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
-  \def\c@rref{#2}%
+  \edef\c@rref{#2}%
   \trace{C}{wDI}%
   \delay@test{#1}% 
   \raise@test{#1}%
