@@ -82,22 +82,26 @@
 
 
 % Helper function for figure parameters which might come from the fig line, a stylesheet, or a default.
-\def\setf@gval#1#2#3{\let#1\empty
+\def\setf@gval#1#2#3#4{\let#1\empty
   \x@\let\x@\tmpp@ram\csname figparam-x-#2\endcsname
-  \trace{F}{figparam-x-#2 is \meaning\tmpp@ram (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b)}%
+  \trace{F}{figparam-x-#2 (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b) is \meaning\tmpp@ram }%
   \ifx\tmpp@ram\relax\let\tmpp@ram\empty\fi
   \ifx\tmpp@ram\empty
     \getp@ram{#2}{loc:\picl@c|fig}{loc:\picl@c|fig}% +fig ? Dangerous.
     \ifx\p@ram\relax
-      \edef#1{#3}%
+      \edef#1{#4}%
     \else
-      \let#1\p@ram
+      \ifx\p@ram\empty
+        \edef#1{#4}%
+      \else
+        \edef#1{\p@ram #3}%
+      \fi
     \fi
   \else
     \x@\let\x@#1\csname figparam-x-#2\endcsname
-  \fi
-  \ifx#1\empty
-    \edef#1{#3}%
+    \ifx#1\empty
+      \edef#1{#4}%
+    \fi
   \fi
 }
 % Generate the insert save-boxes for each class at start-up
@@ -430,6 +434,10 @@
 %+cfig_addcredit
 \newdimen\FigCreditPadding
 \FigCreditPadding=2pt
+\newdimen\FigCreditOverEdgeV
+\newdimen\FigCreditOverEdgeH
+\FigCreditOverEdgeH=0.07pt
+\FigCreditOverEdgeV=0.07pt
 \def\add@credit{% Box to add credit to is  \newpicb@x
   \ifx\cr@ditpos\empty
     \edef\cr@ditpos{ti}% Center, inner edge
@@ -487,7 +495,7 @@
      \def\r@tSet{\kern\dp0}%
      \count255=-\count255
   \fi
-  \edef\cr@ditr@tn{\the\count255}%
+  \edef\cr@ditr@tn{\the\count255}%credit rotation as a positive number (0-180)
   %pad credit
   \setbox0=\hbox{\XeTeXuseglyphmetrics=3 \s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
@@ -539,19 +547,40 @@
     \fi
     \trace{g}{credit text on \cr@dit@col background}%
     \ifx\cr@dit@col\h@phen\else
-      \setbox0=\hbox{\colourbox{\cr@dit@col}{}{\the\wd0}{\the\dp0}{\the\ht0}{0pt}{\box0}\relax}%
+      \setbox0=\hbox{\kern-5sp \colourbox{\cr@dit@col}{}{\the\dimexpr \wd0}{\the\dp0}{\the\ht0}{0pt}{\box0}\relax}%
     \fi
   \fi
   \ifnum\cr@ditrot=0 \else
     \ifnum\cr@ditr@tn>135
       \setbox0=\hbox{\rot@tebzoneeighty}%
+      %\setbox0=\hbox{\raise\dp0 \box0}%
     \else
       \setbox0=\hbox{\rot@tebz}%
     \fi
   \fi
-  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0)}%
-  \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\wd\newpicb@x \vskip 0pt\ab@vecredit\hbox to \wd\newpicb@x{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
+  \edef\cr@ditHshift{\the\FigCreditOverEdgeH}%
+  \edef\cr@ditVshift{\the\FigCreditOverEdgeV}%
+  \getp@ram{spacebefore}{\cr@ditlist}{\cr@ditlist}%
+  \ifx\p@ram\relax\else
+    \ifnum\cr@ditr@tn=90
+      \edef\cr@ditHshift{\dimexpr \cr@ditHshift +\p@ram pt\relax}%
+    \else
+      \edef\cr@ditVshift{\dimexpr \cr@ditVshift + \p@ram pt\relax}%
+    \fi
+  \fi
+  \getp@ram{spacebeside}{\cr@ditlist}{\cr@ditlist}%
+  \ifx\p@ram\relax\else
+    \ifnum\cr@ditr@tn=90
+      \edef\cr@ditVshift{\dimexpr \cr@ditVshift - \p@ram pt\relax}%
+    \else
+      \edef\cr@ditHshift{\dimexpr \cr@ditHshift - \p@ram pt\relax}%
+    \fi
+  \fi
+  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0) \ab@vecredit,\b@lowcredit}%
+  \edef\ol@yboxwd{\the\dimexpr \wd\newpicb@x \relax}%
+  \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\ol@yboxwd\vskip -\cr@ditVshift\relax\ab@vecredit\hbox to \ol@yboxwd{\beginL\hskip -\cr@ditHshift\relax\pr@credit\box0\p@stcredit\hskip -\cr@ditHshift\relax\endL}\b@lowcredit\vskip -\cr@ditVshift}%
   \setbox\newpicb@x=\vbox to \ht\newpicb@x{\box\newpicb@x\vss\box0}%
+  %\ifnum\cr@ditrot=180\showbox\newpicb@x\fi
 }
 \def\strip@minus#1-{#1}
 \def\p@rseCreditBox#1 #2 #3 #4\end{%
@@ -786,9 +815,9 @@
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
-  \setf@gval{\sp@cebeside}{spacebeside}{\DefaultSpaceBeside}%
-  \setf@gval{\sp@cebefore}{spacebefore}{0}%
-  \setf@gval{\sp@ceafter}{spaceafter}{0}%
+  \setf@gval{\sp@cebeside}{spacebeside}{pt}{\DefaultSpaceBeside}% absolute value
+  \setf@gval{\sp@cebefore}{spacebefore}{}{0}%  in \onel@neunit
+  \setf@gval{\sp@ceafter}{spaceafter}{}{0}% in \onel@neunit
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
