@@ -496,9 +496,12 @@ ImportCategories = {
     'c_oth_Body': 'body',
     'c_oth_NotesRefs': 'noteref',
     'c_oth_HeaderFooter': 'headfoot',
-    'c_oth_TabsBorders': 'tabsborders',
-    'c_oth_Advanced': 'advanced',
     'c_oth_FrontMatter': 'front',
+    'c_oth_TabsBorders': 'tabsborders',
+    'c_oth_Peripherals': 'peripherals',
+    'c_oth_Advanced': 'advanced',
     'c_oth_Cover': 'cover',
-    'c_impLayout': 'layout'
+    'c_impFontsScript': 'fontscript',
+    'c_impLayout': 'layout',
+    'c_impPictures': 'pictures'
 }

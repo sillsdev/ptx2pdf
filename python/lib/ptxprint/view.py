@@ -1061,14 +1061,14 @@ class ViewModel:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
         for sect in config.sections():
-            # if sect == "paper":
-                # import pdb; pdb.set_trace()
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
                 if key in ModelMap:
                     v = ModelMap[key]
+                    if categories is not None and v.category not in categories:
+                        continue
                     if val == "None":
                         val = None
                     if key in self._attributes:
@@ -1121,14 +1121,17 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
-        TeXpert.loadConfig(config, self)
+        if categories is None:
+            TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
+            if categories is not None and ModelMap[k].category not in categories:
+                continue
             (sect, name) = k.split("/")
             try:
                 val = config.get(sect, name)
             except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k].widget, self.ptsettings.dict.get(v, ""))
-        if not dummyload and self.get("c_thumbtabs"):
+        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'tabsborders' in categories):
             self.updateThumbLines()
         self.updateFont2BaselineRatio()
 
@@ -1890,8 +1893,19 @@ set stack_size=32768""".format(self.configName())
             self.picinfos.merge_fields(otherpics, **fields)
 
         # merge ptxprint.sty adding missing
+        if self.get("c_impStyles"):
+            newse = StyleEditor(self)
+            with zipfile.open("ptxprint.sty") as inf:
+                newse.loadfh(inf)
+            self.styleeditor.mergein(newse)
+            # do we do ptxprint-mods.sty? or custom.sty?
 
-        # merge cover
+        # merge cover and import has cover
+            # override cover styles
+            # add/override cover periphs in FRTlocal
+            # add missing periph variables for covers
+            # set c_useSectIntros and c_useOrnaments
+            
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

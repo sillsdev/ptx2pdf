@@ -15,6 +15,9 @@ class _CEnum:
     def __contains__(self, v):
         return v in self.vals
 
+    def __str__(self):
+        return "in " + ", ".join(self.vals)
+
 class _CRange:
     def __init__(self, first, last=None):
         self.first = first
@@ -30,6 +33,9 @@ class _CRange:
             return False
         return True
 
+    def __str__(self):
+        return "in range({}, {}+1)".format(self.first, self.last)
+
 class _CValue:
     def __init__(self, val):
         self.value = val
@@ -40,12 +46,18 @@ class _CValue:
             return False
         return v == self.value
 
+    def __str__(self):
+        return "== {}".format(self.value)
+
 class _CNot:
     def __init__(self, constraint):
         self.constraint = constraint
 
     def __contains__(self, v):
         return not v in self.constraint
+
+    def __str__(self):
+        return "not(" + str(self.constraint) + ")"
 
 constraints = {
     'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
@@ -307,12 +319,18 @@ class StyleEditor:
         self.sheet = Sheets(sheetfiles[-1:], base = "")
         self.test_constraints(self.sheet)
 
+    def loadfh(self, fh):
+        self.basesheet = Sheets()
+        self.sheet = Sheets()
+        self.sheet.appendfh(fh)
+        self.test_constraints(self.sheet)
+
     def test_constraints(self, sheet):
         for m, s in sheet.items():
             for k, v in list(s.items()):
                 c = constraints.get(k.lower(), None)
                 if c is not None and not v in c:
-                    logger.info(f"Failed constraint: {m}/{k} = {v}")
+                    logger.info(f"Failed constraint: {m}/{k} = {v} constraint: {c}")
                     del s[k]
 
     def _convertabs(self, key, val):
@@ -391,6 +409,19 @@ class StyleEditor:
             for k in allkeys:
                 nv = newse.getval(m, k)
                 bv = basese.getval(m, k)
+                sv = self.getval(m, k)
+                if sv != bv:
+                    continue
+                if nv != bv:
+                    self.setval(m, k, nv)
+
+    def mergein(self, newse):
+        for m in newse.sheet.keys():
+            allkeys = newse.allValueKeys(m)
+            allkeys.update(self.allValuekeys(m))
+            for k in allkeys:
+                nv = newse.getval(m, k)
+                bv = self.getval(m, k, baseonly=True)
                 sv = self.getval(m, k)
                 if sv != bv:
                     continue

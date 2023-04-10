@@ -54,8 +54,11 @@ class Sheets(dict):
     def append(self, sf, nodefaults=False):
         if os.path.exists(sf):
             with open(sf, encoding="utf-8", errors="ignore") as s:
-                sp = style.parse(s, fields = style.Marker({})) if nodefaults else style.parse(s)
-                self.update_sheet(sp)
+                self.appendfh(s, nodefaults=nodefaults)
+
+    def appendfh(self, s, nodefaults=False):
+        sp = style.parse(s, fields = style.Marker({})) if nodefaults else style.parse(s)
+        self.update_sheet(sp)
 
     def update_sheet(self, d):
         style.update_sheet(self, d, field_replace=True)

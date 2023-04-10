@@ -3387,18 +3387,20 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
 
     # Not yet ready for prime time!
-    # def onImportClicked(self, btn_importPDF):
-        # dialog = self.builder.get_object("dlg_importSettings")
-        # if sys.platform == "win32":
-            # dialog.set_keep_above(True)
-        # response = dialog.run()
-        # if response == Gtk.ResponseType.OK:
+    def onImportClicked(self, btn_importPDF):
+        dialog = self.builder.get_object("dlg_importSettings")
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            # find and open zip
+            # self.importConfig(aZip)
             # MH to do something magic here
             # (depending on the options set within Import dialog)
-            # pass
-        # if sys.platform == "win32":
-            # dialog.set_keep_above(False)
-        # dialog.hide()
+            pass
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
 
     def onImportPDFsettingsClicked(self, btn_importPDF):
         vals = self.fileChooser(_("Select a PDF to import the settings from"),
