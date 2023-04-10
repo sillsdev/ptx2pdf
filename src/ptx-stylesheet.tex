@@ -2072,7 +2072,7 @@
 \def\s@tupsizes{
  \s@tb@dyb@seline{}%
  %\tracingifs=1
- \ifdim\lineskiplimit > 0pt\else\lineskiplimit=-9\le@dingunit\fi
+ \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9\le@dingunit\fi
  \message{lineskiplimit=\the\lineskiplimit}%
  \lineskip=0pt
  \s@tbaseline{p}{p}%

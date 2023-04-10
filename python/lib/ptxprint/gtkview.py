@@ -3393,7 +3393,7 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            # find and open zip
+            # find and open zip: PDF, archive, (project, config)
             # self.importConfig(aZip)
             # MH to do something magic here
             # (depending on the options set within Import dialog)
