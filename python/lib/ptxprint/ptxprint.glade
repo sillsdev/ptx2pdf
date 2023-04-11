@@ -4557,7 +4557,6 @@ Matter settings on the View+Edit tab):
               <object class="GtkButton" id="button2">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
-                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">NOTE: This feature has not yet been implemented!</property>
@@ -4770,7 +4769,7 @@ PDF contains the PTXprint configuration
 settings (as enabled on the Finishing tab).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
+                            <signal name="clicked" handler="onSelectPDForZIPfileToImport" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
@@ -4783,7 +4782,7 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="label" translatable="yes">Path to PDF file of ZIP archive.</property>
+                            <property name="label" translatable="yes">Path to PDF file or ZIP archive.</property>
                             <property name="ellipsize">middle</property>
                             <attributes>
                               <attribute name="foreground" value="#5e5e5c5c6464"/>
@@ -5227,14 +5226,37 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
-                        <property name="label" translatable="yes">Enabling this option will only import the Styles which were changed.
-You may want to reset the current configuration before importing styles.</property>
+                        <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
+You may want to reset the current configuration before importing styles, or even...</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_sty_OverrideAllStyles">
+                        <property name="label" translatable="yes">Override ALL Style Settings</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Normally only styles that have not been changed
+in the receiving configuration will be imported.
+But if you require ALL styles to be updated
+regardless of whether they have already been
+modified locally, then enable this option.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">20</property>
+                        <property name="margin-end">20</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -11438,7 +11460,7 @@ into the current Configuration.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
-                                    <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onImportClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>

@@ -471,6 +471,7 @@ _map = {
     "import/layout":            ("c_impLayout", "import", None),
     "import/fontsscript":       ("c_impFontsScript", "import", None),
     "import/styles":            ("c_impStyles", "import", None),
+    "import/overrideAllstyles": ("c_sty_OverrideAllStyles", "import", None),
     "import/pictures":          ("c_impPictures", "import", None),
     "import/addnewpics":        ("c_impPicsAddNew", "import", None),
     "import/deloldpics":        ("c_impPicsDelOld", "import", None),

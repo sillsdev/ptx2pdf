@@ -3402,25 +3402,35 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(False)
         dialog.hide()
 
-    def onImportPDFsettingsClicked(self, btn_importPDF):
-        vals = self.fileChooser(_("Select a PDF to import the settings from"),
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+    def onSelectPDForZIPfileToImport(self, btn_importPDF):
+        pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf", "default": True},
+                           "ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple = False, basedir=os.path.join(self.working_dir, ".."))
-        if vals is None or not len(vals) or str(vals[0]) == "None":
+        if pdfORzipFile is None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
             return
-        zipdata = self.getPDFconfig(vals[0])
-        if zipdata is not None:
-            if self.msgQuestion(_("Overwite current Configuration?"), 
-                    _("WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\nDo you wish to continue?")):
-                self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
-        else:
-            self.doError(_("PDF Config Import Error"), 
-                    secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
-                            _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
-                            _("if created with 'Include Config Settings Within PDF' option enabled."))
-            return
-        self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
-        
+        # Need to handle EITHER a .PDF (and check that it has a valid zipdata within it
+        #                    OR a .zip file (and also check that it has config settings in it)
+        # and if all is well, then return the filename to the dialog, but don't do anything
+        # else until the other settings have been selected, and OK has been clicked.
+        self.builder.get_object("btn_selectImpSource_pdf").set_tooltip_text(str(pdfORzipFile[0]))
+        if str(pdfORzipFile[0]).lower().endswith(".pdf"):
+            zipdata = self.getPDFconfig(pdfORzipFile[0])
+            if zipdata is not None:
+                self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
+                # if self.msgQuestion(_("Overwite current Configuration?"), 
+                        # _("WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\nDo you wish to continue?")):
+                    # self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
+            else:
+                self.doError(_("PDF Config Import Error"), 
+                        secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
+                                _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
+                                _("if created with 'Include Config Settings Within PDF' option enabled."))
+                return
+            # self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
+        elif pdfORzipFile[0].lower().endswith(".zip"):
+            self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
+            
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
                 os.path.join(self.settings_dir, self.prjid), 

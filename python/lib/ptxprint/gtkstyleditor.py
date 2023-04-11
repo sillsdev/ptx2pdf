@@ -191,12 +191,12 @@ class StyleEditorView(StyleEditor):
             v = stylemap.get(dualmarkers.get(key, key))
             if v is None:
                 return
-            self.loading = True
+            # self.loading = True
             self.set(v[0], val or "")
             if key == "Color":
                 print(f"setval {val=}")
                 self.set("l_styColor", _("Color:")+"\n"+str(val))
-            self.loading = False
+            # self.loading = False
 
     def get(self, key, default=None):
         w = self.builder.get_object(key)
