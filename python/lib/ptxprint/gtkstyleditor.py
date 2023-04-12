@@ -745,8 +745,8 @@ class StyleEditorView(StyleEditor):
             del self.sheet[key]
             selection = self.treeview.get_selection()
             model, i = selection.get_selected()
-            p = model.get_path(i)
-            model.row_delete(p)
+            p = model.get_path(i).convert_path_to_child_path()
+            model.get_model().row_delete(p)
             self.onSelected(selection)
 
     def refreshKey(self):
