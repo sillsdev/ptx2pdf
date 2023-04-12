@@ -1,6 +1,7 @@
 
 import re, os
 from ptxprint.usfmutils import Sheets
+from ptxprint.sfm.style import Marker
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
 from copy import deepcopy
@@ -152,6 +153,8 @@ def toBool(self, v, mrk=None, model=None, parm=None):
 def fromSet(self, s, mrk=None, model=None):
     if isinstance(s, set):
         return s
+    elif not len(s):
+        return set()
     return set(s.split())
 
 def toSet(self, s, mrk=None, model=None, parm=None):
@@ -303,6 +306,9 @@ class StyleEditor:
             return True
         return False
 
+    def addMarker(self, mrk, name):
+        self.sheet[mrk] = Marker({" deletable": True, "Name": name})
+
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")
         if f is not None:
@@ -416,9 +422,12 @@ class StyleEditor:
                     self.setval(m, k, nv)
 
     def mergein(self, newse):
+        allstyles = self.allStyles()
         for m in newse.sheet.keys():
+            if m not in allstyles:
+                self.addMarker(m, newse.getval(m, 'Name'))
             allkeys = newse.allValueKeys(m)
-            allkeys.update(self.allValuekeys(m))
+            allkeys.update(self.allValueKeys(m))
             for k in allkeys:
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)

@@ -88,7 +88,7 @@ _fields = Marker({
     'Endmarker':        (str, None),
     'Name':             (str,   None),
     'Description':      (str,   None),
-    'OccursUnder':      (unique(sequence(str)), {None}),
+    'OccursUnder':      (unique(sequence(str)), set()),
     'TextProperties':   (unique(sequence(CaselessStr)), set()),
     'TextType':         (CaselessStr,   'Unspecified'),
     'StyleType':        (CaselessStr,   ''),

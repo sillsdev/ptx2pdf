@@ -189,7 +189,7 @@ class PicInfo(dict):
     srcfkey = 'src path'
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
-    def __init__(self, model):
+    def __init__(self, model=None):
         self.clear(model)
         self.inthread = False
         self.keycounter = 0
@@ -265,6 +265,16 @@ class PicInfo(dict):
                             break
                 del indat[k]
 
+    def merge_fields(self, other, fields, extend=False):
+        anchored = {v['anchor']: v for v in self.values()}
+        count = 1
+        for k, v in other.items():
+            a = v['anchor']
+            s = anchored.get(a, None)
+            if s is None:
+                self[f"picM{count}"] = v.copy()
+            else:
+                s.update({f: v[f] for f in fields if f in v})
 
     def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
@@ -299,9 +309,9 @@ class PicInfo(dict):
         return "pic{}{}".format(suffix, self.keycounter)
 
     def read_piclist(self, fname, suffix=""):
-        if not os.path.exists(fname):
-            return
         if isinstance(fname, str):
+            if not os.path.exists(fname):
+                return
             inf = universalopen(fname)
         else:
             inf = fname

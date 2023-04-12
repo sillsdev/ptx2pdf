@@ -6,7 +6,8 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath
+                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
+                            zipopentext
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
@@ -91,6 +92,12 @@ class ViewModel:
     }
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
                        "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
+
+    _picFields = {
+        "Captions": ('caption', 'captionR'),
+        "SizePosn": ('size', 'pgpos'),
+        "Copyright": ('copy', ),
+    }
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self.settings_dir = settings_dir        # ~/Paratext8Projects
@@ -1098,6 +1105,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                elif categories is not None:
+                    continue
                 elif sect in ("vars", "strongsvar"):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -1861,7 +1870,7 @@ set stack_size=32768""".format(self.configName())
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
 
-    def importConfig(self, zipfile):
+    def importConfig(self, fzip):
         ''' Imports another config into this one based on import settings '''
         # assemble list of categories to import from ptxprint.cfg
         hasOther = self.get("c_impOther")
@@ -1874,7 +1883,7 @@ set stack_size=32768""".format(self.configName())
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
-        with zipfile.open("ptxprint.cfg") as inf:
+        with zipopentext(fzip, "ptxprint.cfg") as inf:
             config.read_file(inf)
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
@@ -1884,28 +1893,67 @@ set stack_size=32768""".format(self.configName())
         prjid = config.get("project", "id", fallback=None)
 
         # import pictures according to import settings
-        if self.get("c_impPics"):
+        if self.get("c_impPictures"):
             otherpics = PicInfo()
             picfile = "{}-{}.piclist".format(prjid, cfgid)
-            with zipfile.open(picfile) as inf:
+            with zipopentext(fzip, picfile) as inf:
                 otherpics.read_piclist(inf, "B")
-            fields = {x[6:]: self.get(x) for x in ModelMap.keys if x.startswith("c_pic_")}
-            self.picinfos.merge_fields(otherpics, **fields)
+            fields = set()
+            for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
+                if v:
+                    for f in self._picFields.get(n, (n.lower(), )):
+                        fields.add(f)
+            self.picinfos.merge_fields(otherpics, fields)
 
         # merge ptxprint.sty adding missing
-        if self.get("c_impStyles"):
+        if self.get("c_impStyles") or self.get("c_impCover"):
             newse = StyleEditor(self)
-            with zipfile.open("ptxprint.sty") as inf:
+            with zipopentext(fzip, "ptxprint.sty") as inf:
                 newse.loadfh(inf)
-            self.styleeditor.mergein(newse)
+            if self.get("c_impStyles"):
+                self.styleEditor.mergein(newse)
             # do we do ptxprint-mods.sty? or custom.sty?
 
         # merge cover and import has cover
+        if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
+            self.set("c_useSectIntros", True)
+            self.set("c_useOrnaments", True)
             # override cover styles
-            # add/override cover periphs in FRTlocal
-            # add missing periph variables for covers
-            # set c_useSectIntros and c_useOrnaments
+            allstyles = self.styleEditor.allStyles()
+            for k, v in newse.sheet.items():
+                if k.startswith("cat:cover"):
+                    if k not in allstyles:
+                        self.styleEditor.addMarker(k, v['Name'])
+                    for a, b in v.items():
+                        self.styleEditor.setval(k, a, b)
             
+            # add/override cover periphs in FRTlocal
+            periphcapture = None
+            try:
+                with zipopentext(fzip, 'FRTlocal.sfm') as inf:
+                    for l in inf.readlines():
+                        if l.strip().startswith(r"\periph"):
+                            m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                            if m:
+                                periphid = m.group(2) or m.group(1)
+                                if periphid.startswith("cover"):
+                                    periphcapture = [l]
+                                    periphcaptureid = periphid
+                                elif periphcapture is not None:
+                                    self.periphs[periphcaptureid] = "".join(periphcapture)
+                                    periphcapture = None
+                            elif periphcapture is not None:
+                                periphcapture.append(l)
+                    if periphcapture is not None:
+                        self.periphs[periphcaptureid] = "".join(periphcapture)
+            except KeyError:
+                pass
+
+            # add missing periph variables
+            allvars = config.options('vars')
+            for v in allvars:
+                if v not in self.pubvarlist:
+                    self.setvar(v, config.get("vars", v))
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

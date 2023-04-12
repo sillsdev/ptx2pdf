@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -41,6 +41,8 @@ import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
 from base64 import b64encode, b64decode
+from io import BytesIO
+from zipfile import ZipFile, ZIP_DEFLATED
 
 logger = logging.getLogger(__name__)
 
@@ -1556,6 +1558,7 @@ class GtkViewModel(ViewModel):
         if imprj is None:
             return
         impConfigs = self.getConfigList(imprj)
+        self.ecb_impConfig.remove_all()
         if len(impConfigs):
             for cfgName in sorted(impConfigs):
                 self.ecb_impConfig.append_text(cfgName)
@@ -3393,11 +3396,22 @@ class GtkViewModel(ViewModel):
             dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            # find and open zip: PDF, archive, (project, config)
-            # self.importConfig(aZip)
-            # MH to do something magic here
-            # (depending on the options set within Import dialog)
-            pass
+            zipinf = None
+            if self.get("r_impSource") == "pdf":
+                fname = self.get("lb_impSource_pdf")
+                if fname.endswith(".pdf"):
+                    confstream = self.getPDFconfig(fname)
+                    zipinf = BytesIO(confstream)
+                    zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
+                else:
+                    zipdata = ZipFile(fname)
+            else:
+                dpath = os.path.join(self.settings_dir, self.get("fcb_impProject"), "shared", "ptxprint", self.get("ecb_impConfig"))
+                zipdata = UnzipDir(dpath)
+            self.importConfig(zipdata)
+            zipdata.close()
+            if zipinf is not None:
+                zipinf.close()
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
