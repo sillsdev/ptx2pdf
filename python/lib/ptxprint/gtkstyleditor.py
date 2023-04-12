@@ -745,8 +745,10 @@ class StyleEditorView(StyleEditor):
             del self.sheet[key]
             selection = self.treeview.get_selection()
             model, i = selection.get_selected()
-            p = model.get_path(i)
-            model.row_delete(p)
+            if isinstance(model, Gtk.TreeModelFilter):
+                i = model.convert_iter_to_child_iter(i)
+                model = model.get_model()
+            model.remove(i)
             self.onSelected(selection)
 
     def refreshKey(self):
