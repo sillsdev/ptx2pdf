@@ -6,6 +6,7 @@ from ptxprint.sfm import style
 import argparse, difflib, sys
 from enum import Enum,Flag
 from itertools import groupby
+import configparser
 import logging
 
 class MergeF(Flag):
@@ -194,10 +195,9 @@ class Collector:
         if synchronise in SyncPoints:
             logger.debug(f"Sync points: {synchronise.lower()}")
             syncpoints=SyncPoints[synchronise.lower()] 
-        else:
+        else synchronise is None:
             syncpoints=SyncPoints['normal'] 
             logger.debug("Sync points are normal")
-
         if (type(scores)==int):
             tmp=scores
             scores={ChunkType.DEFSCORE:tmp}
@@ -832,7 +832,19 @@ modes = {
     "scores" : alignScores
 }
 
-def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}):
+def ReadSyncPoints(variety,path):
+    global settings
+    logger.debug(f"Reading config file {variety}")
+    config=configparser.ConfigParser()
+    config.read("merge-"+variety+".cfg")
+    if variety in config:
+        retval={}
+    else:
+        logger.debug(f"Unregognised custom merge name '{variety}'. Resorting to normal.")
+        return(SyncPoints['normal'])
+    
+    
+def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
     global debugPrint, debstr,settings
     if debug:
       debugPrint=True
@@ -859,7 +871,11 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     logger.debug(f"{type(scorearr)}, {scorearr=}")
     logger.debug(f"{type(keyarr)}, {keyarr=}")
     logger.log(7, f"{stylesheetsa=}, {stylesheetsb=}")
-    
+    if configarr is None:
+        configarr={}
+        for k in keyarr[:]:
+            configarr[k]=None
+        
     # load stylesheets
     for k in keyarr[:]:
         logger.debug(f"defining stylesheet {k}")
@@ -909,6 +925,17 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         settings = settings | MergeF.ChunkOnVerses
     if (mode == "scores"):
         settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
+        if "custom" in syncarr:
+            for colkey,infile in zip(keyarr,infilearr):
+                if (syncarr[colkey] == "custom"):
+                    if (configarr[colkey] is None):
+                        filepath=os.path.dirname(infile)
+                        confpath=(os.path.join(docpath,"shared"),docpath)
+                    else:
+                        confpath=(os.path.join(
+                        confpath=(
+                    scorearr[colkey]=ReadSyncPoints(synchronise,confpath)
+
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
