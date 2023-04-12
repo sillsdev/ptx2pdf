@@ -1155,7 +1155,7 @@
     \else
       \m@kenumber{\attr@b}%
       \x@\n@endsp@ce\@@result \E
-      \hbox{\doOrnament{\@@@result}}%
+      \hbox{\beginL\doOrnament{\@@@result}\endL}%prevent reordering of specials in RTL mode!
       \relax
     \fi
     \trace{orn}{end of zornament (\@@@result)}%
