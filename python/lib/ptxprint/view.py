@@ -1300,8 +1300,9 @@ class ViewModel:
         copyfile(srcp, destp)
         return True
 
-    def updateFrontMatter(self):
-        fpath = self.configFRT()
+    def updateFrontMatter(self, fpath=None, force=True, forcenames={}):
+        if fpath is None:
+            fpath = self.configFRT()
         fcontent = []
         usedperiphs = set()
         logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
@@ -1312,9 +1313,9 @@ class ViewModel:
                     m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                     if m:
                         periphid = m.group(2) or m.group(1)
-                        if periphid in self.periphs:
+                        usedperiphs.add(periphid)
+                        if (force or periphid in forcenames) and periphid in self.periphs:
                             fcontent.append(self.periphs[periphid].strip())
-                            usedperiphs.add(periphid)
                             skipping = True
                         else:
                             skipping = False
@@ -1325,6 +1326,7 @@ class ViewModel:
         for k, v in self.periphs.items():
             if k not in usedperiphs:
                 fcontent.append(v.strip())
+        self.periphs = {}
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
@@ -1892,6 +1894,7 @@ set stack_size=32768""".format(self.configName())
         self.loadConfig(config, updatebklist=False, categories=useCats)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
+        grabfront = False
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
@@ -1929,9 +1932,15 @@ set stack_size=32768""".format(self.configName())
                         self.styleEditor.addMarker(k, v['Name'])
                     for a, b in v.items():
                         self.styleEditor.setval(k, a, b)
+            grabfront = True
             
+        if setlf.get("c_impFrontMatter"):
+            grabfront = True
+
+        if grabfront:
             # add/override cover periphs in FRTlocal
             periphcapture = None
+            forcenames = set()
             try:
                 with zipopentext(fzip, 'FRTlocal.sfm') as inf:
                     if inf is not None:
@@ -1939,17 +1948,17 @@ set stack_size=32768""".format(self.configName())
                             if l.strip().startswith(r"\periph"):
                                 m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                                 if m:
+                                    if periphcapture is not None:
+                                        self.periphs[periphid] = "".join(periphcapture)
                                     periphid = m.group(2) or m.group(1)
+                                    periphcapture = [l]
                                     if periphid.startswith("cover"):
-                                        periphcapture = [l]
-                                        periphcaptureid = periphid
-                                    elif periphcapture is not None:
-                                        self.periphs[periphcaptureid] = "".join(periphcapture)
-                                        periphcapture = None
+                                        forcenames.add(periphid)
                                 elif periphcapture is not None:
                                     periphcapture.append(l)
                         if periphcapture is not None:
                             self.periphs[periphcaptureid] = "".join(periphcapture)
+                self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
             except KeyError:
                 pass
 
