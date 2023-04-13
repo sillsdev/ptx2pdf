@@ -181,7 +181,9 @@ def toFont(self, v, mrk=None, model=None, parm=None):
     class Shim:
         def __setitem__(subself, key, val):
             if key == 'FontName':
-                self.sheet.setdefault(mrk, {})[key] = val
+                if mrk not in self.sheet:
+                    self.sheet[mrk] = Marker()
+                self.sheet[mrk][key] = val
             else:
                 self.setval(mrk, key, val)
         def __contains__(subself, key):
@@ -260,8 +262,8 @@ class StyleEditor:
         return res
 
     def allValueKeys(self, m):
-        res = set(self.basesheet.get(m, {}).keys())
-        res.update(self.sheet.get(m, {}).keys())
+        res = set(list(self.basesheet.get(m, {}).keys()))
+        res.update(list(self.sheet.get(m, {}).keys()))
         return res
 
     def asStyle(self, m):
@@ -276,16 +278,18 @@ class StyleEditor:
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        res = self.sheet.get(mrk, {}).get(key, None) if not baseonly else None
+        if mrk not in self.sheet:
+            self.sheet[mrk] = Marker()
+        res = self.sheet[mrk].get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet.get(mrk, {}).get(key, default)
+            res = self.basesheet[mrk].get(key, default) if mrk in self.basesheet else default
         if key.lower() in _fieldmap and res is not None:
             res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):
-        if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
-                self.sheet.get(mrk, {}).get(key, None):
+        if ifunchanged and (self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None) != \
+                (self.sheet[mrk].get(key, None) if mrk in self.sheet else None):
             return
         if val is not None and key.lower() in _fieldmap:
             newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
@@ -293,11 +297,14 @@ class StyleEditor:
                 return      # Probably a font which has edited the object for us
             else:
                 val = newval
-        if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
+        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
+        if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
             return
-        elif self.basesheet.get(mrk, {}).get(key, None) != val and val is not None:
-            self.sheet.setdefault(mrk, {})[key] = val or ""
+        elif oldval != val and val is not None:
+            if mrk not in self.sheet:
+                self.sheet[mrk] = Marker()
+            self.sheet[mrk][key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
@@ -426,13 +433,14 @@ class StyleEditor:
         for m in newse.sheet.keys():
             if m not in allstyles:
                 self.addMarker(m, newse.getval(m, 'Name'))
-            allkeys = newse.allValueKeys(m)
-            allkeys.update(self.allValueKeys(m))
+#            allkeys = set(list(newse.allValueKeys(m)))
+#            allkeys.update(list(self.allValueKeys(m)))
+            allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)
                 sv = self.getval(m, k)
                 if not force and sv != bv:
                     continue
-                if force or nv != bv:
+                if force or nv != bv and nv is not None:
                     self.setval(m, k, nv)

@@ -278,3 +278,23 @@ def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):
             sheet[marker] = new_meta
 
     return sheet
+
+def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields):
+    res = {}
+    mkr = ""
+    for l in source.readlines():
+        m = re.match(r"\\(\S+)\s*(.*)\s*$", l)
+        if m is not None:
+            key = m.group(1)
+            v = m.group(2)
+        else:
+            continue
+        val = fields.get(key, (str, ))[0](v.strip())
+        if key.lower() == "marker":
+            mkr = val
+            res[mkr] = Marker()
+        else:
+            res[mkr][key] = val
+    return res
+
+
