@@ -1884,7 +1884,8 @@ set stack_size=32768""".format(self.configName())
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
         with zipopentext(fzip, "ptxprint.cfg") as inf:
-            config.read_file(inf)
+            if inf is not None:
+                config.read_file(inf)
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
         self.localiseConfig(config)
@@ -1897,7 +1898,8 @@ set stack_size=32768""".format(self.configName())
             otherpics = PicInfo()
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             with zipopentext(fzip, picfile) as inf:
-                otherpics.read_piclist(inf, "B")
+                if inf is not None:
+                    otherpics.read_piclist(inf, "B")
             fields = set()
             for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
                 if v:
@@ -1909,7 +1911,8 @@ set stack_size=32768""".format(self.configName())
         if self.get("c_impStyles") or self.get("c_impCover"):
             newse = StyleEditor(self)
             with zipopentext(fzip, "ptxprint.sty") as inf:
-                newse.loadfh(inf)
+                if inf is not None:
+                    newse.loadfh(inf)
             if self.get("c_impStyles"):
                 self.styleEditor.mergein(newse)
             # do we do ptxprint-mods.sty? or custom.sty?
@@ -1931,21 +1934,22 @@ set stack_size=32768""".format(self.configName())
             periphcapture = None
             try:
                 with zipopentext(fzip, 'FRTlocal.sfm') as inf:
-                    for l in inf.readlines():
-                        if l.strip().startswith(r"\periph"):
-                            m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
-                            if m:
-                                periphid = m.group(2) or m.group(1)
-                                if periphid.startswith("cover"):
-                                    periphcapture = [l]
-                                    periphcaptureid = periphid
+                    if inf is not None:
+                        for l in inf.readlines():
+                            if l.strip().startswith(r"\periph"):
+                                m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                                if m:
+                                    periphid = m.group(2) or m.group(1)
+                                    if periphid.startswith("cover"):
+                                        periphcapture = [l]
+                                        periphcaptureid = periphid
+                                    elif periphcapture is not None:
+                                        self.periphs[periphcaptureid] = "".join(periphcapture)
+                                        periphcapture = None
                                 elif periphcapture is not None:
-                                    self.periphs[periphcaptureid] = "".join(periphcapture)
-                                    periphcapture = None
-                            elif periphcapture is not None:
-                                periphcapture.append(l)
-                    if periphcapture is not None:
-                        self.periphs[periphcaptureid] = "".join(periphcapture)
+                                    periphcapture.append(l)
+                        if periphcapture is not None:
+                            self.periphs[periphcaptureid] = "".join(periphcapture)
             except KeyError:
                 pass
 

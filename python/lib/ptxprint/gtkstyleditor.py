@@ -615,7 +615,7 @@ class StyleEditorView(StyleEditor):
 
     def addMarker(self, mrk, name):
         super().addMarker(mrk, name)
-        m = name_reg.match(name)
+        m = name_reg.match(name) if name is not None else None
         if m:
             if not m.group(1) and " " in m.group(2):
                 cat = m.group(2)

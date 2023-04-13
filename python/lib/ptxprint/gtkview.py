@@ -3412,6 +3412,8 @@ class GtkViewModel(ViewModel):
             zipdata.close()
             if zipinf is not None:
                 zipinf.close()
+            if self.get("c_impPictures"):
+                self.picListView.updateinfo(self.picinfos)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()

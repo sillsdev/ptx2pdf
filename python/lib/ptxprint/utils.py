@@ -575,11 +575,14 @@ class Path(pathlib.Path):
 
 
 def zipopentext(zf, fname):
-    if isinstance(zf, UnzipDir):
-        return zf.open(fname, mode="rt", encoding="utf-8")
-    else:
-        zp = zipfile.Path(zf, fname)
-        return zp.open(encoding="utf-8")
+    try:
+        if isinstance(zf, UnzipDir):
+            return zf.open(fname, mode="rt", encoding="utf-8")
+        else:
+            zp = zipfile.Path(zf, fname)
+            return zp.open(encoding="utf-8")
+    except KeyError:
+        return None
 
 class UnzipDir:
     ''' Emulates some of zipfile but backed by a simple filesystem directory '''
