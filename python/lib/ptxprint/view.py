@@ -1306,23 +1306,24 @@ class ViewModel:
         fcontent = []
         usedperiphs = set()
         logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
-        with open(fpath, encoding="utf-8") as inf:
-            skipping = False
-            for l in inf.readlines():
-                if l.strip().startswith(r"\periph"):
-                    m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
-                    if m:
-                        periphid = m.group(2) or m.group(1)
-                        usedperiphs.add(periphid)
-                        if (force or periphid in forcenames) and periphid in self.periphs:
-                            fcontent.append(self.periphs[periphid].strip())
-                            skipping = True
+        if os.path.exists(fpath):
+            with open(fpath, encoding="utf-8") as inf:
+                skipping = False
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                        if m:
+                            periphid = m.group(2) or m.group(1)
+                            usedperiphs.add(periphid)
+                            if (force or periphid in forcenames) and periphid in self.periphs:
+                                fcontent.append(self.periphs[periphid].strip())
+                                skipping = True
+                            else:
+                                skipping = False
                         else:
                             skipping = False
-                    else:
-                        skipping = False
-                if not skipping:
-                    fcontent.append(l.strip())
+                    if not skipping:
+                        fcontent.append(l.strip())
         for k, v in self.periphs.items():
             if k not in usedperiphs:
                 fcontent.append(v.strip())
@@ -1885,9 +1886,11 @@ set stack_size=32768""".format(self.configName())
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
-        with zipopentext(fzip, "ptxprint.cfg") as inf:
-            if inf is not None:
+        try:
+            with zipopentext(fzip, "ptxprint.cfg") as inf:
                 config.read_file(inf)
+        except (KeyError, FileNotFoundError):
+            pass
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
         self.localiseConfig(config)
@@ -1900,9 +1903,11 @@ set stack_size=32768""".format(self.configName())
         if self.get("c_impPictures"):
             otherpics = PicInfo()
             picfile = "{}-{}.piclist".format(prjid, cfgid)
-            with zipopentext(fzip, picfile) as inf:
-                if inf is not None:
+            try:
+                with zipopentext(fzip, picfile) as inf:
                     otherpics.read_piclist(inf, "B")
+            except (KeyError, FileNotFoundError):
+                pass
             fields = set()
             for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
                 if v:
@@ -1913,9 +1918,11 @@ set stack_size=32768""".format(self.configName())
         # merge ptxprint.sty adding missing
         if self.get("c_impStyles") or self.get("c_impCover"):
             newse = StyleEditor(self)
-            with zipopentext(fzip, "ptxprint.sty") as inf:
-                if inf is not None:
+            try:
+                with zipopentext(fzip, "ptxprint.sty") as inf:
                     newse.loadfh(inf)
+            except (KeyError, FileNotFoundError):
+                pass
             if self.get("c_impStyles"):
                 self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"))
             # do we do ptxprint-mods.sty? or custom.sty?
@@ -1954,12 +1961,12 @@ set stack_size=32768""".format(self.configName())
                                     periphcapture = [l]
                                     if periphid.startswith("cover"):
                                         forcenames.add(periphid)
-                                elif periphcapture is not None:
-                                    periphcapture.append(l)
+                            elif periphcapture is not None:
+                                periphcapture.append(l)
                         if periphcapture is not None:
                             self.periphs[periphid] = "".join(periphcapture)
                 self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
-            except KeyError:
+            except (KeyError, FileNotFoundError):
                 pass
 
             # add missing periph variables
