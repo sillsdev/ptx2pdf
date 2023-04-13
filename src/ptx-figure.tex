@@ -1179,14 +1179,16 @@
        \trace{g}{we were in horizontal mode even before the verse number.}%
      %  \dimen1=0pt
      \else
-       \trace{g}{Before this verse was started it was in vertical mode.}%
+       \trace{g}{Before this verse was started it was in vertical mode (\prev@rsemode).}%
+       \setCutoutSlop{\dr@pthingid}{0}{0}%
         %\ifdim\lastdepth>0pt
           %\advance\dimen1 by -\lastdepth
         %\fi
      \fi
      %\csname\m@rker\endcsname
   \else
-     \trace{g}{Cutout was in vertical mode.}%
+     \trace{g}{Cutout for \dr@pthingid\space was in vertical mode. Setting slop to 0}%
+     \setCutoutSlop{\dr@pthingid}{0}{0}%
      \leavevmode %needed for keyterm-based figures, at least
      \tmpcount=0
   \fi
