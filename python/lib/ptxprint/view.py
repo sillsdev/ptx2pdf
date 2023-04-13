@@ -1934,7 +1934,7 @@ set stack_size=32768""".format(self.configName())
                         self.styleEditor.setval(k, a, b)
             grabfront = True
             
-        if setlf.get("c_impFrontMatter"):
+        if self.get("c_impFrontMatter"):
             grabfront = True
 
         if grabfront:

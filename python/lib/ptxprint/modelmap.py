@@ -44,8 +44,8 @@ _map = {
     "project/frontincludes":    ("btn_selectFrontPDFs", "front", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                  for s in w.FrontPDFs) if (w.get("c_inclFrontMatter") and w.FrontPDFs is not None
                                                                                       and w.FrontPDFs != 'None') else ""),
-    "project/ifinclbackpdf":    ("c_inclBackMatter", "peripherals", None),
-    "project/backincludes":     ("btn_selectBackPDFs", "peripherals", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
+    "project/ifinclbackpdf":    ("c_inclBackMatter", "front", None),
+    "project/backincludes":     ("btn_selectBackPDFs", "front", lambda w,v: "\n".join('\\includepdf{{{}}}'.format(s.as_posix()) \
                                  for s in w.BackPDFs) if (w.get("c_inclBackMatter") and w.BackPDFs is not None
                                                                                     and w.BackPDFs != 'None') else ""),
     "project/processscript":    ("c_processScript", "advanced", None),
@@ -74,8 +74,8 @@ _map = {
     "project/colophontext":     ("txbf_colophon", "meta", lambda w,v: re.sub(r"\\u([0-9a-fA-F]{4})",
                                                                    lambda m: chr(int(m.group(1), 16)), v) if v is not None else ""),
     "project/ifcolophon":       ("c_colophon", "meta", lambda w,v: "" if v else "%"),
-    "project/pgbreakcolophon":  ("c_standAloneColophon", "peripherals", lambda w,v: "" if v else "%"),
-    "project/sectintros":       ("c_useSectIntros", "peripherals", None),
+    "project/pgbreakcolophon":  ("c_standAloneColophon", "front", lambda w,v: "" if v else "%"),
+    "project/sectintros":       ("c_useSectIntros", "front", None),
 
     "paper/height":             ("ecb_pagesize", "layout", lambda w,v: re.sub(r"^.*?[,xX]\s*(.+?)\s*(?:\(.*|$)", r"\1", v or "210mm")),
     "paper/width":              ("ecb_pagesize", "layout", lambda w,v: re.sub(r"^(.*?)\s*[,xX].*$", r"\1", v or "148mm")),
@@ -181,7 +181,7 @@ _map = {
     "document/marginalposn":    ("fcb_marginVrsPosn", "body", None),
     "document/columnshift":     ("s_columnShift", "layout", lambda w,v: v or "16"),
     "document/ifshowchapternums": ("c_chapterNumber", "body", lambda w,v: "%" if v else ""),
-    "document/showxtrachapnums":  ("c_showNonScriptureChapters", "peripherals", None),
+    "document/showxtrachapnums":  ("c_showNonScriptureChapters", "front", None),
     "document/ifshow1chbooknum": ("c_show1chBookNum", "body", None),
     "document/ifomitverseone":  ("c_omitverseone", "body", lambda w,v: "true" if v else "false"),
     "document/ifshowversenums": ("c_verseNumbers", "body", lambda w,v: "" if v else "%"),
@@ -484,9 +484,10 @@ _map = {
     "import/notesrefs":         ("c_oth_NotesRefs", "noteref", None),
     "import/headerfooter":      ("c_oth_HeaderFooter", "import", None),
     "import/tabsborders":       ("c_oth_TabsBorders", "import", None),
-    "import/peripherals":       ("c_oth_Peripherals", "import", None),
+    # "import/peripherals":       ("c_oth_Peripherals", "import", None),
     "import/advanced":          ("c_oth_Advanced", "import", None),
     "import/frontmatter":       ("c_oth_FrontMatter", "import", None),
+    "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", "import", None),
     "import/cover":             ("c_oth_Cover", "import", None),
     
 }
@@ -499,7 +500,7 @@ ImportCategories = {
     'c_oth_HeaderFooter': 'headfoot',
     'c_oth_FrontMatter': 'front',
     'c_oth_TabsBorders': 'tabsborders',
-    'c_oth_Peripherals': 'peripherals',
+    # 'c_oth_Peripherals': 'peripherals',
     'c_oth_Advanced': 'advanced',
     'c_oth_Cover': 'cover',
     'c_impFontsScript': 'fontscript',

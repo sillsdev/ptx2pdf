@@ -4879,7 +4879,7 @@ settings (as enabled on the Finishing tab).</property>
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="bx_impPics_adv">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -5031,7 +5031,7 @@ settings (as enabled on the Finishing tab).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="bx_impPics_basic">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -5394,8 +5394,8 @@ modified locally, then enable this option.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_oth_Peripherals">
-                            <property name="label" translatable="yes">Peripherals settings</property>
+                          <object class="GtkCheckButton" id="c_oth_OverwriteFrtMatter">
+                            <property name="label" translatable="yes">Overwrite Front Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -5405,7 +5405,7 @@ modified locally, then enable this option.</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -5443,24 +5443,23 @@ modified locally, then enable this option.</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">3</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="c_oth_FrontMatter">
-                            <property name="label" translatable="yes">Front Matter settings</property>
+                            <property name="label" translatable="yes">Front +Back Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="active">True</property>
                             <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>

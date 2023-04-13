@@ -178,9 +178,13 @@ fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name 
 c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
-fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
+fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff
 btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
-c_imp_ResetConfig tb_impLayout tb_impFontsScript tb_impStyles
+r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
+c_imp_ResetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
+bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
+c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders c_oth_Advanced
+c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
@@ -303,6 +307,7 @@ _sensitivities = {
     "r_impPics": {
         "r_impPics_elements":  ["gr_picElements"]},
     "c_impOther":              ["gr_impOther"],
+    "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -1600,7 +1605,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
-           self.get("c_frontmatter") or self.get("c_colophon") or self.get("c_inclBackMatter")) else ""
+           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else ""  # or self.get("c_colophon") 
         self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
@@ -3403,10 +3408,10 @@ class GtkViewModel(ViewModel):
                     confstream = self.getPDFconfig(fname)
                     zipinf = BytesIO(confstream)
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
-                elif not os.path.exists(fname):
-                    zipdata = None
-                else:
+                elif os.path.exists(fname):
                     zipdata = ZipFile(fname)
+                else:
+                    zipdata = None
             elif self.get("fcb_impProject"):
                 dpath = os.path.join(self.settings_dir, self.get("fcb_impProject"), "shared", "ptxprint", self.get("ecb_impConfig", "Default"))
                 zipdata = UnzipDir(dpath)
@@ -3419,6 +3424,7 @@ class GtkViewModel(ViewModel):
                 zipinf.close()
             if self.get("c_impPictures"):
                 self.picListView.updateinfo(self.picinfos)
+            self.onViewerChangePage(None, None, 0, forced=True)
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
