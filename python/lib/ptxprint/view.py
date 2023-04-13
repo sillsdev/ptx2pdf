@@ -1914,7 +1914,7 @@ set stack_size=32768""".format(self.configName())
                 if inf is not None:
                     newse.loadfh(inf)
             if self.get("c_impStyles"):
-                self.styleEditor.mergein(newse)
+                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"))
             # do we do ptxprint-mods.sty? or custom.sty?
 
         # merge cover and import has cover

@@ -761,7 +761,7 @@ class TexModel:
         intfname = self.printer.getBookFilename('INT')
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
-            self.dict['project/intfile'] = os.path.basename(outfname)
+            self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes, "INT", dat)

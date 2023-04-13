@@ -421,7 +421,7 @@ class StyleEditor:
                 if nv != bv:
                     self.setval(m, k, nv)
 
-    def mergein(self, newse):
+    def mergein(self, newse, force=False):
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
@@ -432,7 +432,7 @@ class StyleEditor:
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)
                 sv = self.getval(m, k)
-                if sv != bv:
+                if not force and sv != bv:
                     continue
-                if nv != bv:
+                if force or nv != bv:
                     self.setval(m, k, nv)

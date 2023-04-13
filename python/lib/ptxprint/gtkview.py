@@ -3403,13 +3403,16 @@ class GtkViewModel(ViewModel):
                     confstream = self.getPDFconfig(fname)
                     zipinf = BytesIO(confstream)
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
+                elif fname is None:
+                    zipdata = None
                 else:
                     zipdata = ZipFile(fname)
             else:
                 dpath = os.path.join(self.settings_dir, self.get("fcb_impProject"), "shared", "ptxprint", self.get("ecb_impConfig"))
                 zipdata = UnzipDir(dpath)
-            self.importConfig(zipdata)
-            zipdata.close()
+            if zipdata is not None:
+                self.importConfig(zipdata)
+                zipdata.close()
             if zipinf is not None:
                 zipinf.close()
             if self.get("c_impPictures"):
