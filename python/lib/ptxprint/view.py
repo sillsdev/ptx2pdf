@@ -1934,7 +1934,7 @@ set stack_size=32768""".format(self.configName())
                         self.styleEditor.setval(k, a, b)
             grabfront = True
             
-        if self.get("c_impFrontMatter"):
+        if self.get("c_oth_FrontMatter"):
             grabfront = True
 
         if grabfront:
@@ -1957,7 +1957,7 @@ set stack_size=32768""".format(self.configName())
                                 elif periphcapture is not None:
                                     periphcapture.append(l)
                         if periphcapture is not None:
-                            self.periphs[periphcaptureid] = "".join(periphcapture)
+                            self.periphs[periphid] = "".join(periphcapture)
                 self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
             except KeyError:
                 pass
