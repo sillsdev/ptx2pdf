@@ -179,12 +179,12 @@ c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff
-btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
+btn_importSettings btn_importSettingsOK r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
 r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 c_imp_ResetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
-c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders c_oth_Advanced
-c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
+gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
+c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
@@ -308,6 +308,7 @@ _sensitivities = {
         "r_impPics_elements":  ["gr_picElements"]},
     "c_impOther":              ["gr_impOther"],
     "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
+    "c_oth_Cover":             ["c_oth_OverwriteFrtMatter"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -3394,9 +3395,14 @@ class GtkViewModel(ViewModel):
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
 
-    # Not yet ready for prime time!
+    def setImportButtonOKsensitivity(self, w):
+        status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
+                 (self.get('r_impSource') == 'config' and (self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None))
+        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status)
+
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
+        self.setImportButtonOKsensitivity(None)
         if sys.platform == "win32":
             dialog.set_keep_above(True)
         response = dialog.run()
@@ -3457,7 +3463,9 @@ class GtkViewModel(ViewModel):
             # self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
         elif pdfORzipFile[0].lower().endswith(".zip"):
             self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
-            
+
+        self.setImportButtonOKsensitivity(None)
+
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
                 os.path.join(self.settings_dir, self.prjid), 
@@ -3640,12 +3648,22 @@ class GtkViewModel(ViewModel):
         b.set_visible(True)
         
     def onimpProjectChanged(self, btn):
+        self.set("r_impSource", "config")
         self.updateimpProjectConfigList()
+        
+    def onimpConfigChanged(self, btn):
+        self.set("r_impSource", "config")
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
-
+        
+    def onCoverFrontBackClicked(self, w):
+        status = self.get("c_oth_FrontMatter") or self.get("c_oth_Cover")
+        self.builder.get_object("c_oth_OverwriteFrtMatter").set_sensitive(status)
+        if not status:
+            self.set("c_oth_OverwriteFrtMatter", False)
+        
     def ondiglotSecConfigChanged(self, btn):
         if self.loadingConfig:
             return

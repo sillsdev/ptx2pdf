@@ -36,6 +36,11 @@ THE SOFTWARE.
       <placeholder/>
     </child>
   </object>
+  <object class="GtkRecentChooserMenu">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="limit">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -4554,9 +4559,10 @@ Matter settings on the View+Edit tab):
             <property name="can-focus">False</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="btn_importSettingsOK">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">NOTE: This feature has not yet been implemented!</property>
@@ -4647,6 +4653,7 @@ on the Help tab).</property>
                             <property name="draw-indicator">True</property>
                             <property name="group">r_impSource_config</property>
                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -4667,6 +4674,7 @@ on the Help tab).</property>
                             <property name="draw-indicator">True</property>
                             <property name="group">r_impSource_pdf</property>
                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -4716,6 +4724,7 @@ settings will be imported.</property>
                             <items>
                               <item translatable="yes">(None)</item>
                             </items>
+                            <signal name="changed" handler="onimpConfigChanged" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -4782,7 +4791,6 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="label" translatable="yes">Path to PDF file or ZIP archive.</property>
                             <property name="ellipsize">middle</property>
                             <attributes>
                               <attribute name="foreground" value="#5e5e5c5c6464"/>
@@ -5019,8 +5027,8 @@ settings (as enabled on the Finishing tab).</property>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">5</property>
-                        <property name="margin-end">5</property>
+                        <property name="margin-start">9</property>
+                        <property name="margin-end">9</property>
                         <property name="margin-top">60</property>
                         <property name="margin-bottom">6</property>
                       </object>
@@ -5038,7 +5046,7 @@ settings (as enabled on the Finishing tab).</property>
                         <property name="valign">end</property>
                         <property name="margin-start">10</property>
                         <property name="margin-end">12</property>
-                        <property name="margin-bottom">9</property>
+                        <property name="margin-bottom">20</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
@@ -5046,6 +5054,7 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin-top">15</property>
                             <property name="margin-bottom">3</property>
                             <property name="label" translatable="yes">How to handle differences:</property>
                           </object>
@@ -5420,7 +5429,7 @@ modified locally, then enable this option.</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">2</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -5444,10 +5453,11 @@ modified locally, then enable this option.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -5459,7 +5469,7 @@ modified locally, then enable this option.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
-                            <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                            <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -5522,7 +5532,7 @@ modified locally, then enable this option.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button2</action-widget>
+      <action-widget response="-5">btn_importSettingsOK</action-widget>
       <action-widget response="-6">button3</action-widget>
     </action-widgets>
   </object>
