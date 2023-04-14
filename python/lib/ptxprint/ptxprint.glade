@@ -5235,6 +5235,7 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
+This will also import styles from ptxprint-mods.sty, but not from custom.sty.
 You may also want to reset the current configuration (see above) before importing styles.</property>
                         <property name="wrap">True</property>
                       </object>
@@ -5422,6 +5423,9 @@ modified locally, then enable this option.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This covers everything on the Advanced tab
+with the exception of Custom Script processing
+and Customized Styles (custom.sty).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>

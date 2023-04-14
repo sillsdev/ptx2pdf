@@ -1445,7 +1445,6 @@ class GtkViewModel(ViewModel):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
-            print(t)
             t = re.sub("\([cC]\)", "\u00a9 ", t)
             t = re.sub("\([rR]\)", "\u00ae ", t)
             t = re.sub("\([tT][mM]\)", "\u2122 ", t)
@@ -1462,8 +1461,7 @@ class GtkViewModel(ViewModel):
                 self.set("txbf_colophon", t)
                 self.builder.get_object("t_copyrightStatement").set_text(' ')
                 self.set("c_colophon", True)
-                self.doError(_("Note: Copyright statement is longer than usual."),
-                   secondary=_("The entire copyright and/or licence text has been placed in the Colophon section of the Peripherals tab."))
+                self.doStatus(_("Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."))
 
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
@@ -1481,16 +1479,16 @@ class GtkViewModel(ViewModel):
             self.updateFonts()
             self.readConfig("Default")
             self.fillCopyrightDetails()
-            self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
+            self.doStatus(_("The 'Default' config settings have been reset.") + sec)
             return
         else:
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
-                self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
+                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + delCfgPath)
                 return
             try: # Delete the entire settings folder
                 rmtree(delCfgPath)
             except OSError:
-                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+                self.doStatus(_("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath)
 
             if not self.working_dir.startswith(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint")):
                 self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
@@ -2956,7 +2954,7 @@ class GtkViewModel(ViewModel):
         self.set("l_styColor", _("Color:")+"\n"+col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
-            self.doError(_("'Enable Colored Text' has now been turned on.\nSee Fonts+Script tab for details."))
+            self.doStatus(_("'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"))
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
@@ -3434,6 +3432,8 @@ class GtkViewModel(ViewModel):
             else:
                 zipdata = None
             if zipdata is not None:
+                if self.get('c_imp_ResetConfig'):
+                    self.resetToInitValues()
                 self.importConfig(zipdata)
                 zipdata.close()
             if zipinf is not None:
@@ -3441,6 +3441,7 @@ class GtkViewModel(ViewModel):
             if self.get("c_impPictures"):
                 self.picListView.updateinfo(self.picinfos)
             self.onViewerChangePage(None, None, 0, forced=True)
+            self.doStatus(_("Import Settings complete!"))
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()
@@ -3938,15 +3939,6 @@ class GtkViewModel(ViewModel):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
-        # Removed by MP after the Nov-2022 SIL Board changed the EL (allowing SIL to publish scripture)
-        # if not self.warnedSIL:
-            # chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
-            # if len(chkSIL):
-                # self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   # secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
-                               # "Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                # t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
-                # self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
