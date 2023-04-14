@@ -111,7 +111,7 @@ _fields = Marker({
 })
 
 
-def parse(source, error_level=ErrorLevel.Content, fields=_fields):
+def old_parse(source, error_level=ErrorLevel.Content, fields=_fields):
     '''
     >>> from pprint import pprint
     >>> r = parse(r"""
@@ -297,4 +297,19 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields):
             res[mkr][key] = val
     return res
 
+parse = old_parse
+
+def merge_sty(base, other, forced=False):
+    for m, ov in other.items():
+        if m not in base or forced:
+            base[m] = ov.copy()
+        else:
+            for k, v in ov.items():
+                base[m][k] = v
+
+def out_sty(base, outf, keyfield="Marker"):
+    for m, rec in base.items():
+        outf.write(f"\n\\{keyfield} {m}\n")
+        for k, v in rec.items():
+            outf.write(f"\\{k} {v}\n")
 

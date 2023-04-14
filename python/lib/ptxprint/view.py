@@ -9,6 +9,7 @@ from ptxprint.utils import _, refKey, universalopen, print_traceback, local2glob
                             get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
                             zipopentext
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
+from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
@@ -1925,7 +1926,44 @@ set stack_size=32768""".format(self.configName())
                 pass
             if self.get("c_impStyles"):
                 self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"))
-            # do we do ptxprint-mods.sty? or custom.sty?
+
+        if self.get("c_oth_Advanced"):
+            if config.getboolean("project", "ifusemodssty", fallback=False):
+                localmodsty = os.path.join(self.configPath(self.configName()), "ptxprint-mods.sty")
+                try:
+                    zipsty = zipopentext(fzip, "ptxprint-mods.sty")
+                except (KeyError, FileNotFoundError):
+                    zipsty = None
+                if zipsty is not None and self.get("c_useModsSty") and os.path.exists(localmodsty):
+                    with open(localmodsty, encoding="utf-8") as inf:
+                        localmods = simple_parse(inf)
+                    othermods = simple_parse(zipsty)
+                    zipsty.close()
+                    merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"))
+                    with open(localmodsty, "w", encoding="utf-8") as outf:
+                        out_sty(localmods, outf)
+                elif zipsty is not None:
+                    with open(localmodsty, "w", encoding="utf-8") as outf:
+                        dat = zipsty.read()
+                        outf.write(dat)
+                    zipsty.close()
+            for a in (("project/usechangesfile", "changes.txt", "#"),
+                      ("project/ifusemodstex", "ptxprint-mods.tex", "%"),
+                      ("project/ifusepremodstex", "ptxprint-premods.tex", "%")):
+                configb = a[0].split("/")
+                if not config.getboolean(*configb, fallback=False):
+                    continue
+                try:
+                    zipmod = zipopentext(fzip, a[1])
+                except (KeyError, FileNotFoundError):
+                    continue
+                localmod = os.path.join(self.configPath(self.configName()), a[1])
+                mode = "a" if self.get(ModelMap(a[0])[0]) and os.path.exists(a[1]) else "w"
+                with open(localmod, "a", encoding="utf-8") as outf:
+                    outf.write(f"\na[3] Imported from {fzip.filename}\n")
+                    dat = zipmod.read()
+                    outf.write(dat)
+                zipsty.close()
 
         # merge cover and import has cover
         if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
