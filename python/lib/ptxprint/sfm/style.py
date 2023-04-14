@@ -279,9 +279,10 @@ def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):
 
     return sheet
 
-def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields):
+def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categories=False, keyfield="Marker"):
     res = {}
     mkr = ""
+    category = ""
     for l in source.readlines():
         m = re.match(r"\\(\S+)\s*(.*)\s*$", l)
         if m is not None:
@@ -290,8 +291,12 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields):
         else:
             continue
         val = fields.get(key, (str, ))[0](v.strip())
-        if key.lower() == "marker":
-            mkr = val
+        if key.lower() == "category":
+            category = val
+            key = "Marker"
+            val = "esb"
+        if key.lower() == keyfield.lower():
+            mkr = f"cat:{category}|{val}" if category else val
             res[mkr] = Marker()
         else:
             res[mkr][key] = val

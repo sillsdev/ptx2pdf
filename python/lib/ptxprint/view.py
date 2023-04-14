@@ -1899,6 +1899,8 @@ set stack_size=32768""".format(self.configName())
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
         grabfront = False
+        if config.get("fancy", "enableOrnaments", fallback=False):
+            self.set("c_useOrnaments", True)
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
@@ -1937,8 +1939,8 @@ set stack_size=32768""".format(self.configName())
                     zipsty = None
                 if zipsty is not None and self.get("c_useModsSty") and os.path.exists(localmodsty):
                     with open(localmodsty, encoding="utf-8") as inf:
-                        localmods = simple_parse(inf)
-                    othermods = simple_parse(zipsty)
+                        localmods = simple_parse(inf, categories=True)
+                    othermods = simple_parse(zipsty, categories=True)
                     zipsty.close()
                     merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"))
                     with open(localmodsty, "w", encoding="utf-8") as outf:
