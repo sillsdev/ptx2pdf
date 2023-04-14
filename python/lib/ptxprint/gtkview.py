@@ -1445,18 +1445,26 @@ class GtkViewModel(ViewModel):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
-            t = re.sub("</?p>", "", t)
+            print(t)
             t = re.sub("\([cC]\)", "\u00a9 ", t)
             t = re.sub("\([rR]\)", "\u00ae ", t)
             t = re.sub("\([tT][mM]\)", "\u2122 ", t)
             if len(t) < 100:
+                t = re.sub(r"</?p>", "", t)
                 self.builder.get_object("t_copyrightStatement").set_text(t)
             else:
-                self.builder.get_object("t_copyrightStatement").set_text(t[:70]+"...")
-                self.doError(_("Warning! The copyright statement in Paratext appears to be too long."), 
-                   secondary=_("Type in a shorter copyright statement and then use" + \
-                               "the local FRT book for longer licensing details."))
-    
+                if len(self.get("txbf_colophon")) > 100:
+                    return # Don't overwrite what has already been placed in the colophon
+                           # from an earlier run, which could also have been edited manually.
+                t = re.sub(r"<p>", r"\n\\pc ", t)
+                t = re.sub(r"</p>", "", t)
+                t = re.sub(r"\\pc ?\n?\\pc ", r"\\pc ", r"\pc " + t)
+                self.set("txbf_colophon", t)
+                self.builder.get_object("t_copyrightStatement").set_text(' ')
+                self.set("c_colophon", True)
+                self.doError(_("Note: Copyright statement is longer than usual."),
+                   secondary=_("The entire copyright and/or licence text has been placed in the Colophon section of the Peripherals tab."))
+
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
@@ -3397,7 +3405,9 @@ class GtkViewModel(ViewModel):
 
     def setImportButtonOKsensitivity(self, w):
         status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
-                 (self.get('r_impSource') == 'config' and (self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None))
+                 (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
+                                                           (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
+                                                            str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig')))))
         self.builder.get_object("btn_importSettingsOK").set_sensitive(not status)
 
     def onImportClicked(self, btn_importPDF):
@@ -3650,9 +3660,11 @@ class GtkViewModel(ViewModel):
     def onimpProjectChanged(self, btn):
         self.set("r_impSource", "config")
         self.updateimpProjectConfigList()
+        self.setImportButtonOKsensitivity(None)
         
     def onimpConfigChanged(self, btn):
         self.set("r_impSource", "config")
+        self.setImportButtonOKsensitivity(None)
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
@@ -4108,8 +4120,10 @@ class GtkViewModel(ViewModel):
                                 break
                         else:
                             lsp.append([prj])
-                    self.resetToInitValues()
+                    ui = self.get("fcb_uiLevel")
+                    self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
+                    self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")

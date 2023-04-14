@@ -5024,11 +5024,10 @@ settings (as enabled on the Finishing tab).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSeparator">
+                      <object class="GtkSeparator" id="sepLine">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">9</property>
-                        <property name="margin-end">9</property>
+                        <property name="margin-start">16</property>
                         <property name="margin-top">60</property>
                         <property name="margin-bottom">6</property>
                       </object>
@@ -5044,7 +5043,7 @@ settings (as enabled on the Finishing tab).</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">end</property>
-                        <property name="margin-start">10</property>
+                        <property name="margin-start">16</property>
                         <property name="margin-end">12</property>
                         <property name="margin-bottom">20</property>
                         <property name="orientation">vertical</property>
@@ -5236,7 +5235,7 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
-You may want to reset the current configuration before importing styles, or even...</property>
+You may also want to reset the current configuration (see above) before importing styles.</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
@@ -5309,7 +5308,7 @@ modified locally, then enable this option.</property>
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">6</property>
-                        <property name="label" translatable="yes">Any other settings can be imported as required:</property>
+                        <property name="label" translatable="yes">Other settings can be imported as needed:</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>

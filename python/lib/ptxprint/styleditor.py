@@ -433,8 +433,6 @@ class StyleEditor:
         for m in newse.sheet.keys():
             if m not in allstyles:
                 self.addMarker(m, newse.getval(m, 'Name'))
-#            allkeys = set(list(newse.allValueKeys(m)))
-#            allkeys.update(list(self.allValueKeys(m)))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 nv = newse.getval(m, k)
