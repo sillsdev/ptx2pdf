@@ -1959,7 +1959,7 @@ set stack_size=32768""".format(self.configName())
                     continue
                 localmod = os.path.join(self.configPath(self.configName()), a[1])
                 mode = "a" if self.get(ModelMap(a[0])[0]) and os.path.exists(a[1]) else "w"
-                with open(localmod, "a", encoding="utf-8") as outf:
+                with open(localmod, mode, encoding="utf-8") as outf:
                     outf.write(f"\na[3] Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
