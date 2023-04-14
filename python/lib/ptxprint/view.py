@@ -1928,6 +1928,7 @@ set stack_size=32768""".format(self.configName())
                 self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"))
 
         if self.get("c_oth_Advanced"):
+            # merge ptxprint-mods.sty
             if config.getboolean("project", "ifusemodssty", fallback=False):
                 localmodsty = os.path.join(self.configPath(self.configName()), "ptxprint-mods.sty")
                 try:
@@ -1947,6 +1948,8 @@ set stack_size=32768""".format(self.configName())
                         dat = zipsty.read()
                         outf.write(dat)
                     zipsty.close()
+
+            # append various .tex and changes files
             for a in (("project/usechangesfile", "changes.txt", "#"),
                       ("project/ifusemodstex", "ptxprint-mods.tex", "%"),
                       ("project/ifusepremodstex", "ptxprint-premods.tex", "%")):

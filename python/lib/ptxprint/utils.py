@@ -584,31 +584,31 @@ def zipopentext(zf, fname):
 class UnzipDir:
     ''' Emulates some of zipfile but backed by a simple filesystem directory '''
     def __init__(self, file, mode='r', **kw):
-        self.dir = file
+        self.filename = file
         self.mode = mode
 
     def infolist(self):
         res = []
-        for dp, dn, fn in os.walk(self.dir):
+        for dp, dn, fn in os.walk(self.filename):
             for f in fn:
                 fp = os.path.join(dp, f)
-                res.append(ZipInfo.from_file(os.path.join(self.dir, fp), arcname=fp))
+                res.append(ZipInfo.from_file(os.path.join(self.filename, fp), arcname=fp))
         return res
 
     def namelist(self):
         res = []
-        for dp, dn, fn in os.walk(self.dir):
+        for dp, dn, fn in os.walk(self.filename):
             res.extend([os.path.join(dp, f) for f in fn])
         return res
 
     def open(self, name, mode='rb', encoding=None, **kw):
         if encoding is not None:
-            return open(os.path.join(self.dir, name), mode, encoding=encoding)
+            return open(os.path.join(self.filename, name), mode, encoding=encoding)
         else:
-            return open(os.path.join(self.dir, name), mode)
+            return open(os.path.join(self.filename, name), mode)
 
     def read(self, name, **kw):
-        with open(os.path.join(self.dir, name), 'r') as inf:
+        with open(os.path.join(self.filename, name), 'r') as inf:
             res = inf.read()
         return res
 
