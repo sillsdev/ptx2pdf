@@ -316,5 +316,7 @@ def out_sty(base, outf, keyfield="Marker"):
     for m, rec in base.items():
         outf.write(f"\n\\{keyfield} {m}\n")
         for k, v in rec.items():
+            if isinstance(v, (set, list, tuple)):
+                v = " ".join(v)
             outf.write(f"\\{k} {v}\n")
 
