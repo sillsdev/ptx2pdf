@@ -302,7 +302,7 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categor
             res[mkr][key] = val
     return res
 
-parse = old_parse
+parse = simple_parse
 
 def merge_sty(base, other, forced=False):
     for m, ov in other.items():

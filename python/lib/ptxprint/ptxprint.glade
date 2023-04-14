@@ -4564,7 +4564,45 @@ Matter settings on the View+Edit tab):
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <child type="center">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="width-chars">40</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_resetConfig">
+                <property name="label" translatable="yes">RESET</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Warning!
+This will reset ALL the UI settings 
+for the current configuration.
+
+Note that it will not reset the Style 
+settings stored in the .sty files.</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <signal name="clicked" handler="onResetCurrentConfigClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
             <child>
               <object class="GtkButton" id="btn_importSettingsOK">
                 <property name="label">OK</property>
@@ -4581,11 +4619,11 @@ Matter settings on the View+Edit tab):
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button3">
+              <object class="GtkButton" id="btn_importCancel">
                 <property name="label">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -4598,7 +4636,7 @@ Matter settings on the View+Edit tab):
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -4628,7 +4666,7 @@ Matter settings on the View+Edit tab):
                     <property name="can-focus">False</property>
                     <property name="left-padding">12</property>
                     <child>
-                      <!-- n-columns=4 n-rows=7 -->
+                      <!-- n-columns=4 n-rows=5 -->
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -4819,33 +4857,6 @@ settings (as enabled on the Finishing tab).</property>
                           <packing>
                             <property name="left-attach">0</property>
                             <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSeparator">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">3</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">5</property>
-                            <property name="width">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_resetConfig">
-                            <property name="label" translatable="yes">!!! Reset the current configuration to default settings (no questions asked!) !!!</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <signal name="clicked" handler="onResetCurrentConfigClicked" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">6</property>
-                            <property name="width">4</property>
                           </packing>
                         </child>
                         <child>
@@ -5540,7 +5551,7 @@ and Customized Styles (custom.sty).</property>
     </child>
     <action-widgets>
       <action-widget response="-5">btn_importSettingsOK</action-widget>
-      <action-widget response="-6">button3</action-widget>
+      <action-widget response="-6">btn_importCancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_featsLangs">
@@ -20323,7 +20334,7 @@ setting, you must first enable Diglot.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <!-- n-columns=7 n-rows=1 -->
+                                  <!-- n-columns=8 n-rows=1 -->
                                   <object class="GtkGrid" id="gr_HeaderAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -20476,6 +20487,25 @@ uncheck this option.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_h">
+                                        <property name="label">\h</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Click to edit the marker's properties on the Styles tab.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">7</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
