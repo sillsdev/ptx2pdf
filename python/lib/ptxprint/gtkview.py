@@ -1377,29 +1377,19 @@ class GtkViewModel(ViewModel):
         
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
-        # print("onBkLstKeyPressed-m")
-        # (this needs constraining somehow 
-        self.set("r_book", "multiple")
+        if self.blInitValue != self.get('ecb_booklist'):
+            self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
         self.booklistKeypressed = False
         self.doBookListChange()
 
     def doBookListChange(self):
-        #bls = " ".join(self.getBooks())
-        #self.set('ecb_booklist', bls)
         bls = self.get('ecb_booklist', '')
         self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
-            # print("doBookListChange-A-s")
-            # self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
-        else:
-            # print("doBookListChange-B-m") 
-            # (this needs constraining somehow 
-            # as it is called on onBkLstFocusOutEvent)
-            self.set("r_book", "multiple")
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -2912,6 +2902,7 @@ class GtkViewModel(ViewModel):
                 self.set("t_chapfrom", str(toCh))
         # print("toChapChange-s")
         self.set("r_book", "single")
+        self.blInitValue = self.get("ecb_booklist")
 
     def onBookChange(self, cb_book):
         bk = self.get("ecb_book")

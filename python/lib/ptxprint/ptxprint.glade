@@ -4573,25 +4573,27 @@ Matter settings on the View+Edit tab):
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
-                <property name="width-chars">40</property>
+                <property name="width-chars">50</property>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
                 <property name="position">1</property>
               </packing>
             </child>
             <child>
               <object class="GtkButton" id="btn_resetConfig">
                 <property name="label" translatable="yes">RESET</property>
+                <property name="name">Reset the current Configuration's UI settings</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Warning!
 This will reset ALL the UI settings 
-for the current configuration.
+for the current configuration to
+their default values.
 
-Note that it will not reset the Style 
+Note that it will NOT reset the Style 
 settings stored in the .sty files.</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
@@ -4619,7 +4621,7 @@ settings stored in the .sty files.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -4636,7 +4638,7 @@ settings stored in the .sty files.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -4670,7 +4672,6 @@ settings stored in the .sty files.</property>
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-bottom">12</property>
@@ -4678,20 +4679,19 @@ settings stored in the .sty files.</property>
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkRadioButton" id="r_impSource_pdf">
-                            <property name="label" translatable="yes">PDF file or ZIP archive (with PTXprint settings)</property>
+                            <property name="label" translatable="yes">PDF file (with embedded settings) or ZIP archive file</property>
                             <property name="name">Import: From existing PDF file or ZIP archive</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Even though it sounds strange, it is possible to
-import the settings from an existing PDF file
-which was produced earlier by PTXprint. But 
-this only works if the PDF contains the settings
-(as can be enabled on the Finishing tab).
+                            <property name="tooltip-text" translatable="yes">It is possible to import settings from an
+existing PDF file which was produced earlier
+by PTXprint. But this only works if the settings
+are embedded within the PDF. (This is enabled
+on the Finishing tab).
 
-Importing from a PTXprint ZIP archive is
-another valid option (these are created
-on the Help tab).</property>
+Importing from a PTXprint ZIP archive 
+(created on the Help tab) is also possible.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
@@ -4821,7 +4821,7 @@ to import the settings from.
 Importing from a PDF will only work if the
 PDF contains the PTXprint configuration
 settings (as enabled on the Finishing tab).</property>
-                            <property name="halign">start</property>
+                            <property name="halign">end</property>
                             <property name="valign">center</property>
                             <signal name="clicked" handler="onSelectPDForZIPfileToImport" swapped="no"/>
                           </object>
@@ -4896,7 +4896,6 @@ settings (as enabled on the Finishing tab).</property>
               <object class="GtkNotebook" id="nbk_Import">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="margin-bottom">6</property>
                 <child>
                   <object class="GtkBox" id="tb_impPictures">
                     <property name="visible">True</property>
@@ -5251,7 +5250,7 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
 This will also import styles from ptxprint-mods.sty, but not from custom.sty.
-You may also want to reset the current configuration (see above) before importing styles.</property>
+You may also want to RESET the current configuration (see below) before importing styles.</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
@@ -10879,7 +10878,7 @@ and helps to place the marker in the tree listing all markers.</property>
                                 <property name="label" translatable="yes">Ch_oose...</property>
                                 <property name="name">Multiple books chooser</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
+                                <property name="can-focus">False</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Select one or more Biblical books
 to be printed from the project.</property>
@@ -10919,7 +10918,7 @@ to be printed from the project.</property>
                                 <property name="name">Choose books selector</property>
                                 <property name="width-request">98</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
+                                <property name="can-focus">False</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -11088,7 +11087,7 @@ Shortcut: Ctrl-B</property>
                               </packing>
                             </child>
                             <child>
-                              <!-- n-columns=5 n-rows=2 -->
+                              <!-- n-columns=4 n-rows=1 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -11172,24 +11171,6 @@ chapter number to end with.</property>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
@@ -11473,15 +11454,15 @@ the Notes field below.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_importSettings">
-                                    <property name="name">Import settings from other PDFs or other Configurations</property>
+                                    <property name="name">Import settings from PDFs, ZIP files or other Configurations</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Import settings from other PDFs 
-or from other Configurations
+                                    <property name="tooltip-text" translatable="yes">Import settings from other PDFs, from 
+other Configurations or from ZIP archives.
 
 Select which settings should be imported
-from another PDF (or another Configuration)
+from another PDF, ZIP or Configuration
 into the current Configuration.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
