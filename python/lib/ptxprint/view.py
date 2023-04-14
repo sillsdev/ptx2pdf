@@ -1923,7 +1923,7 @@ set stack_size=32768""".format(self.configName())
             newse = StyleEditor(self)
             try:
                 with zipopentext(fzip, "ptxprint.sty") as inf:
-                    newse.loadfh(inf)
+                    newse.loadfh(inf, base="")
             except (KeyError, FileNotFoundError):
                 pass
             if self.get("c_impStyles"):

@@ -332,9 +332,9 @@ class StyleEditor:
         self.sheet = Sheets(sheetfiles[-1:], base = "")
         self.test_constraints(self.sheet)
 
-    def loadfh(self, fh):
+    def loadfh(self, fh, base=None):
         self.basesheet = Sheets()
-        self.sheet = Sheets()
+        self.sheet = Sheets(base=base)
         self.sheet.appendfh(fh)
         self.test_constraints(self.sheet)
 
