@@ -168,6 +168,14 @@ be 0.5pt / natural unit in both dimensions (and if applied to ornament 32, it wi
 \OrnamentScaleRef a:y|32,b:y|33,c:X|33:y|32
 ```
 As with normal style-sheet entries, only one `\OrnamentScaleRef` is in force at any time and a second will overwrite it.
+##### Parsing grammar
+```
+ settings:= setting  -or-  setting,settings
+ setting:= name:key2|ornament -or- name:key1|ornament:key1|ornament
+ key2:= xy -or- XY -or- key1 
+ key1:= x -or- X -or- y -or- Y 
+```
+Lower case keys indicates no rotation. X indicates that the horizontal scale factor should use the vertical dimension of the ornament.
 
 
 #### Alignment tweaks
@@ -263,14 +271,6 @@ Normally ornaments for rules are aligned centrally (i.e. if an element is
 scaled, then its centre will used). Other choices can be imposed using parameter. 
 `\Raise`  Lift the bottom edge (of unscaled ornaments) from the baseline.
 
-##### Parsing grammar
-```
- settings:= setting  -or-  setting,settings
- setting:= name:key2|ornament -or- name:key1|ornament:key1|ornament
- key2:= xy -or- XY -or- key1 
- key1:= x -or- X -or- y -or- Y 
-```
-Lower case keys indicates no rotation. X indicates that the horizontal scale factor should use the vertical dimension of the ornament.
 
 #### Page Borders
 In the style sheet: 
