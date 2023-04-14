@@ -115,7 +115,7 @@ _map = {
     "grid/xyadvance":           ("s_gridMinorDivisions", "finish", lambda w,v: (1 / max(asfloat(v, 4), 1)) if v else "0.25"),
     "grid/xyoffset":            ("fcb_gridOffset", "finish", None),
     
-    "fancy/enableornaments":    ("c_useOrnaments", "decorate", lambda w,v: "" if v else "%"),
+    "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
     "fancy/enableborders":      ("c_borders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pageborder":         ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
@@ -465,7 +465,6 @@ _map = {
     "import/impsourcepdf":      ("btn_selectImpSource_pdf", "import", lambda w,v: w.impSourcePDF.as_posix() if w.impSourcePDF is not None else ""),
     "import/project":           ("fcb_impProject", "import", None),
     "import/config":            ("ecb_impConfig", "import", None),
-    "import/resetconfig":       ("c_imp_ResetConfig", "import", None),
     "import/layout":            ("c_impLayout", "import", None),
     "import/fontsscript":       ("c_impFontsScript", "import", None),
     "import/styles":            ("c_impStyles", "import", None),
