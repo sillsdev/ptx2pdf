@@ -1082,7 +1082,8 @@
 \def\@@getCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname}%
 \def\g@tCutoutSlop#1{\@@getCutoutSlop{#1}\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
 \def\p@rselimit#1,#2\E{\edef\@djustmin{-#1}\edef\@djustmax{#2}}
-
+\def\Rerun#1#2#3{}
+ 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
   \edef\c@rref{#2}%
@@ -1097,6 +1098,7 @@
       \trace{C}{PARLOC:ok}%
     \else
        \ifdim\t@str@ise pt=0pt\else
+         \immediate\write\delayf@le{\string\Rerun{#1}{F}{No need for RaiseItem}}%
          \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
        \fi
     \fi
@@ -1120,6 +1122,7 @@
     \fi  % if new delay is <2 away than old, we can use \RaiseItem
     \iftemp
       \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}
+      \immediate\write\delayf@le{\string\Rerun{#1}{T}{Position changed}}%
       \message{Current slop: \string\setCutoutSlop{#1}{\the\numexpr -\@djustmin\relax}{\@djustmax}}%
       \message{Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}}%
     \else
@@ -1129,6 +1132,7 @@
         \ifnum\tmp@lines=0\else
           \ifx\t@std@lay\relax\else
             \MSG{PARLOC: Rerun. RaiseItem needed at #1 #2}%
+            \immediate\write\delayf@le{\string\Rerun{#1}{F}{Need RaiseItem}}%
             \temptrue
           \fi
         \fi
@@ -1141,6 +1145,7 @@
         \else 
           \MSG{PARLOC: Rerun with new RaiseItem (by \the\tmp@lines was \t@str@ise) at #1 #2}%   
           \temptrue
+          \immediate\write\delayf@le{\string\Rerun{#1}{F}{RaiseItem changed}}%
         \fi
       \fi
       \iftemp
