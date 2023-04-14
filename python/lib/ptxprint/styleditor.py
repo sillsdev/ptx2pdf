@@ -297,7 +297,7 @@ class StyleEditor:
                 return      # Probably a font which has edited the object for us
             else:
                 val = newval
-        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
+        oldval = self.basesheet[mrk].get(key, "") if mrk in self.basesheet else ""
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
             return
