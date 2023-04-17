@@ -1,9 +1,39 @@
 PTXprint 2.3.5 Release Notes
-6 Apr 2023
+17 Apr 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
 
+Bug fixes and Improvements in 2.3.6 (17 Apr 2023)
+
+  * Added NEW feature to allow importing of selected settings from 
+    PDF files, ZIP archives or Proj+Configs
+  
+  * Added category flattening to parsing ptxprint-mods.sty for import
+  
+  * Fixed sliver of image showing beside the figure credit box
+  
+  * Improved UI interaction when chapter number is changed (so multiple 
+    books isn't selected when you tab out of the 'To chapter' field
+  
+  * Allow stylesheet-based control of credit position along edge 
+    (\SpaceBeside) or inside/outside edge (\SpaceBefore).
+
+  * Allow lineskiplimit overrides <0pt
+  
+  * Fixed Style editor row deletion when filtering is on
+  
+  * Ensure that zornament works nicely in RTL-land
+  
+  * Added link to \h header style on Header+Footer tab
+  
+  * Fixed out of date documentation about sidebar border padding
+  
+  * Updated documentation for ornaments
+   (put the grammar for `\OrnamentScaleRef` back where it belongs)
+  
+  * Fixed style merging by ensuring we use the same Marker() dict in Sheets
+  
 Bug fixes and Improvements in 2.3.5 (6 Apr 2023)
 
   * Fix SkipMissingPictures (which now works as advertised)

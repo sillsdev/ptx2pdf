@@ -11469,6 +11469,9 @@ into the current Configuration.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
                                     <signal name="clicked" handler="onImportClicked" swapped="no"/>
+                                    <style>
+                                      <class name="highlighted"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
