@@ -95,8 +95,8 @@ class ViewModel:
                        "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
 
     _picFields = {
-        "Captions": ('caption', 'captionR'),
-        "SizePosn": ('size', 'pgpos'),
+        "Captions": ('caption', 'captionR', 'ref'),
+        "SizePosn": ('size', 'pgpos', 'scale', 'mirror', 'x-xetex'),
         "Copyright": ('copy', ),
     }
 
@@ -1904,22 +1904,28 @@ set stack_size=32768""".format(self.configName())
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
-            otherpics = PicInfo()
+            otherpics = PicInfo(self.picinfos.model)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile) as inf:
                     otherpics.read_piclist(inf, "B")
-            except (KeyError, FileNotFoundError):
+            except (KeyError, FileNotFoundError) as e:
                 pass
-            fields = set()
-            for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
-                if v:
-                    for f in self._picFields.get(n, (n.lower(), )):
-                        fields.add(f)
-            self.picinfos.merge_fields(otherpics, fields)
+            if self.get("r_impPics") == "entire":
+                self.picinfos = otherpics
+            else:
+                fields = set()
+                for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
+                    if v:
+                        for f in self._picFields.get(n, (n.lower(), )):
+                            fields.add(f)
+                addNewPics = self.get("c_impPicsAddNew")
+                delOldPics = self.get("c_impPicsDelOld")
+                self.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
+            self.picinfos.out(os.path.join(self.configPath(self.configName()), "{}-{}.piclist".format(self.prjid, self.configName())))
 
         # merge ptxprint.sty adding missing
-        if self.get("c_impStyles") or self.get("c_impCover"):
+        if self.get("c_impStyles") or self.get("c_oth_Cover"):
             newse = StyleEditor(self)
             try:
                 with zipopentext(fzip, "ptxprint.sty") as inf:
@@ -1968,7 +1974,7 @@ set stack_size=32768""".format(self.configName())
                     outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
-                zipsty.close()
+                zipmod.close()
 
         # merge cover and import has cover
         if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):

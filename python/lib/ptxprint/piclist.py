@@ -265,16 +265,27 @@ class PicInfo(dict):
                             break
                 del indat[k]
 
-    def merge_fields(self, other, fields, extend=False):
-        anchored = {v['anchor']: v for v in self.values()}
+    def merge_fields(self, other, fields, extend=False, removeOld=False):
+        anchored = {v['anchor']: k for k, v in self.items()}
         count = 1
+        while f"picM{count}" in self:
+            count += 1
         for k, v in other.items():
             a = v['anchor']
             s = anchored.get(a, None)
-            if s is None:
+            if s is None and extend:
                 self[f"picM{count}"] = v.copy()
-            else:
-                s.update({f: v[f] for f in fields if f in v})
+                count += 1
+            elif s is not None:
+                del anchored[a]
+                self[s].update({f: v[f] for f in fields if f in v})
+                # Delete fields if missing from other
+                for a in ["scale", "mirror", "x-xetex"]:
+                    if a in fields and a not in v and a in self[s]:
+                        del self[s][a]
+        if removeOld:
+            for k in anchored.values():
+                del self[k]
 
     def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()

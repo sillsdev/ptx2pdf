@@ -3429,7 +3429,7 @@ class GtkViewModel(ViewModel):
             if zipinf is not None:
                 zipinf.close()
             if self.get("c_impPictures"):
-                self.picListView.updateinfo(self.picinfos)
+                self.updatePicList()
             self.onViewerChangePage(None, None, 0, forced=True)
             self.doStatus(_("Import Settings complete!"))
         if sys.platform == "win32":
@@ -4978,7 +4978,7 @@ class GtkViewModel(ViewModel):
         picount = len(pics)
         if picount == 0:
             _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("No DCC illustrations were detected. Hit Print first and then try again.")
+                       _("No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
