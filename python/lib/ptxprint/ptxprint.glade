@@ -4809,7 +4809,7 @@ settings will be imported.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_selectImpSource_pdf">
+                          <object class="GtkButton" id="btn_impSource_pdf">
                             <property name="label" translatable="yes">Select...</property>
                             <property name="name">Select PDF to import settings from</property>
                             <property name="visible">True</property>

@@ -179,7 +179,7 @@ c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff
-btn_importSettings btn_importSettingsOK r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
+btn_importSettings btn_importSettingsOK r_impSource_pdf btn_impSource_pdf lb_impSource_pdf nbk_Import
 r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
@@ -301,7 +301,7 @@ _sensitivities = {
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
     "r_impSource": {
-        "r_impSource_pdf":     ["btn_selectImpSource_pdf", "lb_impSource_pdf"],
+        "r_impSource_pdf":     ["btn_impSource_pdf", "lb_impSource_pdf"],
         "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
     "c_impPictures":           ["tb_impPictures"],
     "r_impPics": {
@@ -3409,7 +3409,8 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             zipinf = None
             if self.get("r_impSource") == "pdf":
-                fname = self.get("lb_impSource_pdf")
+                # fname = self.get("lb_impSource_pdf")
+                fname = str(getattr(self, "impSourcePDF", None))
                 if fname.endswith(".pdf"):
                     confstream = self.getPDFconfig(fname)
                     zipinf = BytesIO(confstream)
@@ -3444,29 +3445,27 @@ class GtkViewModel(ViewModel):
                 filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf", "default": True},
                            "ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple = False, basedir=os.path.join(self.working_dir, ".."))
-        if pdfORzipFile is None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
+
+        if pdfORzipFile == None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
+            self.set("r_impSource", "config")
+            setattr(self, "impSourcePDF", None)
+            btn_importPDF.set_tooltip_text("")
+            self.set("lb_impSource_pdf", "")
             return
-        # Need to handle EITHER a .PDF (and check that it has a valid zipdata within it
-        #                    OR a .zip file (and also check that it has config settings in it)
-        # and if all is well, then return the filename to the dialog, but don't do anything
-        # else until the other settings have been selected, and OK has been clicked.
-        self.builder.get_object("btn_selectImpSource_pdf").set_tooltip_text(str(pdfORzipFile[0]))
-        if str(pdfORzipFile[0]).lower().endswith(".pdf"):
-            zipdata = self.getPDFconfig(pdfORzipFile[0])
-            if zipdata is not None:
-                self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
-                # if self.msgQuestion(_("Overwite current Configuration?"), 
-                        # _("WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\nDo you wish to continue?")):
-                    # self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
-            else:
-                self.doError(_("PDF Config Import Error"), 
-                        secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
-                                _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
-                                _("if created with 'Include Config Settings Within PDF' option enabled."))
-                return
-            # self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
-        elif pdfORzipFile[0].lower().endswith(".zip"):
-            self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
+
+        zipdata = self.getPDFconfig(pdfORzipFile[0])
+        if zipdata is None:
+            self.doError(_("PDF/ZIP Import Config Error"), 
+                    secondary=_("Cannot find any settings to import from the selected file.\n\n") + \
+                            _("If importing from a PDF (created with PTXprint version 2.3 or later) check ") + \
+                            _("if it was created with 'Include Config Settings Within PDF' option enabled."))
+            return
+
+        self.set("r_impSource", "pdf")
+        setattr(self, "impSourcePDF", pdfORzipFile[0])
+        btn_importPDF.set_tooltip_text(str(pdfORzipFile[0]))
+        # self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
+        self.set("lb_impSource_pdf", pdfre.sub(r"\1", str(pdfORzipFile[0])))
 
         self.setImportButtonOKsensitivity(None)
 

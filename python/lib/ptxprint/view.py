@@ -66,7 +66,7 @@ def doError(txt, secondary=None, **kw):
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)
-        "project/importPDFsettings":("importPDFsettings", False, None),
+        # "project/importPDFsettings":("importPDFsettings", False, None),
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, "btn_selectScript"),
@@ -106,7 +106,8 @@ class ViewModel:
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
         self.args = args
-        for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
+        # importPDFsettings  (removed from list below)
+        for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
                      customFigFolder customOutputFolder impSourcePDF coverImage
                      prjid configId diglotView usfms picinfos bookrefs""").split():
