@@ -513,6 +513,22 @@ printed by PTXprint, not the current page number.
 `\zgap|1in\*` insert glue occupying 1inch
 `\zgap|1in plus 2in minus 0.3in\*` insert flexible glue.
 
+### <a name="ISBN">ISBN barcode</a>
+`\zISBNbarcode|isbn="01-234-56789"\*`
+Create a barcode (EAN13) from a 10 or 13 digit ISBN.  The provided ISBN will
+be printed as supplied (prefixed by 'ISBN'), normally with the barcode below.
+If a 10 digit ('old style') ISBN is supplied, the barcode will be prefixed with
+'978', and have the check-digit altered as described in the relevant Wikipedia
+article (which corresponds to various books).  No barcode will be created if
+other than 10 or 13 digits are given.  No spaces should be present in the ISBN,
+group separation is by hyphen/minus (U+002D), as above.
+
+The optional parameters
+`height="short"` or `height="medium"`make the bars 5ex and 7ex high
+respectively, as opposed to the normal 10ex. The normal size may be altered by e.g. 
+`\def\b@rheight{9ex}`  Text/numbers are displayed in the font Andika by default, the font can 
+be altered by: `\def\ISBNfont{Helvetica}`
+
 ### Misc. milestones
 `\zfiga|anchor\*` An anchor point for a figure from the piclist. See
 figures.md. It can also be used as a trigger point.

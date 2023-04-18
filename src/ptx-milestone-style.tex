@@ -704,10 +704,34 @@
     \or\G#3\L#4\G#5\G#6\L#7\or\G#3\G#4\L#5\G#6\L#7%
   \fi\01\11\01\11\01\bcR}
 
+\newcount\num@rgs
+\def\@count@rgs#1#2{\let\n@xt\relax\ifx#1\relax\else\advance \num@rgs by 1\relax \ifx#2\relax \else\let\n@xt\@count@rgs \fi\fi \n@xt #2}
+\def\count@rgs#1{\num@rgs=0  \@count@rgs#1 \relax\relax\trace{m}{#1 has \the\num@rgs\space digits}}
+
 %\barcode 9789731650937
+%
+\def\r@encodeten#1#2#3\relax{%Recode a 10 digit ISBN as a 13 digit barcode. The check digit is different beyween ISBN10 and ISBN13
+  \ifx#2\relax
+    \edef\r@code{\r@code\the\numexpr 10-\count255\relax}%
+    \trace{m}{Updated check digit. Barcode should be: \r@code}% 
+    \x@\barcode\r@code
+    \let\n@xt\relax
+  \else
+    \advance\count255 by \numexpr #1 + 3*#2\relax
+    \loop\ifnum\count255 >9 \advance\count255 by -10 \repeat
+    \edef\r@code{\r@code#1#2}%
+    \let\n@xt\r@encodeten
+  \fi
+  \n@xt#3\relax
+}
 %ISBNs use minuses to separate number groups. There seems no guaranteed pattern
 %  Call barcode using stripped down version
-\def\bcode#1-{\lineskip=10pt \lineskiplimit=0pt \barcode#1}
+\def\bcode#1-{\count@rgs{#1}%
+  \lineskip=10pt \lineskiplimit=0pt
+  \ifnum\num@rgs=13 \barcode#1\relax\else
+    \ifnum\num@rgs=10 \count255=0 %\tracingmacros=1\tracingassigns=1 
+      \let\r@code\empty\r@encodeten 978#1\relax\relax \fi
+  \fi}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
@@ -719,12 +743,12 @@
 %seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
 \newdimen\ISBNfontdim
 \ISBNfontdim=10pt
-\def\ISBNfont{"Andika"}
+\def\ISBNfont{Andika}
 \def\ISBN#1{\leavevmode\font\belowISBN="\ISBNfont" at \ISBNfontdim
   \trace{m}{ISBN barcode for \attr@b}%
   \bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
   %I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
-  \font\aboveISBN="Andika" at 0.02\dimen0
+  \font\aboveISBN="\ISBNfont"  at 0.02\dimen0
   \belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
 %\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
   \hbox{\expandafter\isbn#1--}}\egroup}
@@ -733,6 +757,7 @@
 %\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
 \x@\def\csname MS:zISBNbarcode\endcsname{%
   \bgroup
+\def\b@rheight{10ex}
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
   \ifx\attr@b\relax

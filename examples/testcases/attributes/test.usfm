@@ -144,5 +144,9 @@ The paragraph adjusting rule (^90) always applies, otherwise it might become
 impossible to adjust some
 paragraphs.
 
+ISBN10:
+
+\zISBNbarcode|isbn="0-201-54199" \*
+
 \pb
 \zfillsignature|pages="8" pagenos="do"\*
