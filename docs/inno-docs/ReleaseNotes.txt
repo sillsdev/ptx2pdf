@@ -1,9 +1,30 @@
 PTXprint 2.3.6 Release Notes
-17 Apr 2023
+18 Apr 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
 
+Bug fixes and Improvements in 2.3.7 (18 Apr 2023)
+
+  * Improve Cover tab UI with buttons for steps 1-3
+  
+  * Refine import settings dialog, and wordsmith tooltips
+  
+  * Handle missing spinewidth for command-line initiated cover page
+  
+  * Barcode improvements:
+      - Check digit count to avoid crashes
+      - Automatically generate ISBN13 if ISBN10 is provided
+      - make \ISBNfont apply to all lettering
+  
+  * Make PDF binding depend of RTLBookBinding checkbox (MJ #856)
+  
+  * Fix peripheral and cover front import
+  
+  * Fix 'Choose books' broken (#860)
+  
+  * Add delayed file handling
+  
 Bug fixes and Improvements in 2.3.6 (17 Apr 2023)
 
   * Added NEW feature to allow importing of selected settings from 
