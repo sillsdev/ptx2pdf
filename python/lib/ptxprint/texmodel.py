@@ -289,7 +289,7 @@ class TexModel:
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
-            self.dict['cover/spinewidth_'] = float(self.dict.get("cover/spinewidth", "0mm").replace("mm", ""))
+            self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
         else:
             if self.asBool('cover/covercropmarks'):
                 self.dict['cover/spinewidth_'] = 0

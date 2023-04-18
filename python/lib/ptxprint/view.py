@@ -1902,7 +1902,7 @@ set stack_size=32768""".format(self.configName())
         if config.get("fancy", "enableOrnaments", fallback=False):
             self.set("c_useOrnaments", True)
         exclfields = None if self.get("c_impFontsScripts") else \
-                ('fontname', 'fontsize', 'ztexfontfeatures', 'ztexfontgrspace')
+                ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
@@ -1980,7 +1980,7 @@ set stack_size=32768""".format(self.configName())
 
         # merge cover and import has cover
         if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
-            self.set("c_useSectIntros", True)
+            # self.set("c_useSectIntros", True)
             self.set("c_useOrnaments", True)
             # override cover styles
             allstyles = self.styleEditor.allStyles()

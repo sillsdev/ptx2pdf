@@ -1786,7 +1786,7 @@ XeTeX macros (ptx2pdf) with a long and reliable history.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website-label" translatable="yes">PTXprint Homepage</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
-Mark Penny (UI Developer, Testing &amp; Documentation)
+Mark Penny (UI Developer, Testing, Documentation)
 David Gardner (TeX Macro Coding, Diglot Specialist)
 David Coward (User Acceptance Testing)
 
@@ -3909,7 +3909,7 @@ settings for a similar project.</property>
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Generate Cover</property>
+    <property name="title" translatable="yes">PTXprint: Cover Wizard</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
@@ -5437,7 +5437,7 @@ modified locally, then enable this option.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">This covers everything on the Advanced tab
+                            <property name="tooltip-text" translatable="yes">This includes everything on the Advanced tab
 with the exception of Custom Script processing
 and Customized Styles (custom.sty).</property>
                             <property name="halign">start</property>
@@ -11470,7 +11470,7 @@ into the current Configuration.</property>
                                     <property name="image">icon_downloa</property>
                                     <signal name="clicked" handler="onImportClicked" swapped="no"/>
                                     <style>
-                                      <class name="highlighted"/>
+                                      <class name="attention"/>
                                     </style>
                                   </object>
                                   <packing>
@@ -31156,11 +31156,12 @@ of overlap here (mm).</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="spacing">12</property>
+                                    <property name="spacing">6</property>
                                     <child>
                                       <object class="GtkButton" id="btn_coverGenerate">
-                                        <property name="label" translatable="yes">Generate Cover...</property>
+                                        <property name="label" translatable="yes">1. Create Cover Settings...</property>
                                         <property name="name">Generate Cover (Basic settings to create a cover)</property>
+                                        <property name="width-request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -31168,13 +31169,72 @@ of overlap here (mm).</property>
 This tool enables you to create various kinds of
 covers which can easily be enhanced. </property>
                                         <property name="halign">start</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="xalign">0</property>
                                         <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
                                         <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editFrontMatter2">
+                                        <property name="label" translatable="yes">2. Edit Cover Content...</property>
+                                        <property name="name">Edit Front Matter (where cover content is defiined)</property>
+                                        <property name="width-request">170</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show the Front Matter file where
+the content for the Cover page
+can be adjusted as needed.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-right">6</property>
+                                        <property name="xalign">0</property>
+                                        <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
+                                        <accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="b_print4cover">
+                                        <property name="label" translatable="yes">3. Print (Make Cover PDF)</property>
+                                        <property name="width-request">170</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="has-default">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Once 'Create Cover' is enabled, every time
+'Print (Make PDF)' is clicked, a separate 
+cover PDF will be created in addition to
+the usual text content PDF.
+
+However, if another tab (other than the Cover tab)
+is active, the text content PDF will be automatically
+opened rather than the cover PDF.
+
+Clicking this button will ensure that the cover PDF
+will be displayed once it has been created.</property>
+                                        <property name="halign">start</property>
+                                        <property name="resize-mode">immediate</property>
+                                        <property name="xalign">0</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onOK" swapped="no"/>
+                                        <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -31270,7 +31330,12 @@ been trimmed. (Units: mm)</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">When printing and binding books in bulk
 crop marks are usually required to indicate
-where to trim the publication.</property>
+where to trim the publication.
+
+Including the spine will force crop marks
+to be shown on the cover page. So if you 
+cannot uncheck this option, then disable 
+the 'Include Spine' setting (above) and retry.</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin-end">6</property>
@@ -31323,7 +31388,7 @@ the inner backing sheet. (Units: mm)</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -31344,7 +31409,7 @@ on the Styles tab for the Front Cover.</property>
                                       <packing>
                                         <property name="expand">True</property>
                                         <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="position">4</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -33657,6 +33722,9 @@ Click to visit download page on the website.</property>
                 <property name="margin-bottom">3</property>
                 <property name="image">icon_download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
+                <style>
+                  <class name="attention"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>

@@ -179,8 +179,8 @@ c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff
-btn_importSettings btn_importSettingsOK r_impSource_pdf btn_impSource_pdf lb_impSource_pdf nbk_Import
-r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
+btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
+nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
@@ -797,6 +797,7 @@ class GtkViewModel(ViewModel):
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
             .highlighted {background-color: peachpuff; background: peachpuff}
+            .attention {background-color: lightblue; background: lightblue}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
@@ -1255,7 +1256,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
+        for w in ["b_print", "b_print4cover", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -3220,6 +3221,10 @@ class GtkViewModel(ViewModel):
         if self.customScript:
             self._editProcFile(scriptName, scriptPath)
 
+    def onEditCoverContentClicked(self, btn):
+        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("changes.txt", "cfg")
+
     def onEditChangesFile(self, btn):
         self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
@@ -3464,7 +3469,6 @@ class GtkViewModel(ViewModel):
         self.set("r_impSource", "pdf")
         setattr(self, "impSourcePDF", pdfORzipFile[0])
         btn_importPDF.set_tooltip_text(str(pdfORzipFile[0]))
-        # self.set("lb_impSource_pdf", str(pdfORzipFile[0]))
         self.set("lb_impSource_pdf", pdfre.sub(r"\1", str(pdfORzipFile[0])))
 
         self.setImportButtonOKsensitivity(None)
