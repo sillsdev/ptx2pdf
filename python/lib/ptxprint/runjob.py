@@ -719,7 +719,6 @@ class RunJob:
         cachedata = {}
         cacheexts = {"toc":     (_("table of contents"), True), 
                     "picpages": (_("image copyrights"), False), 
-                    "delayed":  (_("chapter numbers"), True),
                     "parlocs":  (_("chapter positions"), True)}
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
@@ -764,15 +763,20 @@ class RunJob:
                 fpath = os.path.join(self.tmpdir, outfname.replace(".tex", "."+a))
                 cachedata[a] = self.readfile(fpath)
                 if testdata != cachedata[a]:
-                    #if a == "delayed" and len(testdata) and numruns < self.maxRuns:
-                    #    os.remove(fpath)
-                    #    cachedata[a] = ""
                     if numruns >= self.maxRuns or not cacheexts[a][1]:
                         self.rerunReasons.append(cacheexts[a][0])
                     else:
                         print(_("Rerunning because the {} changed").format(cacheexts[a][0]))
                         rererun = True
                         break
+            delayed = os.path.join(self.tmpdir, outfname.replace(".tex", ".delayed"))
+            if not rerun and os.path.exists(delayed):
+                with open(delayed, encoding="utf-8") as inf:
+                    for l in inf.readlines():
+                        if re.match(r"\\Rerun\{.*?\}\{T\}", l):
+                            rerun = True
+                            print(_("Rerunning because the delayed file changed"))
+                            break
             if os.path.exists(tocfname):
                 tailoring = self.printer.ptsettings.getCollation()
                 ducet = tailored(tailoring.text) if tailoring else None

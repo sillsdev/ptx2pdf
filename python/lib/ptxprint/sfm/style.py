@@ -295,6 +295,9 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categor
             category = val
             key = "Marker"
             val = "esb"
+        elif key.lower() == "endcategory":
+            category = ""
+            continue
         if key.lower() == keyfield.lower():
             mkr = f"cat:{category}|{val}" if category else val
             res[mkr] = Marker()
