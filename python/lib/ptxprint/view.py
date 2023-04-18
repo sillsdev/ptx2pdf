@@ -1997,7 +1997,6 @@ set stack_size=32768""".format(self.configName())
             # add/override cover periphs in FRTlocal
             periphcapture = None
             forcenames = set()
-            import pdb; pdb.set_trace()
             try:
                 with zipopentext(fzip, 'FRTlocal.sfm') as inf:
                     if inf is not None:
