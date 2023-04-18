@@ -43,6 +43,40 @@ Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 pa
            'c_applyWatermark':      ('watermarks', 'paper/watermarkpdf', r'\def\MergePDF{{"{}"}}')
 }
 
+_periphids = {
+    "title page": "title",
+    "half title page": "halftitle",
+    "promotional page": "promo",
+    "imprimatur": "imprimatur",
+    "publication data": "pubdata",
+    "foreword": "foreword",
+    "preface": "preface",
+    "table of contents": "contents",
+    "alphabetical contents": "alphacontents",
+    "table of abbreviations": "abbreviations",
+    "bible introduction": "intbible",
+    "old testament introduction": "intot",
+    "pentateuch introduction": "intpent",
+    "history introduction": "inthistory",
+    "poetry introduction": "intpoetry",
+    "prophecy introduction": "intprophesy",
+    "deuterocanon introduction": "intdc",
+    "new testament introduction": "intnt",
+    "gospels introduction": "intgospels",
+    "epistles introduction": "intepistles",
+    "letters introduction": "intletters",
+    "chronology": "chron",
+    "weights and measures": "measures",
+    "map index": "maps",
+    "lxx quotes in nt": "lxxquotes",
+    # "coverfront": "coverfront",
+    # "coverback": "coverback",
+    # "coverspine": "coverspine",
+    # "coverwhole": "coverwhole",
+    "cover": "cover",
+    "spine": "spine"
+}
+
 
 class TexModel:
     _peripheralBooks = ["FRT", "INT"]
@@ -96,40 +130,6 @@ class TexModel:
         "notes/fncallers": "footnotes"
     }
     _crossRefInfo = None
-
-    _periphids = {
-        "title page": "title",
-        "half title page": "halftitle",
-        "promotional page": "promo",
-        "imprimatur": "imprimatur",
-        "publication data": "pubdata",
-        "foreword": "foreword",
-        "preface": "preface",
-        "table of contents": "contents",
-        "alphabetical contents": "alphacontents",
-        "table of abbreviations": "abbreviations",
-        "bible introduction": "intbible",
-        "old testament introduction": "intot",
-        "pentateuch introduction": "intpent",
-        "history introduction": "inthistory",
-        "poetry introduction": "intpoetry",
-        "prophecy introduction": "intprophesy",
-        "deuterocanon introduction": "intdc",
-        "new testament introduction": "intnt",
-        "gospels introduction": "intgospels",
-        "epistles introduction": "intepistles",
-        "letters introduction": "intletters",
-        "chronology": "chron",
-        "weights and measures": "measures",
-        "map index": "maps",
-        "lxx quotes in nt": "lxxquotes",
-        # "coverfront": "coverfront",
-        # "coverback": "coverback",
-        # "coverspine": "coverspine",
-        # "coverwhole": "coverwhole",
-        "cover": "cover",
-        "spine": "spine"
-    }
 
     _tocleaders = [
         "",
@@ -722,7 +722,7 @@ class TexModel:
                                 self.frontperiphs[currk] = "\n".join(currperiphs)
                             currk = ma[2] or ma[3]
                             if not currk:
-                                currk = self._periphids.get(m[1].lower(), m[1].lower())
+                                currk = _periphids.get(m[1].lower(), m[1].lower())
                             currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:

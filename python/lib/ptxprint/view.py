@@ -1,6 +1,6 @@
 
 import configparser, os, re, regex, random, collections
-from ptxprint.texmodel import TexModel, Borders
+from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
@@ -1315,15 +1315,13 @@ class ViewModel:
                     if l.strip().startswith(r"\periph"):
                         m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                         if m:
-                            periphid = m.group(2) or m.group(1)
+                            periphid = m.group(2) or _periphids.get(m.group(1).lower(), m.group(1).lower())
                             usedperiphs.add(periphid)
                             if (force or periphid in forcenames) and periphid in self.periphs:
                                 fcontent.append(self.periphs[periphid].strip())
                                 skipping = True
                             else:
                                 skipping = False
-                        else:
-                            skipping = False
                     if not skipping:
                         fcontent.append(l.strip())
         for k, v in self.periphs.items():
@@ -1934,7 +1932,7 @@ set stack_size=32768""".format(self.configName())
             except (KeyError, FileNotFoundError):
                 pass
             if self.get("c_impStyles"):
-                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"))
+                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), nofonts=not self.get("c_impFontsScript"))
 
         if self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
@@ -2007,7 +2005,7 @@ set stack_size=32768""".format(self.configName())
                                 if m:
                                     if periphcapture is not None:
                                         self.periphs[periphid] = "".join(periphcapture)
-                                    periphid = m.group(2) or m.group(1)
+                                    periphid = m.group(2) or _periphids.get(m.group(1).lower(), m.group(1).lower())
                                     periphcapture = [l]
                                     if periphid.startswith("cover"):
                                         forcenames.add(periphid)

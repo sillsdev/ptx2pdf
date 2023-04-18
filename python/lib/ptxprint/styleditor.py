@@ -428,13 +428,16 @@ class StyleEditor:
                 if nv != bv:
                     self.setval(m, k, nv)
 
-    def mergein(self, newse, force=False):
+    def mergein(self, newse, force=False, nofonts=False):
+        fontfields = ('fontname', 'fontsize', 'ztexfontfeatures', 'ztexfontgrspace')
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
                 self.addMarker(m, newse.getval(m, 'Name'))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
+                if nofonts and k in fontfields:
+                    continue
                 nv = newse.getval(m, k)
                 bv = self.getval(m, k, baseonly=True)
                 sv = self.getval(m, k)
