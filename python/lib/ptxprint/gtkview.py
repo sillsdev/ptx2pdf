@@ -610,6 +610,7 @@ class GtkViewModel(ViewModel):
         self.thickActive = False
         self.printReason = 0
         self.warnedMissingZvars = False
+        self.blInitValue = None
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
