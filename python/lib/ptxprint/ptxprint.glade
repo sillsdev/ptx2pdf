@@ -4553,7 +4553,7 @@ Matter settings on the View+Edit tab):
   </object>
   <object class="GtkDialog" id="dlg_importSettings">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Import Settings...</property>
+    <property name="title" translatable="yes">PTXprint: Import Settings Into Current Configuration...</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -4595,9 +4595,13 @@ their default values.
 
 Note that it will NOT reset the Style 
 settings stored in the .sty files.</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
+                <property name="halign">start</property>
+                <property name="valign">end</property>
                 <signal name="clicked" handler="onResetCurrentConfigClicked" swapped="no"/>
+                <style>
+                  <class name="warning"/>
+                  <class name="smallbutton"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -5523,6 +5527,7 @@ and Customized Styles (custom.sty).</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
+                    <property name="inconsistent">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -11458,12 +11463,13 @@ the Notes field below.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Import settings from other PDFs, from 
-other Configurations or from ZIP archives.
+                                    <property name="tooltip-text" translatable="yes">Warning! This may overwrite existing settings.
 
-Select which settings should be imported
-from another PDF, ZIP or Configuration
-into the current Configuration.</property>
+This button will open the Import Settings dialog
+where you may select various options to import 
+settings from other PDFs, ZIP archives or from 
+a different project configuration into the current
+configuration.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>

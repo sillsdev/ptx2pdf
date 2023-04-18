@@ -798,6 +798,7 @@ class GtkViewModel(ViewModel):
             .changed {font-weight: bold}
             .highlighted {background-color: peachpuff; background: peachpuff}
             .attention {background-color: lightblue; background: lightblue}
+            .warning {background: lightpink;font-weight: bold; color: darkred}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
