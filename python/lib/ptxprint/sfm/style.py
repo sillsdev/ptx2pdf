@@ -307,12 +307,14 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categor
 
 parse = simple_parse
 
-def merge_sty(base, other, forced=False):
+def merge_sty(base, other, forced=False, exclfields=None):
     for m, ov in other.items():
         if m not in base or forced:
             base[m] = ov.copy()
         else:
             for k, v in ov.items():
+                if exclfields is not None and k in exclfields:
+                    continue
                 base[m][k] = v
 
 def out_sty(base, outf, keyfield="Marker"):

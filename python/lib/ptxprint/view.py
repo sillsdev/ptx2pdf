@@ -1901,6 +1901,8 @@ set stack_size=32768""".format(self.configName())
         grabfront = False
         if config.get("fancy", "enableOrnaments", fallback=False):
             self.set("c_useOrnaments", True)
+        exclfields = None if self.get("c_impFontsScripts") else \
+                ('fontname', 'fontsize', 'ztexfontfeatures', 'ztexfontgrspace')
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
@@ -1933,7 +1935,7 @@ set stack_size=32768""".format(self.configName())
             except (KeyError, FileNotFoundError):
                 pass
             if self.get("c_impStyles"):
-                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), nofonts=not self.get("c_impFontsScript"))
+                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
 
         if self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
@@ -1948,7 +1950,7 @@ set stack_size=32768""".format(self.configName())
                         localmods = simple_parse(inf, categories=True)
                     othermods = simple_parse(zipsty, categories=True)
                     zipsty.close()
-                    merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"))
+                    merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
                     with open(localmodsty, "w", encoding="utf-8") as outf:
                         out_sty(localmods, outf)
                 elif zipsty is not None:
@@ -1987,7 +1989,8 @@ set stack_size=32768""".format(self.configName())
                     if k not in allstyles:
                         self.styleEditor.addMarker(k, v['Name'])
                     for a, b in v.items():
-                        self.styleEditor.setval(k, a, b)
+                        if exclfields is None or k not in exclfields:
+                            self.styleEditor.setval(k, a, b)
             grabfront = True
             
         if self.get("c_oth_FrontMatter"):
