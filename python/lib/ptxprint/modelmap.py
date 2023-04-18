@@ -280,6 +280,7 @@ _map = {
     "cover/coverbleed":         ("s_coverBleed", "cover", None),
     "cover/coverartbleed":      ("s_coverArtBleed", "cover", None),
     "cover/makeseparatePDF":    ("c_coverSeparatePDF", "cover", None),
+    "cover/spinewidth":         ("l_spineWidth", "cover", None),
 
     "covergen/textscale":       ("s_coverTextScale", "cover", None),
     "covergen/textcolor":       ("col_coverText", "cover", None),
