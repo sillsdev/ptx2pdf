@@ -72,6 +72,9 @@ background images and colours which may be defined (but clearly, not all options
 combinations make sense). Styling is discussed futher down, and this document
 ends with a complete stylesheet that could be used to set the above text.
 
+Note that by default the barcode for the ISBN uses the font Andika. 
+This can be changed: (`\def\ISBNfont{Helvetica}`)
+
 ## TeX Parameters
 
 ```tex
