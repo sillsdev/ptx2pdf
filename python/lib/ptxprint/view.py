@@ -1315,7 +1315,8 @@ class ViewModel:
                     if l.strip().startswith(r"\periph"):
                         m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                         if m:
-                            periphid = m.group(2) or _periphids.get(m.group(1).lower(), m.group(1).lower())
+                            fullname = m.group(1).strip().lower()
+                            periphid = m.group(2) or _periphids.get(fullname, fullname)
                             usedperiphs.add(periphid)
                             if (force or periphid in forcenames) and periphid in self.periphs:
                                 fcontent.append(self.periphs[periphid].strip())
@@ -1996,6 +1997,7 @@ set stack_size=32768""".format(self.configName())
             # add/override cover periphs in FRTlocal
             periphcapture = None
             forcenames = set()
+            import pdb; pdb.set_trace()
             try:
                 with zipopentext(fzip, 'FRTlocal.sfm') as inf:
                     if inf is not None:
@@ -2005,10 +2007,15 @@ set stack_size=32768""".format(self.configName())
                                 if m:
                                     if periphcapture is not None:
                                         self.periphs[periphid] = "".join(periphcapture)
-                                    periphid = m.group(2) or _periphids.get(m.group(1).lower(), m.group(1).lower())
-                                    periphcapture = [l]
-                                    if periphid.startswith("cover"):
+                                    fullname = m.group(1).strip().lower()
+                                    periphid = m.group(2) or _periphids.get(fullname, fullname)
+                                    if periphid.startswith("cover") and self.get("c_oth_Cover"):
                                         forcenames.add(periphid)
+                                        periphcapture = [l]
+                                    elif not periphid.startswith("cover") and self.get("c_oth_FrontMatter"):
+                                        periphcapture = [l]
+                                    else:
+                                        periphcapture = None
                             elif periphcapture is not None:
                                 periphcapture.append(l)
                         if periphcapture is not None:
