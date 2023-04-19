@@ -1208,6 +1208,7 @@
 \let\@v@rse=\v@rse
 \let\@v@rseR=\v@rse
 \def\m@rkverse{\ifdiglot\m@rkverseDglot\else\m@rkverseNml\fi}
+\let\zMarkVerseAgain\m@rkverse
 \def\m@rkverseNml{\mark{\book:\ch@pter:\print@bleverse}\trace{H}{mark: \book:\ch@pter:\print@bleverse}} %normal verse
 \def\m@rkverseDglot{\mark{\book:\ch@pter:\print@bleverse}\edef\cur@ds{\g@tdstat}\marks\m@rknum{\csname book\cur@ds\endcsname:\csname @ch@pter\cur@ds\endcsname:\print@bleverse}} % diglot verse
 
