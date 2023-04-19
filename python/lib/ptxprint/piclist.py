@@ -323,7 +323,7 @@ class PicInfo(dict):
         if isinstance(fname, str):
             if not os.path.exists(fname):
                 return
-            inf = universalopen(fname, encoding=self.model.ptsettings.get('Encoding', 65001) \
+            inf = universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
                                                         if self.model is not None else 65001)
         else:
             inf = fname
