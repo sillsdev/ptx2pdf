@@ -3439,7 +3439,7 @@ class GtkViewModel(ViewModel):
             if self.get("c_impPictures"):
                 self.updatePicList()
             self.onViewerChangePage(None, None, 0, forced=True)
-            self.doStatus(_("Import Settings complete!"))
+            self.doStatus(_("Imported Settings!"))
         if sys.platform == "win32":
             dialog.set_keep_above(False)
         dialog.hide()

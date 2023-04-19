@@ -392,7 +392,8 @@ class PicInfo(dict):
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
-        with universalopen(fname) as inf:
+        with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                            if self.model is not None else 65001) as inf:
             dat = inf.read()
             if isperiph:
                 self._readpics(dat, bk, suffix, 0, None, isperiph, parent)

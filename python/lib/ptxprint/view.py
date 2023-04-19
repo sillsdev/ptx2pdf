@@ -1988,9 +1988,9 @@ set stack_size=32768""".format(self.configName())
                 if k.startswith("cat:cover"):
                     if k not in allstyles:
                         self.styleEditor.addMarker(k, v['Name'])
-                    for a, b in v.items():
+                    for a in v.keys():
                         if exclfields is None or k not in exclfields:
-                            self.styleEditor.setval(k, a, b)
+                            self.styleEditor.setval(k, a, newse.getval(k, a))
             grabfront = True
             
         if self.get("c_oth_FrontMatter"):
