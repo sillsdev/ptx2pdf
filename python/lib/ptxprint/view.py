@@ -874,7 +874,7 @@ class ViewModel:
         if v < 1.2:
             bl = self._config_get(config, "project", "booklist")
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
-        if v < 1.201:
+        if v < 1.201 and cfgpath is not None:
             for d in ('PicLists', 'AdjLists'):
                 p = os.path.join(cfgpath, d)
                 if not os.path.exists(p):
@@ -2027,7 +2027,10 @@ set stack_size=32768""".format(self.configName())
                 pass
 
             # add missing periph variables
-            allvars = config.options('vars')
+            try:
+                allvars = config.options('vars')
+            except configparser.NoSectionError:
+                return
             for v in allvars:
                 if v not in self.pubvarlist:
                     self.setvar(v, config.get("vars", v))
