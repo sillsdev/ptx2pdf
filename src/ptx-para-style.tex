@@ -1036,42 +1036,54 @@
 % #7 - cutout side
 % #8 - pdfpos X
 % #9 - pdfpos Y
+\def\HistoricDelays#1#2#3#4{%
+  \x@\edef\csname historicdelays-#1\endcsname{#2}% A count of how many times this item has been (re)positioned
+  \x@\edef\csname lastdelay-#1\endcsname{#3}% The last user-requested delay
+  \x@\edef\csname historicdelay-#1\endcsname{#4}% History of computed delay positions
+}
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
   \thing@y=#9\relax 
   \ifcsname baselineskip@\c@rrdstat\endcsname
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
   \fi
   \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
-  %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
-    %%\def\this@thing{#1}% What is it?
-    %\def\thing@ref{#2}% Unique id.
-    %\trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
-    %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
-  %\else % para start level with or above chapter number; OK to calculate # of lines
-    %
-    %First, remember where the bottom of the item probably is.
-    \tmp@lines=\thing@y
-    \trace{C}{\the\tmp@lines}% 
-    \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
-    \trace{C}{... -\the\dimen1}% 
-    \advance\tmp@lines by -\dimen1
-    \dimen1=#6 \baselineskip % delay of the item
-    \trace{C}{... -\the\dimen1}% 
-    \advance\tmp@lines by -\dimen1
-    \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
-    \tmp@lines=\prev@y
-    \advance\tmp@lines by -\thing@y
-    \divide\tmp@lines by \baselineskip
-    \advance\tmp@lines by #6
-    \advance\tmp@lines by \p@rlinesgone
-    \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
-    \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
-    %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
-    \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
-    \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
-  %\fi
+  %First, remember where the bottom of the item probably is.
+  \tmp@lines=\thing@y
+  \trace{C}{\the\tmp@lines}% 
+  \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \dimen1=#6 \baselineskip % delay of the item
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
+  \tmp@lines=\prev@y
+  \advance\tmp@lines by -\thing@y
+  \divide\tmp@lines by \baselineskip
+  \advance\tmp@lines by #6
+  \advance\tmp@lines by \p@rlinesgone
+  \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
+  \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
+  %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
+  \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
+  \wr@teHistoric{#1}{\the\tmp@lines}{#6}%
+  \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
 }
-
+\def\wr@teHistoric#1#2#3{%
+  \ifcsname historicdelays-#1\endcsname 
+    \edef\tmpc{\the\numexpr 1+\csname historicdelays-#1\endcsname\relax}%
+  \else
+    \edef\tmpc{0}%
+  \fi
+  \edef\dc@ref@rgs{\string\HistoricDelays{#1}{\tmpc}{#3}{\ifcsname historicdelay-#1\endcsname\csname historicdelay-#1\endcsname,\fi#2}}%
+  \ifcsname lastdelay-#1\endcsname \edef\tmp{#3}%
+    \x@\ifx\csname lastdelay-#1\endcsname\tmp \else
+      \edef\dc@ref@rgs{\string\HistoricDelays{#1}{0}{#3}{#2}}%
+      \x@\edef\csname historicdelays-#1\endcsname{0}% reset count to 0
+    \fi
+  \fi
+  \immediate\write\delayf@le{\dc@ref@rgs}%
+}
 %-cpar_delayedchap
 
 %+cpar_writedelayed
@@ -1108,6 +1120,18 @@
     %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
     \g@tCutoutSlop{#1}%
+    \ifcsname historicdelays-#1\endcsname
+      \x@\let\x@\tmpl\csname historicdelays-#1\endcsname
+      \ifnum \@djustmin < -\tmpl
+        \trace{C}{Limiting @djustmin to -\tmpl, as it's an early cycle}%
+        \edef\@djustmin{-\csname historicdelays-#1\endcsname}%
+      \fi
+      \ifnum \tmpl < -\@djustmax
+        \trace{C}{Limiting @djustmax to \tmpl, as it's an early cycle}%
+        \edef\@djustmax{\csname historicdelays-#1\endcsname}%
+      \fi
+    \else
+    \fi
     \trace{C}{tmplines =\the\tmp@lines. OK if \@djustmin <= tmplines <=  \@djustmax}%
     \tempfalse
     \edef\@accept@djmin{\@djustmin}%
