@@ -773,9 +773,9 @@ class RunJob:
             if not rerun and os.path.exists(delayed):
                 with open(delayed, encoding="utf-8") as inf:
                     for l in inf.readlines():
-                        if re.match(r"\\Rerun\{.*?\}\{T\}", l):
+                        if re.match(r"\\Rerun{", l):
                             rerun = True
-                            print(_("Rerunning because the delayed file changed"))
+                            print(_("Rerunning because the delayed file asked us to"))
                             break
             if os.path.exists(tocfname):
                 tailoring = self.printer.ptsettings.getCollation()
