@@ -33837,13 +33837,15 @@ selected previous version (set on the Finishing
 tab under 'Compare PDFs').
 
 If any differences are found, it should open the 
-"Diff" PDF in the default PDF viewer.</property>
+"Diff" PDF in the default PDF viewer.
+
+Shortcut: Ctrl-D</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="margin-start">3</property>
                     <property name="margin-end">3</property>
                     <property name="draw-indicator">True</property>
-                    <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                    <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
