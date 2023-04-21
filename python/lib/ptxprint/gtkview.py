@@ -178,7 +178,7 @@ fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name 
 c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
-fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff
+fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
 nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
@@ -339,7 +339,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -702,12 +702,8 @@ class GtkViewModel(ViewModel):
         self.mw = self.builder.get_object("ptxprint")
 
         for w in self.allControls:
-            if w.startswith(("c_", "s_", "t_", "r_")):  # These don't work. But why not? "bl_", "btn_", "ecb_", "fcb_")):
-                # try:
+            if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
-                # except (AttributeError, TypeError):
-                    # print("Can't do that for:", w)
-                    # pass
 
         logger.debug("Static controls initialized")
         projects = self.builder.get_object("ls_projects")
@@ -753,13 +749,7 @@ class GtkViewModel(ViewModel):
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
-        # self.onExpertModeClicked(None)
         logger.debug("Project list loaded")
-
-            # .mainnb {background-color: #d3d3d3;}
-            # .mainnb panel {background-color: #d3d3d3;}
-            # .mainnb panel:active {border: 1px solid green;}
-            # .mainnb label:active{background-color: darker(powderblue);}
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -1301,6 +1291,7 @@ class GtkViewModel(ViewModel):
             cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
+        self.docreatediff = self.get("c_createDiff")
         pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
@@ -4824,10 +4815,6 @@ class GtkViewModel(ViewModel):
         if self.get("c_lockFontSize2Baseline"):
             self.updateFont2BaselineRatio()
 
-    def onCreateDiffclicked(self, btn):
-        self.docreatediff = True
-        self.onOK(None)
-        
     def onMarginEnterNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, True)
 
