@@ -794,7 +794,7 @@
   \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
   \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
-  \trace{b}{BALANCE pageouttxt: border=\b@dr@bot@pad notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
+  \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
   \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth\temptrue\fi\fi
     \tmpwrite{notes}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
@@ -2226,14 +2226,14 @@
   \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
-    \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
+    \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \doTextB@rder{\partial}%1
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
       \p@geendcontent
-    }}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
+    }\ifFinalNotesDown\unvbox0\else\box0\fi}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
     \s@tpage
     \fin@lverybottom
 }
