@@ -87,7 +87,7 @@ _map = {
     "paper/cropmarks":          ("c_cropmarks", "finish", None),  
     "paper/ifgrid":             ("c_grid", "finish", lambda w,v :"" if v else "%"),
     "paper/ifverticalrule":     ("c_verticalrule", "layout", lambda w,v :"true" if v else "false"),
-    "paper/margins":            ("s_margins", "layout", lambda w,v: round(float(v)) if v else "12"),
+    "paper/margins":            ("s_margins", "layout", lambda w,v: round(float(v) * 100) / 100. if v else "12"),
     "paper/topmargin":          ("s_topmargin", "layout", None),
     "paper/bottommargin":       ("s_bottommargin", "layout", None),
     "paper/headerpos":          ("s_headerposition", "headfoot", None),
