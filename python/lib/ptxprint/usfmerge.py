@@ -152,7 +152,8 @@ nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # Just split at chapters
     "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1} # split at every verse
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # split at every verse
+    "custom":{} # No default
 }
 
 def ispara(c):
@@ -195,9 +196,11 @@ class Collector:
         if synchronise in SyncPoints:
             logger.debug(f"Sync points: {synchronise.lower()}")
             syncpoints=SyncPoints[synchronise.lower()] 
-        else synchronise is None:
+        elif synchronise is None:
             syncpoints=SyncPoints['normal'] 
             logger.debug("Sync points are normal")
+        else:
+            raise ValueError(f"Synchronise method '{synchronise}' not recognised.")
         if (type(scores)==int):
             tmp=scores
             scores={ChunkType.DEFSCORE:tmp}
@@ -832,17 +835,28 @@ modes = {
     "scores" : alignScores
 }
 
-def ReadSyncPoints(variety,path):
+def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51):
+    """ Given a specified filepath, column (or None if this is a generic config), custime-variety and config name, find the relevant sycnpoints for a given file.
+    """
     global settings
-    logger.debug(f"Reading config file {variety}")
+    logger.debug(f"Reading config file {mergeconfigfile} for ({column or ""}, {variety}, {config})")
     config=configparser.ConfigParser()
-    config.read("merge-"+variety+".cfg")
-    if variety in config:
-        retval={}
+    config.read(mergeconfigfile)
+    if column is None:
+        keys=[variety,confname,"default"]
     else:
-        logger.debug(f"Unregognised custom merge name '{variety}'. Resorting to normal.")
-        return(SyncPoints['normal'])
-    
+        keys=[variety+"-"+column,variety,column,confname,"default"]
+    for key in keys:
+        if config.has_section(key):
+            scores[st]=config.get(key,st.str,fallback=0)
+            weight=config.getfloat(key,"WEIGHT",fallback=fallbackweight)
+            scores={}
+            for st in ChunkType:
+                scores[st]=config.getfloat(key,st.str,fallback=0)*weight
+                logger.debug(f"score for {st} is {scores[st]}")
+            return(scores)
+    logger.debug(f"Did not find expected custom merge section(s) '{keys}'. Resorting to normal.")
+    return(SyncPoints['normal'])
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
     global debugPrint, debstr,settings
@@ -925,16 +939,46 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         settings = settings | MergeF.ChunkOnVerses
     if (mode == "scores"):
         settings = settings & (~MergeF.HeadWithChapter) #  scores needs them initially separated
-        if "custom" in syncarr:
-            for colkey,infile in zip(keyarr,infilearr):
-                if (syncarr[colkey] == "custom"):
-                    if (configarr[colkey] is None):
-                        filepath=os.path.dirname(infile)
-                        confpath=(os.path.join(docpath,"shared"),docpath)
-                    else:
-                        confpath=(os.path.join(
-                        confpath=(
-                    scorearr[colkey]=ReadSyncPoints(synchronise,confpath)
+        priconfname=None
+        priptpath=None
+        priconfpath=None
+        for colkey,infile in zip(keyarr,infilearr):
+            if (colkey=='L'):
+                #Primary might be in a different place to other files, if run
+                # from command line. If so, that should take priority.
+                (prifilepath,filename)=os.path.split(infile)
+                priconfname=os.path.basename(prifilepath)
+                priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath))
+                priconfpath=os.path.join(priptpath,"shared","ptxprint",priconfname)
+        for colkey,infile in zip(keyarr,infilearr):
+            if (syncarr[colkey].startswith("custom")):
+                # determine the config name; and  determine the custom merge control file.
+                # Look for merge config file in : (1) same dir as file, (2) {Project}/shared/ptxprint/{config}, (3) {Project}
+                if (syncarr[colkey]=="custom"):
+                    variety=""
+                    varfile=None
+                else:
+                    variety=syncarr[colkey][7:]
+                    varfile="merge-"+variety+".cfg"
+                (filepath,filename)=os.path.split(infile)
+                confname=os.path.basename(filepath)
+                ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath))
+                confpath=os.path.join(ptpath,"shared","ptxprint",confname)
+                searchlist=[]
+                cfile="merge.cfg"
+                if (varfile):
+                    if (colkey!='L' and prifilepath != filepath):
+                        searchlist.extend((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1))
+                    searchlist.extend((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0))
+                    
+                searchlist.extend((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0))
+                if (colkey!='L' and prifilepath != filepath):
+                    searchlist.extend((os.path.join(ptpath,cfile),0))
+                for searchpair in searchlist:
+                    (confpath,useLR)=searchpair
+                    if (os.path.exists(confpath)):
+                        break
+                scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
 
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
