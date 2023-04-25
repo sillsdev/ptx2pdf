@@ -1,6 +1,7 @@
 
 import re, os
 from ptxprint.usfmutils import Sheets
+from ptxprint.sfm.style import Marker
 from ptxprint.font import FontRef
 from ptxprint.utils import f2s, textocol, coltotex, coltoonemax, Path, saferelpath, asfloat
 from copy import deepcopy
@@ -14,6 +15,9 @@ class _CEnum:
 
     def __contains__(self, v):
         return v in self.vals
+
+    def __str__(self):
+        return "in " + ", ".join(self.vals)
 
 class _CRange:
     def __init__(self, first, last=None):
@@ -30,6 +34,9 @@ class _CRange:
             return False
         return True
 
+    def __str__(self):
+        return "in range({}, {}+1)".format(self.first, self.last)
+
 class _CValue:
     def __init__(self, val):
         self.value = val
@@ -40,12 +47,18 @@ class _CValue:
             return False
         return v == self.value
 
+    def __str__(self):
+        return "== {}".format(self.value)
+
 class _CNot:
     def __init__(self, constraint):
         self.constraint = constraint
 
     def __contains__(self, v):
         return not v in self.constraint
+
+    def __str__(self):
+        return "not(" + str(self.constraint) + ")"
 
 constraints = {
     'texttype': _CEnum('VerseText', 'NoteText', 'BodyText', 'Title', 'Section', 'Other', 'other',
@@ -140,6 +153,8 @@ def toBool(self, v, mrk=None, model=None, parm=None):
 def fromSet(self, s, mrk=None, model=None):
     if isinstance(s, set):
         return s
+    elif not len(s):
+        return set()
     return set(s.split())
 
 def toSet(self, s, mrk=None, model=None, parm=None):
@@ -166,7 +181,9 @@ def toFont(self, v, mrk=None, model=None, parm=None):
     class Shim:
         def __setitem__(subself, key, val):
             if key == 'FontName':
-                self.sheet.setdefault(mrk, {})[key] = val
+                if mrk not in self.sheet:
+                    self.sheet[mrk] = Marker()
+                self.sheet[mrk][key] = val
             else:
                 self.setval(mrk, key, val)
         def __contains__(subself, key):
@@ -245,8 +262,8 @@ class StyleEditor:
         return res
 
     def allValueKeys(self, m):
-        res = set(self.basesheet.get(m, {}).keys())
-        res.update(self.sheet.get(m, {}).keys())
+        res = set(list(self.basesheet.get(m, {}).keys()))
+        res.update(list(self.sheet.get(m, {}).keys()))
         return res
 
     def asStyle(self, m):
@@ -261,16 +278,18 @@ class StyleEditor:
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
-        res = self.sheet.get(mrk, {}).get(key, None) if not baseonly else None
+        if mrk not in self.sheet:
+            self.sheet[mrk] = Marker()
+        res = self.sheet[mrk].get(key, None) if not baseonly else None
         if res is None or (mrk in _defFields and not len(res)):
-            res = self.basesheet.get(mrk, {}).get(key, default)
+            res = self.basesheet[mrk].get(key, default) if mrk in self.basesheet else default
         if key.lower() in _fieldmap and res is not None:
             res = _fieldmap[key.lower()][0](self, res, mrk=mrk, model=self.model)
         return res
 
     def setval(self, mrk, key, val, ifunchanged=False, parm=None):
-        if ifunchanged and self.basesheet.get(mrk, {}).get(key, None) != \
-                self.sheet.get(mrk, {}).get(key, None):
+        if ifunchanged and (self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None) != \
+                (self.sheet[mrk].get(key, None) if mrk in self.sheet else None):
             return
         if val is not None and key.lower() in _fieldmap:
             newval = _fieldmap[key.lower()][1](self, val, mrk=mrk, model=self.model, parm=parm)
@@ -278,11 +297,14 @@ class StyleEditor:
                 return      # Probably a font which has edited the object for us
             else:
                 val = newval
-        if key in self.sheet.get(mrk, {}) and (val is None or val == self.basesheet.get(mrk, {}).get(key, None)):
+        oldval = self.basesheet[mrk].get(key, "") if mrk in self.basesheet else ""
+        if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
             return
-        elif self.basesheet.get(mrk, {}).get(key, None) != val and val is not None:
-            self.sheet.setdefault(mrk, {})[key] = val or ""
+        elif oldval != val and val is not None:
+            if mrk not in self.sheet:
+                self.sheet[mrk] = Marker()
+            self.sheet[mrk][key] = val or ""
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
@@ -290,6 +312,9 @@ class StyleEditor:
         if key in self.sheet.get(mrk, {}) or key in self.basesheet.get(mrk, {}):
             return True
         return False
+
+    def addMarker(self, mrk, name):
+        self.sheet[mrk] = Marker({" deletable": True, "Name": name})
 
     def get_font(self, mrk, style=""):
         f = self.getval(mrk, " font")
@@ -307,12 +332,18 @@ class StyleEditor:
         self.sheet = Sheets(sheetfiles[-1:], base = "")
         self.test_constraints(self.sheet)
 
+    def loadfh(self, fh, base=None):
+        self.basesheet = Sheets()
+        self.sheet = Sheets(base=base)
+        self.sheet.appendfh(fh)
+        self.test_constraints(self.sheet)
+
     def test_constraints(self, sheet):
         for m, s in sheet.items():
             for k, v in list(s.items()):
                 c = constraints.get(k.lower(), None)
                 if c is not None and not v in c:
-                    logger.info(f"Failed constraint: {m}/{k} = {v}")
+                    logger.info(f"Failed constraint: {m}/{k} = {v} constraint: {c}")
                     del s[k]
 
     def _convertabs(self, key, val):
@@ -395,4 +426,21 @@ class StyleEditor:
                 if sv != bv:
                     continue
                 if nv != bv:
+                    self.setval(m, k, nv)
+
+    def mergein(self, newse, force=False, exclfields=None):
+        allstyles = self.allStyles()
+        for m in newse.sheet.keys():
+            if m not in allstyles:
+                self.addMarker(m, newse.getval(m, 'Name'))
+            allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
+            for k in allkeys:
+                if exclfields is not None and k in exclfields:
+                    continue
+                nv = newse.getval(m, k)
+                bv = self.getval(m, k, baseonly=True)
+                sv = self.getval(m, k)
+                if not force and sv != bv:
+                    continue
+                if force or nv != bv and nv is not None:
                     self.setval(m, k, nv)

@@ -1,6 +1,6 @@
 import gettext
 import locale, codecs, traceback
-import os, sys, re, pathlib
+import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
 from inspect import currentframe
 from struct import unpack
@@ -574,33 +574,46 @@ class Path(pathlib.Path):
             return self.as_posix()
 
 
+def zipopentext(zf, fname):
+    if isinstance(zf, UnzipDir):
+        return zf.open(fname, mode="rt", encoding="utf-8")
+    else:
+        zp = zipfile.Path(zf, fname)
+        return zp.open(encoding="utf-8")
+
 class UnzipDir:
     ''' Emulates some of zipfile but backed by a simple filesystem directory '''
     def __init__(self, file, mode='r', **kw):
-        self.dir = file
+        self.filename = file
         self.mode = mode
 
     def infolist(self):
         res = []
-        for dp, dn, fn in os.walk(self.dir):
+        for dp, dn, fn in os.walk(self.filename):
             for f in fn:
                 fp = os.path.join(dp, f)
-                res.append(ZipInfo.from_file(os.path.join(self.dir, fp), arcname=fp))
+                res.append(ZipInfo.from_file(os.path.join(self.filename, fp), arcname=fp))
         return res
 
     def namelist(self):
         res = []
-        for dp, dn, fn in os.walk(self.dir):
+        for dp, dn, fn in os.walk(self.filename):
             res.extend([os.path.join(dp, f) for f in fn])
         return res
 
-    def open(self, name, mode='r', **kw):
-        return open(os.path.join(self.dir, name), mode)
+    def open(self, name, mode='rb', encoding=None, **kw):
+        if encoding is not None:
+            return open(os.path.join(self.filename, name), mode, encoding=encoding)
+        else:
+            return open(os.path.join(self.filename, name), mode)
 
     def read(self, name, **kw):
-        with open(os.path.join(self.dir, name), 'r') as inf:
+        with open(os.path.join(self.filename, name), 'r') as inf:
             res = inf.read()
         return res
+
+    def close(self):
+        pass
 
 
 def brent(left, right, mid, fn, tol, log=None, maxiter=20):

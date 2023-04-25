@@ -424,8 +424,8 @@
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
-  \trace{n}{seperateins@rtn@tecl@ss \cl@ss}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
+  \trace{n}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
@@ -791,17 +791,20 @@
   \traceifset{p@geendcontent}%
   \tempfalse
   \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
-  \ifdim\ht\bottomins>0pt \vfil \temptrue\kern-\lastd@pth
+  \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
+  \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
-  \trace{b}{BALANCE pageouttxt: border=\b@dr@bot@pad notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255}%
-  \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth \temptrue\fi\fi
+  \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
+  \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth\temptrue\fi\fi
+    \tmpwrite{notes}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
   \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
-  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\fi % \kern-\dimen0
+  \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\tmpwrite{verybottomins}\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
+  \iftemp\else\tmpwrite{pageend}\fi
   \traceifcheck{p@geendcontent}%
 }
 \def\onecoltrial{% single-column version of \twocoltrial (see below)
@@ -906,16 +909,37 @@
         % so reduce \vsize and try again with an earlier break
     \trace{i}{1c REDUCING VSIZE \the\vsize \space by -\the\baselineskip, hIns=\the\holdinginserts}%
     \global\advance\vsize by -\baselineskip
-    \trace{b}{BALANCE 1col go round vsize=\the\vsize}%
+    \trace{b}{BALANCE 1col go round vsize=\the\vsize\space ip=\the\insertpenalties}%ip counts the whole/partial inserts held over
     \res@tpage
     \global\let\whichtrial=\onecoltrial
-    \global\output={\backingup}%
-    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+    \ifnum\insertpenalties>0
+      \global\output={\clearthenbackup}%
+      \xdef\b@ckupvsize{\the\vsize}%
+      \global\vsize=0pt
+      \penalty-10000
+      %\showlists
+    \else
+      \global\output={\backingup}%
+      \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+    \fi
   \fi
   \traceifcheck{onecoltrial}%
 }
 %-c_onecoltrial_fail
 
+\def\clearthenbackup{%Clear any held-over inserts.
+  \trace{o}{clearthenbackup \the\outputpenalty, \the\ht255, ip=\the\insertpenalties}% ip counts the whole/partial inserts held over
+  %\showbox255
+  \setbox0\box255
+  \ifnum\insertpenalties>0
+    \box\voidb@x
+    \penalty-10000
+  \else
+    \global\vsize=\b@ckupvsize
+    \global\output={\backingup}%
+    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+  \fi
+}
 %+c_pagebody
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
 \def\makeheadline{{%
@@ -1210,7 +1234,7 @@
     \global\holdinginserts=1
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
-    \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts}%
+    \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts\space ip=\the\insertpenalties}%
     \res@tpage
     %\global\advance\vsize by -\baselineskip
     \global\let\whichtrial=\onecoltrial
@@ -1401,7 +1425,9 @@
   \x@\let\x@\tmp@note\csname note-#1\n@t@sfx\endcsname
   \x@\let\x@\tmp@save\csname notesave\n@tesavelevel-#1\n@t@sfx\endcsname
   \trace{n}{r@store: #1\n@t@sfx(\n@tesavelevel): \the\ht\tmp@note+\the\dp\tmp@note -> \the\ht\tmp@save+\the\dp\tmp@save }%
+  %\tracingassigns=2
   \global\setbox\tmp@note=\copy\tmp@save
+  %\tracingassigns=0
 }
 %-c_clearnoteclass
 
@@ -1893,7 +1919,7 @@
     \fi
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
   \else
-    \trace{o}{sppd: Not fit on page}%
+    \trace{o}{sppd: Not fit on page\space ip=\the\insertpenalties}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
     \res@tpage
     %\global\advance\vsize by -\baselineskip
@@ -2038,7 +2064,7 @@
     \fi
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
-    \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip}%
+    \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip\space ip=\the\insertpenalties}%
     \global\advance\vsize by -\baselineskip
 	% clear insertions
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
@@ -2200,14 +2226,14 @@
   \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
   \def\pagecontents{
     \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
-    \vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
+    \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \doTextB@rder{\partial}%1
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi
 	  \lastd@pth=\dp\partial
       \ifvoid\bottomins\else % \kern-\dimen0
         \lastd@pth=0pt \vskip\skip\bottomins \hbox{\hbox to \columnshift{}\vbox{\unvbox\bottomins}}\fi
       \p@geendcontent
-    }}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
+    }\ifFinalNotesDown\unvbox0\else\box0\fi}\plainoutput\trace{p}{plainoutput for twocolp@geout}%
     \s@tpage
     \fin@lverybottom
 }

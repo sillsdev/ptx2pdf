@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -41,6 +41,8 @@ import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
 from base64 import b64encode, b64decode
+from io import BytesIO
+from zipfile import ZipFile, ZIP_DEFLATED
 
 logger = logging.getLogger(__name__)
 
@@ -150,7 +152,7 @@ l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI
 c_fontFake fr_fontFake l_fontBold s_fontBold l_fontItalic s_fontItalic
 fr_writingSystem l_textDirection fcb_textDirection fcb_script l_script
 tb_Body lb_Body
-fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak
+fr_BeginEnding c_bookIntro c_introOutline c_filterGlossary c_ch1pagebreak c_pagebreakAllChs
 fr_IncludeScripture c_mainBodyText gr_mainBodyText c_chapterNumber c_justify c_sectionHeads
 c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 tb_NotesRefs lb_NotesRefs tb_general
@@ -176,9 +178,13 @@ fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name 
 c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
 c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
-fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF btn_createDiff 
-btn_importSettings r_impSource_pdf btn_selectImpSource_pdf lb_impSource_pdf nbk_Import
-c_imp_ResetConfig tb_impLayout tb_impFontsScript tb_impStyles
+fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
+btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
+nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
+btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
+bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
+gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
+c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
@@ -246,6 +252,7 @@ _sensitivities = {
     "c_grid" :                 ["btn_adjustGrid"],
     "c_gridGraph" :            ["gr_graphPaper"],
     "c_introOutline" :         ["c_prettyIntroOutline"],
+    "c_ch1pagebreak" :         ["c_pagebreakAllChs"],
     "c_sectionHeads" :         ["c_parallelRefs", "lb_style_s", "lb_style_r"],
     "c_parallelRefs" :         ["lb_style_r"],
     "c_useChapterLabel" :      ["t_clBookList", "l_clHeading", "t_clHeading", "c_optimizePoetryLayout"],
@@ -294,12 +301,14 @@ _sensitivities = {
     "c_inclSpine":             ["gr_spine"],
     "c_overridePageCount":     ["s_totalPages"],
     "r_impSource": {
-        "r_impSource_pdf":     ["btn_selectImpSource_pdf", "lb_impSource_pdf"],
+        "r_impSource_pdf":     ["btn_impSource_pdf", "lb_impSource_pdf"],
         "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
     "c_impPictures":           ["tb_impPictures"],
     "r_impPics": {
         "r_impPics_elements":  ["gr_picElements"]},
     "c_impOther":              ["gr_impOther"],
+    "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
+    "c_oth_Cover":             ["c_oth_OverwriteFrtMatter"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -330,7 +339,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -601,6 +610,7 @@ class GtkViewModel(ViewModel):
         self.thickActive = False
         self.printReason = 0
         self.warnedMissingZvars = False
+        self.blInitValue = None
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -692,12 +702,8 @@ class GtkViewModel(ViewModel):
         self.mw = self.builder.get_object("ptxprint")
 
         for w in self.allControls:
-            if w.startswith(("c_", "s_", "t_", "r_")):  # These don't work. But why not? "bl_", "btn_", "ecb_", "fcb_")):
-                # try:
+            if w.startswith(("c_", "s_", "t_", "r_")):  # These ("bl_", "btn_", "ecb_", "fcb_") don't work. But why not?
                 self.builder.get_object(w).connect("button-release-event", self.button_release_callback)
-                # except (AttributeError, TypeError):
-                    # print("Can't do that for:", w)
-                    # pass
 
         logger.debug("Static controls initialized")
         projects = self.builder.get_object("ls_projects")
@@ -743,13 +749,7 @@ class GtkViewModel(ViewModel):
         self.getInitValues(addtooltips=self.args.identify)
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
-        # self.onExpertModeClicked(None)
         logger.debug("Project list loaded")
-
-            # .mainnb {background-color: #d3d3d3;}
-            # .mainnb panel {background-color: #d3d3d3;}
-            # .mainnb panel:active {border: 1px solid green;}
-            # .mainnb label:active{background-color: darker(powderblue);}
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")
@@ -788,6 +788,8 @@ class GtkViewModel(ViewModel):
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
             .highlighted {background-color: peachpuff; background: peachpuff}
+            .attention {background-color: lightblue; background: lightblue}
+            .warning {background: lightpink;font-weight: bold; color: darkred}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
@@ -1246,7 +1248,7 @@ class GtkViewModel(ViewModel):
             self.printReason |= idnty
         if txt or not self.printReason:
             self.doStatus(txt)
-        for w in ["b_print", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
+        for w in ["b_print", "b_print4cover", "b_print2ndDiglotText", "btn_adjust_diglot", "s_diglotPriFraction"]:
             self.builder.get_object(w).set_sensitive(not self.printReason)
 
     def checkFontsMissing(self):
@@ -1289,6 +1291,7 @@ class GtkViewModel(ViewModel):
             cfgname = "-" + cfgname
         if not os.path.exists(self.working_dir):
             os.makedirs(self.working_dir)
+        self.docreatediff = self.get("c_createDiff")
         pdfnames = self.baseTeXPDFnames(diff=self.docreatediff)
         for basename in pdfnames:
             pdfname = os.path.join(self.working_dir, "..", basename) + ".pdf"
@@ -1368,29 +1371,19 @@ class GtkViewModel(ViewModel):
         
     def onBkLstKeyPressed(self, btn, *a):
         self.booklistKeypressed = True
-        # print("onBkLstKeyPressed-m")
-        # (this needs constraining somehow 
-        self.set("r_book", "multiple")
+        if self.blInitValue != self.get('ecb_booklist'):
+            self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
         self.booklistKeypressed = False
         self.doBookListChange()
 
     def doBookListChange(self):
-        #bls = " ".join(self.getBooks())
-        #self.set('ecb_booklist', bls)
         bls = self.get('ecb_booklist', '')
         self.bookrefs = None
         bl = self.getAllBooks()
         if not self.booklistKeypressed and not len(bl):
-            # print("doBookListChange-A-s")
-            # self.set("r_book", "single")
             self.set("ecb_book", list(bl.keys())[0])
-        else:
-            # print("doBookListChange-B-m") 
-            # (this needs constraining somehow 
-            # as it is called on onBkLstFocusOutEvent)
-            self.set("r_book", "multiple")
         self.updateExamineBook()
         self.updateDialogTitle()
         # Save to user's MRU
@@ -1436,18 +1429,24 @@ class GtkViewModel(ViewModel):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
-            t = re.sub("</?p>", "", t)
             t = re.sub("\([cC]\)", "\u00a9 ", t)
             t = re.sub("\([rR]\)", "\u00ae ", t)
             t = re.sub("\([tT][mM]\)", "\u2122 ", t)
             if len(t) < 100:
+                t = re.sub(r"</?p>", "", t)
                 self.builder.get_object("t_copyrightStatement").set_text(t)
             else:
-                self.builder.get_object("t_copyrightStatement").set_text(t[:70]+"...")
-                self.doError(_("Warning! The copyright statement in Paratext appears to be too long."), 
-                   secondary=_("Type in a shorter copyright statement and then use" + \
-                               "the local FRT book for longer licensing details."))
-    
+                if len(self.get("txbf_colophon")) > 100:
+                    return # Don't overwrite what has already been placed in the colophon
+                           # from an earlier run, which could also have been edited manually.
+                t = re.sub(r"<p>", r"\n\\pc ", t)
+                t = re.sub(r"</p>", "", t)
+                t = re.sub(r"\\pc ?\n?\\pc ", r"\\pc ", r"\pc " + t)
+                self.set("txbf_colophon", t)
+                self.builder.get_object("t_copyrightStatement").set_text(' ')
+                self.set("c_colophon", True)
+                self.doStatus(_("Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."))
+
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
@@ -1464,16 +1463,16 @@ class GtkViewModel(ViewModel):
             self.updateFonts()
             self.readConfig("Default")
             self.fillCopyrightDetails()
-            self.doError(_("The 'Default' config settings have been reset."), secondary=sec)
+            self.doStatus(_("The 'Default' config settings have been reset.") + sec)
             return
         else:
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
-                self.doError(_("Internal error occurred, trying to delete a directory tree"), secondary=_("Folder: ")+delCfgPath)
+                self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + delCfgPath)
                 return
             try: # Delete the entire settings folder
                 rmtree(delCfgPath)
             except OSError:
-                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + delCfgPath)
+                self.doStatus(_("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath)
 
             if not self.working_dir.startswith(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint")):
                 self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
@@ -1555,6 +1554,7 @@ class GtkViewModel(ViewModel):
         if imprj is None:
             return
         impConfigs = self.getConfigList(imprj)
+        self.ecb_impConfig.remove_all()
         if len(impConfigs):
             for cfgName in sorted(impConfigs):
                 self.ecb_impConfig.append_text(cfgName)
@@ -1596,7 +1596,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
-           self.get("c_frontmatter") or self.get("c_colophon") or self.get("c_inclBackMatter")) else ""
+           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else ""  # or self.get("c_colophon") 
         self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
@@ -2504,7 +2504,8 @@ class GtkViewModel(ViewModel):
             extend = None
             isCtxtSpace = False
             mapping = "Default"
-            name = self.get("bl_fontR").name
+            tfont = self.get("bl_fontR")
+            name = tfont.name if tfont is not None else None
         else:
             for i, row in enumerate(ls):
                 if row[0] == f.name:
@@ -2895,6 +2896,7 @@ class GtkViewModel(ViewModel):
                 self.set("t_chapfrom", str(toCh))
         # print("toChapChange-s")
         self.set("r_book", "single")
+        self.blInitValue = self.get("ecb_booklist")
 
     def onBookChange(self, cb_book):
         bk = self.get("ecb_book")
@@ -2938,7 +2940,7 @@ class GtkViewModel(ViewModel):
         self.set("l_styColor", _("Color:")+"\n"+col)
         if col != "x000000" and not self.get("c_colorfonts"):
             self.set("c_colorfonts", True)
-            self.doError(_("'Enable Colored Text' has now been turned on.\nSee Fonts+Script tab for details."))
+            self.doStatus(_("'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"))
 
     def configName(self):
         cfg = self.pendingConfig or self.get("ecb_savedConfig") or ""
@@ -3212,6 +3214,10 @@ class GtkViewModel(ViewModel):
         if self.customScript:
             self._editProcFile(scriptName, scriptPath)
 
+    def onEditCoverContentClicked(self, btn):
+        self._editProcFile("PrintDraftChanges.txt", "prj")
+        self._editProcFile("changes.txt", "cfg")
+
     def onEditChangesFile(self, btn):
         self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
@@ -3385,39 +3391,81 @@ class GtkViewModel(ViewModel):
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
 
-    # Not yet ready for prime time!
-    # def onImportClicked(self, btn_importPDF):
-        # dialog = self.builder.get_object("dlg_importSettings")
-        # if sys.platform == "win32":
-            # dialog.set_keep_above(True)
-        # response = dialog.run()
-        # if response == Gtk.ResponseType.OK:
-            # MH to do something magic here
-            # (depending on the options set within Import dialog)
-            # pass
-        # if sys.platform == "win32":
-            # dialog.set_keep_above(False)
-        # dialog.hide()
+    def setImportButtonOKsensitivity(self, w):
+        status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
+                 (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
+                                                           (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
+                                                            str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig')))))
+        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status)
 
-    def onImportPDFsettingsClicked(self, btn_importPDF):
-        vals = self.fileChooser(_("Select a PDF to import the settings from"),
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf"}},
+    def onImportClicked(self, btn_importPDF):
+        dialog = self.builder.get_object("dlg_importSettings")
+        self.setImportButtonOKsensitivity(None)
+        if sys.platform == "win32":
+            dialog.set_keep_above(True)
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            zipinf = None
+            if self.get("r_impSource") == "pdf":
+                # fname = self.get("lb_impSource_pdf")
+                fname = str(getattr(self, "impSourcePDF", None))
+                if fname.endswith(".pdf"):
+                    confstream = self.getPDFconfig(fname)
+                    zipinf = BytesIO(confstream)
+                    zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
+                elif os.path.exists(fname):
+                    zipdata = ZipFile(fname)
+                else:
+                    zipdata = None
+            elif self.get("fcb_impProject"):
+                dpath = os.path.join(self.settings_dir, self.get("fcb_impProject"), "shared", "ptxprint", self.get("ecb_impConfig", "Default"))
+                zipdata = UnzipDir(dpath)
+            else:
+                zipdata = None
+            if zipdata is not None:
+                self.importConfig(zipdata)
+                zipdata.close()
+            if zipinf is not None:
+                zipinf.close()
+            if self.get("c_impPictures"):
+                self.updatePicList()
+            self.onViewerChangePage(None, None, 0, forced=True)
+            self.doStatus(_("Imported Settings!"))
+        if sys.platform == "win32":
+            dialog.set_keep_above(False)
+        dialog.hide()
+
+    def onResetCurrentConfigClicked(self, btn):
+        self.resetToInitValues()
+
+    def onSelectPDForZIPfileToImport(self, btn_importPDF):
+        pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
+                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf", "default": True},
+                           "ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
                 multiple = False, basedir=os.path.join(self.working_dir, ".."))
-        if vals is None or not len(vals) or str(vals[0]) == "None":
+
+        if pdfORzipFile == None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
+            self.set("r_impSource", "config")
+            setattr(self, "impSourcePDF", None)
+            btn_importPDF.set_tooltip_text("")
+            self.set("lb_impSource_pdf", "")
             return
-        zipdata = self.getPDFconfig(vals[0])
-        if zipdata is not None:
-            if self.msgQuestion(_("Overwite current Configuration?"), 
-                    _("WARNING: Importing the settings from the selected PDF will overwrite the current configuration.\n\nDo you wish to continue?")):
-                self.unpackSettingsZip(zipdata, self.prjid, self.configName(), self.configPath(self.configName()))
-        else:
-            self.doError(_("PDF Config Import Error"), 
-                    secondary=_("Sorry - Can't find any settings to import from the selected PDF.\n\n") + \
-                            _("Only PDFs created with PTXprint version 2.3 or later contain settings\n") + \
-                            _("if created with 'Include Config Settings Within PDF' option enabled."))
+
+        zipdata = self.getPDFconfig(pdfORzipFile[0])
+        if zipdata is None:
+            self.doError(_("PDF/ZIP Import Config Error"), 
+                    secondary=_("Cannot find any settings to import from the selected file.\n\n") + \
+                            _("If importing from a PDF (created with PTXprint version 2.3 or later) check ") + \
+                            _("if it was created with 'Include Config Settings Within PDF' option enabled."))
             return
-        self.updateProjectSettings(self.prjid, configName=self.configName(), readConfig=True)
-        
+
+        self.set("r_impSource", "pdf")
+        setattr(self, "impSourcePDF", pdfORzipFile[0])
+        btn_importPDF.set_tooltip_text(str(pdfORzipFile[0]))
+        self.set("lb_impSource_pdf", pdfre.sub(r"\1", str(pdfORzipFile[0])))
+
+        self.setImportButtonOKsensitivity(None)
+
     def onFrontPDFsClicked(self, btn_selectFrontPDFs):
         self._onPDFClicked(_("Select one or more PDF(s) for FRONT matter"), False, 
                 os.path.join(self.settings_dir, self.prjid), 
@@ -3600,12 +3648,24 @@ class GtkViewModel(ViewModel):
         b.set_visible(True)
         
     def onimpProjectChanged(self, btn):
+        self.set("r_impSource", "config")
         self.updateimpProjectConfigList()
+        self.setImportButtonOKsensitivity(None)
+        
+    def onimpConfigChanged(self, btn):
+        self.set("r_impSource", "config")
+        self.setImportButtonOKsensitivity(None)
         
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
-
+        
+    def onCoverFrontBackClicked(self, w):
+        status = self.get("c_oth_FrontMatter") or self.get("c_oth_Cover")
+        self.builder.get_object("c_oth_OverwriteFrtMatter").set_sensitive(status)
+        if not status:
+            self.set("c_oth_OverwriteFrtMatter", False)
+        
     def ondiglotSecConfigChanged(self, btn):
         if self.loadingConfig:
             return
@@ -3868,15 +3928,6 @@ class GtkViewModel(ViewModel):
         btname = Gtk.Buildable.get_name(btn)
         w = self.builder.get_object(btname)
         t = w.get_text()
-        # Removed by MP after the Nov-2022 SIL Board changed the EL (allowing SIL to publish scripture)
-        # if not self.warnedSIL:
-            # chkSIL = re.findall(r"(?i)\bs\.?i\.?l\.?\b", t)
-            # if len(chkSIL):
-                # self.doError(_("Warning! SIL's Executive Limitations do not permit SIL to publish scripture."), 
-                   # secondary=_("The reference to SIL in the project's copyright line has been removed. " + \
-                               # "Contact your entity's Publishing Coordinator for advice regarding protocols."))
-                # t = re.sub(r"(?i)\bs\.?i\.?l\.?\b ?(International)* ?", "", t)
-                # self.warnedSIL = True
         t = re.sub("</?p>", "", t)
         t = re.sub("\([cC]\)", "\u00a9 ", t)
         t = re.sub("\([rR]\)", "\u00ae ", t)
@@ -4050,8 +4101,10 @@ class GtkViewModel(ViewModel):
                                 break
                         else:
                             lsp.append([prj])
-                    self.resetToInitValues()
+                    ui = self.get("fcb_uiLevel")
+                    self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
+                    self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
@@ -4762,10 +4815,6 @@ class GtkViewModel(ViewModel):
         if self.get("c_lockFontSize2Baseline"):
             self.updateFont2BaselineRatio()
 
-    def onCreateDiffclicked(self, btn):
-        self.docreatediff = True
-        self.onOK(None)
-        
     def onMarginEnterNotifyEvent(self, btn, *args):
         self.highlightMargin(btn, True)
 
@@ -4921,7 +4970,7 @@ class GtkViewModel(ViewModel):
         picount = len(pics)
         if picount == 0:
             _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("No DCC illustrations were detected. Hit Print first and then try again.")
+                       _("No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return

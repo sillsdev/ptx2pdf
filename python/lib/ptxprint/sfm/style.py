@@ -88,7 +88,7 @@ _fields = Marker({
     'Endmarker':        (str, None),
     'Name':             (str,   None),
     'Description':      (str,   None),
-    'OccursUnder':      (unique(sequence(str)), {None}),
+    'OccursUnder':      (unique(sequence(str)), set()),
     'TextProperties':   (unique(sequence(CaselessStr)), set()),
     'TextType':         (CaselessStr,   'Unspecified'),
     'StyleType':        (CaselessStr,   ''),
@@ -111,7 +111,7 @@ _fields = Marker({
 })
 
 
-def parse(source, error_level=ErrorLevel.Content, fields=_fields):
+def old_parse(source, error_level=ErrorLevel.Content, fields=_fields):
     '''
     >>> from pprint import pprint
     >>> r = parse(r"""
@@ -278,3 +278,50 @@ def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):
             sheet[marker] = new_meta
 
     return sheet
+
+def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categories=False, keyfield="Marker"):
+    res = {}
+    mkr = ""
+    category = ""
+    for l in source.readlines():
+        m = re.match(r"\\(\S+)\s*(.*)\s*$", l)
+        if m is not None:
+            key = m.group(1)
+            v = m.group(2)
+        else:
+            continue
+        val = fields.get(key, (str, ))[0](v.strip())
+        if key.lower() == "category":
+            category = val
+            key = "Marker"
+            val = "esb"
+        elif key.lower() == "endcategory":
+            category = ""
+            continue
+        if key.lower() == keyfield.lower():
+            mkr = f"cat:{category}|{val}" if category else val
+            res[mkr] = Marker()
+        else:
+            res[mkr][key] = val
+    return res
+
+parse = simple_parse
+
+def merge_sty(base, other, forced=False, exclfields=None):
+    for m, ov in other.items():
+        if m not in base or forced:
+            base[m] = ov.copy()
+        else:
+            for k, v in ov.items():
+                if exclfields is not None and k in exclfields:
+                    continue
+                base[m][k] = v
+
+def out_sty(base, outf, keyfield="Marker"):
+    for m, rec in base.items():
+        outf.write(f"\n\\{keyfield} {m}\n")
+        for k, v in rec.items():
+            if isinstance(v, (set, list, tuple)):
+                v = " ".join(v)
+            outf.write(f"\\{k} {v}\n")
+

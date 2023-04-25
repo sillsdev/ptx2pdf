@@ -200,14 +200,14 @@
   \calc@ornamentdim
   \ifdim\dimen0<0pt
     \dimen0=-\dimen0
-    \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0\relax}}%
-    \trace{orn}{xshift \pdf@xo}%
+    \edef\pdf@xo{\strip@pt{\dimexpr 0.99626401\dimen0 \ifXformOrnaments +\x@bjpadding\fi\relax}}%
   \fi
+  \trace{orn}{xshift \pdf@xo}%
   \ifdim\dimen1<0pt
     \dimen1=-\dimen1
-    \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1\relax}}%
-    \trace{orn}{yshift \pdf@yo}%
+    \edef\pdf@yo{\strip@pt{\dimexpr 0.99626401\dimen1 \ifXformOrnaments +\x@bjpadding\fi\relax}}%
   \fi
+  \trace{orn}{yshift \pdf@yo}%
   \edef\pdf@matrix{}%
   \def\pdf@apply@transform{}%
   \ifXformOrnaments
@@ -216,9 +216,8 @@
     %\edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\strip@pt{\dimen0}\space \strip@pt{\dimen1}}%
     \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX + \x@bjpadding *2\relax}%
     \edef\orn@@y{\the\dimexpr \pdf@yunit*\@pgfornamentY + \x@bjpadding *2\relax}%
-    \edef\pdf@xo{\strip@pt{\dimexpr \pdf@xo pt + \x@bjpadding \relax}}% Actually bp
-    \edef\pdf@yo{\strip@pt{\dimexpr \pdf@yo pt + \x@bjpadding \relax}}% Actually bp
     \edef\pdf@matrix{matrix \pdf@aa\space \pdf@ab\space\pdf@ba\space\pdf@bb\space\pdf@xo\space\pdf@yo}%
+    \trace{orn}{\pdf@matrix}%
   \else
     \def\pdf@apply@transform{\pdf@transformcm{\pdf@aa}{\pdf@ab}{\pdf@ba}{\pdf@bb}{\pdf@xo}{\pdf@yo}}%
     \edef\orn@@x{\the\dimexpr \pdf@xunit*\@pgfornamentX\relax}%
@@ -626,7 +625,7 @@
 \egroup}
 \def\doOrnament#1{%
   \begingroup
-    \orn@setup
+    %\orn@setup
     \x@\ornament@parse#1|||||\E
     \setorn@scale
     \orn@do@ornament
@@ -1121,7 +1120,7 @@
 % 5 rotation: up is -> u=up d=down l=left r=right
 
 \def\UseOrnament#1#2#3#4#5{%
-    \orn@setup
+    %\orn@setup
     \def\ornamentwidth{#2}%
     \def\ornamentheight{#3}%
     \def\ornamentmirror{#4}%
@@ -1139,6 +1138,9 @@
     \orn@setup
     \def\ornXalign{0}%
     \def\ornYalign{0}%
+    \get@ttributedef{linewidth}{\ornamentlinewidth}{0.5}%
+    \get@ttributedef{linecol}{\ornamentlinecol}{0 0 0}%
+    \get@ttributedef{fillcol}{\ornamentfillcol}{NONE}%
     \get@ttribute{size}%
     \ifx\attr@b\relax
       \edef\ornamentheight{\the\dimexpr \c@rrfontsize\dimexpr 0.7\FontSizeUnit\relax\relax}%
@@ -1153,11 +1155,12 @@
     \else
       \m@kenumber{\attr@b}%
       \x@\n@endsp@ce\@@result \E
-      \hbox{\doOrnament{\@@@result}}%
+      \hbox{\beginL\doOrnament{\@@@result}\endL}%prevent reordering of specials in RTL mode!
       \relax
     \fi
     \trace{orn}{end of zornament (\@@@result)}%
   \egroup
+  %\aftergroup{\showlists}%
 } 
 \def\n@endsp@ce#1 \E{\def\@@@result{#1}}
 \def\chkset#1#2{\edef\tmp{#2}\ifx\tmp\empty\else\x@\global\x@\let\csname #1\endcsname\tmp\fi}
@@ -1165,13 +1168,13 @@
 % Parameters:
 % 1 stroke width
 % 2 stroke colour (or empty for no change)
-% 3 fill colour (or 'none' for no fill, empty for no change)
+% 3 fill colour (or 'NONE' for no fill, empty for no change)
 \def\SetupOrnament#1#2#3{% Line width / Line colour / Fill colour
   \chkset{ornamentlinewidth}{#1}%
   \chkset{ornamentlinecol}{#2}%
   \chkset{ornamentfillcol}{#3}%
 }
-
+\SetupOrnament{0.5}{0 0 0}{NONE}
 %\tracingassigns=1
 %\tracingmacros=1
 
@@ -1369,7 +1372,7 @@
   \fi
   \getp@ram{borderfillcolour}{zrule}{\styst@k}%
   \ifx\p@ram\relax
-    \def\ornamentfillcol{none}%
+    \let\ornamentfillcol\fill@none
   \else 
     \let\ornamentfillcol\p@ram
   \fi

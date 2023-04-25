@@ -30,13 +30,13 @@ bisect:
 
 auto:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make test.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make test.pdf ; done < /dev/null
 auto2:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make fontish.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make fontish.pdf ; done < /dev/null
 auto3:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make calctest.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make calctest.pdf ; done < /dev/null
 auto4:
 	echo Source code in $(DIR)
-	while inotifywait -e close_write . $(DIR) ; do make catalogue.pdf ; done < /dev/null
+	while inotifywait -e close_write . $(DIR) ; do sleep 0.5 ;make catalogue.pdf ; done < /dev/null

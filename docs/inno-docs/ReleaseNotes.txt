@@ -1,8 +1,106 @@
-PTXprint 2.3.2 Release Notes
-25 Mar 2023
+PTXprint 2.3.8 Release Notes
+19 Apr 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
+
+Bug fixes and Improvements in 2.3.8 (19 Apr 2023)
+
+  * Updated Crowdin localization strings
+  
+  * Make \zMarkVerseAgain for use in changes files (help identify scripture for text borders)
+  
+  * Text border must check for new "intro" mark from intro paragraphs
+  
+  * Fixed Use correct USFM encoding for reading pictures
+  
+  * Fixed Handle importing configs with no vars section
+  
+  * Fixed spelling in documentation (MJ's PR #861)
+  
+Bug fixes and Improvements in 2.3.7 (18 Apr 2023)
+
+  * Improve Cover tab UI with buttons for steps 1-3
+  
+  * Refine import settings dialog, and wordsmith tooltips
+  
+  * Handle missing spinewidth for command-line initiated cover page
+  
+  * Barcode improvements:
+      - Check digit count to avoid crashes
+      - Automatically generate ISBN13 if ISBN10 is provided
+      - make \ISBNfont apply to all lettering
+  
+  * Make PDF binding depend of RTLBookBinding checkbox (MJ #856)
+  
+  * Fix peripheral and cover front import
+  
+  * Fix 'Choose books' broken (#860)
+  
+  * Add delayed file handling
+  
+Bug fixes and Improvements in 2.3.6 (17 Apr 2023)
+
+  * Added NEW feature to allow importing of selected settings from 
+    PDF files, ZIP archives or Proj+Configs
+  
+  * Added category flattening to parsing ptxprint-mods.sty for import
+  
+  * Fixed sliver of image showing beside the figure credit box
+  
+  * Improved UI interaction when chapter number is changed (so multiple 
+    books isn't selected when you tab out of the 'To chapter' field
+  
+  * Allow stylesheet-based control of credit position along edge 
+    (\SpaceBeside) or inside/outside edge (\SpaceBefore).
+
+  * Allow lineskiplimit overrides <0pt
+  
+  * Fixed Style editor row deletion when filtering is on
+  
+  * Ensure that zornament works nicely in RTL-land
+  
+  * Added link to \h header style on Header+Footer tab
+  
+  * Fixed out of date documentation about sidebar border padding
+  
+  * Updated documentation for ornaments
+   (put the grammar for `\OrnamentScaleRef` back where it belongs)
+  
+  * Fixed style merging by ensuring we use the same Marker() dict in Sheets
+  
+Bug fixes and Improvements in 2.3.5 (6 Apr 2023)
+
+  * Fix SkipMissingPictures (which now works as advertised)
+  
+  * Improved various UI tooltips and interactions
+  
+  * Solved some figure-credit issues
+  
+  * Fixed ornament placement with xfobj
+  
+  * Fixed behaviour when \k is used in a section header
+ 
+Bug fixes and Improvements in 2.3.4 (1 Apr 2023)
+
+  * Added option for pagebreak before ALL chapters
+  
+  * Fixed broken figure credits
+  
+  * Improved wording of Merging Modes tooltip
+
+Bug fixes and Improvements in 2.3.3 (31 Mar 2023)
+
+  * Update cover documentation, and code snippets
+
+  * Preserve the introduction page number
+
+  * Added -V or --pdfversion as a command line option
+    PDF Version to read and write * 10 (default=14)
+
+  * Added extra diglot merging modes (without parameterisation of score mode) 
+
+  * Added more telemetry to .parlocs
 
 Bug fixes and Improvements in 2.3.2 (25 Mar 2023)
 

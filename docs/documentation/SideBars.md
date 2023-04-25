@@ -142,12 +142,18 @@ way through the file, a situation that might produce unexpected results.
 Colours are either specified as 3 decimal numbers or as a hexadecimal number.
 In both cases the sequence is Red, Green, Blue.
 
-`\BoxPadding` measurement
-`\BoxHPadding` measurement
-`\BoxVPadding` measurement
+`\BoxLPadding` measurement
+`\BoxRPadding` measurement
+`\BoxTPadding` measurement
+`\BoxBPadding` measurement
+
 If a coloured background is used, this is how much that box should be larger than the enclosed text.
 Measurement is interpreted as being in points (72.27pt = 1 inch), and should not have a unit attached.
-Horizontal and Vertical padding can be controlled separately.
+Left, Right, Top and Bottom padding can be controlled separately, with historic/convenience  
+single commands `\BoxHPadding`  and `\BoxVPadding` setting (respectively) both
+Horizontal and Vertical parameters in a single command. 
+All four dimensions can be set with `\BoxPadding`.
+
 
 Related to box padding, the (global) TeX boolean control `\BoxLikeBordertrue`
 (new default) and `\BoxLikeBorderfalse` (old default) determine how sidebars
@@ -205,9 +211,10 @@ amount with a gap or filled region (see `\BorderFillColour`), and the *total*
 width of the border will be `\BorderWidth`.
 
 
-`\BorderPadding` measurement
-`\BorderHPadding` measurement
-`\BorderVPadding` measurement
+`\BorderTPadding` measurement
+`\BorderBPadding` measurement
+`\BorderLPadding` measurement
+`\BorderRPadding` measurement
 Default: 0
 
 This measurement (in points) specifies how much further out the (inside) edge of
@@ -216,7 +223,10 @@ coloured box, in the case of side-bars).
 This can be negative in which case the border will overwrite the coloured box
 (or text margins).
 
-Horizontal and Vertical padding can be controlled separately.
+Left, Right, Top and Bottom can all be controlled separately. For historic / convenience reasons, 
+multiple values can be set at once, with  `\BorderHPadding` `\BorderVPadding` each setting two 
+measurements, and `\BorderPadding` setting all four.
+
 
 ## Ending the category
 

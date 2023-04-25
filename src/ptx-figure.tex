@@ -66,44 +66,48 @@
   \let\d@=\D@
 }
 
-\def\s@veinserts#1{%loop through \ins@rts and save them 
+\def\s@veinserts#1{%loop through \ins@rts and save them
   \trace{gI}{Saving inserts (#1)}%
   \edef\s@veclass{#1}%
   \let\d@=\s@veins
-  \x@\cstackdown\ins@rts\E 
-} 
+  \x@\cstackdown\ins@rts\E
+}
 
-\def\r@storeinserts#1{%loop through \ins@rts and save them 
+\def\r@storeinserts#1{%loop through \ins@rts and save them
   \trace{gI}{Restoring inserts (#1)}%
   \edef\s@veclass{#1}%
   \let\d@=\r@strins
   \x@\cstackdown\ins@rts\E
-} 
+}
 
 
 % Helper function for figure parameters which might come from the fig line, a stylesheet, or a default.
-\def\setf@gval#1#2#3{\let#1\empty
+\def\setf@gval#1#2#3#4{\let#1\empty
   \x@\let\x@\tmpp@ram\csname figparam-x-#2\endcsname
-  \trace{F}{figparam-x-#2 is \meaning\tmpp@ram (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b)}%
+  \trace{F}{figparam-x-#2 (lo:\loc@ption, \picl@c, \l@cspec@a\l@cspec@b) is \meaning\tmpp@ram }%
   \ifx\tmpp@ram\relax\let\tmpp@ram\empty\fi
   \ifx\tmpp@ram\empty
     \getp@ram{#2}{loc:\picl@c|fig}{loc:\picl@c|fig}% +fig ? Dangerous.
     \ifx\p@ram\relax
-      \edef#1{#3}%
+      \edef#1{#4}%
     \else
-      \let#1\p@ram
+      \ifx\p@ram\empty
+        \edef#1{#4}%
+      \else
+        \edef#1{\p@ram #3}%
+      \fi
     \fi
   \else
     \x@\let\x@#1\csname figparam-x-#2\endcsname
+    \ifx#1\empty
+      \edef#1{#4}%
+    \fi
   \fi
-  \ifx#1\empty
-    \edef#1{#3}%
-  \fi
-} 
+}
 % Generate the insert save-boxes for each class at start-up
 \addtoinithooks{\let\d@=\m@keinsertsaveboxes\x@\cstackdown\ins@rts\E}
 
-%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%% 
+%%%%%%%%%%%%%% FIGURES %%%%%%%%%%%%%%
 % called from \fig or from figure list
 
 % Place everything up to first | into \param-N.
@@ -117,14 +121,14 @@
 %\def\FigP@ramMirror{mirror} \def\FigP@ramScale{scale}  \def\FigP@ramMedia{media}
 
 \def\s@tp@ramid{%This is used both to decode numeric parameters and to reset named parameters.
-  \ifnum \p@ramnumber<0 
+  \ifnum \p@ramnumber<0
     \edef\p@ramid{NEG\the\p@ramnumber}%
   \else
     \ifnum \p@ramnumber>19 \global\morep@ramsfalse\fi
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
-    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or 
+    \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or
         scale\or media\or pgpos\or x-credit\or x-creditpos\or
-	x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\else UNK-\the\p@ramnumber\fi}%
+        x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -149,20 +153,20 @@
         \let\fnext=\getonepairp@ram
       \else
         \let\p@ramval=\p@ramid
-        \ifnum\p@ramnumber>0 
+        \ifnum\p@ramnumber>0
           \s@tp@ramid
         \else
           \edef\p@ramid{error}%
         \fi
-        \let\fnext=\relax 
+        \let\fnext=\relax
         \trace{g}{usfm2 style parameter (\p@ramid=)\p@ramval}%
        \fi
     \else
       \trace{g}{usfm3 parameter \p@ramid=\p@ramval}%
       \ifusfmthree\else %first usfm3 parameter. USFM3 says first param is comment,  not alt-text. Swap them
         \x@\let\x@\t@mp\csname figparam-alt\endcsname
-      	\x@\global\x@\let\csname figparam-caption\endcsname\t@mp
-      	\x@\global\x@\let\csname figparam-alt\endcsname\empty
+        \x@\global\x@\let\csname figparam-caption\endcsname\t@mp
+        \x@\global\x@\let\csname figparam-alt\endcsname\empty
         \usfmthreetrue
       \fi
       \let\fnext=\getonepairp@ram
@@ -195,9 +199,9 @@
 
 %+cfig_parsextra
 \def\getnum#1=#2\end{#1}%
- 
+
 % These three macros split up x-xetex="foo" parameter, stripping out any key=val formated parameters and leaving the rest.
-% 
+%
 
 \def\p@rs@xtr@#1=#2=#3\end{\edef\t{#2}%
   \ifx\t\empty \edef\t{#1}%
@@ -225,13 +229,13 @@
       \fi
     \else
       \ifx\key\keyP@GE
-	\ifx\picfilecomm@nd\XeTeXpdffile
-	  \edef\picp@ge{page \val}%
+        \ifx\picfilecomm@nd\XeTeXpdffile
+          \edef\picp@ge{page \val}%
         \else
-	  \message{Not a PDF file, page=... only supported on PDFs}%
-	\fi
+          \message{Not a PDF file, page=... only supported on PDFs}%
+        \fi
       \else
-	\message{Unexpected key #1=#2. Expected key "rotate"}%
+        \message{Unexpected key #1=#2. Expected key "rotate"}%
       \fi
     \fi
   \fi
@@ -280,8 +284,8 @@
   \ifx\l@cspec@b\@lignInner\temptrue\ifodd\whichp@ge\let\l@cspec@b=\@lignLeft\else\let\l@cspec@b=\@lignRight\fi\fi
 }
 
-%NB THIS IS ONLY for page-based items, not for e.g. captions. 
-\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them. 
+%NB THIS IS ONLY for page-based items, not for e.g. captions.
+\def\p@rsePicUse#1\end{% Parse the new picture options, and remember them.
   \x@\p@rseLoc#1\end % sets \l@cspec@a, \l@cspec@b, \l@cspec@c to chars 1, 2, 3+
   \iftemp
     % inner/outer support for inserts
@@ -291,7 +295,7 @@
   \ifx\l@cspec@a\loc@T\temptrue\fi
   \ifx\l@cspec@a\loc@B\temptrue\fi
   \iftemp
-    \ifx\l@cspec@b\empty\else 
+    \ifx\l@cspec@b\empty\else
       \ifnum\c@rrentcols>1\else
         \tempfalse %Can't do it.
       \fi
@@ -304,7 +308,7 @@
       \x@\let\x@\tmp\csname \w@tsit @warning\endcsname
       \ifx\tmp\relax
         \picw@rning{#1}{\l@cspec@a\l@cspec@b}%
-      \else 
+      \else
         \tmp{#1}{\l@cspec@a\l@cspec@b}%
       \fi
       \xdef\loc@ption{\l@cspec@a}%
@@ -355,12 +359,12 @@
   \x@\let\x@\thsr@f\csname figparam-ref#1\endcsname% get reference
   \ifx\thsr@f\relax
     \xdef\@r@f{\r@f}\else
-    \xdef\@r@f{\thsr@f}\x@\global\x@\let\csname figparam-ref#1\endcsname\undefined% 
+    \xdef\@r@f{\thsr@f}\x@\global\x@\let\csname figparam-ref#1\endcsname\undefined%
   \fi%
   \stripspace\@r@f\end/ \end/\relax\@r@f \edef\@r@f{\p@ram}% strip space
   \x@\let\x@\c@ption\csname figparam-caption#1\endcsname% get caption
   \ifx\c@ption\relax\let\c@ption\empty\else
-    \x@\global\x@\let\csname figparam-caption#1\endcsname\undefined% 
+    \x@\global\x@\let\csname figparam-caption#1\endcsname\undefined%
   \fi
   \trace{g}{Fig caption#1: [\c@ption] \ifx\@r@f\empty\else(\@r@f)\fi}%
   \ifx\c@ption\empty\else
@@ -380,7 +384,7 @@
 \DoCaptionstrue
 \newif\iffigh@scaption\figh@scaptionfalse
 
-\def\d@caption{% 
+\def\d@caption{%
   %\ifhmode\endgraf\fi
   \unvbox\c@ptionbox
 }
@@ -398,7 +402,7 @@
     \fi
     \xdef\r@f{\csname figparam-ref\endcsname}% get reference
     \d@c@ption{}%Normal monoglot caption.
-    \ifdiglot 
+    \ifdiglot
       \bgroup %Alternative captions
         \def\col@do##1{\def\c@rrdstat{##1}\d@c@ption{##1}}%
         \x@\each@col\diglot@list\E
@@ -430,6 +434,10 @@
 %+cfig_addcredit
 \newdimen\FigCreditPadding
 \FigCreditPadding=2pt
+\newdimen\FigCreditOverEdgeV
+\newdimen\FigCreditOverEdgeH
+\FigCreditOverEdgeH=0.07pt
+\FigCreditOverEdgeV=0.07pt
 \def\add@credit{% Box to add credit to is  \newpicb@x
   \ifx\cr@ditpos\empty
     \edef\cr@ditpos{ti}% Center, inner edge
@@ -442,9 +450,9 @@
       \edef\cr@ditrot{-90}
     \else
       \ifx\cred@h\@lignRight
-	\edef\cr@ditrot{90}
+        \edef\cr@ditrot{90}
       \else
-	\edef\cr@ditrot{0}%
+        \edef\cr@ditrot{0}%
       \fi
     \fi
     \trace{g}{credit rotation blank, \cr@ditrot deg chosen}%
@@ -473,7 +481,7 @@
       \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
-  % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a 
+  % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a
   % small piece of text.
   \count255=\cr@ditrot % adjust to -180 to 180 range.
   \loop
@@ -483,19 +491,20 @@
   \edef\@ngle{\the\count255}%
   \ifnum \count255>0
      \def\r@tSet{\kern\ht0}%
-  \else 
+  \else
      \def\r@tSet{\kern\dp0}%
      \count255=-\count255
   \fi
+  \edef\cr@ditr@tn{\the\count255}%credit rotation as a positive number (0-180)
   %pad credit
-  \setbox0=\hbox{\s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
+  \setbox0=\hbox{\XeTeXuseglyphmetrics=3 \s@tfont{\cr@ditlist}{\cr@ditlist}% We subvert s@tfont's mechanism and provide a pre-formed list
     \ifRTL\beginR\fi\cr@dit\ifRTL\endR\fi}%
   \dimen1=\ht0\advance\dimen1 by \FigCreditPadding\ht0=\dimen1
   \dimen1=\dp0\advance\dimen1 by \FigCreditPadding\dp0=\dimen1
   % Calculuate maximum credit width.  (note count255 is now
   % positive)
-  \ifnum \count255>45
-    \ifnum \count255<135
+  \ifnum \cr@ditr@tn>45
+    \ifnum \cr@ditr@tn<135
        \dimen0=\ht\newpicb@x
     \else
        \dimen0=\wd\newpicb@x
@@ -510,7 +519,7 @@
      \loop
        \dimen1=\wd0
        \divide\dimen1 by \count255
-       \ifdim \dimen1>\dimen0 \advance\count255 by 1 \repeat 
+       \ifdim \dimen1>\dimen0 \advance\count255 by 1 \repeat
      \advance \dimen1 by \ht0 %Add ~1em to each line as line breaking space
      \ifdim \dimen1>\dimen0
        \dimen1=\dimen0
@@ -521,36 +530,57 @@
   \setbox0=\hbox{\hskip \FigCreditPadding\box0\hskip \FigCreditPadding}%
   \ifx\cr@ditbox\empty\else
     \ifx\cr@dit@col\empty
-      \getp@ram{background}{\cr@ditstyle}{\cr@ditstyle}%
+      \getp@ram{background}{\cr@ditlist}{\cr@ditlist}%
       \ifx\p@ram\relax
-        \edef\cr@dit@col{1 1 1} 
+        \edef\cr@dit@col{1 1 1}%
       \else
-	\ifx\p@ram\h@phen
+        \ifx\p@ram\h@phen
           \edef\cr@dit@col{\p@ram}%
-	\else
+        \else
           \trace{g}{decoding \p@ram}%
           \x@\checkh@x \p@ram\end
           \let\cr@dit@col\rgb@out
           \trace{g}{ result: \cr@dit@col}%
           %\edef\cr@dit@col{\p@ram}%
-	\fi
+        \fi
       \fi
     \fi
     \trace{g}{credit text on \cr@dit@col background}%
     \ifx\cr@dit@col\h@phen\else
-      \setbox0=\hbox{\colourbox{\cr@dit@col}{}{\the\wd0}{\the\dp0}{\the\ht0}{0pt}{\box0}\relax}%
+      \setbox0=\hbox{\kern-5sp \colourbox{\cr@dit@col}{}{\the\dimexpr \wd0}{\the\dp0}{\the\ht0}{0pt}{\box0}\relax}%
     \fi
   \fi
   \ifnum\cr@ditrot=0 \else
-    \ifnum\count255>135 
+    \ifnum\cr@ditr@tn>135
       \setbox0=\hbox{\rot@tebzoneeighty}%
+      %\setbox0=\hbox{\raise\dp0 \box0}%
     \else
       \setbox0=\hbox{\rot@tebz}%
     \fi
   \fi
-  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0)}%
-  \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\wd\newpicb@x \vskip 0pt\ab@vecredit\hbox to \wd\newpicb@x{\beginL\hskip 0pt\pr@credit\box0\p@stcredit\hskip 0pt\endL}\b@lowcredit\vskip 0pt}%
+  \edef\cr@ditHshift{\the\FigCreditOverEdgeH}%
+  \edef\cr@ditVshift{\the\FigCreditOverEdgeV}%
+  \getp@ram{spacebefore}{\cr@ditlist}{\cr@ditlist}%
+  \ifx\p@ram\relax\else
+    \ifnum\cr@ditr@tn=90
+      \edef\cr@ditHshift{\dimexpr \cr@ditHshift +\p@ram pt\relax}%
+    \else
+      \edef\cr@ditVshift{\dimexpr \cr@ditVshift + \p@ram pt\relax}%
+    \fi
+  \fi
+  \getp@ram{spacebeside}{\cr@ditlist}{\cr@ditlist}%
+  \ifx\p@ram\relax\else
+    \ifnum\cr@ditr@tn=90
+      \edef\cr@ditVshift{\dimexpr \cr@ditVshift - \p@ram pt\relax}%
+    \else
+      \edef\cr@ditHshift{\dimexpr \cr@ditHshift - \p@ram pt\relax}%
+    \fi
+  \fi
+  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0) \ab@vecredit,\b@lowcredit}%
+  \edef\ol@yboxwd{\the\dimexpr \wd\newpicb@x \relax}%
+  \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\ol@yboxwd\vskip -\cr@ditVshift\relax\ab@vecredit\hbox to \ol@yboxwd{\beginL\hskip -\cr@ditHshift\relax\pr@credit\box0\p@stcredit\hskip -\cr@ditHshift\relax\endL}\b@lowcredit\vskip -\cr@ditVshift}%
   \setbox\newpicb@x=\vbox to \ht\newpicb@x{\box\newpicb@x\vss\box0}%
+  %\ifnum\cr@ditrot=180\showbox\newpicb@x\fi
 }
 \def\strip@minus#1-{#1}
 \def\p@rseCreditBox#1 #2 #3 #4\end{%
@@ -559,7 +589,7 @@
      \edef\cr@dit@col{\strip@minus #1 #2 #3}%
   \else
      \def\t@mp{t-}\def\tmp{#1}\ifx\tmp\t@mp
-     	\let\cr@ditbox\tru@
+        \let\cr@ditbox\tru@
      \fi
   \fi
 }
@@ -575,7 +605,7 @@
    \x@\strip@pt\x@{\x@\dimexpr "#1#2 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#3#4 pt / 255}
    \x@\strip@pt\x@{\x@\dimexpr "#5#6 pt / 255}}}}
-         
+ 
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
@@ -587,15 +617,20 @@
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
   \kern-.2pt \hrule height .2pt}}
 
+\newif\ifSkipMissingFig \SkipMissingFigfalse
+\newif\iffigf@und
+
 \def\ins@rtpic#1#2#3#4#5#6#7{%
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
  \openin\t@stread=#1
    \ifeof\t@stread
      \message{MISSING IMAGE: #1 -> \tmpfile}%
+     \global\figf@undfalse
      \dimen0=\ifdim #3>#4 #4\else #3\fi
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{missing: #1}%  \csname figparam-src\endcsname
    \else \closein\t@stread
+     \global\figf@undtrue
      \message{INPUTFILE: #1 -> \tmpfile}%
      \picfilecomm@nd \tmpfile\space #7 #2 #3 #5 #6%
    \fi
@@ -649,10 +684,10 @@
       \x@\xdef\csname figparam-loc\endcsname{}%
     \else
       \x@\ifx\csname figparam-media\endcsname\empty
-	\x@\xdef\csname figparam-media\endcsname{\csname figparam-loc\endcsname}%
-	\x@\xdef\csname figparam-loc\endcsname{}%
+        \x@\xdef\csname figparam-media\endcsname{\csname figparam-loc\endcsname}%
+        \x@\xdef\csname figparam-loc\endcsname{}%
       \fi
-    \fi 
+    \fi
   \fi
   % get location
   \edef\loc@ption{\csname figparam-pgpos\endcsname}%%
@@ -661,8 +696,8 @@
 %+cfig_dofigure_1
   \ifx\loc@ption\empty % if location empty
     \ifx\size@ption\size@SPAN%
-	   \def\loc@ption{t}% if size is SPAN default to top
-	\else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
+        \def\loc@ption{t}% if size is SPAN default to top
+        \else\def\loc@ption{tl}\fi % else default to top left FIXME? Standard says inline. Could swap to h if that proves stable.
   \fi
   \ifDoCaptions
     \t@mpfalse
@@ -674,7 +709,7 @@
     \else
       \figh@scaptiontrue
     \fi
-  \fi 
+  \fi
   % set width to column width or span width and other default parameters
   \p@cwidth=\textwidth \advance\p@cwidth by -\columnshift
   \p@cheight=\textheight
@@ -713,7 +748,7 @@
     \whichp@ge=\pgn@
     \trace{g}{Picture \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
   \fi
-  \let\w@tsit\gr@phic   % Make sure the debugging info is correct. Also, tested for sometimes 
+  \let\w@tsit\gr@phic   % Make sure the debugging info is correct. Also, tested for sometimes
   \x@\p@rsePicUse\loc@ption\end                                               %(2)
   % make \p@cins point to insertion class for this location
   \otherinsht=0pt % subtract this from the insert height.
@@ -780,11 +815,11 @@
 %-cfig_dofigure_2
   % create box to contain picture
 %+cfig_dofigure_3
-  \setf@gval{\sp@cebeside}{spacebeside}{\DefaultSpaceBeside}%
-  \setf@gval{\sp@cebefore}{spacebefore}{0}%
-  \setf@gval{\sp@ceafter}{spaceafter}{0}%
+  \setf@gval{\sp@cebeside}{spacebeside}{pt}{\DefaultSpaceBeside}% absolute value
+  \setf@gval{\sp@cebefore}{spacebefore}{}{0}%  in \onel@neunit
+  \setf@gval{\sp@ceafter}{spaceafter}{}{0}% in \onel@neunit
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
-  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}% 
+  \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
     \ifpicNarrow
       \hsize=\sizem@ltiple\p@cwidth
@@ -795,7 +830,7 @@
     \ifdim\sp@cebefore pt =0pt \else\vskip \sp@cebefore\onel@neunit\fi
     \ifCaptionFirst\d@caption
       \ifdim\FigCaptionAdjust=0pt\else
-	\vskip \FigCaptionAdjust\relax
+        \vskip \FigCaptionAdjust\relax
       \fi
     \else
       \tempfalse
@@ -803,7 +838,7 @@
       \ifx\picl@c\loc@Inl\temptrue\fi
       \ifx\picl@c\loc@Par\temptrue\fi
       \ifx\picl@c\loc@Cut\temptrue\fi
-      \iftemp 
+      \iftemp
         \vskip0.3\baselineskip
       \fi
     \fi
@@ -870,11 +905,11 @@
     \fi
     %
     \x@\ifx\csname figparam-x-credit\endcsname\empty\else
-        \x@\let\x@\cr@dit\x@=\csname figparam-x-credit\endcsname 
-	\x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
-	\x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
-	\x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
-	\add@credit%
+        \x@\let\x@\cr@dit\x@=\csname figparam-x-credit\endcsname
+        \x@\let\x@\cr@ditpos\x@=\csname figparam-x-creditpos\endcsname
+        \x@\let\x@\cr@ditrot\x@=\csname figparam-x-creditrot\endcsname
+        \x@\let\x@\cr@ditbox\x@=\csname figparam-x-creditbox\endcsname
+        \add@credit%
     \fi
     %Align image left/right or centre
     \trace{g}{Object aligned into hbox \the\p@cinswid}%
@@ -885,13 +920,25 @@
     \fi
     \ifCaptionFirst\vskip 0.5\onel@neunit\else
       \ifdim\FigCaptionAdjust=0pt\else
-	\vskip \FigCaptionAdjust\relax
+        \vskip \FigCaptionAdjust\relax
       \fi
       \d@caption
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
-    \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}% 
+    \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   }% END of box0
+  \temptrue
+  \iffigf@und\else\ifSkipMissingFig
+     \tempfalse
+     \message{SkipMissingFigtrue: Missing figure \csname figparam-src\endcsname\space ignored.}%
+  \fi\fi
+  \iftemp
+    \pl@cefigure
+  \fi
+ \fi% end \ifIncludeFigures
+}
+
+\def\pl@cefigure{%Acutally place the figure
   \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
 %-cfig_dofigure_4
 %+cfig_dofigure_5
@@ -929,7 +976,7 @@
     }\ifx\@wrap\empty\else\egroup\fi
 %-cfig_dofigure_5
 %+cfig_dofigure_6
-  \else
+  \else %ifpicUsesIns
     % Calculate lines used for the picture
     \dimen0=\ht0 \advance\dimen0 by \dp0 %
     \count255=\dimen0
@@ -958,8 +1005,7 @@
     \fi
     %Sanity check. If we used \box0 then it'll be empty now.
     \ifvoid0\else\message{Placement for image \the\im@gecount (at \c@rref) could not be understood. Image Lost!}\fi
-   \fi
- \fi% end \ifIncludeFigures
+  \fi %ifpicUsesIns
 }
 
 
@@ -1023,7 +1069,7 @@
     \trace{s}{eotp: \eotpn@me. st@k:\styst@k, cref:\c@rref}%
     \relax \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
     \ifhmode\edef\eotpprevdepth{0pt}\else\edef\eotpprevdepth{\the\prevdepth}%
-      \prevdepth=0pt 
+      \prevdepth=0pt
     \fi%
     \lastdepth=0pt  % prevdepth accounted for...
     \earlyeotpskipfalse % An early skip of -prevdepth doesn't look good with figures, but keeps gridding for sidebars.
@@ -1058,7 +1104,7 @@
   %\showbox\wholepagepic
 }
 
-% #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern 
+% #1 box, #2 type, #3 vertical size, #4 magic penalty, #5 fine tuning kern
 \def\d@figurep@ge#1#2#3#4#5{%
   \trace{g}{\w@tsit\space is #2, \the\ht#1, \the\wd#1}%
   \dimen0=#3\advance\dimen0 by -\ht#1%
@@ -1097,7 +1143,7 @@
     \ifnum #2 < 5
       \xdef\c@tskip{#1}%
     \else
-      \ifnum #1<0 
+      \ifnum #1<0
         \xdef\c@tskip{\the\numexpr #1  -1\relax}%
       \else
         \xdef\c@tskip{\the\numexpr #1  +1\relax}%
@@ -1110,7 +1156,7 @@
 \def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
   \mkstr@t
   \dimen0=\ht#1%
-  \ifx\w@tsit\gr@phic 
+  \ifx\w@tsit\gr@phic
    \edef\dr@pthingid{droppic\the\im@gecount}%
   \else
    \global\advance\notim@gecount by 1
@@ -1133,14 +1179,16 @@
        \trace{g}{we were in horizontal mode even before the verse number.}%
      %  \dimen1=0pt
      \else
-       \trace{g}{Before this verse was started it was in vertical mode.}%
-	%\ifdim\lastdepth>0pt
-	  %\advance\dimen1 by -\lastdepth
-	%\fi
+       \trace{g}{Before this verse was started it was in vertical mode (\prev@rsemode).}%
+       \setCutoutSlop{\dr@pthingid}{0}{0}%
+        %\ifdim\lastdepth>0pt
+          %\advance\dimen1 by -\lastdepth
+        %\fi
      \fi
      %\csname\m@rker\endcsname
   \else
-     \trace{g}{Cutout was in vertical mode.}%
+     \trace{g}{Cutout for \dr@pthingid\space was in vertical mode. Setting slop to 0}%
+     \setCutoutSlop{\dr@pthingid}{0}{0}%
      \leavevmode %needed for keyterm-based figures, at least
      \tmpcount=0
   \fi
@@ -1189,12 +1237,12 @@
     \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \else
     \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}}%
-    \else 
+    \else
         \vskip -1\baselineskip
-       % \vrule height 0pt depth 1pt width 10ex\kern-1pt 
+       % \vrule height 0pt depth 1pt width 10ex\kern-1pt
         \vbox to 0pt{\box#1\vss}%
     \fi
-  \fi 
+  \fi
   \run@pending
     %\setbox#1\hbox to \hsize{\box#1\hss}%
     %\trace{g}{leftcutout \the\dimen2, \c@tskip, \the\count255}%
@@ -1341,7 +1389,7 @@
     \ifdim\ht\wholepagepic>0pt
       %\showbox3 \showbox\wholepagepic
       \global\setbox\wholepagepic=\vbox{\unvcopy1\unvbox\wholepagepic}%
-    \else 
+    \else
       \global\setbox\wholepagepic\box\voidb@x
     \fi
     %\showboxdepth=99
@@ -1360,11 +1408,11 @@
           \vbox to \textheight{\par\unvbox0}%
           }%
         \plainoutput
-      \else% Full page, past margins (9) or 0 
+      \else% Full page, past margins (9) or 0
         \dimen8=\pdfpagewidth \dimen9=\pdfpageheight
         %\showbox 0
         \trace{g}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, hoffset=\the\hoffset, voffset=\the\voffset, PaperHeight=\the\PaperHeight, pdfpageheight=\the\pdfpageheight}%
-        \setbox0\vbox to \PaperHeight{\unvbox0}%  
+        \setbox0\vbox to \PaperHeight{\unvbox0}%
         \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
         \shipcompletep@gewithcr@pmarks{\box0}
         \pdfpagewidth=\dimen8 \pdfpageheight=\dimen9
@@ -1379,7 +1427,7 @@
   \fi
   \n@xt
 }
-\newtoks\onship@ut 
+\newtoks\onship@ut
 \def\addtonextshipout#1{\x@\global\x@\onship@ut\x@{\the\onship@ut #1}}
 \def\nextshipout{\x@\toks0\x@{\the\onship@ut}\global\onship@ut{}\the\toks0\dofigp@ge}
 %-cfig_dofigpage

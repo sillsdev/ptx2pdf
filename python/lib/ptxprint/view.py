@@ -1,13 +1,15 @@
 
 import configparser, os, re, regex, random, collections
-from ptxprint.texmodel import TexModel, Borders
+from ptxprint.texmodel import TexModel, Borders, _periphids
 from ptxprint.modelmap import ModelMap, ImportCategories
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.font import TTFont, cachepath, cacheremovepath, FontRef, getfontcache, writefontsconf
 from ptxprint.utils import _, refKey, universalopen, print_traceback, local2globalhdr, chgsHeader, \
                             global2localhdr, asfloat, allbooks, books, bookcodes, chaps, f2s, pycodedir, Path, \
-                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath
+                            get_gitver, getcaller, runChanges, coltoonemax, nonScriptureBooks, saferelpath, \
+                            zipopentext
 from ptxprint.usfmutils import Sheets, UsfmCollection, Usfm, Module
+from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
@@ -31,8 +33,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.3.2"
-GitVersionStr = "2.3.2"
+VersionStr = "2.3.8"
+GitVersionStr = "2.3.8"
 ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -64,7 +66,7 @@ def doError(txt, secondary=None, **kw):
 class ViewModel:
     _attributes = {
         # modelname: (attribute, isMultiple, label)
-        "project/importPDFsettings":("importPDFsettings", False, None),
+        # "project/importPDFsettings":("importPDFsettings", False, None),
         "project/frontincludes":    ("FrontPDFs", True, "lb_inclFrontMatter"),
         "project/backincludes":     ("BackPDFs", True, "lb_inclBackMatter"),
         "project/selectscript":     ("customScript", False, "btn_selectScript"),
@@ -92,13 +94,20 @@ class ViewModel:
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
                        "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
 
+    _picFields = {
+        "Captions": ('caption', 'captionR', 'ref'),
+        "SizePosn": ('size', 'pgpos', 'scale', 'mirror', 'x-xetex'),
+        "Copyright": ('copy', ),
+    }
+
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
         self.settings_dir = settings_dir        # ~/Paratext8Projects
         self.working_dir = workingdir           # . or ~/Paratext8Projects/<prj>/PrintDraft
         self.userconfig = userconfig
         self.scriptsdir = scriptsdir
         self.args = args
-        for v in ("""ptsettings importPDFsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
+        # importPDFsettings  (removed from list below)
+        for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
                      customFigFolder customOutputFolder impSourcePDF coverImage
                      prjid configId diglotView usfms picinfos bookrefs""").split():
@@ -865,7 +874,7 @@ class ViewModel:
         if v < 1.2:
             bl = self._config_get(config, "project", "booklist")
             self._configset(config, "project/bookscope", "multiple" if len(bl) else "single")
-        if v < 1.201:
+        if v < 1.201 and cfgpath is not None:
             for d in ('PicLists', 'AdjLists'):
                 p = os.path.join(cfgpath, d)
                 if not os.path.exists(p):
@@ -1061,14 +1070,14 @@ class ViewModel:
                 self.clearvars()
         varcolour = "#FFDAB9" if not clearvars else None
         for sect in config.sections():
-            # if sect == "paper":
-                # import pdb; pdb.set_trace()
             for opt in config.options(sect):
                 editableOverride = len(opt) != len(opt.strip("*"))
                 key = "{}/{}".format(sect, opt.strip("*"))
                 val = config.get(sect, opt)
                 if key in ModelMap:
                     v = ModelMap[key]
+                    if categories is not None and v.category not in categories:
+                        continue
                     if val == "None":
                         val = None
                     if key in self._attributes:
@@ -1098,6 +1107,8 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
+                elif categories is not None:
+                    continue
                 elif sect in ("vars", "strongsvar"):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
@@ -1121,14 +1132,17 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
-        TeXpert.loadConfig(config, self)
+        if categories is None:
+            TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
+            if categories is not None and ModelMap[k].category not in categories:
+                continue
             (sect, name) = k.split("/")
             try:
                 val = config.get(sect, name)
             except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k].widget, self.ptsettings.dict.get(v, ""))
-        if not dummyload and self.get("c_thumbtabs"):
+        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'tabsborders' in categories):
             self.updateThumbLines()
         self.updateFont2BaselineRatio()
 
@@ -1288,31 +1302,33 @@ class ViewModel:
         copyfile(srcp, destp)
         return True
 
-    def updateFrontMatter(self):
-        fpath = self.configFRT()
+    def updateFrontMatter(self, fpath=None, force=True, forcenames={}):
+        if fpath is None:
+            fpath = self.configFRT()
         fcontent = []
         usedperiphs = set()
         logging.debug(f"Process {fpath}, ensuring peripherals: {self.periphs.keys()}")
-        with open(fpath, encoding="utf-8") as inf:
-            skipping = False
-            for l in inf.readlines():
-                if l.strip().startswith(r"\periph"):
-                    m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
-                    if m:
-                        periphid = m.group(2) or m.group(1)
-                        if periphid in self.periphs:
-                            fcontent.append(self.periphs[periphid].strip())
+        if os.path.exists(fpath):
+            with open(fpath, encoding="utf-8") as inf:
+                skipping = False
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                        if m:
+                            fullname = m.group(1).strip().lower()
+                            periphid = m.group(2) or _periphids.get(fullname, fullname)
                             usedperiphs.add(periphid)
-                            skipping = True
-                        else:
-                            skipping = False
-                    else:
-                        skipping = False
-                if not skipping:
-                    fcontent.append(l.strip())
+                            if (force or periphid in forcenames) and periphid in self.periphs:
+                                fcontent.append(self.periphs[periphid].strip())
+                                skipping = True
+                            else:
+                                skipping = False
+                    if not skipping:
+                        fcontent.append(l.strip())
         for k, v in self.periphs.items():
             if k not in usedperiphs:
                 fcontent.append(v.strip())
+        self.periphs = {}
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
@@ -1858,7 +1874,7 @@ set stack_size=32768""".format(self.configName())
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
 
-    def importConfig(self, zipfile):
+    def importConfig(self, fzip):
         ''' Imports another config into this one based on import settings '''
         # assemble list of categories to import from ptxprint.cfg
         hasOther = self.get("c_impOther")
@@ -1871,27 +1887,153 @@ set stack_size=32768""".format(self.configName())
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
-        with zipfile.open("ptxprint.cfg") as inf:
-            config.read_file(inf)
+        try:
+            with zipopentext(fzip, "ptxprint.cfg") as inf:
+                config.read_file(inf)
+        except (KeyError, FileNotFoundError):
+            pass
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
         self.loadingConfig = True
         self.localiseConfig(config)
         self.loadConfig(config, updatebklist=False, categories=useCats)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
+        grabfront = False
+        if config.get("fancy", "enableOrnaments", fallback=False):
+            self.set("c_useOrnaments", True)
+        exclfields = None if self.get("c_impFontsScripts") else \
+                ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
 
         # import pictures according to import settings
-        if self.get("c_impPics"):
-            otherpics = PicInfo()
+        if self.get("c_impPictures"):
+            otherpics = PicInfo(self.picinfos.model)
             picfile = "{}-{}.piclist".format(prjid, cfgid)
-            with zipfile.open(picfile) as inf:
-                otherpics.read_piclist(inf, "B")
-            fields = {x[6:]: self.get(x) for x in ModelMap.keys if x.startswith("c_pic_")}
-            self.picinfos.merge_fields(otherpics, **fields)
+            try:
+                with zipopentext(fzip, picfile) as inf:
+                    otherpics.read_piclist(inf, "B")
+            except (KeyError, FileNotFoundError) as e:
+                pass
+            if self.get("r_impPics") == "entire":
+                self.picinfos = otherpics
+            else:
+                fields = set()
+                for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
+                    if v:
+                        for f in self._picFields.get(n, (n.lower(), )):
+                            fields.add(f)
+                addNewPics = self.get("c_impPicsAddNew")
+                delOldPics = self.get("c_impPicsDelOld")
+                self.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
+            self.picinfos.out(os.path.join(self.configPath(self.configName()), "{}-{}.piclist".format(self.prjid, self.configName())))
 
         # merge ptxprint.sty adding missing
+        if self.get("c_impStyles") or self.get("c_oth_Cover"):
+            newse = StyleEditor(self)
+            try:
+                with zipopentext(fzip, "ptxprint.sty") as inf:
+                    newse.loadfh(inf, base="")
+            except (KeyError, FileNotFoundError):
+                pass
+            if self.get("c_impStyles"):
+                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
 
-        # merge cover
+        if self.get("c_oth_Advanced"):
+            # merge ptxprint-mods.sty
+            if config.getboolean("project", "ifusemodssty", fallback=False):
+                localmodsty = os.path.join(self.configPath(self.configName()), "ptxprint-mods.sty")
+                try:
+                    zipsty = zipopentext(fzip, "ptxprint-mods.sty")
+                except (KeyError, FileNotFoundError):
+                    zipsty = None
+                if zipsty is not None and self.get("c_useModsSty") and os.path.exists(localmodsty):
+                    with open(localmodsty, encoding="utf-8") as inf:
+                        localmods = simple_parse(inf, categories=True)
+                    othermods = simple_parse(zipsty, categories=True)
+                    zipsty.close()
+                    merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+                    with open(localmodsty, "w", encoding="utf-8") as outf:
+                        out_sty(localmods, outf)
+                elif zipsty is not None:
+                    with open(localmodsty, "w", encoding="utf-8") as outf:
+                        dat = zipsty.read()
+                        outf.write(dat)
+                    zipsty.close()
+
+            # append various .tex and changes files
+            for a in (("project/usechangesfile", "changes.txt", "#"),
+                      ("project/ifusemodstex", "ptxprint-mods.tex", "%"),
+                      ("project/ifusepremodstex", "ptxprint-premods.tex", "%")):
+                configb = a[0].split("/")
+                if not config.getboolean(*configb, fallback=False):
+                    continue
+                try:
+                    zipmod = zipopentext(fzip, a[1])
+                except (KeyError, FileNotFoundError):
+                    continue
+                localmod = os.path.join(self.configPath(self.configName()), a[1])
+                mode = "a" if self.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                with open(localmod, mode, encoding="utf-8") as outf:
+                    outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
+                    dat = zipmod.read()
+                    outf.write(dat)
+                zipmod.close()
+
+        # merge cover and import has cover
+        if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
+            # self.set("c_useSectIntros", True)
+            self.set("c_useOrnaments", True)
+            # override cover styles
+            allstyles = self.styleEditor.allStyles()
+            for k, v in newse.sheet.items():
+                if k.startswith("cat:cover"):
+                    if k not in allstyles:
+                        self.styleEditor.addMarker(k, v['Name'])
+                    for a in v.keys():
+                        if exclfields is None or k not in exclfields:
+                            self.styleEditor.setval(k, a, newse.getval(k, a))
+            grabfront = True
+            
+        if self.get("c_oth_FrontMatter"):
+            grabfront = True
+
+        if grabfront:
+            # add/override cover periphs in FRTlocal
+            periphcapture = None
+            forcenames = set()
+            try:
+                with zipopentext(fzip, 'FRTlocal.sfm') as inf:
+                    if inf is not None:
+                        for l in inf.readlines():
+                            if l.strip().startswith(r"\periph"):
+                                m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                                if m:
+                                    if periphcapture is not None:
+                                        self.periphs[periphid] = "".join(periphcapture)
+                                    fullname = m.group(1).strip().lower()
+                                    periphid = m.group(2) or _periphids.get(fullname, fullname)
+                                    if periphid.startswith("cover") and self.get("c_oth_Cover"):
+                                        forcenames.add(periphid)
+                                        periphcapture = [l]
+                                    elif not periphid.startswith("cover") and self.get("c_oth_FrontMatter"):
+                                        periphcapture = [l]
+                                    else:
+                                        periphcapture = None
+                            elif periphcapture is not None:
+                                periphcapture.append(l)
+                        if periphcapture is not None:
+                            self.periphs[periphid] = "".join(periphcapture)
+                self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
+            except (KeyError, FileNotFoundError):
+                pass
+
+            # add missing periph variables
+            try:
+                allvars = config.options('vars')
+            except configparser.NoSectionError:
+                return
+            for v in allvars:
+                if v not in self.pubvarlist:
+                    self.setvar(v, config.get("vars", v))
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

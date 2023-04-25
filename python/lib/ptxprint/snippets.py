@@ -184,7 +184,7 @@ class PDFx1aOutput(Snippet):
         else:
             extras['_iccnumcols'] = "4"
         extras['_gtspdfaid'] = "      <pdfaid:part>1</pdfaid:part>\n      <pdfaid:conformance>B</pdfaid:conformance>\n"
-        extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['document/ifrtl'] == "true" else ""
+        extras['rtlview'] = " /ViewerPreferences <</Direction /R2L>>" if model['cover/rtlbookbinding'] == "true" else ""
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:

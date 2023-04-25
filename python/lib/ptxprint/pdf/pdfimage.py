@@ -107,6 +107,7 @@ class PDFImage:
             if isinstance(cstream, str):
                 cstream = cstream.encode("Latin-1")
             self.icc = ImageCms.ImageCmsProfile(io.BytesIO(cstream))
+            logger.debug(self.icc)
             compress([self.colorspace[1]])
         self.height = int(xobj['/Height'])
         self.width = int(xobj['/Width'])
@@ -221,7 +222,7 @@ class PDFImage:
         sdb = img[...,0] - img[...,2]
         cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01)
         if not cond:
-            self.img = Image.frombytes(data=((1.-img[...,3]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
+            self.img = Image.frombytes(data=((img[...,2]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
             self.cs = self.colorspace = PdfName("DeviceGray")
             return True
         return False

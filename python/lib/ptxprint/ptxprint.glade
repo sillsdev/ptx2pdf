@@ -36,6 +36,11 @@ THE SOFTWARE.
       <placeholder/>
     </child>
   </object>
+  <object class="GtkRecentChooserMenu">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="limit">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -187,6 +192,13 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_cutouterpadding">
     <property name="upper">50</property>
     <property name="value">10</property>
+    <property name="step-increment">1</property>
+    <property name="page-increment">5</property>
+  </object>
+  <object class="GtkAdjustment" id="a_diffpages">
+    <property name="lower">1</property>
+    <property name="upper">999</property>
+    <property name="value">20</property>
     <property name="step-increment">1</property>
     <property name="page-increment">5</property>
   </object>
@@ -1766,7 +1778,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.3.2</property>
+    <property name="version">Version 2.3.8</property>
     <property name="copyright">© 2020-2022, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -1774,7 +1786,7 @@ XeTeX macros (ptx2pdf) with a long and reliable history.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
     <property name="website-label" translatable="yes">PTXprint Homepage</property>
     <property name="authors">Martin Hosken (Project Lead, System Architect, TeX macros)
-Mark Penny (UI Developer, Testing &amp; Documentation)
+Mark Penny (UI Developer, Testing, Documentation)
 David Gardner (TeX Macro Coding, Diglot Specialist)
 David Coward (User Acceptance Testing)
 
@@ -3897,7 +3909,7 @@ settings for a similar project.</property>
     <property name="can-focus">False</property>
     <property name="halign">start</property>
     <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Generate Cover</property>
+    <property name="title" translatable="yes">PTXprint: Cover Wizard</property>
     <property name="resizable">False</property>
     <property name="modal">True</property>
     <property name="window-position">center-on-parent</property>
@@ -4541,7 +4553,7 @@ Matter settings on the View+Edit tab):
   </object>
   <object class="GtkDialog" id="dlg_importSettings">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Import Settings...</property>
+    <property name="title" translatable="yes">PTXprint: Import Settings Into Current Configuration...</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
     <child internal-child="vbox">
@@ -4552,9 +4564,53 @@ Matter settings on the View+Edit tab):
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <child type="center">
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="hexpand">True</property>
+                <property name="width-chars">50</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
             <child>
-              <object class="GtkButton" id="button2">
+              <object class="GtkButton" id="btn_resetConfig">
+                <property name="label" translatable="yes">RESET</property>
+                <property name="name">Reset the current Configuration's UI settings</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Warning!
+This will reset ALL the UI settings 
+for the current configuration to
+their default values.
+
+Note that it will NOT reset the Style 
+settings stored in the .sty files.</property>
+                <property name="halign">start</property>
+                <property name="valign">end</property>
+                <signal name="clicked" handler="onResetCurrentConfigClicked" swapped="no"/>
+                <style>
+                  <class name="warning"/>
+                  <class name="smallbutton"/>
+                </style>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_importSettingsOK">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
                 <property name="sensitive">False</property>
@@ -4569,11 +4625,11 @@ Matter settings on the View+Edit tab):
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="button3">
+              <object class="GtkButton" id="btn_importCancel">
                 <property name="label">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -4586,7 +4642,7 @@ Matter settings on the View+Edit tab):
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -4616,11 +4672,10 @@ Matter settings on the View+Edit tab):
                     <property name="can-focus">False</property>
                     <property name="left-padding">12</property>
                     <child>
-                      <!-- n-columns=4 n-rows=7 -->
+                      <!-- n-columns=4 n-rows=5 -->
                       <object class="GtkGrid">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="halign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-bottom">12</property>
@@ -4628,26 +4683,26 @@ Matter settings on the View+Edit tab):
                         <property name="column-spacing">6</property>
                         <child>
                           <object class="GtkRadioButton" id="r_impSource_pdf">
-                            <property name="label" translatable="yes">PDF file or ZIP archive (with PTXprint settings)</property>
+                            <property name="label" translatable="yes">PDF file (with embedded settings) or ZIP archive file</property>
                             <property name="name">Import: From existing PDF file or ZIP archive</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Even though it sounds strange, it is possible to
-import the settings from an existing PDF file
-which was produced earlier by PTXprint. But 
-this only works if the PDF contains the settings
-(as can be enabled on the Finishing tab).
+                            <property name="tooltip-text" translatable="yes">It is possible to import settings from an
+existing PDF file which was produced earlier
+by PTXprint. But this only works if the settings
+are embedded within the PDF. (This is enabled
+on the Finishing tab).
 
-Importing from a PTXprint ZIP archive is
-another valid option (these are created
-on the Help tab).</property>
+Importing from a PTXprint ZIP archive 
+(created on the Help tab) is also possible.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                             <property name="group">r_impSource_config</property>
                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -4668,6 +4723,7 @@ on the Help tab).</property>
                             <property name="draw-indicator">True</property>
                             <property name="group">r_impSource_pdf</property>
                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">0</property>
@@ -4717,6 +4773,7 @@ settings will be imported.</property>
                             <items>
                               <item translatable="yes">(None)</item>
                             </items>
+                            <signal name="changed" handler="onimpConfigChanged" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">2</property>
@@ -4756,7 +4813,7 @@ settings will be imported.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkButton" id="btn_selectImpSource_pdf">
+                          <object class="GtkButton" id="btn_impSource_pdf">
                             <property name="label" translatable="yes">Select...</property>
                             <property name="name">Select PDF to import settings from</property>
                             <property name="visible">True</property>
@@ -4768,9 +4825,9 @@ to import the settings from.
 Importing from a PDF will only work if the
 PDF contains the PTXprint configuration
 settings (as enabled on the Finishing tab).</property>
-                            <property name="halign">start</property>
+                            <property name="halign">end</property>
                             <property name="valign">center</property>
-                            <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
+                            <signal name="clicked" handler="onSelectPDForZIPfileToImport" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
@@ -4783,7 +4840,6 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">start</property>
-                            <property name="label" translatable="yes">Path to PDF file of ZIP archive.</property>
                             <property name="ellipsize">middle</property>
                             <attributes>
                               <attribute name="foreground" value="#5e5e5c5c6464"/>
@@ -4805,36 +4861,6 @@ settings (as enabled on the Finishing tab).</property>
                           <packing>
                             <property name="left-attach">0</property>
                             <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkCheckButton" id="c_imp_ResetConfig">
-                            <property name="label" translatable="yes">Reset current configuration to Default values before importing settings</property>
-                            <property name="name">Import: Reset current configuration first</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="draw-indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">6</property>
-                            <property name="width">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSeparator">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">3</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">5</property>
-                            <property name="width">4</property>
                           </packing>
                         </child>
                         <child>
@@ -4874,13 +4900,12 @@ settings (as enabled on the Finishing tab).</property>
               <object class="GtkNotebook" id="nbk_Import">
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
-                <property name="margin-bottom">6</property>
                 <child>
                   <object class="GtkBox" id="tb_impPictures">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="bx_impPics_adv">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
@@ -5017,11 +5042,10 @@ settings (as enabled on the Finishing tab).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkSeparator">
+                      <object class="GtkSeparator" id="sepLine">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">5</property>
-                        <property name="margin-end">5</property>
+                        <property name="margin-start">16</property>
                         <property name="margin-top">60</property>
                         <property name="margin-bottom">6</property>
                       </object>
@@ -5032,14 +5056,14 @@ settings (as enabled on the Finishing tab).</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="bx_impPics_basic">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="valign">end</property>
-                        <property name="margin-start">10</property>
+                        <property name="margin-start">16</property>
                         <property name="margin-end">12</property>
-                        <property name="margin-bottom">9</property>
+                        <property name="margin-bottom">20</property>
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
@@ -5047,6 +5071,7 @@ settings (as enabled on the Finishing tab).</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
+                            <property name="margin-top">15</property>
                             <property name="margin-bottom">3</property>
                             <property name="label" translatable="yes">How to handle differences:</property>
                           </object>
@@ -5227,14 +5252,38 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
-                        <property name="label" translatable="yes">Enabling this option will only import the Styles which were changed.
-You may want to reset the current configuration before importing styles.</property>
+                        <property name="label" translatable="yes">This will selectively import any Styles which are different from the Default settings.
+This will also import styles from ptxprint-mods.sty, but not from custom.sty.
+You may also want to RESET the current configuration (see below) before importing styles.</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
                         <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_sty_OverrideAllStyles">
+                        <property name="label" translatable="yes">Override ALL Style Settings</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Normally only styles that have not been changed
+in the receiving configuration will be imported.
+But if you require ALL styles to be updated
+regardless of whether they have already been
+modified locally, then enable this option.</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">20</property>
+                        <property name="margin-end">20</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                   </object>
@@ -5278,7 +5327,7 @@ You may want to reset the current configuration before importing styles.</proper
                         <property name="margin-end">20</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">6</property>
-                        <property name="label" translatable="yes">Any other settings can be imported as required:</property>
+                        <property name="label" translatable="yes">Other settings can be imported as needed:</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>
@@ -5372,8 +5421,8 @@ You may want to reset the current configuration before importing styles.</proper
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_oth_Peripherals">
-                            <property name="label" translatable="yes">Peripherals settings</property>
+                          <object class="GtkCheckButton" id="c_oth_OverwriteFrtMatter">
+                            <property name="label" translatable="yes">Overwrite Front Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -5383,7 +5432,7 @@ You may want to reset the current configuration before importing styles.</proper
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -5392,13 +5441,16 @@ You may want to reset the current configuration before importing styles.</proper
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This includes everything on the Advanced tab
+with the exception of Custom Script processing
+and Customized Styles (custom.sty).</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">2</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -5421,24 +5473,24 @@ You may want to reset the current configuration before importing styles.</proper
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="active">True</property>
                             <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">3</property>
-                            <property name="top-attach">3</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="c_oth_FrontMatter">
-                            <property name="label" translatable="yes">Front Matter settings</property>
+                            <property name="label" translatable="yes">Front +Back Matter</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="active">True</property>
                             <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
@@ -5475,6 +5527,7 @@ You may want to reset the current configuration before importing styles.</proper
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
+                    <property name="inconsistent">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
@@ -5501,8 +5554,8 @@ You may want to reset the current configuration before importing styles.</proper
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button2</action-widget>
-      <action-widget response="-6">button3</action-widget>
+      <action-widget response="-5">btn_importSettingsOK</action-widget>
+      <action-widget response="-6">btn_importCancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkListStore" id="ls_featsLangs">
@@ -10830,7 +10883,7 @@ and helps to place the marker in the tree listing all markers.</property>
                                 <property name="label" translatable="yes">Ch_oose...</property>
                                 <property name="name">Multiple books chooser</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
+                                <property name="can-focus">False</property>
                                 <property name="receives-default">True</property>
                                 <property name="tooltip-text" translatable="yes">Select one or more Biblical books
 to be printed from the project.</property>
@@ -10870,7 +10923,7 @@ to be printed from the project.</property>
                                 <property name="name">Choose books selector</property>
                                 <property name="width-request">98</property>
                                 <property name="visible">True</property>
-                                <property name="can-focus">True</property>
+                                <property name="can-focus">False</property>
                                 <property name="receives-default">False</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
@@ -11039,7 +11092,7 @@ Shortcut: Ctrl-B</property>
                               </packing>
                             </child>
                             <child>
-                              <!-- n-columns=5 n-rows=2 -->
+                              <!-- n-columns=4 n-rows=1 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -11123,24 +11176,6 @@ chapter number to end with.</property>
                                     <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
@@ -11424,21 +11459,25 @@ the Notes field below.</property>
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="btn_importSettings">
-                                    <property name="name">Import settings from other PDFs or other Configurations</property>
+                                    <property name="name">Import settings from PDFs, ZIP files or other Configurations</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Import settings from other PDFs 
-or from other Configurations
+                                    <property name="tooltip-text" translatable="yes">Warning! This may overwrite existing settings.
 
-Select which settings should be imported
-from another PDF (or another Configuration)
-into the current Configuration.</property>
+This button will open the Import Settings dialog
+where you may select various options to import 
+settings from other PDFs, ZIP archives or from 
+a different project configuration into the current
+configuration.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
-                                    <signal name="clicked" handler="onImportPDFsettingsClicked" swapped="no"/>
+                                    <signal name="clicked" handler="onImportClicked" swapped="no"/>
+                                    <style>
+                                      <class name="attention"/>
+                                    </style>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
@@ -11958,8 +11997,9 @@ and descent values of the main body font.</property>
                                         <property name="receives-default">True</property>
                                         <property name="tooltip-text" translatable="yes">Fine Tune Line Spacing:
 
-Click this button to make PTXprint shrink or expand the line
-spacing slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the line spacing slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the line-spacing will decrease slightly to
@@ -12724,8 +12764,9 @@ above the base line of the first line of the body text.</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Fine Tune Top Margin:
 
-Click this button to make PTXprint shrink or expand the top 
-margin slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the top margin slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the top margin will decrease slightly to
@@ -12758,8 +12799,9 @@ button to adjust either the Line Spacing or Bottom Margin.</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">Fine Tune Bottom Margin:
 
-Click this button to make PTXprint shrink or expand the bottom 
-margin slightly to minimise wasted vertical space on the page.
+This button is only active when PTXprint has a suggestion to
+shrink or expand the bottom margin slightly to minimise wasted 
+vertical space on the page. Click to accept the suggestion.
 
 If there is more than half a line of 'spare' space on the 
 page then the bottom margin will decrease slightly to
@@ -14637,25 +14679,6 @@ Includes markers: \io1 ... \io4 \ior \iot</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_ch1pagebreak">
-                                    <property name="label" translatable="yes">Always Start 1st Chapter on a New Page</property>
-                                    <property name="name">Start new page after introduction</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Use this option to automatically make a page 
-break after a book's introduction section. 
-The break will come right before the \c 1 marker.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">1</property>
-                                    <property name="top-attach">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkCheckButton" id="c_startOnHalfPage">
                                     <property name="label" translatable="yes">Begin Next Book on Last Page of Previous Book</property>
                                     <property name="name">Flow one book into the next book</property>
@@ -14701,6 +14724,58 @@ selected books/chapters will show in the glossary.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_ch1pagebreak">
+                                        <property name="label" translatable="yes">Start 1st Chapter on a New Page</property>
+                                        <property name="name">Start new page after introduction</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Use this option to automatically make a page 
+break after a book's introduction section. 
+The break will come right before the \c 1 marker.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                        <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_pagebreakAllChs">
+                                        <property name="label" translatable="yes">All Chapters</property>
+                                        <property name="name">Start every chapter on a new page</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Use this option to force a page break before
+every chapter. This is most commonly used
+for testing materials when each chapter needs
+to be printed and given to a different person.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                               </object>
@@ -20249,7 +20324,7 @@ setting, you must first enable Diglot.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <!-- n-columns=7 n-rows=1 -->
+                                  <!-- n-columns=8 n-rows=1 -->
                                   <object class="GtkGrid" id="gr_HeaderAdvOptions">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -20402,6 +20477,25 @@ uncheck this option.</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">5</property>
+                                        <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLinkButton" id="lb_style_h">
+                                        <property name="label">\h</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="focus-on-click">False</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Click to edit the marker's properties on the Styles tab.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="relief">none</property>
+                                        <property name="uri">Click to view the Styles tab</property>
+                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">7</property>
                                         <property name="top-attach">0</property>
                                       </packing>
                                     </child>
@@ -24251,9 +24345,53 @@ option does not apply at all.</property>
                               </packing>
                             </child>
                             <child>
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Merging mode:</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">6</property>
+                              </packing>
+                            </child>
+                            <child>
                               <object class="GtkComboBoxText" id="fcb_diglotMerge">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 
+algorithms which may be used to obtain the best overall result:
+
+* Document based - attempts to use the document structure to align at 
+  paragraphs as far as possible; but alignment is easily confused when 
+  each text has a very different paragraph structure.
+
+* Chapter Verse - aligns on chapters and verses instead of structure
+
+* Scored - an alternative algorithm using weighted scores which
+  tries to align paragraphs when the verse numbers match
+
+* Scored (Chapter) - as a minimum, forces alignment at chapters breaks 
+
+* Scored (Verses) - as a minimum, forces alignment at each verse, which 
+  can result in a lot of breaks!</property>
                                 <property name="active">0</property>
                                 <property name="active-id">doc</property>
                                 <items>
@@ -24263,19 +24401,6 @@ option does not apply at all.</property>
                                   <item id="scores-chapter" translatable="yes">Scored (Chapter)</item>
                                   <item id="scores-verse" translatable="yes">Scored (Verse)</item>
                                 </items>
-                              </object>
-                              <packing>
-                                <property name="left-attach">3</property>
-                                <property name="top-attach">6</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkLabel">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">start</property>
-                                <property name="label" translatable="yes">Merging
-mode</property>
                               </object>
                               <packing>
                                 <property name="left-attach">4</property>
@@ -29263,11 +29388,12 @@ more clearly where changes are being made.</property>
   \zgap|1.5in\*
 
 To include one or more table of contents:
-  \ip \ztoc|&lt;keyword&gt;\*
+  \ztoc|&lt;keyword&gt;\*
 Where &lt;keyword&gt; can be replaced with:
   main – primary, all-inclusive table of contents
   pre – any book prior to scripture (FRT, INT)
   ot – only Old Testament books are listed
+  heb - OT books sorted according to the Hebrew TaNaKh
   dc – only Deutero Canonical books are listed
   nt – only New Testament books are listed
   post – books that occur after REV (GLO, BAK, TDX, NDX, XXA-G)
@@ -31036,11 +31162,12 @@ of overlap here (mm).</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="orientation">vertical</property>
-                                    <property name="spacing">12</property>
+                                    <property name="spacing">6</property>
                                     <child>
                                       <object class="GtkButton" id="btn_coverGenerate">
-                                        <property name="label" translatable="yes">Generate Cover...</property>
+                                        <property name="label" translatable="yes">1. Create Cover Settings...</property>
                                         <property name="name">Generate Cover (Basic settings to create a cover)</property>
+                                        <property name="width-request">170</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
@@ -31048,13 +31175,72 @@ of overlap here (mm).</property>
 This tool enables you to create various kinds of
 covers which can easily be enhanced. </property>
                                         <property name="halign">start</property>
-                                        <property name="valign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="xalign">0</property>
                                         <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
                                         <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_editFrontMatter2">
+                                        <property name="label" translatable="yes">2. Edit Cover Content...</property>
+                                        <property name="name">Edit Front Matter (where cover content is defiined)</property>
+                                        <property name="width-request">170</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Switch to the View+Edit tab to
+show the Front Matter file where
+the content for the Cover page
+can be adjusted as needed.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-right">6</property>
+                                        <property name="xalign">0</property>
+                                        <signal name="clicked" handler="editFrontMatterClicked" swapped="no"/>
+                                        <accelerator key="c" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="b_print4cover">
+                                        <property name="label" translatable="yes">3. Print (Make Cover PDF)</property>
+                                        <property name="width-request">170</property>
+                                        <property name="visible">True</property>
+                                        <property name="sensitive">False</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="has-default">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Once 'Create Cover' is enabled, every time
+'Print (Make PDF)' is clicked, a separate 
+cover PDF will be created in addition to
+the usual text content PDF.
+
+However, if another tab (other than the Cover tab)
+is active, the text content PDF will be automatically
+opened rather than the cover PDF.
+
+Clicking this button will ensure that the cover PDF
+will be displayed once it has been created.</property>
+                                        <property name="halign">start</property>
+                                        <property name="resize-mode">immediate</property>
+                                        <property name="xalign">0</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onOK" swapped="no"/>
+                                        <accelerator key="p" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">2</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -31150,7 +31336,12 @@ been trimmed. (Units: mm)</property>
                                                 <property name="receives-default">False</property>
                                                 <property name="tooltip-text" translatable="yes">When printing and binding books in bulk
 crop marks are usually required to indicate
-where to trim the publication.</property>
+where to trim the publication.
+
+Including the spine will force crop marks
+to be shown on the cover page. So if you 
+cannot uncheck this option, then disable 
+the 'Include Spine' setting (above) and retry.</property>
                                                 <property name="halign">end</property>
                                                 <property name="valign">center</property>
                                                 <property name="margin-end">6</property>
@@ -31203,7 +31394,7 @@ the inner backing sheet. (Units: mm)</property>
                                       <packing>
                                         <property name="expand">False</property>
                                         <property name="fill">True</property>
-                                        <property name="position">1</property>
+                                        <property name="position">3</property>
                                       </packing>
                                     </child>
                                     <child>
@@ -31224,7 +31415,7 @@ on the Styles tab for the Front Cover.</property>
                                       <packing>
                                         <property name="expand">True</property>
                                         <property name="fill">True</property>
-                                        <property name="position">2</property>
+                                        <property name="position">4</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -31876,6 +32067,7 @@ using separate signatures.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="text" translatable="yes">1</property>
+                                    <property name="xalign">1</property>
                                     <property name="adjustment">a_sheetsPerSignature</property>
                                     <property name="climb-rate">1</property>
                                   </object>
@@ -31895,6 +32087,7 @@ Measured in millimeters (mm).</property>
                                     <property name="halign">start</property>
                                     <property name="width-chars">5</property>
                                     <property name="text">6.0</property>
+                                    <property name="xalign">1</property>
                                     <property name="adjustment">a_foldCutMargin</property>
                                     <property name="climb-rate">0.5</property>
                                     <property name="digits">1</property>
@@ -31986,7 +32179,7 @@ options allow plenty of scope.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=7 n-rows=2 -->
+                              <!-- n-columns=8 n-rows=2 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -31996,7 +32189,7 @@ options allow plenty of scope.</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="row-spacing">6</property>
-                                <property name="column-spacing">6</property>
+                                <property name="column-spacing">8</property>
                                 <child>
                                   <object class="GtkButton" id="btn_selectDiffPDF">
                                     <property name="label" translatable="yes">Select...</property>
@@ -32015,7 +32208,6 @@ options allow plenty of scope.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="lb_diffPDF">
-                                    <property name="width-request">220</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="opacity">0.80</property>
@@ -32029,32 +32221,6 @@ options allow plenty of scope.</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
                                     <property name="width">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_createDiff">
-                                    <property name="label" translatable="yes">Create "Diff" PDF</property>
-                                    <property name="name">Compare PDFs: Create 'diff' PDF</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click to print the regular PDF but
-also generate a PDF showing the 
-differences between the current 
-PDF and the selected previous 
-version. It should open in the 
-default PDF viewer.
-
-Shortcut: Ctrl-D</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">start</property>
-                                    <property name="margin-start">21</property>
-                                    <signal name="clicked" handler="onCreateDiffclicked" swapped="no"/>
-                                    <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">6</property>
-                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -32073,15 +32239,16 @@ identical pages. This also saves
 time as you don't need to search
 through a lengthy PDF to find
 out what might have changed.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">start</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">20</property>
+                                    <property name="margin-end">6</property>
                                     <property name="active">True</property>
                                     <property name="draw-indicator">True</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">6</property>
+                                    <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
+                                    <property name="width">2</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -32094,16 +32261,18 @@ out what might have changed.</property>
 that has been added (or moved to
 the current location) in the new PDF.</property>
                                     <property name="halign">start</property>
+                                    <property name="valign">center</property>
                                     <property name="title" translatable="yes">Color to Highlight Differences</property>
                                     <property name="rgba">rgb(26,95,180)</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">7</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_ndiffColor">
+                                    <property name="name">Compare PDFs: Colour of new text</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Set the color to use when
@@ -32113,17 +32282,20 @@ the old and the new PDFs.
 Use this color to show anything
 that has been added (or moved to
 the current location) in the new PDF.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
                                     <property name="margin-start">12</property>
                                     <property name="label" translatable="yes">Show New Text
 or Position in:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
-                                    <property name="top-attach">0</property>
+                                    <property name="left-attach">6</property>
+                                    <property name="top-attach">1</property>
                                   </packing>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_odiffColor">
+                                    <property name="name">Compare PDFs: Colour of old text</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Set the color to use when
@@ -32133,12 +32305,14 @@ the old and the new PDFs.
 Use this color to show anything
 that has been deleted (or moved from
 the previous location) in the old PDF.</property>
-                                    <property name="margin-start">22</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">18</property>
                                     <property name="label" translatable="yes">Show Old Text
 or Position in:</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">6</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -32150,10 +32324,11 @@ or Position in:</property>
                                     <property name="tooltip-text" translatable="yes">Use this color to show anything
 that has been deleted (or moved from
 the previous location) in the old PDF.</property>
+                                    <property name="valign">center</property>
                                     <property name="rgba">rgb(204,0,0)</property>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">3</property>
+                                    <property name="left-attach">7</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -32183,6 +32358,66 @@ a Previous PDF:</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkSpinButton" id="s_diffpages">
+                                    <property name="name">Compare PDFs: Set maximum diff pages to show</property>
+                                    <property name="width-request">125</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">The PDF showing differences between the old
+and the new contains images that make the
+resulting file rather large. Use this option to
+limit the number of "Diff" pages created.
+This will also potentially speed up the process.</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">start</property>
+                                    <property name="width-chars">3</property>
+                                    <property name="text">15</property>
+                                    <property name="xalign">1</property>
+                                    <property name="input-purpose">number</property>
+                                    <property name="adjustment">a_diffpages</property>
+                                    <property name="climb-rate">1</property>
+                                    <property name="numeric">True</property>
+                                    <property name="update-policy">if-valid</property>
+                                    <property name="value">20</property>
+                                    <signal name="value-changed" handler="labelledChanged" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">5</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkEventBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="halign">end</property>
+                                    <property name="valign">center</property>
+                                    <signal name="button-release-event" handler="resetLabel" swapped="no"/>
+                                    <child>
+                                      <object class="GtkLabel" id="l_diffpages">
+                                        <property name="name">Compare PDFs: Maximum pages of differences to show</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="tooltip-text" translatable="yes">Set the color to use when
+differences are found between
+the old and the new PDFs.
+
+Use this color to show anything
+that has been deleted (or moved from
+the previous location) in the old PDF.</property>
+                                        <property name="halign">end</property>
+                                        <property name="valign">center</property>
+                                        <property name="label" translatable="yes">Show Max
+Diff Pages:</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -32319,6 +32554,7 @@ previous versions can be kept.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="text" translatable="yes">1</property>
+                                <property name="xalign">1</property>
                                 <property name="adjustment">a_keepVersions</property>
                                 <property name="value">1</property>
                               </object>
@@ -32429,8 +32665,9 @@ then select the closest hue
 which will get converted 
 to the closest matching 
 Pantone color code.</property>
-                                <property name="halign">start</property>
+                                <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="margin-start">10</property>
                                 <property name="label" translatable="yes">Color Hue:</property>
                               </object>
                               <packing>
@@ -32454,6 +32691,7 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                 <property name="valign">start</property>
                                 <property name="width-chars">2</property>
                                 <property name="text">15</property>
+                                <property name="xalign">1</property>
                                 <property name="input-purpose">number</property>
                                 <property name="adjustment">a_spotColorTolerance</property>
                                 <property name="climb-rate">1</property>
@@ -33477,6 +33715,9 @@ Click to visit download page on the website.</property>
                 <property name="margin-bottom">3</property>
                 <property name="image">icon_download</property>
                 <signal name="clicked" handler="onUpdateButtonClicked" swapped="no"/>
+                <style>
+                  <class name="attention"/>
+                </style>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -33548,13 +33789,20 @@ Shortcut: Ctrl-F</property>
               </packing>
             </child>
             <child>
-              <object class="GtkCheckButton" id="c_quickRun">
-                <property name="label" translatable="yes">Quick Run</property>
-                <property name="name">Quick run (to speed up process)</property>
+              <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">False</property>
-                <property name="tooltip-text" translatable="yes">Enabling this option will give quicker 
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="orientation">vertical</property>
+                <child>
+                  <object class="GtkCheckButton" id="c_quickRun">
+                    <property name="label" translatable="yes">Quick Run</property>
+                    <property name="name">Quick run (to speed up process)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Enabling this option will give quicker 
 output, but it may be less refined.
 
 PTXprint needs to rerun the typesetting
@@ -33563,18 +33811,52 @@ Contents &amp; other dynamicly updated
 details are accurate.
 
 Shortcut: Ctrl-Q</property>
-                <property name="halign">center</property>
-                <property name="valign">center</property>
-                <property name="margin-start">3</property>
-                <property name="margin-end">3</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
-                <property name="draw-indicator">True</property>
-                <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="draw-indicator">True</property>
+                    <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_createDiff">
+                    <property name="label" translatable="yes">Create Diff</property>
+                    <property name="name">Compare PDFs: Create 'diff' PDF</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="tooltip-text" translatable="yes">Enable this option to generate a PDF showing the 
+differences between the current PDF and the 
+selected previous version (set on the Finishing
+tab under 'Compare PDFs').
+
+If any differences are found, it should open the 
+"Diff" PDF in the default PDF viewer.
+
+Shortcut: Ctrl-D</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="margin-start">3</property>
+                    <property name="margin-end">3</property>
+                    <property name="draw-indicator">True</property>
+                    <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="fill">True</property>
+                <property name="fill">False</property>
                 <property name="position">6</property>
               </packing>
             </child>

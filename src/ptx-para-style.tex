@@ -334,9 +334,10 @@
  \mcpop
 }
 
-\def\writep@rstart#1{%Call with #1 = fully expanded baselineskip
+\def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
+   \getp@ram{type}{#2}{#2}%
    \beginL\pdfsavepos
-   \write\p@rlocs{\noexpand\@parstart{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+   \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
 \newif\iftoplevelp@r
@@ -580,7 +581,7 @@
    \fi
    \the\@veryparhooks
    \restoresettings
-   \x@\writep@rstart\x@{\the\baselineskip}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
+   \x@\writep@rstart\x@{\the\baselineskip}{#1}%baselineskip must fully expanded as macro param, else it remains a macro and only L baseline is output on diglot/polyglot.
    %\edef\spc@ut{pdf:code /\c@rref \space BMC}\x@\special\x@{\spc@ut}%
    \ifdiglot\xdef\lastc@rref{\dc@rref}\else\xdef\lastc@rref{\id@@@ \ch@pter.\v@rse}\fi\xdef\lastc@rradj{\the\curr@djpar}%
    \s@tsideskips{\styst@kfirst}%Probably need this here in case the par gets ended e.g. by end of book.
@@ -869,13 +870,13 @@
   \trace{C}{#2: ( #1  / \the\baselineskip) -> \the\p@rlinesgone}%
 }
 
-\def\@parstart#1#2#3{%
-  \prev@y=#3\relax
+\def\@parstart#1#2#3#4#5{%
+  \prev@y=#5\relax
   \dimen1=\numexpr \prev@col@y - \prev@y\relax sp\relax
   \edef\prev@col@ht{\the\dimexpr \tot@col@ht - \dimen1\relax}%
   \trace{C}{@parstart \tot@col@ht - \the\dimen1 = \prev@col@ht}%
   \csname inp@r-\c@rrdstat true\endcsname
-  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#1}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
+  \x@\xdef\csname baselineskip@\c@rrdstat\endcsname{#3}\relax\p@rlinesgone=1\relax\let\par@items\cstackempty}
 
 \def\@parend#1#2{%
   \this@y=#2\relax
@@ -890,6 +891,8 @@
 }
 
 \def\@parlen#1#2#3{}
+\def\@parpageend#1#2#3{}
+\def\@parnote#1#2#3{}
 
 \def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
@@ -1033,42 +1036,54 @@
 % #7 - cutout side
 % #8 - pdfpos X
 % #9 - pdfpos Y
+\def\HistoricDelays#1#2#3#4{%
+  \x@\edef\csname historicdelays-#1\endcsname{#2}% A count of how many times this item has been (re)positioned
+  \x@\edef\csname lastdelay-#1\endcsname{#3}% The last user-requested delay
+  \x@\edef\csname historicdelay-#1\endcsname{#4}% History of computed delay positions
+}
 \def\@delayedthing#1#2#3#4#5#6#7#8#9{%Part of post-run processing
   \thing@y=#9\relax 
   \ifcsname baselineskip@\c@rrdstat\endcsname
     \baselineskip=\csname baselineskip@\c@rrdstat\endcsname
   \fi
   \trace{C}{delayedthing (prev:\the\prev@y) #1 #2 #3 #4 #5 #6 #7 #8 #9, bl:\the\baselineskip}%
-  %\ifnum\the\prev@y<\thing@y % Lower number means lower on page. para start was lower than chapter number, must have passed a col/page break
-    %%\def\this@thing{#1}% What is it?
-    %\def\thing@ref{#2}% Unique id.
-    %\trace{C}{* saved pending  \string\DelayedItem{#1}{#2}}%
-    %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{#6}{#7}%
-  %\else % para start level with or above chapter number; OK to calculate # of lines
-    %
-    %First, remember where the bottom of the item probably is.
-    \tmp@lines=\thing@y
-    \trace{C}{\the\tmp@lines}% 
-    \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
-    \trace{C}{... -\the\dimen1}% 
-    \advance\tmp@lines by -\dimen1
-    \dimen1=#6 \baselineskip % delay of the item
-    \trace{C}{... -\the\dimen1}% 
-    \advance\tmp@lines by -\dimen1
-    \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
-    \tmp@lines=\prev@y
-    \advance\tmp@lines by -\thing@y
-    \divide\tmp@lines by \baselineskip
-    \advance\tmp@lines by #6
-    \advance\tmp@lines by \p@rlinesgone
-    \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
-    \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
-    %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
-    \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
-    \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
-  %\fi
+  %First, remember where the bottom of the item probably is.
+  \tmp@lines=\thing@y
+  \trace{C}{\the\tmp@lines}% 
+  \dimen1=\dimexpr #5 \baselineskip\relax %how many lines the item is
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \dimen1=#6 \baselineskip % delay of the item
+  \trace{C}{... -\the\dimen1}% 
+  \advance\tmp@lines by -\dimen1
+  \xdef\par@items{\cstackpush{\par@items}{#1|#2|\the\tmp@lines}}% Add end-point to stack checking.
+  \tmp@lines=\prev@y
+  \advance\tmp@lines by -\thing@y
+  \divide\tmp@lines by \baselineskip
+  \advance\tmp@lines by #6
+  \advance\tmp@lines by \p@rlinesgone
+  \advance\tmp@lines by -1 % starting on 1st line is 0, not 1.
+  \trace{C}{* calculated \string\DelayedItem{#1}{#2}{\the\tmp@lines} (#4 x#5 @#6)}%
+  %\add@pending{#1}{#2}{\the\thing@y}{#4}{#5}{\the\tmp@lines}{#7}%
+  \ifnum\tmp@lines>3 \p@rlengthimportanttrue\fi
+  \wr@teHistoric{#1}{\the\tmp@lines}{#6}%
+  \wr@teDelayedItem{#1}{#2}{\the\tmp@lines}{(#4x#5@#6)#7}%
 }
-
+\def\wr@teHistoric#1#2#3{%
+  \ifcsname historicdelays-#1\endcsname 
+    \edef\tmpc{\the\numexpr 1+\csname historicdelays-#1\endcsname\relax}%
+  \else
+    \edef\tmpc{0}%
+  \fi
+  \edef\dc@ref@rgs{\string\HistoricDelays{#1}{\tmpc}{#3}{\ifcsname historicdelay-#1\endcsname\csname historicdelay-#1\endcsname,\fi#2}}%
+  \ifcsname lastdelay-#1\endcsname \edef\tmp{#3}%
+    \x@\ifx\csname lastdelay-#1\endcsname\tmp \else
+      \edef\dc@ref@rgs{\string\HistoricDelays{#1}{0}{#3}{#2}}%
+      \x@\edef\csname historicdelays-#1\endcsname{0}% reset count to 0
+    \fi
+  \fi
+  \immediate\write\delayf@le{\dc@ref@rgs}%
+}
 %-cpar_delayedchap
 
 %+cpar_writedelayed
@@ -1079,10 +1094,11 @@
 \def\@@getCutoutSlop#1{\x@\let\x@\r@iselimit\csname raiselimits-#1\endcsname}%
 \def\g@tCutoutSlop#1{\@@getCutoutSlop{#1}\ifx\r@iselimit\relax\x@\p@rselimit\defaultSlop\E\else\x@\p@rselimit\r@iselimit\E\fi}
 \def\p@rselimit#1,#2\E{\edef\@djustmin{-#1}\edef\@djustmax{#2}}
-
+\def\Rerun#1#2#3{}
+ 
 \def\wr@teDelayedItem#1#2#3#4{% Part of post-run processing
   %\wr@teDelayedItem{thingtype}{curref}{delay}{cutout wd}{cutout ht}{cutout after}{cutout side}%
-  \def\c@rref{#2}%
+  \edef\c@rref{#2}%
   \trace{C}{wDI}%
   \delay@test{#1}% 
   \raise@test{#1}%
@@ -1094,6 +1110,7 @@
       \trace{C}{PARLOC:ok}%
     \else
        \ifdim\t@str@ise pt=0pt\else
+         \immediate\write\delayf@le{\string\Rerun{#1}{F}{No need for RaiseItem}}%
          \MSG{PARLOC: Rerun. RaiseItem was applied for #1 #2, but not needed}%
        \fi
     \fi
@@ -1103,6 +1120,18 @@
     %\ifx\t@str@ise\relax \else \count255=\t@str@ise\advance\tmp@lines by -\count255\fi
     %\ifnum\tmp@lines <0 \count255=-\tmp@lines\else\count255=\tmp@lines\fi
     \g@tCutoutSlop{#1}%
+    \ifcsname historicdelays-#1\endcsname
+      \x@\let\x@\tmpl\csname historicdelays-#1\endcsname
+      \ifnum \@djustmin < -\tmpl
+        \trace{C}{Limiting @djustmin to -\tmpl, as it's an early cycle}%
+        \edef\@djustmin{-\csname historicdelays-#1\endcsname}%
+      \fi
+      \ifnum \tmpl < -\@djustmax
+        \trace{C}{Limiting @djustmax to \tmpl, as it's an early cycle}%
+        \edef\@djustmax{\csname historicdelays-#1\endcsname}%
+      \fi
+    \else
+    \fi
     \trace{C}{tmplines =\the\tmp@lines. OK if \@djustmin <= tmplines <=  \@djustmax}%
     \tempfalse
     \edef\@accept@djmin{\@djustmin}%
@@ -1117,6 +1146,7 @@
     \fi  % if new delay is <2 away than old, we can use \RaiseItem
     \iftemp
       \MSG{PARLOC: Rerun. Delayed #1 setting changed (from \the\pr@vdelay to \the\th@sdelay) at #2.}
+      \immediate\write\delayf@le{\string\Rerun{#1}{T}{Position changed}}%
       \message{Current slop: \string\setCutoutSlop{#1}{\the\numexpr -\@djustmin\relax}{\@djustmax}}%
       \message{Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}}%
     \else
@@ -1126,6 +1156,7 @@
         \ifnum\tmp@lines=0\else
           \ifx\t@std@lay\relax\else
             \MSG{PARLOC: Rerun. RaiseItem needed at #1 #2}%
+            \immediate\write\delayf@le{\string\Rerun{#1}{F}{Need RaiseItem}}%
             \temptrue
           \fi
         \fi
@@ -1138,6 +1169,7 @@
         \else 
           \MSG{PARLOC: Rerun with new RaiseItem (by \the\tmp@lines was \t@str@ise) at #1 #2}%   
           \temptrue
+          \immediate\write\delayf@le{\string\Rerun{#1}{F}{RaiseItem changed}}%
         \fi
       \fi
       \iftemp

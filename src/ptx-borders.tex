@@ -133,11 +133,13 @@
     \ifn@npublishable\else
     %\ifm@rksonpage\ifcsname TextBorderStyle\endcsname\ifx\TextBorderStyle\empty\else
       \ifnum\pageno>0\edef\t@st{\botmark}%
+        \trace{et}{Botmark:\t@st, \the\BodyColumns/\the\IntroColumns, m@rksonpage\ifm@rksonpage true\else false\fi}%
+        \ifx\t@st\intr@ \tempfalse\fi
         \ifx\t@st\t@tle\ifnum\BodyColumns=\IntroColumns \else \tempfalse\fi\fi
         \ifm@rksonpage\else\tempfalse\fi
         \ifx\t@st\empty\tempfalse\fi
         \iftemp
-          \trace{eb}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
+          \trace{et}{Making page border for box #1 (page \the\pageno [\t@st]), \the\ht#1+\the\dp#1x\the\wd#1}%
           \bgroup 
             \def\sb@rmarker{textborder}%
             \S@tCat{\id@@@}%

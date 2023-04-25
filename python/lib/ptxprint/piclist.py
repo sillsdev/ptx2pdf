@@ -189,7 +189,7 @@ class PicInfo(dict):
     srcfkey = 'src path'
     stripsp_re = re.compile(r"^(\S+\s+\S+)\s+.*$")
 
-    def __init__(self, model):
+    def __init__(self, model=None):
         self.clear(model)
         self.inthread = False
         self.keycounter = 0
@@ -265,6 +265,27 @@ class PicInfo(dict):
                             break
                 del indat[k]
 
+    def merge_fields(self, other, fields, extend=False, removeOld=False):
+        anchored = {v['anchor']: k for k, v in self.items()}
+        count = 1
+        while f"picM{count}" in self:
+            count += 1
+        for k, v in other.items():
+            a = v['anchor']
+            s = anchored.get(a, None)
+            if s is None and extend:
+                self[f"picM{count}"] = v.copy()
+                count += 1
+            elif s is not None:
+                del anchored[a]
+                self[s].update({f: v[f] for f in fields if f in v})
+                # Delete fields if missing from other
+                for a in ["scale", "mirror", "x-xetex"]:
+                    if a in fields and a not in v and a in self[s]:
+                        del self[s][a]
+        if removeOld:
+            for k in anchored.values():
+                del self[k]
 
     def threadUsfms(self, parent, suffix, nosave=False):
         bks = self.model.getAllBooks()
@@ -299,10 +320,11 @@ class PicInfo(dict):
         return "pic{}{}".format(suffix, self.keycounter)
 
     def read_piclist(self, fname, suffix=""):
-        if not os.path.exists(fname):
-            return
         if isinstance(fname, str):
-            inf = universalopen(fname)
+            if not os.path.exists(fname):
+                return
+            inf = universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                                                        if self.model is not None else 65001)
         else:
             inf = fname
         for l in (x.strip() for x in inf.readlines()):
@@ -370,7 +392,8 @@ class PicInfo(dict):
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
-        with universalopen(fname) as inf:
+        with universalopen(fname, cp=self.model.ptsettings.get('Encoding', 65001) \
+                            if self.model is not None else 65001) as inf:
             dat = inf.read()
             if isperiph:
                 self._readpics(dat, bk, suffix, 0, None, isperiph, parent)

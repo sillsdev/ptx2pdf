@@ -1,6 +1,6 @@
 from gi.repository import Gtk, Pango
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal
-from ptxprint.sfm.style import Marker, CaselessStr
+from ptxprint.sfm.style import CaselessStr
 from ptxprint.styleditor import StyleEditor, aliases
 from ptxprint.utils import _, coltotex, textocol, asfloat
 from ptxprint.imagestyle import imageStyleFromStyle, ImageStyle
@@ -191,12 +191,12 @@ class StyleEditorView(StyleEditor):
             v = stylemap.get(dualmarkers.get(key, key))
             if v is None:
                 return
-            self.loading = True
+            # self.loading = True
             self.set(v[0], val or "")
             if key == "Color":
                 print(f"setval {val=}")
                 self.set("l_styColor", _("Color:")+"\n"+str(val))
-            self.loading = False
+            # self.loading = False
 
     def get(self, key, default=None):
         w = self.builder.get_object(key)
@@ -613,6 +613,32 @@ class StyleEditorView(StyleEditor):
                     yield u
             treeiter = self.treestore.iter_next(treeiter)
 
+    def addMarker(self, mrk, name):
+        super().addMarker(mrk, name)
+        m = name_reg.match(name) if name is not None else None
+        if m:
+            if not m.group(1) and " " in m.group(2):
+                cat = m.group(2)
+            else:
+                cat = m.group(1) or m.group(3)
+        else:
+            cat = "Other"
+        cat, url = categorymapping.get(cat, (cat, None))
+        self.sheet[mrk][' category'] = cat
+        selecti = self.treestore.get_iter_first()
+        while selecti:
+            r = self.treestore[selecti]
+            if r[0] == cat:
+                selecti = self.treestore.append(selecti, [mrk, name, True, False])
+                logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
+                break
+            selecti = self.treestore.iter_next(selecti)
+        else:
+            selecti = self.treestore.append(None, [cat, cat, False, False])
+            selecti = self.treestore.append(selecti, [mrk, name, True, False])
+            logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
+        return selecti
+
     def mkrDialog(self, newkey=False):
         dialog = self.builder.get_object("dlg_styModsdialog")
         for k, v in dialogKeys.items():
@@ -629,7 +655,7 @@ class StyleEditorView(StyleEditor):
         wid = self.builder.get_object(dialogKeys['Marker'])
         if wid is not None:
             wid.set_sensitive(newkey)
-        tryme = True
+        tryme = True    # keep trying until necessary fields filled in
         while tryme:
             response = dialog.run()
             if response != Gtk.ResponseType.OK:
@@ -648,32 +674,10 @@ class StyleEditorView(StyleEditor):
             (d, selecti) = self.treeview.get_selection().get_selected()
             name = self.model.get(dialogKeys['Name'], '')
             if key not in self.sheet:
-                self.sheet[key] = Marker({" deletable": True})
+                selecti = self.addMarker(key, name)
                 for k, v in stylemap.items():
                     if not k.startswith("_"):
                         self.setval(key, k, self.getval(self.marker, k))
-                m = name_reg.match(name)
-                if m:
-                    if not m.group(1) and " " in m.group(2):
-                        cat = m.group(2)
-                    else:
-                        cat = m.group(1) or m.group(3)
-                else:
-                    cat = "Other"
-                cat, url = categorymapping.get(cat, (cat, None))
-                self.sheet[key][' category'] = cat
-                selecti = self.treestore.get_iter_first()
-                while selecti:
-                    r = self.treestore[selecti]
-                    if r[0] == cat:
-                        selecti = self.treestore.append(selecti, [key, name, True, False])
-                        logger.debug(f"Inside treestore: {self.treestore.get_string_from_iter(selecti)}")
-                        break
-                    selecti = self.treestore.iter_next(selecti)
-                else:
-                    selecti = self.treestore.append(None, [cat, cat, False, False])
-                    selecti = self.treestore.append(selecti, [key, name, True, False])
-                    logger.debug(f"one step {self.treestore.get_string_from_iter(selecti)}")
             else:
                 self.treestore.set_value(selecti, 1, name)
             for k, v in dialogKeys.items():
@@ -745,8 +749,10 @@ class StyleEditorView(StyleEditor):
             del self.sheet[key]
             selection = self.treeview.get_selection()
             model, i = selection.get_selected()
-            p = model.get_path(i)
-            model.row_delete(p)
+            if isinstance(model, Gtk.TreeModelFilter):
+                i = model.convert_iter_to_child_iter(i)
+                model = model.get_model()
+            model.remove(i)
             self.onSelected(selection)
 
     def refreshKey(self):

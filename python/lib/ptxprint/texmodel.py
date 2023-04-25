@@ -43,6 +43,40 @@ Borders = {'c_inclPageBorder':      ('pageborder', 'fancy/pageborderpdf', 'A5 pa
            'c_applyWatermark':      ('watermarks', 'paper/watermarkpdf', r'\def\MergePDF{{"{}"}}')
 }
 
+_periphids = {
+    "title page": "title",
+    "half title page": "halftitle",
+    "promotional page": "promo",
+    "imprimatur": "imprimatur",
+    "publication data": "pubdata",
+    "foreword": "foreword",
+    "preface": "preface",
+    "table of contents": "contents",
+    "alphabetical contents": "alphacontents",
+    "table of abbreviations": "abbreviations",
+    "bible introduction": "intbible",
+    "old testament introduction": "intot",
+    "pentateuch introduction": "intpent",
+    "history introduction": "inthistory",
+    "poetry introduction": "intpoetry",
+    "prophecy introduction": "intprophesy",
+    "deuterocanon introduction": "intdc",
+    "new testament introduction": "intnt",
+    "gospels introduction": "intgospels",
+    "epistles introduction": "intepistles",
+    "letters introduction": "intletters",
+    "chronology": "chron",
+    "weights and measures": "measures",
+    "map index": "maps",
+    "lxx quotes in nt": "lxxquotes",
+    # "coverfront": "coverfront",
+    # "coverback": "coverback",
+    # "coverspine": "coverspine",
+    # "coverwhole": "coverwhole",
+    "cover": "cover",
+    "spine": "spine"
+}
+
 
 class TexModel:
     _peripheralBooks = ["FRT", "INT"]
@@ -96,40 +130,6 @@ class TexModel:
         "notes/fncallers": "footnotes"
     }
     _crossRefInfo = None
-
-    _periphids = {
-        "title page": "title",
-        "half title page": "halftitle",
-        "promotional page": "promo",
-        "imprimatur": "imprimatur",
-        "publication data": "pubdata",
-        "foreword": "foreword",
-        "preface": "preface",
-        "table of contents": "contents",
-        "alphabetical contents": "alphacontents",
-        "table of abbreviations": "abbreviations",
-        "bible introduction": "intbible",
-        "old testament introduction": "intot",
-        "pentateuch introduction": "intpent",
-        "history introduction": "inthistory",
-        "poetry introduction": "intpoetry",
-        "prophecy introduction": "intprophesy",
-        "deuterocanon introduction": "intdc",
-        "new testament introduction": "intnt",
-        "gospels introduction": "intgospels",
-        "epistles introduction": "intepistles",
-        "letters introduction": "intletters",
-        "chronology": "chron",
-        "weights and measures": "measures",
-        "map index": "maps",
-        "lxx quotes in nt": "lxxquotes",
-        # "coverfront": "coverfront",
-        # "coverback": "coverback",
-        # "coverspine": "coverspine",
-        # "coverwhole": "coverwhole",
-        "cover": "cover",
-        "spine": "spine"
-    }
 
     _tocleaders = [
         "",
@@ -289,7 +289,7 @@ class TexModel:
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
-            self.dict['cover/spinewidth_'] = self.printer.spine
+            self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))
         else:
             if self.asBool('cover/covercropmarks'):
                 self.dict['cover/spinewidth_'] = 0
@@ -722,7 +722,7 @@ class TexModel:
                                 self.frontperiphs[currk] = "\n".join(currperiphs)
                             currk = ma[2] or ma[3]
                             if not currk:
-                                currk = self._periphids.get(m[1].lower(), m[1].lower())
+                                currk = _periphids.get(m[1].lower(), m[1].lower())
                             currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:
@@ -761,7 +761,7 @@ class TexModel:
         intfname = self.printer.getBookFilename('INT')
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
-            self.dict['project/intfile'] = os.path.basename(outfname)
+            self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes, "INT", dat)
@@ -1122,6 +1122,10 @@ class TexModel:
                 self.localChanges.append((None,
                                           regex.compile(r"(\\c )", flags=regex.S), "\\cl {}\n\\1".format(clabel)))
                 
+        # If each chapter needs to start on a new page
+        if self.asBool("document/pagebreakallchs"):
+            self.localChanges.append((None, regex.compile(r"\\c ", flags=regex.S), "\\pb\n\\c "))
+
         # Throw out the known "nonpublishable" markers and their text (if any)
         self.localChanges.append((None, regex.compile(r"\\(usfm|ide|rem|sts|restore|pubinfo)( .*?)?\n(?=\\)", flags=regex.M), ""))
 
@@ -1366,8 +1370,9 @@ class TexModel:
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
-                ge = re.findall(r"\\\S+ \\k (.+)\\k\* .+?\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"\\\S+ \\k (.+?)\\k\* .+?\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
+            logger.debug(f"Building regex for {delGloEntry=}")
             self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self):

@@ -183,10 +183,14 @@
 \StorePeriph{wholecover}
 \SwitchOrnamentsFamily{pgfhan}
 \SwitchOrnamentsFamily{vectorian}
-\CacheOrnamentstrue
-\XformOrnamentsfalse
+\CacheOrnamentsfalse
+\XformOrnamentstrue
 \holdXobjectsfalse
 \tracingoutput=1
+\newbox\myorn
+\setbookhook{start}{all}{\setbox\myorn\hbox{\zornament|pattern="1|||" \*}}%showbox\myorn}
+\sethook{start}{p}{\leavevmode xx\copy\myorn}% 
+
 \ptxfile{test.usfm}
 \zNeedEvenPage
 \makeatletter

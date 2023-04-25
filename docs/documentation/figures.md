@@ -288,8 +288,20 @@ taking the place of the caption). Additionally they may have additional
 whitespace before and after them. This is controlled by the 
 USFM-3 parameters `x-spacebefore` and `x-spaceafter`. Alternatively, the
 stylesheet parameters `\SpaceBefore` and `\SpaceAfter` will alter the 
-default value for all figures inserted via the `\fig` mechanism (including figures 
-from piclists). Sidebars similarly have these stylesheet parameters.
+default value for all matching figures inserted via the `\fig` mechanism
+(including figures from piclists). 
+Sidebars similarly have these stylesheet
+parameters.  
+
+'Matching figures' above means that figure location (pgpos value) should be specified:
+
+```
+\Marker loc:cr|fig
+\SpaceBefore 0
+\SpaceAfter 0
+\SpaceBeside 15
+```
+
 
 
 ### x-xetex Attribute - Rotation control and PDF page selection 
@@ -354,8 +366,9 @@ true at the time of writing, the 'ink is not dry' and there will probably be cha
    * Any other string (e.g. `x-creditbox="dark"`) specifies a particular styling set for the credit.
 
 #### Styling of credit 
-Similarly to other attributes, the  displayed attribute `x-credit` of marker `\fig` can be styled in the following manner (by
-the XeTeX code, don't expect this to work with Paratext or another program!):
+Similarly to other attributes, the  displayed attribute `x-credit` of marker
+`\fig` can be styled in the following manner (by the XeTeX code, don't expect
+this to work with Paratext or another program!):
 
 ```
 \Marker x-credit|fig
@@ -369,7 +382,7 @@ the XeTeX code, don't expect this to work with Paratext or another program!):
 \Color xFFFFFE
 \Background x1E1E3E
 
-\Marker x-credit:box=whitetext|fig
+\Marker whitetext|x-credit
 \Color xFFFFFE
 \Background -
 ```
@@ -386,10 +399,58 @@ work.  Note the use of hexadecimal notation is possible only in the style file.
 It is not understood in the ```\fig``` line as the presence of spaces are used
 to distinguish between a colour and a style label.
 
-The third set demonstrates that there's no need to re-specify the default
-parameters (defined by ```\Marker x-credit|fig```, and the special value of `-`
-for the `\Background` parameter cancels the box for `creditbox="whitetext"` I.e. 
-there will be no box for this item.
+The third set demonstrates the alternative, shorthand styling name for the marker, 
+and also that there's no need to re-specify the default parameters (defined by
+```\Marker x-credit|fig```, and the special value of `-` for the `\Background`
+parameter cancels the box for `creditbox="whitetext"` I.e.  there will be no
+box for this item.
+
+#### Moving the position of the credit box.
+It was found that when positioned at the putative exact edge of an image, the
+background box of the credit fails to fully hide the edge of the figure. The
+exact reason for this has not been determined, and it may be deprendent on
+XeTeX, graphics format or perhaps the PDF viewer.
+
+To avoid a tiny sliver of the image showing, a small offset is given by the
+configuration parameters `\FigCreditOverEdgeH` and `\FigCreditOverEdgeV`. These
+move the credit and its box past where edge of the figure would be expected to
+be, in the horizontal and vertical dimension respectively. 
+They are global values, affecting the credits on any figures.
+
+```
+\FigCreditOverEdgeH=0.07pt
+\FigCreditOverEdgeV=0.07pt
+```
+
+It was then realised that more significant values of these parameters might potentially
+move the credit outside the area of the figure entirely. This effect can now be
+utilised to control the position of all or of particular
+credit box styles.  At present there is no per-image control.
+Moving the text in a vertical dimension relative to the text
+is set using the `\SpaceBefore` stylesheet value (adjusting
+FigCreditOverEdgeH if the angle is +/-90 or FigCreditOverEdgeV otherwise) and similarly 
+`\SpaceBeside` (overrides FigCreditOverEdgeV or FigCreditOverEdgeH), 
+shifting the box sidewise relative to the text (unlike the values above,
+positive values will shift it towards the center of the figure).
+
+Note that while `\SpaceBefore` is normally measured in lines and `\SpaceBeside` in points,
+ here both is interpreted as a measurement in points.  e.g.:
+```
+\Marker Outside|x-credit
+\Color x000000
+\Background -
+\SpaceBefore 5
+\SpaceBeside 3
+ 
+\Marker x-credit
+\SpaceBefore 0
+\SpaceBeside 5
+```
+would mean that a  'vertical' credit box (rotation 90 degrees) selected with
+x-creditbox="Outside" is pushed 5pt beyond the left or right edge of the
+figure, and shifted 3pt in from the upper or lower edge, while other credit
+boxes sit on the outer edge of the figure like normal, but are shifted along the
+edge by 5 pt.
 
 
 ## Piclist files
