@@ -2082,7 +2082,7 @@ class GtkViewModel(ViewModel):
             fpath = self.configFRT()
             if not os.path.exists(fpath):
                 logger.debug(f"Front matter from {fpath} does not exist")
-                self.uneditedText[pgnum] = _("%%% Click the Generate button (above) to start the process of creating Front Matter...")
+                self.uneditedText[pgnum] = _("\\rem Click the Generate button (above) to start the process of creating Front Matter...")
                 self.fileViews[pgnum][0].set_text(self.uneditedText[pgnum])
                 fpath = None
             if self.get("t_invisiblePassword") == "":

@@ -1438,7 +1438,7 @@ class ViewModel:
                 with open(fpath, "r", encoding="utf-8") as inf:
                     # Strip out all markers themselves, and English content fields
                     sfmtxt = inf.read()
-                    sfmtxt = re.sub(r'\\id .+?\r?\n', '', sfmtxt)
+                    sfmtxt = re.sub(r'\\id .+?(?=\r?\n)', '', sfmtxt)
                     sfmtxt = re.sub(r'\\rem .+?\r?\n', '', sfmtxt)
                     # throw out illustration markup, BUT keep the caption text (USFM2 + USFM3)
                     sfmtxt = re.sub(r'\\fig (.*\|){5}([^\\]+)?\|[^\\]+\\fig\*', '\2', sfmtxt) 
