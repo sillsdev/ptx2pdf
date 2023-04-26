@@ -1307,7 +1307,10 @@ class TexModel:
         # Escape special codes % and $ that could be in the text itself
         self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])(\s?)".format("".join(self._specialchars)),
                                                       flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " ")))
-
+        # Remove unusual line breaks in final .sfm
+        self.localChanges.append((None, regex.compile(r"\r", flags=regex.M), r""))
+        self.localChanges.append((None, regex.compile(r"^\n\\id", flags=regex.M), r"\\id"))
+        
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.localChanges)
