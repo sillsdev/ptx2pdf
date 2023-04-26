@@ -1778,7 +1778,7 @@ download and use in a publication.</property>
     <property name="type-hint">dialog</property>
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
-    <property name="version">Version 2.3.8</property>
+    <property name="version">Version 2.3.9</property>
     <property name="copyright">© 2020-2022, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
 the user-interface. The PDFs are produced by enhanced 
@@ -4616,7 +4616,6 @@ settings stored in the .sty files.</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">NOTE: This feature has not yet been implemented!</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="always-show-image">True</property>
@@ -5527,7 +5526,6 @@ and Customized Styles (custom.sty).</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
-                    <property name="inconsistent">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>

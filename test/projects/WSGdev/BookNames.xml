@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BookNames>
+  <book code="GEN" abbr="पुट" short="पुट्गड्मि" long="पुट्गड्मिता पुस्तक" />
+  <book code="EXO" abbr="बह्‍रि" short="बह्‍रि पेसिवल" long="बह्‍रि पेसिवल पुस्तक" />
+  <book code="LEV" abbr="कटोडा" short="कटोडलिरा" long="कटोडलिरा पुस्तक" />
+  <book code="NUM" abbr="इसोब" short="इसोब्ना" long="इसोब्ना पुस्तक" />
+  <book code="DEU" abbr="रेंडा" short="रेंडवा उपदेस" long="रेंडवा उपदेस पुस्तक" />
+  <book code="JOS" abbr="येहो" short="येहोसुवा" long="येहोसुवा पुस्तक" />
+  <book code="JDG" abbr="नाय" short="नाय वेह्‍वलिरा" long="नाय वेह्‍वलिरा पुस्तक" />
+  <book code="RUT" abbr="रूतु" short="रूतु" long="रूतु पुस्तक" />
+  <book code="1SA" abbr="1समु" short="1वा समुयेल" long="समुयेल मोदोडा पुस्तक" />
+  <book code="2SA" abbr="2समु" short="2वा समुयेल" long="समुयेल रेंडवा पुस्तक" />
+  <book code="1KI" abbr="1राजा" short="1वा राजलिरा" long="राजलिरा मोदोडा पुस्तक" />
+  <book code="2KI" abbr="2राजा" short="2वा राजलिरा" long="राजलिरा रेंडवा पुस्तक" />
+  <book code="1CH" abbr="1जर्ग्ता" short="1वा जर्गतंग गट्नना" long="जर्गतंग गट्नना मोदोडा पुस्तक" />
+  <book code="2CH" abbr="2जर्ग्ता" short="2वा जर्गतंग गट्नना" long="जर्गतंग गट्नना रेंडवा पुस्तक" />
+  <book code="EZR" abbr="एज्रा" short="एज्रा" long="एज्रा पुस्तक" />
+  <book code="NEH" abbr="नेहे" short="नेहेम्या" long="नेहेम्या पुस्तक" />
+  <book code="EST" abbr="एस्तेर" short="एस्तेर" long="एस्तेर पुस्तक" />
+  <book code="JOB" abbr="योबु" short="योबु" long="योबु पुस्तक" />
+  <book code="PSA" abbr="कीर्ता" short="कीर्तन्क्ना" long="कीर्तन्क्ना पुस्तक" />
+  <book code="PRO" abbr="सुबुत" short="सुबुत्क्ना" long="सुबुत्क्ना पुस्तक" />
+  <book code="ECC" abbr="बोदा" short="बोदा करुस्वल" long="बोदा करुस्वल पुस्तक" />
+  <book code="SNG" abbr="स्वर्ग" short="स्वर्ग्ना पाटा" long="स्वर्ग्ना पाटता पुस्तक" />
+  <book code="ISA" abbr="येसा" short="येसया" long="येसया पुस्तक" />
+  <book code="JER" abbr="इर" short="इर्मिया" long="इर्मिया पुस्तक" />
+  <book code="LAM" abbr="दुक्सा" short="दुक्सतुन तोह्‍वल" long="दुक्सतुन तोह्‍वल पुस्तक" />
+  <book code="EZK" abbr="येहेज" short="येहेज्केल" long="येहेज्केल पुस्तक" />
+  <book code="DAN" abbr="दानि" short="दानियेल" long="दानियेल पुस्तक" />
+  <book code="HOS" abbr="होसे" short="होसेया" long="होसेया पुस्तक" />
+  <book code="JOL" abbr="योवेल" short="योवेल" long="योवेल पुस्तक" />
+  <book code="AMO" abbr="आमोस" short="आमोस" long="आमोस पुस्तक" />
+  <book code="OBA" abbr="ओबद्या" short="ओबद्या" long="ओबद्या पुस्तक" />
+  <book code="JON" abbr="योना" short="योना" long="योना पुस्तक" />
+  <book code="MIC" abbr="मीका" short="मीका" long="मीका पुस्तक" />
+  <book code="NAM" abbr="नाहो" short="नाहोम" long="नाहोम पुस्तक" />
+  <book code="HAB" abbr="हबा" short="हबकुक" long="हबकुक पुस्तक" />
+  <book code="ZEP" abbr="जेपंया" short="जेपंया" long="जेपंया पुस्तक" />
+  <book code="HAG" abbr="हग्गा" short="हग्गयि" long="हग्गयि पुस्तक" />
+  <book code="ZEC" abbr="जेकर्या" short="जेकर्या" long="जेकर्या पुस्तक" />
+  <book code="MAL" abbr="मलाकि" short="मलाकि" long="मलाकि पुस्तक" />
+  <book code="MAT" abbr="मत्ता" short="मत्तयि" long="मत्तयि लिहि कीता चोकोट्ना कबुर" />
+  <book code="MRK" abbr="मार" short="मार्क" long="मार्क लिहि कीता चोकोट्ना कबुर" />
+  <book code="LUK" abbr="लूका" short="लूका" long="लूकल लिहि कीता चोकोट्ना कबुर" />
+  <book code="JHN" abbr="योहा" short="योहन" long="योहन लिहि कीता चोकोट्ना कबुर" />
+  <book code="ACT" abbr="अपो" short="अपो. का." long="अपोस्तुल्क कीतंग काम्क" />
+  <book code="ROM" abbr="रोमा" short="रोमा" long="रोमतुरकुन लिहि कीता चिटि" />
+  <book code="1CO" abbr="1कोरा" short="1वा कोरंति" long="कोरंतितुरकुन लिहि कीता मोदोडा चिटि" />
+  <book code="2CO" abbr="2कोरा" short="2वा कोरंति" long="कोरंतितुरकुन लिहि कीता रेंडवा चिटि" />
+  <book code="GAL" abbr="गलति" short="गलति" long="गलतियतुरकुन लिहि कीता चिटि" />
+  <book code="EPH" abbr="एपेसि" short="एपेसि" long="एपेसितुरकुन लिहि कीता चिटि" />
+  <book code="PHP" abbr="पिलिपि" short="पिलिपि" long="पिलिपितुरकुन लिहि कीता चिटि" />
+  <book code="COL" abbr="कोलसि" short="कोलसि" long="कोलसितुरकुन लिहि कीता चिटि" />
+  <book code="1TH" abbr="1तेसा" short="1वा तेसलोनिका" long="तेसलोनिकतुरकुन लिहि कीता मोदोडा चिटि" />
+  <book code="2TH" abbr="2तेसा" short="2वा तेसलोनिका" long="तेसलोनिकतुरकुन लिहि कीता रेंडवा चिटि" />
+  <book code="1TI" abbr="1तिमो" short="1वा तिमोति" long="तिमोतिन लिहि कीता मोदोडा चिटि" />
+  <book code="2TI" abbr="2तिमो" short="2वा तिमोति" long="तिमोतिन लिहि कीता रेंडवा चिटि" />
+  <book code="TIT" abbr="तीतु" short="तीतु" long="तीतुन लिहि कीता चिटि" />
+  <book code="PHM" abbr="पिले" short="पिलेमोन" long="पिलेमोंतुन लिहि कीता चिटि" />
+  <book code="HEB" abbr="हेब्रि" short="हेब्रि" long="हेब्रियुलकुन लिहि कीता चिटि" />
+  <book code="JAS" abbr="याको" short="याकोब" long="याकोब लिहि कीता चिटि" />
+  <book code="1PE" abbr="1पेतु" short="1वा पेतुरु" long="पेतुरु लिहि कीता मोदोडा चिटि" />
+  <book code="2PE" abbr="2पेतु" short="2वा पेतुरु" long="पेतुरु लिहि कीता रेंडवा चिटि" />
+  <book code="1JN" abbr="1योहा" short="1वा योहन" long="योहन लिहि कीता मोदोडा चिटि" />
+  <book code="2JN" abbr="2योहा" short="2वा योहन" long="योहन लिहि कीता रेंडवा चिटि" />
+  <book code="3JN" abbr="3योहा" short="3वा योहन" long="योहन लिहि कीता मूडवा चिटि" />
+  <book code="JUD" abbr="यूदा" short="यूदा" long="यूदल लिहि कीता चिटि" />
+  <book code="REV" abbr="उजगिरि" short="उजगिरि अरुस्वल" long="उजगिरि अरुस्वल पुस्तक" />
+  <book code="BAK" abbr="" short="" long="यूदुल्क्ना जातितुर बगवंतन पार्तना-विंति किय्वल तरिका" />
+  <book code="GLO" abbr="" short="" long="पूना सेलेते कटिन गोस्टिना अर्तम" />
+  <book code="TOB" abbr="" short="" long="" />
+  <book code="JDT" abbr="" short="" long="" />
+  <book code="ESG" abbr="" short="" long="" />
+  <book code="WIS" abbr="" short="" long="" />
+  <book code="SIR" abbr="" short="" long="" />
+  <book code="BAR" abbr="" short="" long="" />
+  <book code="LJE" abbr="" short="" long="" />
+  <book code="S3Y" abbr="" short="" long="" />
+  <book code="SUS" abbr="" short="" long="" />
+  <book code="BEL" abbr="" short="" long="" />
+  <book code="1MA" abbr="" short="" long="" />
+  <book code="2MA" abbr="" short="" long="" />
+  <book code="3MA" abbr="" short="" long="" />
+  <book code="4MA" abbr="" short="" long="" />
+  <book code="1ES" abbr="" short="" long="" />
+  <book code="2ES" abbr="" short="" long="" />
+  <book code="MAN" abbr="" short="" long="" />
+  <book code="PS2" abbr="" short="" long="" />
+  <book code="ODA" abbr="" short="" long="" />
+  <book code="PSS" abbr="" short="" long="" />
+  <book code="JSA" abbr="" short="" long="" />
+  <book code="JDB" abbr="" short="" long="" />
+  <book code="TBS" abbr="" short="" long="" />
+  <book code="SST" abbr="" short="" long="" />
+  <book code="DNT" abbr="" short="" long="" />
+  <book code="BLT" abbr="" short="" long="" />
+  <book code="3ES" abbr="" short="" long="" />
+  <book code="EZA" abbr="" short="" long="" />
+  <book code="5EZ" abbr="" short="" long="" />
+  <book code="6EZ" abbr="" short="" long="" />
+  <book code="DAG" abbr="" short="" long="" />
+  <book code="PS3" abbr="" short="" long="" />
+  <book code="2BA" abbr="" short="" long="" />
+  <book code="LBA" abbr="" short="" long="" />
+  <book code="JUB" abbr="" short="" long="" />
+  <book code="ENO" abbr="" short="" long="" />
+  <book code="1MQ" abbr="" short="" long="" />
+  <book code="2MQ" abbr="" short="" long="" />
+  <book code="3MQ" abbr="" short="" long="" />
+  <book code="REP" abbr="" short="" long="" />
+  <book code="4BA" abbr="" short="" long="" />
+  <book code="LAO" abbr="" short="" long="" />
+  <book code="FRT" abbr="" short="" long="पवित्रा आत्मतंग कार्वय्क पवित्रा आत्मता सक्तिते अपोस्तुल्क्नंग कार्वय्क बतल बगा मंता" />
+  <book code="XXE" abbr="" short="" long="पूना सेलेते कटिन गोस्टिना अर्तम" />
+  <book code="XXF" abbr="2018" short="Bible Readings 2018" long="पूना सेलेते कटिन गोस्टिना अर्तम" />
+  <book code="XXG" abbr="" short="" long="पूना सेलेते कटिन गोस्टिना अर्तम" />
+  <book code="***" abbr="" short="" long="" />
+  <book code="XXA" abbr="" short="स्टांग्स" long="INTRODUCTION OLD TESTAMENT NEW TESTAMENT" />
+  <book code="XXB" abbr="" short="Proverbs" long="बातल वकत्ने बहन ताकना इन्जेर वेह्‍वलिक वचन्क" />
+  <book code="XXC" abbr="" short="" long="" />
+  <book code="XXD" abbr="" short="" long="" />
+  <book code="OTH" abbr="" short="" long="" />
+  <book code="INT" abbr="" short="" long="గోండి బాసత పూన నియమున్ బారెతె మునె వెహ్వల్ గొస్టి" />
+  <book code="CNC" abbr="" short="" long="Concordance" />
+  <book code="TDX" abbr="" short="" long="" />
+  <book code="NDX" abbr="" short="" long="" />
+</BookNames>
