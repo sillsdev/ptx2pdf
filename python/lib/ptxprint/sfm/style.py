@@ -300,9 +300,7 @@ def simple_parse(source, error_level=ErrorLevel.Content, fields=_fields, categor
             continue
         if key.lower() == keyfield.lower():
             mkr = f"cat:{category}|{val}" if category else val
-            res[mkr] = Marker()
-        else:
-            res[mkr][key] = val
+        res.setdefault(mkr, Marker())[key] = val
     return res
 
 parse = simple_parse

@@ -281,7 +281,7 @@ class Reference:
         r.verse += 1
         if r.verse > maxvrs:
             r.chap += 1
-            r.verse = 1
+            r.verse = 0
             if r.book not in books:
                 r.book = "GEN"
                 r.chap = 1
@@ -696,7 +696,7 @@ def tests():
         init = a.asint()
         end = b.asint()
         for r in res.allrefs():
-            if r.verse == 1 and r.chap != res[0].first.chap:
+            if r.verse == 0 and r.chap != res[0].first.chap:
                 init += 1
             if r.asint() != init:
                 raise TestException("{} in {} is out of order".format(r, s))
