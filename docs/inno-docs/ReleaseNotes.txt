@@ -1,9 +1,25 @@
 PTXprint 2.3.8 Release Notes
-19 Apr 2023
+26 Apr 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________________________________
 
+Bug fixes and Improvements in 2.3.9 (26 Apr 2023)
+
+  * Don't crash if glossary line contains multiple keywords
+  
+  * Merge branch 'figplacemnt'
+  
+  * Fixed broken footnote hanging around during backing up #862
+  
+  * Improved UI: Remove Create Diff button and replace with a selectable option
+  
+  * Fix CMYK black processing & Don't reverse a white image
+  
+  * Improved: Round margins to 0.01
+  
+  * Make ifFinalNotesDown work properly
+  
 Bug fixes and Improvements in 2.3.8 (19 Apr 2023)
 
   * Updated Crowdin localization strings

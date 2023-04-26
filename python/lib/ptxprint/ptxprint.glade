@@ -4616,7 +4616,6 @@ settings stored in the .sty files.</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">NOTE: This feature has not yet been implemented!</property>
                 <property name="margin-top">3</property>
                 <property name="margin-bottom">3</property>
                 <property name="always-show-image">True</property>
@@ -5527,7 +5526,6 @@ and Customized Styles (custom.sty).</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="active">True</property>
-                    <property name="inconsistent">True</property>
                     <property name="draw-indicator">True</property>
                     <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
