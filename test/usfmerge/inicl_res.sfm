@@ -1,25 +1,33 @@
-\lefttext
+\polyglotcolumn L
+
 \id TST - a test regarding universal cl usage before c 1
-\p
-\righttext
-\id TST - a test regarding universal cl usage before c 1
-\p
-\lefttext
+
 \mt1 Testing Initial cl
 \cl Chapter
-\righttext
+\polyglotcolumn R
+
+\id TST - a test regarding universal cl usage before c 1
+
 \mt1 Testing Initial cl no heading
 \cl Chapter
-\lefttext
-\s Section Heading
-\norighttext
+
+\polyglotendcols
+\polyglotcolumn L
+
 \c 1
+
+\s Section Heading
+\polyglotcolumn R
+
+\c 1
+
+\polyglotendcols
+\polyglotcolumn L
 \p
 \v 1 Some text
-\p
-\righttext
-\c 1
+\polyglotcolumn R
 \p
 \v 1 Some text
 
-\p
+
+\polyglotendcols

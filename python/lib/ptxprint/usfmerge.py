@@ -28,20 +28,40 @@ class ChunkType(Enum):
     BODY = 5
     ID = 6
     TABLE = 7
-    VERSE = 8           # A verse chunk, inside a paragraph 
-    PARVERSE = 9           # A verse chunk, just after a paragraph 
-    MIDVERSEPAR = 10     # A verse immediately after a paragraph
-    PREVERSEPAR = 11    # A paragrpah where the next content is a verse number
-    NOVERSEPAR = 12     # A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction
-    NPARA = 13          # A nested paragraph 
-    NB = 14             # A nobreak mark 
-    NBCHAPTER = 15      # A chapter that is followed by an NB
-    CHAPTERPAR = 16      # A PREVERSEPAR that is following a chapter - never a good sync point!
-    CHAPTERHEAD=17      #A Heading that is (was) following a chapter (and sometimes also the chapter number)
-    PREVERSEHEAD=18      #A Heading that is just before  a verse 
-    USERSYNC=19        #A preprocessing-inserted break point.
+    VERSE = 8 
+    PARVERSE = 9
+    MIDVERSEPAR = 10
+    PREVERSEPAR = 11
+    NOVERSEPAR = 12
+    NPARA = 13
+    NB = 14
+    NBCHAPTER = 15
+    CHAPTERPAR = 16
+    CHAPTERHEAD = 17
+    PREVERSEHEAD = 18
+    USERSYNC = 19
 
-
+_chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
+    ChunkType.CHAPTER :"A normal chapter number",
+    ChunkType.HEADING :"A heading (e.g. s1)",
+    ChunkType.TITLE :"A title (e.g. mt1)",
+    ChunkType.INTRO :"An introduction paragraph (e.g. ip)",
+    ChunkType.BODY :"A generic paragraph (normally turned into something else)",
+    ChunkType.ID :"(!)The \\id line",
+    ChunkType.TABLE :"A table",
+    ChunkType.VERSE :"A verse chunk, inside a paragraph",
+    ChunkType.PARVERSE :"A verse chunk, just after starting a paragraph",
+    ChunkType.MIDVERSEPAR :"A paragraph which is mid-paragraph",
+    ChunkType.PREVERSEPAR :"A paragrpah where the next content is a verse number",
+    ChunkType.NOVERSEPAR :"A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction",
+    ChunkType.NPARA :"(!)A block of nested paragraphs",
+    ChunkType.NB :"A nobreak mark - often protected against breaking",
+    ChunkType.NBCHAPTER :"A chapter that is followed by an NB - not normally a good sync point",
+    ChunkType.CHAPTERPAR :"A PREVERSEPAR that is following a chapter - not normally a good sync point!",
+    ChunkType.CHAPTERHEAD:"A Heading that is (was) following a chapter (and sometimes also the chapter number)",
+    ChunkType.PREVERSEHEAD:"A Heading that is just before PREVERSEPAR",
+    ChunkType.USERSYNC:"A preprocessing-inserted / manual sync point."
+}
 _chunkClass_map = {
 ChunkType.DEFSCORE:'',
 ChunkType.CHAPTER:'CHAPTER',
@@ -835,27 +855,80 @@ modes = {
     "scores" : alignScores
 }
 
-def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51):
+def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
+    global _chunkDesc_map
+    config={}#configparser.ConfigParser()
+    config['DEFAULT']={k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
+    config['L']={'WEIGHT':51}
+    config['R']={'WEIGHT':51}
+    if variety!="":
+        config[variety]={}
+    if confname!="":
+        config[confname]={}
+    logger.debug(f"Writing default configuration to {mergeconfigfile}")
+    with open(mergeconfigfile,'w') as configfile:
+        configfile.write("# Custom merge configuration file.\n")
+        configfile.write("# This was written because no merge.cfg file could be found. As generated it contains all potential break-points the program expects.\n")
+        configfile.write("# Items in the [DEFAULT] section define the global defaults, which apply if there are no overriding values in a given section.\n")
+        configfile.write("# Valid sections include [L] and [R] (primary and secondary), [configuration], and [variety] for custom-variety.\n")
+        configfile.write("# Sections [L] and [R] are ignored if the file is in the root paratext directory.\n")
+        configfile.write("# The scores (from all columns) are added and a sum of 100 or more at a given point causes splitting and synchronisation.\n")
+        configfile.write("# Any value not listed is assumed to be 0.\n")
+        configfile.write("# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value. Other values are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.\n")
+        configfile.write("# Chapter and verse numbers are remembered, other break-points increment a paragraph counter.\n")
+        #configfile.write("# The number at the end of the comment indicates the group a given break-point falls into,\n")
+        #configfile.write("# i.e. to which other positions it will be compared\n")
+        for section in config:
+            configfile.write(f"\n[{section}]\n\n")
+            for k in config[section]:
+                v=config[section][k]
+                if k in _chunkDesc_map:
+                    comment=_chunkDesc_map[k]
+                    if not comment.startswith('(!)'):
+                        #cannon=_canonical_order[k] if k in _canonical_order else 9
+                        #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
+                        configfile.write(f"#{comment}\n{k.name} = {v}\n")
+                else:
+                    configfile.write(f"{k} = {v}\n")
+        #config.write(configfile)
+
+def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     """ Given a specified filepath, column (or None if this is a generic config), custime-variety and config name, find the relevant sycnpoints for a given file.
     """
     global settings
-    logger.debug(f"Reading config file {mergeconfigfile} for ({column or ""}, {variety}, {config})")
+    logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
     config=configparser.ConfigParser()
     config.read(mergeconfigfile)
+    if not config.has_section('zzzDEFAULT'):
+        config['zzzDEFAULT']={} # make it possible to access the DEFAULT values.
     if column is None:
-        keys=[variety,confname,"default"]
+        if variety == "":
+            keys=[confname,"zzzDEFAULT"]
+        else:
+            keys=[variety,confname,"zzzDEFAULT"]
     else:
-        keys=[variety+"-"+column,variety,column,confname,"default"]
+        if variety == "":
+            keys=[column,confname,"zzzDEFAULT"]
+        else:
+            keys=[variety+"-"+column,variety,column,confname,"zzzDEFAULT"]
     for key in keys:
         if config.has_section(key):
-            scores[st]=config.get(key,st.str,fallback=0)
             weight=config.getfloat(key,"WEIGHT",fallback=fallbackweight)
             scores={}
             for st in ChunkType:
-                scores[st]=config.getfloat(key,st.str,fallback=0)*weight
-                logger.debug(f"score for {st} is {scores[st]}")
+                if st==ChunkType.DEFSCORE:
+                    continue
+                val=config.getfloat(key,str(st.name),fallback=0)
+                if (val>=-2 and val <=2):
+                    scores[st]=val*weight
+                else:
+                    scores[st]=val
+                logger.log(7,f"score for {st} is {val} -> {scores[st]}")
             return(scores)
-    logger.debug(f"Did not find expected custom merge section(s) '{keys}'. Resorting to normal.")
+        else:
+            logger.debug(f"No section {key}")
+                
+    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to normal.")
     return(SyncPoints['normal'])
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
@@ -911,8 +984,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         if len(tmp)!=len(keyarr):
             raise ValueError("Cannot have %d keys and %d synchronisation modes!" % (len(keyarr),len(tmp)) )
         else:
-            syncarr=tmp
+            syncarr={k:val for k,val in zip(keyarr,tmp)}
 
+    logger.debug(f"{type(syncarr)}, {syncarr=}")
 
     if len(scorearr)==0:
         s=int(1+100/len(keyarr))
@@ -946,9 +1020,9 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
             if (colkey=='L'):
                 #Primary might be in a different place to other files, if run
                 # from command line. If so, that should take priority.
-                (prifilepath,filename)=os.path.split(infile)
+                (prifilepath,filename)=os.path.split(os.path.abspath(infile))
                 priconfname=os.path.basename(prifilepath)
-                priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath))
+                priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
                 priconfpath=os.path.join(priptpath,"shared","ptxprint",priconfname)
         for colkey,infile in zip(keyarr,infilearr):
             if (syncarr[colkey].startswith("custom")):
@@ -960,25 +1034,34 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 else:
                     variety=syncarr[colkey][7:]
                     varfile="merge-"+variety+".cfg"
-                (filepath,filename)=os.path.split(infile)
+                (filepath,filename)=os.path.split(os.path.abspath(infile))
                 confname=os.path.basename(filepath)
-                ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath))
+                ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
                 confpath=os.path.join(ptpath,"shared","ptxprint",confname)
                 searchlist=[]
                 cfile="merge.cfg"
-                if (varfile):
+                if (varfile is not None):
                     if (colkey!='L' and prifilepath != filepath):
-                        searchlist.extend((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1))
+                        searchlist.extend(((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1)))
                     searchlist.extend((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0))
                     
-                searchlist.extend((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0))
+                searchlist.extend(((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0)))
                 if (colkey!='L' and prifilepath != filepath):
                     searchlist.extend((os.path.join(ptpath,cfile),0))
+                done=0
                 for searchpair in searchlist:
                     (confpath,useLR)=searchpair
+                    logger.debug(f"Checking if config file {confpath} exists")
                     if (os.path.exists(confpath)):
+                        scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
+                        done=1
                         break
-                scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
+                if (not done):
+                    logger.debug(f"Did not find expected custom merge file. Resorting to normal.")
+                    if os.path.exists(priconfpath):
+                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints['normal'])
+                    else:
+                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints['normal'])
 
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
