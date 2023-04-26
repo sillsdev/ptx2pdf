@@ -238,9 +238,9 @@ class PicList:
                 else:
                     val = pgpos[1:] or ""
             elif k == 'nlines':
-                val = re.sub(r'^[^\-\d]*', "", pgpos)
+                val = re.sub(r'^[^\-\d.]*', "", pgpos)
                 try:
-                    val = int(val)
+                    val = int(float(val) * 100) / 100.
                 except (ValueError, TypeError):
                     val = 0
             elif k.startswith("med"):
