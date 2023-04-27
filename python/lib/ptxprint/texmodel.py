@@ -1308,6 +1308,9 @@ class TexModel:
         self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])(\s?)".format("".join(self._specialchars)),
                                                       flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " ")))
 
+        self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
+        self.localChanges.append((None, regex.compile(r"^\s*(?=\\id)"), ""))
+
         if self.printer is not None and self.printer.get("c_tracing"):
             print("List of Local Changes:----------------------------------------------------------")
             report = "\n".join("{} -> {}".format(p[1].pattern, p[2]) for p in self.localChanges)

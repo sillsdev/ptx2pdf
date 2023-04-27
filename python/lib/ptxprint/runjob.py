@@ -773,7 +773,7 @@ class RunJob:
             if not rerun and os.path.exists(delayed):
                 with open(delayed, encoding="utf-8") as inf:
                     for l in inf.readlines():
-                        if re.match(r"\\Rerun{", l):
+                        if l.startswith(r"\Rerun{"):
                             rerun = True
                             print(_("Rerunning because the delayed file asked us to"))
                             break
