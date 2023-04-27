@@ -282,7 +282,7 @@ elif sys.platform == "win32":
         return winreg.QueryValueEx(base, value)[0]
 
 def saferelpath(p, r="."):
-    if p is None or not len(p):
+    if p is None or not len(str(p)):
         return p
     try:
         return os.path.relpath(p, r)
