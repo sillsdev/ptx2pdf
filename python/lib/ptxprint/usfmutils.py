@@ -778,9 +778,13 @@ class Module:
                         r.last.verse = 1
                     r.first.verse = 0
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
-                if isinstance(p[-1], sfm.Element) and (not len(p[-1]) or 
-                        (len(p[-1]) == 1 and isinstance(p[-1][-1], sfm.Text) and not len(str(p[-1][-1]).strip()))):
-                    p = p[:-1]
+                if isinstance(p[-1], sfm.Element) and p[-1].name == "c":
+                    b = p[-1]
+                else:
+                    b = p
+                while isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
+                        (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
+                    b.pop()
                 if e.name == "ref":
                     for i, t in enumerate(p):
                         if isinstance(t, sfm.Element) and t.meta.get('StyleType', '').lower() == 'paragraph':
