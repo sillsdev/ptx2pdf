@@ -152,7 +152,7 @@ class PicList:
         w = self.builder.get_object(wid)
         res = getWidgetVal(wid, w, default=default)
         if wid.startswith("s_"):
-            res = int(res[:res.find(".")]) if res.find(".") >= 0 else int(res)
+            res = float(res[:res.find(".")]) if res.find(".") >= 0 else int(res)
         return res
 
     def updateinfo(self, picinfos):
