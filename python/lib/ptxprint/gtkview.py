@@ -3841,8 +3841,10 @@ class GtkViewModel(ViewModel):
                 self.builder.get_object(w).set_sensitive(True)
             if pgpos == "p":
                 self.builder.get_object("l_plOffsetNum").set_label("Number of\nparagraphs:")
+                self.builder.get_object("s_plLines").set_digits(0)
             else:
                 self.builder.get_object("l_plOffsetNum").set_label("Number of\nlines:")
+                self.builder.get_object("s_plLines").set_digits(1)
         else:
             for w in wids:
                 self.builder.get_object(w).set_sensitive(False)
