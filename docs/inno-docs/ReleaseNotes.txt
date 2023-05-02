@@ -1,8 +1,32 @@
 PTXprint 2.3.9 Release Notes
-26 Apr 2023
+2 May 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 ________________________________________________________________________________
+
+Bug fixes and Improvements in 2.3.10 (2 May 2023)
+
+  * Improved: Verse ranges to include x:0
+  
+  * Fixed modules to include content based on body tab settings
+  
+  * Fixed module ref final empty element clearing
+  
+  * Correct delimiters for \asterisk etc.
+  
+  * Fixed auto generated front matter text to not output anything
+  
+  * Partial fix: Allow fractional lines in picture cutouts
+  
+  * Allow custom scoring for diglots
+  
+  * Add changes to clean up whitespace (and remove extra blank lines)
+  
+  * Address #852 and strip final empty elements from ref results in modules
+  
+  * Fix path not having len()
+  
+  * Build all documentation pdfs
 
 Bug fixes and Improvements in 2.3.9 (26 Apr 2023)
 
