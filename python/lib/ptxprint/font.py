@@ -1088,12 +1088,11 @@ class FontRef:
         else:
             (name, sfeats, feats) = self._getTeXComponents(inarchive=inArchive, root=rootpath)
             style['FontName'] = self.name
-            if len(feats) or len(sfeats):
+            if len(sfeats):
+                style['FontName'] += "".join(sfeats)
+            if len(feats):
                 ztexs = []
                 initcolon = True
-                if len(sfeats):
-                    ztexs.append("".join(sfeats))
-                    initcolon = False
                 if self.lang is not None:
                     ztexs.append("language={}".format(self.lang))
                 if len(feats):

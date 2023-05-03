@@ -353,8 +353,8 @@ class StyleEditorView(StyleEditor):
             return
         if self.marker in aliases:
             self.marker += "1"
-        logger.debug(f"Start editing style {self.marker}, {self.isLoading=}")
-        oldisLoading = self.isLoading
+        oldisLoading = getattr(self, 'isLoading', False)
+        logger.debug(f"Start editing style {self.marker}, {oldisLoading}")
         self.isLoading = True
         data = self.sheet.get(self.marker, {})
         old = self.basesheet.get(self.marker, {})
