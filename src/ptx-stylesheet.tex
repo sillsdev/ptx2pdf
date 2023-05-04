@@ -598,7 +598,7 @@
     \trace{sa}{Final feature list:\f@atureset}%
     % Font-features should now be recorded in \f@atureset. Now Rebuid r@s based on its contents.
     \let\r@s\empty % MUST start with empy list!
-    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\else:\fi\else\r@s:\fi\t@st}\x@\let\csname ##1\endcsname\relax\fi}%
+    \def\d@##1\E{\x@\let\x@\t@st\csname ##1\endcsname\ifx\relax\t@st\else\x@\st@rtswithsl@sh\t@st\E\edef\r@s{\ifx\r@s\empty\iftemp\t@st\else:\t@st\fi\else\iftemp\t@st\r@s\else\r@s:\t@st\fi\fi}\x@\let\csname ##1\endcsname\relax\fi}%
     \x@\cstackdown\f@atureset,\E
     \let\n@xt\f@aturen@xt
     \let\p@ram\r@s
