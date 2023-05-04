@@ -328,6 +328,10 @@ setting the `extend` value in the stylesheet to shrink/expand a custom paragraph
 style can be used. (e.g. `p_95` with has a stylesheet-defined `extend` feature). 
 The parameter give this way *can* be overridden by character style.
 
-
+Character styles can now also take the `\ft^102` format, which is of particular
+use in footnotes. Note that the footnote style *itself* cannot accept the
+notation, as the potiential for confusion seems much too probable. The extend
+parameter applies strictly to the character style, and is not continued by
+other character styles on a given line, except where nesting is used.
 
 
