@@ -106,8 +106,10 @@
 \def\h@phen{-} % for matching
 {\catcode`+=11 
  \catcode`-=11
+ \catcode`\^=12 
  \gdef\pl@sLtr{+}
  \gdef\m@nusLtr{-}
+ \global\let\cflexLtr ^
 }
 \def\c@lon{:}
 \def\equ@ls{=}

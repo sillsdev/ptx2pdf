@@ -8,11 +8,12 @@
 \ip The \ul \+nd Lord\+nd*\ul* God is \em king\em*
 \ip \ul The \+nd Lord\+nd*\ul* God is \em king\em*
 \ip The \ul \+nd Lord\+nd* God\ul* is \em king\em*
+\ip The \ul \+nd^120 Lord\+nd* God\ul* is \em king\em*
 
 \c 1
 \s \jmp |link-id="pgtop1"\jmp* \zgry This is a really excessively long title that breaks across two lines\zgry*
 \p
-\v 1 This is normal text.\f + \fr 1:1 \ft A footnote\f* 
+\v 1 This is normal text.\f  + \fr^150 2:1 \ft A footnote \ft^150 with two lengthened bits\f* 
 \nd NDtext and other character styles can cross a milestone boundary like this -> \qt-s\* 
 now inside an unattributed  qt-s..qt-e block \nd* The end of the ND style returns to what it was before the ND started,
 if it doesn't call setfont.

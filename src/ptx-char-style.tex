@@ -35,6 +35,7 @@
 \newtoks\end@box@run
 \newtoks\start@box@run
 \newif\ifbox@run
+\newif\ifCharstyleExtend\CharstyleExtendtrue  % Does \ft^130 get processed as 130%, or a mal-formed \ft ^130?
 
 
 %+cchar_parsecolor
@@ -92,6 +93,7 @@
 \catcode`\_=12 \lccode`\_=13 % and \lowercase{_} for category-12 <return>
 \lccode`\|=`\\
 \let\thisch@rstyle\empty
+\let\ch@rfontextend\empty
 \lowercase{
 %-cchar_docharstyle_intro
 %+cchar_docharstyle
@@ -108,14 +110,26 @@
   \ifx\n@xt\@@st@risk \let\n@xt@\endch@rstylen % check for "*", if so then we need to end the style
   \else
     \temptrue
-    \ifx\n@xt\@@spc\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle, after \thisch@rstyle}\else
-      \ifx\n@xt\@@nl\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
-        \ifx\n@xt\@@min\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
-	  \let\n@xt@\startch@rstyle@misc\trace{ss}{misc delimiter for \newch@rstyle}\fi\fi\fi
+    \ifx\n@xt\@@spc\global\let\n@xt@\startch@rstyle@spc\trace{ss}{space delimiter for \newch@rstyle, after \thisch@rstyle}\else
+      \ifx\n@xt\@@nl\global\let\n@xt@\startch@rstyle@nl\trace{ss}{nl delimiter for \newch@rstyle}\else
+        \ifx\n@xt\@@min\global\let\n@xt@\startmst@nestyle@minus\trace{ss}{minus delimiter for \newch@rstyle}\let\thismil@stone\newch@rstyle\tempfalse\else
+	  \global\let\n@xt@\startch@rstyle@misc\trace{ss}{misc delimiter for \newch@rstyle (\meaning\n@xt = \meaning \cflexLtr )?}%
+          \ifx \n@xt\cflexLtr\relax
+            \ifCharstyleExtend
+              \trace{ss}{extend syntax for \newch@rstyle}%
+              \global\let\n@xt@\startch@rstyle@extend
+            \else
+              \trace{ss}{\newch@rstyle ^ found, but CharstyleExtend false. Check usage.}%
+            \fi
+          \fi
+    \fi\fi\fi
     \iftemp
+      \trace{ss}{group level before \the\currentgrouplevel}%
       \end@llpoppedstyles{\ss@Char}%a char style closes all other char styles, milestones do not.e
+      \trace{ss}{group level after \the\currentgrouplevel}%
     \fi
   \fi % else we need to start it
+  \let\ch@rfontextend\empty
   \xdef\stylet@pe{\ss@Char}%                                                                   %(2)
   %\tracingassigns=0
   \n@xt@} % chain to the start or end macro
@@ -133,8 +147,15 @@
       \else\let\n@xt@\startch@rstyle@spc
       \fi
     \else\ifx\n@xt\@@nl\trace{ss}{nl delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startch@rstyle@nl
-      \else\ifx\n@xt\@@min\trace{ss}{minus delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle\else
-        \let\n@xt\startch@rstyle
+      \else\ifx\n@xt\@@min\trace{ss}{minus delimiter for +\newch@rstyle, after \thisch@rstyle}\let\n@xt@\startmst@nestyle@minus\let\thismil@stone\newch@rstyle
+        \else
+          \let\n@xt@\startch@rstyle
+          \ifx\n@xt\cflexLtr\trace{ss}{extend syntax for +\newch@rstyle}%
+            \ifCharstyleExtend\let\n@xt@\startch@rstyle@extend
+            \else
+              \message{\newch@rstyle ^ found, but CharstyleExtend false. Check usage.}%
+            \fi
+          \fi
     \fi\fi\fi
   \fi % else we need to start it
   %\tracingassigns=0
@@ -144,6 +165,11 @@
  % so we have to explicitly consume it here as part of the macro parameter list
  \def\startch@rstyle@spc~{\startch@rstyle}%                                             %(3)
  \def\startch@rstyle@nl_{\startch@rstyle}%
+}
+{
+ \catcode`\^=12 
+ \gdef\startch@rstyle@extend^#1 {\edef\ch@rfontextend{\p@rcent#1xx\E}\startch@rstyle}%
+ \gdef\startch@rstyle@extend^#1 {\edef\ch@rfontextend{\p@rcent#1xx\E}\startch@rstyle}%
 }
 %-cchar_docharstyle
 
@@ -176,6 +202,16 @@
    \trace{A}{Attributes-\newch@rstyle: \@ttriblist}%
    \bgroup % start a group to encapsulate the style's formatting changes
     \skipch@rstylefalse
+    \ifx\ch@rfontextend\empty\else
+     \m@kenumber{\ch@rfontextend}%
+      \ifx\f@ntextend\empty\let\f@ntextend\@@result
+      \else 
+        \bgroup\dimen0=\f@ntextend pt\xdef\tmpv@l{\strip@pt{\dimexpr \@@result \dimen0\relax}}%
+        \egroup
+        \let\f@ntextend\tmpv@l
+      \fi
+      \trace{sa}{ch@rfontextend \ch@rfontextend, f@ntextend=\f@ntextend}% 
+    \fi
     \trace{sa}{using newch@rstyle (\newch@rstyle) at nesting (\the\p@ranesting/\the\n@tenesting) \the\currentgrouplevel}%
     \let\thisch@rstyle=\newch@rstyle % remember the current style
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
