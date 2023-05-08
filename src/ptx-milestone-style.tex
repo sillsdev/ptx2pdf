@@ -559,8 +559,8 @@
   \get@ttribute{id}%
   \ifcsname periphcontents\t@mpside=\attr@b\endcsname
     \keeptriggerfalse
-    \csname periphcontents\t@mpside=\attr@b\endcsname
     \ifcsname keepperiph-\attr@b\endcsname\keeptriggertrue\fi
+    \csname periphcontents\t@mpside=\attr@b\endcsname
     \ifkeeptrigger\else
       \x@\global\x@\let\csname periphcontents\t@mpside=\attr@b\endcsname\undefined
     \fi
