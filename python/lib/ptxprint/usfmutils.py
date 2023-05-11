@@ -656,7 +656,7 @@ class Usfm:
                 matched = False
                 if base is not None:
                     try:
-                        regre = regex.compile(regs)
+                        regre = regex.compile(regs, regex.I | regex.F)
                     except regex._regex_core.error as e:
                         raise SyntaxError(f"Faulty regex in {regs}: {e}")
                     if regre.search(newstr):

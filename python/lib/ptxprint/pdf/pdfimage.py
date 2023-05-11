@@ -68,7 +68,7 @@ def cmyk_vecto_rgb(img):
     out[...,2] = (1. - img[...,2]) * k
     return out
 
-def rgb_vecto_cmyk(img):
+def rgb_vecto_cmyk(img, black=0.):
     out = np.zeros((img.shape[0], img.shape[1], 4))
     #omk = max(img[...,0], img[...,1], img[...,2])
     omk = np.maximum(img[...,0], img[...,1])
@@ -76,7 +76,7 @@ def rgb_vecto_cmyk(img):
     c = (omk - img[...,0]) / (omk + .001)
     m = (omk - img[...,1]) / (omk + .001)
     y = (omk - img[...,2]) / (omk + .001)
-    cond = omk > 0.
+    cond = omk > black
     out[cond,0] = c[cond]
     out[cond,1] = m[cond]
     out[cond,2] = y[cond]
@@ -212,7 +212,7 @@ class PDFImage:
 
     def rgb_cmyk(self):
         img = np.asarray(self.img) / 255.
-        res = rgb_vecto_cmyk(img)
+        res = rgb_vecto_cmyk(img, black=0.01)
         self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
 
