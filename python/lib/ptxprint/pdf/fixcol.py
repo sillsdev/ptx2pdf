@@ -315,22 +315,32 @@ def fixpdfcmyk(trailer, threshold=1., **kw):
                 if len(col) == 3:
                     newc = rgb_to_cmyk(*map(float, col))
                     a.C = PdfArray(list(map(PdfObject, newc)))
+    _pushICC(trailer, os.path.join(pycodedir(), "default_cmyk.icc"), 4, **kw)
 
-def fixpdfrgb(trailer, **kw):
+def _pushICC(trailer, fname, n=0, **kw):
+    if kw.get('copy', False):
+        trailer.Root.OutputIntents = [x.copy() for x in trailer.Root.OutputIntents]
     oi = trailer.Root.OutputIntents
     iccdat = None
     if oi is not None and len(oi):
         iccprofile = oi[0].DestOutputProfile
         if isinstance(iccprofile, PdfIndirect):
             iccprofile = iccprofile.real_value()
+        if kw.get('copy', False):
+            iccprofile = iccprofile.copy()
+            oi[0].DestOutputProfile = iccprofile
         uncompress([iccprofile], leave_raw=True)
         iccprofile[PdfName('Binary')] = True
-        iccdat = iccprofile.stream
-    if iccdat is None:
-        iccfile = os.path.join(pycodedir(), "sRGB.icc")
-        if os.path.exists(iccfile):
-            with open(iccfile, "rb") as inf:
-                iccdat = inf.read()
+        if os.path.exists(fname):
+            with open(fname, "rb") as inf:
+                iccprofile.stream = inf.read()
+        if n != 0:
+            iccprofile[PdfName('N')] = n
+        return iccprofile.stream
+    return None
+
+def fixpdfrgb(trailer, **kw):
+    iccdat = _pushICC(trailer, os.path.join(pycodedir(), "sRGB.icc"), 3, **kw)
     if iccdat is None:
         return
     icc = PdfDict(indirect=True, Binary=True, N=3,

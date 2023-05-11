@@ -843,7 +843,7 @@ class RunJob:
                 covpdf.private.pages = eps
                 for v in eps:
                     v.Parent = covpdf.Root.Pages
-                fixpdffile(covpdf, covpdfname, colour="cmyk")
+                fixpdffile(covpdf, covpdfname, colour="cmyk", copy=True)
                 self.coverfile = covpdfname
             outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
