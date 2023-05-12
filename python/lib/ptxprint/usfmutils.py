@@ -778,11 +778,13 @@ class Module:
                         r.last.verse = 1
                     r.first.verse = 0
                 p = self.get_passage(r, removes=self.removes, strippara=e.name=="refnp")
+                if not len(p):
+                    continue
                 if isinstance(p[-1], sfm.Element) and p[-1].name == "c":
                     b = p[-1]
                 else:
                     b = p
-                while isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
+                while len(b) and isinstance(b[-1], sfm.Element) and (not len(b[-1]) or 
                         (len(b[-1]) == 1 and isinstance(b[-1][-1], sfm.Text) and not len(str(b[-1][-1]).strip()))):
                     b.pop()
                 if e.name == "ref":
