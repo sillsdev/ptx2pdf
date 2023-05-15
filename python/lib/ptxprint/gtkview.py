@@ -962,6 +962,17 @@ class GtkViewModel(ViewModel):
             return
         if highlight:
             self.searchWidget.append(wid)
+            ui = int(self.get("fcb_uiLevel"))
+            setLevel = 0
+            for i in range(2, 5):
+                if i in _uiLevels and wid in _uiLevels[i]:
+                    if i > ui:
+                        setLevel = i
+                    break
+            else:
+                setLevel = 6
+            if setLevel > 0:
+                self.set("fcb_uiLevel", str(setLevel))
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)

@@ -431,7 +431,7 @@ class Colophon(Snippet):
 class Grid(Snippet):
     regexes = []
     processTex = True
-    texCode = """
+    texCode = r"""
 \def\GraphPaperX{{{grid/xyadvance}{grid/units}}}
 \def\GraphPaperY{{{grid/xyadvance}{grid/units}}}
 \def\GraphPaperXoffset{{{grid/xoffset_}mm}}
@@ -443,4 +443,25 @@ class Grid(Snippet):
 \def\GraphPaperColMinor{{{minorcolor_}}} % Colour (R G B)
 """
     takesDiglot = False
+
+class AdjustLabelling(Snippet):
+    processTex = True
+    texCode = r'''
+\MarkAdjustPointstrue
+\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
+'''
+
+class ParaLabelling(Snippet):
+    processTex = True
+    texCode = r'''
+\catcode`\@=11
+\input marginnotes.tex
+\newcount\pcount \pcount=0
+{{\catcode`\~=12 \lccode`\~=32 \lowercase{{
+\gdef\parmkr{{\setbox0=\vbox{{\hbox{{\ch@rstylepls{{zpmkr}}~\m@rker\ch@rstylepls{{zpmkr}}*}}}}%
+    \advance\pcount by 1
+    \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
+}}
+\addtoeveryparhooks{{\parmkr}}
+'''
 
