@@ -1719,9 +1719,12 @@ Online Repository</property>
                     <property name="can-focus">True</property>
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">There are several DBL bundles available at
+                    <property name="tooltip-text" translatable="yes">There are hundres of DBL bundles available at
 the Open.Bible website which you may
-download and use in a publication.</property>
+download and use in a publication.
+
+Use resources which contain the text
+and select the USX download option.</property>
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="relief">none</property>
@@ -6575,6 +6578,47 @@ as the baselines of the body text.</property>
               </packing>
             </child>
             <child>
+              <object class="GtkCheckButton" id="c_markAdjPoints">
+                <property name="label" translatable="yes">Show Adjust Points</property>
+                <property name="name">Marks &amp; Guides dialog: Show adjust points</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">When using an AdjList to grow or shrink
+paragraphs, it can be helpful to display the
+adjust points in the margin of the text.</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkCheckButton" id="c_showUSFMcodes">
+                <property name="label" translatable="yes">Show USFM Codes</property>
+                <property name="name">Marks &amp; Guides dialog: Show USFM codes</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">Show the USFM marker of paragraphs.
+This can be useful when growing and
+shrinking paragraphs using changes.txt
+
+Note that in some situations, having these
+markers visible will result in changes to the
+layout. Only use this feature temporarily
+when trying to identify a marker.</property>
+                <property name="draw-indicator">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">2</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkCheckButton" id="c_showHboxErrorBars">
                 <property name="label" translatable="yes">Show Error Bars For Overfull Lines</property>
                 <property name="name">Marks &amp; Guides dialog: Show error bars for overfull lines</property>
@@ -6592,11 +6636,8 @@ black boxes at the end of lines in the PDF then uncheck it. </property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">3</property>
               </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
             <child>
               <!-- n-columns=3 n-rows=1 -->
@@ -6662,7 +6703,7 @@ the publication being printed.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -6953,7 +6994,7 @@ the text. This may be useful for precise measuring.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
           </object>
