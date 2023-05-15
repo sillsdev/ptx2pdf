@@ -1221,7 +1221,7 @@
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\pb=\pagebreak %pb isn't a paragraph style, 
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
+ \def\h{\bgroup\csname liter@lkerns\endcsname\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
  \def\@h ##1^^M{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \book / bookR
  \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \obeylines\@hh}% \h1 gets stored as the book name (for references)
