@@ -6587,6 +6587,8 @@ as the baselines of the body text.</property>
                 <property name="tooltip-text" translatable="yes">When using an AdjList to grow or shrink
 paragraphs, it can be helpful to display the
 adjust points in the margin of the text.</property>
+                <property name="halign">start</property>
+                <property name="margin-start">6</property>
                 <property name="draw-indicator">True</property>
               </object>
               <packing>
@@ -6610,6 +6612,8 @@ Note that in some situations, having these
 markers visible will result in changes to the
 layout. Only use this feature temporarily
 when trying to identify a marker.</property>
+                <property name="halign">start</property>
+                <property name="margin-start">6</property>
                 <property name="draw-indicator">True</property>
               </object>
               <packing>
