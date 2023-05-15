@@ -19991,7 +19991,6 @@ you would need to enter:
                                         <property name="margin-end">3</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">False</property>
                                         <property name="active">1</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -20007,7 +20006,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">13</property>
+                                            <property name="width-chars">14</property>
                                             <property name="xalign">0.5</property>
                                           </object>
                                         </child>
@@ -20045,7 +20044,6 @@ you would need to enter:
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">False</property>
                                         <property name="active">4</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -20061,7 +20059,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">13</property>
+                                            <property name="width-chars">14</property>
                                             <property name="xalign">1</property>
                                           </object>
                                         </child>
@@ -20099,7 +20097,6 @@ you would need to enter:
                                         <property name="margin-end">3</property>
                                         <property name="margin-top">4</property>
                                         <property name="margin-bottom">4</property>
-                                        <property name="hexpand">False</property>
                                         <property name="active">0</property>
                                         <property name="has-entry">True</property>
                                         <items>
@@ -20115,7 +20112,7 @@ you would need to enter:
                                           <object class="GtkEntry">
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="width-chars">13</property>
+                                            <property name="width-chars">14</property>
                                           </object>
                                         </child>
                                       </object>
@@ -24343,7 +24340,7 @@ option does not apply at all.</property>
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkLabel">
+                              <object class="GtkLabel" id="l_diglotMergeMode">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">When the different texts of a diglot are merged, there are various 

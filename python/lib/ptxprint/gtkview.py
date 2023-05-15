@@ -142,7 +142,9 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-r_book_module btn_chooseBibleModule lb_bibleModule
+r_book_module btn_chooseBibleModule lb_bibleModule 
+btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
+lb_DBLbundleFilename lb_DBLbundleNameDesc 
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages l_colgutterfactor btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
@@ -1097,8 +1099,10 @@ class GtkViewModel(ViewModel):
         for pre in ("l_", "lb_"):
             for h in ("ptxprintdir", "prjdir", "settings_dir"): 
                 self.builder.get_object("{}{}".format(pre, h)).set_visible(adv)
-        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", "lb_omitPics", "l_techFAQ",  "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
+        for w in ["lb_omitPics", "l_techFAQ",  "lb_techFAQ", "l_reportBugs", "lb_reportBugs"]:
             self.builder.get_object(w).set_visible(not newval and adv)
+        for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
+            self.builder.get_object(w).set_visible(not newval)
 
     def addCR(self, name, index):
         if "|" in name:
