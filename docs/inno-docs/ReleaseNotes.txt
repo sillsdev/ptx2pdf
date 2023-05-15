@@ -1,8 +1,33 @@
 PTXprint 2.3.10 Release Notes
-2 May 2023
+15 May 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
-________________________________________________________________________________
+____________________________________________________________________
+
+Bug fixes and Improvements in 2.3.11 (15 May 2023)
+
+  * Implemented ^95 notation for character styles
+  
+  * Promote font features with slash to start of the list
+  
+  * Added two additional options to Marks and Guides options:
+     * Show Adj Points
+     * Show USFM Codes
+
+  * Updated documentation:
+     * Added Techincal Reference Manual (to GitHub documentation)
+  
+  * Check if keepperiph has been defined before running the periphery
+  
+  * Fixed output intents for cover PDF (always print cover in color)
+  
+  * Make modules more resilient to missing text
+  
+  * Fixed active quotes not getting deactivated
+  
+  * Have search change UI level for widgets not in the present view
+  
+  * Ensure DBL buttons are visible even in Basic mode
 
 Bug fixes and Improvements in 2.3.10 (2 May 2023)
 
