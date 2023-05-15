@@ -104,8 +104,6 @@ _map = {
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 
     "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\doGridLines" if v else ""),
-    "grid/showadjpoints":       ("c_markAdjPoints", "finish", None),
-    "grid/showusfmcodes":       ("c_showUSFMcodes", "finish", None),
     "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", "finish", None),
     "majorcolor_":              ("col_gridMajor", "finish", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
@@ -425,6 +423,8 @@ _map = {
     "snippets/pdfoutput":       ("fcb_outputFormat", "finish", None),
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", "decorate", None),
+    "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
+    "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None),
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     

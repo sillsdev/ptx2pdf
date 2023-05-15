@@ -447,7 +447,7 @@ class Grid(Snippet):
 class AdjustLabelling(Snippet):
     processTex = True
     texCode = r'''
-\MarkAdjustPointstrue
+{paper/ifgrid}\MarkAdjustPointstrue
 \expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
 '''
 
@@ -462,6 +462,6 @@ class ParaLabelling(Snippet):
     \advance\pcount by 1
     \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
 }}
-\addtoeveryparhooks{{\parmkr}}
+{paper/ifgrid}\addtoeveryparhooks{{\parmkr}}
 '''
 
