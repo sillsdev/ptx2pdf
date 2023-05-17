@@ -1261,13 +1261,13 @@
     \else 
       \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
     \fi
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \ifhmode
       \unskip\let\aft@rnb\space
     \else
       \let\aft@rnb\empty
       \leavevmode\str@t                                                           %(1)
     \fi
-    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \t@stpublishability{c}\ifn@npublishable
      \setbox\ch@pterbox=\box\voidb@x
     \else
