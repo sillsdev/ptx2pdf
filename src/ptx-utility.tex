@@ -30,7 +30,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 % scantokens triggers eof. Therefore it should be wrapped in these:
-\def\p@sheof{\x@\toks\x@\x@0\x@{\the\everyeof}\everyeof{}}
+\def\p@sheof{\x@\toks\x@0\x@{\the\everyeof}\everyeof{}}
 \def\p@peof{\x@\everyeof\x@{\the\toks0}}
 % Utility macros for rotation, etc.
 \def\geom@xform@u{{1}{0}{0}{1}} % Normal
@@ -81,6 +81,8 @@
   \egroup
 }
     
+\long\def\addto@macro#1#2{%
+    \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
       
 
       

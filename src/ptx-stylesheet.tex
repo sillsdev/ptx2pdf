@@ -1830,6 +1830,9 @@
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
 \def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
+\def\pr@tectch{\lccode`\~=\count255\lowercase{\let~\relax}}
+\def\pr@tectcustomch@rs{% Make customchars non-expanding on write
+ \def\d@something{\afterassignment\pr@tectch \count255=}\the\do@ctive \lccode`\~=`\\}  
 
 \m@kedigitsother
 % use numbers to allow sequences to work in \fig .. \fig*
