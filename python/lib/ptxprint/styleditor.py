@@ -297,14 +297,14 @@ class StyleEditor:
                 return      # Probably a font which has edited the object for us
             else:
                 val = newval
-        oldval = self.basesheet[mrk].get(key, "") if mrk in self.basesheet else ""
+        # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
+        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
-            return
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
                 self.sheet[mrk] = Marker()
-            self.sheet[mrk][key] = val or ""
+            self.sheet[mrk][key] = val
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 

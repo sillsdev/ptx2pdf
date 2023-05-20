@@ -412,6 +412,7 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val or False
                     oldval = oldval or False
+                logger.debug(f"{k}: {oldval=}, {val=}")
             if k == "_fontsize":
                 fstyles = []
                 fref = self.getval(self.marker, 'FontName')
@@ -577,6 +578,8 @@ class StyleEditorView(StyleEditor):
             value = val
 
         if not key.startswith("_"):
+            if key == "Italic":
+                import pdb; pdb.set_trace()
             super(self.__class__, self).setval(self.marker, key, value)
             if key in ("FontSize", "FontName", "Bold", "Italic"):
                 fref = self.getval(self.marker, 'FontName')
