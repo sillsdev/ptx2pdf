@@ -207,7 +207,8 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
     return res
 
 def fromFileName(self, s, mrk=None, model=None):
-    return s.strip('"')
+    v = re.sub(r"\\ ", " ", s)
+    return v.strip('"')
 
 def toFileName(self, s, mrk=None, model=None, parm=None):
     v = s.replace("\\", "/").replace(" ", "\\ ")
