@@ -210,9 +210,10 @@ def fromFileName(self, s, mrk=None, model=None):
     return s.strip('"')
 
 def toFileName(self, s, mrk=None, model=None, parm=None):
-    if not s.startswith('"'):
-        return '"'+s.replace("\\", "/")+'"'
-    return s.replace("\\", "/")
+    v = s.replace("\\", "/").replace(" ", "\\ ")
+    if not v.startswith('"'):
+        return '"'+v+'"'
+    return v
 
 _fieldmap = {
     'bold':             (fromBool, toBool, None),
