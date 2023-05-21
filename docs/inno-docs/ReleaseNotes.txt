@@ -1,9 +1,25 @@
 PTXprint 2.3.12 Release Notes
-15 May 2023
+21 May 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 ____________________________________________________________________
 
+Bug fixes and Improvements in 2.3.13 (21 May 2023)
+
+  * Permit multi-character footnote callers to get through the SFM parser
+  
+  * Unset chapterwaiting earlier to prevent duplicate chapter numbers
+  
+  * Keep track of variables across diglot breaks
+  
+  * Fix paratext alternates for separator settings
+  
+  * Allow ToC files to include control sequences e.g. for font-switching
+  
+  * Revert styleeditor setval strcmp fix of f3ba39b. To get Italic setting to stick
+  
+  * Don't remember show USFMs since it changes layout
+  
 Bug fixes and Improvements in 2.3.12 (15 May 2023)
 
   * Implemented ^95 notation for character styles
