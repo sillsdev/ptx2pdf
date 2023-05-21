@@ -212,7 +212,7 @@ def fromFileName(self, s, mrk=None, model=None):
 
 def toFileName(self, s, mrk=None, model=None, parm=None):
     v = s # s.replace("\\", "/").replace(" ", "\\ ")
-    if not v.startswith('"'):
+    if v is not None and not v.startswith('"') and len(v):
         return '"'+v+'"'
     return v
 
