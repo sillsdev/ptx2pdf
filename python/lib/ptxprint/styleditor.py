@@ -211,7 +211,7 @@ def fromFileName(self, s, mrk=None, model=None):
 
 def toFileName(self, s, mrk=None, model=None, parm=None):
     if not s.startswith('"'):
-        return '"'+s+'"'
+        return '"'+s.replace("\\", "/")+'"'
     return s.replace("\\", "/")
 
 _fieldmap = {
