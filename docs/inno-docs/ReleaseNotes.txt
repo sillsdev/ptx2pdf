@@ -4,6 +4,12 @@ PTXprint 2.3.13 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 ____________________________________________________________________
 
+Bug fixes and Improvements in 2.3.14 (21 May 2023)
+
+  * Replace backslash with / in filenames in .sty files
+  
+  * And fix a bunch of minor bugs
+
 Bug fixes and Improvements in 2.3.13 (21 May 2023)
 
   * Permit multi-character footnote callers to get through the SFM parser
