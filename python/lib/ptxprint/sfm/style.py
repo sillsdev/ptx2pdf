@@ -195,7 +195,7 @@ def _reify(sheet):
     for r in sheet.values():
         for f, v in r.items():
             if isinstance(v, records.sfm.Text):
-                r[f] = str(v)
+                r[str(f)] = str(v)
 
 
 def update_sheet(sheet, ammendments={}, field_replace=False, **kwds):

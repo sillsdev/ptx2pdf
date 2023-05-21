@@ -761,6 +761,8 @@ class TexModel:
 
     def addInt(self, outfname):
         intfname = self.printer.getBookFilename('INT')
+        if intfname is None or not len(intfname):
+            return
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
             self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))

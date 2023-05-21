@@ -206,11 +206,13 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
     # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
-def fromFileName(self, v, mrk=None, model=None):
-    return v
+def fromFileName(self, s, mrk=None, model=None):
+    return s.strip('"')
 
-def toFileName(self, v, mrk=None, model=None, parm=None):
-    return v
+def toFileName(self, s, mrk=None, model=None, parm=None):
+    if not s.startswith('"'):
+        return '"'+s+'"'
+    return s
 
 _fieldmap = {
     'bold':             (fromBool, toBool, None),
@@ -432,7 +434,7 @@ class StyleEditor:
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
-                self.addMarker(m, newse.getval(m, 'Name'))
+                self.addMarker(m, str(newse.getval(m, 'Name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:

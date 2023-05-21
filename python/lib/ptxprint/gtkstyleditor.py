@@ -588,7 +588,8 @@ class StyleEditorView(StyleEditor):
                 if key in ("Bold", "Italic"):
                     setattr(fref, "is"+key, val)
                     self.setval(self.marker, 'FontName', fref, parm=True)
-                self.setFontLabel(fref, float(self.getval(self.marker, "FontSize")) * float(self.model.get("s_fontsize")))
+                # check that defaulting this doesn't cause problems
+                self.setFontLabel(fref, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):
