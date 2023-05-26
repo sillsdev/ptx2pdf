@@ -42,20 +42,23 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\f@rstref#1{\edef\t@st{#1}%
+\def\s@tf@rstr@f#1{\edef\t@st{#1}%
+ \let\@@firstref\empty
  \ifx\t@st\empty\else
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
-    \ifx\@book\empty\else
-     \ifOmitBookRef\else\@book\ \fi
-     \ifOmitChapterNumberRH\else\@chapter\fi
-     \ifVerseRefs
-      \ifOmitChapterNumberRH\else\cvs@p\fi
-      \@verse
-     \fi
-   \fi
+    \edef\@@firstref{\ifx\@book\empty\else
+      \ifOmitBookRef\else\@book\ \fi
+      \ifOmitChapterNumberRH\else\@chapter\fi
+      \ifVerseRefs
+        \ifOmitChapterNumberRH\else\cvs@p\fi
+        \@verse
+      \fi
+    \fi}%
   \fi\fi
- \fi}
+ \fi
+}
+\def\f@rstref#1{\s@tf@rstr@f{#1}\@@firstref}
 
 %
 % Print the last reference from the mark data
@@ -287,6 +290,7 @@
 \def\firstref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\f@rstref{\p@gefirstmark}\egroup\ifRTL\endR\fi}
 \def\lastref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\l@stref{\p@gebotmark}\egroup\ifRTL\endR\fi}
 \def\rangeref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\egroup\ifRTL\endR\fi}
+
 
 \def\header@defs#1{%polyglot references
   \def@cseq{firstref#1}{\headfoot #1{\f@rstref{\csname first#1mark\endcsname}}}

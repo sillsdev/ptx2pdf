@@ -1,0 +1,76 @@
+
+% This optional plugin (see ptx-plugins) provides ptx2pdf users with 
+% access to QR codes. The actual work is done by contrib/QRcode.tex
+%
+% Copyright (c) 2023 by SIL International written by David Gardner
+%
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,  
+% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF  
+% MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND  
+% NONINFRINGEMENT. IN NO EVENT SHALL SIL INTERNATIONAL BE LIABLE FOR  
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF  
+% CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION  
+% WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+%
+% Except as contained in this notice, the name of SIL International  
+% shall not be used in advertising or otherwise to promote the sale,  
+% use or other dealings in this Software without prior written  
+% authorization from SIL International.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\makeatletter
+\newwrite\QRtmpfile
+\plugin@startif{QR}
+
+\input QRcode.tex
+\QRdimen=2cm
+\def\QRref{\s@tf@rstr@f{\p@gefirstmark}\ifx\@@firstref\empty\else\x@\QRdata\x@! \@@firstref!\QRcode\box\QRcodebox\fi}
+
+\x@\def\csname MS:zqrcode\endcsname{%
+  \bgroup\everypar{}%
+    \get@ttribute{cat}%
+    \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
+    \get@ttribute{size}%
+    \ifx\attr@b\relax
+      \getp@ram{fontsize}{zqrcode}{\styst@k}\ifx\p@ram\relax\else\QRdimen=\p@ram\FontSizeUnit\fi
+    \else
+      \m@kenumber{\attr@b}\QRdimen=\@@result
+    \fi
+    \get@ttribute{vmin}%
+    \ifx\attr@b\relax\else\def\QRminVersion{1}\fi
+    \get@ttribute{unicode}%
+    \ifx\attr@b\tru@ \temptrue \else\tempfalse\fi
+    \get@ttribute{data}%
+    \iftemp 
+      \immediate\openout\QRtmpfile="QRtmp.tex"\relax
+      \immediate\write\QRtmpfile{\string\XeTeXinputencoding "bytes"}%
+      \immediate\write\QRtmpfile{\string\QRdata"\attr@b"}%
+      \immediate\write\QRtmpfile{\string\endinput}%
+      \immediate\closeout\QRtmpfile
+      \input "QRtmp.tex"\relax
+    \else
+      \x@\QRdata\x@"\attr@b"\relax
+    \fi
+    \QRcode
+    \message{QR code is \the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+    \get@ttribute{pgpos}%
+    \dimen0=\QRbounding
+    \advance\dimen0 -\QRinside
+    \ifx\attr@b\relax |\kern-\dimen0\box\QRcodebox\kern\dimen0|\else
+      \ifx\attr@b\loc@InText\box\QRcodebox
+      \else
+        \ifcsname ins-\attr@b\endcsname
+          \x@\let\x@\p@cins\csname ins-\attr@b
+          \picUsesInstrue
+        \else
+          \picUsesInsfalse
+          \def\w@tsit{QRcode}%
+          \x@\p@rsePicUse\attr@b\end
+        \fi
+        \setbox0\box\QRcodebox
+        \pl@cefigure
+      \fi
+    \fi
+  \egroup  
+}
+\plugin@endif

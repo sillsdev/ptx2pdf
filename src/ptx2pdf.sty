@@ -718,6 +718,14 @@
 \TextProperties publishable
 \BorderStyle plain
 
+\Marker zqrcode
+\Name zqrcode - Milestones - Insert QR code
+\Description Generates a QR-code from attribute data (which may not contain double-quotes), with the specified size (or from FontSize, if cat is provided).  pgpos can be 'H' (a simple box, here), or any valid figure position. vmin specifies a minimum version number (complexity) for the QR code, otherwise it will autosize. At present there is an incompatibility, with the QR code generator assuming that it will get data byte by byte, but XeTeX providing it character by character.  If unicode is set to "T" (true), then the provided data will be written out to a separate file and re-read, byte by byte.
+\OccursUnder id periph mt p
+\Attributes data size? pgpos? vmin? unicode? cat?
+\StyleType Milestone
+\TextProperties publishable
+
 \Marker zgap
 \Name zgap - Milestones - Vertical gap
 \Description

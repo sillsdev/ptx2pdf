@@ -1,0 +1,1282 @@
+% The original of this file provided by Vladan Majerech <maj at ktiml.mff.cuni.cz>
+% Licence: 
+% Use the license DEK used for TeX:):  No warranty, but no restrictions
+%
+%%%% WHOLE GAME %%%%
+\newbox\QRcodebox
+%
+%
+\def\DPI{600}%
+\def\QRreset{\def\QRcontent{}}%
+\def\QRdata{\QRreset\QRdataadd}%
+\def\QRdataadd{\QRchars\QRdatacont}
+\def\QRdatacont#1{\def\QRdatacontcont##1#1{\edef\QRcontent{\QRcontent##1}\plainchars}\QRdatacontcont}%
+%^ want to allow active chars to allow UTF8 codding
+\def\QRcode{\!\QRBIN\QRcontent\ENDQRBIN\ReedSolomon\QRSet\QRSelectMask\QRSetBox}%
+\def\QRminVersion{1}%
+\def\QRmaxVersion{40}%
+% \QRdimen=4cm to choose the box side
+% interface \QRdataadd x<data not containing x>x repeated several times
+%\QRCode uses gathered data and fills QRcodebox
+%\QRreset resets the data \QRdata calls reset first (\QRdata.. does the same as \QRreset)
+%\QRdimen allows setting size of QRcodebox including the quiet zone
+%\DPI is used to find optimal granularity according to printer resolution
+%\QRminVersion allows prohibitting smaller versions
+%\QRmaxVersion allows prohibitting higher versions Issues \errmessage{No room in versions till ...}
+%\QRminVerion and \QRmaxVersion is used in default \freeVersion mode
+%\fixVersion{5} is an alternative to use given version number even when smaller version is sufficient
+%\QRSetMinECLevel allows to force at least that error correction. The EC level is chosen after the version, but the version choice is constrained by the min level
+%\QRSetECLevel allows to fix level of error correction
+%
+% The code is optimized for using big collection of simillar sized QR codes at one run ... after a QRcode version is used,
+% it's template is remembered for further use. Masking is done on the fly. 
+% (It was desined first for generating QRpayments for a lot of clients (versions 4 and 5 were sufficient), 
+% but full set of versions is implemented now).
+% In default setting it chooses minimal sized QR codes with maximal possible error level for the size.
+% Using even small QRcodes in emTeX fails due to POOL SIZE
+% all versions of QRcodes work for me in mikTeX, but printing several (big) codes on the same page exceeds MAIN MEMORY size
+% this is why I have not implemented chains in the planned way ... 
+% as I expect putting several big codes into one box would exceed the MAIN memory
+% using chains for smaller codes could be worth trying so it still remains in TODO list ... with small priority
+%
+% Author: Vladan Majerech maj@ktiml.mff.cuni.cz
+%
+% There are example formats here after \endinput
+% usage for czech mecards require UTF8 encodding conversion (from 1250 codepage), 
+% extension for other alphabets would be simillar
+%%%% WHERE TO CONTINUE? NOT DONE YET! %%%%
+% Input the text file instead
+%\QRmaxChainLen allows prohibiting QRCode chains
+% Planned priorities to select Version, error correction and chain len is following:
+% 1) minimize chain len as possible (no chains implemented yet)
+% 2) chose minimal version possible to be capable to code the data, use same version in the chain.
+% 3) chose maximal correction level X to be capable to code the data
+% 4) if using correction level X+1 for the current part allows codding rest of the message in the remaining parts of the chain using correction level X, use correction level X+1 for this part, otherwise use correction level X.
+% When there is not enough capacity the error should be issued
+% If more than one box is used, the box \QRcodebox would be composed of all the boxes. They could be separated by \lastbox.
+%\QRchainLen is usefull in that case
+%
+%%%%%% GLOBAL %%%%%%
+\let\!=\expandafter
+\newif\iftest
+\let\orioplus\oplus
+\def\oplus{\nobreak\orioplus\nobreak\discretionary{}{\hbox{$\orioplus$}}{}}%
+\newcount\QRnumA\newcount\QRnumB\newcount\QRnumC\newcount\QRnumD\newcount\QRnumE\newcount\QRnumF\newcount\QRnumG
+\def\QRempty{}%
+\def\QRspace{ }%
+\def\QRtypeN{N}%
+\def\QRtypeA{A}%
+\def\QRtypeB{B}%
+\def\gobbleone#1{}%
+\def\gobblesecond#1#2{#1}%
+\def\doubleToken#1{#1#1}%
+%\def\gobbletwo#1#2{}
+%
+%%%%% QR sizes %%%%%
+\def\QRdefBlocks#1#2#3#4#5#6#7#8#9{%Sizes defined with a random choice ... table needed
+\QRnumA=#1 %version
+\QRnumB=4 \multiply\QRnumB by \QRnumA\advance\QRnumB by 17 %side
+\!\edef\csname QRside<\romannumeral#1>\endcsname{\the\QRnumB\QRspace}%
+\QRnumC=\QRnumB\multiply\QRnumC by \QRnumC %area
+\ifnum\QRnumA>1
+ \QRnumD=\QRnumA\divide\QRnumD by 7 
+ \QRnumF=\QRnumD %# alignments between FINDERS on one side
+ \advance\QRnumD by 1 %#alignments per side except on timing
+ \!\edef\csname QRSideAligns<\romannumeral#1>\endcsname{\the\QRnumD\QRspace}%
+ \QRnumE=\QRnumD\multiply\QRnumE by \QRnumE\multiply\QRnumE by 25 %area of alignments except those on timing
+ \multiply\QRnumF by 40 \advance\QRnumE by \QRnumF% area of alignments including alignments on timing, but excluding timing
+ %\message{Sizes version \the\QRnumA, side \the\QRnumB, area \the\QRnumC, alignside \the\QRnumD, alignsarea \the\QRnumE, alignsontimersarea \the\QRnumF}%
+\else
+ \QRnumD=0 %
+ \!\edef\csname QRSideAligns<\romannumeral#1>\endcsname{\the\QRnumD\QRspace}%
+\fi
+\QRnumF=\QRnumC\advance\QRnumF by -192 %data area ... finders excluded so far
+\advance\QRnumF by -\QRnumE% alignments except timing excluded
+\QRnumE=\QRnumB\advance\QRnumE by -16\multiply \QRnumE by 2 %timing pattern area
+%\message{;timing \the\QRnumE,area without finders and aligns \the\QRnumF}%
+\advance\QRnumF by -\QRnumE% timing area excluded as well
+%\message{;area witout finders, aligns and timing\the\QRnumF}%
+\ifnum\QRnumA>6
+ \advance\QRnumF by -36 % version encodding area excluded as well
+ %\message{;data+ECmask info area\the\QRnumF}%
+\fi
+\advance\QRnumF by -31 % encodding mask and dummy bit excluded as well
+%\message{;data area \the\QRnumF}%
+%now \QRnumF contains area capable to hold info
+\QRnumE=\QRnumF
+\divide\QRnumE by 8 %number of bytes available for data and error correction
+\multiply\QRnumE by 8 %number of bits of the available bytes
+\advance\QRnumF by -\QRnumE % bits reminder
+\!\edef\csname QRPadBits<\romannumeral#1>\endcsname{\the\QRnumF\QRspace}%
+\divide\QRnumE by 8 %number of bytes available for data and error correction
+%\message{;byte size\the\QRnumE,padding bits\the\QRnumF}%
+\!\def\csname QRBlocks<\romannumeral#1>L\endcsname{#2 }%
+\!\def\csname QREC<\romannumeral#1>L\endcsname{#3 }%
+\QRnumF#2 \multiply\QRnumF by -#3 %totalECbytes
+\advance\QRnumF by \QRnumE %total data bytes
+\multiply\QRnumF by 8 %total data bits
+\!\edef\csname QRBitLimit<\romannumeral#1>L\endcsname{\the\QRnumF\QRspace}%
+\!\def\csname QRBlocks<\romannumeral#1>M\endcsname{#4 }%
+\!\def\csname QREC<\romannumeral#1>M\endcsname{#5 }%
+\QRnumF#4 \multiply\QRnumF by -#5 %totalECbytes
+\advance\QRnumF by \QRnumE %total data bytes
+\multiply\QRnumF by 8 %total data bits
+\!\edef\csname QRBitLimit<\romannumeral#1>M\endcsname{\the\QRnumF\QRspace}%
+\!\def\csname QRBlocks<\romannumeral#1>Q\endcsname{#6 }%
+\!\def\csname QREC<\romannumeral#1>Q\endcsname{#7 }%
+\QRnumF#6 \multiply\QRnumF by -#7 %totalECbytes
+\advance\QRnumF by \QRnumE %total data bytes
+\multiply\QRnumF by 8 %total data bits
+\!\edef\csname QRBitLimit<\romannumeral#1>Q\endcsname{\the\QRnumF\QRspace}%
+\!\def\csname QRBlocks<\romannumeral#1>H\endcsname{#8 }%
+\!\def\csname QREC<\romannumeral#1>H\endcsname{#9 }%
+\QRnumF#8 \multiply\QRnumF by -#9 %totalECbytes
+\advance\QRnumF by \QRnumE %total data bytes
+\multiply\QRnumF by 8 %total data bits
+\!\edef\csname QRBitLimit<\romannumeral#1>H\endcsname{\the\QRnumF\QRspace}%
+}%
+\def\QRSetMinECLevel#1{\QRnumA=40
+\loop \!\edef\csname QRBitLimit<\romannumeral\QRnumA>\endcsname{\!\noexpand\csname QRBitLimit<\romannumeral\QRnumA>#1\endcsname}%
+\advance\QRnumA by -1 \ifnum\QRnumA>0\repeat
+\let\chooseECLevel=\chooseMaxECLevel
+}%
+\def\QRSetECLevel#1{\QRSetMinECLevel{#1}\def\EClevel{#1}\let\chooseECLevel=\relax}%
+\QRSetMinECLevel{L}%
+\QRdefBlocks{1}{1}{7}{1}{10}{1}{13}{1}{17}%
+\QRdefBlocks{2}{1}{10}{1}{16}{1}{22}{1}{28}%
+\QRdefBlocks{3}{1}{15}{1}{26}{2}{18}{2}{22}%
+\QRdefBlocks{4}{1}{20}{2}{18}{2}{26}{4}{16}%
+\QRdefBlocks{5}{1}{26}{2}{24}{4}{18}{4}{22}%
+\QRdefBlocks{6}{2}{18}{4}{16}{4}{24}{4}{28}%
+\QRdefBlocks{7}{2}{20}{4}{18}{6}{18}{5}{26}%
+\QRdefBlocks{8}{2}{24}{4}{22}{6}{22}{6}{26}%
+\QRdefBlocks{9}{2}{30}{5}{22}{8}{20}{8}{24}%
+\QRdefBlocks{10}{4}{18}{5}{26}{8}{24}{8}{28}%
+\QRdefBlocks{11}{4}{20}{5}{30}{8}{28}{11}{24}%
+\QRdefBlocks{12}{4}{24}{8}{22}{10}{26}{11}{28}%
+\QRdefBlocks{13}{4}{26}{9}{22}{12}{24}{16}{22}%
+\QRdefBlocks{14}{4}{30}{9}{24}{16}{20}{16}{24}%
+\QRdefBlocks{15}{6}{22}{10}{24}{12}{30}{18}{24}%
+\QRdefBlocks{16}{6}{24}{10}{28}{17}{24}{16}{30}%
+\QRdefBlocks{17}{6}{28}{11}{28}{16}{28}{19}{28}%
+\QRdefBlocks{18}{6}{30}{13}{26}{18}{28}{21}{28}%
+\QRdefBlocks{19}{7}{28}{14}{26}{21}{26}{25}{26}%
+\QRdefBlocks{20}{8}{28}{16}{26}{20}{30}{25}{28}%
+\QRdefBlocks{21}{8}{28}{17}{26}{23}{28}{25}{30}%
+\QRdefBlocks{22}{9}{28}{17}{28}{23}{30}{34}{24}%
+\QRdefBlocks{23}{9}{30}{18}{28}{25}{30}{30}{30}%
+\QRdefBlocks{24}{10}{30}{20}{28}{27}{30}{32}{30}%
+\QRdefBlocks{25}{12}{26}{21}{28}{29}{30}{35}{30}%
+\QRdefBlocks{26}{12}{28}{23}{28}{34}{28}{37}{30}%
+\QRdefBlocks{27}{12}{30}{25}{28}{34}{30}{40}{30}%
+\QRdefBlocks{28}{13}{30}{26}{28}{35}{30}{42}{30}%
+\QRdefBlocks{29}{14}{30}{28}{28}{38}{30}{45}{30}%
+\QRdefBlocks{30}{15}{30}{29}{28}{40}{30}{48}{30}%
+\QRdefBlocks{31}{16}{30}{31}{28}{43}{30}{51}{30}%
+\QRdefBlocks{32}{17}{30}{33}{28}{45}{30}{54}{30}%
+\QRdefBlocks{33}{18}{30}{35}{28}{48}{30}{57}{30}%
+\QRdefBlocks{34}{19}{30}{37}{28}{51}{30}{60}{30}%
+\QRdefBlocks{35}{19}{30}{38}{28}{53}{30}{63}{30}%
+\QRdefBlocks{36}{20}{30}{40}{28}{56}{30}{66}{30}%
+\QRdefBlocks{37}{21}{30}{43}{28}{59}{30}{70}{30}%
+\QRdefBlocks{38}{22}{30}{45}{28}{62}{30}{74}{30}%
+\QRdefBlocks{39}{24}{30}{47}{28}{65}{30}{77}{30}%
+\QRdefBlocks{40}{25}{30}{49}{28}{68}{30}{81}{30}%
+%
+%%%%% DATA LEVEL %%%%%
+\def\QRBIN#1\ENDQRBIN{% PATTERN OPTIMIZATION first
+\QRswitchCostsLow\QRDiag#1\ENDQRDiag
+\ifnum\QRnumF>\QRLowLimit \QRswitchCostsMed\QRDiag#1\ENDQRDiag\fi
+\ifnum\QRnumF>\QRMedLimit \QRswitchCostsHigh\QRDiag#1\ENDQRDiag\fi
+%\message{\the\QRnumF(\QRSchema)}%
+\binaryReset\PACKcontent#1\PAD}%
+%
+%%%%% DATA TRANSLATION %%%%%
+%%%%% TABLE 1250->UTF8 %%%%%
+\def\UTFlist{}%
+\def\UTF#1#2{}%\!\def\!\UTFlist\!{\UTFlist\UTFdo#1}\bgroup\uccode`~=`#1\uppercase{\egroup\def~}{#2}}%
+\UTF{á}{^^c3^^a1}\UTF{ä}{^^c3^^a4}\UTF{è}{^^c4^^8d}\UTF{ï}{^^c4^^8f}\UTF{é}{^^c3^^a9}%
+\UTF{ì}{^^c4^^9b}\UTF{ë}{^^c3^^ab}\UTF{í}{^^c3^^ad}\UTF{å}{^^c4^^ba}\UTF{¾}{^^c4^^be}%
+\UTF{ò}{^^c5^^88}\UTF{ó}{^^c3^^b3}\UTF{ô}{^^c3^^b4}\UTF{ö}{^^c3^^b6}\UTF{à}{^^c5^^95}%
+\UTF{ø}{^^c5^^99}\UTF{}{^^c5^^a1}\UTF{}{^^c5^^a5}\UTF{ú}{^^c3^^ba}\UTF{ù}{^^c5^^af}%
+\UTF{ü}{^^c3^^bc}\UTF{ý}{^^c3^^bd}\UTF{}{^^c5^^be}%
+\UTF{Á}{^^c3^^81}\UTF{Ä}{^^c3^^84}\UTF{È}{^^c4^^8c}\UTF{Ï}{^^c4^^8e}\UTF{É}{^^c3^^89}%
+\UTF{Ì}{^^c4^^9a}\UTF{Ë}{^^c3^^8b}\UTF{Í}{^^c3^^8d}\UTF{Å}{^^c4^^b9}\UTF{¼}{^^c4^^bd}%
+\UTF{Ò}{^^c5^^87}\UTF{Ó}{^^c3^^93}\UTF{Ô}{^^c3^^94}\UTF{Ö}{^^c3^^96}\UTF{À}{^^c5^^94}%
+\UTF{Ø}{^^c5^^98}\UTF{}{^^c5^^a0}\UTF{}{^^c5^^a4}\UTF{Ú}{^^c3^^9a}\UTF{Ù}{^^c5^^ae}%
+\UTF{Ü}{^^c3^^9c}\UTF{Ý}{^^c3^^9d}\UTF{}{^^c5^^bd}%
+%\UTF{á}{a}\UTF{ä}{a}\UTF{è}{c}\UTF{ï}{d}\UTF{é}{e}%
+%\UTF{ì}{e}\UTF{ë}{e}\UTF{í}{i}\UTF{å}{l}\UTF{¾}{l}%
+%\UTF{ò}{n}\UTF{ó}{o}\UTF{ô}{o}\UTF{ö}{o}\UTF{à}{r}%
+%\UTF{ø}{r}\UTF{}{s}\UTF{}{t}\UTF{ú}{u}\UTF{ù}{u}%
+%\UTF{ü}{u}\UTF{ý}{y}\UTF{}{z}%
+%\UTF{Á}{A}\UTF{Ä}{A}\UTF{È}{C}\UTF{Ï}{D}\UTF{É}{E}%
+%\UTF{Ì}{E}\UTF{Ë}{E}\UTF{Í}{I}\UTF{Å}{L}\UTF{¼}{L}%
+%\UTF{Ò}{N}\UTF{Ó}{O}\UTF{Ô}{O}\UTF{Ö}{O}\UTF{À}{R}%
+%\UTF{Ø}{R}\UTF{}{S}\UTF{}{T}\UTF{Ú}{U}\UTF{Ù}{U}%
+%\UTF{Ü}{U}\UTF{Ý}{Y}\UTF{}{Z}%
+\def\CATlist{}%
+\let\CATdo\noexpand
+\def\CAT#1{\!\!\!\def\!\!\!\CATlist\!\!\!{\!\CATlist\!\CATdo\!#1\!{\the\catcode`#1}}}
+\def\makeactive#1{\catcode`#1=13 }%
+\def\makeother#1{\catcode`#1=12 }%
+\def\CATother#1#2{\catcode`#1=12 }%
+\def\CATori#1#2{\catcode`#1=#2 }%
+%\CAT\%\CAT\$\CAT\ \CAT\\
+\let\do\CAT\dospecials
+%\show\CATlist
+%\def\QRchars{\catcode`\%=12 \catcode`\$=12 \catcode`\ =12 \let\UTFdo\makeactive\UTFlist \catcode`\\=12 }%
+\def\QRchars{\let\CATdo=\CATother\CATlist\let\UTFdo\makeactive\UTFlist}%
+%\def\plainchars{\catcode`\\=0 \catcode`\ =10\relax\catcode`\%=14 \catcode`\$=3 \let\UTFdo\makeother\UTFlist}%
+\def\plainchars{\let\CATdo=\CATori\CATlist\let\UTFdo\makeother\UTFlist}%
+{\!\QRchars\!\catcode\!`\!\}\!=\!2\! \!\gdef\!\ALPHANUMERIC{0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:}}%
+%%%%% MODE CATEGORIES %%%%%
+\def\NUMERIC{0123456789}%
+\def\isALPHANUMERIC#1{\def\tst##1#1##2\endtest{\if @##2@\testfalse\else\testtrue\fi}%
+\!\tst\ALPHANUMERIC#1\endtest}%
+\def\isNUMERIC#1{\def\tst##1#1##2\endtest{\if @##2@\testfalse\else\testtrue\fi}\!\tst\NUMERIC#1\endtest}%
+\def\defQRtype#1{\isNUMERIC#1\iftest\def\QRtype{N}\else\isALPHANUMERIC#1\iftest\def\QRtype{A}\else\def\QRtype{B}\fi\fi}%
+%%%%% CHAR TO NUMBER ACCORDING MODE %%%%%
+\def\BINNUM#1{\QRnumA=`#1}%
+\def\ALPHANUM#1{%could be used both for ALPHANUMERIC and NUMERIC
+\let\ALPHANUMnext\MATCHALPHA\QRnumA=0 \!\ALPHANUMnext\!#1\ALPHANUMERIC\ENDALPHA}%
+\def\MATCHALPHA#1#2#3\ENDALPHA{\if#1#2\let\ALPHANUMnext\MATCHEDALPHA\else\advance\QRnumA by 1 \fi
+\ALPHANUMnext#1#3\ENDALPHA}%
+\def\MATCHEDALPHA#1#2\ENDALPHA{}%
+%
+%%%%% PACKING PATTERN OPTIMIZATION %%%%%
+\def\QRBswitchCostLow{12 }\def\QRBswitchCostMed{20 }\def\QRBswitchCostHigh{20 }%
+\def\QRAswitchCostLow{13 }\def\QRAswitchCostMed{15 }\def\QRAswitchCostHigh{17 }%
+\def\QRNswitchCostLow{14 }\def\QRNswitchCostMed{16 }\def\QRNswitchCostHigh{18 }%
+\def\QRswitchCostsLow{\let\QRBswitchCost=\QRBswitchCostLow\let\QRAswitchCost=\QRAswitchCostLow\let\QRNswitchCost=\QRNswitchCostLow}%1-9
+\def\QRswitchCostsMed{\let\QRBswitchCost=\QRBswitchCostMed\let\QRAswitchCost=\QRAswitchCostMed\let\QRNswitchCost=\QRNswitchCostMed}%10-26
+\def\QRswitchCostsHigh{\let\QRBswitchCost=\QRBswitchCostHigh\let\QRAswitchCost=\QRAswitchCostHigh\let\QRNswitchCost=\QRNswitchCostHigh}%27-40
+\def\QRLowLimit{\csname QRBitLimit<ix>\endcsname}\def\QRMedLimit{\csname QRBitLimit<xxvi>\endcsname}% def no let as the macros could change by \QRSetMinECLevel
+\def\QRinfty{29649 }%
+\def\QRDiag#1\ENDQRDiag{%\message{Diag >#1< Limits \QRLowLimit \QRMedLimit}%
+% should be changed if chosen version is higher than 10/27 and rerun again ... 
+%A:number of chars of the last type, 
+%B:number of not yet counted chars when ending by type A, 
+%C:number of not yet counted chars wher ending by type B,
+%D:length, when ending by type N including the last sequence \infty is represented by one more than version40L capacity \QRinfty
+%E:length, when ending by type A excluding the last B chars, \infty is represented by \QRinfty again
+%F:length, when ending by type B excluding last C chars
+%Returns F the optimal length and QRSchema the optimal schema
+%subresults QRSchemaB, QRSchemaA, QRSchemaN representing optimal schemas ending with the appropriate type (excluding the last sequence in the B, A cases)
+\QRnumA=0 \QRnumB=\QRnumA \QRnumC=\QRnumA 
+\def\QRSchemaB{}\def\QRSchemaA{}\def\QRSchemaN{}%
+\QRnumD=\QRNswitchCost\QRnumE=\QRAswitchCost\QRnumF=\QRBswitchCost
+\let\QRDIAGnext=\DIAGcontent\DIAGcontent#1\ENDDIAG}%
+\def\DIAGcontent#1#2\ENDDIAG{\defQRtype#1\ifnum\QRnumA>0 \ifx\prevQRtype\QRtype\else \QRtypeChange\fi\fi\let\prevQRtype=\QRtype\advance\QRnumA by 1 \def\test{#2}\ifx\test\QRempty\let\QRDIAGnext=\QRDIAGend\fi\QRDIAGnext#2\ENDDIAG}%
+\def\QRDIAGend\ENDDIAG{\QRtypeChange
+%\message{\prevQRtype\the\QRnumA,\the\QRnumD\QRSchemaN,\the\QRnumE[\the\QRnumB]\QRSchemaA,\the\QRnumF[\the\QRnumC]\QRSchemaB}%
+% argmin 1) F+C*8, 2) E+\lfloor(11B+1)/2 \rfloor, 3) D
+% 1) \edef\QRSchema{\QRSchemaB B\the\QRnumC} F:=F+C*8
+% 2) \edef\QRSchema{\QRSchemaA A\the\QRnumB} F:=E+\lfloor(11B+1)/2 \rfloor
+% 3) \let\QRSchema=\QRSchemaN F:=D
+ \QRnumG=\QRnumC\multiply\QRnumG by 8 \advance\QRnumF by\QRnumG
+ \QRnumG=\QRnumB\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumE by \QRnumG
+ \ifnum\QRnumE<\QRnumD
+  \ifnum\QRnumE<\QRnumF
+   \edef\QRSchema{\QRSchemaA A\the\QRnumB}\QRnumF=\QRnumE
+  \else
+   \edef\QRSchema{\QRSchemaB B\the\QRnumC}%
+  \fi
+ \else
+  \ifnum\QRnumD<\QRnumF
+   \let\QRSchema=\QRSchemaN\QRnumF=\QRnumD
+  \else
+   \edef\QRSchema{\QRSchemaB B\the\QRnumC}%
+  \fi
+ \fi
+}%
+\def\QRtypeChange{%
+%\message{\prevQRtype\the\QRnumA,\the\QRnumD\QRSchemaN,\the\QRnumE[\the\QRnumB]\QRSchemaA,\the\QRnumF[\the\QRnumC]\QRSchemaB}%
+\ifx\prevQRtype\QRtypeB %B switch
+% argmin 1) F+C*8, 2) E+\lfloor(11B+1)/2 \rfloor+\QRBswitchCost, 3) D+\QRBswitchCost according the argmin:
+% 1) F remains, C+=A, \QRSchemaB remains
+% 2) F:=E+\lfloor(11B+1)/2 \rfloor+\QRBswitchCost, C=A, \edef\QRSchemaB{\QRSchemaA A\the\QRnumB}
+% 3) F:=D+\QRBswitchCost, C=A \let\QRSchemaB=\QRSchemaN
+% E=\QRinfty, D=\QRinfty
+ \QRnumG=\QRnumC\multiply\QRnumG by 8 \advance\QRnumG by\QRnumF\edef\exprB{\the\QRnumG}%
+ \QRnumG=\QRnumB\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumG by \QRnumE
+ \ifnum\QRnumG<\QRnumD
+  \advance\QRnumG by \QRBswitchCost
+  \ifnum\exprB>\QRnumG
+   \QRnumF=\QRnumG\QRnumC=\QRnumA\edef\QRSchemaB{\QRSchemaA A\the\QRnumB}%
+  \else
+   \advance\QRnumC by \QRnumA
+  \fi
+ \else
+  \QRnumG=\QRnumD
+  \advance\QRnumG by \QRBswitchCost
+  \ifnum\exprB>\QRnumG
+   \QRnumF=\QRnumG\QRnumC=\QRnumA\let\QRSchemaB=\QRSchemaN
+  \else
+   \advance\QRnumC by \QRnumA
+  \fi 
+ \fi
+ \QRnumE=\QRinfty\QRnumD=\QRinfty
+\else\ifx\prevQRtype\QRtypeA %A switch
+% argmin 1) F+(C+A)*8, 2) E+\lfloor(11(B+A)+1)/2 \rfloor+\QRBswitchCost, 3) D+\QRBswitchCost+A*8 according the argmin:
+% 1) futF=F remains, \def\futC{\advance\QRnumC by \QRnumA}, \let\futQRSchemaB=\QRSchemaB
+% 2) futF:=E+\lfloor(11(B+A)+1)/2 \rfloor+\QRBswitchCost, \edef\futQRSchemaB{\QRSchemaA A\the(\QRnumB+\QRnumA) counted in G}  \def\futC{\QRnumC=0 }
+% 3) futF:=D+\QRBswitchCost, \def\futC{\QRnumC=\QRnumA} \let\futQRSchemaB=\QRSchemaN
+% argmin 1) F+C*8+\QRAswitchCost, 2) E+\lfloor(11B+1)/2 \rfloor, 3) D+\QRAswitchCost according the argmin:
+% 1) E:=F+C*8+\QRAswitchCost, B=A \edef\QRSchemaA{\QRSchemaB B\the\QRnumC}
+% 2) E remains, B=B+A \QRSchemaA remains
+% 3) E:=D+\QRBswitchCost, B=A \let\QRSchemaA=\QRSchemaN
+% \let\QRSchemaB=\futQRSchemaB\futC
+% D=\QRinfty
+ \QRnumG=\QRnumC\advance\QRnumG by \QRnumA\multiply\QRnumG by 8 \advance\QRnumG by\QRnumF\edef\exprB{\the\QRnumG}%
+ \QRnumG=\QRnumB\advance\QRnumG by \QRnumA\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumG by \QRnumE
+ \edef\exprA{\the\QRnumG\QRspace}%
+ \QRnumG=\QRnumA\multiply\QRnumG by 8 \advance\QRnumG by\QRnumD
+ \ifnum\exprA<\QRnumG
+  \QRnumG=\exprA
+  \advance\QRnumG by \QRBswitchCost
+  \ifnum\exprB>\QRnumG
+   \edef\futF{\QRnumF=\the\QRnumG\QRspace}\QRnumG=\QRnumB\advance\QRnumG by \QRnumA\edef\futQRSchemaB{\QRSchemaA A\the\QRnumG}\def\futC{\QRnumC=0 }%
+  \else
+   \let\futF=\relax\def\futC{\advance\QRnumC by \QRnumA}\let\futQRSchemaB=\QRSchemaB
+  \fi
+ \else
+  \advance\QRnumG by \QRBswitchCost
+  \ifnum\exprB>\QRnumG
+   \QRnumG=\QRnumD\advance\QRnumG by \QRBswitchCost
+   \edef\futF{\QRnumF=\the\QRnumG\QRspace}\def\futC{\QRnumC=\QRnumA}\let\futQRSchemaB=\QRSchemaN
+  \else
+   \let\futF=\relax\def\futC{\advance\QRnumC by \QRnumA}\let\futQRSchemaB=\QRSchemaB
+  \fi
+ \fi
+ \QRnumG=\QRnumB\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumG by \QRnumE\edef\exprA{\the\QRnumG}%
+ \QRnumG=\QRnumC\multiply\QRnumG by 8 \advance\QRnumG by \QRnumF
+ \ifnum\QRnumG<\QRnumD
+  \advance\QRnumG by \QRAswitchCost
+  \ifnum\exprA>\QRnumG
+   \QRnumB=\QRnumA\edef\QRSchemaA{\QRSchemaB B\the\QRnumC}\QRnumE=\QRnumG
+  \else
+   \advance\QRnumB by \QRnumA
+  \fi
+ \else
+  \QRnumG=\QRnumD
+  \advance\QRnumG by \QRAswitchCost
+  \ifnum\exprA>\QRnumG
+   \QRnumB=\QRnumA\let\QRSchemaA=\QRSchemaN\QRnumE=\QRnumG
+  \else
+   \advance\QRnumB by \QRnumA
+  \fi
+ \fi
+ \let\QRSchemaB=\futQRSchemaB\futF\futC
+ \QRnumD=\QRinfty
+\else %N switch
+% argmin 1) F+(C+A)*8, 2) E+\lfloor(11(B+A)+1)/2 \rfloor+\QRBswitchCost  according the argmin:
+% 1) futF:=F remains, \def\futC{\advance\QRnumC by \QRnumA}, \let\futQRSchemaB=\QRSchemaB
+% 2) futF:=E+\lfloor(11(B+A)+1)/2 \rfloor+\QRBswitchCost, \edef\futQRSchemaB{\QRSchemaA A\the(\QRnumB+\QRnumA) counted in G}  \def\futC{\QRnumC=0 }
+% argmin 1) F+C*8+\QRAswitchCost, 2) E+\lfloor(11B+1)/2 \rfloor according the argmin:
+% 1) futE:=F+C*8+\QRAswitchCost, \def\futB{\QRnumB=\QRnumA}, \edef\futQRSchemaA{\QRSchemaB B\the\QRnumC}
+% 2) futE:=E remains, \def\futB{\advance\QRnumB by \QRnumA}, \futQRSchemaA=\QRSchemaA
+% argmin 1) F+C*8, 2) E+\lfloor(11B+1)/2 \rfloor 3) D according the argmin:
+% 1)D:=F+C*8+\QRNswitchCost+\lfloor(10A+2)/3 \rfloor, \edef\QRSchemaN{\QRSchemaB B\the\QRnumC N\the\QRnumA}
+% 2)D:=E+\lfloor(11B+1)/2 \rfloor)+\QRNswitchCost+\lfloor(10A+2)/3 \rfloor, \edef\QRSchemaN{\QRSchemaA A\the\QRnumB N\the\QRnumA}
+% 3)D:=D+\lfloor(10A+2)/3 \rfloor for the case of start of the message \edef\QRSchemaN{N\the\QRnumA}
+% \let\QRSchemaB=\futQRSchemaB\futC
+% \let\QRSchemaA=\futQRSchemaA\futB
+ \QRnumG=\QRnumA\advance\QRnumG by \QRnumC\multiply\QRnumG by 8 \advance\QRnumG by \QRnumF\edef\exprB{\the\QRnumG\QRspace}%
+ \QRnumG=\QRnumA\advance\QRnumG by \QRnumB\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumG by \QRnumE\edef\exprA{\the\QRnumG\QRspace}% 
+ \advance\QRnumG by \QRBswitchCost
+ \ifnum\exprB>\QRnumG
+  \edef\futF{\QRnumF=\the\QRnumG\QRspace}\QRnumG=\QRnumB\advance\QRnumG by \QRnumA
+  \edef\futQRSchemaB{\QRSchemaA A\the\QRnumG}\def\futC{\QRnumC=0 }%
+ \else
+  \let\futF=\relax\def\futC{\advance\QRnumC by \QRnumA}\let\futQRSchemaB=\QRSchemaB
+ \fi
+ \QRnumG=\QRnumB\multiply\QRnumG by 11 \advance\QRnumG by 1 \divide\QRnumG by 2 \advance\QRnumG by \QRnumE\edef\exprA{\the\QRnumG\QRspace}% 
+ \QRnumG=\QRnumC\multiply\QRnumG by 8 \advance\QRnumG by \QRnumF\edef\exprB{\the\QRnumG\QRspace}%
+ \advance\QRnumG by \QRAswitchCost
+ \ifnum\exprA>\QRnumG
+  \edef\futE{\QRnumE=\the\QRnumG\QRspace}\def\futB{\QRnumB=\QRnumA}\edef\futQRSchemaA{\QRSchemaB B\the\QRnumC}%
+ \else
+  \let\futE=\relax\def\futB{\advance\QRnumB by \QRnumA}\let\futQRSchemaA=\QRSchemaA
+ \fi
+ \QRnumG=\QRnumD
+ \QRnumD=\QRnumA\multiply\QRnumD by 10 \advance\QRnumD by 2 \divide\QRnumD by 3 \advance\QRnumD by \QRNswitchCost
+ \ifnum\QRnumG=\QRNswitchCost
+  \edef\QRSchemaN{N\the\QRnumA}%
+ \else
+  \ifnum\exprA<\exprB
+   \edef\QRSchemaN{\QRSchemaA A\the\QRnumB N\the\QRnumA}\advance\QRnumD by \exprA
+  \else
+   \edef\QRSchemaN{\QRSchemaB B\the\QRnumC N\the\QRnumA}\advance\QRnumD by \exprB
+  \fi
+ \fi 
+ \let\QRSchemaB=\futQRSchemaB\futF\futC
+ \let\QRSchemaA=\futQRSchemaA\futE\futB
+\fi\fi 
+\QRnumA=0
+}%
+%%%%% PACKING %%%%%
+\def\binaryReset{\QRnumC=0 \def\binary{}}%length of binary is maintained in \QRnumC 
+%
+\def\NUMBIN{%\message{NUMBIN [\the\QRnumC]&\the\QRnumA(\the\QRnumB)}%
+%writes \QRnumA using \QRnumB binary digits to the end of \binary,
+% increases \QRnumC by the number of digits added to \binary
+\advance\QRnumC by \QRnumB
+\ifnum\QRnumB>0 \let\NUMBINnext\NUMBINNEXTDIGIT\NUMBINnext\ENDNUMBIN\fi}%
+%never more than 16 bits :) ... the recursion would not be a tail one
+\def\NUMBINNEXTDIGIT{\ifodd\QRnumA\def\NUMBINnextdigit{\1}\else\def\NUMBINnextdigit{\0}\fi
+\divide\QRnumA by 2 \advance\QRnumB by -1 \ifnum\QRnumB=0 \let\NUMBINnext\NUMBINEND\fi
+\!\NUMBINnext\NUMBINnextdigit}%
+\def\NUMBINEND#1\ENDNUMBIN{\!\def\!\binary\!{\binary#1}}%
+%
+\def\showOne{1\penalty0 }\def\showZero{0\penalty0 }%
+\def\showing{\let\0\showZero\let\1\showOne}%
+\def\binaryShow{\let\1=\showOne\let\0=\showZero (\the\QRnumC)\binary}%
+
+\def\PACKcontent{%\message{packing with schema \QRSchema}%
+\ifx\QRSchema\QRempty\ifnum\QRnumC=\QRnumF\else\errmessage{Number of bits does not correspond to the computed value}\fi\else\!\takeFirstQRSchema\QRSchema\relax\!\PackQRTypeBlock\fi}%TODO
+\def\takeFirstQRSchema#1{\def\QRtype{#1}\afterassignment\takeFirstQRSchemaCont\QRnumD=}%
+\def\takeFirstQRSchemaCont#1\relax{\def\QRSchema{#1}%
+%\message{\QRtype\the\QRnumD, remains >\QRSchema<}%
+}%
+\def\PackQRTypeBlock{%\message{PackQRTypeBlock \QRtype\the\QRnumD}%
+\ifx\QRtype\QRtypeB\QRnumA=4 \QRnumE=\QRBswitchCost
+\else
+ \ifx\QRtype\QRtypeA\QRnumA=2 \QRnumE=\QRAswitchCost
+ \else \QRnumA=1 \QRnumE=\QRNswitchCost
+ \fi
+\fi
+\QRnumB=4 \advance\QRnumE by -\QRnumB
+\NUMBIN %type included
+\QRnumA=\QRnumD\QRnumB=\QRnumE\NUMBIN %type block len included
+\QRnumE=0 %cache len for ALPHANUM/NUMERIC
+\GFReady
+%\message{modelen:(\the\QRnumC)\binary}%
+\let\PackQRTypeBlockNext=\PackQRTypeBlockLoop\PackQRTypeBlockNext}%\PACKcontent is issued at the block end
+\def\PackQRTypeBlockLoop#1{%
+\ifx\QRtype\QRtypeB
+ \BINNUM#1\QRnumB=8 \NUMBIN
+\else
+ \QRnumG=\QRnumA\advance\QRnumE by 1
+ \ALPHANUM#1\relax
+ \ifx\QRtype\QRtypeA
+  \multiply\QRnumG by 45 \advance\QRnumG by \QRnumA
+  \QRnumA=\QRnumG
+  \ifnum\QRnumE=2
+   \QRnumB=11 \NUMBIN\QRnumE=\QRnumA %NUMBIN resets QRnumA
+  \fi
+ \else
+  \multiply\QRnumG by 10 \advance\QRnumG by \QRnumA
+  \QRnumA=\QRnumG
+  \ifnum\QRnumE=3
+   \QRnumB=10 \NUMBIN\QRnumE=\QRnumA %NUMBIN resets QRnumA
+  \fi 
+ \fi
+\fi
+\advance\QRnumD by -1
+\ifnum\QRnumD=0 \let\PackQRTypeBlockNext=\PACKQRTypeBlockFlush\fi
+\PackQRTypeBlockNext
+}%
+\def\PACKQRTypeBlockFlush{%
+\ifnum\QRnumE>0
+ \ifx\QRtype\QRtypeA
+  \QRnumB=6 \NUMBIN
+ \else
+  \ifnum\QRnumE=1
+   \QRnumB=4 \NUMBIN
+  \else
+   \QRnumB=7 \NUMBIN
+  \fi
+ \fi
+\fi
+\PACKcontent}%
+
+\def\setQRversion#1{%\message{setQRversion \number#1}%
+\edef\QRversion{<\romannumeral#1>}\!\let\!\QRside\!=\csname QRside\QRversion\endcsname\QRnumG=\QRside\advance\QRnumG by -1
+\edef\QRmaxCoord{\the\QRnumG\QRspace}}%
+\def\chooseMaxECLevel{\QRnumF=\csname QRBitLimit\QRversion Q\endcsname
+\ifnum\QRnumC>\QRnumF
+ \QRnumF=\csname QRBitLimit\QRversion M\endcsname
+ \ifnum\QRnumC>\QRnumF
+  \def\EClevel{L}%  
+ \else
+  \def\EClevel{M}%
+ \fi
+\else
+ \QRnumF=\csname QRBitLimit\QRversion H\endcsname
+ \ifnum\QRnumC>\QRnumF
+  \def\EClevel{Q}%
+ \else
+  \def\EClevel{H}%
+ \fi
+\fi
+}%
+\let\chooseECLevel=\chooseMaxECLevel
+\newif\ifVersionChooseLoopCont
+\def\versionChooseLoopBreakTest{\ifnum\QRnumE<\QRmaxVersion\relax
+ \ifnum\QRnumC>\QRnumF
+  \VersionChooseLoopConttrue
+ \else
+  \VersionChooseLoopContfalse
+ \fi
+\else\VersionChooseLoopContfalse\fi}%
+\def\chooseVersionToFit{\QRnumE=\QRminVersion\relax
+ \loop \QRnumF=\csname QRBitLimit<\romannumeral\QRnumE>\endcsname
+  \versionChooseLoopBreakTest
+  \ifVersionChooseLoopCont
+   \advance\QRnumE by 1 
+ \repeat
+}%
+\def\fixVersion#1{\def\chooseVersion{\QRnumE=#1\relax}}%
+\def\freeVersion{\let\chooseVersion=\chooseVersionToFit}%
+\freeVersion
+\def\PAD{%choses appropriate version and EC level, PADs data bits to full data size for the version and EC level
+ \chooseVersion% choses \QRnumE
+ \setQRversion{\QRnumE}%
+ \QRnumF=\csname QRBitLimit\QRversion\endcsname
+ \ifnum\QRnumC>\QRnumF
+  \errmessage{No room for data in QRcode versions till \the\QRnumE}%
+ \fi
+ \chooseECLevel
+ \!\let\!\QRBitLimit\!=\csname QRBitLimit\QRversion\EClevel\endcsname
+ %\message{version \QRversion=\the\QRnumE, EClevel \EClevel, QRBitLimit \QRBitLimit}%
+ \QRnumA=0 \QRnumB=\QRBitLimit\advance\QRnumB by -\QRnumC
+ \ifnum\QRnumB<4 \else\QRnumB=4\NUMBIN\fi %PAD mode mark
+ \QRnumB=\QRnumC\divide\QRnumB by 8 \multiply\QRnumB by 8
+ \advance\QRnumB by-\QRnumC
+ \ifnum\QRnumB=0 \else
+  \advance\QRnumB by 8 \NUMBIN %PAD by 0 to the byte boundary
+ \fi
+ \let\PADnext=\PADbyXVI\PADnext %PADDING by alternating 2 PAD bytes
+}%
+\def\PADbyXVI{\QRnumB=\QRBitLimit\advance\QRnumB by -\QRnumC
+\ifnum\QRnumB<16 \let\PADnext\PADlastVIII\else\QRnumB=16 \QRnumA="EC11 \NUMBIN\fi\PADnext}%
+\def\PADlastVIII{\ifnum\QRnumB=8 \QRnumA="EC \NUMBIN\fi}%
+
+%%%%% ReedSolomon LEVEL %%%%%
+% split to blocks, find ec for the blocks, join blocks, join ec blocks 
+\def\ReedSolomon{\QRSplitBlocks\QRMergeBlocks\QRMergeECs
+%\message{After merge (\the\QRnumC)\binary QRversion = \QRversion}%
+\QRnumB=\csname QRPadBits\QRversion\endcsname\QRnumA=0 
+\NUMBIN
+%\message{After PADDBits (\the\QRnumC)\binary QRversion = \QRversion}%
+}%
+% QRnumC does not contain the length of binary now.
+
+\def\binarySplit#1#2#3#4#5#6#7#8{\!\def\!\binSplit\!{\binSplit#1#2#3#4#5#6#7#8}\advance\QRnumB by -1
+\ifnum\QRnumB>0 \!\binarySplit\else\!\defbinary\fi}%
+\def\defbinary#1\endbinary{\def\binary{#1}}%
+%
+\def\QRSplitBlocks{% The blocks would be numbered downwards. Block len differ by at most 1, the longer blocks are at the end.
+\!\let\!\QRBlocks\!=\csname QRBlocks\QRversion\EClevel\endcsname
+\!\let\!\QREC\!=\csname QREC\QRversion\EClevel\endcsname
+\QRnumD=\QRBlocks\QRnumE=\QRnumC\divide \QRnumE by 8 %number of data bytes
+\loop
+\ifnum\QRnumD>1
+ %\message{QRSplitBlocks remaining blocks \the\QRnumD, remaining bytes \the\QRnumE binary \binary}%
+ \QRnumB=\QRnumE
+ \divide\QRnumB by \QRnumD\advance\QRnumE by -\QRnumB\QRnumF=\QRnumB
+ \def\binSplit{}\!\binarySplit\binary\endbinary
+ \processSplit
+ \advance\QRnumD by -1
+\repeat
+\let\binSplit=\binary
+\QRnumF=\QRnumE
+\processSplit
+\def\binary{}%
+}%
+
+\def\processSplit{\!\let\csname bin\the\QRnumD\endcsname=\binSplit
+%%%% Reed Solomon here %%%%
+% ... not to compute the part lengths again, as GFP is represented by a set of definitions, it's better to finish the computation now.
+% the arithmetic definition follows 
+\QRnumA=\QREC
+%\message{processSplit[\the\QRnumD] (\the\QRnumF)\binSplit}%
+\binaryToGFP\GFPdata\binSplit\QRnumF
+%\GFPshow\GFPdata\par
+\GFPshiftLeft\QRnumA\GFPdata
+%DataShifted \GFPshow\GFPdata\par
+%\message{split ... QRnumA=\the\QRnumA}%
+%Prod \!\GFPshow\csname GFPProd\the\QRnumA\endcsname\par
+\!\GFPmod\!\GFPec\!\GFPdata\csname GFPProd\the\QRnumA\endcsname
+\advance\QRnumA by -1\relax\edef\GFPecDeg{\the\QRnumA}% don't remove leading zeros!
+%Data \GFPshow\GFPdata\par
+%EC \GFPshow\GFPec\par
+\ReedSolomonCheck
+\!\GFPTobinary\csname EC\the\QRnumD\endcsname\GFPec
+%\message{EC\the\QRnumD = \csname EC\the\QRnumD\endcsname}%
+}%
+
+\def\ReedSolomonCheck{%
+{\!\xdef\csname GFPcheckDeg\endcsname{\csname GFPdataDeg\endcsname}%
+\QRnumG=\csname GFPcheckDeg\endcsname
+\loop
+%\message{GFPcheck \the\QRnumG}%
+\!\edef\csname GFPcheck[\the\QRnumG]\endcsname{\csname GFPdata[\the\QRnumG]\endcsname}\advance\QRnumG by -1 \ifnum\QRnumG>\QRnumA\repeat
+\loop
+%\message{GFPcheck(EC) \the\QRnumG}%
+\!\edef\csname GFPcheck[\the\QRnumG]\endcsname{\csname GFPec[\the\QRnumG]\endcsname}\advance\QRnumG by -1 \ifnum\QRnumG>-1 \repeat
+\QRnumG=\QRnumA\advance \QRnumG by 1
+%Check \GFPshow\GFPcheck\par
+\!\GFPmod\!\GFPtst\!\GFPcheck\csname GFPProd\the\QRnumG\endcsname
+%Tst \GFPshow\GFPtst\par
+}}%
+
+\def\takeByte#1{\def\taken{#1}\ifx#1\QRempty\def\byte{}\else\!\takeEight#1\endtake\fi}
+\def\takeEight#1#2#3#4#5#6#7#8#9\endtake{\def\byte{#1#2#3#4#5#6#7#8}\!\def\taken{#9}}%
+\def\QRMergeBlocks{% Blocks should be merged (in our numbering taking one byte from each block (going downwards) until the shorter blocks are empty
+\QRnumD=\QRBlocks
+\loop
+ \!\takeByte\csname bin\the\QRnumD\endcsname
+ \!\!\!\def\!\!\!\binary\!\!\!{\!\binary\byte}%
+\ifnum\QRnumD>1
+ \advance\QRnumD by -1
+\repeat
+\!\ifx\csname bin1\endcsname\QRempty\else\!\QRMergeBlocks\fi
+}%
+\def\QRMergeECs{% ECs should be merged (in our numbering taking one byte from each block (going downwards) until they are empty
+\QRnumD=\QRBlocks
+\loop
+ \!\takeByte\csname EC\the\QRnumD\endcsname
+ \!\!\!\def\!\!\!\binary\!\!\!{\!\binary\byte}%
+\ifnum\QRnumD>1
+ \advance\QRnumD by -1
+\repeat
+\!\ifx\csname EC1\endcsname\QRempty\else\!\QRMergeECs\fi
+}%Merge EC's should be added as well
+
+%%%%% GF(0x11D) ARITHMETICS %%%%%
+% fortunately we could work with 9 bit elements (even when multiplying by the generator)
+% results in \GFacc
+\def\GFmodulo{\1\0\0\0\1\1\1\0\1}%
+\def\GFid{}%
+\def\GFnegNine#1#2#3#4#5#6#7#8#9{\ifx#9\0\!#1\!#2\!#3\!#4\!#5\!#6\!#7\!#8\!\1\else\!#1\!#2\!#3\!#4\!#5\!#6\!#7\!#8\!\0\fi}
+\def\GFxorZeroReady{\noexpand\GFid}%
+\def\GFxorOneReady{\noexpand\GFnegNine}%
+\def\GFxorReady{\let\0=\GFxorZeroReady\let\1=\GFxorOneReady}
+\def\GFZeroReady{\noexpand\0}%
+\def\GFOneReady{\noexpand\1}%
+\def\GFReady{\let\0=\GFZeroReady\let\1=\GFOneReady}
+\def\GFZeroGobble{}%
+\def\GFOneGobble{\relax}% has to be different from GFZeroGobble
+\def\GFGobble{\let\0=\GFZeroGobble\let\1=\GFOneGobble}
+\def\GFadd#1#2#3#4#5#6#7#8#9{\GFxorReady\edef\GFacc{\GFacc}\GFReady
+\edef\GFacc{\GFacc#1#2#3#4#5#6#7#8#9}}
+\def\GFmod{\GFGobble\!\ifx\!\0\GFacc\else\!\GFadd\GFmodulo\fi}%
+\def\GFx{\!\!\!\def\!\!\!\GFacc\!\!\!{\!\gobbleone\GFacc\0}\GFmod}%
+\def\GFone{\0\0\0\0\0\0\0\0\1}
+\def\GFzero{\0\0\0\0\0\0\0\0\0}
+\def\GFLOGEXPloop{\!\!\!\def\!\csname\!G\!F\!E\!X\!P\!\the\!\QRnumA\!\endcsname\!{\GFacc}%
+\def\0{0}\def\1{1}\!\edef\csname GFLOG\GFacc\endcsname{\the\QRnumA}%
+\GFx\advance\QRnumA by 1 \ifnum\QRnumA=255 \let\GFLOGEXPnext=\relax\fi\GFLOGEXPnext}%
+\let\GFLOGEXPnext=\GFLOGEXPloop\QRnumA=0\!\def\!\GFacc\!{\GFone}\GFLOGEXPnext
+\def\GFlog{\def\0{0}\def\1{1}\QRnumA=\csname GFLOG\GFacc\endcsname\relax}%
+\def\GFexp{\!\!\!\def\!\!\!\GFacc\!\!\!{\csname GFEXP\the\QRnumA\endcsname}}%
+\def\GFmul#1#2#3#4#5#6#7#8#9{\ifx\GFacc\GFzero\else\GFlog
+ \def\GFacc{#1#2#3#4#5#6#7#8#9}\GFmod\ifx\GFacc\GFzero\else
+ \QRnumB=\QRnumA\GFlog\advance\QRnumA by \QRnumB
+ \ifnum\QRnumA>254 \advance\QRnumA by -255 \fi
+ \GFexp\fi\fi}%
+\def\GFoneover{\GFlog\QRnumB=\QRnumA\ifnum\QRnumA=0 \else \QRnumA=255\advance\QRnumA by -\QRnumB\fi\GFexp}%
+\def\GFshow{\def\0{0}\def\1{1}\GFacc}%
+%
+%%%% GFP ARITHMETIC %%%%
+\def\GFPreset#1{\QRnumA=\csname\string#1Deg\endcsname\relax
+\def\GFPresetnext{\!\!\!\gdef\!\csname\!\string\!#1\![\!\the\!\QRnumA\!]\!\endcsname\!{\GFzero}%
+\advance\QRnumA by -1\ifnum\QRnumA<0\let\GFPresetnext=\relax\fi\GFPresetnext}\GFPresetnext}%
+%
+\def\GFPmul#1#2#3{\begingroup\escapechar=-1 \QRnumA=\csname\string#2Deg\endcsname\relax
+\QRnumB=\csname\string#3Deg\endcsname\relax
+\advance\QRnumA by \QRnumB\!\xdef\csname\string#1Deg\endcsname{\the\QRnumA}\GFPreset#1\relax
+\def\GFPmulnextloop{\begingroup\QRnumC=\QRnumB\advance\QRnumC by\QRnumA\!\!\!\GFmul\csname\string#2[\the\QRnumA]\endcsname
+\!\!\!\GFadd\csname\string#1[\the\QRnumC]\endcsname
+\!\!\!\gdef\!\csname\!\string\!#1\![\!\the\!\QRnumC\!]\!\endcsname\!{\GFacc}%
+\endgroup\advance\QRnumA by -1 \ifnum\QRnumA<0 \let\GFPmulnextnext=\relax\fi\GFPmulnextnext}%
+\def\GFPmulnext{\!\!\!\def\!\!\!\GFacc\!\!\!{\csname\string#3[\the\QRnumB]\endcsname}\QRnumA=\csname\string#2Deg\endcsname
+\let\GFPmulnextnext=\GFPmulnextloop\GFPmulnextnext
+\advance\QRnumB by -1 \ifnum\QRnumB<0 \let\GFPmulnext=\relax\fi\GFPmulnext}\GFPmulnext\endgroup
+}%
+%
+%GFPcopy expects #1 is not defined at all or was defined with smaler degree ... otherwise there remains non accessed allocation
+\def\GFPcopy#1#2{\begingroup\escapechar=-1 \!\xdef\csname\string#1Deg\endcsname{\csname\string#2Deg\endcsname}%
+\QRnumA=\csname\string#1Deg\endcsname
+\def\GFPcopyloop{\!\!\!\!\!\!\!\gdef\!\!\!\csname\!\!\!\string\!\!\!#1\!\!\![\!\!\!\the\!\!\!\QRnumA\!\!\!]\!\!\!\endcsname\!\!\!{\csname\string#2[\the\QRnumA]\endcsname}\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\GFPcopyloop\fi}%
+\GFPcopyloop\endgroup}%
+%
+\def\GFPshiftLeft{\afterassignment\GFPshiftLeftCont\QRnumB=}%
+\def\GFPshiftLeftCont#1{\begingroup\escapechar=-1
+\QRnumA=\csname\string#1Deg\endcsname\relax
+\advance\QRnumB by \QRnumA \!\xdef\csname\string#1Deg\endcsname{\the\QRnumB}%
+\def\GFPshiftLeftLoop{\!\!\!\!\!\!\!\gdef\!\!\!\csname\!\!\!\string\!\!\!#1\!\!\![\!\!\!\the\!\!\!\QRnumB\!\!\!]\!\!\!\endcsname\!\!\!{\csname\string#1[\the\QRnumA]\endcsname}\advance\QRnumA by -1
+\advance\QRnumB by -1 \ifnum\QRnumA<0 \else\!\GFPshiftLeftLoop\fi}%
+\def\GFPshiftLeftClearLoop{\!\!\!\gdef\!\csname\!\string\!#1\![\!\the\!\QRnumB\!]\!\endcsname\!{\GFzero}\advance\QRnumB by -1 \ifnum\QRnumB<0 \else\!\GFPshiftLeftClearLoop\fi}%
+\GFPshiftLeftLoop
+\GFPshiftLeftClearLoop
+\endgroup}%
+%
+\def\GFPgenloop{\GFPcopy\GFPPrevProd\GFPProd\!\def\csname GFPGen\the\QRnumA Deg\endcsname{1}%
+\!\!\!\def\!\csname\!G\!F\!P\!G\!e\!n\!\the\!\QRnumA\![\!1\!]\!\endcsname\!{\GFone}%
+\GFexp\!\!\!\def\!\csname\!G\!F\!P\!G\!e\!n\!\the\!\QRnumA\![\!0\!]\!\endcsname\!{\GFacc}%
+\!\GFPmul\!\GFPProd\!\GFPPrevProd\csname GFPGen\the\QRnumA\endcsname
+\advance\QRnumA by 1 \!\GFPcopy\csname GFPProd\the\QRnumA\endcsname\GFPProd
+\ifnum\QRnumA<30 \!\GFPgenloop\fi}%
+\def\GFPProdDeg{0}\!\!\!\def\!\csname\!G\!F\!P\!P\!r\!o\!d\![\!0\!]\!\endcsname\!{\GFone}%
+\QRnumA=0 \!\GFPcopy\csname GFPProd\the\QRnumA\endcsname\GFPProd
+\GFPgenloop
+%
+\def\GFPreducedeg#1{\begingroup\escapechar=-1
+\def\GFPreducedegloop{\!\ifx\csname\string#1[\csname\string#1Deg\endcsname]\endcsname\GFzero
+\QRnumA=\csname\string#1Deg\endcsname\relax\advance\QRnumA by -1
+\ifnum\QRnumA<0 \else\!\xdef\csname\string#1Deg\endcsname{\the\QRnumA}\!\!\!\GFPreducedegloop\fi\fi}\GFPreducedegloop\endgroup}%
+%
+\def\GFPmod#1#2#3{\begingroup\escapechar=-1 \GFPcopy#1#2\relax
+\GFPreducedeg#3\QRnumA=\csname\string#3Deg\endcsname\relax
+\!\!\!\def\!\!\!\GFacc\!\!\!{\csname\string#3[\the\QRnumA]\endcsname}\GFoneover
+\!\def\!\DivisorMonicFactor\!{\GFacc}% we would use monic polynomials anyway ... nonzero not tested!
+\def\GFPmodloop{\GFPreducedeg#1\relax
+\QRnumC=\csname\string#1Deg\endcsname\relax
+\!\!\!\def\!\!\!\GFacc\!\!\!{\csname\string#1[\the\QRnumC]\endcsname}%
+\advance\QRnumC by -\csname\string#3Deg\endcsname\relax % shift left
+\ifnum\QRnumC<0 \else
+\!\GFmul\DivisorMonicFactor
+\def\GFPshiftsubloop{\begingroup\advance\QRnumC by \QRnumA
+\!\!\!\GFmul\csname\string#3[\the\QRnumA]\endcsname
+\!\!\!\GFadd\csname\string#1[\the\QRnumC]\endcsname
+\!\!\!\gdef\!\csname\!\string\!#1\![\!\the\!\QRnumC\!]\!\endcsname\!{\GFacc}%
+\endgroup
+\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\!\!\GFPshiftsubloop\fi
+}\QRnumA=\csname\string#3Deg\endcsname\relax\GFPshiftsubloop
+\!\GFPmodloop\fi}\GFPmodloop
+\endgroup}%
+%
+\def\GFPshow#1{\begingroup\escapechar=-1\QRnumA=\csname\string#1Deg\endcsname
+\def\GFPshowloop{\!\!\!\def\!\!\!\GFacc\!\!\!{\csname\string#1[\the\QRnumA]\endcsname}\GFshow\odot x^{\the\QRnumA}%
+\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\oplus\!\GFPshowloop\fi}$\GFPshowloop$\endgroup}%
+%
+\def\binaryToGFPloopend#1\endbinary{}%
+\def\binaryToGFP#1#2#3{\begingroup\escapechar=-1 \QRnumA=#3\advance\QRnumA by -1 \!\xdef\csname\string#1Deg\endcsname{\the\QRnumA}%
+\def\binaryToGFPloop##1##2##3##4##5##6##7##8{\!\gdef\csname\string#1[\the\QRnumA]\endcsname{\0##1##2##3##4##5##6##7##8}%
+\advance\QRnumA by -1 \ifnum\QRnumA<0 \!\binaryToGFPloopend\else\!\binaryToGFPloop\fi}%
+\!\binaryToGFPloop#2\endbinary
+\endgroup}%
+%
+%\def\GFPTobinary#1{\iffalse{\fi\begingroup\def\0{\aftergroup\!\aftergroup\0}\def\1{\aftergroup\!\aftergroup\1}%
+%\escapechar=-1
+%\QRnumA=\csname\string#1Deg\endcsname\relax
+%\aftergroup\!\aftergroup\!\aftergroup\!\aftergroup\def\aftergroup\!\aftergroup\!\aftergroup\!\aftergroup\binary\aftergroup\!\aftergroup\!\aftergroup\!\%aftergroup{\iffalse}\fi\aftergroup\!\aftergroup\binary
+%\def\GFPTobinaryloop{\!\!\!\gobbleone\csname\string#1[\the\QRnumA]\endcsname\advance\QRnumA by -1 \ifnum\QRnumA<0 \else \!\GFPTobinaryloop\fi}%
+%\GFPTobinaryloop
+%\endgroup}}%
+%
+\def\GFPTobinary#1#2{%
+\begingroup\escapechar=-1\def#1{}%
+\QRnumA=\csname\string#2Deg\endcsname\relax
+\def\GFPTobinaryloop{%
+\!\let\!\nextkoef\!=\csname\string#2[\the\QRnumA]\endcsname
+\!\edef\!#1\!{\!#1\!\gobbleone\nextkoef}%
+\advance\QRnumA by -1 \ifnum\QRnumA<0 \else \!\GFPTobinaryloop\fi}%
+\GFReady
+\GFPTobinaryloop
+\xdef\gbinary{\def\noexpand#1{#1}}% local assignment outside the group!
+\endgroup
+\gbinary}%
+%
+%%%%% GEOMETRY %%%%
+%
+%For each version there would be set of definitions ... one per pixel. 
+%QRVER<\QRversion>[i,j] will be filled by one of: \QRBigFixed\0, \QRBigFixed\1, \QRFixed\0, \QRFixed\1, \QRecMaskInfo 0 ... \QRecMaskInfo E, \QRmasked<i><j>\0, \QRmasked<i><j>\1, ... always 2 tokens
+% (QRBigFixed, QRFixed are static for given version, QRecMaskInfo depends on chosen encoddinglevel and mask)
+% data pixels are initialised to \QRmasked<i><j>\1, could be changed using QRSet according to the data to be stored
+%\QRSet sets the databits, \QRchooseMask choses the optimal mask and \QRSetBox fills the box with corresponding rules
+% the idea to have QRBigFixed for Finders and (outer Aligns) is to print them separately by bigger rules. 
+% It is not implemented yet and probably would never be. 
+%There would be different modes how to use the information ... 
+%%%% Modes of use %%%%
+%\QRmasked is not redefined according the mode, Mask is changed instead
+\def\QRShowBitsMode{\let\QRBigFixed=\relax\let\QRFixed=\relax\def\QRecMaskInfo##1{\csname QRecMask\QRMask\EClevel##1\endcsname}}
+%%%% ^ for printing %%%%
+\def\QRSetBitsMode{\QRSetMask8\let\QRBigFixed=\QRSetLoopTwo\let\QRFixed=\QRSetLoopTwo\let\QRecMaskInfo\QRSetLoopTwo}
+%%%% ^ for QRSet ... the MASK8 would store the databits in QRmasked, everything else is skipped
+%
+%%%% QRSET %%%%
+\newif\ifQRSecondColumn
+%\binery should have exact len ... the number of \QRmasked items among QRVER
+%\QRnumC is vertical direction of filling
+\def\QRSetLoop{\ifQRSecondColumn\QRSecondColumnfalse\advance\QRnumA by 1 \advance\QRnumB by \QRnumC\else
+\QRSecondColumntrue\advance\QRnumA by -1 \fi
+\ifnum\QRnumB<0 \QRSetStartColumn\fi\ifnum\QRnumB=\QRside \QRSetStartColumn\fi
+\ifnum\QRnumA<0 \else
+\!\!\!\doubleToken\!\csname\!Q\!R\!V\!E\!R\!\QRversion\![\!\the\!\QRnumB\!,\!\the\!\QRnumA\!]\!\endcsname\fi}%
+% expands to <token1><token2><QRVER<>[i,j]> where <QRVER<>[i,j]> expands to <token1><token2>
+\def\QRSet{%\message{QRSet}%
+\QRinit\QRSetBitsMode\QRSecondColumnfalse\QRnumC=-1 \QRnumA=\QRmaxCoord \QRnumB=\QRnumA
+\!\!\!\doubleToken\!\csname\!Q\!R\!V\!E\!R\!\QRversion\![\!\the\!\QRnumB\!,\!\the\!\QRnumA\!]\!\endcsname\binary}%
+% again expands to <token1><token2><QRVER<>[i,j]> where <QRVER<>[i,j]> expands to <token1><token2>
+\def\QRSetLoopTwo#1#2{\QRSetLoop}% used for <token1> to skip <token2><QRVER<>[i,j]> (fixed patterns ignored while filling)
+\def\QRSetBit#1#2#3{\!\!\!\def\!\!\!#2\!\!\!{\!\gobblesecond#2#3}\QRSetLoop}% Mask8 used for QRSet 
+% QRSetBit<token2><QRVER<>[i,j]>#1 after first expandafter chain \!\def\!<QRVER<>[i,j]>\!{\gobblesecond<token1><token2>#1}\QRSetLoop
+% after second expandafter chain \def<QRVER<>[i,j]>{<token1>#1}\QRSetLoop so 2nd token was replaced by first token from the replacement list
+\def\QRSetStartColumn{\QRnumC=-\QRnumC\advance\QRnumB by \QRnumC\advance\QRnumA by -2 
+\ifnum\QRnumA=6 \advance\QRnumA by -1 \fi}%
+% revert direction, move left twice and skip column6, and return vertically once (as invoked outside the square)
+%
+%%%% ARRAY FILL %%%%
+%%%% DEFINING THE VERSION SQUARE %%%%
+\def\QRinit{%\message{QRinit version \QRversion \!\meaning\csname QRVER\QRversion[0,0]\endcsname}%
+\GFGobble\!\ifx\!\relax\csname QRVER\QRversion[0,0]\endcsname\!\QRInit\fi}%
+\def\QRInit{%\message{QRInit}%
+\QRFill\QRPutFinders\QRPutTimers\QRPutAligns\QRPutVersion\QRPutECMaskInfo%\QRLog
+}%
+%
+\def\QRFill{\QRnumA=\QRmaxCoord\QRnumC=\QRnumA\divide\QRnumC by 12 \multiply\QRnumC by -12 \advance\QRnumC by \QRnumA
+\QRnumE=\QRnumC\ifnum\QRnumE>5 \advance\QRnumE by -6 \fi\QRFillLoop}% fill by QRmasked first, fixed patterns would replace it later
+\def\QRFillLoop{\QRnumB=\QRmaxCoord\QRnumD=\QRnumE\QRFillLoopLoop
+\advance\QRnumA by -1 \advance\QRnumC by -1
+\ifnum\QRnumC<0 \advance\QRnumC by 12 \fi
+\ifnum\QRnumA<0 \else\!\QRFillLoop\fi}%
+\def\QRFillLoopLoop{\QRFillLoopLoopDo
+\advance\QRnumB by -1 \advance\QRnumD by -1
+\ifnum\QRnumD<0 \advance\QRnumD by 6 \fi
+\ifnum\QRnumB<0 \else\!\QRFillLoopLoop\fi}%
+\def\QRFillLoopLoopDo{\!\!\!\gdef\!\csname\!Q\!R\!V\!E\!R\!\QRversion\![\!\the\!\QRnumA\!,\!\the\!\QRnumB\!]\!\endcsname\!{\csname QRmasked\the\QRnumC,\the\QRnumD\endcsname\1}}%
+%
+\def\QRPutBasic#1#2#3#4{\!\gdef\csname QRVER\QRversion[\number#1,\number#2]\endcsname{#3#4}}%
+%filling with main diagonal symmetry
+\def\QRPutTwoBigFixed#1{\QRPutBasic\QRnumA\QRnumB\QRBigFixed#1\QRPutBasic\QRnumB\QRnumA\QRBigFixed#1}%
+\def\QRPutBigFixedSym#1{\QRPutTwoBigFixed#1\relax
+{\QRnumA=-\QRnumA\advance\QRnumA by \QRmaxCoord\QRPutTwoBigFixed#1}% with one mirror symmetry
+{\QRnumB=-\QRnumB\advance\QRnumB by \QRmaxCoord\QRPutTwoBigFixed#1}% with the other mirror symmetry
+}%
+%
+\def\QRPutBigFixedLine#1#2#3#4{\QRnumA=#1 \QRnumB=#2 \QRPutBigFixedLineLoop#3#4}%
+\def\QRPutBigFixedLineLoop#1#2{\QRPutBigFixedSym#2\advance\QRnumB by -1 \ifnum\QRnumB<#1 \else\!\QRPutBigFixedLineLoop\!#1\!#2\fi}%
+\def\QRPutFinders{\QRnumA=\QRside\advance\QRnumA by -1
+\QRPutBigFixedLine770\0
+\QRPutBigFixedLine660\1
+\QRPutBigFixedLine050\1
+\QRPutBigFixedLine551\0
+\QRPutBigFixedLine141\0
+\QRPutBigFixedLine442\1
+\QRPutBigFixedLine332\1
+\QRPutBigFixedLine222\1
+}%
+%
+\def\QRPutFixed#1{\QRPutBasic\QRnumA\QRnumB\QRFixed#1}%
+\def\QRPutTwoFixed#1{\QRPutFixed#1\QRPutBasic\QRnumB\QRnumA\QRFixed#1}%
+%
+\def\QRPutAlignOffs#1#2#3{{\advance\QRnumA by #1 \advance\QRnumB by #2 \QRPutBasic\QRnumA\QRnumB\QRBigFixed#3}}%
+%
+\def\QRPutAlignment#1#2{{\QRnumA=#1 \QRnumB=#2 \QRPutFixed\1
+\QRPutAlignOffs{-1}{-1}\0\QRPutAlignOffs{-1}0\0\QRPutAlignOffs{-1}1\0\QRPutAlignOffs01\0
+\QRPutAlignOffs11\0\QRPutAlignOffs10\0\QRPutAlignOffs1{-1}\0\QRPutAlignOffs0{-1}\0
+\QRPutAlignOffs{-2}{-2}\1\QRPutAlignOffs{-2}{-1}\1\QRPutAlignOffs{-2}0\1\QRPutAlignOffs{-2}1\1
+\QRPutAlignOffs{-2}2\1\QRPutAlignOffs{-1}2\1\QRPutAlignOffs02\1\QRPutAlignOffs12\1
+\QRPutAlignOffs22\1\QRPutAlignOffs21\1\QRPutAlignOffs20\1\QRPutAlignOffs2{-1}\1
+\QRPutAlignOffs2{-2}\1\QRPutAlignOffs1{-2}\1\QRPutAlignOffs0{-2}\1\QRPutAlignOffs{-1}{-2}\1
+}}%
+\def\QRPutAligns{\QRnumD=\csname QRSideAligns\QRversion\endcsname
+%\message{QRPutAligns alignside \the\QRnumD}%
+\ifnum\QRnumD>1 %compute the alignments distance
+\QRnumE=\QRside\advance\QRnumE by -13 
+%\message{Side-13 \the\QRnumE}%
+\multiply\QRnumE by 5 
+%\message{5*(side-13) \the\QRnumE}%
+\QRnumF=7 \multiply\QRnumF by \QRnumD
+\advance\QRnumE by \QRnumF
+%\message{7A \the\QRnumF; 5*(side-13)+7A \the\QRnumE}%
+\divide\QRnumE by 10 \divide\QRnumE by \QRnumD
+%\message{5*(side-13)/(10A)+7/10 \the\QRnumE}%
+\multiply\QRnumE by 2 
+%\message{Aligns dist \the\QRnumE}%
+\fi
+\QRnumA=\QRside\advance\QRnumA by -7 \QRnumB=\QRnumA\QRnumC=\QRnumD
+\ifnum\QRnumD>0 \QRPutAlignsLoop\fi}%
+\def\QRPutAlignsLoop{\loop
+%\message{PutAlignments loop \the\QRnumD \the\QRnumE}%
+\QRPutAlignsLoopLoop\advance\QRnumD by -1 \advance\QRnumB by -\QRnumE\ifnum\QRnumD>0
+\QRPutAlignment6\QRnumB \QRPutAlignment\QRnumB6
+\repeat}%
+\def\QRPutAlignsLoopLoop{{\loop
+%\message{PutAlignments inner loop \the\QRnumA,\the\QRnumC}%
+\QRPutAlignment\QRnumA\QRnumB
+\advance\QRnumC by -1 \advance\QRnumA by -\QRnumE\ifnum\QRnumC>0 
+\repeat}}%
+%
+\def\QRPutVersion{{\GFReady\QRnumA=\QRside\advance\QRnumA by -17 \divide\QRnumA by 4 
+\ifnum\QRnumA>6 %no version info for versions upto 6
+\binaryReset\QRnumB=6 \NUMBIN\let\binSplit=\binary
+\QRnumA=0 %already was
+\QRnumB=12 \NUMBIN %multiplied ... get ready for modloop
+\!\QRVersionBCHmodLoop\binary\endbinary % reminder computed
+\edef\binary{\binSplit\binary}%
+\QRnumB=\QRside\advance\QRnumB by -9 \QRnumA=5
+\!\QRVersionPutBitsLoop\binary % puts the bits to appropriate places!
+\fi}}%
+\def\QRVersionBCHmodLoop#1#2\endbinary{\ifx#1\0\def\binary{#2}\else
+\edef\binary{\XorOOOOZZOZZOZO #2\endbinary}\fi
+\advance\QRnumC by -1 \ifnum\QRnumC>12 \!\!\!\QRVersionBCHmodLoop\!\binary\!\endbinary\fi}%
+%0x1f25=1111100100101 is the version modulo
+\def\XorOOOOZZOZZOZO#1#2#3#4#5#6#7#8#9\endbinary{\QRNeg#1\QRNeg#2\QRNeg#3\QRNeg#4#5#6\QRNeg#7#8\XorZOZO#9\endbinary}%
+\def\XorZOZO#1#2#3#4#5\endbinary{#1\QRNeg#2#3\QRNeg#4#5}%
+%
+\def\QRVersionPutBitsLoop#1#2#3{{%\message{QRVersionPutBits \the\QRnumA}%
+\QRPutTwoFixed#1\advance\QRnumB by -1 \QRPutTwoFixed#2\advance\QRnumB by -1 \QRPutTwoFixed#3}%
+\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\QRVersionPutBitsLoop\fi}%
+%
+\def\QRPutTimers{\QRnumA=-8 \advance\QRnumA by\QRmaxCoord\QRnumB=6 \QRPutTimersLoop
+\QRnumA=-7 \advance\QRnumA by \QRmaxCoord\QRnumB=8 \QRPutFixed\1}%
+\def\QRPutTimersLoop{%
+\QRPutTwoFixed\1\advance\QRnumA by -1
+\ifnum\QRnumA<8 \else
+\QRPutTwoFixed\0\advance\QRnumA by -1
+\!\QRPutTimersLoop\fi}%
+
+\def\QRPutECMaskInfoBit#1{\QRPutBasic\QRnumA\QRnumB\QRecMaskInfo#1}%
+\def\QRPutECMaskInfoBitPos#1#2#3{\QRPutBasic#1#2\QRecMaskInfo#3}%
+\def\QRPutECMaskInfo{\QRnumB=\QRmaxCoord\QRnumA=8
+\QRPutECMaskInfoBit0\QRPutECMaskInfoBitPos080
+\advance\QRnumB by -1 \QRPutECMaskInfoBit1\QRPutECMaskInfoBitPos181
+\advance\QRnumB by -1 \QRPutECMaskInfoBit2\QRPutECMaskInfoBitPos282
+\advance\QRnumB by -1 \QRPutECMaskInfoBit3\QRPutECMaskInfoBitPos383
+\advance\QRnumB by -1 \QRPutECMaskInfoBit4\QRPutECMaskInfoBitPos484
+\advance\QRnumB by -1 \QRPutECMaskInfoBit5\QRPutECMaskInfoBitPos585
+\advance\QRnumB by -1 \QRPutECMaskInfoBit6\QRPutECMaskInfoBitPos786
+\advance\QRnumB by -1 \QRPutECMaskInfoBit7\QRPutECMaskInfoBitPos887
+\QRnumA=\QRnumB\QRnumB=8
+\advance\QRnumA by 1 \QRPutECMaskInfoBit8\QRPutECMaskInfoBitPos878
+\advance\QRnumA by 1 \QRPutECMaskInfoBit9\QRPutECMaskInfoBitPos859
+\advance\QRnumA by 1 \QRPutECMaskInfoBit A\QRPutECMaskInfoBitPos84A
+\advance\QRnumA by 1 \QRPutECMaskInfoBit B\QRPutECMaskInfoBitPos83B
+\advance\QRnumA by 1 \QRPutECMaskInfoBit C\QRPutECMaskInfoBitPos82C
+\advance\QRnumA by 1 \QRPutECMaskInfoBit D\QRPutECMaskInfoBitPos81D
+\advance\QRnumA by 1 \QRPutECMaskInfoBit E\QRPutECMaskInfoBitPos80E
+}%
+%
+%%%% DEFINING THE MASKS %%%%
+\def\QRId{}%
+\def\QRNeg#1{\ifx#1\0\!\1\else\!\0\fi}%
+\def\QRSetMask#1{\edef\QRMask{<#1>}}% masks 0 ... 11 x 0 ... 5 should be set for #1
+%%%% MASK PATTERNS %%%%
+\def\QRdefMasks{%\message{QRdefMasks}%
+\QRnumA=5 \QRdefMasksLoop}%
+\def\QRdefMasksLoop{\QRnumB=11 \QRdefMasksLoopLoop\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\QRdefMasksLoop\fi}%
+\def\QRdefMasksLoopLoop{\QRdefMasksLoopLoopDo\advance\QRnumB by -1 \ifnum\QRnumB<0 \else\!\QRdefMasksLoopLoop\fi}%
+\def\QRdefMasksLoopLoopDo{\!\edef\csname QRmasked\the\QRnumB,\the\QRnumA\endcsname{\noexpand\csname  QRmasked\noexpand\QRMask\the\QRnumB,\the\QRnumA\noexpand\endcsname}%
+\QRnumC=\QRnumB\advance\QRnumC by \QRnumA
+\ifodd\QRnumC
+ \!\let\csname QRmasked<0>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\else
+ \!\let\csname QRmasked<0>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\fi
+\ifodd\QRnumB
+ \!\let\csname QRmasked<1>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\else
+ \!\let\csname QRmasked<1>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\fi
+\QRnumD=\QRnumA
+\divide\QRnumD by 3 \multiply\QRnumD by 3
+\ifnum\QRnumD=\QRnumA
+ \!\let\csname QRmasked<2>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\else
+ \!\let\csname QRmasked<2>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\fi
+\QRnumD=\QRnumC
+\divide\QRnumD by 3 \multiply\QRnumD by 3
+\ifnum\QRnumD=\QRnumC
+ \!\let\csname QRmasked<3>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\else
+ \!\let\csname QRmasked<3>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\fi
+\QRnumD=\QRnumA\divide\QRnumD by 3 \multiply\QRnumD by 2
+\advance\QRnumD by \QRnumB
+\divide\QRnumD by 2
+\ifodd\QRnumD
+ \!\let\csname QRmasked<4>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\else
+ \!\let\csname QRmasked<4>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\fi
+\QRnumD=\QRnumA\multiply\QRnumD by \QRnumB
+\QRnumE=\QRnumD
+\divide\QRnumE by 3 \multiply\QRnumE by -3
+\advance\QRnumE by \QRnumD
+\advance\QRnumC by \QRnumE
+\ifodd\QRnumD \advance\QRnumE by 1 \fi
+\ifnum\QRnumE=0 
+ \!\let\csname QRmasked<5>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\else
+ \!\let\csname QRmasked<5>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\fi
+\ifodd\QRnumE
+ \!\let\csname QRmasked<6>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\else
+ \!\let\csname QRmasked<6>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\fi
+\ifodd\QRnumC
+ \!\let\csname QRmasked<7>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+\else
+ \!\let\csname QRmasked<7>\the\QRnumB,\the\QRnumA\endcsname=\QRNeg
+\fi
+\!\let\csname QRmasked<8>\the\QRnumB,\the\QRnumA\endcsname=\QRSetBit
+\!\let\csname QRmasked<9>\the\QRnumB,\the\QRnumA\endcsname=\QRId
+}%
+\QRdefMasks
+%
+%%%% Precomputing ECMask encodding %%%%
+%for all possible EC levels and masks ... for example \csname QRecMask<4>Q3\endcsname denotes value of 3rd bit for mask 4 EC level Q.
+% EC level and MASK info is stored masked with pattern 101010000010010.
+\def\QRSetecMaskOnMlK#1#2#3{\!\edef\csname QRecMask<#1>#2E\endcsname{\QRNeg#3}\QRSetecMasknMlK#1#2}%
+\def\QRSetecMasknMlK#1#2#3{\!\def\csname QRecMask<#1>#2D\endcsname{#3}\QRSetecMaskMlK#1#2}%
+\def\QRSetecMaskMlK#1#2#3{\!\edef\csname QRecMask<#1>#2C\endcsname{\QRNeg#3}\QRSetecMasklK#1#2}%
+\def\QRSetecMasklK#1#2#3{\!\def\csname QRecMask<#1>#2B\endcsname{#3}\QRSetecMaskK#1#2}%
+\def\QRSetecMaskK#1#2#3{\!\edef\csname QRecMask<#1>#2A\endcsname{\QRNeg#3}}%
+\def\QRSetecMaskjihgfEdcBa#1#2#3{\!\def\csname QRecMask<#1>#29\endcsname{#3}\QRSetecMaskihgfEdcBa#1#2}%
+\def\QRSetecMaskihgfEdcBa#1#2#3{\!\def\csname QRecMask<#1>#28\endcsname{#3}\QRSetecMaskhgfEdcBa#1#2}%
+\def\QRSetecMaskhgfEdcBa#1#2#3{\!\def\csname QRecMask<#1>#27\endcsname{#3}\QRSetecMaskgfEdcBa#1#2}%
+\def\QRSetecMaskgfEdcBa#1#2#3{\!\def\csname QRecMask<#1>#26\endcsname{#3}\QRSetecMaskfEdcBa#1#2}%
+\def\QRSetecMaskfEdcBa#1#2#3{\!\def\csname QRecMask<#1>#25\endcsname{#3}\QRSetecMaskEdcBa#1#2}%
+\def\QRSetecMaskEdcBa#1#2#3{\!\edef\csname QRecMask<#1>#24\endcsname{\QRNeg#3}\QRSetecMaskdcBa#1#2}%
+\def\QRSetecMaskdcBa#1#2#3{\!\def\csname QRecMask<#1>#23\endcsname{#3}\QRSetecMaskcBa#1#2}%
+\def\QRSetecMaskcBa#1#2#3{\!\def\csname QRecMask<#1>#22\endcsname{#3}\QRSetecMaskBa#1#2}%
+\def\QRSetecMaskBa#1#2#3{\!\edef\csname QRecMask<#1>#21\endcsname{\QRNeg#3}\QRSetecMaska#1#2}%
+\def\QRSetecMaska#1#2#3{\!\def\csname QRecMask<#1>#20\endcsname{#3}}%
+\def\QRSetecMask#1#2{%mask eclevel
+\binaryReset\QRnumA=#1 %MASKid as first parameter
+\if#2L\advance\QRnumA by 8 \fi
+\if#2H\advance\QRnumA by 16 \fi
+\if#2Q\advance\QRnumA by 24 \fi
+% M->0,L->1,H->2,Q->3, EC<<3|MASK
+\QRnumB=5
+\NUMBIN
+%now \binary contains what needs to be BCH with "537=101 0011 0111 and masked with "5412 let us start with setting the higher bits ... masked by 101 01
+\GFReady\!\QRSetecMaskOnMlK\!#1\!#2\binary
+%so only last 10 digits of the reminder should be added ... masked by 00 0001 0010
+\QRnumA=0 %already was
+\QRnumB=10 \NUMBIN %multiplied ... get ready for modloop
+\!\QRSetecMaskBCHmodLoop\binary\endbinary % reminder computed
+\!\QRSetecMaskjihgfEdcBa\!#1\!#2\binary
+%last 10 digits of the reminder added ... masked by 00 0001 0010
+}%
+\def\QRSetecMaskBCHmodLoop#1#2\endbinary{%
+\ifx#1\0\def\binary{#2}\else
+\edef\binary{\XorZOZZOOZOOO #2\endbinary}\fi
+\advance\QRnumC by -1 \ifnum\QRnumC>10 \!\!\!\QRSetecMaskBCHmodLoop\!\binary\!\endbinary\fi}%
+%0x537=10100110111 is the mask modulo
+\def\XorZOZZOOZOOO#1#2#3#4#5#6#7#8#9\endbinary{#1\QRNeg#2#3#4\QRNeg#5\QRNeg#6#7\QRNeg#8\XorOO#9\endbinary}%
+\def\XorOO#1#2#3\endbinary{\QRNeg#1\QRNeg#2#3}
+\def\QRSetecMaskEC#1{\QRSetecMask0#1\QRSetecMask1#1\QRSetecMask2#1\QRSetecMask3#1\QRSetecMask4#1\QRSetecMask5#1\QRSetecMask6#1\QRSetecMask7#1}%
+\QRSetecMaskEC L\QRSetecMaskEC M\QRSetecMaskEC Q\QRSetecMaskEC H
+%
+%%%% DEMERITS COMPUTATION FOR GIVEN MASK %%%%
+\def\countQRDemerits{\QRShowBitsMode\QRnumB=0 \QRnumC=\QRnumB\QRnumD=\QRnumB
+\countRowQRDemeritsAndDark\countColQRDemerits\countDarkQRDemerits\countSquareQRDemerits}% result in \QRnumC
+%
+\def\QRcountStaticZero#1{\ifx#1\0\advance\QRnumB by 1 \else
+ \ifnum\QRnumB>3 \advance\QRnumB by -1 \advance\QRnumC by \QRnumB\fi
+ \QRnumB=0
+\fi#1}%
+\def\QRcountStaticOne#1{\ifx#1\1\advance\QRnumB by 1 \else
+ \ifnum\QRnumB>3 \advance\QRnumB by -1 \advance\QRnumC by \QRnumB\fi
+ \QRnumB=0
+\fi#1}%
+\def\QRcountStatic{\let\0=\QRcountStaticZero\let\1=\QRcountStaticOne}%
+
+\def\QRcountDarkZero{\advance\QRnumD by -1 }%
+\def\QRcountDarkOne{\advance\QRnumD by 1 }%
+\def\QRcountDark{\let\0=\QRcountDarkZero\let\1=\QRcountDarkOne}%
+
+\def\QRtoBinaryOne{\!\def\!\binary\!{\binary\1}}%
+\def\QRtoBinaryZero{\!\def\!\binary\!{\binary\0}}%
+\def\QRtoBinary{\let\0\QRtoBinaryZero\let\1\QRtoBinaryOne}%
+
+\def\QRtstSquareZero{\0\0\0\0}%
+\def\QRtstSquareOne{\1\1\1\1}%
+%
+\def\countBinaryStaticDemerits{\QRcountStatic\QRnumB=0 \binary\relax}%
+\def\countBinaryPatternOneDemerits#1\0\0\0\0\1\0\1\1\1\0\1#2\relax{%
+\def\tmp{#2}\ifx\tmp\QRempty\else\advance\QRnumC by 40 \!\!\!\countBinaryPatternOneDemerits\!\tmp\!\relax\fi}
+\def\countBinaryPatternTwoDemerits#1\1\0\1\1\1\0\1\0\0\0\0#2\relax{%
+\def\tmp{#2}\ifx\tmp\QRempty\else\advance\QRnumC by 40 \!\!\!\countBinaryPatternTwoDemerits\!\tmp\!\relax\fi}
+\def\countBinaryPatternThreeDemerits#1\0\0\0\0\1\0\1\1\1\0\1\0\0\0\0#2\relax{%
+\def\tmp{#2}\ifx\tmp\QRempty\else\advance\QRnumC by -40 \!\!\!\countBinaryPatternThreeDemerits\!\!\!\0\!\!\!\0\!\!\!\0\!\!\!\0\!\tmp\!\relax\fi}%
+\def\countBinaryPatternDemerits#1\relax{\countBinaryPatternOneDemerits#1\2\0\0\0\0\1\0\1\1\1\0\1\relax
+\countBinaryPatternTwoDemerits#1\2\1\0\1\1\1\0\1\0\0\0\0\relax
+\countBinaryPatternThreeDemerits#1\2\0\0\0\0\1\0\1\1\1\0\1\0\0\0\0\relax}%
+\def\countBinaryDemerits{\countBinaryStaticDemerits
+%\the\QRnumA After static demerits: \the\QRnumC\par
+\!\countBinaryPatternDemerits\binary\relax
+%\the\QRnumA After pattern demerits: \the\QRnumC\par
+}%
+\def\countRowQRDemeritsAndDark{%Rows:
+\QRnumA=\QRmaxCoord\countRowQRDemeritsAndDarkLoop}%
+\def\countRowQRDemeritsAndDarkLoop{\QRRowToBinary%\binaryShow
+\countBinaryDemerits\QRcountDark\binary\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\countRowQRDemeritsAndDarkLoop\fi}%
+\def\countColQRDemerits{%Cols:
+\QRnumA=\QRmaxCoord\countColQRDemeritsLoop}%
+\def\countColQRDemeritsLoop{\QRColToBinary%\binaryShow
+\countBinaryDemerits\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\countColQRDemeritsLoop\fi}%
+\def\countDarkQRDemerits{\ifnum\QRnumD<0 \QRnumD=-\QRnumD\fi\multiply\QRnumD by 10
+\QRnumB=\QRside\multiply\QRnumB by \QRside
+\divide\QRnumD by \QRnumB\multiply\QRnumD by 10
+\advance\QRnumC by \QRnumD
+}%After dark demerits: \the\QRnumC\par}%
+\def\QRRowToBinary{\QRtoBinary\def\binary{}\QRnumB=\QRmaxCoord\QRRowToBinaryLoop}%
+\def\QRRowToBinaryLoop{\csname QRVER\QRversion[\the\QRnumA,\the\QRnumB]\endcsname\advance\QRnumB by -1
+\ifnum\QRnumB<0 \else\!\QRRowToBinaryLoop\fi}%
+\def\QRColToBinary{\QRtoBinary\def\binary{}\QRnumB=\QRmaxCoord\QRColToBinaryLoop}%
+\def\QRColToBinaryLoop{\csname QRVER\QRversion[\the\QRnumB,\the\QRnumA]\endcsname\advance\QRnumB by -1
+\ifnum\QRnumB<0 \else\!\QRColToBinaryLoop\fi}%
+\def\countSquareQRDemerits{\QRtoBinary\QRnumA=\QRmaxCoord\countSquareQRDemeritsLoop}% After squares: \the\QRnumC\par}%
+\def\countSquareQRDemeritsLoop{\QRnumB=\QRmaxCoord\countSquareQRDemeritsLoopLoop\advance\QRnumA by -1 \ifnum\QRnumA=0 \else\!\countSquareQRDemeritsLoop\fi}%
+\def\countSquareQRDemeritsLoopLoop{\countSquareQRDemeritsLoopLoopDo\advance\QRnumB by -1 \ifnum\QRnumB=0 
+\else\!\countSquareQRDemeritsLoopLoop\fi}
+\def\countSquareQRDemeritsLoopLoopDo{\def\binary{}%
+\csname QRVER\QRversion[\the\QRnumA,\the\QRnumB]\endcsname\advance\QRnumA by -1
+\csname QRVER\QRversion[\the\QRnumA,\the\QRnumB]\endcsname\advance\QRnumB by -1
+\csname QRVER\QRversion[\the\QRnumA,\the\QRnumB]\endcsname\advance\QRnumA by 1
+\csname QRVER\QRversion[\the\QRnumA,\the\QRnumB]\endcsname\advance\QRnumB by 1
+\ifx\binary\QRtstSquareZero\advance\QRnumC by 3 \fi
+\ifx\binary\QRtstSquareOne\advance\QRnumC by 3 \fi
+}%
+%%%%% MASK select %%%%%
+\def\QRSelectMask{\QRSetMask7\countQRDemerits\def\QRbestMask{7}\QRnumE=\QRnumC
+\SelectQRMaskIfBetter6\SelectQRMaskIfBetter5\SelectQRMaskIfBetter4\SelectQRMaskIfBetter3
+\SelectQRMaskIfBetter2\SelectQRMaskIfBetter1\SelectQRMaskIfBetter0\QRSetMask{\QRbestMask}}%
+%
+\def\SelectQRMaskIfBetter#1{%Best demerits: \QRnumE
+\QRSetMask#1\countQRDemerits
+%#1 demerits: \the\QRnumC\par
+%\message{SelectQRMaskIfBetter prev \the\QRnumE, now \the\QRnumC}%
+\ifnum\QRnumC<\QRnumE\def\QRbestMask{#1}\QRnumE=\QRnumC\fi}%
+
+%%%% Boxing LEVEL %%%%
+\newdimen\QRbounding\newdimen\QRinside\newdimen\QRpixelUnit
+\newdimen\basePixelUnit\basePixelUnit=1in \divide\basePixelUnit by \DPI\relax
+%
+\def\QRdimen{\afterassignment\QRdimenCont\QRbounding}%
+\def\QRdimenCont{\defQRversionSizes}
+\def\defQRversionSizes{\QRnumA=40 \loop\!\let\csname defQRVER<\romannumeral\QRnumA>Size\endcsname=\defQRversionSize
+\advance\QRnumA by -1 \ifnum\QRnumA>0 \repeat}
+\def\defQRversionSize{\QRnumC=\QRside\advance\QRnumC by 8
+\QRinside=\QRbounding\divide\QRinside by \QRnumC
+\divide\QRinside by\basePixelUnit\multiply\QRinside by \basePixelUnit
+\QRpixelUnit=\QRinside\!\edef\csname QRVER\QRversion PixelUnit\endcsname{\the\QRpixelUnit}%
+\QRnumC=\QRside\multiply\QRinside by \QRnumC
+%\message{defQRversionSize QRinside: \the\QRinside}%
+\!\let\csname defQRVER<\romannumeral\QRnumA>Size\endcsname=\relax
+\!\edef\csname QRVER\QRversion inside\endcsname{\the\QRinside}}%
+%
+\QRdimen=5cm % good practice is to use space or \relax to invoke afterassignment before next another macro is started
+\def\QRSetBox{%\message{QRSetBox QRversion=\QRversion}%
+\QRShowBitsMode\csname defQRVER\QRversion Size\endcsname
+\QRinside=\csname QRVER\QRversion inside\endcsname
+\QRpixelUnit=\csname QRVER\QRversion PixelUnit\endcsname
+\QRnumA=\QRside\advance\QRnumA by 4
+\setbox\QRcodebox=\vbox{\hrule height 0pt
+  \hbox to \QRbounding{\vrule  width 0pt height \QRnumA\QRpixelUnit depth 4\QRpixelUnit
+    \hss\hbox to \QRinside{\hss\QRShowContent\hss}\hss
+    \vrule width 0pt }
+    \hrule height 0pt
+   }%
+}%
+\def\QRShowContent{{%\tracingall
+\def\1{\rlap{\kern\QRnumA\QRpixelUnit\raise\QRnumC\QRpixelUnit\hbox{\vrule width \the\QRpixelUnit\space height \the\QRpixelUnit\space depth 0pt}}}%
+\let\0=\relax
+\QRnumA=\QRmaxCoord\QRShowContentLoop}}%
+\def\QRShowContentLoop{\QRnumC=0 \QRnumB=\QRmaxCoord\QRShowContentLoopLoop\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\QRShowContentLoop\fi}%
+\def\QRShowContentLoopLoop{\QRShowContentLoopLoopDo\advance\QRnumB by -1 \advance\QRnumC by 1 \ifnum\QRnumB<0 \else\!\QRShowContentLoopLoop\fi}%
+\def\QRShowContentLoopLoopDo{\csname QRVER\QRversion[\the\QRnumB,\the\QRnumA]\endcsname}%
+\endinput
+%%%%%%%%%%%%%%%%%% example formats %%%%%%%%%%%%%%%
+\QRdata|MECARD:N:Jméno Pøíjmení Titul za, Titul pøed;ADR:Ulice èíslo popisné/orientaèní, PSÈ Mìsto;ORG:Firma, Ulice kde firma sídlí èíslo popisné/orientaèní, PSÈ Mìsto firmy;URL:adresa www stránek;TEL:+420telefon|\QRcode 
+\box\QRcodebox
+\def\QRPstart{SPD*1.0}%
+\def\QRPacc{*ACC:CZ72bbbbppppppuuuuuuuuuu}%
+\def\QRPdspl{*DT:yyyymmdd}% could be empty
+\def\QRPss{*X-SS:ssssssssss}% could be empty
+\def\QRPamt{*AM:k.hh*CC:CZK}% almost arbitrary length of k's
+\QRdata|*MSG:any message be cerefull with spaces and other special chars so QRdata is better method|\!\def\!\QRPmsg\!{\QRcontent}%
+\def\QRPvs{*X-VS:vvvvvvvvvv}% could be empty, but not recommended
+\def\QRPurl{*X-URL:HTTP://server/directory}%
+\def\QRPay{\edef\QRPcontent{|\QRPstart\QRPacc\QRPamt\QRPdspl\QRPmsg\QRPvs\QRPss\QRPurl|}%
+\!\QRdata\QRPcontent\QRcode}%
+\QRPay\box\QRcodebox
+%%%%%%%%%%%%%%% tests (almost removed) %%%%%%%%%%%
+\def\QRLog{\QRnumA=\QRmaxCoord\QRLogLoop}%
+\def\QRLogLoop{\QRnumB=\QRmaxCoord\QRLogLoopLoop\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\QRLogLoop\fi}%
+\def\QRLogLoopLoop{\QRLogLoopLoopDo\advance\QRnumB by -1 \ifnum\QRnumB<0 \else\!\QRLogLoopLoop\fi}%
+\def\QRLogLoopLoopDo{\!\show\csname QRVER\QRversion[\the\QRnumB,\the\QRnumA]\endcsname}%
+%\bye
+\QRversion\box\QRcodebox\par\vfil\eject
+\QRSetMinECLevel{H}%
+\fixVersion{8}
+\def\showdo#1{\show#1#1}%
+\QRdata|QR code example 3.14159265358979323846264338327950|\QRcode $\pi$\QRversion \box\QRcodebox\par 
+\freeVersion\QRcode  $\pi$\QRversion \box\QRcodebox\par
+\def\QRminVersion{7}%
+\def\QRmaxVersion{9}%
+\QRcode  $\pi$\QRversion \box\QRcodebox\par
+\def\QRmaxVersion{40}%
+
+\QRdataadd,abcdefghi2,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi3,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi4,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi5,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi6,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi7,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghi8,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrs9,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrsA,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrsB,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrsC,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrsD,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrsE,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstF,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuG,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwH,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyI,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzaJ,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdK,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefgijklmnL,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnM,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghiN,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrO,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcP,%\QRcode% \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrQ,%\QRcode% \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrR,%\QRcode% \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdS,%\QRcode% \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijT,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrU,%\QRcode% \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrV,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrW,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrX,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrY,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrZ,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr36,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr37,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr38,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqr39,%\QRcode \par \QRversion\box\QRcodebox\par\vfil\eject
+\QRdataadd,abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrst40,\QRcode \par\vfil\eject \QRversion\box\QRcodebox\par\vfil\eject
+\box\QRcodebox\par
+
+\def\QRLogMask{\QRnumA=5 \QRLogMaskLoop
+\!\show\csname QRecMask\QRMask\EClevel E\endcsname
+\!\show\csname QRecMask\QRMask\EClevel D\endcsname
+\!\show\csname QRecMask\QRMask\EClevel C\endcsname
+\!\show\csname QRecMask\QRMask\EClevel B\endcsname
+\!\show\csname QRecMask\QRMask\EClevel A\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 9\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 8\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 7\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 6\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 5\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 4\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 3\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 2\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 1\endcsname
+\!\show\csname QRecMask\QRMask\EClevel 0\endcsname
+}%
+\def\QRLogMaskLoop{\QRnumB=5 \QRLogMaskLoopLoop\advance\QRnumA by -1 \ifnum\QRnumA<0 \else\!\QRLogMaskLoop\fi}%
+\def\QRLogMaskLoopLoop{\QRLogMaskLoopLoopDo\advance\QRnumB by -1 \ifnum\QRnumB<0 \else\!\QRLogMaskLoopLoop\fi}%
+\def\QRLogMaskLoopLoopDo{\!\show\csname QRmasked\the\QRnumA,\the\QRnumB\endcsname
+\!\show\csname QRmasked\QRMask\the\QRnumA,\the\QRnumB\endcsname}%
+\bye
