@@ -515,7 +515,7 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_sbBorderWidth">
     <property name="lower">0.10</property>
-    <property name="upper">20</property>
+    <property name="upper">200</property>
     <property name="value">1</property>
     <property name="step-increment">0.10</property>
     <property name="page-increment">0.5</property>
@@ -26435,8 +26435,10 @@ and select the USX download option.</property>
   <object class="GtkDialog" id="dlg_SBimage">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PTXprint: Sidebar Image Settings</property>
+    <property name="window-position">center-always</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
+    <property name="gravity">center</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -27219,9 +27221,11 @@ maintains its proportions.</property>
   <object class="GtkDialog" id="dlg_borders">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">PTXprint: Sidebar Border Settings</property>
+    <property name="window-position">center-always</property>
     <property name="default-height">150</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
+    <property name="gravity">center</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -27475,6 +27479,7 @@ maintains its proportions.</property>
                     <property name="tooltip-text" translatable="yes">The thickness of the rule.</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
+                    <property name="width-chars">6</property>
                     <property name="text">1.0</property>
                     <property name="xalign">1</property>
                     <property name="input-purpose">number</property>
@@ -29856,9 +29861,10 @@ If in doubt, click Cancel.</property>
   <object class="GtkDialog" id="dlg_gridsGuides">
     <property name="can-focus">False</property>
     <property name="title" translatable="yes">Guides, Crop Marks, Watermark and Grid Settings</property>
-    <property name="window-position">mouse</property>
+    <property name="window-position">center-always</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
+    <property name="gravity">center</property>
     <property name="transient-for">ptxprint</property>
     <child internal-child="vbox">
       <object class="GtkBox">

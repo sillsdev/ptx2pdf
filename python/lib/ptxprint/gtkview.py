@@ -4339,7 +4339,9 @@ class GtkViewModel(ViewModel):
         fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
         self.set('s_coverTextScale', fsize / mtsize)
         self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
-        # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite:
+        
+        # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite,
+        # but if there are no \periphs relating to the cover, then turn it ON and disable control.
         coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
         lt = _(" \periphs in Front Matter")
         hasCoverPeriphs = self.isPeriphInFrontMatter(periphnames=coverPeriphs)
@@ -5019,15 +5021,11 @@ Thank you,
             return 99
 
     def onCatalogClicked(self,btn):
-        catpdf = os.path.join(pycodedir(), "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
-        print("1st try:", catpdf)
-        logger.debug(f"{catpdf=}")
+        catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
-            print("2nd try:", catpdf)
         self.set('l_pdfCat', catpdf)
         if os.path.exists(catpdf):
-            print('The path exists!')
             if sys.platform == "win32":
                 os.startfile(catpdf)
             elif sys.platform == "linux":
