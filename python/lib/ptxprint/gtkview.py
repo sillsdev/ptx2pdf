@@ -146,8 +146,8 @@ r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
-c_mirrorpages l_colgutterfactor btn_adjust_spacing
-s_colgutterfactor l_bottomRag s_bottomRag
+c_mirrorpages c_pagegutter s_pagegutter btn_adjust_spacing
+l_colgutterfactor s_colgutterfactor l_bottomRag s_bottomRag
 fr_margins l_margins s_margins l_topmargin s_topmargin l_bottommargin s_bottommargin
 c_rhrule l_rhruleposition s_rhruleposition
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
