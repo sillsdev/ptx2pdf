@@ -5024,7 +5024,6 @@ Thank you,
         catpdf = os.path.join(pycodedir(), "..", "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
-        self.set('l_pdfCat', catpdf)
         if os.path.exists(catpdf):
             if sys.platform == "win32":
                 os.startfile(catpdf)

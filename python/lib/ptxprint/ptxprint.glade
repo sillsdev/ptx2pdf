@@ -29228,19 +29228,7 @@ this setting to increase size of such titles.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="l_pdfCat">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="wrap">True</property>
-                        <property name="wrap-mode">char</property>
-                        <property name="width-chars">35</property>
-                        <property name="max-width-chars">35</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">2</property>
-                        <property name="top-attach">2</property>
-                        <property name="width">2</property>
-                      </packing>
+                      <placeholder/>
                     </child>
                   </object>
                 </child>
