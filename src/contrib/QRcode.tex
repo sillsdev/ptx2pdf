@@ -851,14 +851,14 @@
 \def\QRPutBigFixedLine#1#2#3#4{\QRnumA=#1 \QRnumB=#2 \QRPutBigFixedLineLoop#3#4}%
 \def\QRPutBigFixedLineLoop#1#2{\QRPutBigFixedSym#2\advance\QRnumB by -1 \ifnum\QRnumB<#1 \else\!\QRPutBigFixedLineLoop\!#1\!#2\fi}%
 \def\QRPutFinders{\QRnumA=\QRside\advance\QRnumA by -1
-\QRPutBigFixedLine770\0
-\QRPutBigFixedLine660\1
-\QRPutBigFixedLine050\1
-\QRPutBigFixedLine551\0
-\QRPutBigFixedLine141\0
-\QRPutBigFixedLine442\1
-\QRPutBigFixedLine332\1
-\QRPutBigFixedLine222\1
+\QRPutBigFixedLine770\0\relax
+\QRPutBigFixedLine660\1\relax
+\QRPutBigFixedLine050\1\relax
+\QRPutBigFixedLine551\0\relax
+\QRPutBigFixedLine141\0\relax
+\QRPutBigFixedLine442\1\relax
+\QRPutBigFixedLine332\1\relax
+\QRPutBigFixedLine222\1\relax
 }%
 %
 \def\QRPutFixed#1{\QRPutBasic\QRnumA\QRnumB\QRFixed#1}%
@@ -866,13 +866,13 @@
 %
 \def\QRPutAlignOffs#1#2#3{{\advance\QRnumA by #1 \advance\QRnumB by #2 \QRPutBasic\QRnumA\QRnumB\QRBigFixed#3}}%
 %
-\def\QRPutAlignment#1#2{{\QRnumA=#1 \QRnumB=#2 \QRPutFixed\1
-\QRPutAlignOffs{-1}{-1}\0\QRPutAlignOffs{-1}0\0\QRPutAlignOffs{-1}1\0\QRPutAlignOffs01\0
-\QRPutAlignOffs11\0\QRPutAlignOffs10\0\QRPutAlignOffs1{-1}\0\QRPutAlignOffs0{-1}\0
-\QRPutAlignOffs{-2}{-2}\1\QRPutAlignOffs{-2}{-1}\1\QRPutAlignOffs{-2}0\1\QRPutAlignOffs{-2}1\1
-\QRPutAlignOffs{-2}2\1\QRPutAlignOffs{-1}2\1\QRPutAlignOffs02\1\QRPutAlignOffs12\1
-\QRPutAlignOffs22\1\QRPutAlignOffs21\1\QRPutAlignOffs20\1\QRPutAlignOffs2{-1}\1
-\QRPutAlignOffs2{-2}\1\QRPutAlignOffs1{-2}\1\QRPutAlignOffs0{-2}\1\QRPutAlignOffs{-1}{-2}\1
+\def\QRPutAlignment#1#2{{\QRnumA=#1\relax\QRnumB=#2\relax\QRPutFixed\1%
+\QRPutAlignOffs{-1}{-1}\0\QRPutAlignOffs{-1}0\0\QRPutAlignOffs{-1}1\0\QRPutAlignOffs01\0%
+\QRPutAlignOffs11\0\QRPutAlignOffs10\0\QRPutAlignOffs1{-1}\0\QRPutAlignOffs0{-1}\0%
+\QRPutAlignOffs{-2}{-2}\1\QRPutAlignOffs{-2}{-1}\1\QRPutAlignOffs{-2}0\1\QRPutAlignOffs{-2}1\1%
+\QRPutAlignOffs{-2}2\1\QRPutAlignOffs{-1}2\1\QRPutAlignOffs02\1\QRPutAlignOffs12\1%
+\QRPutAlignOffs22\1\QRPutAlignOffs21\1\QRPutAlignOffs20\1\QRPutAlignOffs2{-1}\1%
+\QRPutAlignOffs2{-2}\1\QRPutAlignOffs1{-2}\1\QRPutAlignOffs0{-2}\1\QRPutAlignOffs{-1}{-2}\1%
 }}%
 \def\QRPutAligns{\QRnumD=\csname QRSideAligns\QRversion\endcsname
 %\message{QRPutAligns alignside \the\QRnumD}%
@@ -888,12 +888,12 @@
 %\message{5*(side-13)/(10A)+7/10 \the\QRnumE}%
 \multiply\QRnumE by 2 
 %\message{Aligns dist \the\QRnumE}%
-\fi
+\fi%
 \QRnumA=\QRside\advance\QRnumA by -7 \QRnumB=\QRnumA\QRnumC=\QRnumD
 \ifnum\QRnumD>0 \QRPutAlignsLoop\fi}%
 \def\QRPutAlignsLoop{\loop
 %\message{PutAlignments loop \the\QRnumD \the\QRnumE}%
-\QRPutAlignsLoopLoop\advance\QRnumD by -1 \advance\QRnumB by -\QRnumE\ifnum\QRnumD>0
+\QRPutAlignsLoopLoop\advance\QRnumD by -1\advance\QRnumB by -\QRnumE\ifnum\QRnumD>0
 \QRPutAlignment6\QRnumB \QRPutAlignment\QRnumB6
 \repeat}%
 \def\QRPutAlignsLoopLoop{{\loop
@@ -934,22 +934,22 @@
 \def\QRPutECMaskInfoBit#1{\QRPutBasic\QRnumA\QRnumB\QRecMaskInfo#1}%
 \def\QRPutECMaskInfoBitPos#1#2#3{\QRPutBasic#1#2\QRecMaskInfo#3}%
 \def\QRPutECMaskInfo{\QRnumB=\QRmaxCoord\QRnumA=8
-\QRPutECMaskInfoBit0\QRPutECMaskInfoBitPos080
-\advance\QRnumB by -1 \QRPutECMaskInfoBit1\QRPutECMaskInfoBitPos181
-\advance\QRnumB by -1 \QRPutECMaskInfoBit2\QRPutECMaskInfoBitPos282
-\advance\QRnumB by -1 \QRPutECMaskInfoBit3\QRPutECMaskInfoBitPos383
-\advance\QRnumB by -1 \QRPutECMaskInfoBit4\QRPutECMaskInfoBitPos484
-\advance\QRnumB by -1 \QRPutECMaskInfoBit5\QRPutECMaskInfoBitPos585
-\advance\QRnumB by -1 \QRPutECMaskInfoBit6\QRPutECMaskInfoBitPos786
-\advance\QRnumB by -1 \QRPutECMaskInfoBit7\QRPutECMaskInfoBitPos887
-\QRnumA=\QRnumB\QRnumB=8
-\advance\QRnumA by 1 \QRPutECMaskInfoBit8\QRPutECMaskInfoBitPos878
-\advance\QRnumA by 1 \QRPutECMaskInfoBit9\QRPutECMaskInfoBitPos859
-\advance\QRnumA by 1 \QRPutECMaskInfoBit A\QRPutECMaskInfoBitPos84A
-\advance\QRnumA by 1 \QRPutECMaskInfoBit B\QRPutECMaskInfoBitPos83B
-\advance\QRnumA by 1 \QRPutECMaskInfoBit C\QRPutECMaskInfoBitPos82C
-\advance\QRnumA by 1 \QRPutECMaskInfoBit D\QRPutECMaskInfoBitPos81D
-\advance\QRnumA by 1 \QRPutECMaskInfoBit E\QRPutECMaskInfoBitPos80E
+\QRPutECMaskInfoBit0\QRPutECMaskInfoBitPos080\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit1\QRPutECMaskInfoBitPos181\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit2\QRPutECMaskInfoBitPos282\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit3\QRPutECMaskInfoBitPos383\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit4\QRPutECMaskInfoBitPos484\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit5\QRPutECMaskInfoBitPos585\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit6\QRPutECMaskInfoBitPos786\relax
+\advance\QRnumB by -1 \QRPutECMaskInfoBit7\QRPutECMaskInfoBitPos887\relax
+\QRnumA=\QRnumB\QRnumB=8\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit8\QRPutECMaskInfoBitPos878\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit9\QRPutECMaskInfoBitPos859\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit A\QRPutECMaskInfoBitPos84A\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit B\QRPutECMaskInfoBitPos83B\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit C\QRPutECMaskInfoBitPos82C\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit D\QRPutECMaskInfoBitPos81D\relax
+\advance\QRnumA by 1 \QRPutECMaskInfoBit E\QRPutECMaskInfoBitPos80E\relax
 }%
 %
 %%%% DEFINING THE MASKS %%%%

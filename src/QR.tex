@@ -37,7 +37,7 @@
       \m@kenumber{\attr@b}\QRdimen=\@@result
     \fi
     \get@ttribute{vmin}%
-    \ifx\attr@b\relax\else\def\QRminVersion{1}\fi
+    \ifx\attr@b\relax\else\m@kenumber{\attr@b}\let\QRminVersion\@@result\fi
     \get@ttribute{unicode}%
     \ifx\attr@b\tru@ \temptrue \else\tempfalse\fi
     \get@ttribute{data}%
@@ -51,19 +51,22 @@
     \else
       \x@\QRdata\x@"\attr@b"\relax
     \fi
-    \QRcode
-    \message{QR code is \the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+    \QRcode%
+    \message{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+    \dimen0=0.5\QRinside
+    \setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
     \get@ttribute{pgpos}%
     \dimen0=\QRbounding
-    \advance\dimen0 -\QRinside
-    \ifx\attr@b\relax |\kern-\dimen0\box\QRcodebox\kern\dimen0|\else
+    %\advance\dimen0 -\QRinside
+    \ifx\attr@b\relax \box\QRcodebox\else
       \ifx\attr@b\loc@InText\box\QRcodebox
       \else
         \ifcsname ins-\attr@b\endcsname
-          \x@\let\x@\p@cins\csname ins-\attr@b
+          \x@\let\x@\p@cins\csname ins-\attr@b\endcsname
           \picUsesInstrue
         \else
           \picUsesInsfalse
+          \def\sp@cebeside{0pt}\edef\hs@ze{\the\hsize}%
           \def\w@tsit{QRcode}%
           \x@\p@rsePicUse\attr@b\end
         \fi
