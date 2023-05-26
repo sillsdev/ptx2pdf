@@ -292,6 +292,7 @@ _map = {
     "covergen/shadingalpha":    ("s_coverShadingAlpha", "cover", None),
     "covergen/imagealpha":      ("s_coverImageAlpha", "cover", None),
     "covergen/useimage":        ("c_coverSelectImage", "cover", None),
+    "covergen/overwriteperiphs":("c_coverOverwritePeriphs", "cover", None),
     # "covergen/imagefront":      ("c_coverImageFront", "cover", None),
     # "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
     # "covergen/imgfname":       ("lb_coverImageFilename", "cover", None),

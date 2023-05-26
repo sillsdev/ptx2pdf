@@ -144,7 +144,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 _ui_basic = """
 r_book_module btn_chooseBibleModule lb_bibleModule 
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
-lb_DBLbundleFilename lb_DBLbundleNameDesc 
+lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
 c_mirrorpages l_colgutterfactor btn_adjust_spacing
 s_colgutterfactor l_bottomRag s_bottomRag
@@ -475,11 +475,7 @@ def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2ema
         dialog.set_title(title)
         if secondary is not None:
             dialog.format_secondary_text(secondary)
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
         dialog.run()
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
         dialog.destroy()
     else:
         print(text)
@@ -1368,9 +1364,7 @@ class GtkViewModel(ViewModel):
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
-        dialog.set_keep_above(True)
         response = dialog.run()
-        dialog.set_keep_above(False)
         dialog.hide()
 
     def onBookScopeClicked(self, btn):
@@ -1788,7 +1782,6 @@ class GtkViewModel(ViewModel):
             return
         lockBtn = self.builder.get_object("btn_lockunlock")
         dialog = self.builder.get_object("dlg_password")
-        dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             pw = self.get("t_password")
@@ -1810,7 +1803,6 @@ class GtkViewModel(ViewModel):
             else: # Mismatching password - Don't do anything
                 pass
         self.builder.get_object("t_password").set_text("")
-        dialog.set_keep_above(False)
         dialog.hide()
 
     def onPasswordChanged(self, t_invisiblePassword):
@@ -1888,8 +1880,6 @@ class GtkViewModel(ViewModel):
         bks = bks2gen
         dialog = self.builder.get_object("dlg_generatePL")
         self.set("l_generate_booklist", " ".join(bks))
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
         # If there is no PicList file for this config, then don't even ask - just generate it
         plpath = os.path.join(self.configPath(self.configName()),"{}-{}.piclist".format(self.prjid, self.configName()))
         if not os.path.exists(plpath):
@@ -1908,8 +1898,6 @@ class GtkViewModel(ViewModel):
             self.savePics()
             if self.get('r_generate') == 'all':
                 self.set("c_filterPicList", False)
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
         dialog.hide()
 
     def onFilterPicListClicked(self, btn):
@@ -1927,14 +1915,10 @@ class GtkViewModel(ViewModel):
             ptFRT = os.path.exists(os.path.join(self.settings_dir, self.prjid, self.getBookFilename("FRT", self.prjid)))
             self.builder.get_object("r_generateFRT_paratext").set_sensitive(ptFRT)
             dialog = self.builder.get_object("dlg_generateFRT")
-            if sys.platform == "win32":
-                dialog.set_keep_above(True)
             response = dialog.run()
             if response == Gtk.ResponseType.OK:
                 self.generateFrontMatter(self.get("r_generateFRT"), self.get("c_includeCoverSections"))
                 self.rescanFRTvarsClicked(None, autosave=False)
-            if sys.platform == "win32":
-                dialog.set_keep_above(False)
             dialog.hide()
 
         if pgid == "scroll_AdjList":
@@ -2412,7 +2396,6 @@ class GtkViewModel(ViewModel):
             mkr = "zthumbtab"
         elif mkr == "x-credit|fig":
             dialog = self.builder.get_object("dlg_overlayCredit")
-            dialog.set_keep_above(False)
             dialog.hide()
         elif mkr.endswith("strong-s"):
             simple = mkr.split("+",1)[0]
@@ -2564,7 +2547,6 @@ class GtkViewModel(ViewModel):
         for a in ("Bold", "Italic"):
             self.builder.get_object("s_font"+a).set_sensitive(hasfake)
         # dialog.set_default_response(Gtk.ResponseType.OK)
-        dialog.set_keep_above(True)
         
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -2581,7 +2563,6 @@ class GtkViewModel(ViewModel):
             res = True
         else:
             res = False
-        dialog.set_keep_above(False)
         dialog.hide()
         return res
 
@@ -2668,7 +2649,6 @@ class GtkViewModel(ViewModel):
                         ob.set_active_id(newdefaults.get(k, 0))
             self.currdefaults = newdefaults
         langChangedId = self.builder.get_object("fcb_featsLangs").connect("changed", onLangChanged)
-        dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             results = []
@@ -2691,7 +2671,6 @@ class GtkViewModel(ViewModel):
         for i in range(numrows-1, -1, -1):
             featbox.remove_row(i)
         self.builder.get_object("fcb_featsLangs").disconnect(langChangedId)
-        dialog.set_keep_above(False)
         dialog.hide()
 
     def onFontIsGraphiteClicked(self, btn):
@@ -2738,7 +2717,6 @@ class GtkViewModel(ViewModel):
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
-        dialog.set_keep_above(True)
         mbs_grid = self.builder.get_object("mbs_grid")
         mbs_grid.forall(mbs_grid.remove)
         lsbooks = self.builder.get_object("ls_books")
@@ -2763,12 +2741,10 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
         self.updateExamineBook()
         self.updatePicList()
-        dialog.set_keep_above(False)
         dialog.hide()
         
     def onChooseTargetProjectsClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiProjSelector")
-        dialog.set_keep_above(True)
         mps_grid = self.builder.get_object("mps_grid")
         mps_grid.forall(mps_grid.remove)
         self.alltoggles = []
@@ -2805,7 +2781,6 @@ class GtkViewModel(ViewModel):
                         self.applyConfig(cfg, cfg, action=0, newprj=p)
                 except FileNotFoundError as e:
                     self.doError(_("File not found"), str(e))
-        dialog.set_keep_above(False)
         dialog.hide()
         
     def updateExamineBook(self):
@@ -3416,8 +3391,6 @@ class GtkViewModel(ViewModel):
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
         self.setImportButtonOKsensitivity(None)
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             zipinf = None
@@ -3446,8 +3419,6 @@ class GtkViewModel(ViewModel):
                 self.updatePicList()
             self.onViewerChangePage(None, None, 0, forced=True)
             self.doStatus(_("Imported Settings!"))
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
         dialog.hide()
 
     def onResetCurrentConfigClicked(self, btn):
@@ -3701,13 +3672,9 @@ class GtkViewModel(ViewModel):
         if not sylbrk:
             self.set("c_addSyllableBasedHyphens", False)
         self.builder.get_object("c_addSyllableBasedHyphens").set_sensitive(sylbrk)
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             self.generateHyphenationFile(inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
         dialog.hide()
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
@@ -3726,14 +3693,9 @@ class GtkViewModel(ViewModel):
         par = self.builder.get_object('ptxprint')
         dialog = Gtk.MessageDialog(parent=par, flags=Gtk.DialogFlags.MODAL, type=Gtk.MessageType.QUESTION, buttons=Gtk.ButtonsType.YES_NO, message_format=title)
         dialog.format_secondary_text(question)
-        dialog.set_keep_above(True)
         response = dialog.run()
-        dialog.set_keep_above(False)
         dialog.destroy()
-        if response == Gtk.ResponseType.YES:
-            return(True)
-        elif response == Gtk.ResponseType.NO:
-            return(False)
+        return True if response == Gtk.ResponseType.YES else False
 
     def onOpenFolderButtonClicked(self, btn):
         self.onOpenFolderClicked(self.builder.get_object("lb_working_dir"))
@@ -4062,13 +4024,11 @@ class GtkViewModel(ViewModel):
     def adjustGuideGrid(self, btn):
         # if self.get('c_grid'):
         dialog = self.builder.get_object("dlg_gridsGuides")
-        dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             pass
         elif response == Gtk.ResponseType.CANCEL:
             pass
-        dialog.set_keep_above(False)
         dialog.hide()
 
     def onRefreshGridDefaults(self, btn):
@@ -4252,7 +4212,6 @@ class GtkViewModel(ViewModel):
 
     def onOverlayCreditClicked(self, btn):
         dialog = self.builder.get_object("dlg_overlayCredit")
-        dialog.set_keep_above(True)
         crParams = self.get("t_piccreditbox")
         crParams = "bl,0,None" if not len(crParams) else crParams
         m = re.match(r"^([tcb]?)([lrcio]?),(-?9?0?|None),(\w*)", crParams)
@@ -4279,7 +4238,6 @@ class GtkViewModel(ViewModel):
             pass
         else:
             return
-        dialog.set_keep_above(False)
         dialog.hide()
 
     def onDiglotAutoAdjust(self, btn):
@@ -4329,8 +4287,6 @@ class GtkViewModel(ViewModel):
 
     def onGenerateStrongsClicked(self, btn):
         dialog = self.builder.get_object("dlg_strongsGenerate")
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
         response = dialog.run()
         if response == Gtk.ResponseType.OK: # Create Index... clicked
             cols = 2 if self.get("c_strongs2cols") else 1
@@ -4349,8 +4305,6 @@ class GtkViewModel(ViewModel):
                         os.startfile(fpath)
                     elif sys.platform == "linux":
                         subprocess.call(('xdg-open', fpath))
-        if sys.platform == "win32":
-            dialog.set_keep_above(False)
         dialog.hide()
         
     def onGenerateCoverClicked(self, btn):
@@ -4385,14 +4339,13 @@ class GtkViewModel(ViewModel):
         fsize = float(self.styleEditor.getval('cat:coverfront|mt1', 'FontSize', 12))
         self.set('s_coverTextScale', fsize / mtsize)
         self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
-
-        if sys.platform == "win32":
-            dialog.set_keep_above(True)
+        # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite:
+        coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
+        if self.isPeriphInFrontMatter(periphnames=coverPeriphs):
+            self.set('c_coverOverwritePeriphs', False)
         response = dialog.run()
 
         if response == Gtk.ResponseType.CANCEL:
-            if sys.platform == "win32":
-                dialog.set_keep_above(False)
             dialog.hide()
             return
         elif response == Gtk.ResponseType.OK: # Create Cover Settings clicked
@@ -4456,39 +4409,15 @@ class GtkViewModel(ViewModel):
                 # else:
                     # self.styleEditor.setval('cat:coverback|esb', 'Alpha', 1)
                     # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
-                
-            self.periphs['coverfront'] = r'''
-\periph front|id="coverfront"
-\zgap|30pt\*
-\mt1 \zvar|maintitle\*
-\mt2 \zvar|subtitle\*
-\vfill
-\endgraf'''
-            self.periphs['coverspine'] = r'''
-\periph spine|id="coverspine"
-\mt1 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
-\p'''
-            self.periphs['coverback'] = r'''
-\periph back|id="coverback"
-\zgap|1pt\*
-\pc ~
-\vfill
-\zifvarset|var="isbn" emptyok="F"\*
-\ztruetext
-\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
-\ztruetext*'''
-            self.periphs['coverwhole'] = r'''
-\periph spannedCover|id="coverwhole"
-\zgap|1pt\*
-\vfill
-\pc ~
-\vfill
-\endgraf'''
-            self.updateFrontMatter()
+
+            if self.get('c_coverOverwritePeriphs'):
+                self.createCoverPeriphs()
             self.set("c_frontmatter", True)
-            if sys.platform == "win32":
-                dialog.set_keep_above(False)
+
             dialog.hide()
+
+            if not self.get('c_coverOverwritePeriphs'):
+                return
             # See if any of the meta-data fields are missing in the zvars, and if so
             # add them and ask the user to fill them in.
             if not self.warnedMissingZvars:
@@ -4515,7 +4444,37 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Viewer").set_current_page(0)
             mpgnum = self.notebooks['Main'].index("tb_Cover")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
-        
+
+    def createCoverPeriphs(self):
+        self.periphs['coverfront'] = r'''
+\periph front|id="coverfront"
+\zgap|30pt\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\vfill
+\endgraf'''
+        self.periphs['coverspine'] = r'''
+\periph spine|id="coverspine"
+\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
+\p'''
+        self.periphs['coverback'] = r'''
+\periph back|id="coverback"
+\zgap|1in\*
+\pc ~
+\vfill
+\zifvarset|var="isbn" emptyok="F"\*
+\ztruetext
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\ztruetext*'''
+        self.periphs['coverwhole'] = r'''
+\periph spannedCover|id="coverwhole"
+\zgap|1pt\*
+\vfill
+\pc ~
+\vfill
+\endgraf'''
+        self.updateFrontMatter()
+
     def onInterlinearClicked(self, btn):
         if self.sensiVisible("c_interlinear"):
             if self.get("c_letterSpacing"):
@@ -4631,7 +4590,6 @@ class GtkViewModel(ViewModel):
         entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
         dbox = dialog.get_content_area()
         dbox.pack_end(entry, False, False, 0)
-        dialog.set_keep_above(True)
         dialog.show_all()
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -4697,7 +4655,6 @@ class GtkViewModel(ViewModel):
         entry.connect("activate", responseToDialog, dialog, Gtk.ResponseType.OK)
         dbox = dialog.get_content_area()
         dbox.pack_end(entry, False, False, 0)
-        dialog.set_keep_above(True)
         dialog.show_all()
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -5056,10 +5013,14 @@ Thank you,
             return 99
 
     def onCatalogClicked(self,btn):
-        catpdf = os.path.join(pycodedir(), "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        catpdf = os.path.join(pycodedir(), "ptx2pdf", "contrib", "ornaments", "OrnamentsCatalogue.pdf")
+        print("1st try:", catpdf)
+        logger.debug(f"{catpdf=}")
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
+            print("2nd try:", catpdf)
         if os.path.exists(catpdf):
+            print('The path exists!')
             if sys.platform == "win32":
                 os.startfile(catpdf)
             elif sys.platform == "linux":

@@ -1332,6 +1332,22 @@ class ViewModel:
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
 
+    def isPeriphInFrontMatter(self, fpath=None, periphnames=[]):
+        if fpath is None:
+            fpath = self.configFRT()
+        usedperiphs = set()
+        if os.path.exists(fpath):
+            with open(fpath, encoding="utf-8") as inf:
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                        if m:
+                            fullname = m.group(1).strip().lower()
+                            periphid = m.group(2) or _periphids.get(fullname, fullname)
+                            if periphid in periphnames:
+                                return True
+        return False
+
     def generateHyphenationFile(self, inbooks=False, addsyls=False):
         listlimit = 63929
         prjid = self.get("fcb_project")
