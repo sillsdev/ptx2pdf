@@ -36,12 +36,15 @@
     \else
       \m@kenumber{\attr@b}\QRdimen=\@@result
     \fi
+    \get@ttribute{vmax}%
+    \ifx\attr@b\relax\else\m@kenumber{\attr@b}\let\QRmaxVersion\@@result\fi
     \get@ttribute{vmin}%
     \ifx\attr@b\relax\else\m@kenumber{\attr@b}\let\QRminVersion\@@result\fi
     \get@ttribute{unicode}%
-    \ifx\attr@b\tru@ \temptrue \else\tempfalse\fi
+    \ifx\attr@b\tr@e \temptrue \else\tempfalse\fi
     \get@ttribute{data}%
     \iftemp 
+      \trace{m}{QRcode writing temp file QRtmp.tex}%
       \immediate\openout\QRtmpfile="QRtmp.tex"\relax
       \immediate\write\QRtmpfile{\string\XeTeXinputencoding "bytes"}%
       \immediate\write\QRtmpfile{\string\QRdata"\attr@b"}%
@@ -52,9 +55,16 @@
       \x@\QRdata\x@"\attr@b"\relax
     \fi
     \QRcode%
-    \message{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+    \tracing{m}{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
     \dimen0=0.5\QRinside
     \setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
+    \getp@ram{color}{zqrcode}{\styst@k}%
+    \get@ttribute{color}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
+    \get@ttribute{colour}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
+    \ifx\p@ram\relax\else\setfgc@l{\p@ram}\setbox\QRcodebox\hbox{\fgc@l\box\QRcodebox\endfgc@l}\fi
+    \getp@ram{background}{zqrcode}{\styst@k}%
+    \get@ttribute{background}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
+    \ifx\p@ram\relax\else\setbgc@l{\p@ram}\setbox\QRcodebox\hbox{\bgc@l\vrule depth 0pt height \QRbounding width \QRbounding\endbgc@l\kern -\QRbounding\box\QRcodebox}\fi
     \get@ttribute{pgpos}%
     \dimen0=\QRbounding
     %\advance\dimen0 -\QRinside
