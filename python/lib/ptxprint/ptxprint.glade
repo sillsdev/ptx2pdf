@@ -35,6 +35,11 @@ THE SOFTWARE.
     <property name="can-focus">False</property>
     <property name="limit">10</property>
   </object>
+  <object class="GtkRecentChooserMenu">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="limit">10</property>
+  </object>
   <object class="GtkAdjustment" id="a_PriColWidth">
     <property name="lower">20</property>
     <property name="upper">300</property>
@@ -991,6 +996,28 @@ settings for a similar project.</property>
     <property name="can-focus">False</property>
     <property name="icon-name">emblem-documents-symbolic</property>
     <property name="icon_size">3</property>
+  </object>
+  <object class="GtkListStore" id="lc_coverBorder1">
+    <columns>
+      <!-- column-name selected -->
+      <column type="gboolean"/>
+      <!-- column-name borderArt -->
+      <column type="GdkPixbuf"/>
+    </columns>
+    <data>
+      <row>
+        <col id="0">True</col>
+        <col id="1">Han1</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1">Han2</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1">Han3</col>
+      </row>
+    </data>
   </object>
   <object class="GtkListStore" id="ls_NoteBlendInto">
     <columns>
@@ -21851,6 +21878,8 @@ output and tweak adjust lists.</property>
                     <property name="valign">start</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
                     <child>
@@ -21863,7 +21892,6 @@ output and tweak adjust lists.</property>
                         <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
-                        <property name="margin-top">6</property>
                         <property name="margin-bottom">3</property>
                         <property name="column-spacing">12</property>
                         <child>
@@ -22203,6 +22231,7 @@ Information button.</property>
                             <property name="valign">center</property>
                             <property name="xalign">0</property>
                             <property name="draw-indicator">True</property>
+                            <signal name="clicked" handler="onLocalFRTclicked" swapped="no"/>
                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                           </object>
                           <packing>
@@ -22695,7 +22724,6 @@ on subsequent runs.</property>
                         <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
-                        <property name="margin-bottom">6</property>
                         <property name="column-spacing">12</property>
                         <child>
                           <object class="GtkCheckButton" id="c_inclBackMatter">

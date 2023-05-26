@@ -174,11 +174,8 @@ tb_studynotes fr_txlQuestions c_txlQuestionsInclude gr_txlQuestions l_txlQuestio
 c_txlQuestionsOverview c_txlQuestionsNumbered c_txlQuestionsRefs rule_txl l_txlExampleHead l_txlExample
 tb_Diglot fr_diglot gr_diglot c_diglot l_diglotSecProject fcb_diglotSecProject l_diglotSecConfig ecb_diglotSecConfig 
 l_diglotPriFraction s_diglotPriFraction btn_adjust_diglot tb_diglotSwitch btn_diglotSwitch
-tb_Peripherals gr_importFrontPDF gr_importBackPDF 
-bx_ToC c_autoToC t_tocTitle 
+tb_Peripherals bx_ToC c_autoToC t_tocTitle c_frontmatter
 fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name col_zvar_value cr_zvar_value
-c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
-c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
@@ -190,7 +187,12 @@ c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
-# removed from list above: r_pictureRes_High r_pictureRes_Low
+# removed from list above: 
+# r_pictureRes_High r_pictureRes_Low
+# gr_importFrontPDF gr_importBackPDF 
+# c_inclFrontMatter btn_selectFrontPDFs lb_inclFrontMatter
+# c_inclBackMatter btn_selectBackPDFs lb_inclBackMatter
+# btn_editFrontMatter
 
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
@@ -1708,6 +1710,19 @@ class GtkViewModel(ViewModel):
         self.sensiVisible(Gtk.Buildable.get_name(btn))
         self.colorTabs()
 
+    def onLocalFRTclicked(self, w):
+        if self.get('c_frontmatter'):
+            self.set('c_colophon', False)
+            frtpath = self.configFRT()
+            # when FRT doesn't even exist yet, or is empty:
+            if not os.path.exists(frtpath) or \
+                  (os.path.exists(frtpath) and os.path.getsize(frtpath) == 0):
+                self.generateFrontMatter()
+                self.rescanFRTvarsClicked(None, autosave=False)
+                self.onViewerChangePage(None, None, 0, forced=True)
+        else:
+            self.set('c_colophon', True)
+    
     def onFnPosChanged(self, btn):
         if self.get("r_fnpos") == "column" and self.get("r_xrpos") == "normal":
             self.set("r_xrpos", "column")
