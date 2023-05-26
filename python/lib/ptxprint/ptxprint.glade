@@ -28709,7 +28709,7 @@ are using supports these digits too.)</property>
             <property name="layout-style">end</property>
             <child>
               <object class="GtkCheckButton" id="c_coverOverwritePeriphs">
-                <property name="label" translatable="yes">Overwrite Periphs in Front Matter</property>
+                <property name="label" translatable="yes">Create/Overwrite \periphs in Front Matter</property>
                 <property name="name">Generate cover: Overwrite Periphs in Front Matter</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -28937,7 +28937,7 @@ be applied to the front cover page.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="margin-end">6</property>
-                        <property name="label" translatable="yes">C:\Filepath\to\image.jpg</property>
+                        <property name="label" translatable="yes">&lt;== Select an image file for the background</property>
                         <property name="ellipsize">middle</property>
                         <attributes>
                           <attribute name="scale" value="0.84999999999999998"/>
@@ -28973,6 +28973,8 @@ be applied to the front cover page.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Enable this option to apply shading
+to the entire cover.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
                         <property name="draw-indicator">True</property>
@@ -29170,6 +29172,8 @@ be applied to the front cover page.</property>
                         <property name="width-request">150</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">The transparency (alpha channel) values on the sliders below
+range from 0 (completely transparent) to 1 (completely opaque).</property>
                         <property name="margin-top">35</property>
                         <property name="label" translatable="yes">Transparency</property>
                         <attributes>
@@ -29219,10 +29223,19 @@ this setting to increase size of such titles.</property>
                       </packing>
                     </child>
                     <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
+                      <object class="GtkLabel" id="l_pdfCat">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="wrap">True</property>
+                        <property name="wrap-mode">char</property>
+                        <property name="width-chars">35</property>
+                        <property name="max-width-chars">35</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">2</property>
+                        <property name="top-attach">2</property>
+                        <property name="width">2</property>
+                      </packing>
                     </child>
                   </object>
                 </child>
@@ -29245,14 +29258,11 @@ this setting to increase size of such titles.</property>
                 <property name="can-focus">False</property>
                 <property name="halign">end</property>
                 <property name="label" translatable="yes">Note that when you click on Create Cover Settings, PTXprint will:
-
-   (a) update the Cover style definitions (Style Editor settings), and
-
-   (b) overwrite the \periph definitions (the Front Matter settings
-   on the View+Edit tab) ONLY IF the option below is enabled:
-
+     (a) update the Cover style definitions (Style Editor settings)
+     (b) overwrite the \periph definitions (the Front Matter settings
+     on the View+Edit tab) ONLY IF the option below is enabled:
 The \periphs affected are as follows:
-   id='coverfront', id='coverspine', id='coverback, id='coverwhole'</property>
+     id='coverfront', id='coverspine', id='coverback, id='coverwhole'</property>
                 <attributes>
                   <attribute name="foreground" value="#cccc00000000"/>
                 </attributes>

@@ -4341,8 +4341,12 @@ class GtkViewModel(ViewModel):
         self.set('col_coverText', textocol(self.styleEditor.getval('cat:coverfront|mt1', 'Color', 'x000000')))
         # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite:
         coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
-        if self.isPeriphInFrontMatter(periphnames=coverPeriphs):
-            self.set('c_coverOverwritePeriphs', False)
+        lt = _(" \periphs in Front Matter")
+        hasCoverPeriphs = self.isPeriphInFrontMatter(periphnames=coverPeriphs)
+        w = self.builder.get_object("c_coverOverwritePeriphs")
+        w.set_sensitive(True if hasCoverPeriphs else False)
+        w.set_label(_("Overwrite")+lt if hasCoverPeriphs else _("Create")+lt)
+        self.set('c_coverOverwritePeriphs', False if hasCoverPeriphs else True)
         response = dialog.run()
 
         if response == Gtk.ResponseType.CANCEL:
@@ -4720,8 +4724,10 @@ class GtkViewModel(ViewModel):
                 pixbuf = None
             return pixbuf
 
+        # Removed .png from file types as this image format is not supported directly
+        # We would need to convert the .png to .jpg on the fly to do so.
         picfiles = self.fileChooser(_("Choose Image"),
-                                  filters={"Images": {"patterns": ['*.png', '*.jpg', '*.pdf'], "mime": "application/image"}},
+                                  filters={"Images": {"patterns": ['*.jpg', '*.pdf'], "mime": "application/image"}},
                                    multiple=False, basedir=picpath, preview=update_preview)
         self.set("lb_sbFilename", str(picfiles[0]) if picfiles is not None and len(picfiles) else "")
 
@@ -5019,6 +5025,7 @@ Thank you,
         if not os.path.exists(catpdf):
             catpdf = os.path.join(pycodedir(), "..", "..", "..", "docs", "documentation", "OrnamentsCatalogue.pdf")
             print("2nd try:", catpdf)
+        self.set('l_pdfCat', catpdf)
         if os.path.exists(catpdf):
             print('The path exists!')
             if sys.platform == "win32":
