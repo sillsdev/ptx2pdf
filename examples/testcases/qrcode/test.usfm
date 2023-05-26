@@ -1,0 +1,13 @@
+\id TST Test file
+\h small test file
+\mt1 The Test File
+\rem \periph Hello|intro
+\rem \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
+\rem \zendperiph
+\ip Introductory paragraph. 
+
+\c 1
+\v 1
+\zqrcode|hello\*
+\v 2
+\zqrcode|unicode="T" size="24pt" data="This\ is\ in\ v\ 2"\*
