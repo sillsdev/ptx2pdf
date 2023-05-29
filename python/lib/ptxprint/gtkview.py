@@ -4218,8 +4218,6 @@ class GtkViewModel(ViewModel):
             self.set("s_topmargin", float(self.get("s_topmargin")) - extra)
         elif param == "bottom":
             self.set("s_bottommargin", float(self.get("s_bottommargin")) - extra)
-        else:
-            print("Oops! No more Magic Adjust options...")
             
     def setMagicAdjustSensitive(self, clickable=False):
         btns = ["spacing", "top", "bottom"]
