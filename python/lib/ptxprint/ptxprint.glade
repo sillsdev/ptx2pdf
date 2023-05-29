@@ -4113,9 +4113,6 @@ and descent values of the main body font.</property>
                                         <property name="margin-start">9</property>
                                         <property name="label" translatable="yes">99.9</property>
                                         <property name="track-visited-links">False</property>
-                                        <attributes>
-                                          <attribute name="foreground" value="#2b0a4be2f850"/>
-                                        </attributes>
                                       </object>
                                       <packing>
                                         <property name="left-attach">6</property>

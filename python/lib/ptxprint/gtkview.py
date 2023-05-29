@@ -532,6 +532,15 @@ class GtkViewModel(ViewModel):
         self.initialised = False
 
     def setup_ini(self):
+        if sys.platform.startswith("win"):
+            # import ctypes
+            from ctypes import windll
+            # Set DPI awareness
+            try:
+                windll.shcore.SetProcessDpiAwareness(2)  # DPI_AWARENESS_PER_MONITOR_AWARE
+            except:
+                windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
+
         self._setup_css()
         self.radios = {}
         GLib.set_prgname("ptxprint")
@@ -787,6 +796,8 @@ class GtkViewModel(ViewModel):
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
+            .blue-label {color: blue; font-weight: bold}
+            .red-label {color: red}
             .highlighted {background-color: peachpuff; background: peachpuff}
             .attention {background-color: lightblue; background: lightblue}
             .warning {background: lightpink;font-weight: bold; color: darkred}
@@ -4149,8 +4160,7 @@ class GtkViewModel(ViewModel):
         status = self.get("c_rhrule")
         self.updateMarginGraphics()
         for w in ["l_rhruleposition", "s_rhruleposition"]:
-            # self.builder.get_object(w).set_visible(status)        
-            self.builder.get_object(w).set_sensitive(status)        
+            self.builder.get_object(w).set_sensitive(status)
 
     def _calcBodyHeight(self):
         linespacing = float(self.get("s_linespacing")) * 25.4 / 72.27
@@ -4174,8 +4184,21 @@ class GtkViewModel(ViewModel):
         textheight, linespacing = self._calcBodyHeight()
         lines = textheight / linespacing
         self.set("l_linesOnPage", "{:.1f}".format(lines))
-        self.setMagicAdjustSensitive(int(lines) != lines)
+        self.colorLinesOnPage()
         
+    def colorLinesOnPage(self):
+        lines = float(self.get("l_linesOnPage"))
+        lb = self.builder.get_object("l_linesOnPage")
+        ctxt = lb.get_style_context()
+        if int(lines * 20) == int(lines) * 20:
+            self.setMagicAdjustSensitive(False)
+            ctxt.add_class("blue-label")
+            ctxt.remove_class("red-label")
+        else:
+            self.setMagicAdjustSensitive(True)
+            ctxt.add_class("red-label")
+            ctxt.remove_class("blue-label")
+
     def onMagicAdjustClicked(self, btn):
         param = Gtk.Buildable.get_name(btn).split("_")[-1]
         textheight, linespacing = self._calcBodyHeight()
@@ -4185,20 +4208,18 @@ class GtkViewModel(ViewModel):
             extra += 1.
             lines += 1
         extra *= linespacing
-        
+
         if param == "spacing":
             l = float(self.get("s_linespacing"))
             l -= (extra * 72.27 / 25.4) / (int(lines))
             self.set("s_linespacing", l)
+            print(f"{l=}  {lines=}  {extra=}  {linespacing=}  {textheight=}  ")
         elif param == "top":
             self.set("s_topmargin", float(self.get("s_topmargin")) - extra)
-            
         elif param == "bottom":
             self.set("s_bottommargin", float(self.get("s_bottommargin")) - extra)
         else:
             print("Oops! No more Magic Adjust options...")
-        self.set("l_linesOnPage", "{:.1f}".format(int(lines)))
-        self.setMagicAdjustSensitive(False)
             
     def setMagicAdjustSensitive(self, clickable=False):
         btns = ["spacing", "top", "bottom"]
