@@ -65,6 +65,14 @@
     \getp@ram{background}{zqrcode}{\styst@k}%
     \get@ttribute{background}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
     \ifx\p@ram\relax\else\setbgc@l{\p@ram}\setbox\QRcodebox\hbox{\bgc@l\vrule depth 0pt height \QRbounding width \QRbounding\endbgc@l\kern -\QRbounding\box\QRcodebox}\fi
+    \get@ttribute{spacebeside}%
+    \ifx\attr@b\relax\getp@ram{spacebeside}{zqrcode}{\styst@k}%
+      \ifx\p@ram\relax\def\sp@cebeside{0pt}\else
+        \edef\sp@cebeside{\p@ram pt}%
+      \fi
+    \else
+      \let\sp@cebeside\attr@b
+    \fi
     \get@ttribute{pgpos}%
     \dimen0=\QRbounding
     %\advance\dimen0 -\QRinside
@@ -76,7 +84,7 @@
           \picUsesInstrue
         \else
           \picUsesInsfalse
-          \def\sp@cebeside{0pt}\edef\hs@ze{\the\hsize}%
+          \edef\hs@ze{\the\hsize}%
           \def\w@tsit{QRcode}%
           \x@\p@rsePicUse\attr@b\end
         \fi
