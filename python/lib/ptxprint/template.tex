@@ -253,7 +253,11 @@
 
 %%%%% Covers
 \catcode`\@=11
-\edef\figbleed{{{cover/coverartbleed}mm}}   % Art Bleed dimension (should eventually apply to all edge-hugging figures)
+\lowercase{{\def\tmp{{{cover/coverartbleed}mm}}}}   % Art Bleed dimension (should eventually apply to all edge-hughhkkkging figures)
+\def\bad{{nonemm}} %unfortunately, it gives 'none' sometimes
+\ifx\tmp\bad\else
+  \let\figbleed\tmp
+\fi
 \expandafter\edef\csname cover-bleed\endcsname{{{cover/coverbleed}mm}}   % Bleed dimension
 \expandafter\edef\csname cover-spine\endcsname{{{cover/spinewidth_}mm}}   % Actual spine width = book thickness, endpapers, board thickness, etc.
 \expandafter\xdef\csname cover-y\endcsname{{\the\PaperHeight}} % spine/book height 
