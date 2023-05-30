@@ -436,7 +436,7 @@ class StyleEditor:
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
-                self.addMarker(m, str(newse.getval(m, 'Name', "")))
+                self.addMarker(str(m), str(newse.getval(m, 'Name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:

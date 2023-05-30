@@ -4433,7 +4433,7 @@ class GtkViewModel(ViewModel):
             if self.get('c_coverSelectImage'):
                 img = self.get('lb_coverImageFilename')
                 scaleto = self.get('fcb_coverImageSize')
-                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img)
+                self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImage', img.strip('"'))
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScale', '1x1')
                 self.styleEditor.setval('cat:coverfront|esb' if self.get('c_coverImageFront') else 'cat:coverwhole|esb', 'BgImageScaleTo', scaleto)
 
