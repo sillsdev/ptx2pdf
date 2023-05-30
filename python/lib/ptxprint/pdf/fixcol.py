@@ -319,7 +319,8 @@ def fixpdfcmyk(trailer, threshold=1., **kw):
 
 def _pushICC(trailer, fname, n=0, **kw):
     if kw.get('copy', False):
-        trailer.Root.OutputIntents = [x.copy() for x in trailer.Root.OutputIntents]
+        if trailer.Root.OutputIntents is not None:
+            trailer.Root.OutputIntents = [x.copy() for x in trailer.Root.OutputIntents]
     oi = trailer.Root.OutputIntents
     iccdat = None
     if oi is not None and len(oi):
