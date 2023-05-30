@@ -425,7 +425,7 @@ _map = {
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", "decorate", None),
     "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
-    # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None),
+    # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None), # Don't save this setting so it is OFF by default
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     

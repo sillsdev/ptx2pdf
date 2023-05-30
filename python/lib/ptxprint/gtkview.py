@@ -4213,7 +4213,6 @@ class GtkViewModel(ViewModel):
             l = float(self.get("s_linespacing"))
             l -= (extra * 72.27 / 25.4) / (int(lines))
             self.set("s_linespacing", l)
-            print(f"{l=}  {lines=}  {extra=}  {linespacing=}  {textheight=}  ")
         elif param == "top":
             self.set("s_topmargin", float(self.get("s_topmargin")) - extra)
         elif param == "bottom":

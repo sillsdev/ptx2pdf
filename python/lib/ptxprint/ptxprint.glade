@@ -862,8 +862,8 @@ THE SOFTWARE.
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
     <property name="version">Version 2.3.16</property>
-    <property name="copyright">© 2020-2022, SIL International</property>
-    <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK4, using Glade for
+    <property name="copyright">© 2020-2023, SIL International</property>
+    <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
 XeTeX macros (ptx2pdf) with a long and reliable history.</property>
     <property name="website">https://software.sil.org/ptxprint/</property>
@@ -4214,7 +4214,7 @@ it is an odd or even page, then turn off this option.</property>
                                         <property name="tooltip-text" translatable="yes">Enable Guides or a Grid to sit behind the
 text to assist with final adjustments; 
 or enable a Watermark to show behind the text;
-or turn on the Crop marks for the printer.</property>
+or turn on USFM codes temporarily.</property>
                                         <property name="halign">end</property>
                                         <property name="valign">center</property>
                                         <property name="margin-start">2</property>
@@ -23478,7 +23478,7 @@ been trimmed. (Units: mm)</property>
                                             </child>
                                             <child>
                                               <object class="GtkCheckButton" id="c_coverCropMarks">
-                                                <property name="label" translatable="yes">Show Crop Marks</property>
+                                                <property name="label" translatable="yes">Show Cover Crop Marks</property>
                                                 <property name="name">Generate cover: Include bleed area and cropmarks</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
