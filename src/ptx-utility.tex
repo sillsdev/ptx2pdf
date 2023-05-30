@@ -83,8 +83,7 @@
     
 \long\def\addto@macro#1#2{%
     \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
-      
 
-      
-    
+\def\stripqu@te#1{\x@\@stripqu@te #1""\E\relax}
+\def\@stripqu@te #1"#2"#3\E{\def\@@result{#2}\ifx\@@result\empty\def\@@result{#1}\fi}
 

@@ -1084,11 +1084,11 @@
 \def\Position   #1\relax{\initc@t\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Scale      #1\relax{\initc@t\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase{#1}}\fi} %Can the box page-break?
-\def\FgImage      #1\relax{\initc@t\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
+\def\FgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{fgfigname}{\@@result}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
 \def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
 \def\FgImageScaleTo   #1\relax{\initc@t\setsbp@ram{fgfigscaleto}{#1}\GenC@tFig{fg}}
-\def\BgImage      #1\relax{\initc@t\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
+\def\BgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{bgfigname}{\@@result}\GenC@tFig{bg}}
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImageScaleTo   #1\relax{\initc@t\setsbp@ram{bgfigscaleto}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
