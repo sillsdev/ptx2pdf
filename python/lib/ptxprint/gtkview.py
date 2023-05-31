@@ -620,6 +620,8 @@ class GtkViewModel(ViewModel):
         self.printReason = 0
         self.warnedMissingZvars = False
         self.blInitValue = None
+        self.currCodeletVbox = None
+        self.codeletVboxes = {}
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
         ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
@@ -2192,8 +2194,78 @@ class GtkViewModel(ViewModel):
                      \n   * the 'Print' button to create the PDF first")
             self.fileViews[pgnum][0].set_text(txt)
             self.uneditedText[pgnum] = txt
+        self.enableCodelets(pgnum, fpath)
         self.noUpdate = False
         self.onViewEdited()
+
+    def enableCodelets(self, pgnum, fpath):
+        print("enableCodelets")
+        pgcats = ['Front', 'Adj', None, None, None, 'File', 'File']
+        cat = pgcats[pgnum]
+        if self.currCodeletVbox is not None:
+            self.currCodeletVbox.hide()
+            self.currCodeletVbox.set_no_show_all(True)
+            self.currCodeletVbox.set_visible(False)
+            self.currCodeletVbox = None
+        if cat is None:
+            return
+        if cat == 'File':
+            cat = os.path.splitext(fpath)[1]  # could be txt, tex, or sty
+        if not len(self.codeletVboxes):
+            self.loadCodelets()
+        self.currCodeletVbox = self.codeletVboxes.get(cat, None)
+        if self.currCodeletVbox is not None:
+            self.currCodeletVbox.set_no_show_all(False)
+            self.currCodeletVbox.set_visible(True)
+            self.currCodeletVbox.show_all()
+        
+    def loadCodelets(self):
+        # Read codelets from JSON file
+        with universalopen(os.path.join(pycodedir(), 'codelets.json')) as file:
+            codelets = json.load(file)
+
+        daddybox = self.builder.get_object("box_codelets")
+        for cat, info in codelets.items():
+            vb = Gtk.VBox(daddybox)
+            self.codeletVboxes[cat] = vb
+            daddybox.pack_start(vb, True, False, 6)
+            # Add categories and buttons
+            
+            for category, codeitems in info.items():
+                button = Gtk.Button.new_with_label(category)
+                button.set_focus_on_click(False)
+                vb.pack_start(button, True, False, 6)
+
+                submenu = Gtk.Menu()
+                for codelet in codeitems:
+                    menu_item = Gtk.MenuItem(label=codelet["Marker"])
+                    menu_item.set_tooltip_text(codelet["Description"])
+                    menu_item.connect("activate", self.insert_codelet, codelet)
+                    submenu.append(menu_item)
+            
+                button.connect("clicked", self.showCodeletMenu, submenu)
+            vb.set_no_show_all(True)
+            # vb.show_all()
+            # vb.hide()
+            # vb.set_visible(False)
+
+    def showCodeletMenu(self, button, menu):
+        menu.show_all()
+        menu.popup(None, None, None, None, 0, Gdk.CURRENT_TIME)
+
+    def insert_codelet(self, menu_item, codelet):
+        code_codelet = codelet.get("CodeSnippet", codelet["Marker"])
+        nbk_Viewer = self.builder.get_object("nbk_Viewer")
+        pgnum = nbk_Viewer.get_current_page()
+        buf, tv = self.fileViews[pgnum]
+        # print(code_codelet)
+
+        # Get the iterator at the current cursor position
+        cursor_mark = buf.get_insert()
+        cursor_iter = buf.get_iter_at_mark(cursor_mark)
+
+        # Insert the code snippet at the cursor position
+        buf.insert(cursor_iter, code_codelet+'\n')
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():

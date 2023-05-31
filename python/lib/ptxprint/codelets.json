@@ -1,0 +1,262 @@
+{
+  "Front":
+    {
+      "Periphs+Vars": [
+        {
+          "Marker": "\\periph",
+          "Description": "Start of a periph section.",
+          "CodeSnippet": "\\periph Publication Data|id=\"pubdata\""
+        },
+        {
+          "Marker": "\\zendperiph",
+          "Description": "End of a periph section, if you’re not starting a new periphery. Must be the only thing on the line."
+        },
+        {
+          "Marker": "\\zgetperiph|id\\*",
+          "Description": "Get (use) the periphery stored earlier by \\periph comment|id=”preface”",
+          "CodeSnippet": "\\zgetperiph|preface\\*"
+        },
+        {
+          "Marker": "\\zvar|variablename\\*",
+          "Description": "Insert project variable value",
+          "CodeSnippet": "\\zvar|maintitle\\*"
+        },
+        {
+          "Marker": "\\zbl[|num]\\*",
+          "Description": "Insert num of blank lines",
+          "CodeSnippet": "\\zbl|3\\*"
+        },
+        {
+          "Marker": "\\zgap[|dimen]\\*",
+          "Description": "Insert a vertical gap of given dimension (6pt, 5mm, 2cm, 1.5in, etc.)",
+          "CodeSnippet": "\\zgap|2.3cm\\*"
+        }
+      ],
+      "Credits+Logos": [
+        {
+          "Marker": "\\zcopyright",
+          "Description": "Insert project copyright statement"
+        },
+        {
+          "Marker": "\\zfiga|anchor\\*",
+          "Description": "Insert image from piclist with given anchor",
+          "CodeSnippet": "\\zfiga|p003\\*"
+        },
+        {
+          "Marker": "\\fig |src=\"path/to/filename.png\" size=\"size\" pgpos=\"pgpos\" scale=\"0.2\" copy=\"None\"",
+          "Description": "Insert an image copy=\"None\"",
+          "CodeSnippet": "\\fig |src=\"C:/Users/Jim/Dropbox/orglogo.png\" size=\"col\" pgpos=\"pc\" scale=\"0.15\" copy=\"None\"\\fig*"
+        },
+        {
+          "Marker": "\\zccimg by-nd|size=\"size\" pgpos=\"pgpos\" scale=\"scale\"\\*",
+          "Description": "Insert Create Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
+          "CodeSnippet": "\\zccimg by-nc-nd|size=\"col\" pgpos=\"pc\" scale=\"0.2\"\\*"
+        },
+        {
+          "Marker": "\\zimagecopyrights[LANG]",
+          "Description": "Insert image copyrights for a language",
+          "CodeSnippet": "\\zimagecopyrightsfr"
+        },
+        {
+          "Marker": "\\zlicence",
+          "Description": "Insert projects license"
+        }
+      ],
+      "Contents": [
+        {
+          "Marker": "\\ztocbefore…\\ztocbefore*",
+          "Description": "Insert table rows (\\tr \\cat toc\\cat*... ) before the TOC",
+          "CodeSnippet": "\\ztocbefore\\tr \\cat toc\\cat*\\tc1 Book Name\\tc2 Abbreviation\\tcr3 Page\\ztocbefore*"
+        },
+        {
+          "Marker": "\\ztoc[|order]\\*",
+          "Description": "Insert Table of Contents of given order (main, ot, nt, dc, pre, post, heb, sorta, sortb, sortc)",
+          "CodeSnippet": "\\ztoc|nt\\*"
+        },
+        {
+          "Marker": "\\ztocafter …. \\ztocafter*",
+          "Description": "Insert table rows (\\tr \\tc1 …. ) after the TOC.",
+          "CodeSnippet": "\\ztocafter\\tr \\tc1 Names Index\\tc2 \\tcr3 196\\ztocafter*"
+        },
+        {
+          "Marker": "\\zthumbtab bookname",
+          "Description": "Set the thumb tab text for this book (instead of using \\toc3)",
+          "CodeSnippet": "\\zthumbtab Intro"
+        }
+      ],
+      "Pages": [
+        {
+          "Marker": "\\dopagenums",
+          "Description": "Turn on page numbers"
+        },
+        {
+          "Marker": "\\nopagenums",
+          "Description": "Turn off page numbers"
+        },
+        {
+          "Marker": "\\resetpagenums pnum",
+          "Description": "Reset page numbers (negative for Roman numerals)",
+          "CodeSnippet": "\\resetpagenums -1"
+        },
+        {
+          "Marker": "\\zEmptyPage",
+          "Description": "Insert intentionally empty page contains \\TPILB "
+        },
+        {
+          "Marker": "\\zNeedOddPage",
+          "Description": "Insert an “empty” page if the current page is even"
+        },
+        {
+          "Marker": "\\zNeedEvenPage",
+          "Description": "Insert an “empty” page if the current page is off"
+        },
+        {
+          "Marker": "\\zNeedQuadPage",
+          "Description": "Insert 1, 2 or 3 “empty” pages if the current page is not divisible by 4"
+        },
+        {
+          "Marker": "\\zfillsignature|pages=\"8\" pagenums=\"no\"  extra=\"2\"\\*",
+          "Description": "Fill a signature to the given modulo of pages. Note, uses the actual page count.  Optional ‘pagenums’ parameter ‘no’=\\nopagenums, ‘do’=\\dopagenums), extra ensures at least this many pages will be added."
+        }
+      ],
+      "Marks+Labels": [
+        {
+          "Marker": "\\zlabel|uniquelabel\\*",
+          "Description": "Remember where uniquelabel is (page and reference)",
+          "CodeSnippet": "\\zlabel|map_israel\\*"
+        },
+        {
+          "Marker": "\\zpage|uniquelabel\\*",
+          "Description": "Output the page number for uniquelabel",
+          "CodeSnippet": "Refer to map on page \\zpage|map_israel\\*"
+        },
+        {
+          "Marker": "\\zref|id=”uniquelabel” show=”b_c:v”\\*",
+          "Description": "Output chapter:verse for uniquelabel (show: b=book, c=chapter, v=verse, _=space, anything else is copied)",
+          "CodeSnippet": "Refer to sidebar on culture in \\zref|id=”cultural_clues” show=”b_c:v”\\*"
+        },
+        {
+          "Marker": "\\zcustommark|type=\"user\" value=\"text\"\\*",
+          "Description": "Inserts a mark of given type and value"
+        },
+        {
+          "Marker": "\\zcustombotmark|type=\"user\"\\*",
+          "Description": "Gets the value of the given mark at the bottom of this page. Used in headers/footers"
+        },
+        {
+          "Marker": "\\zcustomfirstmark|type=\"user\"\\*",
+          "Description": "Gets the value of the first given mark on this page. Used in headers/footers"
+        },
+        {
+          "Marker": "\\zcustomtopmark|type=\"user\"\\*",
+          "Description": "Gets the value of the given mark at the bottom of the previous page. Used in headers/footers"
+        }
+      ],
+      "Conditionals": [
+        {
+          "Marker": "\\zifvarset|var=\"varname\"\\*",
+          "Description": "Sets conditional text if varname is set. emptyOK=\"T\" ⇒ empty is true, emptyOK=\"F\" ⇒ empty is false.",
+          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*"
+        },
+        {
+          "Marker": "\\ztruetext …\\ztruetext*",
+          "Description": "Include contents if condition is true",
+          "CodeSnippet": "\\ztruetext \\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"short\"\\* \\esbe \\ztruetext*"
+        },
+        {
+          "Marker": "\\zfalsetext …\\zfalsetext*",
+          "Description": "Include contents if condition is false",
+          "CodeSnippet": "\\zfalsetext ISBN missing \\zfalsetext*"
+        },
+        {
+          "Marker": "\\zISBNbarcode|isbn=\"num\" height=\"size\" var=\"varid\"\\*",
+          "Description": "Insert ISBNbarcode for num.  Optional parameter size one of (normal, medium, short). If isbn is missing try the zvar varid",
+          "CodeSnippet": "\\pc \\zISBNbarcode|isbn=\"987-123-456-0\" height=\"normal\"\\*"
+        },
+        {
+          "Marker": "\\zifhooks|marker\\*",
+          "Description": "Does marker have a hook, set conditional true"
+        }
+      ],
+      "Diglots": [
+        {
+          "Marker": "\\zglot|[col]\\*",
+          "Description": "Use formatting for diglot column col, in a monoglot section. Return to normal formatting with \\zglot|\\*",
+          "CodeSnippet": "\\zglot|R\\*"
+        },
+        {
+          "Marker": "\\zgetperiph|side=\"L|R\" id=\"preface\"\\*",
+          "Description": "Get (use) the appropriate L/R periphery stored earlier by \\periph comment|id=”preface”",
+          "CodeSnippet": "\\zgetperiph|side=\"R\" id=\"preface\"\\*"
+        },
+        {
+          "Marker": "\\ztoc|main[L|R]\\*",
+          "Description": "Insert L/R Table of Contents of given order (main, ot, nt, dc, pre, post, heb, sorta, sortb, sortc)",
+          "CodeSnippet": "\\mt3 \\zvar|toctitlepri\\* \\ip \\ztoc|mainL\\* \\mt3 \\zvar|toctitlesec\\* \\ip \\ztoc|mainR\\*"
+        }
+      ],
+      "Other": [
+        {
+          "Marker": "\\beginL",
+          "Description": "Start LTR text run"
+        },
+        {
+          "Marker": "\\beginR",
+          "Description": "Start RTL text run"
+        },
+        {
+          "Marker": "\\onebody",
+          "Description": "Set \\BodyColumns=1 for single column body text"
+        },
+        {
+          "Marker": "\\twobody",
+          "Description": "Set \\BodyColumns=2 for double column body text"
+        },
+        {
+          "Marker": "\\makeatletter",
+          "Description": "Allow access to names with @ in them"
+        },
+        {
+          "Marker": "\\makeatother",
+          "Description": "Disable access to names with @ in them"
+        },
+        {
+          "Marker": "\\m@kedigitsother",
+          "Description": "Treat digits as digits"
+        },
+        {
+          "Marker": "\\m@kedigitsletters",
+          "Description": "Treat digits as letters (for use in names)"
+        },
+        {
+          "Marker": "\\ztmon",
+          "Description": "Turn on TeX’s tracing macros (for debugging)"
+        },
+        {
+          "Marker": "\\ztmoff",
+          "Description": "Turn off TeX’s tracing macros"
+        },
+        {
+          "Marker": "\\zplaceallnotes",
+          "Description": "Output end notes for this file here"
+        },
+        {
+          "Marker": "\\zendnoterule",
+          "Description": "Insert an endnote type rule, including spacing"
+        },
+        {
+          "Marker": "\\zpostendnoterule",
+          "Description": "If there were endnotes just now, insert a rule to mark the bottom."
+        }
+      ]
+    },
+  "txt":
+    {
+      "Periphs+Vars": [
+        {
+          "Marker": "'oldword' > 'neword'",
+          "Description": "Simple find and replace."
+        }
+      ]
+    }
+}

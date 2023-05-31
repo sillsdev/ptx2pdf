@@ -69,7 +69,6 @@ class ImageStyle:
         groundoframe.set_visible(False)
         frtitle = view.builder.get_object("l_sbFGorBG")
         frtitle.set_label("Sidebar Background" if self.isbg else "Sidebar Foreground")
-        dialog.set_keep_above(True)
         self.initdialog(dialog, view)
         response = dialog.run()
         # print(f"{Gtk.ResponseType.__enum_values__[response]=}")
@@ -78,7 +77,6 @@ class ImageStyle:
             res = True
         else:
             res = False
-        dialog.set_keep_above(False)
         dialog.hide()
         return res
 
