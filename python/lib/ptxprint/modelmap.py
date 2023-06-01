@@ -278,7 +278,7 @@ _map = {
     "cover/papercalcunits":     ("r_paperCalc", "cover", None),
     "cover/covercropmarks":     ("c_coverCropMarks", "cover", None),
     "cover/coverbleed":         ("s_coverBleed", "cover", None),
-    "cover/coverartbleed":      ("s_coverArtBleed", "cover", None),
+    "cover/coverartbleed":      ("s_coverArtBleed", "cover", lambda w,v: v or "0"),
     "cover/makeseparatePDF":    ("c_coverSeparatePDF", "cover", None),
     "cover/spinewidth":         ("l_spineWidth", "cover", None),
 
