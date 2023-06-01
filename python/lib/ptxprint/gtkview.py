@@ -2199,6 +2199,8 @@ class GtkViewModel(ViewModel):
         self.onViewEdited()
 
     def enableCodelets(self, pgnum, fpath):
+        if self.loadingConfig:
+            return
         print("enableCodelets")
         pgcats = ['Front', 'Adj', None, None, None, 'File', 'File']
         cat = pgcats[pgnum]
@@ -2210,7 +2212,8 @@ class GtkViewModel(ViewModel):
         if cat is None:
             return
         if cat == 'File':
-            cat = os.path.splitext(fpath)[1]  # could be txt, tex, or sty
+            cat = os.path.splitext(fpath)[1].lower()  # could be txt, tex, or sty
+        print(f"{pgnum=} {cat=} {fpath=} ")
         if not len(self.codeletVboxes):
             self.loadCodelets()
         self.currCodeletVbox = self.codeletVboxes.get(cat, None)
@@ -2238,7 +2241,7 @@ class GtkViewModel(ViewModel):
 
                 submenu = Gtk.Menu()
                 for codelet in codeitems:
-                    menu_item = Gtk.MenuItem(label=codelet["Marker"])
+                    menu_item = Gtk.MenuItem(label=codelet["Label"])
                     menu_item.set_tooltip_text(codelet["Description"])
                     menu_item.connect("activate", self.insert_codelet, codelet)
                     submenu.append(menu_item)
@@ -2254,7 +2257,7 @@ class GtkViewModel(ViewModel):
         menu.popup(None, None, None, None, 0, Gdk.CURRENT_TIME)
 
     def insert_codelet(self, menu_item, codelet):
-        code_codelet = codelet.get("CodeSnippet", codelet["Marker"])
+        code_codelet = codelet.get("CodeSnippet", codelet["Label"])
         nbk_Viewer = self.builder.get_object("nbk_Viewer")
         pgnum = nbk_Viewer.get_current_page()
         buf, tv = self.fileViews[pgnum]
