@@ -2201,8 +2201,7 @@ class GtkViewModel(ViewModel):
     def enableCodelets(self, pgnum, fpath):
         if self.loadingConfig:
             return
-        print("enableCodelets")
-        pgcats = ['Front', 'Adj', None, None, None, 'File', 'File']
+        pgcats = ['Front', 'Adjust', None, None, None, 'File', 'File']
         cat = pgcats[pgnum]
         if self.currCodeletVbox is not None:
             self.currCodeletVbox.hide()
@@ -2212,8 +2211,7 @@ class GtkViewModel(ViewModel):
         if cat is None:
             return
         if cat == 'File':
-            cat = os.path.splitext(fpath)[1].lower()  # could be txt, tex, or sty
-        print(f"{pgnum=} {cat=} {fpath=} ")
+            cat = os.path.splitext(fpath)[1].lower()  # could be .txt, .tex, or .sty
         if not len(self.codeletVboxes):
             self.loadCodelets()
         self.currCodeletVbox = self.codeletVboxes.get(cat, None)
@@ -2232,8 +2230,8 @@ class GtkViewModel(ViewModel):
             vb = Gtk.VBox(daddybox)
             self.codeletVboxes[cat] = vb
             daddybox.pack_start(vb, True, False, 6)
-            # Add categories and buttons
             
+            # Add categories and buttons
             for category, codeitems in info.items():
                 button = Gtk.Button.new_with_label(category)
                 button.set_focus_on_click(False)
@@ -2248,9 +2246,6 @@ class GtkViewModel(ViewModel):
             
                 button.connect("clicked", self.showCodeletMenu, submenu)
             vb.set_no_show_all(True)
-            # vb.show_all()
-            # vb.hide()
-            # vb.set_visible(False)
 
     def showCodeletMenu(self, button, menu):
         menu.show_all()
@@ -2261,14 +2256,19 @@ class GtkViewModel(ViewModel):
         nbk_Viewer = self.builder.get_object("nbk_Viewer")
         pgnum = nbk_Viewer.get_current_page()
         buf, tv = self.fileViews[pgnum]
-        # print(code_codelet)
 
         # Get the iterator at the current cursor position
         cursor_mark = buf.get_insert()
         cursor_iter = buf.get_iter_at_mark(cursor_mark)
+        ty = codelet['Type']
+        
+        if ty.startswith('comment'):
+            txt = f"\n{ty[-1]} {codelet['Label']}\n{code_codelet}\n"
+        else:
+            txt = f"\n{code_codelet}\n"
 
         # Insert the code snippet at the cursor position
-        buf.insert(cursor_iter, code_codelet+'\n')
+        buf.insert(cursor_iter, txt)
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -3305,20 +3305,18 @@ class GtkViewModel(ViewModel):
         if self.customScript:
             self._editProcFile(scriptName, scriptPath)
 
-    def onEditCoverContentClicked(self, btn):
-        self._editProcFile("PrintDraftChanges.txt", "prj")
-        self._editProcFile("changes.txt", "cfg")
-
     def onEditChangesFile(self, btn):
         self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
-
+        self.onRefreshViewerTextClicked(None)
+        
     def onEditModsTeX(self, btn):
         cfgname = self.configName()
         self._editProcFile("ptxprint-mods.tex", "cfg",
             intro=_(_("""% This is the .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
 """).format(self.prjid, cfgname)))
+        self.onRefreshViewerTextClicked(None)
 
     def onEditPreModsTeX(self, btn):
         cfgname = self.configName()
@@ -3326,18 +3324,22 @@ class GtkViewModel(ViewModel):
             intro=_(_("""% This is the preprocessing .tex file specific for the {} project used by PTXprint.
 % Saved Configuration name: {}
 """).format(self.prjid, cfgname)))
+        self.onRefreshViewerTextClicked(None)
 
     def onEditCustomSty(self, btn):
         self.editFile("custom.sty", "prj")
+        self.onRefreshViewerTextClicked(None)
 
     def onEditModsSty(self, btn):
         self.editFile("ptxprint-mods.sty", "cfg")
+        self.onRefreshViewerTextClicked(None)
 
     def onExtraFileClicked(self, btn):
         self.onSimpleClicked(btn)
         self.colorTabs()
         if btn.get_active():
             self.triggervcs = True
+        self.onRefreshViewerTextClicked(None)
 
     def onChangesFileClicked(self, btn):
         self.onExtraFileClicked(btn)
@@ -3345,6 +3347,7 @@ class GtkViewModel(ViewModel):
         if not os.path.exists(cfile):
             with open(cfile, "w", encoding="utf-8") as outf:
                 outf.write(chgsHeader)
+        self.onRefreshViewerTextClicked(None)
 
     def onMainBodyTextChanged(self, btn):
         self.sensiVisible("c_mainBodyText")
