@@ -2081,7 +2081,7 @@ class GtkViewModel(ViewModel):
         genBtn = self.builder.get_object("btn_Generate")
         genBtn.set_sensitive(False)
         self.builder.get_object("btn_editZvars").set_visible(False)
-        self.builder.get_object("btn_removeZeros").set_visible(False)
+        # self.builder.get_object("btn_removeZeros").set_visible(False)
         self.noUpdate = True
         prjid = self.get("fcb_project")
         prjdir = os.path.join(self.settings_dir, prjid)
@@ -2141,7 +2141,7 @@ class GtkViewModel(ViewModel):
             if pgid == "scroll_AdjList":
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
-                    self.builder.get_object("btn_removeZeros").set_visible(True)
+                    # self.builder.get_object("btn_removeZeros").set_visible(True)
                 else:
                     self.builder.get_object("c_autoSave").set_sensitive(False)
                     self.set("c_autoSave", False)
@@ -2235,6 +2235,8 @@ class GtkViewModel(ViewModel):
             for category, codeitems in info.items():
                 button = Gtk.Button.new_with_label(category)
                 button.set_focus_on_click(False)
+                button.set_halign(Gtk.Align.START)
+                button.set_size_request(100, -1)
                 vb.pack_start(button, True, False, 6)
 
                 submenu = Gtk.Menu()
@@ -2255,20 +2257,31 @@ class GtkViewModel(ViewModel):
         code_codelet = codelet.get("CodeSnippet", codelet["Label"])
         nbk_Viewer = self.builder.get_object("nbk_Viewer")
         pgnum = nbk_Viewer.get_current_page()
-        buf, tv = self.fileViews[pgnum]
+        buf = self.fileViews[pgnum][0]
 
         # Get the iterator at the current cursor position
-        cursor_mark = buf.get_insert()
-        cursor_iter = buf.get_iter_at_mark(cursor_mark)
+        cursor_iter = buf.get_iter_at_mark(buf.get_insert())
         ty = codelet['Type']
-        
-        if ty.startswith('comment'):
-            txt = f"\n{ty[-1]} {codelet['Label']}\n{code_codelet}\n"
-        else:
-            txt = f"\n{code_codelet}\n"
 
-        # Insert the code snippet at the cursor position
-        buf.insert(cursor_iter, txt)
+        if not self.get("t_invisiblePassword") == "":
+            # Don't let any changes be made to a locked config!
+            # Ideally we should disable all the codelet buttons if it is locked.
+            return
+        
+        if ty.startswith('global'):
+            find = code_codelet.split(' > ')[0]
+            repl = code_codelet.split(' > ')[1]
+            oldtext = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+            self.fileViews[pgnum][0].set_text(re.sub(find, repl, oldtext))
+        elif ty.startswith('line'):
+            # self.cursors[pgnum] = (cursor_iter.get_line(), cursor_iter.get_line_offset())
+            pass
+        elif ty.startswith('comment'):
+            txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n\n"
+            buf.insert(cursor_iter, txt)
+        else:
+            txt = f"{code_codelet}\n\n"
+            buf.insert(cursor_iter, txt)
 
     def savePics(self, fromdata=False, force=False):
         if not force and self.configLocked():
@@ -4662,14 +4675,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         pgnum = self.notebooks["Viewer"].index("scroll_FrontMatter")
         self.builder.get_object("nbk_Viewer").set_current_page(pgnum)
-
-    def removeZerosClicked(self, btn):
-        pgnum = self.notebooks["Viewer"].index("scroll_AdjList")
-        buf = self.fileViews[pgnum][0]
-        titer = buf.get_iter_at_mark(buf.get_insert())
-        self.cursors[pgnum] = (titer.get_line(), titer.get_line_offset())
-        oldlist = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-        self.fileViews[pgnum][0].set_text(re.sub(r"[A-Z123]{3}\s\d.+?[-+]+0([%[].+\])?\r?\n", "", oldlist))
 
     def rescanFRTvarsClicked(self, btn, autosave=True):
         prjid = self.get("fcb_project")

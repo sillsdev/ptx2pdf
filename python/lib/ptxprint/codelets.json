@@ -1,7 +1,7 @@
 {
   "Front":
     {
-      "Periphs+Vars": [
+      "Periph+Var": [
         {
           "Type": "insert",
           "Label": "\\periph",
@@ -38,7 +38,7 @@
           "CodeSnippet": "\\zgap|2.3cm\\*"
         }
       ],
-      "Credits+Logos": [
+      "Legal": [
         {
           "Type": "insert",
           "Label": "\\zcopyright",
@@ -144,7 +144,7 @@
           "CodeSnippet": "\\zfillsignature|pages=\"8\" pagenums=\"no\"  extra=\"2\"\\*"
         }
       ],
-      "Marks+Labels": [
+      "Label": [
         {
           "Type": "insert",
           "Label": "\\zlabel|uniquelabel\\*",
@@ -164,7 +164,7 @@
           "CodeSnippet": "Refer to sidebar on culture in \\zref|id=”cultural_clues” show=”b_c:v”\\*"
         }
       ],
-      "Conditional": [
+      "Condition": [
         {
           "Type": "insert",
           "Label": "\\zifvarset|var=\"varname\"\\*",
@@ -433,7 +433,7 @@
           "CodeSnippet": "\\SeparateVerseAdornmentsfalse\n\\newbox\\stretchedversestarbox\n\\setbox\\stretchedversestarbox=\\hbox{\\XeTeXpdffile 'c:/pathtofile/BridgedVerseRoundedBox.pdf' scaled 760 \\relax}\n\\def\\AdornVerseNumber#1{\\beginL\\rlap{\\hbox to \\ifadorningrange\\wd\\stretchedversestarbox\\else\\wd\\versestarbox\\fi{\\hfil #1\\hfil}}%\n    \\raise -4.5pt\\ifadorningrange\\copy\\stretchedversestarbox\\else\\copy\\versestarbox\\fi\\endL}"
         }
       ],
-      "Sethooks": [
+      "Hooks": [
         {
           "Type": "insert",
           "Label": "\\sethook{pos}{mrkr}{code}",
@@ -586,17 +586,23 @@
       "Line": [
         {
           "Type": "line",
-          "Label": "Split lines",
+          "Label": "Split line for multi-para adjustments",
           "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]% +[4]",
-          "CodeSnippet": "'^(... \\d+\\.\\d+(-\\d+)?) (.+?)% +(\\[\\d\\]) (.+?)$'  >  '\\1 \\2\\n\\1 +0\\3% \\4'"
+          "CodeSnippet": "^([A-Z123]{3}\\s\\d+\\.\\d+(-\\d+)?) (.+?)%\\s+\\+(\\[\\d+\\])(.+)?$ > \\1 \\3\\n\\1 \\+0\\4% \\5"
         }
       ],
       "Global": [
         {
           "Type": "global",
-          "Label": "Highlight shrinkable paragraphs",
+          "Label": "Highlight all shrinkable paragraphs",
           "Description": "Highlights any lines that could shrink (JAS 4.1 +-0) becomes (% JAS 4.1 -1)",
-          "CodeSnippet": "'^(... \\d+\\.\\d+(-\\d+)?) (+-0)(.+?)$'  >  '% \\1 -1\\3'"
+          "CodeSnippet": "([A-Z123]{3}\\s\\d+\\.\\d+(-\\d+)?)\\s+(\\+-0)(.+?)? > % \\1 -1\\4"
+        },
+        {
+          "Type": "global",
+          "Label": "Remove all the redundant 0 lines",
+          "Description": "Remove (delete) all lines where no adjustment has been specified.",
+          "CodeSnippet": "[A-Z123]{3}\\s\\d.+?[-+]+0([%[].+\\])?\\r?\\n > "
         }
       ]
     }
