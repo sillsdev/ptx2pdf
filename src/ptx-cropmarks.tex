@@ -337,6 +337,7 @@
  \fi
 }
 
+\newif\ifTabsOddOnly \TabsOddOnlyfalse
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
   \initThumbT@bs%becomes \relax after 1st run, unless reset
   \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
@@ -356,7 +357,7 @@
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
- \ifnum\NumTabs=0 \else
+ \ifnum \ifnum\NumTabs=0 0\else \ifTabsOddOnly\ifodd\pageno 1\else 0\fi\else 1\fi\fi =1
    \sett@bname{\id@@@}\gett@bgroup\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
    \ifx\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
