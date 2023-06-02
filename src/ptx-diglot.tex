@@ -638,7 +638,7 @@
 \def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
   {\count255=\numexpr \m@rksm@x+1\relax
   \x@\xdef\x@\m@rksm@x{\the\count255}%
-  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
   \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
 }
 \def\getm@rknum#1{%retrieve or get a new m@rknum#1

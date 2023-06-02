@@ -2350,7 +2350,7 @@
     \fi
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
       \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%
-    \advancepageno
+    \ifholdpageno\else\advancepageno\fi
     \repeat
   \endgroup % begun in \incl@depdf
 }

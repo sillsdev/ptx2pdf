@@ -558,12 +558,22 @@
   \fi
   \get@ttribute{id}%
   \ifcsname periphcontents\t@mpside=\attr@b\endcsname
-    \keeptriggerfalse
-    \ifcsname keepperiph-\attr@b\endcsname\keeptriggertrue\fi
-    \csname periphcontents\t@mpside=\attr@b\endcsname
-    \ifkeeptrigger\else
-      \x@\global\x@\let\csname periphcontents\t@mpside=\attr@b\endcsname\undefined
+    \let\periph@@@\attr@b
+    \@chk@pull{\periph@@@}%
+    \let\p@llpages=\tmp
+    \ifx\p@llpages\tr@e
+      \marks\m@rknumpdftag{\periph@@@}%
+      \endgraf\pagebreak
+    \else
+      \marks\m@rknumpdftag{}%
     \fi
+    \keeptriggerfalse
+    \ifcsname keepperiph-\periph@@@\endcsname\keeptriggertrue\fi
+    \csname periphcontents\t@mpside=\periph@@@\endcsname
+    \ifkeeptrigger\else
+      \x@\global\x@\let\csname periphcontents\t@mpside=\periph@@@\endcsname\undefined
+    \fi
+    \ifx\p@llpages\tr@e\pagebreak\fi
   \fi
 }
 \x@\def\csname MS:zfillsignature\endcsname{{%

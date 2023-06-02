@@ -1416,7 +1416,7 @@
         \trace{g}{Box prepared (\the\ht0+\the\dp0)x\the\wd0}%
         \shipcompletep@gewithcr@pmarks{\box0}
         \pdfpagewidth=\dimen8 \pdfpageheight=\dimen9
-        \advancepageno
+        \ifholdpageno\else\advancepageno\fi
       \fi
     \fi
   \fi

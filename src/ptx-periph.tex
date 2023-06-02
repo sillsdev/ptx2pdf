@@ -97,11 +97,12 @@
 \StorePeriph{backcover}
 \StorePeriph{cover}
 \StorePeriph{spine}
+\newm@rknum{pdftag}% registers and defines m@rknumpdftag
 
 \def\endp@riph{%
   \trace{ss}{endp@riph: \sh@wstuff}%
   \ifst@ringperiph
-    \global\let\periphattr@b\attr@b
+    \global\let\periphattr@b\periph@@@
     \egroup\egroup
     \let\tmp\p@riphlines
     \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
@@ -125,32 +126,57 @@
 \newif\ifStorePeriph\StorePeriphtrue % are *any* periphs stored?
 \newif\ifStoreAllPeriphs \StoreAllPeriphsfalse
 \newif\ifPagebreakAfterPeriph\PagebreakAfterPeriphtrue
-
+% Some periphs should be pulled out of the print-run and printed as part of a separate run 
+\def\PullPeriph#1{\x@\global\x@\let\csname @pullperiph-#1\endcsname\tr@e} 
+\def\NoPullPeriph#1{\x@\global\x@\let\csname @pullperiph-#1\endcsname\false}
+\def\@chk@pull#1{\let\tmp\empty\ifcsname @pullperiph-#1\endcsname \x@\let\x@\tmp\csname @pullperiph-#1\endcsname\fi}
+\PullPeriph{maps}
+\def\@@@chkp@riphname#1__\E{%
+  \edef\tmpb{#1}%
+  \global\let\periph@@@\tmpb
+}
+\def\@@chkp@riphname#1_#2_#3\E{%
+  \edef\tmpa{#1}\edef\tmpb{#2}\edef\tmpc{#3}%
+  \ifx\tmpa\periph@sep@print@name
+    \ifx\tmpc\usc@re
+      \global\let\periph@@@\tmpb
+    \else
+      \x@\@@@chkp@riphname#2_#3\E
+    \fi
+    \PullPeriph{\periph@@@}%
+  \fi
+}
 \def\@@@periph #1|#2|#3\E{%
   \trace{ss}{@@@periph #1|#2}%
   \def\tmp{#2}%
   \unset@ttribs
   \def\thisdefault@ttrkey{id}%
   \ifx\tmp\empty
-    \let\attr@b\empty
+    \global\let\periph@@@\empty
   \else\let\@ttributes\tmp
     \parse@ttribs{\@ttributes}%
     %\let\d@\apply@attr@specials
     %\x@\cstackdown \attribsus@d,\E
     \get@ttribute{id}%
     \ifx\attr@b\relax
-      \let\attr@b\empty
+      \global\let\periph@@@\empty
+    \else
+      \global\let\periph@@@\attr@b
+      \x@\@@chkp@riphname\attr@b__\E
+      \get@ttribute{nopagecount}%
+      \ifx\attr@b\relax\else
+        \x@\global\x@\let\csname periph-\periph@@@-nocount\endcsname\attr@b % Page builder shouldn't increment page count for this.
+      \fi
     \fi
   \fi
-  \trace{per}{Setting periph@@@ to `\attr@b` (#2)}%
-  \global\let\periph@@@\attr@b
+  \trace{per}{Set periph@@@ to `\periph@@@` (#2)}%
   \the\@idhooks
   \trace{per}{idhooks run}%
   \tempfalse
   \def\tmp{}%
   \ifStoreAllPeriphs\temptrue\fi
   \ifStorePeriph
-    \ifcsname storeperiph-\attr@b\endcsname 
+    \ifcsname storeperiph-\periph@@@\endcsname 
       \def\tmp{(periph type)}\temptrue
     \fi
   \fi
@@ -176,4 +202,6 @@
   \n@xt
 }
 
-\def\@ndofperiphgroup{\trace{per}{End of periph group}\global\let\periph@@@\empty\pagebreak}
+\def\@ndofperiphgroup{\trace{per}{End of periph group}\global\let\periph@@@\empty
+  \marks\m@rknumpdftag{}%
+  \pagebreak}

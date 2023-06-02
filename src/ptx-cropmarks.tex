@@ -40,6 +40,7 @@
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \trace{cov}{makecrops bleeds=\the\bl@eds, pw=\the\PaperWidth}%
+  \trace{o}{id line (\the\pageno): \id@line}%
   \global\setbox\topcr@p=\vbox to 0pt{\toks0=\everypar\everypar={}\vss
     \hbox to \PaperWidth{%
       \kern -30pt \kern -\bl@eds
@@ -56,7 +57,7 @@
       \raise\dimexpr 12pt + \bl@eds \hbox to 0pt{\hss\vtop{{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
-        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi \endL\par
+        \noindent \hfil\beginL\idf@nt \id@line  \endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
           \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}\hss}%
       \hss
@@ -113,6 +114,7 @@
 \newif\ifTabTopToEdgeOdd %Is the top of the text at the pageedge on odd pages
 \TabTopToEdgeEvenfalse
 \TabTopToEdgeOddfalse
+\newif\ifholdpageno\holdpagenofalse
 
 \newif\ifTabAutoRotate \TabAutoRotatetrue % Does autorotation of text occur?
 \newif\ifTabRotationNormal \TabRotationNormaltrue % TabRotationNormalfalse==rotate text (if auto-rotate off). (If auto-rotate on: invert autorotate logic, i.e. assume the \toc3 are narrower than they are tall).
@@ -415,6 +417,7 @@
         \strip@pt{\dimen2} ]>> }\fi
     \getm@rknum{pdftag}%Tag pages if pdftag mark is active issued.
     \xdef\@@pdftag{\topmarks\m@rknum}%
+    \trace{ma}{topmark for pdftag on page \the\pageno is '\@@pdftag'}%
     \ifx\@@pdftag\empty\else
       \special {pdf:put @thispage <</PieceInfo <</ptxprint 
           <</LastModified /D:20221126103720Z /Private <</Insertion /\@@pdftag>> >>
@@ -521,6 +524,8 @@
 %+c_docropmarks
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
+      \edef\id@line{\jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi}%
+      \ifx\lastid@line\id@line\else\setbox\topcr@p\box\voidb@x\global\let\lastid@line\id@line\fi
       \ifvoid\topcr@p \bl@eds=0pt \makecr@ps \fi % create them (first time)
       \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
@@ -799,7 +804,13 @@
   \holdXobjectsfalse
   \shipwithcr@pmarks{#1}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
-  \advancepageno
+  \holdpagenofalse
+  \ifcsname periph-\@@pdftag-nocount\endcsname
+    \x@\ifx\csname periph-\@@pdftag-nocount\endcsname\tr@e      
+      \holdpagenotrue
+    \fi
+  \fi
+  \ifholdpageno\else\advancepageno\fi
   \global\p@geonefalse
 %NB: dosupereject (from plain.tex) will continue triggering outputs as long as
 %there are footnotes/floats coming.
