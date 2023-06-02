@@ -2290,6 +2290,11 @@ class GtkViewModel(ViewModel):
                 buf.end_user_action()
             return
 
+        # if ty.startswith('method'):
+            # m = getattr(self, code_codelet, None)
+            # if m is not None:
+                # m()
+
         if ty.startswith('comment'):
             txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n\n"
             buf.insert(cursor_iter, txt)
