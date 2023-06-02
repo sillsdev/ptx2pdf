@@ -828,23 +828,28 @@ class RunJob:
         opath = outfname.replace(".tex", ".prepress.pdf")
         outpdf = None
         self.coverfile = None
-        if kw.get('cover', False):
+        if kw.get('burst', False) or kw.get('cover', False):
             inpdf = PdfReader(opath)
-            covpdfname = pdffile.replace(".pdf", "_cover.pdf")
-            logger.debug(f"Pulling out cover pages into {covpdfname} from {opath}")
             extras = split_pages(inpdf)
-            if 'cover' in extras:
-                eps = extras['cover']
-                covpdf = PdfReader(source=inpdf.source, trailer=inpdf)
-                covpdf.Root = covpdf.Root.copy()
-                covpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
-                covpdf.Root.Names = None
-                covpdf.Root.Outlines = None
-                covpdf.private.pages = eps
+            for k, eps in extras.items():
+                bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
+                if k == 'cover':
+                    if kw.get('cover', False):
+                        self.coverfile = bpdfname
+                    else:
+                        continue
+                elif not kw.get('burst', False):
+                    continue
+                logger.debug(f"Pulling out {k} into {bpdfname} from {opath}")
+                bpdf = PdfReader(source=inpdf.source, trailer=inpdf)
+                bpdf.Root = bpdf.Root.copy()
+                bpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
+                bpdf.Root.Names = None
+                bpdf.Root.Outlines = None
+                bpdf.private.pages = eps
                 for v in eps:
-                    v.Parent = covpdf.Root.Pages
-                fixpdffile(covpdf, covpdfname, colour="cmyk", copy=True)
-                self.coverfile = covpdfname
+                    v.parent = bpdf.Root.Pages
+                fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
             outpdf = PdfWriter(None, trailer=inpdf)
         colour = None
         params = {}
