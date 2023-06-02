@@ -297,8 +297,8 @@
         },
         {
           "Type": "insert",
-          "Label": "in '\\\\io1 .+?\\n': 'some word' > 'some\\LINESEP word'",
-          "Description": "Find and replace WITHIN a specific context (e.g within the \\io1 line, break the line between 'some' and 'word').",
+          "Label": "in '\\f .+?\\f\\*':  'Syria'  >  'Aram'",
+          "Description": "Find and replace WITHIN a specific context.",
           "CodeSnippet": "in 'context-regex': 'old' > 'new'"
         },
         {
@@ -309,6 +309,12 @@
         }
       ],
       "Insert": [
+        {
+          "Type": "comment#",
+          "Label": "Insert line break within Intro Outline",
+          "Description": "Within the \\io1 line, break the line between 'some' and 'words'.",
+          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\LINESEP words'"
+        },
         {
           "Type": "comment#",
           "Label": "Insert a rule before \\iot",
@@ -395,7 +401,7 @@
           "Type": "comment#",
           "Label": "Use Section headers \\s or \\s1 for Table of Contents",
           "Description": "Remove existing \\toc# markers and generate new \\toc1 markers from the \\s (or \\s1) markers in the text.",
-          "CodeSnippet": "'\\\\toc\\d .+?[\r\n]+' > ''\n'(\\\\s1? )(.+?[\r\n]+)' > '\\\\toc1 \\2\\1\\2'"
+          "CodeSnippet": "'\\\\toc\\d .+?[\\r\\n]+' > ''\n'(\\\\s1? )(.+?[\\r\\n]+)' > '\\\\toc1 \\2\\1\\2'"
         },
         {
           "Type": "comment#",
