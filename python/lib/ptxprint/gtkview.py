@@ -2268,15 +2268,29 @@ class GtkViewModel(ViewModel):
             # Ideally we should disable all the codelet buttons if it is locked.
             return
         
-        if ty.startswith('global'):
+        if ty.startswith('global') or ty.startswith('line'):
             find = code_codelet.split(' > ')[0]
             repl = code_codelet.split(' > ')[1]
-            oldtext = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
-            self.fileViews[pgnum][0].set_text(re.sub(find, repl, oldtext))
-        elif ty.startswith('line'):
-            # self.cursors[pgnum] = (cursor_iter.get_line(), cursor_iter.get_line_offset())
-            pass
-        elif ty.startswith('comment'):
+            if ty.startswith('global'):
+                oldtext = buf.get_text(buf.get_start_iter(), buf.get_end_iter(), True)
+                self.fileViews[pgnum][0].set_text(re.sub(find, repl, oldtext))
+            elif ty.startswith('line'):
+                start_iter = buf.get_iter_at_line(cursor_iter.get_line())
+                end_iter = buf.get_iter_at_line(cursor_iter.get_line() + 1)
+                newtext = buf.get_text(start_iter, end_iter, include_hidden_chars=False)
+                oldtext = ''
+                while oldtext != newtext:
+                    oldtext = newtext
+                    newtext = re.sub(find, repl, oldtext)
+                    if ty == 'line':
+                        break
+                buf.begin_user_action()
+                buf.delete(start_iter, end_iter)
+                buf.insert(start_iter, newtext)
+                buf.end_user_action()
+            return
+
+        if ty.startswith('comment'):
             txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n\n"
             buf.insert(cursor_iter, txt)
         else:
