@@ -393,6 +393,12 @@
         },
         {
           "Type": "comment#",
+          "Label": "Use Section headers \\s or \\s1 for Table of Contents",
+          "Description": "Remove existing \\toc# markers and generate new \\toc1 markers from the \\s (or \\s1) markers in the text.",
+          "CodeSnippet": "'\\\\toc\\d .+?[\r\n]+' > ''\n'(\\\\s1? )(.+?[\r\n]+)' > '\\\\toc1 \\2\\1\\2'"
+        },
+        {
+          "Type": "comment#",
           "Label": "Change \\p to \\nb ",
           "Description": "No-break paragraph: Commonly used in cases where the previous paragraph spans the chapter boundary.",
           "CodeSnippet": "at JHN 16:0 ACT 8:0 1CO 11:0 2CO 2:0,6:0,7:0 COL 2:0,4:0 HEB 10:0 '\\\\p' > '\\\\nb'"

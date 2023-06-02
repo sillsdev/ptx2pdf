@@ -80,7 +80,7 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
-                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
+                            ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
                       + [('python/lib/ptxprint/sfm/*.txt', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/xrefs/*.*', 'ptxprint/xrefs')]

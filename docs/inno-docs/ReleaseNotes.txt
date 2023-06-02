@@ -1,8 +1,54 @@
 PTXprint 2.3.16 Release Notes
-24 May 2023
+2 June 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
-____________________________________________________________________
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.3.17 (2 June 2023)
+
+  * Added code snippets and actions to various tabs in View+Edit
+  
+  * Auto-create BASIC FRTlocal.sfm when Front Matter is enabled, & disable colophon
+  
+  * Implement KeepFigure (allowing re-use of illustrations within the job)
+  
+  * Include page gutter in Basic settings (as it was earlier)
+  
+  * Add support for QR code generation (using \zqrcode)
+  
+  * Use ifTabsOddOnly to set only tabs on odd pages
+  
+  * Add Lao script support as per Thai
+  
+  * Ensure that color pickers don't hide behind dialogs
+  
+  * Fixed magic adjust lines per page & color red when less than optimum (non-integer)
+  
+  * Don't overwrite \periphs in Front matter when (re-)creating the cover settings
+  
+  * Fixed path to Ornament Catalogue (on the cover settings dialog)
+  
+  * Fixed some cover merging errors
+  
+  * Fixed missing output intents in covers
+  
+  * Minor UI improvements based on user feedback from post-EMDC workshop
+  
+  * Tidy up cover box padding values and ensure cover boxes don't grow
+  
+  * Fixed setting figbleed properly
+  
+  * Protect stylesheet image paths against quotation marks
+  
+  * Add peripherals and new tracings to TechRef manual (ver0.85)
+  
+  * Fix coverartbleed from generating None
+  
+  * Enable multiline codelets, and allow ** as footnote caller
+  
+  * Add core code for bursting inserts (work in progress; need to add switches)
+  
+  * Add 'method' codelet ability (work in progress)
 
 Bug fixes and Improvements in 2.3.16 (24 May 2023)
 
