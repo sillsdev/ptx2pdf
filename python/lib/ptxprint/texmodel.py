@@ -771,6 +771,7 @@ class TexModel:
             dat = runChanges(self.changes, "INT", dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
+        return outfname
 
     def flattenModule(self, infpath, outdir, usfm=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))

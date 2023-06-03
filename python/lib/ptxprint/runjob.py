@@ -582,7 +582,7 @@ class RunJob:
 
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
         if info['project/iffrontmatter'] != '%' or info["project/sectintros"]:
-            diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM")))
+            texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
         
         if not len(donebooks) or not len(digdonebooks):
             unlockme()
@@ -628,7 +628,7 @@ class RunJob:
             info.createFrontMatter(frtfname)
             genfiles.append(frtfname)
         if info["project/sectintros"]:
-            info.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INT.SFM")))
+            genfiles.append(info.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INT.SFM"))))
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):

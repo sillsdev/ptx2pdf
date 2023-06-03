@@ -1563,7 +1563,7 @@ class ViewModel:
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
-        for bk in books:
+        for bk in books + ['INT']:
             fname = self.getBookFilename(bk, prjid)
             if fname is not None:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
@@ -1718,8 +1718,9 @@ class ViewModel:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         self._archiveAdd(zf, self.getBooks(files=True))
+        temps = []
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True), parent=self.prjid)
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid)
             pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
             ipf = os.path.join(self.settings_dir, pf)
             if os.path.exists(ipf):
@@ -1728,8 +1729,8 @@ class ViewModel:
         runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
         res = runjob.wait()
-        temps = []
         found = False
+        # TODO: include burst pdfs
         for a in (".pdf", ):
             for d in ('', '..'):
                 for x in self.tempFiles:
@@ -1742,6 +1743,8 @@ class ViewModel:
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.settings_dir)
                 zf.write(pf, outfname)
+            else:
+                print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
