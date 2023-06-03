@@ -372,8 +372,8 @@ def fixpdfspot(trailer, hashue, hue, hrange, **kw):
     for pagenum, page in enumerate(trailer.pages, 1):
         rparser.parsepage(page, trailer, **kw)
 
-    if hashue:
-        spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
+    spothsv = [rparser.hue, rparser.sats[1], rparser.values[1]]
+    if hashue and spothsv[1] > 0. and spothsv[2] > 0.:
         # convert this to closest pantone code
         spotrgb = hsv_to_rgb(*spothsv)
         spotcmyk = rgb_to_cmyk(*spotrgb)
@@ -404,6 +404,7 @@ pop }}""".format(*spotcmyk)
         spothsv = 0
         hrange = 0
         name = "None"
+        hashue = False
     wparser = PageDuoToneStateWrite(hashue, spothsv, hrange, name, rparser.imgcache)
     for pagenum, page in enumerate(trailer.pages, 1):
         wparser.usesColour = False
