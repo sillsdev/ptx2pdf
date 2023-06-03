@@ -1370,12 +1370,22 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("Note: It may take a while for pictures to convert for selected PDF Output Format ({}).".format(ofmt)))
         else:
             self.doStatus("")
-        spotColorStatus = ofmt == "Spot"
-        for w in ["l_spotColor", "col_spotColor", "l_spotColorTolerance", "s_spotColorTolerance"]:
-            self.builder.get_object(w).set_sensitive(spotColorStatus)
-            
-    def enableDisableSpotColor(self, btn):
+
+    def outputFormatChanged(self, btn):
+        if self.loadingConfig:
+            return
         ofmt = self.get("fcb_outputFormat")
+        self.enableDisableSpotColor(ofmt)
+        if self.get("c_thumbtabs") and not self.get("c_tabsOddOnly"):
+            if ofmt in ["CMYK", "Gray", "Spot"]:
+                self.set("c_tabsOddOnly", True)
+                self.doStatus(_("Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({}).".format(ofmt)))
+        else:
+            self.warnSlowRun(None)
+
+    def enableDisableSpotColor(self, ofmt):
+        for w in ["l_spotColor", "col_spotColor", "l_spotColorTolerance", "s_spotColorTolerance"]:
+            self.builder.get_object(w).set_sensitive(ofmt == "Spot")
 
     def onAboutClicked(self, btn_about):
         dialog = self.builder.get_object("dlg_about")
@@ -3901,9 +3911,9 @@ class GtkViewModel(ViewModel):
             
     def tabsHorizVert(self):
         if self.get("c_thumbtabs"):
-            self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate"))
+            self.builder.get_object("l_thumbVerticalL").set_visible(self.get("c_thumbrotate") and not self.get("c_tabsOddOnly"))
             self.builder.get_object("l_thumbVerticalR").set_visible(self.get("c_thumbrotate"))
-            self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate"))
+            self.builder.get_object("l_thumbHorizontalL").set_visible(not self.get("c_thumbrotate") and not self.get("c_tabsOddOnly"))
             self.builder.get_object("l_thumbHorizontalR").set_visible(not self.get("c_thumbrotate"))
         else:
             for w in ["l_thumbHorizontalL", "l_thumbVerticalL", "l_thumbHorizontalR", "l_thumbVerticalR"]:

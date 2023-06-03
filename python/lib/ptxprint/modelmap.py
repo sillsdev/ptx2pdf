@@ -308,6 +308,7 @@ _map = {
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", "finish", None),
     "finishing/foldcutmargin":  ("s_foldCutMargin", "finish", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", "finish", None),
+    "finishing/extractinserts": ("c_extractInserts", "finish", None),
     "finishing/spotcolor":      ("col_spotColor", "finish", None),
     "finishing/spottolerance":  ("s_spotColorTolerance", "finish", None),
     # The next line is redundant (I think) - check and remove
@@ -436,6 +437,7 @@ _map = {
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/rotate":         ("c_thumbrotate", "tabsborders", None),
+    "thumbtabs/tabsoddonly":    ("c_tabsOddOnly", "tabsborders", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", "tabsborders", None),
     "thumbtabs/thumbtextmkr":   ("r_thumbText", "tabsborders", None),
     "thumbtabs/restart":        ("c_thumbrestart", "tabsborders", None),

@@ -16990,7 +16990,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left-attach">8</property>
                                 <property name="top-attach">0</property>
-                                <property name="height">3</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
@@ -17008,7 +17008,7 @@ For example: PHM TIT; 1JN 2JN 3JN JUD</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">2</property>
-                                <property name="width">5</property>
+                                <property name="width">4</property>
                               </packing>
                             </child>
                             <child>
@@ -17187,6 +17187,25 @@ formatting of the thumb tabs.</property>
                               <packing>
                                 <property name="left-attach">3</property>
                                 <property name="top-attach">1</property>
+                                <property name="width">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_tabsOddOnly">
+                                <property name="label" translatable="yes">Only Show on Odd Pages</property>
+                                <property name="name">Thumb tabs: Rotate tabs</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="draw-indicator">True</property>
+                                <signal name="toggled" handler="onNumTabsChanged" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">7</property>
+                                <property name="top-attach">2</property>
                                 <property name="width">4</property>
                               </packing>
                             </child>
@@ -21603,9 +21622,6 @@ a specialized font or script.</property>
                             <property name="top-attach">0</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
@@ -24622,7 +24638,7 @@ runs.</property>
                         <property name="margin-bottom">10</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=7 n-rows=2 -->
+                          <!-- n-columns=8 n-rows=3 -->
                           <object class="GtkGrid">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -24656,11 +24672,11 @@ Note: Digital and Print comply with archive standard PDF/A-1b.</property>
                                 <property name="entry-text-column">0</property>
                                 <property name="id-column">1</property>
                                 <property name="active-id">None</property>
-                                <signal name="changed" handler="warnSlowRun" swapped="no"/>
+                                <signal name="changed" handler="outputFormatChanged" swapped="no"/>
                                 <signal name="grab-notify" handler="grab_notify_event" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">4</property>
                                 <property name="top-attach">0</property>
                                 <property name="width">2</property>
                               </packing>
@@ -24681,12 +24697,13 @@ Archive (largest size, for keeping long-term)
 Note: All comply with archive standard PDF/A-1b.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">30</property>
+                                <property name="margin-start">20</property>
                                 <property name="label" translatable="yes">PDF Output Format:</property>
                               </object>
                               <packing>
                                 <property name="left-attach">2</property>
                                 <property name="top-attach">0</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -24701,11 +24718,13 @@ on the PDF to show where the page
 should be trimmed after binding.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">0</property>
                                 <property name="top-attach">1</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -24744,6 +24763,7 @@ so that it can be compared to at a
 later date.</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
+                                <property name="margin-start">12</property>
                                 <property name="label" translatable="yes">Number of Previous
 PDFs to be Kept:</property>
                                 <property name="xalign">1</property>
@@ -24772,13 +24792,13 @@ configuration. This is also a way to
 share config settings with other users.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-left">12</property>
+                                <property name="margin-start">12</property>
                                 <property name="active">True</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">2</property>
                                 <property name="width">2</property>
                               </packing>
                             </child>
@@ -24794,11 +24814,13 @@ text in the PDF which is a good practice
 for final print and long-term archiving.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
+                                <property name="margin-start">12</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">2</property>
-                                <property name="top-attach">1</property>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">2</property>
                               </packing>
                             </child>
                             <child>
@@ -24817,7 +24839,7 @@ Pantone color code.</property>
                                 <property name="rgba">rgb(28,113,216)</property>
                               </object>
                               <packing>
-                                <property name="left-attach">6</property>
+                                <property name="left-attach">7</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>
@@ -24836,7 +24858,7 @@ Pantone color code.</property>
                                 <property name="label" translatable="yes">Color Hue:</property>
                               </object>
                               <packing>
-                                <property name="left-attach">5</property>
+                                <property name="left-attach">6</property>
                                 <property name="top-attach">0</property>
                               </packing>
                             </child>
@@ -24866,7 +24888,7 @@ side (e.g. -15% to +15%) of the selected hue.</property>
                                 <signal name="value-changed" handler="labelledChanged" swapped="no"/>
                               </object>
                               <packing>
-                                <property name="left-attach">5</property>
+                                <property name="left-attach">6</property>
                                 <property name="top-attach">1</property>
                                 <property name="width">2</property>
                               </packing>
@@ -24889,15 +24911,54 @@ Note that this will include similar colors either
 side (e.g. -15% to +15%) of the selected hue.</property>
                                     <property name="halign">end</property>
                                     <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
+                                    <property name="margin-start">30</property>
                                     <property name="label" translatable="yes">Tolerance (%):</property>
                                   </object>
                                 </child>
                               </object>
                               <packing>
-                                <property name="left-attach">4</property>
+                                <property name="left-attach">5</property>
                                 <property name="top-attach">1</property>
                               </packing>
+                            </child>
+                            <child>
+                              <object class="GtkCheckButton" id="c_extractInserts">
+                                <property name="label" translatable="yes">Extract Color Inserts</property>
+                                <property name="name">Extract Color Insert pages (as separate PDFs)</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Extract the special peripheral materials
+named 'maps' or 'insert_*' as separate 
+PDFs to be printed in color and inserted
+manually during the binding process.
+
+Note that the cover is always extracted.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-start">12</property>
+                                <property name="draw-indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <placeholder/>
                             </child>
                           </object>
                         </child>

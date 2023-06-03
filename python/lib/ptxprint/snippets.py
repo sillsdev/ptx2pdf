@@ -405,6 +405,7 @@ class ThumbTabs(Snippet):
         rotate = model["thumbtabs/rotate"]
         texlines.append("\\TabAutoRotatefalse")
         texlines.append("\\TabRotationNormal{}".format("false" if rotate else "true"))
+        texlines.append("\\TabsOddOnly{}".format("true" if model["thumbtabs/tabsoddonly"] else "false"))
         if rotate:
             rottype = int(model["thumbtabs/rotatetype"]) - 1
             texlines.append("\\TabTopToEdgeOdd{}".format("true" if rottype & 1 else "false"))

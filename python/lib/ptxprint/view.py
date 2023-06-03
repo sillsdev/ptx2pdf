@@ -1795,6 +1795,8 @@ class ViewModel:
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
+        logger.debug(texfiles)
+        logger.debug(self.tempFiles)
         for t in texfiles:
             if t.endswith("_FRT.SFM"):
                 continue

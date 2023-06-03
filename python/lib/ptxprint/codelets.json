@@ -400,8 +400,8 @@
         {
           "Type": "comment#",
           "Label": "Use Section headers \\s or \\s1 for Table of Contents",
-          "Description": "Remove existing \\toc# markers and generate new \\toc1 markers from the \\s (or \\s1) markers in the text.",
-          "CodeSnippet": "'\\\\toc\\d .+?[\\r\\n]+' > ''\n'(\\\\s1? )(.+?[\\r\\n]+)' > '\\\\toc1 \\2\\1\\2'"
+          "Description": "Change the existing \\toc3 marker to \\zthumbtab, remove \\toc1 and \\toc2 markers; then generate new \\toc1 markers from the \\s (or \\s1) markers in the text to populate the Table of Contents with section headers.",
+          "CodeSnippet": "'\\\\toc3 (.+?)[\\r\\n]+' > '\\\\zthumbtab \\1'\n'\\\\toc\\d .+?[\\r\\n]+' > ''\n'(\\\\s1? )(.+?[\\r\\n]+)' > '\\\\toc1 \\2\\1\\2'"
         },
         {
           "Type": "comment#",
