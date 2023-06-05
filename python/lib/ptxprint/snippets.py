@@ -227,8 +227,8 @@ class Diglot(Snippet):
 {notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 {ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 \def\addInt{{
-\zglot|L\*\ptxfile{{{project/intfile}}}
-\zglot|R\*\ptxfile{{{diglot/intfile}}}
+\zglot|L\*{project/intfile}
+\zglot|R\*{diglot/intfile}
 \zglot|\*}}
 \catcode `@=12
 

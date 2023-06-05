@@ -17193,11 +17193,13 @@ formatting of the thumb tabs.</property>
                             <child>
                               <object class="GtkCheckButton" id="c_tabsOddOnly">
                                 <property name="label" translatable="yes">Only Show on Odd Pages</property>
-                                <property name="name">Thumb tabs: Rotate tabs</property>
+                                <property name="name">Thumb tabs: Only Show on Odd Pages</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
                                 <property name="receives-default">False</property>
-                                <property name="tooltip-text" translatable="yes">Rotates the tabs so that the text runs along the edge of the page. This works well for narrow margins, but may result in fewer tab positions per page.</property>
+                                <property name="tooltip-text" translatable="yes">When printing thumb tabs on thin paper,
+it is preferable to only print these tabs on
+a single side of the page (the odd pages).</property>
                                 <property name="halign">end</property>
                                 <property name="valign">center</property>
                                 <property name="draw-indicator">True</property>
@@ -23355,7 +23357,7 @@ of overlap here (mm).</property>
                                         <property name="tooltip-text" translatable="yes">Creating a cover from nothing takes a lot of effort.
 This tool enables you to create various kinds of
 covers which can easily be enhanced. </property>
-                                        <property name="halign">center</property>
+                                        <property name="halign">start</property>
                                         <property name="valign">center</property>
                                         <property name="xalign">0</property>
                                         <signal name="clicked" handler="onGenerateCoverClicked" swapped="no"/>
@@ -24647,7 +24649,7 @@ runs.</property>
                             <property name="margin-end">12</property>
                             <property name="margin-top">6</property>
                             <property name="margin-bottom">6</property>
-                            <property name="row-spacing">6</property>
+                            <property name="row-spacing">8</property>
                             <property name="column-spacing">3</property>
                             <child>
                               <object class="GtkComboBox" id="fcb_outputFormat">
