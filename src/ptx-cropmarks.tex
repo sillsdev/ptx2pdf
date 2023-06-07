@@ -522,10 +522,14 @@
 }
 %-c_shipcomplete
 %+c_docropmarks
+\def\m@keid@line{
+  \xdef\id@line{\jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi}%
+  \ifx\lastid@line\id@line\else\setbox\topcr@p\box\voidb@x\global\let\lastid@line\id@line\fi
+}
+
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
-      \edef\id@line{\jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi}%
-      \ifx\lastid@line\id@line\else\setbox\topcr@p\box\voidb@x\global\let\lastid@line\id@line\fi
+      \m@keid@line
       \ifvoid\topcr@p \bl@eds=0pt \makecr@ps \fi % create them (first time)
       \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
@@ -833,6 +837,7 @@
   \ifdim #3<0pt
     \dimen0=0pt
   \else
+    \m@keid@line
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
     \sp@newidth=#3 \bl@eds=#4 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p
