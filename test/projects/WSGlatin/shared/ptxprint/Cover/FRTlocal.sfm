@@ -1,0 +1,61 @@
+\id FRT
+\rem ----------Page 1----------------
+\periph Title Page|id="title"
+\nopagenums
+\zgap|1.5in\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\rem ----------Page 2----------------
+\periph Publication Data|id="pubdata"
+\zgap|0.5in\*
+\mt3 \zvar|maintitle\*
+\mt4 \zvar|subtitle\*
+\pc \zvar|languagename\*
+\zbl|2\*
+\pc \zcopyright
+\zccimg by-nc-nd|size="col" pgpos="pc" scale="0.2"\*
+\pc \zlicense
+\zbl|2\*
+\pc \zimagecopyrights
+\rem ----------Page 3----------------
+\periph Table of Contents|id="contents"
+\mt3 \zvar|toctitle\*
+\zgap|8pt\*
+\pc \zvar|ot\*
+\zgap|5pt\*
+\ztocbefore\tr \cat toc\cat*\tc1 Book Name\tc2 Abbreviation\tcr3 Page\ztocbefore*
+\ip \ztoc|ot\*
+\zbl|2\*
+\pc \zvar|nt\*
+\zgap|5pt\*
+\ztocafter\tr \tc1 Topical Index\tc2 \tcr3 66\ztocafter*
+\ztocafter\tr \tc1 Names Index\tc2 \tcr3 77\ztocafter*
+\ztocafter\tr \tc1 Maps of the Bible\tc2 \tcr3 88\ztocafter*
+\ztoc|nt\*
+
+\resetpagenums -1
+\dopagenums
+\ip
+\periph front|id="coverfront"
+\zgap|30pt\*
+\mt1 \zvar|maintitle\*
+\mt2 \zvar|subtitle\*
+\vfill
+\endgraf
+\periph spine|id="coverspine"
+\mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
+\p
+\periph back|id="coverback"
+\zgap|1in\*
+\pc ~
+\vfill
+\zifvarset|var="isbn" emptyok="F"\*
+\ztruetext
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\ztruetext*
+\periph spannedCover|id="coverwhole"
+\zgap|1pt\*
+\vfill
+\pc ~
+\vfill
+\endgraf
