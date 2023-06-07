@@ -18,9 +18,7 @@ after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
 \p
 \esb
 \cat endnotes\cat*
-\p
 \zplaceallnotes
-\zpostendnoterule
 \esbe
 \p
 \v 2 Endnotes should\fe + \ft normally\fe*  appear

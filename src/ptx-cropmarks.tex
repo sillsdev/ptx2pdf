@@ -416,7 +416,7 @@
         \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ]>> }\fi
     \getm@rknum{pdftag}%Tag pages if pdftag mark is active issued.
-    \xdef\@@pdftag{\topmarks\m@rknum}%
+    \xdef\@@pdftag{\firstmarks\m@rknum}%
     \trace{ma}{topmark for pdftag on page \the\pageno is '\@@pdftag'}%
     \ifx\@@pdftag\empty\else
       \special {pdf:put @thispage <</PieceInfo <</ptxprint 
