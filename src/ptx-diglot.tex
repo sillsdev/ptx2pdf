@@ -1132,6 +1132,7 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
+  \seriesdiglotfalse
   \global\let\layoutstylebreak\enddigl@t
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
@@ -1153,13 +1154,16 @@
     \global\let\c@rrdstat\empty
   \else\x@\monoglotcolumn\x@{\tmp}\fi}
 
+\newif\ifseriesdiglot
+
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
   \ifcsname #1isDiglotColumn\endcsname % 
     \ifinptxfile
       \ifsk@pping\egroup\fi
       \endlastp@rstyle{monoglotcol}%
-      \diglottrue
+      \diglottrue % Use diglot settings/styles
+      \seriesdiglottrue %
       \@setside{#1}%
       \@@switchstyles{#1}%
     \else

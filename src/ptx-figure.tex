@@ -774,7 +774,7 @@
           \p@cinswid=\hsize
         \fi\fi
       \else
-        \ifdiglot\MSG{HOW DID THAT HAPPEN? c@rrentcols=\the\c@rrentcols\space is surprising(incorrect) with diglot}\fi
+        \ifdiglot\ifseriesdiglot\else\MSG{HOW DID THAT HAPPEN? c@rrentcols=\the\c@rrentcols\space is surprising(incorrect) with diglot}\fi\fi
         \ifx\loc@ption\loc@TL \picw@rning{tl}{t}\let\loc@ption\loc@T
         \else\ifx\loc@ption\loc@TR \picw@rning{tr}{t}\let\loc@ption\loc@T
         \else\ifx\loc@ption\loc@BL \picw@rning{bl}{b}\let\loc@ption\loc@B

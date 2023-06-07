@@ -1751,6 +1751,11 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi}%
+ \ifdigl@tinuse\ifdiglot        
+   \seriesdiglotfalse
+ \else
+   \seriesdiglottrue
+ \fi\fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
