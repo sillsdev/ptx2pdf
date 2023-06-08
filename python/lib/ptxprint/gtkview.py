@@ -5040,9 +5040,9 @@ class GtkViewModel(ViewModel):
         rotateDegrees = float(self.get("fcb_rotateSpineText"))
         self.builder.get_object("lb_spineTitle").set_angle(rotateDegrees)
         if rotateDegrees != 0:
-            self.builder.get_object("lb_spineTitle").set_label(_("Spine Title"))
+            self.builder.get_object("lb_spineTitle").set_label(_("Main Title   -   Subtitle"))
         else:
-            self.builder.get_object("lb_spineTitle").set_label(_("Spine\nTitle"))
+            self.builder.get_object("lb_spineTitle").set_label(_("Main\nTitle\n\nSubtitle"))
         if rotateDegrees == 90:
             self.styleEditor.setval('cat:coverspine|esb', 'Rotation', 'l')
         elif rotateDegrees == 270:
@@ -5065,7 +5065,9 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(showSpine)
             
         self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
-        thick = self.spine * 4
+        # self.dict["paper/width"]).asunits("mm")
+        thick = self.spine * 180 / 148
+        # thick = 10 if thick < 10 else thick
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
         self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
 

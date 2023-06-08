@@ -23339,7 +23339,6 @@ of overlap here (mm).</property>
                                 <property name="margin-top">6</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="vexpand">True</property>
-                                <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkBox">
                                     <property name="visible">True</property>
@@ -23414,6 +23413,7 @@ opened rather than the cover PDF.
 Clicking this button will ensure that the cover PDF
 will be displayed once it has been created.</property>
                                         <property name="halign">start</property>
+                                        <property name="margin-end">30</property>
                                         <property name="resize-mode">immediate</property>
                                         <property name="xalign">0</property>
                                         <property name="always-show-image">True</property>
@@ -23565,7 +23565,7 @@ the inner backing sheet. (Units: mm)</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                             <property name="halign">start</property>
-                                            <property name="margin-end">20</property>
+                                            <property name="margin-end">30</property>
                                             <property name="label" translatable="yes">Crop Marks + Bleed Settings</property>
                                             <attributes>
                                               <attribute name="weight" value="bold"/>
@@ -23581,19 +23581,56 @@ the inner backing sheet. (Units: mm)</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
-                                        <property name="label">Edit Cover Spread Settings</property>
+                                      <object class="GtkBox">
                                         <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="focus-on-click">False</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Front Cover.</property>
+                                        <property name="can-focus">False</property>
                                         <property name="halign">center</property>
-                                        <property name="valign">end</property>
-                                        <property name="relief">none</property>
-                                        <property name="uri">Click to view the Styles tab</property>
-                                        <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                        <property name="valign">center</property>
+                                        <property name="margin-start">10</property>
+                                        <child>
+                                          <object class="GtkLinkButton" id="lb_style_cat:coverwhole|esb">
+                                            <property name="label">Cover Spread</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Front Cover.</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">end</property>
+                                            <property name="margin-end">10</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to view the Styles tab</property>
+                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLinkButton" id="lb_style_cat:coverspine|esb">
+                                            <property name="label">Spine</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
+on the Styles tab for the Spine.</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">10</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to view the Styles tab</property>
+                                            <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">True</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">True</property>
@@ -23719,7 +23756,7 @@ View+Edit tab.
                                             </child>
                                             <child>
                                               <object class="GtkLinkButton" id="lb_style_cat:coverback|esb">
-                                                <property name="label">Edit Back Cover Settings</property>
+                                                <property name="label">Back Cover</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="focus-on-click">False</property>
@@ -23751,9 +23788,10 @@ on the Styles tab for the Back Cover.</property>
                                 </child>
                                 <child>
                                   <object class="GtkViewport" id="vp_spine">
-                                    <property name="width-request">65</property>
+                                    <property name="width-request">20</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="halign">center</property>
                                     <child>
                                       <object class="GtkEventBox" id="eb_spine">
                                         <property name="visible">True</property>
@@ -23769,7 +23807,7 @@ on the Styles tab for the Back Cover.</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="vexpand">True</property>
-                                                <property name="label" translatable="yes">Spine Title</property>
+                                                <property name="label" translatable="yes">Main Title   -   Subtitle</property>
                                                 <property name="justify">center</property>
                                                 <property name="angle">270</property>
                                                 <property name="xalign">0.5</property>
@@ -23777,7 +23815,7 @@ on the Styles tab for the Back Cover.</property>
                                                 <attributes>
                                                   <attribute name="weight" value="bold"/>
                                                   <attribute name="stretch" value="expanded"/>
-                                                  <attribute name="scale" value="1.6000000000000001"/>
+                                                  <attribute name="scale" value="0.80000000000000004"/>
                                                 </attributes>
                                               </object>
                                               <packing>
@@ -23787,26 +23825,7 @@ on the Styles tab for the Back Cover.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLinkButton" id="lb_style_cat:coverspine|esb">
-                                                <property name="label">Spine</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="focus-on-click">False</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">Click to edit the Sidebar properties 
-on the Styles tab for the Spine.</property>
-                                                <property name="halign">center</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-bottom">6</property>
-                                                <property name="relief">none</property>
-                                                <property name="uri">Click to view the Styles tab</property>
-                                                <signal name="activate-link" handler="onEditStyleClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="expand">False</property>
-                                                <property name="fill">True</property>
-                                                <property name="position">1</property>
-                                              </packing>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -23815,7 +23834,7 @@ on the Styles tab for the Spine.</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
-                                    <property name="fill">True</property>
+                                    <property name="fill">False</property>
                                     <property name="position">2</property>
                                   </packing>
                                 </child>
@@ -23948,7 +23967,7 @@ on the Styles tab for the Spine.</property>
                                             </child>
                                             <child>
                                               <object class="GtkLinkButton" id="lb_style_cat:coverfront|esb">
-                                                <property name="label">Edit Front Cover Settings</property>
+                                                <property name="label">Front Cover</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="focus-on-click">False</property>

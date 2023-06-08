@@ -1,9 +1,26 @@
 PTXprint 2.3.18 Release Notes
-5 June 2023
+8 June 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.19 (8 June 2023)
+
+  * Allow monoglot GLO book(s) to use 2-column layout in a diglot
+    (enabled column-switching in serial-polyglots)
+  
+  * Finish(?) implementing zmakeinsert and multidepth periphs 
+  
+  * Reinstate IB series of illustrations with updated copyright info
+  
+  * Fix crashes with disabled footnotes in headings
+  
+  * Fix regression (covers stopped working)
+  
+  * Fix cmyk_black conversion in PDF finishing
+  
+  * Add test project for Covers, ToC, Thumbtabs and basic Front matter
+  
 Bug fixes and Improvements in 2.3.18 (5 June 2023)
 
   * Add UI elements for 'OnlyOddTabs' and 'Extract Color Inserts' (work in progress)
