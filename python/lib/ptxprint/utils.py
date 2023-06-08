@@ -738,3 +738,10 @@ def binsearch(arr, v, fn):
         else:
             return mid
     return mid
+
+def convert2mm(measure):
+    _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+    units = _unitConv.keys()
+    num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+    unit = str(measure)[len(str(num)):].strip(" ")
+    return (num * _unitConv[unit]) if unit in units else num

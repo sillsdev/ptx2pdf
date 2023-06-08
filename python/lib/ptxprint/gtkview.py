@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex, UnzipDir
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -5065,9 +5065,10 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(showSpine)
             
         self.builder.get_object("lb_style_cat:coverspine|esb").set_visible(self.get("c_inclSpine"))
-        # self.dict["paper/width"]).asunits("mm")
-        thick = self.spine * 180 / 148
-        # thick = 10 if thick < 10 else thick
+        # Calculate the actual page width (in mm) based on page size
+        pw = convert2mm(re.sub(r"^(.*?)\s*[,xX].*$", r"\1", self.get("ecb_pagesize") or "148mm"))
+        # 180 is the width (pixels) of the front/back page in the UI
+        thick = self.spine * 180 / pw
         self.builder.get_object("vp_spine").set_size_request(thick, -1)
         self.builder.get_object("l_spineWidth").set_label(f"{self.spine:.3f}mm")
 

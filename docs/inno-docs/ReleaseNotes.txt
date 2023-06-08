@@ -4,7 +4,7 @@ PTXprint 2.3.19 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.19 (8 June 2023)
+Bug fixes and Improvements in 2.3.20 (8 June 2023)
 
   * Allow monoglot GLO book(s) to use 2-column layout in a diglot
     (enabled column-switching in serial-polyglots)
@@ -18,6 +18,8 @@ Bug fixes and Improvements in 2.3.19 (8 June 2023)
   * Fix regression (covers stopped working)
   
   * Fix cmyk_black conversion in PDF finishing
+  
+  * Fix cover styling for diglots
   
   * Add test project for Covers, ToC, Thumbtabs and basic Front matter
   

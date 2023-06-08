@@ -9,7 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
-from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges
+from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm
 from ptxprint.pdf.fixcol import fixpdffile, compress
 from ptxprint.pdf.pdfsig import make_signatures
 from ptxprint.pdf.pdfsanitise import split_pages
@@ -1129,10 +1129,10 @@ class RunJob:
         return os.path.basename(tgtpath)
 
     def usablePageRatios(self, info):
-        pageHeight = self.convert2mm(info.dict["paper/height"])
-        pageWidth = self.convert2mm(info.dict["paper/width"])
+        pageHeight = convert2mm(info.dict["paper/height"])
+        pageWidth = convert2mm(info.dict["paper/width"])
         # print("pageHeight =", pageHeight, "  pageWidth =", pageWidth)
-        margin = self.convert2mm(info.dict["paper/margins"])
+        margin = convert2mm(info.dict["paper/margins"])
         # print("margin =", margin)
         sideMarginFactor = 1.0
         middleGutter = float(info.dict["document/colgutterfactor"])/3
@@ -1153,11 +1153,4 @@ class RunJob:
         pageRatios = (pw1/ph, pw2/ph)
         # print("Page Ratios = ", pageRatios)
         return pageRatios
-
-    def convert2mm(self, measure):
-        _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
-        units = _unitConv.keys()
-        num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
-        unit = str(measure)[len(str(num)):].strip(" ")
-        return (num * _unitConv[unit]) if unit in units else num
 
