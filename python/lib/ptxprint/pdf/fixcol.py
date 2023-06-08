@@ -194,7 +194,8 @@ class PageCMYKState(PdfStreamParser):
 
     def processImg(self, img):
         if "rgb" in img.cs.lower():
-            img.rgb_cmyk()
+            if not img.rgb_black():
+                img.rgb_cmyk()
             logger.debug(f"After convert to CMYK, {img.cs=}")
             return img.asXobj()
         elif img.cmyk_black():

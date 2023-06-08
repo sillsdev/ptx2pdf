@@ -190,6 +190,8 @@ def toFont(self, v, mrk=None, model=None, parm=None):
             return self.haskey(mrk, key)
         def __delitem__(subself, key):
             return self.sheet.get(mrk, {}).pop(key, None)
+        def __getitem__(subself, key):
+            return self.sheet.get(mrk, {}).get(key, None)
         def pop(subself, key, dflt):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")

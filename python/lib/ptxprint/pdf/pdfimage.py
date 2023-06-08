@@ -222,13 +222,24 @@ class PDFImage:
         self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
 
-    def cmyk_black(self):
+    def rgb_black(self):
         img = np.asarray(self.img) / 255.
         sda = img[...,0] - img[...,1]
         sdb = img[...,0] - img[...,2]
         cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01)
         if not cond:
             self.img = Image.frombytes(data=((img[...,2]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
+            self.cs = self.colorspace = PdfName("DeviceGray")
+            return True
+        return False
+
+    def cmyk_black(self):
+        img = np.asarray(self.img) / 255.
+        sda = img[...,0] - img[...,1]
+        sdb = img[...,0] - img[...,2]
+        cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01) or np.any(np.abs(img[...,3] > 0.01))
+        if not cond:
+            self.img = Image.frombytes(data=((np.maximum(img[...,2], img[...,3])) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
             self.cs = self.colorspace = PdfName("DeviceGray")
             return True
         return False
