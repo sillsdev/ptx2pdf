@@ -55,7 +55,7 @@
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
 \let\BorderFillColor\BorderFillColour
 \def\BorderLineWidth #1\relax{\initc@t\setsbp@ram{borderlinewidth}{#1}} % linewidth for double border (or ornament)
-\def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\c@tprefix\m@rker}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
+\def\BorderRef #1\relax{\initc@t\setsbp@ram{borderref}{#1}\xdef\dep@ndlist{\ifx\empty\dep@ndlist\else\dep@ndlist,\fi\c@tprefix\m@rker[\ds@ffix]}}%\x@\xdef\csname border@deps-#1\endcsname{\ifcsname border@deps-#1\endcsname\csname border@deps\endcsname,\fi\m@rker}}
 \def\SetBorder #1\relax{\Marker bdr-#1\relax}
 
 \def\mkb@rder{%Put a simple border around a box
@@ -430,9 +430,9 @@
   \trace{eb}{b@rderbox: \the\ht\b@rderbox+\the\dp\b@rderbox x\the\wd\b@rderbox}%
 }
 \def\c@pyp@rams#1\E{% If the style has no parameter, copy the parent's one in
-  \getp@r@m{#1}{\m@rker}%
+  \dgetp@r@m{#1}{\m@rker}%
   \ifx\p@ram\relax
-    \getp@r@m{#1}{bdr-\p@rent}%
+    \dgetp@r@m{#1}{bdr-\p@rent}%
     \ifx\relax\p@ram
       \trace{ebi}{Parent has no #1 }%
     \else
@@ -445,16 +445,19 @@
     \trace{ebi}{Keeping own version of #1 (\p@ram)}%
   \fi
 }
-\def\tryc@pyb@rders#1\E{%
+\def\tryc@pyb@rders#1[#2]\E{%
   \def\m@rker{#1}%
-  \getp@r@m{borderref}{\m@rker}%
+  \let\tcbc@rrdstat\c@rrdstat
+  \def\ds@ffix{#2}%
+  \let\c@rrdstat\ds@ffix
+  \dgetp@r@m{borderref}{\m@rker}%
   \trace{ebi}{Trying to process \m@rker <-\p@ram}%
   \ifx\p@ram\relax\else
     \ifx\p@ram\empty\else
       \let\p@rent\p@ram
       \testm@rkerexists{bdr-\p@rent}%
       \iftemp
-        \getp@r@m{borderref}{bdr-\p@rent}%
+        \dgetp@r@m{borderref}{bdr-\p@rent}%
         \trace{ebi}{Has parent got a parent? "\p@ram"}%
         \temptrue
         \ifx\p@ram\empty
@@ -480,6 +483,7 @@
       \fi
     \fi
   \fi
+  \let\c@rrdstat\tcbc@rrdstat
   \trace{ebi}{END.}%
 }
 \def\dep@ndlist{}

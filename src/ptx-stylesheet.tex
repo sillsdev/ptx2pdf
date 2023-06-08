@@ -62,7 +62,7 @@
     \fi
   \fi
 }
-\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi}
+\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\endcsname\temptrue\else\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi\fi}
 \def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
   \trace{sC}{Remembering that #1 exists as a marker}%
   \remember@xists{#1}%
@@ -503,7 +503,22 @@
 \def\stackg@tp@ram#1\E{%\trace{sa}{tgp #1}%
   \getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 
-\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}\fi}
+\def\getp@r@m#1#2{\let\p@ram\relax\ifcsname #2:#1\endcsname \x@\let\x@\p@ram\csname#2:#1\endcsname\fi \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}\fi}
+\def\dgetp@r@m#1#2{% Half-way house between a full getp@ram and raw getp@ram
+  \let\p@ram\relax
+  \ifcsname #2\c@rrdstat:#1\endcsname
+    \x@\let\x@\p@ram\csname#2\c@rrdstat:#1\endcsname
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2\c@rrdstat:#1 undefined}
+    \ifcsname #2:#1\endcsname
+      \x@\let\x@\p@ram\csname#2:#1\endcsname
+    \fi
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2(\c@rrdstat):#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}%
+  \fi}
+  
 % build a list of results
 \def\cs@pushout#1{\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi}
 % prepend \@lso to #1 and build comma separated list of results
