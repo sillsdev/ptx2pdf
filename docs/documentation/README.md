@@ -240,6 +240,7 @@ Headers for pages that start with the title of a book. e.g.:
 *   \def\RHtitlecenter{```\empty```}
 *   \def\RHtitleright{```\empty```}
 
+There are also side-specific versions, e.g. `\def\RHtitleoddright{\pagenumber}`
 </a>
 
 ### <a name="ptx2pdf-MacroSetupParameters-NoVpage">Front / back matter Header</a>
@@ -367,7 +368,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \def\TabBleed{```1pt```} - Amount the tab goes over the edge of the page. (default 1pt)
 
 
-## ><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
+## <a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Hooks">
 
@@ -561,7 +562,7 @@ give the following results:
 * `\zifvarset|var="varname" emptyok=""\*`   -> true
 * `\zifvarset|var="varname" emptyok="rabbit"\*`   -> true
 
-### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>
+### <a name="ptx2pdf-MacroSetupParameters-scriptTags">Appendix: Common OpenType script tags</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
 
