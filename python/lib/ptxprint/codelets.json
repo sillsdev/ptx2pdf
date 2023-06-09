@@ -413,6 +413,14 @@
     },
   ".tex":
     {
+      "Page Nums": [
+        {
+          "Type": "comment%",
+          "Label": "Set custom page numbers (Header/Footer)",
+          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the inserted snippet as needed by choosing (one|options) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
+          "CodeSnippet": "% \\def\\R(H|F)(|noV|title)(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(first|last|range)ref|\\(us|uk|iso)date|\\hrsmins)}\n\\def\\RFevenleft{\\pagenumber}\n\\def\\RFoddright{\\pagenumber}\n"
+        }
+      ],
       "Verses": [
         {
           "Type": "comment%",
@@ -600,25 +608,47 @@
           "Type": "global",
           "Label": "Remove all the redundant 0 lines",
           "Description": "Remove (delete) all lines where no adjustment has been specified.",
-          "CodeSnippet": "[A-Z123]{3}\\s\\d.+?[-+]+0([%[].+\\])?%?\\r?\\n > "
+          "CodeSnippet": "[A-Z123]{3}[LR]?\\s\\d.+?[-+]+0([%[].+\\])?%?\\r?\\n > "
         },
         {
           "Type": "line",
           "Label": "Split line once for multi-para adjustments",
           "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]% +[4]",
-          "CodeSnippet": "([A-Z123]{3}\\s\\d+\\.\\d+(-\\d+)?) (.+?)%\\s*\\+(\\[\\d+\\])(.+)? > \\1 \\3\\n\\1 +0\\4%\\5"
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
         },
         {
           "Type": "linemulti",
-          "Label": "Split all lines for multi-para adjustments",
+          "Label": "Split line multiple times for multi-para adjustments",
           "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
-          "CodeSnippet": "([A-Z123]{3}\\s\\d+\\.\\d+(-\\d+)?) (.+?)%\\s*\\+(\\[\\d+\\])(.+)? > \\1 \\3\\n\\1 +0\\4%\\5"
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
+        },
+        {
+          "Type": "globalmulti",
+          "Label": "Split ALL lines to a flatter list",
+          "Description": "Expand out ALL the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
         },
         {
           "Type": "global",
           "Label": "Highlight all shrinkable paragraphs",
           "Description": "Highlights any lines that could shrink (JAS 4.1 +-0) becomes (% JAS 4.1 -1)",
-          "CodeSnippet": "([A-Z123]{3}\\s\\d+\\.\\d+(-\\d+)?)\\s+(\\+-0)(.+?)? > % \\1 -1\\4"
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?)\\s+(\\+-0)(.+?)? > % \\1 -1\\4"
+        }
+      ],
+      "-1 / +1": [
+        {
+          "Type": "line",
+          "Shortcut": "Ctrl+<",
+          "Label": "Shorten this paragraph (apply -1)",
+          "Description": "Shrink (shorten) the paragraph at the cursor position.",
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 -1\\n"
+        },
+        {
+          "Type": "line",
+          "Shortcut": "Ctrl+>",
+          "Label": "Lengthen this paragraph (apply +1)",
+          "Description": "Grow (lengthen) the paragraph at the cursor position.",
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 +1\\n"
         }
       ]
     }
