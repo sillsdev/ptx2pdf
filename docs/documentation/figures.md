@@ -549,7 +549,10 @@ the combinations do not trigger an unprintable page.
 If it is desirable to have a particular piclist entry (including caption)
 multiple times, then the following steps must be taken: 
 1. Read the piclist to discover what TeX thinks the identity of image is - the anchor reference, and image number (starting at 1) at that anchor reference.
-2. Inform TeX that the image is one that should be kept, in the controlling TeX file (or `ptxprint-mods.tex`). The format for this is `\KeepFigure{`book`}{`Reference`}{`image Nr`}`
+2. Inform TeX that the image is one that should be kept, in the controlling TeX file (or `ptxprint-mods.tex`). The format for this is either:	
+  a. `\KeepFigure{`book`}{`Reference`}{`image Nr`}`
+  b. `\KeepFigure{`book`}{`Reference`}{}`  (for all images on a given reference), or
+  c. The boolean `\KeepAllFigurestrue`  Which prevents TeX from tidying up after itself everywhere.
 3. Modify the USFM to trigger reuse the image. For an image triggered initially by `\zfiga`, then that simply means repeating the relevant `\zfiga` line.
 For other images, e.g. those triggered from `\k`, or a specific chapter-verse, 
 the `\zfiga` code must be identified. Some examples are given below:
