@@ -533,8 +533,8 @@
       "Other": [
         {
           "Type": "comment%",
-          "Label": "Special page numbering for a book",
-          "Description": "I need the page number for the glossary to restart numbering at one, and be prefixed with G-\nFirst, we reset the page number to one,  and then redefine the macro that prints the pagenumber.  (`\\\\folio` prints lower case roman numerals if the page number is negative, and numbers starting from 1 if positive).",
+          "Label": "Special page numbering for a specific book",
+          "Description": "I need the page number for the glossary to restart numbering at one, and be prefixed with G-\n\nFirst, we reset the page number to one,  and then redefine the macro that prints the pagenumber.  (`\\\\folio` prints lower case roman numerals if the page number is negative, and numbers starting from 1 if positive).",
           "CodeSnippet": "\\setbookhook{GLO}{start}{\\pageno=1 \\def\\pagenumber{G-\\\\folio}}"
         },
         {
