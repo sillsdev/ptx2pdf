@@ -1166,7 +1166,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         if v is not None and v != 'ai':
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-                self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
+                self.localChanges.append((None, regex.compile(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
 
         if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
             self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
