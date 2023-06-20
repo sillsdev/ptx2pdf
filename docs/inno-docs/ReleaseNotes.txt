@@ -1,8 +1,15 @@
 PTXprint 2.3.20 Release Notes
-8 June 2023
+20 June 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.21 (20 June 2023)
+
+  * Fix regex to handle nested \w glossary markup better
+  
+  * Implement \ifKeepAllFigures (global boolean to keep all pics)
+     and at specific locations e.g.  \KeepFigure{MAT}{1.1}{}
 
 Bug fixes and Improvements in 2.3.20 (8 June 2023)
 
