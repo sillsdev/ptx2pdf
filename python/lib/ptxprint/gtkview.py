@@ -125,6 +125,7 @@ tb_Help lb_Help
 fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
+l_artStatusLine btn_dismissArtStatusLine
 """.split() # btn_reloadConfig 
 
 _ui_enable4diglot2ndary = """
@@ -201,7 +202,7 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "bx_imageMsgBar", "fr_plChecklistFilter",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
 
 _uiLevels = {
@@ -343,7 +344,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_requestPermission", "c_createDiff", "c_quickRun"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_dismissArtStatusLine", "btn_requestPermission", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -1093,6 +1094,9 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
+        # Turn off this button until we're ready for people to use it.
+        # It still can be activated by enabling texpert hacks
+        self.builder.get_object("btn_getPictures").set_visible(False)
 
     def toggleUIdetails(self, w, state):
         # print(w)
@@ -4997,6 +5001,7 @@ class GtkViewModel(ViewModel):
         # status = False
         self.builder.get_object("tb_Expert").set_visible(status)
         self.builder.get_object("lb_Expert").set_visible(status)
+        self.builder.get_object("btn_getPictures").set_visible(status)
         
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
@@ -5200,5 +5205,6 @@ Thank you,
         response = dialog.run()
         dialog.hide()
 
-    def onArtistToggled(self, param1, param2):
+    def onArtistToggled(self, renderer, path):
         print("Uh oh... time to refresh the image list again!")
+

@@ -30870,7 +30870,7 @@ the Notes field below.</property>
                     </child>
                     <child>
                       <object class="GtkTreeView" id="tv_artists">
-                        <property name="height-request">150</property>
+                        <property name="height-request">130</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="valign">start</property>
@@ -30880,14 +30880,13 @@ the Notes field below.</property>
                         <property name="show-expanders">False</property>
                         <child internal-child="selection">
                           <object class="GtkTreeSelection">
-                            <property name="mode">multiple</property>
+                            <property name="mode">none</property>
                           </object>
                         </child>
                         <child>
                           <object class="GtkTreeViewColumn" id="col_artShow">
                             <property name="spacing">4</property>
                             <property name="title" translatable="yes">Show</property>
-                            <property name="clickable">True</property>
                             <child>
                               <object class="GtkCellRendererToggle" id="cr_artShow">
                                 <signal name="toggled" handler="onArtistToggled" swapped="no"/>
@@ -30979,7 +30978,7 @@ the Notes field below.</property>
             <property name="halign">end</property>
             <property name="valign">end</property>
             <child>
-              <object class="GtkLabel" id="l_statusLine1">
+              <object class="GtkLabel" id="l_artStatusLine">
                 <property name="sensitive">False</property>
                 <property name="can-focus">False</property>
                 <property name="no-show-all">True</property>
@@ -31007,7 +31006,7 @@ the Notes field below.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_dismissStatusLine1">
+              <object class="GtkButton" id="btn_dismissArtStatusLine">
                 <property name="label" translatable="yes">Dismiss</property>
                 <property name="width-request">55</property>
                 <property name="sensitive">False</property>
