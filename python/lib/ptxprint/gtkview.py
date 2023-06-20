@@ -5194,3 +5194,11 @@ Thank you,
             return True
         else:
             return False
+
+    def onGetPicturesClicked(self, btn):
+        dialog = self.builder.get_object("dlg_imagePicker")
+        response = dialog.run()
+        dialog.hide()
+
+    def onArtistToggled(self, param1, param2):
+        print("Uh oh... time to refresh the image list again!")
