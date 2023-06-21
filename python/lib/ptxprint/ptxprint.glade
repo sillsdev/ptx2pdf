@@ -1146,12 +1146,14 @@ for the Image Set:</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">If you don't already have a DBL bundle, then
-you may be able to download a relevant text 
-from an online scripture repository.
+                    <property name="tooltip-text" translatable="yes">If you don't already have appropriate
+scripture illustrations, then you can
+download an Image Set which contains
+low-resolution illustrations for trial
+publications from one of the links.
 
-If you already have the required DBL bundle,
-then skip this first step.</property>
+If you already have an Image Set (.zip)
+file downloaded then skip this first step.</property>
                     <property name="halign">end</property>
                     <property name="margin-left">6</property>
                     <property name="margin-start">6</property>
@@ -30902,15 +30904,56 @@ the text. This may be useful for precise measuring.</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
             <property name="can-focus">False</property>
-            <property name="layout-style">end</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">3</property>
+            <property name="hexpand">True</property>
+            <property name="layout-style">spread</property>
             <child>
-              <object class="GtkButton" id="btn_feats_ok1">
+              <object class="GtkButton" id="btn_getImageSet">
+                <property name="label" translatable="yes">Download Image Set...</property>
+                <property name="name">Download an Image Set from an online source</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">If you don't already have appropriate
+scripture illustrations, then you can
+download an Image Set which contains
+low-resolution illustrations for trial
+publications from one of the links.</property>
+                <property name="halign">start</property>
+                <property name="valign">end</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">4</property>
+                <property name="margin-bottom">4</property>
+                <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="width-request">320</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="hexpand">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_imagePicker_ok">
                 <property name="label">OK</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="margin-left">3</property>
-                <property name="margin-right">3</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
@@ -30918,13 +30961,13 @@ the text. This may be useful for precise measuring.</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_feats_cancel1">
+              <object class="GtkButton" id="btn_imagePicker_cancel">
                 <property name="label">Cancel</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -30934,9 +30977,9 @@ the text. This may be useful for precise measuring.</property>
                 <property name="always-show-image">True</property>
               </object>
               <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">3</property>
               </packing>
             </child>
           </object>
@@ -31071,7 +31114,7 @@ the text. This may be useful for precise measuring.</property>
                 <property name="can-focus">False</property>
                 <property name="orientation">vertical</property>
                 <child>
-                  <!-- n-columns=2 n-rows=7 -->
+                  <!-- n-columns=2 n-rows=6 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -31090,7 +31133,7 @@ the text. This may be useful for precise measuring.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -31103,7 +31146,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -31113,7 +31156,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -31127,7 +31170,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -31153,7 +31196,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -31187,23 +31230,13 @@ the Notes field below.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="vexpand">True</property>
-                      </object>
-                      <packing>
-                        <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
-                        <property name="width">2</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkRadioButton" id="r_imgSort_ref">
                         <property name="label" translatable="yes">Scripture Reference</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Sort the images according to
+the canonical order of scripture.</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <property name="group">r_imgSort_pop</property>
@@ -31211,16 +31244,19 @@ the Notes field below.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="r_imgSort_pop">
-                        <property name="label" translatable="yes">Popularity (how often it
-has been used by others)</property>
+                        <property name="label" translatable="yes">Frequency of Use</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Sort the images based on how
+often other projects use them.
+The most popular illustrations
+appear at the top of the list.</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <property name="group">r_imgSort_ref</property>
@@ -31228,7 +31264,7 @@ has been used by others)</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">6</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -31239,7 +31275,7 @@ has been used by others)</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -31248,6 +31284,7 @@ has been used by others)</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="vexpand">True</property>
+                        <property name="hscrollbar-policy">never</property>
                         <property name="shadow-type">in</property>
                         <child>
                           <object class="GtkTreeView" id="tv_artists">
@@ -31301,7 +31338,7 @@ has been used by others)</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -31315,31 +31352,7 @@ has been used by others)</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_getImageSet">
-                    <property name="label" translatable="yes">Download Image Set...</property>
-                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
-available texts to print from. Note that the
-DBL bundle will get unpacked into your 
-regular folder (e.g. My Paratext 9 Projects)
-but will only be used by PTXprint. It cannot
-be viewed or edited in Paratext.</property>
-                    <property name="halign">end</property>
-                    <property name="valign">end</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">4</property>
-                    <property name="margin-bottom">4</property>
-                    <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -31422,8 +31435,8 @@ be viewed or edited in Paratext.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">btn_feats_ok1</action-widget>
-      <action-widget response="-6">btn_feats_cancel1</action-widget>
+      <action-widget response="-5">btn_imagePicker_ok</action-widget>
+      <action-widget response="-6">btn_imagePicker_cancel</action-widget>
     </action-widgets>
   </object>
   <object class="GtkDialog" id="dlg_importSettings">

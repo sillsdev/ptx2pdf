@@ -1096,7 +1096,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         # Turn off this button until we're ready for people to use it.
         # It still can be activated by enabling texpert hacks
-        self.builder.get_object("btn_getPictures").set_visible(False)
+        # self.builder.get_object("btn_getPictures").set_visible(False)
 
     def toggleUIdetails(self, w, state):
         # print(w)
@@ -5039,7 +5039,7 @@ class GtkViewModel(ViewModel):
         # status = False
         self.builder.get_object("tb_Expert").set_visible(status)
         self.builder.get_object("lb_Expert").set_visible(status)
-        self.builder.get_object("btn_getPictures").set_visible(status)
+        # self.builder.get_object("btn_getPictures").set_visible(status)
         
     def onTxlOptionsChanged(self, btn):
         o = _("What did Mary say that God had done?")
