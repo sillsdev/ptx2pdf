@@ -37,7 +37,7 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
-from ptxprint.picselect import ThumbnailDialog
+from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
@@ -667,6 +667,12 @@ class GtkViewModel(ViewModel):
         mrubl.remove_all()
         for m in self.mruBookList:
             mrubl.append(None, m)
+
+        imsets = self.builder.get_object("ecb_artPictureSet")
+        imsets.remove_all()
+        for m in getImageSets():
+            logger.debug(f"Found imageset: {m}")
+            imsets.append_text(m)
 
         # for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   # "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
@@ -4243,11 +4249,12 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         if response == Gtk.ResponseType.OK:
             imgsetname = self.get("t_imageSetName")
+            zfile = self.get("btn_locateImageSet")
             if imgsetname != "":
-                if UnpackImageSet(self.imgsetfile, self.settings_dir):
+                if unpackImageset(imgsetname, zfile):
                     # add imgsetname to ecb_artPictureSet before selecting it.
-                    lsp = self.builder.get_object("imgsetname")
-                    allimgsets = [x[0] for x in lsp]
+                    lsp = self.builder.get_object("ecb_artPictureSet")
+                    allimgsets = [x[0] for x in lsp.get_model()]
                     for i, p in enumerate(allimgsets):
                         if imgsetname.casefold() > p.casefold():
                             lsp.insert(i, [imgsetname])
@@ -5242,7 +5249,9 @@ Thank you,
     def onGetPicturesClicked(self, btn):
         dialog = self.builder.get_object("dlg_imagePicker")
         gridbox = self.builder.get_object("box_images")
-        self.thumbnails = ThumbnailDialog(dialog, self, gridbox)
+        self.thumbnails = ThumbnailDialog(dialog, self, gridbox, 5)
+        res = self.thumbnails.run()
+        print(res)
 
     def onArtistToggled(self, btn, path):
         model = self.builder.get_object("ls_artists")
@@ -5252,4 +5261,4 @@ Thank you,
             self.thumbnails.add_artist(model[path][1])
         else:
             self.thumbnails.remove_artist(model[path][1])
-        logger.debug(f"Toggled {param2}")
+        logger.debug(f"Toggled {path}")
