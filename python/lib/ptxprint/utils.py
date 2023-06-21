@@ -517,16 +517,35 @@ def cachedData(filepath, fn):
         pickle.dump(res, outf)
     return res
 
+def extraDataDir(base, dirname, create=False):
+    uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), base)
+    if dirname is None:
+        dirname = os.listdir(uddir)[0]
+    ddir = os.path.join(uddir, dirname)
+    if os.path.exists(ddir):
+        return ddir
+    elif create:
+        os.makedirs(ddir)
+        return ddir
+    else:
+        return None
+
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)
         dat = inf.read(12).rstrip(b"\xdf")
+        if len(dat) < 5:
+            return 0
         postamble = unpack(">I", dat[-5:-1])[0]
         inf.seek(postamble, 0)
         dat = inf.read(5)
+        if len(dat) < 5:
+            return 0
         lastpage = unpack(">I", dat[1:])[0]
         inf.seek(lastpage, 0)
         dat = inf.read(5)
+        if len(dat) < 5:
+            return 0
         res = unpack(">I", dat[1:])[0]
     return res
 

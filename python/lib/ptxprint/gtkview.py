@@ -37,6 +37,7 @@ from ptxprint.modelmap import ModelMap
 from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
+from ptxprint.picselect import ThumbnailDialog
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
@@ -5240,9 +5241,15 @@ Thank you,
 
     def onGetPicturesClicked(self, btn):
         dialog = self.builder.get_object("dlg_imagePicker")
-        response = dialog.run()
-        dialog.hide()
+        gridbox = self.builder.get_object("box_images")
+        self.thumbnails = ThumbnailDialog(dialog, self, gridbox)
 
-    def onArtistToggled(self, renderer, path):
-        print("Uh oh... time to refresh the image list again!")
-
+    def onArtistToggled(self, btn, path):
+        model = self.builder.get_object("ls_artists")
+        model[path][0] = not model[path][0]
+        
+        if model[path][0]:
+            self.thumbnails.add_artist(model[path][1])
+        else:
+            self.thumbnails.remove_artist(model[path][1])
+        logger.debug(f"Toggled {param2}")

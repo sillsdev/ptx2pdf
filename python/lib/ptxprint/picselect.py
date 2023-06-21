@@ -1,91 +1,136 @@
 import gi
 import os
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf
+gi.require_version('Gdk', '3.0')
+from gi.repository import Gtk, Gdk, GdkPixbuf
 
-class ThumbnailWindow(Gtk.Window):
+from ptxprint.utils import extraDataDir
+
+def unpackExtras(dirname, filename):
+    uddir = extraDataDir("imagesets", dirname, create=True)
+    if uddir is None:
+        return
+    with zipfile.ZipFile(filename) as zf:
+        zf.extractall(path=uddir)
+
+class ThumbnailHolder(Gtk.Widget):
+    __gtype_name__ = "ThumbnailHolder"
+    __cache__ = None
+
     def __init__(self):
-        Gtk.Window.__init__(self, title="Thumbnail Viewer")
-        self.set_border_width(10)
-        self.set_default_size(600, 400)
+        super().__init__()
+        self.picid = ""
+        self.child = None
+        self.alloc = Gdk.Rectangle()
 
-        # Create a vertical box as the main container
-        main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.add(main_box)
+    def set_picid(self, picid):
+        if picid != self.picid:
+            self.child = None
+            self.picid = picid
 
-        # Create a split pane
-        split_pane = Gtk.Paned.new(Gtk.Orientation.HORIZONTAL)
-        main_box.pack_start(split_pane, True, True, 0)
+    def do_get_preferred_width(self):
+        return self.__cache__.get_preferred_width()
 
-        # Create a box for the filters on the left side of the split pane
-        filters_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        split_pane.pack1(filters_box, resize=True, shrink=False)
+    def do_get_preferred_height(self):
+        return self.__cache__.get_preferred_height()
 
-        # Create a scrolled window for the thumbnails grid
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        split_pane.pack2(scrolled_window, resize=True, shrink=False)
+    def do_get_preferred_width_for_height(self, height):
+        return self.get_preferred_width()
 
-        # Create a grid to hold the thumbnails
-        self.grid = Gtk.Grid()
-        self.grid.set_row_spacing(10)
-        self.grid.set_column_spacing(10)
-        scrolled_window.add(self.grid)
+    def do_get_preferred_height_for_width(self, width):
+        return self.get_preferred_height()
 
-        # List of selected thumbnail filenames
-        self.selected_thumbnails = []
+    def do_size_allocate(self, alloc):
+        super().do_size_allocate(alloc)
+        self.alloc = alloc
+        if self.child is not None:
+            self.child.do_size_allocate(alloc)
 
-        # Specify the folder path
-        # folder_path = "D:\Reference\Bible related\BiblePictures\\testSample"
-        folder_path = r"D:\Reference\Bible related\BiblePictures\images_96dpi"
-        print(folder_path)
+    def do_draw(self, cr):
+        if self.child is None:
+            self.child = self.__cache__.get_child(self, self.picid)
+            if self.child is None:
+                return
+            self.child.do_size_allocate(self.alloc)
+        self.child.do_draw(cr)
 
-        # Add thumbnails from the specified folder
-        self.add_thumbnails_from_folder(folder_path, "GT")  # Load GT images initially
+    def clear(self):
+        self.child = None
 
-        # Create checkboxes for the filters
-        filter_checkboxes = []
-        artist_filters = self.get_artist_filters(folder_path)
 
-        for artist in artist_filters:
-            checkbox = Gtk.CheckButton(label=artist)
-            checkbox.connect("toggled", self.on_filter_toggled, artist)
-            filters_box.pack_start(checkbox, True, False, 0)
-            filter_checkboxes.append(checkbox)
+class ThumbnailCache:
 
-    def get_artist_filters(self, folder_path):
-        # Check if the folder exists
-        if not os.path.exists(folder_path):
-            print(f"Folder does not exist: {folder_path}")
-            return []
+    def __init__(self, size, factoryfn, dimen):
+        self.size = size
+        self.factor = factoryfn
+        self.dimen = dimen
+        self.cache = {}
+        self.entries = []
+        self.curr_entry = 0
+        ThumbnailHolder.__cache__ = self
 
-        # Read all .jpg files from the folder
-        jpg_files = [file for file in os.listdir(folder_path) if file.lower().endswith(".jpg")]
-        artists = {f[:2].upper() for f in jpg_files}
-        return sorted(artists)
+    def get_child(self, parent, key):
+        if key in self.cache:
+            res = self.cache[key]
+        else:
+            res = self.add_child(key)
+            if res is None:
+                return None
+        res.set_parent(parent)
+        return res
 
-    def add_thumbnails_from_folder(self, folder_path, artist_filter):
-        # Check if the folder exists
-        if not os.path.exists(folder_path):
-            print(f"Folder does not exist: {folder_path}")
-            return
+    def add_child(self, key):
+        res = factoryfn(key)
+        if res is None:
+            return None
+        if len(self.entries) >= self.size:
+            delkey = self.entries[self.curr_entry]
+            oldchild = self.cache[delkey]
+            if oldchild.get_parent() is not None:
+                oldchild.get_parent().clear()
+                oldchild.unparent()
+            del self.cache[delkey]
+            self.curr_entry += 1
+            if self.curr_entry == self.size:
+                self.curr_entry = 0
+            self.entries[self.curr_entry] = key
+            self.cache[key] = res
+        else:
+            self.cache[key] = res
+            self.entries.append(key)
+        return res
 
-        # Read all .jpg files from the folder
-        jpg_files = [file for file in os.listdir(folder_path) if file.lower().endswith(".jpg")]
+    def get_preferred_width(self):
+        return dimen.width
+
+    def get_preferred_height(self):
+        return dimen.height
         
-        # Add thumbnails for each .jpg file
-        for filename in jpg_files:
-            file_path = os.path.join(folder_path, filename)
-            thumbnail_artist = os.path.splitext(os.path.basename(filename))[0][:2].upper()
 
-            if artist_filter == thumbnail_artist:
-                self.add_thumbnail(file_path)
+class Thumbnails:
+    __dimen__ = Gdk.Rectangle(100, 100)
 
-    def add_thumbnail(self, file_path):
-        # Create a thumbnail button with an image
+    def __init__(self, gridbox):
+        self.grid = gridbox
+        self.cache = ThumbnailCache(200, self.make_thumbnail, self.__dimen__)
+        self.selected_thumbnails = set()
+        ThumbnailHolder.__cache__ = self.cache
+
+    def set_imagespath(self, imagespath):
+        self.imagespath = imagespath
+
+    def make_thumbnail(self, key):
+        fpathbase = os.path.join(self.imagespath, key)
+        for e in (".jpg", ".tif"):
+            fpath = fpathbase + "." + e
+            if os.path.exists(fpath):
+                break
+        else:
+            return None
+
         thumbnail_button = Gtk.ToggleButton()
-        thumbnail_button.set_tooltip_text(os.path.splitext(os.path.basename(file_path))[0])
-        thumbnail_button.connect("toggled", self.on_thumbnail_toggled, file_path)
+        thumbnail_button.set_tooltip_text(key)
+        thumbnail_button.connect("toggled", self.on_thumbnail_toggled, key)
         thumbnail_button.set_hexpand(True)
         thumbnail_button.set_vexpand(True)
 
@@ -94,19 +139,18 @@ class ThumbnailWindow(Gtk.Window):
         thumbnail_image.set_vexpand(True)
 
         # Load the original image
-        original_pixbuf = GdkPixbuf.Pixbuf.new_from_file(file_path)
+        original_pixbuf = GdkPixbuf.Pixbuf.new_from_file(fpath)
 
         # Calculate the thumbnail size while preserving the aspect ratio
-        max_size = 100  # Maximum size for the thumbnail
         width = original_pixbuf.get_width()
         height = original_pixbuf.get_height()
         aspect_ratio = width / height
 
         if width > height:
-            thumbnail_width = max_size
+            thumbnail_width = self.__dimen__.width
             thumbnail_height = int(thumbnail_width / aspect_ratio)
         else:
-            thumbnail_height = max_size
+            thumbnail_height = self.__diment__.height
             thumbnail_width = int(thumbnail_height * aspect_ratio)
 
         # Scale the original image to the calculated thumbnail size
@@ -114,37 +158,73 @@ class ThumbnailWindow(Gtk.Window):
         thumbnail_image.set_from_pixbuf(thumbnail_pixbuf)
 
         thumbnail_button.set_image(thumbnail_image)
-
-        # Add the thumbnail button to the grid
-        num_children = len(self.grid.get_children())
-        row = num_children // 4
-        column = num_children % 4
-        self.grid.attach(thumbnail_button, column, row, 1, 1)
+        return thumbnail_button
 
     def on_thumbnail_toggled(self, button, file_path):
         if button.get_active():
-            self.selected_thumbnails.append(file_path)
+            self.selected_thumbnails.add(file_path)
         else:
-            self.selected_thumbnails.remove(file_path)
-
+            self.selected_thumbnails.discard(file_path)
         print("Selected thumbnails:", self.selected_thumbnails)
 
-    def on_filter_toggled(self, checkbox, artist):
-        folder_path = r"D:\Reference\Bible related\BiblePictures\images_96dpi"
-        if checkbox.get_active():
-            self.add_thumbnails_from_folder(folder_path, artist)
-        else:
-            for child in self.grid.get_children():
-                thumbnail_button = child
-                thumbnail_artist = os.path.splitext(os.path.basename(thumbnail_button.get_tooltip_text()))[0][:2].upper()
+    def set_images(self, imageids):
+        children = self.grid.get_children()
+        nchildren = len(children)
+        nimages = len(imageids)
+        colwidth = self.grid.get_column_width(0) + self.grid.get_column_spacing()
+        ncols = self.grid/get_allocated_width() // column_width
+        if nchildren > nimages:
+            for c in children[(nimages - nchildren):]:
+                self.grid.remove(c)
+        elif nchildren < nimages:
+            for i in range(nimages - nchildren):
+                j = nchildren + i
+                rowj = j // ncols
+                colj = j % ncols
+                self.grid.attach(ThumbnailHolder(), colj, rowj, 1, 1)
+        for i, c in self.grid.get_children():
+            c.set_picid(imageids[i])
+        
+        
+class ThumbnailDialog:
+    def __init__(self, dlg, view, gridbox):
+        self.dlg = dlg
+        self.view = view
+        self.artists = set()
+        self.refs = ""
+        self.filters = set()
+        self.imageset = None
+        self.thumbnails = Thumbnails(gridbox)
 
-                if thumbnail_artist == artist:
-                    self.grid.remove(thumbnail_button)
+    def run(self):
+        self.dlg.run()
+        self.dlg.hide()
 
-            self.grid.show_all()
+    def set_imageset(self, s):
+        self.imageset = s
 
+    def add_artist(self, artid):
+        self.artists.add(artid)
 
-win = ThumbnailWindow()
-win.connect("destroy", Gtk.main_quit)
-win.show_all()
-Gtk.main()
+    def remove_artist(self, artid):
+        self.artists.discard(artid)
+
+    def set_filter(self, s):
+        self.filters = set(s.split())
+
+    def fill(self):
+        imagesetdir = extraDataDir("imagesets", self.imageset)
+        if imagesetdir is None:
+            return
+        imagesdir = os.path.join(imagesetdir, "images")
+        self.thumbnails.set_imagespath(imagesdir)
+        imageids = set()
+        for imagefile in os.listdir(imagesdir):
+            (imageid, imageext) = os.splitext(imagefile)
+            if not imageext.lower() in (".jpg", ".tif"):
+                continue
+            if len(self.artists) and imagid[:2].lower() not in self.artists:
+                continue
+            imageids.add(imageid)
+        self.thumbnails.set_images(imageids)
+
