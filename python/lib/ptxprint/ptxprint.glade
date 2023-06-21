@@ -903,6 +903,323 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
       </object>
     </child>
   </object>
+  <object class="GtkDialog" id="dlg_getImageSet">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">PTXprint: Install an Image Set...</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">ptxprint</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">3</property>
+            <property name="margin-right">3</property>
+            <property name="margin-start">3</property>
+            <property name="margin-end">3</property>
+            <property name="margin-top">3</property>
+            <property name="margin-bottom">3</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_imgSet_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_imgSet_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">12</property>
+                <property name="margin-right">12</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="margin-top">12</property>
+                <property name="margin-bottom">12</property>
+                <property name="label" translatable="yes">Sample image files at low-resolution have been
+packaged only for use in Scripture publications.
+
+Due to the large size of such image sets, these are
+not included in the PTXprint distribution but need
+to be downloaded and installed by the steps below.</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <!-- n-columns=2 n-rows=6 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-left">8</property>
+                <property name="margin-right">8</property>
+                <property name="margin-start">8</property>
+                <property name="margin-end">8</property>
+                <property name="margin-top">8</property>
+                <property name="margin-bottom">8</property>
+                <property name="row-spacing">6</property>
+                <property name="column-spacing">6</property>
+                <child>
+                  <object class="GtkButton" id="btn_locateImageSet">
+                    <property name="label" translatable="yes">Locate...</property>
+                    <property name="name">Locate DBL bundle</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">After downloading an Image Set
+you need to tell PTXprint where the
+.zip file is saved so it can be installed.</property>
+                    <property name="margin-top">12</property>
+                    <property name="use-underline">True</property>
+                    <signal name="clicked" handler="onLocateImageSetClicked" swapped="no"/>
+                    <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Locate the downloaded Image Set 
+file (.zip) which is likely to be located 
+in your 'Downloads' folder.</property>
+                    <property name="halign">end</property>
+                    <property name="margin-top">12</property>
+                    <property name="label" translatable="yes">Step 2.
+Locate File:</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">PTXprint will create a NEW Image Set
+folder with this name. Use a relatively
+short (but descriptive) name.</property>
+                    <property name="halign">end</property>
+                    <property name="margin-top">6</property>
+                    <property name="label" translatable="yes">Step 3.
+Assign a Name
+for the Image Set:</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_imageSetName">
+                    <property name="name">Assign a name to an image set</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Create an image set using this name.</property>
+                    <property name="margin-top">12</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="max-length">20</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">5</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="lb_imageSetFilename">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.80</property>
+                    <property name="halign">end</property>
+                    <property name="justify">right</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">char</property>
+                    <property name="ellipsize">middle</property>
+                    <property name="max-width-chars">50</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="lb_imageSetDesc">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.7019607843137254</property>
+                    <property name="halign">start</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">char</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Filename:</property>
+                    <property name="justify">right</property>
+                    <attributes>
+                      <attribute name="foreground" value="#808000008080"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="lb_imgSetLink1">
+                    <property name="label" translatable="yes">Monochrome Image Set</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">end</property>
+                    <property name="relief">none</property>
+                    <property name="uri">https://link/to/image/set/bw</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">If you don't already have a DBL bundle, then
+you may be able to download a relevant text 
+from an online scripture repository.
+
+If you already have the required DBL bundle,
+then skip this first step.</property>
+                    <property name="halign">end</property>
+                    <property name="margin-left">6</property>
+                    <property name="margin-start">6</property>
+                    <property name="label" translatable="yes">[Optional] Step 1.
+Download an Image Set 
+from the Online Repository</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                    <property name="height">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="label" translatable="yes">Description:</property>
+                    <property name="justify">right</property>
+                    <attributes>
+                      <attribute name="foreground" value="#808000008080"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLinkButton" id="lb_imgSetLink2">
+                    <property name="label" translatable="yes">Color Image Set</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="focus-on-click">False</property>
+                    <property name="receives-default">True</property>
+                    <property name="halign">center</property>
+                    <property name="valign">start</property>
+                    <property name="relief">none</property>
+                    <property name="uri">https://link/to/image/set/color</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_imgSet_ok</action-widget>
+      <action-widget response="-6">btn_imgSet_cancel</action-widget>
+    </action-widgets>
+  </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
@@ -30761,6 +31078,7 @@ the text. This may be useful for precise measuring.</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">12</property>
+                    <property name="margin-bottom">6</property>
                     <property name="row-spacing">6</property>
                     <property name="column-spacing">6</property>
                     <child>
@@ -30817,7 +31135,7 @@ of References:</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Picture Set:</property>
+                        <property name="label" translatable="yes">Image Set:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -30869,56 +31187,114 @@ the Notes field below.</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkTreeView" id="tv_artists">
-                        <property name="height-request">130</property>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="vexpand">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">4</property>
+                        <property name="width">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_imgSort_ref">
+                        <property name="label" translatable="yes">Scripture Reference</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="valign">start</property>
-                        <property name="model">ls_artists</property>
-                        <property name="headers-clickable">False</property>
-                        <property name="enable-search">False</property>
-                        <property name="show-expanders">False</property>
-                        <child internal-child="selection">
-                          <object class="GtkTreeSelection">
-                            <property name="mode">none</property>
-                          </object>
-                        </child>
+                        <property name="receives-default">False</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_imgSort_pop</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="r_imgSort_pop">
+                        <property name="label" translatable="yes">Popularity (how often it
+has been used by others)</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="active">True</property>
+                        <property name="draw-indicator">True</property>
+                        <property name="group">r_imgSort_ref</property>
+                        <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                      </object>
+                      <packing>
+                        <property name="left-attach">1</property>
+                        <property name="top-attach">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Sort Images By:</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkScrolledWindow">
+                        <property name="height-request">205</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="shadow-type">in</property>
                         <child>
-                          <object class="GtkTreeViewColumn" id="col_artShow">
-                            <property name="spacing">4</property>
-                            <property name="title" translatable="yes">Show</property>
+                          <object class="GtkTreeView" id="tv_artists">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="model">ls_artists</property>
+                            <property name="headers-clickable">False</property>
+                            <property name="enable-search">False</property>
+                            <property name="show-expanders">False</property>
                             <child>
-                              <object class="GtkCellRendererToggle" id="cr_artShow">
-                                <signal name="toggled" handler="onArtistToggled" swapped="no"/>
+                              <object class="GtkTreeViewColumn" id="col_artShow">
+                                <property name="spacing">4</property>
+                                <property name="title" translatable="yes">Show</property>
+                                <child>
+                                  <object class="GtkCellRendererToggle" id="cr_artShow">
+                                    <signal name="toggled" handler="onArtistToggled" swapped="no"/>
+                                  </object>
+                                  <attributes>
+                                    <attribute name="active">0</attribute>
+                                  </attributes>
+                                </child>
                               </object>
-                              <attributes>
-                                <attribute name="active">0</attribute>
-                              </attributes>
                             </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="col_artCode">
-                            <property name="spacing">4</property>
-                            <property name="title" translatable="yes">Code</property>
-                            <property name="alignment">0.5</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cr_artCode"/>
-                              <attributes>
-                                <attribute name="text">1</attribute>
-                              </attributes>
+                              <object class="GtkTreeViewColumn" id="col_artCode">
+                                <property name="spacing">4</property>
+                                <property name="title" translatable="yes">Code</property>
+                                <property name="alignment">0.5</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cr_artCode"/>
+                                  <attributes>
+                                    <attribute name="text">1</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
                             </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkTreeViewColumn" id="col_artName">
-                            <property name="spacing">4</property>
-                            <property name="title" translatable="yes">Artist Name</property>
                             <child>
-                              <object class="GtkCellRendererText" id="cr_artName"/>
-                              <attributes>
-                                <attribute name="text">2</attribute>
-                              </attributes>
+                              <object class="GtkTreeViewColumn" id="col_artName">
+                                <property name="spacing">4</property>
+                                <property name="title" translatable="yes">Artist Name</property>
+                                <child>
+                                  <object class="GtkCellRendererText" id="cr_artName"/>
+                                  <attributes>
+                                    <attribute name="text">2</attribute>
+                                  </attributes>
+                                </child>
+                              </object>
                             </child>
                           </object>
                         </child>
@@ -30931,21 +31307,6 @@ the Notes field below.</property>
                     <child>
                       <placeholder/>
                     </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
-                    <child>
-                      <placeholder/>
-                    </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -30954,7 +31315,31 @@ the Notes field below.</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkButton" id="btn_getImageSet">
+                    <property name="label" translatable="yes">Download Image Set...</property>
+                    <property name="name">Diglot: Get text from Digital Bible Library (DBL)</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Click to add a DBL bundle to the list of
+available texts to print from. Note that the
+DBL bundle will get unpacked into your 
+regular folder (e.g. My Paratext 9 Projects)
+but will only be used by PTXprint. It cannot
+be viewed or edited in Paratext.</property>
+                    <property name="halign">end</property>
+                    <property name="valign">end</property>
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">4</property>
+                    <property name="margin-bottom">4</property>
+                    <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>

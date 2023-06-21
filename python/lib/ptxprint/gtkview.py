@@ -4236,6 +4236,27 @@ class GtkViewModel(ViewModel):
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
 
+    def onImageSetClicked(self, btn):
+        dialog = self.builder.get_object("dlg_getImageSet")
+        response = dialog.run()
+        dialog.hide()
+        if response == Gtk.ResponseType.OK:
+            imgsetname = self.get("t_imageSetName")
+            if imgsetname != "":
+                if UnpackImageSet(self.imgsetfile, self.settings_dir):
+                    # add imgsetname to ecb_artPictureSet before selecting it.
+                    lsp = self.builder.get_object("imgsetname")
+                    allimgsets = [x[0] for x in lsp]
+                    for i, p in enumerate(allimgsets):
+                        if imgsetname.casefold() > p.casefold():
+                            lsp.insert(i, [imgsetname])
+                            break
+                    else:
+                        lsp.append([imgsetname])
+                    self.set("ecb_artPictureSet", imgsetname)
+                else:
+                    self.doError("Faulty Image Set", "Please check that you have selected a valid Image Set (ZIP) file.")
+
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
                 filters = {"DBL Bundles": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
@@ -4252,6 +4273,23 @@ class GtkViewModel(ViewModel):
             self.set("t_DBLprojName", "")
             self.DBLfile = None
             self.builder.get_object("btn_locateDBLbundle").set_tooltip_text("")
+    
+    def onLocateImageSetClicked(self, btn):
+        imgsetfile = self.fileChooser("Select an Image Set file", 
+                filters = {"Image Sets": {"patterns": ["*.zip"] , "mime": "text/plain", "default": True},
+                           "All Files": {"pattern": "*"}},
+                multiple = False, basedir=os.path.join(self.settings_dir, "Bundles"))
+        if imgsetfile is not None:
+            # imgsetfile = [x.relative_to(prjdir) for x in imgsetfile]
+            self.imgsetfile = imgsetfile[0]
+            self.builder.get_object("lb_imageSetFilename").set_label(os.path.basename(imgsetfile[0]))
+            self.set("t_imageSetName", os.path.basename(imgsetfile[0])[:8])
+            self.builder.get_object("btn_locateImageSet").set_tooltip_text(str(imgsetfile[0]))
+        else:
+            self.builder.get_object("lb_imageSetFilename").set_label("")
+            self.set("t_imageSetName", "")
+            self.imgsetfile = None
+            self.builder.get_object("btn_locateImageSet").set_tooltip_text("")
     
     def onDBLprojNameChanged(self, widget):
         text = self.get("t_DBLprojName")
