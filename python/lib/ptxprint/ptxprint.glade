@@ -31526,9 +31526,9 @@ used on websites. </property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry,</property>
+                        <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry</property>
                         <property name="wrap">True</property>
-                        <property name="max-width-chars">34</property>
+                        <property name="max-width-chars">35</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31541,6 +31541,8 @@ used on websites. </property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">MAT 12:15, LUK 22:7; ACT 8:3</property>
+                        <property name="wrap">True</property>
+                        <property name="max-width-chars">35</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31553,6 +31555,8 @@ used on websites. </property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">The shepherd carries a lamb.</property>
+                        <property name="wrap">True</property>
+                        <property name="max-width-chars">35</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31565,6 +31569,7 @@ used on websites. </property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">cn01234, David C Cook - NT</property>
+                        <property name="max-width-chars">35</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31623,7 +31628,7 @@ used on websites. </property>
                 <property name="margin-end">8</property>
                 <property name="margin-top">2</property>
                 <property name="hexpand">False</property>
-                <property name="label"> Selected (3): cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, hk00452</property>
+                <property name="label">Selected (3): cn01234, lb0315, hk00452</property>
                 <property name="wrap">True</property>
                 <property name="max-width-chars">130</property>
                 <property name="track-visited-links">False</property>

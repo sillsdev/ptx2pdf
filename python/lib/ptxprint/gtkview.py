@@ -4677,6 +4677,7 @@ class GtkViewModel(ViewModel):
 \zifvarset|var="isbn" emptyok="F"\*
 \ztruetext
 \esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\zgap|10pt\*
 \ztruetext*'''
         self.periphs['coverwhole'] = r'''
 \periph spannedCover|id="coverwhole"
