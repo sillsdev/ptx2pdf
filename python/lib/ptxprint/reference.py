@@ -11,7 +11,8 @@ startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
 startchaps += [("special", startchaps[-1][1]+1)]
 startbooks = dict(startchaps)
 allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999], []) + ['special']
-b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+# b64codes are irregular from MIME64 to make them sortable
+b64codes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
 
 def readvrs(fname):

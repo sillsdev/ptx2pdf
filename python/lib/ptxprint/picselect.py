@@ -67,6 +67,7 @@ class ThumbnailDialog:
         self.imagedata = None
         self.langdata = None
         self.tilesize = 100
+        self.selected_thumbnails = set()
 
     def run(self):
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -87,11 +88,11 @@ class ThumbnailDialog:
         imagesets = getImageSets()
         if len(imagesets):
             self.set_imageset(imagesets[0])
-        self.fill()
+        self.refresh()
         response = self.dlg.run()
         self.dlg.hide()
         if response == Gtk.ResponseType.OK:
-            return self.thumbnails.selected_thumbnails
+            return self.selected_thumbnails
         else:
             return None
 
@@ -137,14 +138,15 @@ class ThumbnailDialog:
 
     def add_artist(self, artid):
         self.artists.add(artid.lower())
-        self.fill()
+        self.refresh()
 
     def remove_artist(self, artid):
         self.artists.discard(artid.lower())
-        self.fill()
+        self.refresh()
 
     def set_filter(self, s):
         self.filters = set(c.lower() for c in s.split())
+        self.enable_refresh()
 
     def test_filter(self, imgid, filters):
         if self.langdata is None:
@@ -156,15 +158,19 @@ class ThumbnailDialog:
         return False
 
     def set_reflist(self, s):
-        if s is not None and len(s):
-            self.reflist = RefList.fromStr(s)
+        self.reftext = s
+        self.enable_refresh()
+
+    def update_reflist(self):
+        if self.reftext is not None and len(self.reftext):
+            self.reflist = RefList.fromStr(self.reftext)
         else:
             self.reflist = []
         # logger.debug(f"reflist from {s} to {self.reflist}")
 
-    def get_refs(self, imgid):
+    def get_refs(self, imgid, default=[]):
         if self.imagedata is None:
-            return []
+            return default
         # logger.debug(f"{imgid}: {self.imagedata['images'].get(imgid,{}).get('refs')}")
         return [RefList.fromStr(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
 
@@ -175,7 +181,14 @@ class ThumbnailDialog:
         imagesdir = os.path.join(imagesetdir, "images")
         return imagesdir
 
+    def enable_refresh(self):
+        b = self.view.builder.get_object("btn_imgRefresh").set_sensitive(True)
+
+    def disable_refresh(self):
+        b = self.view.builder.get_object("btn_imgRefresh").set_sensitive(False)
+
     def refresh(self):
+        self.update_reflist()
         self.fill()
 
     def fill(self):
@@ -190,8 +203,10 @@ class ThumbnailDialog:
                 continue
             if len(self.filters) and not self.test_filter(imageid, self.filters):
                 continue
-            refs = self.get_refs(imageid)
-            if len(self.reflist) and len(refs):
+            if len(self.reflist):
+                refs = self.get_refs(imageid)
+                if not len(refs):
+                    continue
                 for r in refs:
                     if r in self.reflist:
                         # logger.debug(f"Testing {imageid}: {refs}, {r} in {self.reflist}")
@@ -201,21 +216,23 @@ class ThumbnailDialog:
                     continue
             imageids.add(imageid)
         self.set_images(imagesdir, sorted(imageids))
+        self.disable_refresh()
 
     def imgkey(self, imgid):
         res = self.imgrefs[imgid].astag() if imgid in self.imgrefs else "zzzz"+imgid
-        # logger.debug(f"{imgid}: {res}")
+        logger.debug(f"{imgid}: {self.imgrefs.get(imgid, 'UNK')}={res}")
         return res
 
     def set_images(self, fbase, imageids):
         # logger.debug(f"Setting up for images: {imageids}")
         #children = sorted(self.grid.get_children(),
         #        key = lambda c:(self.grid.child_get_property(c, "top_attach"), self.grid.child_get_property(c, "left-attach")))
-        logger.debug(f"Setting up grid for {len(imageids)}")
         for c in self.grid.get_children():
             c.hide()
             self.grid.remove(c)
-        for i, imgid in enumerate(sorted(imageids, key=lambda s:self.imgkey(s))):
+        images = sorted(imageids, key=lambda s:self.imgkey(s))
+        logger.debug(f"Setting up grid for {images}")
+        for i, imgid in enumerate(images):
             w, isLoaded, fpath = self.image_tiles[imgid]
             if not isLoaded:
                 fill_me(w, fpath, self.tilesize)
@@ -226,11 +243,13 @@ class ThumbnailDialog:
         logger.debug(f"Image grid complete")
 
     def on_thumbnail_toggled(self, button, imageid):
-        val = (imageid, self.imgrefs[imageid])
+        val = (imageid, self.imgrefs.get(imageid, self.get_refs(imageid, default=[None])[0]))
         if button.get_active():
             self.selected_thumbnails.add(val)
         else:
             self.selected_thumbnails.discard(val)
+        status = " ".join(x[0] for x in sorted(self.selected_thumbnails, key=lambda t:(t[1], t[0])))
+        self.view.set("l_artStatusLine", status)
 
     def on_thumbnail_entered(self, button, event, imageid):
         cinfo = self.view.copyrightInfo
