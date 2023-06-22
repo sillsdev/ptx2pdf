@@ -30907,8 +30907,6 @@ the text. This may be useful for precise measuring.</property>
             <property name="margin-start">6</property>
             <property name="margin-end">6</property>
             <property name="margin-bottom">3</property>
-            <property name="hexpand">True</property>
-            <property name="layout-style">spread</property>
             <child>
               <object class="GtkButton" id="btn_getImageSet">
                 <property name="label" translatable="yes">Download Image Set...</property>
@@ -30937,15 +30935,18 @@ publications from one of the links.</property>
             </child>
             <child>
               <object class="GtkLabel">
-                <property name="width-request">320</property>
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
+                <property name="width-chars">60</property>
+                <property name="single-line-mode">True</property>
+                <property name="track-visited-links">False</property>
               </object>
               <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
+                <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
@@ -30954,6 +30955,11 @@ publications from one of the links.</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Import the selected images
+to the current Configuration
+where an appropriate caption
+should be added and other
+image properties selected.</property>
                 <property name="margin-start">3</property>
                 <property name="margin-end">3</property>
                 <property name="margin-top">3</property>
@@ -30985,7 +30991,7 @@ publications from one of the links.</property>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="fill">False</property>
+            <property name="fill">True</property>
             <property name="position">0</property>
           </packing>
         </child>
@@ -30995,8 +31001,8 @@ publications from one of the links.</property>
             <property name="can-focus">False</property>
             <child>
               <object class="GtkScrolledWindow">
-                <property name="width-request">532</property>
-                <property name="height-request">532</property>
+                <property name="width-request">540</property>
+                <property name="height-request">540</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="margin-start">4</property>
@@ -31004,6 +31010,7 @@ publications from one of the links.</property>
                 <property name="margin-top">4</property>
                 <property name="margin-bottom">4</property>
                 <property name="hexpand">True</property>
+                <property name="hscrollbar-policy">never</property>
                 <property name="shadow-type">in</property>
                 <child>
                   <object class="GtkViewport">
@@ -31012,8 +31019,8 @@ publications from one of the links.</property>
                     <child>
                       <!-- n-columns=5 n-rows=5 -->
                       <object class="GtkGrid" id="box_images">
-                        <property name="width-request">512</property>
-                        <property name="height-request">512</property>
+                        <property name="width-request">520</property>
+                        <property name="height-request">520</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="hexpand">True</property>
@@ -31153,6 +31160,8 @@ of References:</property>
                       <object class="GtkEntry" id="t_artRefRange">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="placeholder-text" translatable="yes">e.g. LUK ACT HEB JAS</property>
+                        <signal name="changed" handler="onImageRefRangeChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31193,6 +31202,8 @@ of References:</property>
                         <property name="primary-icon-name">edit-find-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
+                        <property name="placeholder-text" translatable="yes">(lamb|sheep)+shepherd</property>
+                        <signal name="changed" handler="onImageSearchChanged" swapped="no"/>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31302,9 +31313,9 @@ appear at the top of the list.</property>
                             <child>
                               <object class="GtkTreeViewColumn" id="col_artShow">
                                 <property name="spacing">4</property>
-                                <property name="title" translatable="yes">Show</property>
+                                <property name="title" translatable="yes">Filter</property>
                                 <child>
-                                  <object class="GtkCellRendererToggle" id="cr_artShow">
+                                  <object class="GtkCellRendererToggle" id="cr_artFilter">
                                     <signal name="toggled" handler="onArtistToggled" swapped="no"/>
                                   </object>
                                   <attributes>
@@ -31350,6 +31361,7 @@ appear at the top of the list.</property>
                       <object class="GtkSeparator">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="margin-top">4</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -31363,6 +31375,7 @@ appear at the top of the list.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
+                        <property name="margin-top">4</property>
                         <signal name="clicked" handler="btnImageRefreshClicked" swapped="no"/>
                       </object>
                       <packing>
@@ -31385,8 +31398,10 @@ appear at the top of the list.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Can be used in Print/PDF publications. </property>
+                            <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
+used in Print/PDF publications. </property>
                             <property name="valign">center</property>
+                            <property name="active">True</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
@@ -31401,7 +31416,8 @@ appear at the top of the list.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Can be used in mobile phone Apps. </property>
+                            <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
+used in mobile phone Apps. </property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                           </object>
@@ -31417,7 +31433,8 @@ appear at the top of the list.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Can be used on websites. </property>
+                            <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
+used on websites. </property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                           </object>
@@ -31472,7 +31489,8 @@ appear at the top of the list.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">ID:</property>
+                        <property name="valign">start</property>
+                        <property name="label" translatable="yes">Keywords:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -31488,7 +31506,7 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -31500,15 +31518,17 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">0</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="l_imgID">
+                      <object class="GtkLabel" id="l_imgKeywords">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">cn01234</property>
+                        <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry,</property>
+                        <property name="wrap">True</property>
+                        <property name="max-width-chars">34</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31524,7 +31544,7 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -31536,19 +31556,19 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">0</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkLabel" id="l_imgArtist">
+                      <object class="GtkLabel" id="l_imgIDArtist">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="label" translatable="yes">David C Cook - NT</property>
+                        <property name="label" translatable="yes">cn01234, David C Cook - NT</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                     <child>
@@ -31556,11 +31576,11 @@ appear at the top of the list.</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
-                        <property name="label" translatable="yes">Artist:</property>
+                        <property name="label" translatable="yes">ID, Artist:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">0</property>
                       </packing>
                     </child>
                   </object>
@@ -31593,9 +31613,8 @@ appear at the top of the list.</property>
             <property name="valign">end</property>
             <child>
               <object class="GtkLabel" id="l_artStatusLine">
-                <property name="sensitive">False</property>
+                <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
                 <property name="margin-left">6</property>
@@ -31603,9 +31622,10 @@ appear at the top of the list.</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">8</property>
                 <property name="margin-top">2</property>
-                <property name="label"> This is where status messages go to alert the user.</property>
-                <property name="justify">center</property>
-                <property name="single-line-mode">True</property>
+                <property name="hexpand">False</property>
+                <property name="label"> Selected (3): cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, cn01234, lb0315, hk00452, cn01234, lb0315, hk00452</property>
+                <property name="wrap">True</property>
+                <property name="max-width-chars">130</property>
                 <property name="track-visited-links">False</property>
                 <property name="xalign">0.5</property>
                 <attributes>
@@ -31620,20 +31640,22 @@ appear at the top of the list.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_dismissArtStatusLine">
-                <property name="label" translatable="yes">Dismiss</property>
+              <object class="GtkButton" id="btn_imgClearSelection">
+                <property name="label" translatable="yes">Clear Selection</property>
                 <property name="width-request">55</property>
-                <property name="sensitive">False</property>
+                <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
-                <property name="no-show-all">True</property>
                 <property name="halign">end</property>
+                <property name="valign">start</property>
                 <property name="margin-left">6</property>
                 <property name="margin-right">6</property>
                 <property name="margin-start">6</property>
                 <property name="margin-end">6</property>
                 <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
+                <signal name="clicked" handler="onImgClearSelected" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">False</property>

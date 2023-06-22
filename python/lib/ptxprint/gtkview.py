@@ -126,7 +126,7 @@ tb_Help lb_Help
 fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
-l_artStatusLine btn_dismissArtStatusLine
+l_artStatusLine btn_imgClearSelection
 """.split() # btn_reloadConfig 
 
 _ui_enable4diglot2ndary = """
@@ -203,8 +203,8 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "bx_imageMsgBar", "fr_plChecklistFilter",
-                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
+                  "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
     2 : _ui_minimal,
@@ -345,7 +345,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_dismissArtStatusLine", "btn_requestPermission", "c_createDiff", "c_quickRun"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -5268,3 +5268,13 @@ Thank you,
 
     def btnImageRefreshClicked(self, btn):
         pass
+        
+    def onImgClearSelected(self, btn):
+        pass
+        
+    def onImageSearchChanged(self, btn):
+        pass
+        
+    def onImageRefRangeChanged(self, btn):
+        pass
+        
