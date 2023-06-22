@@ -670,9 +670,12 @@ class GtkViewModel(ViewModel):
 
         imsets = self.builder.get_object("ecb_artPictureSet")
         imsets.remove_all()
-        for m in getImageSets():
-            logger.debug(f"Found imageset: {m}")
-            imsets.append_text(m)
+        ims = getImageSets()
+        if ims is not None:
+            for m in ims:
+                logger.debug(f"Found imageset: {m}")
+                imsets.append_text(m)
+            imsets.set_active(0)
 
         # for d in ("multiBookSelector", "multiProjSelector", "fontChooser", "password", "overlayCredit",
                   # "generateFRT", "generatePL", "styModsdialog", "DBLbundle", "features", "gridsGuides"):
@@ -4257,10 +4260,10 @@ class GtkViewModel(ViewModel):
                     allimgsets = [x[0] for x in lsp.get_model()]
                     for i, p in enumerate(allimgsets):
                         if imgsetname.casefold() > p.casefold():
-                            lsp.insert(i, [imgsetname])
+                            lsp.insert_text(i, imgsetname)
                             break
                     else:
-                        lsp.append([imgsetname])
+                        lsp.append_text(imgsetname)
                     self.set("ecb_artPictureSet", imgsetname)
                 else:
                     self.doError("Faulty Image Set", "Please check that you have selected a valid Image Set (ZIP) file.")
@@ -5262,3 +5265,6 @@ Thank you,
         else:
             self.thumbnails.remove_artist(model[path][1])
         logger.debug(f"Toggled {path}")
+
+    def btnImageRefreshClicked(self, btn):
+        pass

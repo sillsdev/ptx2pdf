@@ -304,6 +304,22 @@
                 }
             }
         },
+        "sh": {
+            "artist": "Scott Hayes",
+            "copyright": {
+                "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license."
+            },
+            "sensitive": {
+                "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine for non commercial use. For inquiries regarding a commercial license please email Scott Hayes at hayesvienna@gmail.com"
+                }
+            }
+        },
         "dh": {
             "artist": "David Healey",
             "copyright": {

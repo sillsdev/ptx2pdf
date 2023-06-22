@@ -74,6 +74,26 @@
           "Description": "Insert projects license"
         }
       ],
+      "ISBN+QR": [
+        {
+          "Type": "insert",
+          "Label": "Generate ISBN bar code for a specific number.",
+          "Description": "Generate ISBN bar code for fixed number.  Height can be one of (normal, medium, short).",
+          "CodeSnippet": "\\pc \\zISBNbarcode|isbn=\"987-123-456-0\" height=\"normal\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Generate ISBN bar code (if ISBN number exists)",
+          "Description": "If the 'isbn' variable has been set, then this will generate a code.",
+          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*\n\\ztruetext\n\\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"short\"\\* \\esbe\n\\zgap|10pt\\*\n\\ztruetext*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Generate QR code (to link to other content)",
+          "Description": "Generate a QR-code from attribute data (which may not contain double-quotes)",
+          "CodeSnippet": "\\zqrcode|pgpos=\"cr\" size=\"48pt\" data=\"www.jesusfilm.org/watch/jesus.html/birth-of-jesus/wakawaka.html\"\\*"
+        }
+      ],
       "Contents": [
         {
           "Type": "insert",
@@ -174,20 +194,13 @@
         {
           "Type": "insert",
           "Label": "\\ztruetext …\\ztruetext*",
-          "Description": "Include contents if condition is true",
-          "CodeSnippet": "\\ztruetext \\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"short\"\\* \\esbe \\ztruetext*"
+          "Description": "Include contents if condition is true"
         },
         {
           "Type": "insert",
           "Label": "\\zfalsetext …\\zfalsetext*",
           "Description": "Include contents if condition is false",
           "CodeSnippet": "\\zfalsetext ISBN missing \\zfalsetext*"
-        },
-        {
-          "Type": "insert",
-          "Label": "\\zISBNbarcode|isbn=\"num\" height=\"size\" var=\"varid\"\\*",
-          "Description": "Insert ISBNbarcode for num.  Optional parameter size one of (normal, medium, short). If isbn is missing try the zvar varid",
-          "CodeSnippet": "\\pc \\zISBNbarcode|isbn=\"987-123-456-0\" height=\"normal\"\\*"
         },
         {
           "Type": "insert",
@@ -487,7 +500,8 @@
         {
           "Type": "insert",
           "Label": "\\setbetweenhook{mkr1}{mkr2}{code}",
-          "Description": "Runs code between paragraphs mkr1 and mkr2.\ne.g. if it is desirable to insert extra space between \\s1 and \\r but not above every \\r"
+          "Description": "Runs code between paragraphs mkr1 and mkr2.\ne.g. insert a rule between the end of the introduction and before the chapter number.",
+          "CodeSnippet": "\\setbetweenhook{imte1}{c}{\\zrule|\\*}"
         }
       ],
       "Tweaks": [

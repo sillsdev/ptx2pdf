@@ -17,7 +17,10 @@ def unpackImageset(dirname, filename):
 
 def getImageSets():
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
-    return sorted([f for f in os.listdir(uddir) if os.path.isdir(os.path.join(uddir, f))])
+    if os.path.exists(uddir):
+        return sorted([f for f in os.listdir(uddir) if os.path.isdir(os.path.join(uddir, f))])
+    else:
+        return None
 
 def fill_me(parent, fpath, size):
     thumbnail_image = Gtk.Image()
@@ -262,6 +265,9 @@ class ThumbnailDialog:
         self.thumbnails = Thumbnails(gridbox, gridcols)
 
     def run(self):
+        uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+        if not os.path.exists(uddir):
+            self.view.onImageSetClicked(None)
         ltv = self.view.builder.get_object("ls_artists")
         for r in ltv:
             if r[0]:

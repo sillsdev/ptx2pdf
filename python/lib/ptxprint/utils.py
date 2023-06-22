@@ -519,6 +519,11 @@ def cachedData(filepath, fn):
 
 def extraDataDir(base, dirname, create=False):
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), base)
+    if not os.path.exists(uddir):
+        if create:
+            os.makedirs(uddir)
+        else:
+            return None
     if dirname is None:
         dirname = os.listdir(uddir)[0]
     ddir = os.path.join(uddir, dirname)
