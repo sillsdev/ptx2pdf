@@ -31128,7 +31128,7 @@ image properties selected.</property>
                     <property name="margin-start">6</property>
                     <property name="margin-end">6</property>
                     <property name="margin-top">12</property>
-                    <property name="margin-bottom">6</property>
+                    <property name="margin-bottom">3</property>
                     <property name="row-spacing">6</property>
                     <property name="column-spacing">6</property>
                     <child>
@@ -31140,7 +31140,7 @@ image properties selected.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -31153,7 +31153,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -31165,7 +31165,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">4</property>
+                        <property name="top-attach">5</property>
                       </packing>
                     </child>
                     <child>
@@ -31179,7 +31179,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">6</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -31207,7 +31207,7 @@ of References:</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">6</property>
                       </packing>
                     </child>
                     <child>
@@ -31256,7 +31256,7 @@ the canonical order of scripture.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -31277,7 +31277,7 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -31288,15 +31288,15 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkScrolledWindow">
-                        <property name="height-request">160</property>
+                        <property name="height-request">140</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="vexpand">True</property>
+                        <property name="vexpand">False</property>
                         <property name="hscrollbar-policy">never</property>
                         <property name="shadow-type">in</property>
                         <child>
@@ -31354,7 +31354,7 @@ appear at the top of the list.</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">6</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -31371,7 +31371,7 @@ appear at the top of the list.</property>
                     </child>
                     <child>
                       <object class="GtkButton" id="btn_imgRefresh">
-                        <property name="label" translatable="yes">Refresh Images</property>
+                        <property name="label" translatable="yes">Search + Update Images</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
                         <property name="receives-default">True</property>
@@ -31447,7 +31447,7 @@ used on websites. </property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -31459,7 +31459,7 @@ used on websites. </property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">5</property>
+                        <property name="top-attach">1</property>
                       </packing>
                     </child>
                     <child>
@@ -31476,10 +31476,25 @@ used on websites. </property>
                   </packing>
                 </child>
                 <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="vexpand">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
                   <!-- n-columns=2 n-rows=4 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="valign">end</property>
+                    <property name="margin-left">12</property>
+                    <property name="margin-right">6</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">6</property>
                     <property name="row-spacing">3</property>
@@ -31514,6 +31529,7 @@ used on websites. </property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
+                        <property name="valign">start</property>
                         <property name="label" translatable="yes">Description:</property>
                       </object>
                       <packing>
@@ -31554,6 +31570,7 @@ used on websites. </property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
+                        <property name="valign">start</property>
                         <property name="label" translatable="yes">The shepherd carries a lamb.</property>
                         <property name="wrap">True</property>
                         <property name="max-width-chars">35</property>
@@ -31590,9 +31607,21 @@ used on websites. </property>
                     </child>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="valign">end</property>
+                  </object>
+                  <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
-                    <property name="position">1</property>
+                    <property name="position">3</property>
                   </packing>
                 </child>
               </object>

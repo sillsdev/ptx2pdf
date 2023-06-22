@@ -5275,7 +5275,7 @@ Thank you,
         
     def onImageSearchChanged(self, btn):
         t = self.get('t_artSearch')
-        self.thumbnails.set_search(t)
+        self.thumbnails.set_filter(t)
         
     def onImageRefRangeChanged(self, btn):
         t = self.get('t_artRefRange')
