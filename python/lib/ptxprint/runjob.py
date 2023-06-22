@@ -181,6 +181,102 @@ def isLocked():
     global _joblock
     return _joblock is not None
 
+def procpdf(outfname, pdffile, info, ispdfxa, **kw):
+    opath = outfname.replace(".tex", ".prepress.pdf")
+    outpdf = None
+    coverfile = None
+    if kw.get('burst', False) or kw.get('cover', False):
+        inpdf = PdfReader(opath)
+        extras = split_pages(inpdf)
+        for k, eps in extras.items():
+            bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
+            if k == 'cover':
+                if kw.get('cover', False):
+                    coverfile = bpdfname
+                else:
+                    continue
+            elif not kw.get('burst', False):
+                continue
+            logger.debug(f"Pulling out {k} into {bpdfname} from {opath}")
+            bpdf = PdfReader(source=inpdf.source, trailer=inpdf)
+            bpdf.Root = bpdf.Root.copy()
+            bpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
+            bpdf.Root.Names = None
+            bpdf.Root.Outlines = None
+            bpdf.private.pages = eps
+            for v in eps:
+                v.parent = bpdf.Root.Pages
+            fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
+        outpdf = PdfWriter(None, trailer=inpdf)
+    colour = None
+    params = {}
+    if ispdfxa == "Spot":
+        colour = "spot"
+        params = {'color': coltoonemax(info['finishing/spotcolor']),
+                  'range': float(info['finishing/spottolerance']) / 100.}
+    elif ispdfxa == "Screen":
+        pass
+    elif ispdfxa in _pdfmodes['rgb']:
+        colour = "rgbx4"
+    else:
+        colour = ispdfxa.lower()
+    if colour is not None:
+        logger.debug(f"Fixing colour for {colour}")
+        try:
+            outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
+                        colour=colour,
+                        parlocs = outfname.replace(".tex", ".parlocs"), **params)
+        except ValueError:
+            return False
+    nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
+    if nums > 1:
+        psize = info['finishing/sheetsize'].split(",")
+        paper = []
+        for p in psize:
+            m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
+            if m:
+                paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
+            else:
+                paper.append(0.)
+        sigsheets = int(info['finishing/sheetsinsigntr'])
+        foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
+        logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
+        try:
+            outpdf = make_signatures((outpdf._trailer if outpdf else opath),
+                                 paper[0], paper[1], nums,
+                                 sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
+                                 info['finishing/foldfirst'])
+        except OverflowError as e:
+            info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
+                                 title=_("Paper Size Error"), secondary=str(e), threaded=True)
+            return False
+    if info['finishing/inclsettings']:
+        logger.debug("Adding settings to the pdf")
+        zio = cStringIO()
+        z = info.printer.createSettingsZip(zio)
+        z.close()
+        if outpdf is None:
+            outpdf = PdfWriter(None, trailer=PdfReader(opath))
+        if outpdf.trailer.Root.PieceInfo is None:
+            p = PdfDict()
+            outpdf.trailer.Root.PieceInfo = p
+        else:
+            p = output.trailer.Root.PieceInfo
+        pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
+        pdict.Private = PdfDict()
+        pdict.Private.stream = zio.getvalue()
+        pdict.Private.Binary = True
+        p.ptxprint = pdict
+        zio.close()
+
+    if outpdf is not None:
+        outpdf.fname = pdffile
+        outpdf.compress = True
+        outpdf.do_compress = compress
+        outpdf.write()
+        os.remove(opath)
+    return coverfile
+
 class RunJob:
 
     def __init__(self, printer, scriptsdir, macrosdir, args, inArchive=False):
@@ -825,96 +921,10 @@ class RunJob:
         return pdffile
 
     def procpdf(self, outfname, pdffile, info, **kw):
-        opath = outfname.replace(".tex", ".prepress.pdf")
-        outpdf = None
-        self.coverfile = None
-        if kw.get('burst', False) or kw.get('cover', False):
-            inpdf = PdfReader(opath)
-            extras = split_pages(inpdf)
-            for k, eps in extras.items():
-                bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
-                if k == 'cover':
-                    if kw.get('cover', False):
-                        self.coverfile = bpdfname
-                    else:
-                        continue
-                elif not kw.get('burst', False):
-                    continue
-                logger.debug(f"Pulling out {k} into {bpdfname} from {opath}")
-                bpdf = PdfReader(source=inpdf.source, trailer=inpdf)
-                bpdf.Root = bpdf.Root.copy()
-                bpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
-                bpdf.Root.Names = None
-                bpdf.Root.Outlines = None
-                bpdf.private.pages = eps
-                for v in eps:
-                    v.parent = bpdf.Root.Pages
-                fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
-            outpdf = PdfWriter(None, trailer=inpdf)
-        colour = None
-        params = {}
-        if self.ispdfxa == "Spot":
-            colour = "spot"
-            params = {'color': coltoonemax(info['finishing/spotcolor']),
-                      'range': float(info['finishing/spottolerance']) / 100.}
-        elif self.ispdfxa == "Screen":
-            pass
-        elif self.ispdfxa in _pdfmodes['rgb']:
-            colour = "rgbx4"
-        else:
-            colour = self.ispdfxa.lower()
-        if colour is not None:
-            logger.debug(f"Fixing colour for {colour}")
-            outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
-                            colour=colour,
-                            parlocs = outfname.replace(".tex", ".parlocs"), **params)
-        nums = int(info['finishing/pgsperspread']) if info['finishing/pgsperspread'] is not None else 1
-        if nums > 1:
-            psize = info['finishing/sheetsize'].split(",")
-            paper = []
-            for p in psize:
-                m = re.match(r"^\s*([\d.]+)\s*(mm|in|pt)", p)
-                if m:
-                    paper.append(float(m.group(1)) * float(_unitpts[m.group(2)])) 
-                else:
-                    paper.append(0.)
-            sigsheets = int(info['finishing/sheetsinsigntr'])
-            foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
-            logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
-            try:
-                outpdf = make_signatures((outpdf._trailer if outpdf else opath),
-                                     paper[0], paper[1], nums,
-                                     sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
-                                     info['finishing/foldfirst'])
-            except OverflowError as e:
-                info.printer.doError(_("Try adjusting the output paper size to account for the number of pages you want"),
-                                     title=_("Paper Size Error"), secondary=str(e), threaded=True)
-                return False
-        if info['finishing/inclsettings']:
-            logger.debug("Adding settings to the pdf")
-            zio = cStringIO()
-            z = info.printer.createSettingsZip(zio)
-            z.close()
-            if outpdf is None:
-                outpdf = PdfWriter(None, trailer=PdfReader(opath))
-            if outpdf.trailer.Root.PieceInfo is None:
-                p = PdfDict()
-                outpdf.trailer.Root.PieceInfo = p
-            else:
-                p = output.trailer.Root.PieceInfo
-            pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
-            pdict.Private = PdfDict()
-            pdict.Private.stream = zio.getvalue()
-            pdict.Private.Binary = True
-            p.ptxprint = pdict
-            zio.close()
-
-        if outpdf is not None:
-            outpdf.fname = pdffile
-            outpdf.compress = True
-            outpdf.do_compress = compress
-            outpdf.write()
-            os.remove(opath)
+        self.coverfile = procpdf(outfname, pdffile, info, self.ispdfxa, **kw)
+        if self.coverfile is False:
+            self.coverfile = None
+            return False
         return True
 
     def createDiff(self, pdfname, basename, **kw):

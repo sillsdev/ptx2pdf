@@ -5267,14 +5267,16 @@ Thank you,
         logger.debug(f"Toggled {path}")
 
     def btnImageRefreshClicked(self, btn):
-        pass
+        self.thumbnails.refresh()
         
     def onImgClearSelected(self, btn):
-        pass
+        self.thumbnails.clear()
         
     def onImageSearchChanged(self, btn):
-        pass
+        t = self.get('t_artSearch')
+        self.thumbnails.set_search(t)
         
     def onImageRefRangeChanged(self, btn):
-        pass
+        t = self.get('t_artRefRanges')
+        self.thumbnails.set_reflist(t)
         

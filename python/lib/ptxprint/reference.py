@@ -454,13 +454,15 @@ class BookNames(BaseBooks):
 class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None, marks=None):
+        self = cls()
+        if s is None or not len(s):
+            return self
+
         rerefs = re.compile(r"[\s;,]+")
-        
         remarks = re.compile("^(["+"".join(marks)+r"])") if marks is not None else None
         rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
-        self = cls()
         curr = Reference(None, 0, -1) if starting is None else starting
         currmark = None
         nextmark = None
