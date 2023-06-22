@@ -74,11 +74,9 @@ class ThumbnailDialog:
             self.view.onImageSetClicked(None)
 
         logger.debug("Starting to load images")
-        imagesets = getImageSets()
-        if len(imagesets):
-            self.set_imageset(imagesets[0])
         self.view.getBooks()
         reflist = self.view.bookrefs
+        logger.debug(f"Start with bookrefs: {reflist}")
         self.view.set('t_artRefRange', str(reflist))
         ltv = self.view.builder.get_object("ls_artists")
         for r in ltv:
@@ -86,6 +84,9 @@ class ThumbnailDialog:
                 self.artists.add(r[1].lower())
             else:
                 self.artists.discard(r[1].lower())
+        imagesets = getImageSets()
+        if len(imagesets):
+            self.set_imageset(imagesets[0])
         self.fill()
         response = self.dlg.run()
         self.dlg.hide()
@@ -159,11 +160,13 @@ class ThumbnailDialog:
             self.reflist = RefList.fromStr(s)
         else:
             self.reflist = []
+        # logger.debug(f"reflist from {s} to {self.reflist}")
 
     def get_refs(self, imgid):
         if self.imagedata is None:
             return []
-        return [RefList(r)[0] for r in self.imagedata.get(imgid, {}).get('refs', [])]
+        # logger.debug(f"{imgid}: {self.imagedata['images'].get(imgid,{}).get('refs')}")
+        return [RefList.fromStr(r)[0] for r in self.imagedata['images'].get(imgid, {}).get('refs', [])]
 
     def get_imgdir(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)
@@ -187,22 +190,25 @@ class ThumbnailDialog:
                 continue
             if len(self.filters) and not self.test_filter(imageid, self.filters):
                 continue
-            if len(self.reflist):
-                refs = self.get_refs(imageid)
-                if len(refs):
-                    for r in refs:
-                        if r in self.reflist:
-                            self.imgrefs[imageid] = r
-                            break
-                    else:
-                        continue
+            refs = self.get_refs(imageid)
+            if len(self.reflist) and len(refs):
+                for r in refs:
+                    if r in self.reflist:
+                        # logger.debug(f"Testing {imageid}: {refs}, {r} in {self.reflist}")
+                        self.imgrefs[imageid] = r
+                        break
+                else:
+                    continue
             imageids.add(imageid)
         self.set_images(imagesdir, sorted(imageids))
 
     def imgkey(self, imgid):
-        return self.imgrefs[imgid].as_tag if imgid in self.imgrefs else "zzzz"+imgid
+        res = self.imgrefs[imgid].astag() if imgid in self.imgrefs else "zzzz"+imgid
+        # logger.debug(f"{imgid}: {res}")
+        return res
 
     def set_images(self, fbase, imageids):
+        # logger.debug(f"Setting up for images: {imageids}")
         #children = sorted(self.grid.get_children(),
         #        key = lambda c:(self.grid.child_get_property(c, "top_attach"), self.grid.child_get_property(c, "left-attach")))
         logger.debug(f"Setting up grid for {len(imageids)}")
@@ -241,6 +247,6 @@ class ThumbnailDialog:
             if len(kwds):
                 self.view.set('l_imgKeywords', kwds)
         if self.imagedata:
-            refs = "; ".join(self.imagedata.get(imageid, {}).get('refs', []))
+            refs = "; ".join(self.imagedata["images"].get(imageid, {}).get('refs', []))
             if len(refs):
                 self.view.set('l_imgRefs', refs)

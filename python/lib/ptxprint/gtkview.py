@@ -5278,6 +5278,6 @@ Thank you,
         self.thumbnails.set_search(t)
         
     def onImageRefRangeChanged(self, btn):
-        t = self.get('t_artRefRanges')
+        t = self.get('t_artRefRange')
         self.thumbnails.set_reflist(t)
         
