@@ -812,9 +812,11 @@ class GtkViewModel(ViewModel):
             .blue-label {color: blue; font-weight: bold}
             .red-label {color: red}
             .highlighted {background-color: peachpuff; background: peachpuff}
+            .yellowlighted {background-color: rgb(255,255,102); background: rgb(255,255,102)}
             .attention {background-color: lightblue; background: lightblue}
             .warning {background: lightpink;font-weight: bold; color: darkred}
             combobox.highlighted > box.linked > entry.combo { background-color: peachpuff; background: peachpuff}
+            combobox.yellowlighted > box.linked > entry.combo { background-color: rgb(255,255,102); background: rgb(255,255,102)}
             entry.progress, entry.trough {min-height: 24px} """
         provider = Gtk.CssProvider()
         provider.load_from_data(css.encode("utf-8"))
@@ -4830,21 +4832,16 @@ class GtkViewModel(ViewModel):
         self.set("c_diglot2captions", status)
 
     def button_release_callback(self, widget, event, data=None):
-        # Experimenting with the View/Edit button to see what 
-        # we can do to lock controls etc. (e.g. hold Ctrl to toggle state)
+        # If a user wants to highlight a control (for training or documentation
+        # purposes) using Ctrl to toggle state then we want it to be a 
+        # different color from the peachpuff which carries another meaning.
         if event.get_state() & Gdk.ModifierType.CONTROL_MASK:
             sc = widget.get_style_context()
-            if sc.has_class("highlighted"):
-                sc.remove_class("highlighted")
+            if sc.has_class("yellowlighted"):
+                sc.remove_class("yellowlighted")
             else:
-                sc.add_class("highlighted")
+                sc.add_class("yellowlighted")
             return True
-            # wname = Gtk.Buildable.get_name(widget)
-            # if wname.startswith("c_"):
-                # self.set(wname, not self.get(wname)) # this makes sure that Ctrl+Click doesn't ALSO toggle the value
-            # widget.set_sensitive(False)
-        # else:
-            # print("Ctrl not held")
 
     def grab_notify_event(self, widget, event, data=None):
         pass
