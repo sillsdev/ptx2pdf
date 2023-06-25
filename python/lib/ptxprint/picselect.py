@@ -1,5 +1,6 @@
 import gi
 import os
+import re
 gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -260,12 +261,16 @@ class ThumbnailDialog:
             self.view.set("l_imgIDArtist", imageid)
         if self.langdata:
             desc = self.langdata.get(imageid, {}).get("title", "")
-            if len(desc):
-                self.view.set("l_imgDesc", desc)
+            self.view.set("l_imgDesc", desc if len(desc) else "")
             kwds = ", ".join(self.langdata.get(imageid, {}).get("kwds", []))
-            if len(kwds):
-                self.view.set('l_imgKeywords', kwds)
+            self.view.set('l_imgKeywords', kwds if len(kwds) else "")
+        else:
+            self.view.set("l_imgDesc", "")
+            self.view.set('l_imgKeywords', "")
+
         if self.imagedata:
             refs = "; ".join(self.imagedata["images"].get(imageid, {}).get('refs', []))
-            if len(refs):
-                self.view.set('l_imgRefs', refs)
+            refs = re.sub(":0", "", refs)
+            self.view.set('l_imgRefs', refs if len(refs) else "")
+        else:
+            self.view.set('l_imgRefs', "")
