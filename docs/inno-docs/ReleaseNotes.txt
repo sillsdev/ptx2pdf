@@ -1,9 +1,23 @@
 PTXprint 2.3.22 Release Notes
-22 June 2023
+26 June 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.23 (26 June 2023)
+
+  * Change the manual highlighting color (Ctrl+Click) to Yellow
+  
+  * Prevent old keywords and descriptions carrying over to next picture
+  
+  * Add \marginversemarker{∙\kern 1pt} capability using \zmvm character style
+  
+  * Fix margin verse positions
+  
+  * Set appropriate defaults for lacking style settings
+  
+  * Fix generating and not generating covers
+  
 Bug fixes and Improvements in 2.3.22 (22 June 2023)
 
   * Ensure that localChanges get run on INT book(s)
