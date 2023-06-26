@@ -227,12 +227,12 @@ _fieldmap = {
     'leftmargin':       (fromFloat, toFloat, 0.),
     'rightmargin':      (fromFloat, toFloat, 0.),
     'nonjustifiedfill': (fromFloat, toFloat, 0.25),
-    'linespacing':      (fromFloat, toFloat, 0.),
-    'raise':            (asFloatPts, toFloatPts, None),
+    'linespacing':      (fromFloat, toFloat, 1.),
+    'raise':            (asFloatPts, toFloatPts, 0.),
     'baseline':         (asFloatPts, toFloatPts, None),
     'callerraise':      (asFloatPts, toFloatPts, None),
     'notecallerraise':  (asFloatPts, toFloatPts, None),
-    'fontsize':         (from12, to12, 0),
+    'fontsize':         (from12, to12, 12.),
     'spacebefore':      (from12, to12, 0),
     'spaceafter':       (from12, to12, 0),
     'fontname':         (fromFont, toFont, None),
@@ -284,6 +284,8 @@ class StyleEditor:
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
+        if default is None:
+            default = _fieldmap.get(key.lower(), [None, None, None])[2]
         if mrk not in self.sheet:
             self.sheet[mrk] = Marker()
         res = self.sheet[mrk].get(key, None) if not baseonly else None

@@ -21,7 +21,7 @@
     \t@mptrue\else\t@mpfalse
   \fi
   \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
-        \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\simpleprintv@rse
+        \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\mysimpleprintv@rse
         \ift@mp\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
@@ -31,13 +31,14 @@
     \myh@ngprintv@rse{2}%
     \setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
         \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\box2
-        \ift@mp\else\kern-\AfterVerseSpaceFactor\FontSizeUnit\hfil\fi}}%
+        \ift@mp\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
   \fi
   \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}{\colshiftmode}%
   \cstyle{zmvm}{\marginversemarker}%
 }
 
+\def\mysimpleprintv@rse{\cstyle{v}{\plainv@rse}}
 \let\defaultprintverse=\mymarginpverse
 \let\printverse\defaultprintverse
 \newif\ifversehyphen \versehyphentrue
