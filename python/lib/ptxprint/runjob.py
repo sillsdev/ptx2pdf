@@ -918,6 +918,8 @@ class RunJob:
             return opath
         elif info['finishing/inclsettings']:
             return opath
+        elif info['cover/makecoverpage'] != '%':
+            return opath
         return pdffile
 
     def procpdf(self, outfname, pdffile, info, **kw):
