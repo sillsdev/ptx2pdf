@@ -22,7 +22,7 @@
   \fi
   \ifx\v@rsefrom\v@rseto\setbox2=\vbox{\everypar={}\hbox to \VerseBoxWidth{%
         \ift@mp\hfil\else\kern\AfterVerseSpaceFactor\FontSizeUnit\fi\simpleprintv@rse
-        \ift@mp\else\kern-\AfterVerseSpaceFactor\FontSizeUnit\hfil\fi}}%
+        \ift@mp\kern\AfterVerseSpaceFactor\FontSizeUnit\else\hfil\fi}}%
     \trace{v}{in mymarginpv@rse \v@rseto - \v@rsefrom, side is \ift@mp left\else right\fi, pad to \the\VerseBoxWidth}%
   \else
     \s@tsideskips{v}%
@@ -35,6 +35,7 @@
   \fi
   \trace{v}{verse \t@mp \space width=\the\wd2, height=\the\ht2, depth=\the\dp2, newwidth=\the\VerseBoxWidth, \ift@mp left\else right\fi}%
   \d@marginnote{2}{\t@mp}{v}{\colshiftmode}%
+  \cstyle{zmvm}{\marginversemarker}%
 }
 
 \let\defaultprintverse=\mymarginpverse
@@ -43,7 +44,7 @@
 \def\myh@ngprintv@rse#1{%
     \p@sheof
     \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
-        \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp}\advance\c@untA by 1
+        \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}\advance\c@untA by 1
     \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\else\endash\fi\fi\adornv{\v@rseto}}}%
     \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}%
         \box1}%
