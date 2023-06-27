@@ -1502,7 +1502,7 @@ class TexModel:
                         else:
                             template = cinfo['templates']['exceptIllustrations'].get(lang,
                                 cinfo['templates']['exceptIllustrations']['en'])
-                        cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                        cpystr = template.format(artstr.replace("_", "\u00A0"), exceptPgs)
                         crdts.append("\\{} {}".format(mkr, cpystr))
             if self.dict['notes/ifxrexternalist']:
                 if self.dict['notes/xrlistsource'] == "standard":
