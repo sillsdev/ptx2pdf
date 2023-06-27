@@ -208,7 +208,8 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
             bpdf.private.pages = eps
             for v in eps:
                 v.parent = bpdf.Root.Pages
-            fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
+            if ispdfxa != "Screen":
+                fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
         outpdf = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
