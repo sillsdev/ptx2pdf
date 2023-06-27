@@ -2,8 +2,10 @@
 from ptxprint.utils import refKey, universalopen, print_traceback, nonScriptureBooks
 from threading import Thread
 import configparser
-import regex, re
+import regex, re, logging
 import os, re, random, sys
+
+logger = logging.getLogger(__name__)
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
@@ -357,7 +359,8 @@ class PicInfo(dict):
         self.rmdups()
 
     def _getanchor(self, m, txt, i):
-        t = regex.match(r"\\k\s(.*?)\\k\*([^\\]*(?!\\fig))$", txt, regex.R, endpos=m.start(0))
+        logger.debug(f"{txt[:m.start(0)]=}\n{m.start(0)=}")
+        t = regex.match(r"\\k\s(.*?)\\k\*([^\\]*?|.(?!\\fig))*?$", txt, regex.R|regex.S, endpos=m.start(0))
         if t:
             res = ("", "", t.group(1).replace(" ", ""))
         else:
@@ -371,7 +374,7 @@ class PicInfo(dict):
             # print("usfm2:", lastv, m)
             for i, f in enumerate(m):     # usfm 2
                 if bk == "GLO":
-                    a = self._getanchor(m, txt, i)
+                    a = self._getanchor(f, txt, i)
                 else:
                     a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                 r = "{}{} {}{}{}".format(bk, suffix, *a)
@@ -389,7 +392,7 @@ class PicInfo(dict):
                 if "|" in f.group(2):
                     break
                 if bk == "GLO":
-                    a = self._getanchor(m, txt, i)
+                    a = self._getanchor(f, txt, i)
                 else:
                     a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                 r = "{}{} {}{}{}".format(bk, suffix, *a)
