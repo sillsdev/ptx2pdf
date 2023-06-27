@@ -11,7 +11,7 @@ from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm
 from ptxprint.pdf.fixcol import fixpdffile, compress
-from ptxprint.pdf.pdfsig import make_signatures
+from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdfrw import PdfReader, PdfWriter
 from ptxprint.pdfrw.errors import PdfError
@@ -188,6 +188,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
     if kw.get('burst', False) or kw.get('cover', False):
         inpdf = PdfReader(opath)
         extras = split_pages(inpdf)
+        logger.debug("Bursting: " + " ".join(extras.keys()))
         for k, eps in extras.items():
             bpdfname = pdffile.replace(".pdf", f"_{k}.pdf")
             if k == 'cover':
@@ -200,7 +201,8 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
             logger.debug(f"Pulling out {k} into {bpdfname} from {opath}")
             bpdf = PdfReader(source=inpdf.source, trailer=inpdf)
             bpdf.Root = bpdf.Root.copy()
-            bpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
+            bpdf.Root.Pages = buildPagesTree(eps)
+            # bpdf.Root.Pages = IndirectPdfDict(Type=PdfName("Pages"), Count=PdfObject(len(eps)), Kids=PdfArray(eps))
             bpdf.Root.Names = None
             bpdf.Root.Outlines = None
             bpdf.private.pages = eps
