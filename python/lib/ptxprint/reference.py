@@ -200,6 +200,16 @@ class Reference:
         coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
         return self.vrs[books[self.book]][0] + coffset + self.verse
 
+    def numchaps(self):
+        if self.vrs is None:
+            self.loadvrs()
+        return len(self.vrs[books[self.book]])
+
+    def numverses(self):
+        if self.vrs is None:
+            self.loadvrs()
+        return self.vrs[books[self.book]][self.chap]
+
     @classmethod
     def fromtag(cls, s, remainder=False):
         if s[0] in "0123456789":

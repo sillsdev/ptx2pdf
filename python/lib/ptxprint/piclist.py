@@ -356,33 +356,47 @@ class PicInfo(dict):
             inf.close()
         self.rmdups()
 
+    def _getanchor(self, m, txt, i):
+        t = regex.match(r"\\k\s(.*?)\\k\*([^\\]*(?!\\fig))$", txt, regex.R, endpos=m.start(0))
+        if t:
+            res = ("", "", t.group(1).replace(" ", ""))
+        else:
+            res = ("p", "", "{:03d}".format(i+1))
+        return res
+
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
-        m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt)
+        m = list(regex.finditer(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
+                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt))
         if len(m):
             # print("usfm2:", lastv, m)
             for i, f in enumerate(m):     # usfm 2
-                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                if bk == "GLO":
+                    a = self._getanchor(m, txt, i)
+                else:
+                    a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                 r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'anchor': r, 'caption':f[5].strip()}
+                pic = {'anchor': r, 'caption':f.group(6).strip()}
                 key = self.newkey(suffix)
                 self[key] = pic
-                for i, v in enumerate(f):
+                for i, v in enumerate(f.groups()):
                     pic[posparms[i]] = v
                 self._fixPicinfo(pic)
-        m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt)
+        m = list(regex.finditer(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt))
         if len(m):
             # print("usfm3:", lastv, m)
             for i, f in enumerate(m):     # usfm 3
                 # lastv = f[0] or lastv
-                if "|" in f[1]:
+                if "|" in f.group(2):
                     break
-                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                if bk == "GLO":
+                    a = self._getanchor(m, txt, i)
+                else:
+                    a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                 r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'caption':f[0].strip(), 'anchor': r}
+                pic = {'caption':f.group(1).strip(), 'anchor': r}
                 key = self.newkey(suffix)
                 self[key] = pic
-                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
+                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
                 for l in labelParams:
                     k,v = l.split("=")
                     pic[k.strip()] = v.strip('"')
