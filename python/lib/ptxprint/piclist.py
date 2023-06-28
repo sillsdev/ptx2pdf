@@ -633,8 +633,12 @@ class PicInfo(dict):
                 continue
             if bk is not None and not v['anchor'].startswith(bk):
                 continue
-            return v['anchor']
-        return None
+            res = v['anchor']
+            break
+        else:
+            res = None
+        logger.debug(f"getAnchor({src}, {bk}) -> {res}")
+        return res
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)

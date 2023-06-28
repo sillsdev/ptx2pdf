@@ -128,6 +128,7 @@ class ViewModel:
         self.artpgs = None
         self.spine = 0
         self.periphs = {}
+        self.digSuffix = None
 
         # private to this implementation
         self.dict = {}
@@ -745,10 +746,11 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            self.diglotView = self.createDiglotView()
+            self.diglotView = self.createDiglotView("R")
         else:
             self.setPrintBtnStatus(2)
             self.diglotView = None
+            self.digSuffix = None
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -1246,6 +1248,7 @@ class ViewModel:
             res = self.picinfos.load_files(self)
         else:
             res = self.picinfos.load_files(self, suffix="B")
+            self.diglotView.picinfos = self.picinfos
 #            digpicinfos = PicInfo(self.diglotView)
 #            if digpicinfos.load_files(self.diglotView, suffix="R"):
 #                mrgCptn = self.get("c_diglot2captions", False)
@@ -1689,7 +1692,7 @@ class ViewModel:
         res.update(ptres)
         return (res, cfgchanges, tmpfiles)
 
-    def createDiglotView(self):
+    def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
@@ -1701,10 +1704,13 @@ class ViewModel:
             digview.setPrjid(prjid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
+            digview.picinfos = self.picinfos
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
         else:
             digview.isDiglot = True
+            digview.digSuffix = suffix
+            self.digSuffix = "L"
         return digview
 
     def createArchive(self, filename=None):

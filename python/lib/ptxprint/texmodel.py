@@ -1178,11 +1178,12 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
             def figtozfiga(m):
-                a = self.printer.picinfos.getAnchor(m.group(1), bk)
+                a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
                 if a is None:
                     return ""
                 ref = re.sub(r"^\S+\s+", r"", a)
                 return "\\zfiga|{}\\*".format(ref)
+            logger.debug(self.printer.picinfos)
             self.localChanges.append((None, regex.compile(r'\\fig.*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
             self.localChanges.append((None, regex.compile(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 

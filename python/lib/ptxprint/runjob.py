@@ -965,7 +965,7 @@ class RunJob:
                     secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder, digtexmodel=None):
-        logger.debug("Gathering illustrations")
+        logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
         tmpPicpath = os.path.join(self.printer.working_dir, "tmpPics")
