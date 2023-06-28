@@ -42,10 +42,10 @@
     \ifsk@pping\egroup\fi%
   \fi%
   \endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi%
-  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax\else
+  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax\else%
     \message{Malformed input near \c@rref: periph called while there was a pending chapter number (\csname ch@pter\g@tdstat waiting\endcsname)}%
-    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
-  \fi
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax%
+  \fi%
   \ifn@npublishable \message{Warning! periph is set nonpublishable (hidden) in general. This may be a mistake!}%
     \egroup%
   \fi%
