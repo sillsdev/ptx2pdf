@@ -301,21 +301,23 @@ class PicInfo(dict):
         self.inthread = False
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
-        p = vals['pgpos']
-        if all(x in "apw" for x in p):
-            vals['media'] = p
-            del vals['pgpos']
-        elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
-            vals['media'] = 'p'
-        else:
-            vals['loc'] = p
-            del vals['pgpos']
-        p = vals['size']
-        m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
-        if m:
-            vals['size'] = m[1]
-            if m[2] is not None and len(m[2]):
-                vals['scale'] = m[2]
+        if 'pgpos' in vals:
+            p = vals['pgpos']
+            if all(x in "apw" for x in p):
+                vals['media'] = p
+                del vals['pgpos']
+            elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
+                vals['media'] = 'p'
+            else:
+                vals['loc'] = p
+                del vals['pgpos']
+        if 'size' in vals:
+            p = vals['size']
+            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+            if m:
+                vals['size'] = m[1]
+                if m[2] is not None and len(m[2]):
+                    vals['scale'] = m[2]
         return vals
 
     def newkey(self, suffix=""):
@@ -360,31 +362,32 @@ class PicInfo(dict):
         self.rmdups()
 
     def _getanchor(self, m, txt, i):
-        logger.debug(f"{txt[:m.start(0)]=}\n{m.start(0)=}")
-        t = regex.match(r"\\k\s(.*?)\\k\*([^\\]*?|.(?!\\fig))*?$", txt, regex.R|regex.S, endpos=m.start(0))
+        t = regex.match(r"\\k\s(.*?)\\k\*.*?$", txt, regex.R|regex.S, endpos=m.start(0))
+        f = regex.match(r"\\fig.*?$", txt, regex.R|regex.S, endpos=m.start(0))
         if t:
-            res = ("", "", t.group(1).replace(" ", ""))
+            if f is None or t.start(0) > f.start(0):
+                res = (t.group(1).replace(" ", ""), "", "")
+            else:
+                res = (t.group(1).replace(" ", ""), "", "{:03d}".format(i+1))
         else:
             res = ("p", "", "{:03d}".format(i+1))
         return res
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
-        logger.debug(f"Reading pics for {bk} + {suffix}")
-        for a in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
+        for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
                   (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
-            m = list(regex.finditer(a[0], txt))
+            m = list(regex.finditer(b[0], txt))
             if len(m):
                 for i, f in enumerate(m):     # usfm 2
                     if bk == "GLO":
-                        a = self._getanchor(m, txt, i)
+                        a = self._getanchor(f, txt, i)
                     else:
                         a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                     r = "{}{} {}{}{}".format(bk, suffix, *a)
-                    pic = {'anchor': r, 'caption':f.group(1 if a[1] else 6).strip()}
-                    logger.debug(f"Found '{r}'")
+                    pic = {'anchor': r, 'caption':f.group(1 if b[1] else 6).strip()}
                     key = self.newkey(suffix)
                     self[key] = pic
-                    if a[1]:    # usfm 3
+                    if b[1]:    # usfm 3
                         labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
                         for l in labelParams:
                             k,v = l.split("=")
@@ -393,8 +396,8 @@ class PicInfo(dict):
                             default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
                             pic['media'] = 'paw' if default is None else default
                     else:       # usfm 2
-                        for i, v in enumerate(f.groups()):
-                            pic[posparms[i]] = v
+                        for j, v in enumerate(f.groups()):
+                            pic[posparms[j]] = v
                         self._fixPicinfo(pic)
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
