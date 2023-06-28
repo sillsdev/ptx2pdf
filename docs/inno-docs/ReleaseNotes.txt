@@ -1,9 +1,21 @@
 PTXprint 2.3.24 Release Notes
-27 June 2023
+28 June 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.25 (28 June 2023)
+
+  * Have base and diglot views share the same picinfos (major change)
+  
+  * Add logging to picture extraction
+  
+  * Fix keyword finding when parsing figs
+  
+  * One command to set up all 6 header positions
+  
+  * Repair footnotes on chapter numbers
+  
 Bug fixes and Improvements in 2.3.24 (27 June 2023)
 
   * Fix up pdf pages tree hierarchy in burst out insertions
