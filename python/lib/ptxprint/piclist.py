@@ -4,6 +4,7 @@ from threading import Thread
 import configparser
 import regex, re, logging
 import os, re, random, sys
+import logging
 
 logger = logging.getLogger(__name__)
 
@@ -368,44 +369,33 @@ class PicInfo(dict):
         return res
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
-        m = list(regex.finditer(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt))
-        if len(m):
-            # print("usfm2:", lastv, m)
-            for i, f in enumerate(m):     # usfm 2
-                if bk == "GLO":
-                    a = self._getanchor(f, txt, i)
-                else:
-                    a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'anchor': r, 'caption':f.group(6).strip()}
-                key = self.newkey(suffix)
-                self[key] = pic
-                for i, v in enumerate(f.groups()):
-                    pic[posparms[i]] = v
-                self._fixPicinfo(pic)
-        m = list(regex.finditer(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt))
-        if len(m):
-            # print("usfm3:", lastv, m)
-            for i, f in enumerate(m):     # usfm 3
-                # lastv = f[0] or lastv
-                if "|" in f.group(2):
-                    break
-                if bk == "GLO":
-                    a = self._getanchor(f, txt, i)
-                else:
-                    a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'caption':f.group(1).strip(), 'anchor': r}
-                key = self.newkey(suffix)
-                self[key] = pic
-                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
-                for l in labelParams:
-                    k,v = l.split("=")
-                    pic[k.strip()] = v.strip('"')
-                if 'media' not in pic:
-                    default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
-                    pic['media'] = 'paw' if default is None else default
+        logger.debug(f"Reading pics for {bk} + {suffix}")
+        for a in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
+                  (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
+            m = list(regex.finditer(a[0], txt))
+            if len(m):
+                for i, f in enumerate(m):     # usfm 2
+                    if bk == "GLO":
+                        a = self._getanchor(m, txt, i)
+                    else:
+                        a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                    r = "{}{} {}{}{}".format(bk, suffix, *a)
+                    pic = {'anchor': r, 'caption':f.group(1 if a[1] else 6).strip()}
+                    logger.debug(f"Found '{r}'")
+                    key = self.newkey(suffix)
+                    self[key] = pic
+                    if a[1]:    # usfm 3
+                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
+                        for l in labelParams:
+                            k,v = l.split("=")
+                            pic[k.strip()] = v.strip('"')
+                        if 'media' not in pic:
+                            default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+                            pic['media'] = 'paw' if default is None else default
+                    else:       # usfm 2
+                        for i, v in enumerate(f.groups()):
+                            pic[posparms[i]] = v
+                        self._fixPicinfo(pic)
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
