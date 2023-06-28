@@ -163,6 +163,9 @@
 \def\@wrap{}
 \def\m@kenote#1#2#3#4{\let\@sf\empty
   % text is read later
+  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\undefined
+    \x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+  \fi
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
@@ -170,8 +173,9 @@
       \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
       \else\edef\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
-        \else
-          \everypar={}\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+        \else % there is a chapter number waiting
+          \trace{f}{Note will be saved for chapter number}%
+          \everypar={}\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
           \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
         \fi % output caller
       \fi
