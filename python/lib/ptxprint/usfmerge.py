@@ -124,13 +124,14 @@ _canonical_order={
     
 
 class Chunk(list):
-    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0):
+    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0,syncp=''):
         super(Chunk, self).__init__(a)
         self.type = mode
         self.chap = chap
         self.verse = verse
         self.end = verse
         self.pnum = pnum
+        self.syncp = syncp
         self.hasVerse = False
         if mode in (ChunkType.MIDVERSEPAR, ChunkType.VERSE, ChunkType.PARVERSE):
             self.verseText = True
@@ -139,7 +140,7 @@ class Chunk(list):
         self.labelled = False
         self.score = None
 
-    def label(self, chap, verse, end, pnum):
+    def label(self, chap, verse, end, pnum, syncp):
         if self.labelled:
             self.end = end
             return
@@ -147,11 +148,12 @@ class Chunk(list):
         self.verse = verse
         self.end = end
         self.pnum = pnum
+        self.syncp = syncp
         self.labelled = True
 
     @property
     def position(self):
-        return((self.chap,self.verse,_canonical_order[self.type] if self.type in _canonical_order else 9, self.pnum, self.type.name if self.type.name != 'VERSE' else '@VERSE'))
+        return((self.chap,self.verse,self.syncp, _canonical_order[self.type] if self.type in _canonical_order else 9, self.pnum, self.type.name if self.type.name != 'VERSE' else '@VERSE'))
         #return("%03d:%03d:%04d:%s" % (self.chap,self.verse,self.pnum,self.type.name))
 
     @property
@@ -164,7 +166,7 @@ class Chunk(list):
         #return "".join(repr(x) for x in self)
         #return "".join(sfm.generate(x) for x in self)
         return sfm.generate(self)
-_headingidx=4
+_headingidx=5
 _validatedhpi=False
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
@@ -206,7 +208,7 @@ class Collector:
         self.waspar = False # Was the previous item an empty paragraph mark of some type?
         self.waschap = False # Was the previous item a chapter number?
         self.counts = {}
-        self.scores = {ChunkType.USERSYNC.value:100} # a usersync is always a sync-point
+        self.scores = {} 
         self.currChunk = None
         self.mode = ChunkType.INTRO
         self.oldmode= None
@@ -366,6 +368,20 @@ class Collector:
                 logger.log(7, f"Para:{c.name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if issync(c):
                 newchunk = True
+                try:
+                  self.syncp=str(c[0])
+                  self.syncp=re.sub(r"(?s)\\\*.*$","",self.syncp)
+                except (ValueError, TypeError):
+                  self.syncp='@'
+                logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
+                M=re.search(r"\|v(\d+)(\D*)$",self.syncp)
+                if (M is not None):
+                  Mv=M.group(1)
+                  Ms=M.group(2)
+                  logger.log(7,f"RE: {M}, Match: '{Mv}.{Ms}'")
+                  if Mv and len(Mv)>0:
+                    self.verse=int(Mv)
+                    self.end=int(Mv)
             if isverse(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -384,7 +400,7 @@ class Collector:
                 if MergeF.ChunkOnVerses in settings:
                     newchunk = True
                 else:
-                    self.currChunk.label(self.chap, self.verse, self.end, 0)
+                    self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                 logger.log(8, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if newchunk:
                 self.oldmode=self.mode
@@ -392,8 +408,10 @@ class Collector:
                 if MergeF.ChunkOnVerses in settings:
                     if isverse(c):
                         currChunk.hasVerse = True # By definition!
-                        self.currChunk.label(self.chap, self.verse, self.end, 0)
+                        self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                         self.currChunk.hasVerse = True
+                if issync(c):
+                    self.currChunk.label(self.chap, self.verse, self.end, 0,self.syncp)
                 #elif (currChunk.type==ChunkType.BODY and ispara(c) and self.oldmode == ChunkType.MIDVERSEPAR): 
                     #currChunk.type=ChunkType.MIDVERSEPAR
             if currChunk is not None:
