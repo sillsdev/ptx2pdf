@@ -578,8 +578,8 @@ class StyleEditorView(StyleEditor):
             value = val
 
         if not key.startswith("_"):
-            if key == "Italic":
-                import pdb; pdb.set_trace()
+            # if key == "Italic":
+                # import pdb; pdb.set_trace()
             super(self.__class__, self).setval(self.marker, key, value)
             if key in ("FontSize", "FontName", "Bold", "Italic"):
                 fref = self.getval(self.marker, 'FontName')
