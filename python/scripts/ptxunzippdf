@@ -1,0 +1,18 @@
+#!/usr/bin/python3
+
+import argparse, os
+from ptxprint.utils import getPDFconfig
+from zipfile import ZipFile, ZIP_DEFLATED
+from io import BytesIO
+
+parser = argparse.ArgumentParser()
+parser.add_argument("infile", help="Input PDF")
+parser.add_argument("-o","--outdir", default=".", help="Output directory [.]")
+args = parser.parse_args()
+
+os.makedirs(args.outdir, exist_ok=True)
+confstream = getPDFconfig(args.infile)
+zipinf = BytesIO(confstream)
+zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
+zipdata.extractall(args.outdir)
+

@@ -3560,7 +3560,7 @@ class GtkViewModel(ViewModel):
                 # fname = self.get("lb_impSource_pdf")
                 fname = str(getattr(self, "impSourcePDF", None))
                 if fname.endswith(".pdf"):
-                    confstream = self.getPDFconfig(fname)
+                    confstream = getPDFconfig(fname)
                     zipinf = BytesIO(confstream)
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
                 elif os.path.exists(fname):
@@ -3599,7 +3599,7 @@ class GtkViewModel(ViewModel):
             self.set("lb_impSource_pdf", "")
             return
 
-        zipdata = self.getPDFconfig(pdfORzipFile[0])
+        zipdata = getPDFconfig(pdfORzipFile[0])
         if zipdata is None:
             self.doError(_("PDF/ZIP Import Config Error"), 
                     secondary=_("Cannot find any settings to import from the selected file.\n\n") + \

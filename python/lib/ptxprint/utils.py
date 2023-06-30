@@ -2,6 +2,8 @@ import gettext
 import locale, codecs, traceback
 import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
+from ptxprint.pdfrw.pdfreader import PdfReader
+from ptxprint.pdfrw.uncompress import uncompress
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
@@ -250,6 +252,23 @@ def universalopen(fname, rewrite=False, cp=65001):
 
 def print_traceback(f=None):
     traceback.print_stack(f=f)
+
+def getPDFconfig(fname):
+    trailer = PdfReader(fname)
+    p = trailer.Root.PieceInfo
+    if p is None:
+        return None
+    pp = p.ptxprint
+    if pp is None:
+        return None
+    pd = pp.Private
+    if not isinstance(pd, bytes):
+        uncompress([pd], leave_raw=True)
+        try:
+            return pd.stream
+        except AttributeError:
+            return None
+    return None
 
 if sys.platform == "linux":
 

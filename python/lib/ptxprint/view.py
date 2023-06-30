@@ -13,8 +13,6 @@ from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
-from ptxprint.pdfrw.pdfreader import PdfReader
-from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
@@ -1845,23 +1843,6 @@ set stack_size=32768""".format(self.configName())
                     res.write(fpath, f if d is None else os.path.join(d, f))
         return res
 
-    def getPDFconfig(self, fname):
-        trailer = PdfReader(fname)
-        p = trailer.Root.PieceInfo
-        if p is None:
-            return None
-        pp = p.ptxprint
-        if pp is None:
-            return None
-        pd = pp.Private
-        if not isinstance(pd, bytes):
-            uncompress([pd], leave_raw=True)
-            try:
-                return pd.stream
-            except AttributeError:
-                return None
-        return None
-        
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
         inf = BytesIO(zipdata)
         zf = ZipFile(inf, compression=ZIP_DEFLATED)
