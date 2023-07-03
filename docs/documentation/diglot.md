@@ -55,6 +55,10 @@ Note that this  must occur before any USFM files or stylesheets are loaded.
 By default the 'scores' merge mechanism synchronises on verse and paragraph number. I.e. the first mid-verse paragraph in verse 2 on one side should be aligned with the first mid-verse paragraph in verse 2 on the other side. This looks beautiful when all is working but becomes problematic when the paragraphing does not agree.  One option is to disable forming chunks on paragraphs, the other is to insert manual 'hints' with`\zcolsync|id\*`  These hints should be in both files and have the same id.  If using multiple ids within a given verse, they  should occur in their sorted order (ie. A before Z).
 
 If the id is of form 'v2' or 'v23a'  (starting with v, a number, and an optional letter sequence) then the number overrides the current verse number. This is largely untested, but may help with versification. 
+Note that it is *not* the name of \zcolsync that helps with merging, but the 'diglotsync' text-property in the stylesheet.
+```
+\TextProperties  nonpublishable diglotsync
+```
 
 ## Diglot-specific configuration items to go in custom stylesheets:
 
