@@ -10,7 +10,7 @@ from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm
-from ptxprint.pdf.fixcol import fixpdffile, compress
+from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
 from ptxprint.pdf.pdfsanitise import split_pages
 from ptxprint.pdfrw import PdfReader, PdfWriter
@@ -208,7 +208,9 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
             bpdf.private.pages = eps
             for v in eps:
                 v.parent = bpdf.Root.Pages
-            if ispdfxa != "Screen":
+            if ispdfxa == "Screen":
+                outpdf(bpdf, bpdfname)
+            else:
                 fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
         outpdf = PdfWriter(None, trailer=inpdf)
     colour = None
