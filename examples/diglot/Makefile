@@ -42,6 +42,17 @@ mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl
 	$(SCRIPTDIR)/diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 
+midVmerged.usfm:$(DIR)/ptx2pdf.sty  midV1.usfm midV2.usfm $(SCRIPTDIR)/usfmerge $(DIR)/ptx2pdf.sty $(DIR)/../python/lib/ptxprint/usfmerge.py 
+	$(SCRIPTDIR)/usfmerge --debug -s $(DIR)/ptx2pdf.sty  -m scores midV1.usfm midV2.usfm -o midVmerged.usfm 2> midVmerge.log
+automidV:
+	while inotifywait -e close_write  . $(DIR)/../python/lib/ptxprint ; do sleep 0.5 ;  make midVmerged.usfm midV.pdf ; done
+midV.pdf: midV.tex midVmerged.usfm 
+
+noVmerged.usfm:$(DIR)/ptx2pdf.sty  noV1.usfm noV2.usfm $(SCRIPTDIR)/usfmerge $(DIR)/ptx2pdf.sty $(DIR)/../python/lib/ptxprint/usfmerge.py 
+	$(SCRIPTDIR)/usfmerge --debug -s $(DIR)/ptx2pdf.sty  noV1.usfm noV2.usfm -o noVmerged.usfm 2> noVmerge.log
+
+autonoV:
+	while inotifywait -e close_write  . $(DIR)/../python/lib/ptxprint ; do sleep 0.5 ;  make noVmerged.usfm ; done
 autohist:	
 	while inotifywait -e close_write . $(DIR) ; do sleep 1 ; make history.pdf ; done </dev/null
 autogal:	

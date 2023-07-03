@@ -1,0 +1,28 @@
+\id N 
+\h The history of diglot
+\c 1
+\p
+ This is the begining of the story of diglot.
+ First Knuth made \TeX, then Kew made \XeTeX\ from \TeX.
+ \XeTeX\ had a child called paratext2, and paratext2 had
+a child called ptxplus.
+\s The birth of diglot 
+\p
+ David took ptxplus and tweaked it in various places and so diglot came into being, and it lived in dark obscurity for many years, sometimes crafting text, sometimes creating strange things.
+\p
+\p 
+\zcolsync|1\*
+ Then Mark and Martin created  of a beautiful thing called ptxprint  using Something Completely Different called python, and asked David to possibly make the diglot code fit into it.
+ And David had time, and patched some bugs in diglot and also in ptxprint. And so it was that diglot ventured out into the world. 
+
+\zcolsync|2\*
+\p
+ After meeting a lot of bugs that were seemed increasingly complex to track
+down and fix, David (encouraged by Martin) delved deep into the insides of
+diglot and re-wrote the 'text collection' part significantly.  
+ Then, meeting
+yet more bugs, he went on to rip out the old horrendously complex
+column-filling/refilling/side swapping and layout portions of diglot.
+ Triglot (or more) is not yet possible, but it's now almost within touching
+distance.
+

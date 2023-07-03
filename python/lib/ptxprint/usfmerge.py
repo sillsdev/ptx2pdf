@@ -120,11 +120,12 @@ _canonical_order={
     ChunkType.MIDVERSEPAR:7,
     ChunkType.HEADING:7,
     ChunkType.USERSYNC:7,
+    ChunkType.BODY:7,
 }
     
 
 class Chunk(list):
-    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0,syncp=''):
+    def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
         super(Chunk, self).__init__(a)
         self.type = mode
         self.chap = chap
@@ -153,7 +154,7 @@ class Chunk(list):
 
     @property
     def position(self):
-        return((self.chap,self.verse,self.syncp, _canonical_order[self.type] if self.type in _canonical_order else 9, self.pnum, self.type.name if self.type.name != 'VERSE' else '@VERSE'))
+        return((self.chap,self.verse, _canonical_order[self.type] if self.type in _canonical_order else 9, self.syncp, self.pnum, self.type.name if self.type.name != 'VERSE' else '@VERSE'))
         #return("%03d:%03d:%04d:%s" % (self.chap,self.verse,self.pnum,self.type.name))
 
     @property
@@ -167,7 +168,7 @@ class Chunk(list):
         #return "".join(sfm.generate(x) for x in self)
         return sfm.generate(self)
 _headingidx=5
-_validatedhpi=False
+_validatedhpi=False # Has the heading(position)idx above been validated?
 
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
@@ -487,8 +488,9 @@ class Collector:
                         
 
         # Merge pre-verse paragraph and verses.
-        for i in range(1, len(self.acc) - 1):
+        for i in range(1, len(self.acc) ):
             if self.acc[i].type == ChunkType.PARVERSE:
+                logger.log(7,f"Merge.5 {self.colkey}? {self.acc[i].position} prev:{self.acc[i-1].type}")
                 if  self.acc[i-1].type in (ChunkType.PREVERSEPAR, ChunkType.NB):
                     # A PARVERSE gives its address and content up to the preceeding PREVERSEPAR, as the two may not be seperated
                     if bi is None:
@@ -583,7 +585,10 @@ class Collector:
         self.acc = [x for x in self.acc if not getattr(x, 'deleteme', False)]
         logger.debug("Chunks after reordering: {}".format(len(self.acc)))
         for i in range(0, len(self.acc)):
-            logger.log(7, f"{i}, {self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-'}, {self.acc[i].type=}, {self.acc[i]=}")
+            if isinstance(self.acc[i],Chunk):
+              logger.log(7, f"r: {i}, {self.acc[i].ident}//{self.acc[i].position}, {self.acc[i].type=}, {self.acc[i]=}")
+            else:
+              logger.log(7, f"r: {i}, '-//-', {self.acc[i].type=}, {self.acc[i]=}")
     def score(self,results={}):
         """Calculate the scores for each chunk, returning an array of non-zero scores (potential break points)
         If the results parameter is given, then the return value is a summation
@@ -841,7 +846,7 @@ def alignScores(*columns):
         logger.log(7, f"CHUNK: {posn}, {merged[posn] if posn in merged else '-'}")
         for c,i in colkeys.items():
             nxt=coln[c].getofs(posn) # Get the next offset.
-            logger.log(7, f"{c=}, {ofs[c]=} ,{nxt=}, {lim[c]=}")
+            logger.log(7, f"{c=}, {ofs[c]=} ,{posn=}, {nxt=}, {lim[c]=}")
             if (ofs[c]==nxt and nxt<lim[c]):
                 logger.log(7, f"not yet: {nxt} = {acc[c][nxt].position}")
             if (nxt>lim[c]):

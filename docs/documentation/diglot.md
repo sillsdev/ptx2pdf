@@ -1,13 +1,14 @@
 # Diglot options and settings (XeTeX macros)
 
 ## General overview
-The diglot options allow for typesetting two (or more) versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
+The diglot options allow for typesetting two (or more) versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two pieces of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
 The preprocessing step picks `pairs' (or groups) of things that ought to be aligned, and puts these into what we can call a *chunk*. These
-pairs/tripples/quadruples  might be verses, paragraphs at the same  place, and so on. 
+pairs/groups might be verses, paragraphs at the same  place, and so on. 
 At the moment this step is done by a python program, one of 2 perl programs,  or by hand for small sections of text. The python program integrates better 
 with ptxprint, one of the perl programs is considerably older and both have more powerful/complex options.
 
 ![History of diglot](../../examples/diglot/history.png  "An example.")
+
 
 ## The structure of a diglot-friendly usfm file.
 The preprocessing step "shuffles" the two files together, interspersing them with instructions to switch sides. (For as-yet-uncertain reasons, these instructions seem to work much better if  preceeded by \p). There are four instructions:  ```\lefttext``` ```\righttext``` ```\nolefttext``` ```\norighttext```. The ```\nolefttext``` specifies that the text that follows ought to begin below any text remaining in the the left-hand column, and start a chunk that will not have any corresponding left-hand text.   A sample of the  file that produced the above image is given below. 
@@ -49,6 +50,12 @@ Additional columns should be defined in the controlling `.tex` file:
 ```
 Note that this  must occur before any USFM files or stylesheets are loaded.
 
+
+## Hints to the merging step
+By default the 'scores' merge mechanism synchronises on verse and paragraph number. I.e. the first mid-verse paragraph in verse 2 on one side should be aligned with the first mid-verse paragraph in verse 2 on the other side. This looks beautiful when all is working but becomes problematic when the paragraphing does not agree.  One option is to disable forming chunks on paragraphs, the other is to insert manual 'hints' with`\zcolsync|id\*`  These hints should be in both files and have the same id.  If using multiple ids within a given verse, they  should occur in their sorted order (ie. A before Z).
+
+If the id is of form 'v2' or 'v23a'  (starting with v, a number, and an optional letter sequence) then the number overrides the current verse number. This is largely untested, but may help with versification. 
+
 ## Diglot-specific configuration items to go in custom stylesheets:
 
 Any ```\Marker```  can (theortically) be generic (e.g. 'p') or apply to a single column only ('pL' or 'pR' for left and right versions of 'p').
@@ -72,6 +79,11 @@ The left column will use:
 and the right column will use:
 	Gentium (default) at 12pt (column specific).
 
+
+### stylesheetL and stylesheetR
+The PTXprint user interface code loads the primary and secondary styling with
+\stylesheetL and \stylesheetR respectively. This means that all styling applied
+via the user interface is side-specific (as `\Marker pL` above). Thus introductory material, etc. should be prefaced with `\zglot|L\*` etc. to specify which 
 
 
 ## Configuration items to go in foo-setup.tex (or main .tex file)
