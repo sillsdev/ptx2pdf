@@ -25,8 +25,8 @@ diglot and re-wrote the 'text collection' part significantly.
  Then, meeting
 yet more bugs, he went on to rip out the old horrendously complex
 column-filling/refilling/side swapping and layout portions of diglot.
-\p
-\zcolsync|p2\*
+\zcolsync|p3\*
+\q1 
  Triglot (or more) is not yet possible with the user-interface, but it's now almost within touching
 distance.
 

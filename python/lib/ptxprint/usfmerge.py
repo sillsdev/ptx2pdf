@@ -40,6 +40,7 @@ class ChunkType(Enum):
     CHAPTERHEAD = 17
     PREVERSEHEAD = 18
     USERSYNC = 19
+    PARUSERSYNC =20 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
@@ -60,7 +61,8 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.CHAPTERPAR :"A PREVERSEPAR that is following a chapter - not normally a good sync point!",
     ChunkType.CHAPTERHEAD:"A Heading that is (was) following a chapter (and sometimes also the chapter number)",
     ChunkType.PREVERSEHEAD:"A Heading that is just before PREVERSEPAR",
-    ChunkType.USERSYNC:"A preprocessing-inserted / manual sync point."
+    ChunkType.USERSYNC:"A preprocessing-inserted / manual sync point.",
+    ChunkType.PARUSERSYNC:"A preprocessing-inserted / manual sync point, just after starting a paragraph."
 }
 _chunkClass_map = {
 ChunkType.DEFSCORE:'',
@@ -82,7 +84,8 @@ ChunkType.NBCHAPTER:'CHAPTER',
 ChunkType.CHAPTERPAR:'BODY',
 ChunkType.CHAPTERHEAD:'CHAPTER',
 ChunkType.PREVERSEHEAD:'HEADING',
-ChunkType.USERSYNC:'BODY'
+ChunkType.USERSYNC:'BODY',
+ChunkType.PARUSERSYNC:'BODY'
 }
 
 splitpoints={
@@ -128,6 +131,7 @@ class Chunk(list):
     def __init__(self, *a, mode=None, chap=0, verse=0, end=0, pnum=0,syncp='~'):
         super(Chunk, self).__init__(a)
         self.type = mode
+        self.otype = mode
         self.chap = chap
         self.verse = verse
         self.end = verse
@@ -144,7 +148,15 @@ class Chunk(list):
     def label(self, chap, verse, end, pnum, syncp):
         if self.labelled:
             self.end = end
+            if syncp != '':
+              self.syncp=syncp
             return
+        if syncp != '':
+          m=re.match(r"\|p(\d+)$",syncp)
+          if m:
+            pnum=int(m.group(1))-1
+            syncp="~"
+            self.type=ChunkType.MIDVERSEPAR
         self.chap = chap
         self.verse = verse
         self.end = end
@@ -283,6 +295,9 @@ class Collector:
                 mode = ChunkType.TABLE
             elif sfm.text_properties('diglotsync')(c):
                 mode = ChunkType.USERSYNC
+                if (self.waspar):
+                  mode = ChunkType.PARUSERSYNC
+      
             elif c.name in nestedparas:
                 mode = ChunkType.NPARA
             elif c.name == "v":
@@ -317,6 +332,7 @@ class Collector:
                                 mode = ChunkType.MIDVERSEPAR
                     logger.log(9, f"Conclusion: bodypar type is {mode}")
                         
+            pn=self.pnum
             currChunk = Chunk(mode=mode, chap=self.chap, verse=self.verse, end=self.end, pnum=self.pnum(mode))
             if not _validatedhpi:
                 p=currChunk.position
@@ -508,6 +524,19 @@ class Collector:
                     logger.debug(f"Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: {self.acc[i-1].type} {self.acc[i].type}")
                     logger.debug(f"{self.acc[i-1]=}, {self.acc[i]=}")
                     #raise ValueError("Caught unexpected situtuation. Expected (PREVERSEPAR,PARVERSE), got: %,%" %  (self.acc[i-1].type, self.acc[i].type))
+            elif self.acc[i].otype == ChunkType.PARUSERSYNC:
+                if bi is None:
+                    bi=i-1
+                logger.log(7, f"Merge.5b: {self.acc[bi].position} , {self.acc[i].position}?")
+                self.acc[i].verse=self.acc[i].verse
+                self.acc[i].pnum=self.acc[i].pnum
+                self.acc[i].insert(0,self.acc[bi][0])
+                #self.acc[bi].syncp=self.acc[i].syncp
+                #self.acc[bi].type=ChunkType.USERSYNC
+                #self.acc[bi].extend(self.acc[i])
+                self.acc[bi].deleteme = True
+                logger.log(7, f"Merging.5b: {self.acc[bi].position} , {self.acc[i].position}?")
+                logger.debug(f"Merged.5b: {'deleteme' in self.acc[bi]}, {self.acc[i]=} {self.acc[bi]=}")
             else:
                 bi=None
         # make headings in the intro into intro
@@ -609,7 +638,7 @@ class Collector:
                 logger.debug("%s(%s)  + %d = %d" % (pos,self.acc[i][0].name, scval, results[pos]))
             else:
                 results[pos]=scval
-                logger.debug(f"{pos} = {scval}")
+                logger.debug(f"{pos}({self.acc[i][0].name}) = {scval}")
         return results
     def getofs(self,pos, incremental=True):
         """Return the index into acc[] of the (end-point) pos. If an exact match for pos cannot be found, return the index of the next highest point. If incremental is true, it assumes that calls to this are always done in increasing sequence.
@@ -769,7 +798,7 @@ def alignScores(*columns):
         merged=ochunks.score(merged)
     positions=[k for k,v in merged.items()]
     positions.sort()
-    logger.debug("Potiential sync positions:" + " ".join(map(str,positions)))
+    logger.debug("Potential sync positions:" + " ".join(map(str,positions)))
     # Ensure headings get split from preceding text if there's a coming break
     oldconfl=None
     conflicts=[]
@@ -1122,7 +1151,8 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 if data is not None:
                     outf.write("\\polyglotcolumn %c\n" % col)
                     for d in data:
-                        outf.write(str(d))
+                        s=re.sub(r"\\zcolsync.*?\\\*","",str(d))
+                        outf.write(s)
                         if debugPrint:
                           debugf[col].write(str(d))
             outf.write("\n\\polyglotendcols\n")

@@ -52,11 +52,16 @@ Note that this  must occur before any USFM files or stylesheets are loaded.
 
 
 ## Hints to the merging step
-By default the 'scores' merge mechanism synchronises on verse and paragraph number. I.e. the first mid-verse paragraph in verse 2 on one side should be aligned with the first mid-verse paragraph in verse 2 on the other side. This looks beautiful when all is working but becomes problematic when the paragraphing does not agree.  One option is to disable forming chunks on paragraphs, the other is to insert manual 'hints' with`\zcolsync|id\*`  These hints should be in both files and have the same id.  If using multiple ids within a given verse, they  should occur in their sorted order (ie. A before Z).
+By default the 'scores' merge mechanism synchronises on verse and paragraph number. I.e. the first mid-verse paragraph in verse 2 on one side should be aligned with the first mid-verse paragraph in verse 2 on the other side. This looks beautiful when all is working but becomes problematic when the paragraphing does not agree.  One option is to disable forming chunks on paragraphs, the other is to insert manual 'hints' with the milestone `\zcolsync|id\*`  Except as below, these  hints should be in both files and have the same id.  If using multiple ids within a given verse, they  should occur in their sorted order (ie. A before Z).
 
-If the id is of form 'v2' or 'v23a'  (starting with v, a number, and an optional letter sequence) then the number overrides the current verse number. This is largely untested, but may help with versification. 
-Note that it is *not* the name of \zcolsync that helps with merging, but the 'diglotsync' text-property in the stylesheet.
-```
+If the milestone is of form '\zcolsync|v2\*' or '\zcolsync|v23a\*'  (the position starts with v, a number, and an optional letter sequence) then the number overrides the current verse number. This is largely untested, but may help with versification differences. 
+
+If the milestone is of the form `\zcolsync|p3\*` (the position starting with p, followed by a number, and including no spaces), then then the number overrides the natural paragraph count. This means that it is possible to make the alignment code ignore other places that might have a claim to being paragraph 3, and treat this position as that number, whether it would naturally 2 or 4.
+
+If such a milestone is adjacent to a paragraph, (including *after* one) then that paragraph mark begins the alignment chunk.  If the milestone is mid-text, then there is no attempt to guess what the paragraph style should be. The TeX code probably treats the style as `\p`   Unfortunately, the sequence `\p \zcolsync|whatever\* \v 2` causes a parser error at present; instead use `\zcolsync|whatever\* \p \v 2`
+
+Note that it is *not* the name of `\zcolsync` that helps with merging, but the 'diglotsync' text-property in the stylesheet, however the milestone `\zcolsync` is recognised by the code and removed from the output, so that it does not cause some unwanted issues in the layout.  Giving an alternative milestone the `diglotsync` text-property is thus possible but not recommended.
+
 \TextProperties  nonpublishable diglotsync
 ```
 
