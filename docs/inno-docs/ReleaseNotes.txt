@@ -1,8 +1,20 @@
 PTXprint 2.3.27 Release Notes
-29 June 2023
+3 July 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.28 (3 July 2023)
+
+  * Ensure USFM2 figs don't get picked up again as USFM3 (piclist generation)
+
+  * When 'Screen' PDF output is set, ensure the cover is also output
+  
+  * Add utility 'ptxunzippdf' to recover settings from PDF to specified folder 
+  
+  * Refactor view.getPDFconfig into utils
+  
+  * Diglot 'zcolsync' now accepts parameter and seems to work
 
 Bug fixes and Improvements in 2.3.27 (29 June 2023)
 

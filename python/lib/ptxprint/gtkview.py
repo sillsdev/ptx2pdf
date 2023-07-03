@@ -420,7 +420,7 @@ _signals = {
     'color-set': ("ColorButton",),
     'change-current-page': ("Notebook",),
     'value-changed': ("SpinButton",),
-    'state-set': ("Switch",),
+    # 'state-set': ("Switch",),
     'row-activated': ("TreeView",),
 }
 
@@ -858,6 +858,7 @@ class GtkViewModel(ViewModel):
             self.starttime = time.time()
             for k, v in _signals.items():
                 for w in v:
+                    # print(f"{k=} {w=}")
                     GObject.add_emission_hook(getattr(Gtk, w), k, self.emission_hook, k)
             self.logactive = True
         el = self.userconfig.getboolean('init', 'englinks', fallback=False)
@@ -887,6 +888,7 @@ class GtkViewModel(ViewModel):
         name = Gtk.Buildable.get_name(w)
         self.logfile.write('    <event w="{}" s="{}" t="{}"/>\n'.format(name, a[0],
                             time.time()-self.starttime))
+        logger.debug(f'event: {name=} {a[0]=}')
         return True
 
     def pause_logging(self):
