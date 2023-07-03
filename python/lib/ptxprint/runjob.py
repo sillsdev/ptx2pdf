@@ -183,7 +183,7 @@ def isLocked():
 
 def procpdf(outfname, pdffile, info, ispdfxa, **kw):
     opath = outfname.replace(".tex", ".prepress.pdf")
-    outpdf = None
+    outpdfobj = None
     coverfile = None
     if kw.get('burst', False) or kw.get('cover', False):
         inpdf = PdfReader(opath)
@@ -212,7 +212,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
                 outpdf(bpdf, bpdfname)
             else:
                 fixpdffile(bpdf, bpdfname, colour="cmyk", copy=True)
-        outpdf = PdfWriter(None, trailer=inpdf)
+        outpdfobj = PdfWriter(None, trailer=inpdf)
     colour = None
     params = {}
     if ispdfxa == "Spot":
@@ -228,7 +228,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
     if colour is not None:
         logger.debug(f"Fixing colour for {colour}")
         try:
-            outpdf = fixpdffile((outpdf._trailer if outpdf else opath), None,
+            outpdfobj = fixpdffile((outpdfobj._trailer if outpdfobj else opath), None,
                         colour=colour,
                         parlocs = outfname.replace(".tex", ".parlocs"), **params)
         except ValueError:
@@ -247,7 +247,7 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         foldmargin = int(info['finishing/foldcutmargin']) * _unitpts['mm']
         logger.debug(f"Impositioning onto {nums} pages. {sigsheets=}, {foldmargin=} from {paper[0]} to {paper[1]}")
         try:
-            outpdf = make_signatures((outpdf._trailer if outpdf else opath),
+            outpdfobj = make_signatures((outpdfobj._trailer if outpdfobj else opath),
                                  paper[0], paper[1], nums,
                                  sigsheets, foldmargin, info['paper/cropmarks'], info['document/ifrtl'] == 'true',
                                  info['finishing/foldfirst'])
@@ -260,11 +260,11 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         zio = cStringIO()
         z = info.printer.createSettingsZip(zio)
         z.close()
-        if outpdf is None:
-            outpdf = PdfWriter(None, trailer=PdfReader(opath))
-        if outpdf.trailer.Root.PieceInfo is None:
+        if outpdfobj is None:
+            outpdfobj = PdfWriter(None, trailer=PdfReader(opath))
+        if outpdfobj.trailer.Root.PieceInfo is None:
             p = PdfDict()
-            outpdf.trailer.Root.PieceInfo = p
+            outpdfobj.trailer.Root.PieceInfo = p
         else:
             p = output.trailer.Root.PieceInfo
         pdict = PdfDict(LastModified= "D:" + info["pdfdate_"])
@@ -274,11 +274,11 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         p.ptxprint = pdict
         zio.close()
 
-    if outpdf is not None:
-        outpdf.fname = pdffile
-        outpdf.compress = True
-        outpdf.do_compress = compress
-        outpdf.write()
+    if outpdfobj is not None:
+        outpdfobj.fname = pdffile
+        outpdfobj.compress = True
+        outpdfobj.do_compress = compress
+        outpdfobj.write()
         os.remove(opath)
     return coverfile
 

@@ -531,9 +531,9 @@ def fixpdffile(infile, outfile, colour="rgb", **kw):
         fixpdfspot(trailer, (hue[1] > 0.01 and hue[2] > 0.01), hue[0], kw['range'], **kw)
     elif colour == "gray":
         fixpdfspot(trailer, False, 0, 0, **kw)
-    outpdf(trailer, outfile, **kw)
+    return outpdf(trailer, outfile, **kw)
 
-def outpdf(trailer, outfile, **kw)
+def outpdf(trailer, outfile, **kw):
     meta = trailer.Root.Metadata
     if meta is not None:
         meta.Filter = []

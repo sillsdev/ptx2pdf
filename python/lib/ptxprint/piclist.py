@@ -301,8 +301,7 @@ class PicInfo(dict):
         self.inthread = False
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
-        if 'pgpos' in vals:
-            p = vals['pgpos']
+        if vals.get('pgpos', None) is not None:
             if all(x in "apw" for x in p):
                 vals['media'] = p
                 del vals['pgpos']
@@ -311,8 +310,8 @@ class PicInfo(dict):
             else:
                 vals['loc'] = p
                 del vals['pgpos']
-        if 'size' in vals:
-            p = vals['size']
+        if vals.get('size', None) is not None:
+            p = vals['size'] or "col"
             m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
             if m:
                 vals['size'] = m[1]
@@ -385,7 +384,7 @@ class PicInfo(dict):
                     else:
                         a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                     r = "{}{} {}{}{}".format(bk, suffix, *a)
-                    pic = {'anchor': r, 'caption':f.group(1 if b[1] else 6).strip()}
+                    pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
                     key = self.newkey(suffix)
                     self[key] = pic
                     if b[1]:    # usfm 3
@@ -400,6 +399,7 @@ class PicInfo(dict):
                         for j, v in enumerate(f.groups()):
                             pic[posparms[j]] = v
                         self._fixPicinfo(pic)
+                break
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
@@ -585,13 +585,13 @@ class PicInfo(dict):
             cols = 2 if isBoth else 1
         for k, v in self.items():
             if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
-                if 'pgpos' in v:
+                if v.get('pgpos', None) is not None:
                     v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
                 elif randomize:
                     v['pgpos'] = random.choice(picposns[suffix]['span'])
                 else:
                     v['pgpos'] = "t"
-            elif 'pgpos' not in v:
+            elif v.get('pgpos', None) is None:
                 posns = picposns[suffix].get(v.get('size', 'col'), picposns[suffix]["col"])
                 if randomize:
                     v['pgpos'] = random.choice(posns)
