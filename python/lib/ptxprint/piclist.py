@@ -260,7 +260,7 @@ class PicInfo(dict):
                 a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
                 if mergeCaptions:
                     for s in tgts.get(a, []):
-                        if s.get('src', '') == v.get('src', ''):
+                        if newBase(s.get('src', '')) == newBase(v.get('src', '')):
                             if v.get('caption', '') != '':
                                 s['caption'+captionpre] = v.get('caption', '')
                             if v.get('ref', '') != '':
@@ -302,6 +302,7 @@ class PicInfo(dict):
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
         if vals.get('pgpos', None) is not None:
+            p = vals['pgpos']
             if all(x in "apw" for x in p):
                 vals['media'] = p
                 del vals['pgpos']
@@ -311,7 +312,7 @@ class PicInfo(dict):
                 vals['loc'] = p
                 del vals['pgpos']
         if vals.get('size', None) is not None:
-            p = vals['size'] or "col"
+            p = vals['size']
             m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
             if m:
                 vals['size'] = m[1]
