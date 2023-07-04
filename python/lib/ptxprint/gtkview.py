@@ -4627,7 +4627,7 @@ class GtkViewModel(ViewModel):
                     # self.styleEditor.setval('cat:coverspine|esb', 'Alpha', 1)
 
             if self.get('c_coverOverwritePeriphs'):
-                self.createCoverPeriphs()
+                self.createCoverPeriphs(noDiglot = r'\zglot|\*' if self.diglotView is not None else "")
             self.set("c_frontmatter", True)
 
             dialog.hide()
@@ -4661,35 +4661,39 @@ class GtkViewModel(ViewModel):
             mpgnum = self.notebooks['Main'].index("tb_Cover")
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
-    def createCoverPeriphs(self):
+    def createCoverPeriphs(self, **kw):
         self.periphs['coverfront'] = r'''
+{noDiglot}
 \periph front|id="coverfront"
 \zgap|30pt\*
 \mt1 \zvar|maintitle\*
 \mt2 \zvar|subtitle\*
 \vfill
-\endgraf'''
+\endgraf'''.format(**kw)
         self.periphs['coverspine'] = r'''
+{noDiglot}
 \periph spine|id="coverspine"
 \mt2 \zvar|maintitle\* ~~-~~ \zvar|subtitle\*
-\p'''
+\p'''.format(**kw)
         self.periphs['coverback'] = r'''
+{noDiglot}
 \periph back|id="coverback"
 \zgap|1in\*
 \pc ~
 \vfill
 \zifvarset|var="isbn" emptyok="F"\*
 \ztruetext
-\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="short"\* \esbe
+\esb \cat ISBNbox\cat* \pc \zISBNbarcode|var="isbn" height="medium"\* \esbe
 \zgap|10pt\*
-\ztruetext*'''
+\ztruetext*'''.format(**kw)
         self.periphs['coverwhole'] = r'''
+{noDiglot}
 \periph spannedCover|id="coverwhole"
 \zgap|1pt\*
 \vfill
 \pc ~
 \vfill
-\endgraf'''
+\endgraf'''.format(**kw)
         self.updateFrontMatter()
 
     def onInterlinearClicked(self, btn):
