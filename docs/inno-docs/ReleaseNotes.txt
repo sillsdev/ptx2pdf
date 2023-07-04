@@ -1,8 +1,20 @@
 PTXprint 2.3.28 Release Notes
-3 July 2023
+4 July 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.29 (4 July 2023)
+
+  * Improve column sync behaviour and document \zcolsync\* #851
+  
+  * Handle set_positions for B suffix (Left/Right/Both)
+  
+  * Remove rems from FRT on run
+  
+  * Make sure cover periphs run with diglot turned off
+  
+  * Fuzzy match diglot pic filenames when generating L+R piclist
 
 Bug fixes and Improvements in 2.3.28 (3 July 2023)
 
