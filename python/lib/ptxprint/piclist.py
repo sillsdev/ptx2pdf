@@ -324,6 +324,9 @@ class PicInfo(dict):
         self.keycounter += 1
         return "pic{}{}".format(suffix, self.keycounter)
 
+    def addpic(self, suffix="", **kw):
+        self[self.newkey(suffix or "")] = kw
+
     def read_piclist(self, fname, suffix=""):
         if isinstance(fname, str):
             if not os.path.exists(fname):
