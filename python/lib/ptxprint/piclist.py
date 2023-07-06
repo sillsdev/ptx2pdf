@@ -515,7 +515,10 @@ class PicInfo(dict):
                 if os.path.exists(p) and len(os.listdir(p)) > 0:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
-                            self.srchlist += [dp]
+                            self.srchlist.append(dp)
+        uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+        if os.path.isdir(uddir):
+            self.srchlist.append(uddir)
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.model.get("t_imageTypeOrder").lower()
