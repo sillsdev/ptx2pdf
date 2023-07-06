@@ -44,6 +44,7 @@ from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
+from ptxprint.reference import RefSeparators
 
 logger = logging.getLogger(__name__)
 
@@ -1108,9 +1109,6 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
-        # Turn off this button until we're ready for people to use it.
-        # It still can be activated by enabling texpert hacks
-        self.builder.get_object("btn_getPictures").set_visible(False)
 
     def toggleUIdetails(self, w, state):
         # print(w)
@@ -5258,7 +5256,10 @@ Thank you,
         gridbox = self.builder.get_object("box_images")
         self.thumbnails = ThumbnailDialog(dialog, self, gridbox, 5)
         res = self.thumbnails.run()
-        print(res)
+        for p in res:
+            self.picinfos.addpic(self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), 
+                   src=p[0]+'.jpg', ref=p[1].str(addsep=self.getRefSeparators(nobook=True)), alt=p[2])
+        self.picListView.load(self.picinfos)
 
     def onArtistToggled(self, btn, path):
         model = self.builder.get_object("ls_artists")

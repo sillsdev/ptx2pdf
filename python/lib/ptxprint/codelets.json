@@ -85,7 +85,7 @@
           "Type": "insert",
           "Label": "Generate ISBN bar code (if ISBN number exists)",
           "Description": "If the 'isbn' variable has been set, then this will generate a code.",
-          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*\n\\ztruetext\n\\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"short\"\\* \\esbe\n\\zgap|10pt\\*\n\\ztruetext*"
+          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*\n\\ztruetext\n\\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"medium\"\\* \\esbe\n\\zgap|10pt\\*\n\\ztruetext*"
         },
         {
           "Type": "insert",
@@ -103,9 +103,9 @@
         },
         {
           "Type": "insert",
-          "Label": "\\ztoc[|order]\\*",
+          "Label": "\\ip \\ztoc[|order]\\*",
           "Description": "Insert Table of Contents of given order (main, ot, nt, dc, pre, post, heb, sorta, sortb, sortc)",
-          "CodeSnippet": "\\ztoc|nt\\*"
+          "CodeSnippet": "\\ip \\ztoc|nt\\*"
         },
         {
           "Type": "insert",
@@ -175,13 +175,13 @@
           "Type": "insert",
           "Label": "\\zpage|uniquelabel\\*",
           "Description": "Output the page number for uniquelabel",
-          "CodeSnippet": "Refer to map on page \\zpage|map_israel\\*"
+          "CodeSnippet": "\\p Refer to map on page \\zpage|map_israel\\*"
         },
         {
           "Type": "insert",
           "Label": "\\zref|id=”uniquelabel” show=”b_c:v”\\*",
           "Description": "Output chapter:verse for uniquelabel (show: b=book, c=chapter, v=verse, _=space, anything else is copied)",
-          "CodeSnippet": "Refer to sidebar on culture in \\zref|id=”cultural_clues” show=”b_c:v”\\*"
+          "CodeSnippet": "\\p Refer to sidebar on culture in \\zref|id=”cultural_clues” show=”b_c:v”\\*"
         }
       ],
       "Condition": [

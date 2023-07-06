@@ -69,6 +69,7 @@ class ThumbnailDialog:
         self.langdata = None
         self.tilesize = 100
         self.selected_thumbnails = set()
+        self.reftext = None
 
     def run(self):
         uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -244,7 +245,9 @@ class ThumbnailDialog:
         logger.debug(f"Image grid complete")
 
     def on_thumbnail_toggled(self, button, imageid):
-        val = (imageid, self.imgrefs.get(imageid, self.get_refs(imageid, default=[None])[0]))
+        bibref = self.get_refs(imageid, default=[None])[0]
+        val = (imageid, bibref, self.langdata.get(imageid, {}).get("title", ""))
+
         if button.get_active():
             self.selected_thumbnails.add(val)
         else:

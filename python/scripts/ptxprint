@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-import argparse, sys, os, configparser
+import argparse, sys, os, re, configparser
 import appdirs
 import site, logging
 from shutil import rmtree
@@ -177,7 +177,17 @@ else:
 
 config.set("init", "paratext", str(args.paratext))
 
-if args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
+if args.pid is not None and args.pid.lower().endswith(".zip"):
+    fname = os.path.basename(args.pid)[:-4]
+    m = re.match(r"^(.+?)-(.+?)PTXprintArchive", fname)
+    if m:
+        args.zip = args.pid
+        args.pid = m.group(1)
+        args.config = m.group(2)
+    else:
+        print("Sorry - no match")
+        
+elif args.pid is not None and (any(x in args.pid for x in "\\/") or args.pid.lower().endswith(".cfg")):
     pidpath = saferelpath(args.pid, args.paratext).replace("\\", "/")
     if pidpath.startswith("..") or pidpath.startswith("/"):
         pidpath = os.path.abspath(args.pid).replace("\\", "/")
@@ -240,7 +250,7 @@ if args.fontpath is not None:
 if args.zip:
     # Unzip to args.paratext+args.pid
     # import pdb; pdb.set_trace()
-    print(f"{args.paratext=} {args.pid=}")
+    print(f"{args.paratext=} {args.pid=} {args.config=}")
     if len(args.paratext) and len(args.pid):
         rmtree(os.path.join(args.paratext,args.pid), ignore_errors = True)
     zf = ZipFile(args.zip)

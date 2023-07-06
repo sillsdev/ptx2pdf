@@ -5,6 +5,7 @@ import configparser
 import regex, re, logging
 import os, re, random, sys
 import logging
+import appdirs
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +27,7 @@ _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
 def newBase(fpath):
     doti = fpath.rfind(".")
-    f = os.path.basename(fpath[:doti])
+    f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
     cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
     if cl:
         return cl[0].lower()
@@ -321,8 +322,11 @@ class PicInfo(dict):
         return vals
 
     def newkey(self, suffix=""):
-        self.keycounter += 1
-        return "pic{}{}".format(suffix, self.keycounter)
+        while True:
+            self.keycounter += 1
+            key = "pic{}{}".format(suffix, self.keycounter)
+            if key not in self:
+                return key
 
     def addpic(self, suffix="", **kw):
         self[self.newkey(suffix or "")] = kw
@@ -530,7 +534,7 @@ class PicInfo(dict):
                 self.extensions = extdflt
             else:
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
-                
+        logger.debug(f"{self.srchlist=} {self.extensions=}")
 
     def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None, mode=None):
         ''' Add source filename information to each figinfo, stored with the key '''
