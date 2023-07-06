@@ -288,7 +288,7 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getRefSeparators(self):
+    def getRefSeparators(self, **kw):
         if self.get("fcb_textDirection", "") == "rtl":
             res = None
         else:
@@ -296,6 +296,8 @@ class ViewModel:
             res = pts.getRefSeparators()
         if res is None:
             res = self.getScriptSnippet().getrefseps(self)
+        if len(kw):
+            res = res.copy(**kw)
         return res
 
     def switchFRTsettings(self):

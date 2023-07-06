@@ -54,12 +54,19 @@ class RefSeparators(dict):
         "range": "-",
         "sep": "\u200B",
         "verseonly": "v",
-        "end": "end"
+        "end": "end",
+        "nobook": False,
+        "nochap": False
     }
     def __init__(self, **kw):
         self.update(kw)
         for k, v in self._defaults.items():
             self[k] = kw.get(k, v)
+
+    def copy(self, **kw):
+        res = RefSeparators(**self)
+        res.update(kw)
+        return res
 
 class Reference:
 
@@ -83,7 +90,10 @@ class Reference:
         minverse = -1 if allowzero else 0
         sep = ""
         hasbook = False
-        if (lastref is None or lastref.book != self.book) and (this is None or this.book != self.book):
+        if addsep['nobook']:
+            res = []
+            hasbook = True
+        elif (lastref is None or lastref.book != self.book) and (this is None or this.book != self.book):
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level)).replace(" ", addsep['bksp'])]
             if lastref is not None and lastref.book is not None:
                 sep = addsep['books']
