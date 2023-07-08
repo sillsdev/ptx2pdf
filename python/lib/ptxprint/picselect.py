@@ -13,15 +13,16 @@ from ptxprint.utils import _, extraDataDir
 from ptxprint.reference import RefList
 
 def unpackImageset(filename):
+    print(f"{filename=}")
     with zipfile.ZipFile(filename) as zf:
         with zf.open("illustrations.json") as zill:
             zdat = json.load(zill)
         dirname = zdat.get('id', "Unknown")
         uddir = extraDataDir("imagesets", dirname, create=True)
         if uddir is None:
-            return False
+            return None
         zf.extractall(path=uddir)
-    return True
+    return dirname
 
 def getImageSets():
     uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
@@ -207,6 +208,12 @@ class ThumbnailDialog:
     def refresh(self):
         self.update_reflist()
         self.fill()
+
+    def clear(self):
+        # TO DO: need to unset all the buttons as well!
+        self.selected_thumbnails = set()
+        status = "(0 images selected)"
+        self.view.set("l_artStatusLine", status)
 
     def fill(self):
         imagesdir = self.get_imgdir()

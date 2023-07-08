@@ -215,7 +215,7 @@ class Reference:
             self.loadvrs()
         try:
             return len(self.vrs[books[self.book]])
-        except KeyError, IndexError:
+        except (KeyError, IndexError):
             return 0
 
     def numverses(self):
@@ -223,7 +223,7 @@ class Reference:
             self.loadvrs()
         try:
             return self.vrs[books[self.book]][self.chap] - (self.vrs[books[self.book]][self.chap - 1] if self.chap > 1 else 0)
-        except KeyError, IndexError:
+        except (KeyError, IndexError):
             return 0
 
     @classmethod

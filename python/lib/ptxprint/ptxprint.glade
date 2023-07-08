@@ -13605,7 +13605,7 @@ settings will remain unchanged.</property>
                                 <child>
                                   <object class="GtkButton" id="btn_requestPermission">
                                     <property name="label" translatable="yes"> Request Permission... </property>
-                                    <property name="width-request">55</property>
+                                    <property name="width-request">110</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
@@ -13616,9 +13616,9 @@ Scripture Press, you are required to obtain prior
 permission. Click this button to generate the text
 to be sent to ScripturePicturePermissions_intl@sil.org
 requesting permission.</property>
-                                    <property name="halign">end</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">end</property>
                                     <property name="margin-left">6</property>
-                                    <property name="margin-right">6</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
@@ -13631,6 +13631,26 @@ requesting permission.</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <object class="GtkButton" id="btn_getPictures">
+                                    <property name="label" translatable="yes">Get Pictures...</property>
+                                    <property name="width-request">110</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-top">3</property>
+                                    <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">5</property>
+                                  </packing>
+                                </child>
+                                <child>
                                   <object class="GtkBox" id="bx_showImage">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -13638,7 +13658,7 @@ requesting permission.</property>
                                     <property name="valign">start</property>
                                     <property name="margin-left">6</property>
                                     <property name="margin-start">3</property>
-                                    <property name="margin-top">6</property>
+                                    <property name="margin-top">3</property>
                                     <child>
                                       <object class="GtkRadioButton" id="r_image_preview">
                                         <property name="label" translatable="yes">Image</property>
@@ -13688,7 +13708,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">5</property>
+                                    <property name="position">6</property>
                                   </packing>
                                 </child>
                               </object>
@@ -14031,21 +14051,22 @@ images, not just those with lines.</property>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="lb_selectFigureFolder">
-                                                <property name="width-request">235</property>
+                                                <property name="width-request">350</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="opacity">0.80</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="wrap">True</property>
+                                                <property name="wrap-mode">word-char</property>
                                                 <property name="ellipsize">middle</property>
-                                                <property name="single-line-mode">True</property>
                                                 <property name="max-width-chars">60</property>
                                                 <property name="xalign">0</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
                                                 <property name="top-attach">4</property>
-                                                <property name="width">3</property>
+                                                <property name="width">4</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -14177,19 +14198,6 @@ references without the captions.</property>
                                                 <property name="left-attach">2</property>
                                                 <property name="top-attach">0</property>
                                                 <property name="height">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkButton" id="btn_getPictures">
-                                                <property name="label" translatable="yes">Get Pictures...</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">4</property>
-                                                <property name="top-attach">4</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -30126,12 +30134,8 @@ If in doubt, click Cancel.</property>
                 <property name="margin-end">12</property>
                 <property name="margin-top">12</property>
                 <property name="margin-bottom">12</property>
-                <property name="label" translatable="yes">Sample image files at low-resolution have been
-packaged only for use in Scripture publications.
-
-Due to the large size of such image sets, these are
-not included in the PTXprint distribution but need
-to be downloaded and installed by the steps below.</property>
+                <property name="label" translatable="yes">Illustrations have been packaged 
+for use in Scripture publications.</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -30162,7 +30166,6 @@ to be downloaded and installed by the steps below.</property>
                     <property name="tooltip-text" translatable="yes">After downloading an Image Set
 you need to tell PTXprint where the
 .zip file is saved so it can be installed.</property>
-                    <property name="margin-top">12</property>
                     <property name="use-underline">True</property>
                     <signal name="clicked" handler="onLocateImageSetClicked" swapped="no"/>
                     <accelerator key="o" signal="activate" modifiers="GDK_MOD1_MASK"/>
@@ -30183,7 +30186,6 @@ in your 'Downloads' folder.
 DO NOT UNZIP THE FILE - this will
 be done for you automatically.</property>
                     <property name="halign">end</property>
-                    <property name="margin-top">12</property>
                     <property name="label" translatable="yes">Option 2: Locate an
 Image Set .zip File
 to be installed:</property>
@@ -30237,20 +30239,6 @@ the Online Repository</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_downloadImageSet">
-                    <property name="label" translatable="yes">Download Sample
-B/W Image Set</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="receives-default">True</property>
-                    <signal name="clicked" handler="onDownloadImageSetClicked" swapped="no"/>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -30267,7 +30255,30 @@ B/W Image Set</property>
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">OR</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkCheckButton" id="c_downloadImages">
+                    <property name="label" translatable="yes">Download Sample
+B/W Image Set</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="draw-indicator">True</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
                 </child>
                 <child>
                   <placeholder/>
@@ -31327,6 +31338,7 @@ appear at the top of the list.</property>
                           <object class="GtkCheckButton" id="c_imgMediaP">
                             <property name="label" translatable="yes">Print</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
@@ -31345,6 +31357,7 @@ used in Print/PDF publications. </property>
                           <object class="GtkCheckButton" id="c_imgMediaA">
                             <property name="label" translatable="yes">App</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
@@ -31362,6 +31375,7 @@ used in mobile phone Apps. </property>
                           <object class="GtkCheckButton" id="c_imgMediaW">
                             <property name="label" translatable="yes">Web</property>
                             <property name="visible">True</property>
+                            <property name="sensitive">False</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">Filter for illustrations that can be
@@ -31447,6 +31461,11 @@ used on websites. </property>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Note that if a reference only contains
+a book and chapter number (with no
+specific verse mentioned), then the
+illustration will be placed in the middle
+of the chapter.</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">Reference:</property>
                       </object>
@@ -31571,9 +31590,8 @@ used on websites. </property>
         </child>
         <child>
           <object class="GtkBox" id="bx_imageMsgBar">
-            <property name="sensitive">False</property>
+            <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="no-show-all">True</property>
             <property name="halign">end</property>
             <property name="valign">end</property>
             <child>

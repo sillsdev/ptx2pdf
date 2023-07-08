@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -43,6 +43,7 @@ import configparser, logging
 from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
+# import zipfile
 from zipfile import ZipFile, ZIP_DEFLATED
 from ptxprint.reference import RefSeparators, Reference
 
@@ -4253,25 +4254,67 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         dialog.hide()
         if response == Gtk.ResponseType.OK:
-            # if opening file:
-            # imgsetname = self.get("t_imageSetName") # this control no longer exists
-            zfile = self.get("btn_locateImageSet")
-            # else:
-            # zfile = urllib.request.urlopen(url)
-            if unpackImageset(zfile):
-                # display readme and get OK not cancel (msgbox)
-                # add imgsetname to ecb_artPictureSet before selecting it.
-                lsp = self.builder.get_object("ecb_artPictureSet")
-                allimgsets = [x[0] for x in lsp.get_model()]
-                for i, p in enumerate(allimgsets):
-                    if imgsetname.casefold() > p.casefold():
-                        lsp.insert_text(i, imgsetname)
-                        break
-                else:
-                    lsp.append_text(imgsetname)
-                self.set("ecb_artPictureSet", imgsetname)
+            if self.get("c_downloadImages"):
+                imgset = "ccsampleimages.zip" # this will eventually be a variable, or even a list of img sets to download.
+                try:
+                    urlfile = urllib.request.urlopen(r"https://software.sil.org/downloads/r/ptxprint/{}".format(imgset))
+                    tzdir = extraDataDir("imagesets", "../zips", create=True)
+                    zfile = os.path.join(tzdir, imgset)
+                    with open(zfile, 'wb') as f:
+                        f.write(urlfile.read())
+                except urllib.error.URLError:
+                    self.doError("Error Downloading Image Set", secondary="Check that you are online before trying again.")
+                    return
             else:
-                self.doError("Faulty Image Set", "Please check that you have selected a valid Image Set (ZIP) file.")
+                zfile = self.get("btn_locateImageSet")
+            imgsetname = unpackImageset(zfile)
+            if imgsetname is not None:
+                uddir = extraDataDir("imagesets", imgsetname, create=False)
+                if not self.displayReadmeFile(imgsetname, uddir):
+                    # remove the unpacked imageset!
+                    try:
+                        if len(uudir):
+                            rmtree(uddir)
+                        return
+                    except OSError:
+                        self.doError(_("Cannot delete folder from disk!"), secondary=_("Image Set: ") + imgsetname)
+                else:
+                    # add imgsetname to ecb_artPictureSet before selecting it.
+                    lsp = self.builder.get_object("ecb_artPictureSet")
+                    allimgsets = [x[0] for x in lsp.get_model()]
+                    for i, p in enumerate(allimgsets):
+                        if imgsetname.casefold() > p.casefold():
+                            lsp.insert_text(i, imgsetname)
+                            break
+                        else:
+                            lsp.append_text(imgsetname)
+                    self.set("ecb_artPictureSet", imgsetname)
+            else:
+                if self.get("c_downloadImages"):
+                    self.doError("Failed Image Set", secondary="The Image Set failed to download and/or install.")
+                else:
+                    self.doError("Faulty Image Set", secondary="Please check that you have selected a valid Image Set (ZIP) file.")
+
+    def displayReadmeFile(self, imgsetname, uddir):
+        readme_path = os.path.join(uddir ,"readme.txt")
+        try:
+            with open(readme_path, 'r') as f:
+                readme_content = f.read()
+        except FileNotFoundError:
+            self.doError("Error: readme.txt not found.", secondary=f"The file containing the terms and conditions of use for these images could not be located. Therefore the '{imgsetname}' image set will be deleted.")
+            return False
+
+        dialog = Gtk.MessageDialog(None, Gtk.DialogFlags.MODAL,
+            Gtk.MessageType.INFO, Gtk.ButtonsType.YES_NO, "readme")
+        dialog.set_default_size(400, 300)
+        dialog.set_title("Do you agree to the terms and conditions of use?")
+        dialog.set_property("text", f"\nImage Set: {imgsetname}\n\n" + readme_content)
+        response = dialog.run()
+        dialog.destroy()
+        if response == Gtk.ResponseType.YES:
+            return True
+        else:
+            return False
 
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
@@ -4299,11 +4342,9 @@ class GtkViewModel(ViewModel):
             # imgsetfile = [x.relative_to(prjdir) for x in imgsetfile]
             self.imgsetfile = imgsetfile[0]
             self.builder.get_object("lb_imageSetFilename").set_label(os.path.basename(imgsetfile[0]))
-            self.set("t_imageSetName", os.path.basename(imgsetfile[0])[:8])
             self.builder.get_object("btn_locateImageSet").set_tooltip_text(str(imgsetfile[0]))
         else:
             self.builder.get_object("lb_imageSetFilename").set_label("")
-            self.set("t_imageSetName", "")
             self.imgsetfile = None
             self.builder.get_object("btn_locateImageSet").set_tooltip_text("")
     
@@ -5297,10 +5338,3 @@ Thank you,
     def onImageSetChosen(self, ecb, *a):
         imgset = self.get('ecb_artPictureSet')
         self.thumbnails.set_imageset(imgset)
-        
-    def onDownloadImageSetClicked(self, btn):
-        continue
-        # Need to make this button like the codelet buttons with multiple
-        # sub-menu items with tooltips connected to actions.
-        # For now, we just have a single downloadable file:
-        # https://software.sil.org/downloads/r/ptxprint/ccsampleimages.zip
