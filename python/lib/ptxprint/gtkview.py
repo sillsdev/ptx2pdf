@@ -4253,22 +4253,24 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         dialog.hide()
         if response == Gtk.ResponseType.OK:
-            imgsetname = self.get("t_imageSetName")
+            # if opening file:
             zfile = self.get("btn_locateImageSet")
-            if imgsetname != "":
-                if unpackImageset(imgsetname, zfile):
-                    # add imgsetname to ecb_artPictureSet before selecting it.
-                    lsp = self.builder.get_object("ecb_artPictureSet")
-                    allimgsets = [x[0] for x in lsp.get_model()]
-                    for i, p in enumerate(allimgsets):
-                        if imgsetname.casefold() > p.casefold():
-                            lsp.insert_text(i, imgsetname)
-                            break
-                    else:
-                        lsp.append_text(imgsetname)
-                    self.set("ecb_artPictureSet", imgsetname)
+            # else:
+            # zfile = urllib.request.urlopen(url)
+            if unpackImageset(zfile):
+                # display readme and get OK not cancel (msgbox)
+                # add imgsetname to ecb_artPictureSet before selecting it.
+                lsp = self.builder.get_object("ecb_artPictureSet")
+                allimgsets = [x[0] for x in lsp.get_model()]
+                for i, p in enumerate(allimgsets):
+                    if imgsetname.casefold() > p.casefold():
+                        lsp.insert_text(i, imgsetname)
+                        break
                 else:
-                    self.doError("Faulty Image Set", "Please check that you have selected a valid Image Set (ZIP) file.")
+                    lsp.append_text(imgsetname)
+                self.set("ecb_artPictureSet", imgsetname)
+            else:
+                self.doError("Faulty Image Set", "Please check that you have selected a valid Image Set (ZIP) file.")
 
     def onLocateDBLbundleClicked(self, btn):
         DBLfile = self.fileChooser("Select a DBL Bundle file", 
@@ -5266,9 +5268,9 @@ Thank you,
         model[path][0] = not model[path][0]
         
         if model[path][0]:
-            self.thumbnails.add_artist(model[path][1])
+            self.thumbnails.add_artist(model[path][1].lower())
         else:
-            self.thumbnails.remove_artist(model[path][1])
+            self.thumbnails.remove_artist(model[path][1].lower())
         logger.debug(f"Toggled {path}")
 
     def btnImageRefreshClicked(self, btn):
@@ -5284,4 +5286,8 @@ Thank you,
     def onImageRefRangeChanged(self, btn):
         t = self.get('t_artRefRange')
         self.thumbnails.set_reflist(t)
+
+    def onImageSetChosen(self, ecb, *a):
+        imgset = self.get('ecb_artPictureSet')
+        self.thumbnails.set_imageset(imgset)
         

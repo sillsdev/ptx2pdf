@@ -29,6 +29,7 @@ parser.add_argument("inzip", help="Input zipfile of images")
 parser.add_argument("outzip", help="Output release zipfile")
 parser.add_argument("-i", "--illustrations", help="Headered CSV file containing Image information")
 parser.add_argument("-H", "--harvest", help="Merge in harvest data")
+parser.add_argument("-I", "--id", default="", help="Image set identifier")
 args = parser.parse_args()
 
 zf = zipfile.ZipFile(args.inzip)
@@ -37,12 +38,14 @@ filters = [re.sub(r"\..*?$", "", x) for x in zf.namelist() if re.match(r"^[a-z]{
 data = {}
 langdat = {}
 refs = {}
+allsets = set()
 
 if args.harvest:
     with open(args.harvest) as inf:
         hdat = json.load(inf)
     for k, v in hdat["images"].items():
         tid = normalizeid(k)
+        allsets.add(tid[:2])
         if filters is not None and tid not in filters:
             continue
         if not len(v):
@@ -57,6 +60,7 @@ if args.illustrations:
         for r in dr:
             res = {}
             tid = normalizeid(r['ID'])
+            allsets.add(tid[:2])
             if filters is not None and tid not in filters:
                 continue
             for k, v in r.items():
@@ -97,7 +101,11 @@ if args.illustrations:
 zof = zipfile.ZipFile(args.outzip, "w", compression=zipfile.ZIP_DEFLATED)
 
 with utf8zipfile(zof, "illustrations.json", "w") as outf:
-    json.dump({"images": data, "references": {k:v for k,v in sorted(refs.items())}}, outf, indent=True, ensure_ascii=False)
+    json.dump({"id": args.id,
+               "sets": sorted(allsets),
+               "images": data,
+               "references": {k:v for k,v in sorted(refs.items())}},
+                        outf, indent=True, ensure_ascii=False)
 
 for k, v in langdat.items():
     with utf8zipfile(zof, "lang_{}.json".format(k), "w") as outf:

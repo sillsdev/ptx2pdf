@@ -9,14 +9,17 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from ptxprint.utils import extraDataDir
+from ptxprint.utils import _, extraDataDir
 from ptxprint.reference import RefList
 
-def unpackImageset(dirname, filename):
-    uddir = extraDataDir("imagesets", dirname, create=True)
-    if uddir is None:
-        return False
+def unpackImageset(filename):
     with zipfile.ZipFile(filename) as zf:
+        with zf.open("illustrations.json") as zill:
+            zdat = json.load(zill)
+        dirname = zdat.get('id', "Unknown")
+        uddir = extraDataDir("imagesets", dirname, create=True)
+        if uddir is None:
+            return False
         zf.extractall(path=uddir)
     return True
 
@@ -87,10 +90,14 @@ class ThumbnailDialog:
                 self.artists.add(r[1].lower())
             else:
                 self.artists.discard(r[1].lower())
-        imagesets = getImageSets()
-        if len(imagesets):
-            self.set_imageset(imagesets[0])
-        self.refresh()
+        imgset = self.view.get('ecb_artPictureSet')
+        if not imgset:
+            imagesets = getImageSets()
+            if imagesets is None or not len(imagesets):
+                return None
+            else:
+                imgset = imagesets[0]
+        self.set_imageset(imgset)
         response = self.dlg.run()
         self.dlg.hide()
         if response == Gtk.ResponseType.OK:
@@ -109,6 +116,13 @@ class ThumbnailDialog:
                 self.imagedata = json.load(inf)
         else:
             self.imagedata = None
+        # fill in list of artists
+        model = self.view.builder.get_object("ls_artists")
+        model.clear()
+        for a in sorted(self.imagedata['sets']):
+            name = self.view.copyrightInfo['copyrights'].get(a.lower(), {}).get('artist', _("Unknown"))
+            model.append([False, a.upper(), name])
+        self.artists.clear()
         langpath = os.path.join(imagesetdir, "lang_{}.json".format(self.view.lang.lower()))
         print(langpath)
         if not os.path.exists(langpath):
@@ -119,6 +133,7 @@ class ThumbnailDialog:
         else:
             self.langdata = None
         self.setup_tiles()
+        self.refresh()
 
     def setup_tiles(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)
