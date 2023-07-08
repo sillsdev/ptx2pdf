@@ -591,9 +591,21 @@
         },
         {
           "Type": "insert",
+          "Label": "g & P - figs, esbs, piclists",
+          "Description": "\\tracing{g}\\tracing{P}\n(parsing of arguments, making of the figure, positioning the caption, position on the page, etc.)}",
+          "CodeSnippet": "\\tracing{g}\\tracing{P}"
+        },
+        {
+          "Type": "insert",
           "Label": "j - paragraph adjustments",
           "Description": "\\tracing{j}\n(for seeing where it loses sync)",
           "CodeSnippet": "\\tracing{j}"
+        },
+        {
+          "Type": "insert",
+          "Label": "m - milestones",
+          "Description": "\\tracing{m}\n(includes QR codes & rules)",
+          "CodeSnippet": "\\tracing{m}"
         },
         {
           "Type": "insert",

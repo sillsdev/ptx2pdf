@@ -454,7 +454,9 @@ class PicList:
         #    row = self.model[self.model.get_iter(sel)][:]
         #else:
         row = self.get_row_from_items()
-        row[_pickeys['key']] = "row{}".format(newrowcounter)
+        key = "row{}".format(newrowcounter)
+        row[_pickeys['key']] = key
+        self.picinfo[key] = dict()
         logger.debug(f"{row[_pickeys['key']]}", sorted(self.picinfo.keys()))
         newrowcounter += 1
         self.coremodel.append(row)
@@ -466,6 +468,7 @@ class PicList:
         inds = [model.convert_path_to_child_path(i) for i in paths]
         for i in reversed(sorted(inds)):
             ci = self.coremodel.get_iter(i)
+            del self.picinfo[self.coremodel[ci][_pickeys['key']]]
             del self.coremodel[ci]
         if not len(inds):
             indt = model.get_iter_first()

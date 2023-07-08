@@ -1095,49 +1095,54 @@ settings for a similar project.</property>
     </columns>
     <data>
       <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">CN</col>
-        <col id="2" translatable="yes">David C Cook - NT</col>
-      </row>
-      <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">CO</col>
-        <col id="2" translatable="yes">David C Cook - OT</col>
+        <col id="0">False</col>
+        <col id="1">CN</col>
+        <col id="2">David C Cook - NT</col>
       </row>
       <row>
         <col id="0">False</col>
-        <col id="1" translatable="yes">DN</col>
+        <col id="1">CO</col>
+        <col id="2">David C Cook - OT</col>
+      </row>
+      <row>
+        <col id="0">True</col>
+        <col id="1">DH</col>
+        <col id="2" translatable="yes">David Healey</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1">DN</col>
         <col id="2" translatable="yes">Darwin Dunham</col>
       </row>
       <row>
         <col id="0">True</col>
-        <col id="1" translatable="yes">GT</col>
-        <col id="2" translatable="yes">Gordon Thompson</col>
+        <col id="1">GT</col>
+        <col id="2">Gordon Thompson</col>
       </row>
       <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">HK</col>
-        <col id="2" translatable="yes">Horace Knowles</col>
+        <col id="0">False</col>
+        <col id="1">HK</col>
+        <col id="2">Horace Knowles</col>
       </row>
       <row>
         <col id="0">False</col>
         <col id="1" translatable="yes">IB</col>
-        <col id="2" translatable="yes">Farid Faadil</col>
-      </row>
-      <row>
-        <col id="0">True</col>
-        <col id="1" translatable="yes">LB</col>
-        <col id="2" translatable="yes">Louise Bass</col>
+        <col id="2">Farid Faadil</col>
       </row>
       <row>
         <col id="0">False</col>
-        <col id="1" translatable="yes">MN</col>
-        <col id="2" translatable="yes">Muze Tshilombo</col>
+        <col id="1">LB</col>
+        <col id="2">Louise Bass</col>
       </row>
       <row>
         <col id="0">False</col>
-        <col id="1" translatable="yes">WA</col>
-        <col id="2" translatable="yes">Graham Wade</col>
+        <col id="1">MN</col>
+        <col id="2">Muze Tshilombo</col>
+      </row>
+      <row>
+        <col id="0">False</col>
+        <col id="1">WA</col>
+        <col id="2">Graham Wade</col>
       </row>
     </data>
   </object>
@@ -13970,7 +13975,7 @@ By default it also searches all the sub-folders of these
 locations.
 
 If you would prefer that it only searches in the folder
-specified directly (and NOT look in any other folders)
+specified directly (and NOT look in any subfolders)
 then select this option. This should speed up searches
 for images, but may result in some images not being
 found at all.</property>
@@ -14026,7 +14031,7 @@ images, not just those with lines.</property>
                                             </child>
                                             <child>
                                               <object class="GtkLabel" id="lb_selectFigureFolder">
-                                                <property name="width-request">350</property>
+                                                <property name="width-request">235</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
                                                 <property name="opacity">0.80</property>
@@ -30135,7 +30140,7 @@ to be downloaded and installed by the steps below.</property>
               </packing>
             </child>
             <child>
-              <!-- n-columns=2 n-rows=6 -->
+              <!-- n-columns=2 n-rows=4 -->
               <object class="GtkGrid">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -30173,11 +30178,15 @@ you need to tell PTXprint where the
                     <property name="can-focus">False</property>
                     <property name="tooltip-text" translatable="yes">Locate the downloaded Image Set 
 file (.zip) which is likely to be located 
-in your 'Downloads' folder.</property>
+in your 'Downloads' folder.
+
+DO NOT UNZIP THE FILE - this will
+be done for you automatically.</property>
                     <property name="halign">end</property>
                     <property name="margin-top">12</property>
-                    <property name="label" translatable="yes">Step 2.
-Locate File:</property>
+                    <property name="label" translatable="yes">Option 2: Locate an
+Image Set .zip File
+to be installed:</property>
                     <property name="justify">right</property>
                   </object>
                   <packing>
@@ -30186,45 +30195,11 @@ Locate File:</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">PTXprint will create a NEW Image Set
-folder with this name. Use a relatively
-short (but descriptive) name.</property>
-                    <property name="halign">end</property>
-                    <property name="margin-top">6</property>
-                    <property name="label" translatable="yes">Step 3.
-Assign a Name
-for the Image Set:</property>
-                    <property name="justify">right</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_imageSetName">
-                    <property name="name">Assign a name to an image set</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">Create an image set using this name.</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="max-length">20</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">5</property>
-                  </packing>
-                </child>
-                <child>
                   <object class="GtkLabel" id="lb_imageSetFilename">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="opacity">0.80</property>
-                    <property name="halign">end</property>
+                    <property name="halign">start</property>
                     <property name="justify">right</property>
                     <property name="wrap">True</property>
                     <property name="wrap-mode">char</property>
@@ -30237,17 +30212,42 @@ for the Image Set:</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel" id="lb_imageSetDesc">
+                  <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="opacity">0.7019607843137254</property>
-                    <property name="halign">start</property>
-                    <property name="wrap">True</property>
-                    <property name="wrap-mode">char</property>
+                    <property name="tooltip-text" translatable="yes">If you don't already have appropriate
+scripture illustrations, then you can
+download an Image Set which contains
+low-resolution illustrations for trial
+publications from one of the links.
+
+If you already have an Image Set (.zip)
+file downloaded then skip this first step.</property>
+                    <property name="halign">end</property>
+                    <property name="margin-left">6</property>
+                    <property name="margin-start">6</property>
+                    <property name="label" translatable="yes">Option 1: Download and
+Install Image Set from 
+the Online Repository</property>
+                    <property name="justify">right</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_downloadImageSet">
+                    <property name="label" translatable="yes">Download Sample
+B/W Image Set</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">True</property>
+                    <signal name="clicked" handler="onDownloadImageSetClicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">0</property>
                   </packing>
                 </child>
                 <child>
@@ -30267,80 +30267,10 @@ for the Image Set:</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLinkButton" id="lb_imgSetLink1">
-                    <property name="label" translatable="yes">Monochrome Image Set</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">end</property>
-                    <property name="relief">none</property>
-                    <property name="uri">https://link/to/image/set/bw</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">0</property>
-                  </packing>
+                  <placeholder/>
                 </child>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">If you don't already have appropriate
-scripture illustrations, then you can
-download an Image Set which contains
-low-resolution illustrations for trial
-publications from one of the links.
-
-If you already have an Image Set (.zip)
-file downloaded then skip this first step.</property>
-                    <property name="halign">end</property>
-                    <property name="margin-left">6</property>
-                    <property name="margin-start">6</property>
-                    <property name="label" translatable="yes">[Optional] Step 1.
-Download an Image Set 
-from the Online Repository</property>
-                    <property name="justify">right</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">0</property>
-                    <property name="height">2</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">end</property>
-                    <property name="label" translatable="yes">Description:</property>
-                    <property name="justify">right</property>
-                    <attributes>
-                      <attribute name="foreground" value="#808000008080"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="left-attach">0</property>
-                    <property name="top-attach">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLinkButton" id="lb_imgSetLink2">
-                    <property name="label" translatable="yes">Color Image Set</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="focus-on-click">False</property>
-                    <property name="receives-default">True</property>
-                    <property name="halign">center</property>
-                    <property name="valign">start</property>
-                    <property name="relief">none</property>
-                    <property name="uri">https://link/to/image/set/color</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">1</property>
-                    <property name="top-attach">1</property>
-                  </packing>
+                  <placeholder/>
                 </child>
               </object>
               <packing>
@@ -31220,6 +31150,7 @@ of References:</property>
                         <items>
                           <item translatable="yes">Default</item>
                         </items>
+                        <signal name="changed" handler="onImageSetChosen" swapped="no"/>
                         <child internal-child="entry">
                           <object class="GtkEntry">
                             <property name="visible">True</property>
@@ -31657,7 +31588,7 @@ used on websites. </property>
                 <property name="margin-end">8</property>
                 <property name="margin-top">2</property>
                 <property name="hexpand">False</property>
-                <property name="label">Selected (3): cn01234, lb0315, hk00452</property>
+                <property name="label">(0 Images Selected)</property>
                 <property name="wrap">True</property>
                 <property name="max-width-chars">130</property>
                 <property name="track-visited-links">False</property>

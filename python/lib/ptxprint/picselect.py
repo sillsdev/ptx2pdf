@@ -194,7 +194,7 @@ class ThumbnailDialog:
     def get_imgdir(self):
         imagesetdir = extraDataDir("imagesets", self.imageset)
         if imagesetdir is None:
-            return
+            return None
         imagesdir = os.path.join(imagesetdir, "images")
         return imagesdir
 
@@ -210,6 +210,8 @@ class ThumbnailDialog:
 
     def fill(self):
         imagesdir = self.get_imgdir()
+        if imagesdir is None:
+            return
         imageids = set()
         self.imgrefs = {}
         for imagefile in os.listdir(imagesdir):
@@ -260,14 +262,15 @@ class ThumbnailDialog:
         logger.debug(f"Image grid complete")
 
     def on_thumbnail_toggled(self, button, imageid):
-        bibref = self.get_refs(imageid, default=[None])[0]
+        bibrefs = self.get_refs(imageid, default=[None])
+        bibref = bibrefs[0] if len(bibrefs) else None
         val = (imageid, bibref, self.langdata.get(imageid, {}).get("title", ""))
 
         if button.get_active():
             self.selected_thumbnails.add(val)
         else:
             self.selected_thumbnails.discard(val)
-        status = " ".join(x[0] for x in sorted(self.selected_thumbnails, key=lambda t:(t[1], t[0])))
+        status = ", ".join(x[0] for x in sorted(self.selected_thumbnails, key=lambda t:(t[1], t[0]))) + f" ({len(self.selected_thumbnails)} images selected)"
         self.view.set("l_artStatusLine", status)
 
     def on_thumbnail_entered(self, button, event, imageid):

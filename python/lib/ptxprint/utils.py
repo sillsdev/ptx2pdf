@@ -544,7 +544,10 @@ def extraDataDir(base, dirname, create=False):
         else:
             return None
     if dirname is None:
-        dirname = os.listdir(uddir)[0]
+        try:
+            dirname = os.listdir(uddir)[0]
+        except IndexError:
+            return None
     ddir = os.path.join(uddir, dirname)
     if os.path.exists(ddir):
         return ddir

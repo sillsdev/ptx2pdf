@@ -44,7 +44,7 @@ from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
-from ptxprint.reference import RefSeparators
+from ptxprint.reference import RefSeparators, Reference
 
 logger = logging.getLogger(__name__)
 
@@ -127,8 +127,8 @@ tb_Help lb_Help
 fr_Help
 r_generate_selected l_generate_booklist r_generate_all c_randomPicPosn
 l_statusLine btn_dismissStatusLine
-l_artStatusLine btn_imgClearSelection
-""".split() # btn_reloadConfig 
+l_artStatusLine
+""".split() # btn_reloadConfig   btn_imgClearSelection
 
 _ui_enable4diglot2ndary = """
 l_fontB bl_fontB l_fontI bl_fontI l_fontBI bl_fontBI 
@@ -4254,6 +4254,7 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         if response == Gtk.ResponseType.OK:
             # if opening file:
+            # imgsetname = self.get("t_imageSetName") # this control no longer exists
             zfile = self.get("btn_locateImageSet")
             # else:
             # zfile = urllib.request.urlopen(url)
@@ -5258,10 +5259,16 @@ Thank you,
         gridbox = self.builder.get_object("box_images")
         self.thumbnails = ThumbnailDialog(dialog, self, gridbox, 5)
         res = self.thumbnails.run()
-        for p in res:
-            self.picinfos.addpic(self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), 
-                   src=p[0]+'.jpg', ref=p[1].str(addsep=self.getRefSeparators(nobook=True)), alt=p[2])
-        self.picListView.load(self.picinfos)
+        if res:
+            for p in res:
+                ref = p[1]
+                if ref is None:
+                    ref = Reference("UNK", 0, 0)
+                if ref.verse == 0:
+                    ref.verse = ref.numverses() // 2 + 1
+                self.picinfos.addpic(self.digSuffix, anchor=p[1].str(addsep=RefSeparators(cv='.')), src=p[0]+'.jpg',
+                        ref=p[1].str(addsep=self.getRefSeparators(nobook=True)), alt=p[2], size='col', pgpos='tl')
+            self.picListView.load(self.picinfos)
 
     def onArtistToggled(self, btn, path):
         model = self.builder.get_object("ls_artists")
@@ -5291,3 +5298,9 @@ Thank you,
         imgset = self.get('ecb_artPictureSet')
         self.thumbnails.set_imageset(imgset)
         
+    def onDownloadImageSetClicked(self, btn):
+        continue
+        # Need to make this button like the codelet buttons with multiple
+        # sub-menu items with tooltips connected to actions.
+        # For now, we just have a single downloadable file:
+        # https://software.sil.org/downloads/r/ptxprint/ccsampleimages.zip

@@ -213,12 +213,18 @@ class Reference:
     def numchaps(self):
         if self.vrs is None:
             self.loadvrs()
-        return len(self.vrs[books[self.book]])
+        try:
+            return len(self.vrs[books[self.book]])
+        except KeyError, IndexError:
+            return 0
 
     def numverses(self):
         if self.vrs is None:
             self.loadvrs()
-        return self.vrs[books[self.book]][self.chap]
+        try:
+            return self.vrs[books[self.book]][self.chap] - (self.vrs[books[self.book]][self.chap - 1] if self.chap > 1 else 0)
+        except KeyError, IndexError:
+            return 0
 
     @classmethod
     def fromtag(cls, s, remainder=False):
