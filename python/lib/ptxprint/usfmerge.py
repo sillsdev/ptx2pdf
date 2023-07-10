@@ -123,6 +123,7 @@ _canonical_order={
     ChunkType.MIDVERSEPAR:7,
     ChunkType.HEADING:7,
     ChunkType.USERSYNC:7,
+    ChunkType.PARUSERSYNC:7,
     ChunkType.BODY:7,
 }
     
@@ -185,9 +186,9 @@ _validatedhpi=False # Has the heading(position)idx above been validated?
 nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
 
 SyncPoints = {
-    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # Just split at chapters
-    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1}, 
-    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1}, # split at every verse
+    "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # Just split at chapters
+    "normal":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:1,ChunkType.MIDVERSEPAR:1,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, 
+    "verse":{ChunkType.VERSE:1,ChunkType.PREVERSEPAR:1,ChunkType.PREVERSEHEAD:1,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:1,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:1,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # split at every verse
     "custom":{} # No default
 }
 
@@ -369,7 +370,10 @@ class Collector:
                     self.waspar=False
                 if(currChunk): # It's a text node, make sure it's attached to the right place.
                     currChunk.append(c)
-                    root.remove(c)
+                    try:
+                      root.remove(c)
+                    except (ValueError):
+                      pass
                 continue
             if c.name == "fig":
                 if self.fsecondary == primary:
@@ -781,8 +785,15 @@ def alignSimple(primary, *others):
                         runindices[j] -= 1
                     runs = runs[:ri] + runs[ri+1:]
             if action in ("insert", "replace"):
-                ai = runindices[ab]
+                if (ab<numkeys):
+                  ai = runindices[ab]
+                  runs[ai][-1] = [bb, be-1]
+                else: # This might be wrong, but it *seems* to work
+                  ai=len(runs)-1
+                  bb=runs[ai][-1][0]
+                #logger.log(7,f"{debstr(runs)}")
                 runs[ai][-1] = [bb, be-1]
+                #logger.log(7,f"{debstr(runs)}")
     results = []
     for r in runs:
         res = [Chunk(*sum(pchunks[r[0][0]:r[0][1]+1], []), mode=pchunks[r[0][1]].type)]
@@ -1118,7 +1129,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
-            doc = list(usfm.parser(inf, stylesheet=sheets[colkey],
+            doc = list(usfm.parser(inf, stylesheet=sheets[colkey], debug=False,
                                    canonicalise_footnotes=False, tag_escapes=tag_escapes))
             while len(doc) > 1:
                 if isinstance(doc[0], sfm.Text):

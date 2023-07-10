@@ -42,11 +42,18 @@ mergedGalV.usfm: Gal_wyc.usfm Gal_web.usfm Makefile $(SCRIPTDIR)/diglot_merge.pl
 	$(SCRIPTDIR)/diglot_merge.pl -s -v -C -L merge.log -o merged.out Gal_web.usfm Gal_wyc.usfm 
 	cat merged.out | grep -Ev '\\sts|\\rem' > $@
 
+egmerged.usfm:$(DIR)/ptx2pdf.sty  eg1.usfm eg2.usfm $(SCRIPTDIR)/usfmerge $(DIR)/ptx2pdf.sty $(DIR)/../python/lib/ptxprint/usfmerge.py 
+	$(SCRIPTDIR)/usfmerge --debug -s $(DIR)/ptx2pdf.sty  -m scores eg1.usfm eg2.usfm -o egmerged.usfm 2> egmerge.log
+autoeg:
+	while inotifywait -e close_write  . $(DIR)/../python/lib/ptxprint ; do sleep 0.5 ;  make egmerged.usfm eg.pdf ; done
+eg.pdf: eg.tex egmerged.usfm 
+
 midVmerged.usfm:$(DIR)/ptx2pdf.sty  midV1.usfm midV2.usfm $(SCRIPTDIR)/usfmerge $(DIR)/ptx2pdf.sty $(DIR)/../python/lib/ptxprint/usfmerge.py 
 	$(SCRIPTDIR)/usfmerge --debug -s $(DIR)/ptx2pdf.sty  -m scores midV1.usfm midV2.usfm -o midVmerged.usfm 2> midVmerge.log
 automidV:
 	while inotifywait -e close_write  . $(DIR)/../python/lib/ptxprint ; do sleep 0.5 ;  make midVmerged.usfm midV.pdf ; done
 midV.pdf: midV.tex midVmerged.usfm 
+noV.pdf: noV.tex noVmerged.usfm 
 
 noVmerged.usfm:$(DIR)/ptx2pdf.sty  noV1.usfm noV2.usfm $(SCRIPTDIR)/usfmerge $(DIR)/ptx2pdf.sty $(DIR)/../python/lib/ptxprint/usfmerge.py 
 	$(SCRIPTDIR)/usfmerge --debug -s $(DIR)/ptx2pdf.sty  noV1.usfm noV2.usfm -o noVmerged.usfm 2> noVmerge.log
