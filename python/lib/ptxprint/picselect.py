@@ -210,7 +210,9 @@ class ThumbnailDialog:
         self.fill()
 
     def clear(self):
-        # TO DO: need to unset all the buttons as well!
+        for image_tuple in self.image_tiles.values():
+            toggle_button = image_tuple[0]
+            toggle_button.set_active(False)
         self.selected_thumbnails = set()
         status = "(0 images selected)"
         self.view.set("l_artStatusLine", status)

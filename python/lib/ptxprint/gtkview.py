@@ -5337,4 +5337,7 @@ Thank you,
 
     def onImageSetChosen(self, ecb, *a):
         imgset = self.get('ecb_artPictureSet')
-        self.thumbnails.set_imageset(imgset)
+        try:
+            self.thumbnails.set_imageset(imgset)
+        except AttributeError:
+            pass
