@@ -1,8 +1,30 @@
 PTXprint 2.3.29 Release Notes
-4 July 2023
+14 July 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.30 (14 July 2023)
+
+  * Picture selector integrated into UI
+  
+  * Add installed imagesets to piclist search directories list
+  
+  * Fix bibrefs and verses
+  
+  * Refactor image sets (currently only Creative Commons image set available)
+  
+  * Add nobook to reference separators
+  
+  * Improved a few codelets
+  
+  * Improved manual syncing of no-verses text
+  
+  * Box/BorderL/R/T/BPadding added to style editor
+  
+  * Can now parse config and prjid from .zip archive without -Z
+  
+  * Set allNeedEmptyingfalse at diglotsetup: prevent staggered 1st titles
 
 Bug fixes and Improvements in 2.3.29 (4 July 2023)
 
