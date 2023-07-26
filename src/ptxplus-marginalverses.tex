@@ -41,12 +41,12 @@
 \def\mysimpleprintv@rse{\cstyle{v}{\plainv@rse}}
 \let\defaultprintverse=\mymarginpverse
 \let\printverse\defaultprintverse
-\newif\ifversehyphen \versehyphentrue
+\newif\ifversehyphen \versehyphenfalse
 \def\myh@ngprintv@rse#1{%
     \p@sheof
     \setbox1=\hbox{\p@sheof\m@kedigitsother \edef\tmp{\x@\scantokens\x@{\v@rsefrom\noexpand}}
         \global\c@untA=0\tmp \xdef\tmp{\x@\scantokens\x@{\v@rseto\noexpand}} \global\c@untB=0\tmp \p@peof}\advance\c@untA by 1
-    \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\else\endash\fi\fi\adornv{\v@rseto}}}%
+    \setbox1=\hbox{\cstyle{v}{\ifnum\c@untA=\c@untB\else\ifversehyphen\endash\fi\fi\adornv{\v@rseto}}}%
     \setbox#1=\vtop{\s@tbaseline{v}{v}\hbox to \wd1{\hfil\cstyle{v}{\adornv{\v@rsefrom}}}%
         \box1}%
     \p@peof}
