@@ -11,8 +11,8 @@
 
 % Define default kern amount
 \newdimen\quotekernamount
-\quotekernamount = 0pt
-
+\quotekernamount=0pt
+\newif\ifqt@st
 % Define quotes
 \def\soq{^^^^2018}
 \def\doq{^^^^201c}
@@ -31,20 +31,19 @@
 % Activate the search characters
 \let\knext\relax
 % Insert the kerned version
-\def\soqtest{\ifx\knext^^^^201c\let\knext=\soqkern\else\let\knext=\soqnokern\fi\knext\let\knext\relax}
-\def\doqtest{\ifx\knext^^^^2018\let\knext=\doqkern\else\let\knext=\doqnokern\fi\knext\let\knext\relax}
-\def\scqtest{\ifx\knext^^^^201d\let\knext=\scqkern\else\let\knext=\scqnokern\fi\knext\let\knext\relax}
-\def\dcqtest{\ifx\knext^^^^2019\let\knext=\dcqkern\else\let\knext=\dcqnokern\fi\knext\let\knext\relax}
-%\catcode"2018=\active \def^^^^2018{\futurelet\knext\soqtest}%
-%\catcode"201C=\active \def^^^^201c{\futurelet\knext\doqtest}%
-%\catcode"2019=\active \def^^^^2019{\futurelet\knext\scqtest}%
-%\catcode"201D=\active \def^^^^201d{\futurelet\knext\dcqtest}%
-\DefineActiveChar{^^^^2018}{\futurelet\knext\soqtest}
-\DefineActiveChar{^^^^2019}{\futurelet\knext\scqtest}
-\DefineActiveChar{^^^^201c}{\futurelet\knext\doqtest}
-\DefineActiveChar{^^^^201d}{\futurelet\knext\dcqtest}
-\def\liter@lkerns{%\edef^^^^2018{\soq}\edef^^^^201c{\doq}\edef^^^^2019{\scq}\edef^^^^201d{\dcq}%
-  \catcode"2018=12 \catcode"201C=12 \catcode"2019=12 \catcode"201D=12}
-\def\sm@rtquotes{\catcode"2018=\active \catcode"201C=\active \catcode"2019=\active \catcode"201D=\active}
-\sm@rtquotes
+\def\h@ghquotes{^^^^201c^^^^2018^^^^201d^^^^2019} % List of things to trigger a match on
+% Logic: If the test item (#1) is nowhere in the above list, then its first occuence will be just before the \E, and ##2 will be empty. If it IS in the list, then ##2 will contain something.
+\def\qt@st#1{\def\@@qt@st##1#1##2\E{\edef\tmp{##2}\ifx\tmp\empty\qt@sttrue\else\qt@stfalse\fi}\x@\@@qt@st\h@ghquotes#1\E}
+\def\soqtest{\qt@st{\knext}\let\knext=\soqnokern\ifqt@st\ifdim\quotekernamount=0pt\else\let\knext=\soqkern \fi\fi\knext\let\knext\relax}
+\def\doqtest{\qt@st{\knext}\let\knext=\doqnokern\ifqt@st\ifdim\quotekernamount=0pt\else\let\knext=\doqkern \fi\fi\knext\let\knext\relax}
+\def\scqtest{\qt@st{\knext}\let\knext=\scqnokern\ifqt@st\ifdim\quotekernamount=0pt\else\let\knext=\scqkern \fi\fi\knext\let\knext\relax}
+\def\dcqtest{\qt@st{\knext}\let\knext=\dcqnokern\ifqt@st\ifdim\quotekernamount=0pt\else\let\knext=\dcqkern \fi\fi\knext\let\knext\relax}
+\DefineActiveChar{^^^^2018}{\futurelet\knext\noexpand\soqtest}
+\DefineActiveChar{^^^^2019}{\futurelet\knext\noexpand\scqtest}
+\DefineActiveChar{^^^^201c}{\futurelet\knext\noexpand\doqtest}
+\DefineActiveChar{^^^^201d}{\futurelet\knext\noexpand\dcqtest}
+%\def\liter@lkerns{%\edef^^^^2018{\soq}\edef^^^^201c{\doq}\edef^^^^2019{\scq}\edef^^^^201d{\dcq}%
+  %\catcode"2018=12 \catcode"201C=12 \catcode"2019=12 \catcode"201D=12}
+%\def\sm@rtquotes{\catcode"2018=\active \catcode"201C=\active \catcode"2019=\active \catcode"201D=\active}
+%\sm@rtquotes
 
