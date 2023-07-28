@@ -1,9 +1,15 @@
 PTXprint 2.3.30 Release Notes
-14 July 2023
+28 July 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.31 (28 July 2023)
+
+  * Add punctuation processing to interlinear
+  
+  * Fixed ifversehyphen bug
+  
 Bug fixes and Improvements in 2.3.30 (14 July 2023)
 
   * Picture selector integrated into UI
