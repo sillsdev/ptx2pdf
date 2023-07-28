@@ -163,6 +163,9 @@
 \def\@wrap{}
 \def\m@kenote#1#2#3#4{\let\@sf\empty
   % text is read later
+  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\undefined
+    \x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+  \fi
   \ifhmode\edef\@sf{\spacefactor\the\spacefactor}\/\fi%
   % if footnote is on a chapter number ...
   \ifinextended #3\edef\@wrap{\global\setbox\sid@barnotes=\vbox\bgroup\unvbox\sid@barnotes}\else
@@ -170,8 +173,9 @@
       \ifhe@dings #3\edef\@wrap{\global\setbox\he@dingnotes=\vbox\bgroup\unvbox\he@dingnotes}%
       \else\edef\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
-        \else
-          \everypar={}\x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
+        \else % there is a chapter number waiting
+          \trace{f}{Note will be saved for chapter number}%
+          \everypar={}\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
           \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
         \fi % output caller
       \fi
@@ -228,7 +232,7 @@
       \fi
     \fi
     \ifp@ranotes\else
-      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\kern\p@ram\verticalsp@ceunit\fi
+      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\kern\p@ram\verticalsp@ceunit\penalty10000\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
@@ -257,6 +261,7 @@
 %  \splitmaxdepth\dp\f@@tstrut
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}{#2}%
+  %\ifnum\interactionmode=1\showlists\fi
   \futurelet\next\fo@t}% use plain.tex footnote processor
 %-c_vmakenote
 
@@ -372,6 +377,7 @@
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable}\ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi\egroup
+  %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
   }
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
@@ -414,7 +420,6 @@
 \newif\ifonlyst@dynotes
 \def\n@ffin#1{}
 \def\ins@rtn@tecl@ss#1{% insert the given note class, either paragraphed or separately
-  % set appropriate hsize width for diglot or not.
   \checkp@ranotes{#1}\setn@tewidth{#1}\ifst@dynotes\ifnotst@dynotes\let\n@xt=\n@ffin\else\let\n@xt=\studyins@rtn@tecl@ss\fi\else
     \ifonlyst@dynotes\let\n@xt=\n@ffin\else
       \ifp@ranotes\let\n@xt=\parains@rtn@tecl@ss\else\let\n@xt=\separateins@rtn@tecl@ss\fi
@@ -428,6 +433,10 @@
   \trace{n}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
+    \trace{f}{Noteclass #1: dim:\the\ht\th@cl@ss+\the\dp\th@cl@ss, \the\skip\th@cl@ss, \the\count\th@cl@ss.}%
+    %\ifnum\interactionmode=1
+      %\showbox\th@cl@ss
+    %\fi
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi
     \hbox{\vbox{\ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss}}\fi}% output notes
@@ -613,6 +622,7 @@
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\maken@tepara#1#2{%
+  % set appropriate hsize width for diglot or not.
   \setn@tewidth{#2}%
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
@@ -792,15 +802,17 @@
   \tempfalse
   \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
   \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
+  \trace{b}{botomins=\the\ht\bottomins + \the\dp\bottomins, +\the\skip\bottomins}%
   \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
+  \trace{b}{notes=\the\ht\n@tesbox + \the\dp\n@tesbox}%
   \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth\temptrue\fi\fi
     \tmpwrite{notes}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
   \noteseenfalse
-  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}
+  \trace{o}{verybottomins(onecoltrial): height=\the\ht\verybottomins, wd=\the\wd\verybottomins, availht=\the\availht, textheight=\the\textheight, htpartial=\the\dimen9}%
   \ifdim\ht\verybottomins>0pt \ifdim\availht > 0pt \iftemp\else\vfil\tmpwrite{verybottomins}\fi % \kern-\dimen0
     \lastd@pth=0pt \vskip\skip\verybottomins \hbox{\lshiftc@lumn{\the\pageno}\vbox{\unvbox\verybottomins}}%
   \fi\fi
@@ -2059,9 +2071,9 @@
     \ifrerunsavepartialpaged
       \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
-    \ifnum\interactionmode=2
-      \showlists
-    \fi
+    %\ifnum\interactionmode=1
+      %\showlists
+    %\fi
   \else % the contents of the "galley" didn't fit into the columns,         %(+)
         % so reduce \vsize and try again with an earlier break
     \trace{o}{Reducing vsize \the\vsize, by \the\baselineskip\space ip=\the\insertpenalties}%
@@ -2208,6 +2220,7 @@
   \global\vsize=\textheight
   \global\pagefullfalse%
   \global\BodyColumns=2
+  \global\allNeedEmptyingfalse
   \global\advance\vsize by \baselineskip % don't get caught short by 1/2 line or so
   \global\advance\vsize by -\ht\partial % Don't mis-inform TeX
   % make a macro reset vsize for remaining pages which do not have 1 column material
@@ -2350,7 +2363,7 @@
     \fi
     {\def\c@rrID{#2 #1 page \number\whichp@ge}% for lower crop-mark info, if requested
       \shipcompletep@gewithcr@pmarks{\vbox{\box0}}}%
-    \advancepageno
+    \ifholdpageno\else\advancepageno\fi
     \repeat
   \endgroup % begun in \incl@depdf
 }

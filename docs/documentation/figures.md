@@ -228,10 +228,9 @@ name that should be supplied to `\setCutoutSlop`.
 #### Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending
-the previous paragraph. This works with *here* picture locations,
-(the 'automatic' paragraph style for text surrounding the image is intended to
-be the same as the previous paragraph style, but until further testing reveals
-this to be 100% reliable, sensible users will supply their own style marker).
+the previous paragraph. This works with *here* picture locations, except that the 
+paragraph is not ended.
+
 USFM makes no reference to left or right alignment, nor scaling images, nor
 images in cutouts.
  
@@ -470,7 +469,7 @@ ptx macros but with an added extension of `.piclist` and in the Piclist folder,
 specified to the macros. Ptxprint handles all this for the user.
 
 There are two methods to read a piclist, in 'slurp' mode (`\picslurptrue`, the
-new default) where the entire file is read at once or the traditional mode
+default) where the entire file is read at once or the traditional mode
 (`\picslurpfalse`) where the specification for only one picture is held in
 memory at a time.  The traditional mode requires that pictures occur in the correct 
 order (difficult in diglots, where the sequence of verses is not always
@@ -546,7 +545,29 @@ the combinations do not trigger an unprintable page.
 ```
 \SetTriggerParagraphSeparator{=@=}
 ```
+### Reuse of piclist entries.
+If it is desirable to have a particular piclist entry (including caption)
+multiple times, then the following steps must be taken: 
+1. Read the piclist to discover what TeX thinks the identity of image is - the anchor reference, and image number (starting at 1) at that anchor reference.
+2. Inform TeX that the image is one that should be kept, in the controlling TeX file (or `ptxprint-mods.tex`). The format for this is either:	
+  a. `\KeepFigure{`book`}{`Reference`}{`image Nr`}`
+  b. `\KeepFigure{`book`}{`Reference`}{}`  (for all images on a given reference), or
+  c. The boolean `\KeepAllFigurestrue`  Which prevents TeX from tidying up after itself everywhere.
+3. Modify the USFM to trigger reuse the image. For an image triggered initially by `\zfiga`, then that simply means repeating the relevant `\zfiga` line.
+For other images, e.g. those triggered from `\k`, or a specific chapter-verse, 
+the `\zfiga` code must be identified. Some examples are given below:
 
+```tex
+\KeepFigure{MAT}{1.1}{1} % First figure in piclist at Matthew 1:1, or  \zfiga|1.1\* in MAT
+\KeepFigure{GLO}{Borogroves}{2} % 2nd figure triggered by \zfiga|Borogroves\* in GLO
+\KeepFigure{GLO}{k.Brillig}{1} % Triggered \k Brillig\* or \zfiga|k.Brillig\* in GLO
+```
+
+Note that while it is possible to select a subset of images triggered from a given 
+anchor point (verse or other reference), there is no mechanism available for
+reordering them. Nor is there any way to defend against reordering of multiple
+images at the same anchor point within the piclist, if something (e.g. the
+python code) alters the order.
 
 ## Captions
 

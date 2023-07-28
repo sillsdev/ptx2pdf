@@ -278,7 +278,7 @@ _map = {
     "cover/papercalcunits":     ("r_paperCalc", "cover", None),
     "cover/covercropmarks":     ("c_coverCropMarks", "cover", None),
     "cover/coverbleed":         ("s_coverBleed", "cover", None),
-    "cover/coverartbleed":      ("s_coverArtBleed", "cover", None),
+    "cover/coverartbleed":      ("s_coverArtBleed", "cover", lambda w,v: v or "0"),
     "cover/makeseparatePDF":    ("c_coverSeparatePDF", "cover", None),
     "cover/spinewidth":         ("l_spineWidth", "cover", None),
 
@@ -292,6 +292,7 @@ _map = {
     "covergen/shadingalpha":    ("s_coverShadingAlpha", "cover", None),
     "covergen/imagealpha":      ("s_coverImageAlpha", "cover", None),
     "covergen/useimage":        ("c_coverSelectImage", "cover", None),
+    "covergen/overwriteperiphs":("c_coverOverwritePeriphs", "cover", None),
     # "covergen/imagefront":      ("c_coverImageFront", "cover", None),
     # "covergen/imagefile":       ("btn_coverSelectImage", "cover", lambda w,v: w.coverImage.as_posix() if w.coverImage is not None else ""),
     # "covergen/imgfname":       ("lb_coverImageFilename", "cover", None),
@@ -307,6 +308,7 @@ _map = {
     "finishing/sheetsinsigntr": ("s_sheetsPerSignature", "finish", None),
     "finishing/foldcutmargin":  ("s_foldCutMargin", "finish", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", "finish", None),
+    "finishing/extractinserts": ("c_extractInserts", "finish", None),
     "finishing/spotcolor":      ("col_spotColor", "finish", None),
     "finishing/spottolerance":  ("s_spotColorTolerance", "finish", None),
     # The next line is redundant (I think) - check and remove
@@ -423,6 +425,8 @@ _map = {
     "snippets/pdfoutput":       ("fcb_outputFormat", "finish", None),
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
     "snippets/fancyborders":    ("c_borders", "decorate", None),
+    "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
+    # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None), # Don't save this setting so it is OFF by default
 
     "document/includeimg":      ("c_includeillustrations", "pictures", None),
     
@@ -433,6 +437,7 @@ _map = {
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/rotate":         ("c_thumbrotate", "tabsborders", None),
+    "thumbtabs/tabsoddonly":    ("c_tabsOddOnly", "tabsborders", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", "tabsborders", None),
     "thumbtabs/thumbtextmkr":   ("r_thumbText", "tabsborders", None),
     "thumbtabs/restart":        ("c_thumbrestart", "tabsborders", None),

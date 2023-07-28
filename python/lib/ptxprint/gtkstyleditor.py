@@ -412,6 +412,7 @@ class StyleEditorView(StyleEditor):
                 if v[0].startswith("c_"):
                     val = val or False
                     oldval = oldval or False
+                logger.debug(f"{k}: {oldval=}, {val=}")
             if k == "_fontsize":
                 fstyles = []
                 fref = self.getval(self.marker, 'FontName')
@@ -577,6 +578,8 @@ class StyleEditorView(StyleEditor):
             value = val
 
         if not key.startswith("_"):
+            # if key == "Italic":
+                # import pdb; pdb.set_trace()
             super(self.__class__, self).setval(self.marker, key, value)
             if key in ("FontSize", "FontName", "Bold", "Italic"):
                 fref = self.getval(self.marker, 'FontName')
@@ -585,7 +588,8 @@ class StyleEditorView(StyleEditor):
                 if key in ("Bold", "Italic"):
                     setattr(fref, "is"+key, val)
                     self.setval(self.marker, 'FontName', fref, parm=True)
-                self.setFontLabel(fref, float(self.getval(self.marker, "FontSize")) * float(self.model.get("s_fontsize")))
+                # check that defaulting this doesn't cause problems
+                self.setFontLabel(fref, float(self.getval(self.marker, "FontSize", "1.")) * float(self.model.get("s_fontsize", "1.")))
         if v[1] is not None:
             ctxt = self.builder.get_object(v[1]).get_style_context()
             if key.startswith("_"):

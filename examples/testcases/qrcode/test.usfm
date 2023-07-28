@@ -1,0 +1,15 @@
+\id TST Test file
+\h small test file
+\mt1 The Test File
+\rem \periph Hello|intro
+\rem \ip\cat hi\cat* This \qt-s|who="James me"\*is \qt-e\* an intro
+\rem \zendperiph
+\ip Introductory paragraph. 
+
+\c 1
+\v 1
+Behold a QR code\zqrcode|hello\*
+\v 2
+And another \zqrcode|pgpos="cr" background="1 1 0.5" colour="0 0 .5" vmax="2" unicode="T" size="1cm" data="This is in v 2 ăěâśěǎ"\*
+
+

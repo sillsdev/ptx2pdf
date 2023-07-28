@@ -50,6 +50,12 @@
 \def\updatep@cusecheck#1{\x@\global\x@\p@cusecheck\x@{\the\p@cusecheck #1}}
 
 \def\mkp@cid{\xdef\p@cid{piclist-\p@cref|\the\p@clistsuff}}
+\def\keepp@cprefix{keeppicl-}
+\def\@mkkp@cid#1#2{\xdef\kp@cid{\keepp@cprefix#1|#2}}
+\def\mkkp@cid{\@mkkp@cid{\p@cref}{\the\p@clistsuff}}
+\def\KeepFigure#1#2#3{\@mkkp@cid{#1#2-preverse}{#3}%
+  \trace{P}{Marking '\kp@cid' for keeping}%
+  \x@\global\x@\let\csname \kp@cid\endcsname\empty}
 
 \def\mkp@cref#1#2{%format the reference for book,chapter.verse that piclist (and anything wanting to trigger piclist entries) should use
 #1#2-preverse}
@@ -92,6 +98,8 @@
 }
 
 \newif\ifpicslurp \picslurptrue %If true, this uses some extra memory (remembering the entire piclist) for the benefit of the piclist no longer needing to be sorted. 
+\newif\ifKeepAllFigures 
+\KeepAllFiguresfalse
 
 \def\readnextp@c{%
   \let\r@peat\relax
@@ -146,27 +154,56 @@
 }
 \def\ch@ckN@xtPicid{%Check to see if there's one or more pictures for this verse.
   \mkp@cid
-  \trace{P}{ch@ckN@xtPicid: \p@cid}%
+  \mkkp@cid
+  \trace{P}{ch@ckN@xtPicid: \p@cid (keepid:\kp@cid)}%
   \ifcsname\p@cid\endcsname 
     \traceifset{ch@ckN@xtPicid}%
     \x@\let\x@\t@st\csname \p@cid\endcsname
     \ifx\t@st\relax
-      \let\cnpicr@pe@t\relax
-      \trace{P}{No piclist entry found for \p@cid}%
+      \trace{P}{No real piclist entry found for \p@cid}%
+      \let\cnpicr@pe@t\ch@ckN@xtPicid
     \else
-      \global\advance\p@clistused by 1
+      \x@\ifx\csname used\p@cid\endcsname\empty\else %Avoid overcounting
+        \global\advance\p@clistused by 1
+      \fi
       \x@\global\x@\let\csname used\p@cid\endcsname\empty% mark picture as done
       \trace{P}{Piclist entry found for \p@cid (\the\p@clistused/\the\p@clistentries)}%
-      \x@\global\x@\let\csname\p@cid\endcsname\undefined% Undefine pics on use
+      \ifcsname \kp@cid\endcsname
+        \temptrue
+      \else
+        \tempfalse
+      \fi
+      \ifKeepAllFigures 
+        \temptrue
+      \fi
+      \ifcsname \keepp@cprefix\p@cref|\endcsname
+        \temptrue
+      \fi
+      \iftemp
+        \trace{P}{Preserving entry}%
+        {\loop\tempfalse\ifnum\p@clistsuff>1
+          \advance\p@clistsuff by -1
+          \mkp@cid
+          \ifcsname\p@cid\endcsname\else
+            \trace{P}{Reactivating image \p@cid as null, so our kept image is spotted}%
+            \x@\global\x@\let\csname\p@cid\endcsname\relax
+            \temptrue
+          \fi
+        \fi\iftemp\repeat
+        }%  
+      \else
+        \trace{P}{No request to keep \p@cref or \kp@cid}%
+        \x@\global\x@\let\csname\p@cid\endcsname\undefined% Undefine pics on use
+      \fi
       \let\p@cspec\t@st
-      \x@\d@figure\x@{\p@cspec}%
-      \advance\p@clistsuff by 1
+      {\x@\d@figure\x@{\p@cspec}}% In a group so that paragraph counts don't get broken.
       \let\cnpicr@pe@t\ch@ckN@xtPicid
     \fi
     \traceifcheck{ch@ckN@xtPicid}%
   \else
     \let\cnpicr@pe@t\relax
   \fi
+  \advance\p@clistsuff by 1
   \cnpicr@pe@t
 }
 

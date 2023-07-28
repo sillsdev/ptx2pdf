@@ -1,0 +1,681 @@
+{
+  "Front":
+    {
+      "Periph+Var": [
+        {
+          "Type": "insert",
+          "Label": "\\periph",
+          "Description": "Start of a periph section.",
+          "CodeSnippet": "\\periph Publication Data|id=\"pubdata\""
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zendperiph",
+          "Description": "End of a periph section, if you’re not starting a new periphery. Must be the only thing on the line."
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zgetperiph|id\\*",
+          "Description": "Get (use) the periphery stored earlier by \\periph comment|id=”preface”",
+          "CodeSnippet": "\\zgetperiph|preface\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zvar|variablename\\*",
+          "Description": "Insert project variable value",
+          "CodeSnippet": "\\zvar|maintitle\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zbl[|num]\\*",
+          "Description": "Insert num of blank lines",
+          "CodeSnippet": "\\zbl|3\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zgap[|dimen]\\*",
+          "Description": "Insert a vertical gap of given dimension (6pt, 5mm, 2cm, 1.5in, etc.)",
+          "CodeSnippet": "\\zgap|2.3cm\\*"
+        }
+      ],
+      "Legal": [
+        {
+          "Type": "insert",
+          "Label": "\\zcopyright",
+          "Description": "Insert project copyright statement"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zfiga|anchor\\*",
+          "Description": "Insert image from piclist with given anchor",
+          "CodeSnippet": "\\zfiga|p003\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\fig |src=\"path/to/filename.png\" size=\"size\" pgpos=\"pgpos\" scale=\"0.2\" copy=\"None\"",
+          "Description": "Insert an image copy=\"None\"",
+          "CodeSnippet": "\\fig |src=\"C:/Users/Jim/Dropbox/orglogo.png\" size=\"col\" pgpos=\"pc\" scale=\"0.15\" copy=\"None\"\\fig*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zccimg by-nd|size=\"size\" pgpos=\"pgpos\" scale=\"scale\"\\*",
+          "Description": "Insert Create Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
+          "CodeSnippet": "\\zccimg by-nc-nd|size=\"col\" pgpos=\"pc\" scale=\"0.2\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zimagecopyrights[LANG]",
+          "Description": "Insert image copyrights for a language",
+          "CodeSnippet": "\\zimagecopyrightsfr"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zlicence",
+          "Description": "Insert projects license"
+        }
+      ],
+      "ISBN+QR": [
+        {
+          "Type": "insert",
+          "Label": "Generate ISBN bar code for a specific number.",
+          "Description": "Generate ISBN bar code for fixed number.  Height can be one of (normal, medium, short).",
+          "CodeSnippet": "\\pc \\zISBNbarcode|isbn=\"987-123-456-0\" height=\"normal\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Generate ISBN bar code (if ISBN number exists)",
+          "Description": "If the 'isbn' variable has been set, then this will generate a code.",
+          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*\n\\ztruetext\n\\esb \\cat ISBNbox\\cat* \\pc \\zISBNbarcode|var=\"isbn\" height=\"medium\"\\* \\esbe\n\\zgap|10pt\\*\n\\ztruetext*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Generate QR code (to link to other content)",
+          "Description": "Generate a QR-code from attribute data (which may not contain double-quotes)",
+          "CodeSnippet": "\\zqrcode|pgpos=\"cr\" size=\"48pt\" data=\"www.jesusfilm.org/watch/jesus.html/birth-of-jesus/wakawaka.html\"\\*"
+        }
+      ],
+      "Contents": [
+        {
+          "Type": "insert",
+          "Label": "\\ztocbefore…\\ztocbefore*",
+          "Description": "Insert table rows (\\tr \\cat toc\\cat*... ) before the TOC",
+          "CodeSnippet": "\\ztocbefore\\tr \\cat toc\\cat*\\tc1 Book Name\\tc2 Abbreviation\\tcr3 Page\\ztocbefore*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ip \\ztoc[|order]\\*",
+          "Description": "Insert Table of Contents of given order (main, ot, nt, dc, pre, post, heb, sorta, sortb, sortc)",
+          "CodeSnippet": "\\ip \\ztoc|nt\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ztocafter …. \\ztocafter*",
+          "Description": "Insert table rows (\\tr \\tc1 …. ) after the TOC.",
+          "CodeSnippet": "\\ztocafter\\tr \\tc1 Names Index\\tc2 \\tcr3 196\\ztocafter*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zthumbtab bookname",
+          "Description": "Set the thumb tab text for this book (instead of using \\toc3)",
+          "CodeSnippet": "\\zthumbtab Intro"
+        }
+      ],
+      "Pages": [
+        {
+          "Type": "insert",
+          "Label": "\\dopagenums",
+          "Description": "Turn on page numbers"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\nopagenums",
+          "Description": "Turn off page numbers"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\resetpagenums pnum",
+          "Description": "Reset page numbers (negative for Roman numerals)",
+          "CodeSnippet": "\\resetpagenums -1"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zEmptyPage",
+          "Description": "Insert intentionally empty page contains \\TPILB "
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zNeedOddPage",
+          "Description": "Insert an “empty” page if the current page is even"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zNeedEvenPage",
+          "Description": "Insert an “empty” page if the current page is off"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zNeedQuadPage",
+          "Description": "Insert 1, 2 or 3 “empty” pages if the current page is not divisible by 4"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zfillsignature\\*",
+          "Description": "Fill a signature to the given modulo of pages. Note, uses the actual page count. Optional ‘pagenums’ parameter ‘no’=\\nopagenums, ‘do’=\\dopagenums), extra ensures at least this many pages will be added.",
+          "CodeSnippet": "\\zfillsignature|pages=\"8\" pagenums=\"no\"  extra=\"2\"\\*"
+        }
+      ],
+      "Label": [
+        {
+          "Type": "insert",
+          "Label": "\\zlabel|uniquelabel\\*",
+          "Description": "Remember where uniquelabel is (page and reference)",
+          "CodeSnippet": "\\zlabel|map_israel\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zpage|uniquelabel\\*",
+          "Description": "Output the page number for uniquelabel",
+          "CodeSnippet": "\\p Refer to map on page \\zpage|map_israel\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zref|id=”uniquelabel” show=”b_c:v”\\*",
+          "Description": "Output chapter:verse for uniquelabel (show: b=book, c=chapter, v=verse, _=space, anything else is copied)",
+          "CodeSnippet": "\\p Refer to sidebar on culture in \\zref|id=”cultural_clues” show=”b_c:v”\\*"
+        }
+      ],
+      "Condition": [
+        {
+          "Type": "insert",
+          "Label": "\\zifvarset|var=\"varname\"\\*",
+          "Description": "Sets conditional text if varname is set. emptyOK=\"T\" ⇒ empty is true, emptyOK=\"F\" ⇒ empty is false.",
+          "CodeSnippet": "\\zifvarset|var=\"isbn\" emptyok=\"F\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ztruetext …\\ztruetext*",
+          "Description": "Include contents if condition is true"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zfalsetext …\\zfalsetext*",
+          "Description": "Include contents if condition is false",
+          "CodeSnippet": "\\zfalsetext ISBN missing \\zfalsetext*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zifhooks|marker\\*",
+          "Description": "Does marker have a hook, set conditional true"
+        }
+      ],
+      "Diglot": [
+        {
+          "Type": "insert",
+          "Label": "\\zglot|[col]\\*",
+          "Description": "Use formatting for diglot column col, in a monoglot section. Return to normal formatting with \\zglot|\\*",
+          "CodeSnippet": "\\zglot|R\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\zgetperiph|side=\"L|R\" id=\"preface\"\\*",
+          "Description": "Get (use) the appropriate L/R periphery stored earlier by \\periph comment|id=”preface”",
+          "CodeSnippet": "\\zgetperiph|side=\"R\" id=\"preface\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ztoc|main[L|R]\\*",
+          "Description": "Insert L/R Table of Contents of given order (main, ot, nt, dc, pre, post, heb, sorta, sortb, sortc)",
+          "CodeSnippet": "\\mt3 \\zvar|toctitlepri\\*\n\\ip \\ztoc|mainL\\*\n\\mt3 \\zvar|toctitlesec\\*\n\\ip \\ztoc|mainR\\*"
+        }
+      ],
+      "Other": [
+        {
+          "Type": "insert",
+          "Label": "\\beginL",
+          "Description": "Start LTR text run"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\beginR",
+          "Description": "Start RTL text run"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\onebody",
+          "Description": "Set \\BodyColumns=1 for single column body text"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\twobody",
+          "Description": "Set \\BodyColumns=2 for double column body text"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ztmon",
+          "Description": "Turn on TeX’s tracing macros (for debugging)"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\ztmoff",
+          "Description": "Turn off TeX’s tracing macros"
+        }
+      ]
+    },
+  ".txt":
+    {
+      "Adjust": [
+        {
+          "Type": "insert",
+          "Label": "Shrink text to 93% width ('\\p' > '\\p^93')",
+          "Description": "Shrink one or more paragraphs by 7%\n(remember to reference the PREVIOUS verse).",
+          "CodeSnippet": "at JHN 17:27 '\\\\p(\\s)' > '\\\\p^93\\1'"
+        },
+        {
+          "Type": "insert",
+          "Label": "Shrink text to 95% width ('\\p' > '\\p^95')",
+          "Description": "Shrink one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
+          "CodeSnippet": "at MRK 1:46; 2:29; 14:73; LUK 2:53 '\\\\p(\\s)' > '\\\\p^95\\1'"
+        },
+        {
+          "Type": "insert",
+          "Label": "Shrink text to 97% width ('\\p' > '\\p^97')",
+          "Description": "Shrink one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
+          "CodeSnippet": "at ROM 4:26; 5:22; 1CO 2:17 '\\\\p(\\s)' > '\\\\p^97\\1'"
+        },
+        {
+          "Type": "insert",
+          "Label": "Stretch text to 103% width ('\\p' > '\\p^103')",
+          "Description": "Stretch one or more paragraphs by 3%\n(remember to reference the PREVIOUS verse).",
+          "CodeSnippet": "at JHN 14:32; ACT 3:27 '\\\\p(\\s)' > '\\\\p^103\\1'"
+        },
+        {
+          "Type": "insert",
+          "Label": "Stretch text to 105% width ('\\p' > '\\p^105')",
+          "Description": "Stretch one or more paragraphs by 5%\n(remember to reference the PREVIOUS verse).",
+          "CodeSnippet": "at GAL 1:25; EPH 4:33 '\\\\p(\\s)' > '\\\\p^105\\1'"
+        }
+      ],
+      "Change": [
+        {
+          "Type": "insert",
+          "Label": "'wrongword' > 'rightword'",
+          "Description": "Simple find and replace.",
+          "CodeSnippet": "'old' > 'new'"
+        },
+        {
+          "Type": "insert",
+          "Label": "at JHN 3:16 'world' > 'people of the world'",
+          "Description": "Location-specific find and replace.",
+          "CodeSnippet": "at JHN 14:32 'old' > 'new'"
+        },
+        {
+          "Type": "insert",
+          "Label": "in '\\f .+?\\f\\*':  'Syria'  >  'Aram'",
+          "Description": "Find and replace WITHIN a specific context.",
+          "CodeSnippet": "in 'context-regex': 'old' > 'new'"
+        },
+        {
+          "Type": "insert",
+          "Label": "at LUK 2:53 in '\\f .+?\\f\\*':  'Syria'  >  'Aram'",
+          "Description": "Location AND context specific find and replace (e.g. for the footnote found in a particular verse, change Syria to Aram)",
+          "CodeSnippet": "at LUK 2:53 in 'context-regex': 'old' > 'new'"
+        }
+      ],
+      "Insert": [
+        {
+          "Type": "comment#",
+          "Label": "Insert line break within Intro Outline",
+          "Description": "Within the \\io1 line, break the line between 'some' and 'words'.",
+          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\LINESEP words'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert a rule before \\iot",
+          "Description": "Insert a rule before the introductory outline. Note that you will have to translate the word 'Outline'.",
+          "CodeSnippet": "'(\\\\iot Outline)' > '\\\\pb\\r\\n\\1' "
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert a rule before \\c 1 starts",
+          "Description": "Insert a rule after the intro (for all books)",
+          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\*\\r\\n\\1 '"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert a page break at specific location",
+          "Description": "This example demonstrates how to insert a page break at specific location within a certain book (TDX).",
+          "CodeSnippet": "at TDX '(\\\\s1 Parables Jesus Told)' > '\\\\pb\\r\\n\\1'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert a picture at specific reference",
+          "Description": "Insert an illustration at a particular reference. This is NOT the best way to insert an illustration, but shows what is possible. It is better to insert the illustration in Paratext, and/or use the PicList.",
+          "CodeSnippet": "at EPH 6:13 '(soldier.)' > '\\1\\\\fig A Roman soldier complete with armor|alt=\"Roman soldier\" src=\"ArmorOfGodDiagram.png\" size=\"col\" ref=\"6:14-18\"\\\\fig*'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert book separator pages",
+          "Description": "Insert book separator pages using heading information",
+          "CodeSnippet": "(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt) > '\\1\\2\\3\\4\\\\zgap|2in\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\*\\4\\\\pb\\4\\5'"
+        }
+      ],
+      "Format": [
+        {
+          "Type": "comment#",
+          "Label": "Add 3-letter book codes to headers (temporarily)",
+          "Description": "When typesetting in another script it is useful to temporarily add readable headers using the 3-letter book code. To make these generated \\h1 codes to appear in the header, use the 'Book Alt (\\h1)' option on the Header+Footer tab.",
+          "CodeSnippet": "(\\\\id (...).*\\n) > '\\1\\\\h1 \\2\\r\\n'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Allow linebreaks after in-word hyphens",
+          "Description": "This will insert a zero-width space after in-word hyphens allowing the line to break there if needed.",
+          "CodeSnippet": "'(?<=\\s[^\\]*\\D)-(?=\\D)' > '-\\u200B'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Make glossary entries list items",
+          "Description": "Only within the Glossary, changes a normal paragraph \\p marker to be a list item \\li for paragraphs with a \\k (keyword/entry), and to \\pi for subsequent paragraphs.\n\nNote that as an alternative you can use book-specific styling instead (the style 'id:GLO|p' could be added to change how \\p gets styled within the Glossary).",
+          "CodeSnippet": "at GLO '\\\\p \\\\k ' > '\\\\li \\\\k '\nat GLO '\\\\p ' > '\\\\pi '"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Make \\ior\\* consistent",
+          "Description": "Remove the space before the \\ior\\* markers to make the right edge consistent in \\io# lines.",
+          "CodeSnippet": "' (\\\\ior\\*)' > '\\1'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Auto lengthen poetry",
+          "Description": "Short \\q1 and \\q2 lines work great for 2-col layouts. But for a single column layout, we can merge all \\q2 into the previous \\q1, and then turn every other \\q1 into a \\q2 to make it look like poetry.",
+          "CodeSnippet": "'\\\\q2 ' > ''\n'(\\\\q1(?:[^\\\\]|(\\\\[fx]).*?\\2\\*|\\\\v)+?)\\\\q1' > '\\1\\\\q2'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Add section headers to Strong's index",
+          "Description": "Just for the XXS book, insert the first letter of each section of verncular renderings before the block of renderings with their Strong's H and G numbers.",
+          "CodeSnippet": "at XXS '(\\\\m ?\\r?\\n(.))' > '\\\\s - \\2 -\\n\\1'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Suppress introductory material for *some* books",
+          "Description": "In order to suppress the intro material (\\i- markers before \\c 1) in specific books (but keep it for others) replace BAK,XXA,XXE with whichever books you want the intro material stripped from.",
+          "CodeSnippet": "at BAK,XXA,XXE '\\\\i[so]\\d?\\s.+\\r?\\n' > ''"
+        }
+      ],
+      "Other": [
+        {
+          "Type": "insert",
+          "Label": "Drop (remove) an illustration",
+          "Description": "Remove an illustration (\\fig ... \\fig\\*) from a specific location.",
+          "CodeSnippet": "at JHN 4 '\\\\fig .+?\\\\fig\\*' > ''"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Use Section headers \\s or \\s1 for Table of Contents",
+          "Description": "Change the existing \\toc3 marker to \\zthumbtab, remove \\toc1 and \\toc2 markers; then generate new \\toc1 markers from the \\s (or \\s1) markers in the text to populate the Table of Contents with section headers.",
+          "CodeSnippet": "'\\\\toc3 (.+?)[\\r\\n]+' > '\\\\zthumbtab \\1'\n'\\\\toc\\d .+?[\\r\\n]+' > ''\n'(\\\\s1? )(.+?[\\r\\n]+)' > '\\\\toc1 \\2\\1\\2'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Change \\p to \\nb ",
+          "Description": "No-break paragraph: Commonly used in cases where the previous paragraph spans the chapter boundary.",
+          "CodeSnippet": "at JHN 16:0 ACT 8:0 1CO 11:0 2CO 2:0,6:0,7:0 COL 2:0,4:0 HEB 10:0 '\\\\p' > '\\\\nb'"
+        }
+      ]
+    },
+  ".tex":
+    {
+      "Page Nums": [
+        {
+          "Type": "comment%",
+          "Label": "Set custom page numbers (Header/Footer)",
+          "Description": "PTXprint makes it easy to set the Running Header (RH) and Running Footer (RF) for most common uses. However there are many more options that can be used if needed. Modify the inserted snippet as needed by choosing (one|options) in each segment. The resulting line(s) of code should look something like this:\n  \\def\\RFevenleft{\\pagenumber}\n  \\def\\RFoddright{\\pagenumber}\n\n- RH means running header, RF running footer,\n- noV means pages with no scripture verses, title means the title page, and nothing in that slot means normal pages,\n- odd/even is referring to the page numbers,\n- left|center|right are the 3 the positions within the header/footer.\n\n",
+          "CodeSnippet": "% \\def\\R(H|F)(|noV|title)(odd|even)(left|center|right){(\\empty|\\pagenumber|\\(first|last|range)ref|\\(us|uk|iso)date|\\hrsmins)}\n\\def\\RFevenleft{\\pagenumber}\n\\def\\RFoddright{\\pagenumber}\n"
+        }
+      ],
+      "Verses": [
+        {
+          "Type": "comment%",
+          "Label": "Show bridged verses at the start of chapters",
+          "Description": "Generally people do not want to show the verse number for verse 1 at the start of a chapter. But they may want to show a bridged verse in such a situation.",
+          "CodeSnippet": "\\catcode`\\@=11\n\\addtopreversehooks{\\ifc@ncelfirstverse\n    \\spl@tprintableverse\n    \\ifx\\v@rsefrom\\v@rseto\\else\\c@ncelfirstversefalse\\fi\n  \\fi}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Paragraph Initial Verses",
+          "Description": "This snippet limits verse numbers so that only the first verse in a paragraph is shown. It is typically used in conjunction with marginal verses for reader editions where only limited verse hints are required.",
+          "CodeSnippet": "\\newif\\iffirstinpara \\firstinparatrue\n\\let\\mytv=\\defaultprintverse\n\\lowercase{\\def\\marginverse{\\iffirstinpara\\global\\firstinparafalse\\mytv\\fi}}\n\\def\\paramarker#1{\\expandafter\\global\\expandafter\\let\\csname _#1\\expandafter\\endcsname \\csname #1\\endcsname\n    \\expandafter\\gdef\\csname #1\\endcsname{\\firstinparatrue\\csname _#1\\endcsname}}\n\\paramarker{p}\\paramarker{q1}\\paramarker{li}\n\\let\\defaultprintverse=\\marginverse"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Suppress hyphen between bridged verses",
+          "Description": "When using marginal verses, if you want to suppress the hyphen that normally comes between bridged verses (so that vertical stacks don't show the hyphen) then place this code before the \\bridgeVerses lines:",
+          "CodeSnippet": "\\versehyphenfalse"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Avoid two marginal verses crashing into each other",
+          "Description": "Marginal verse numbers get printed in the margin beside the text. Sometimes, where there is a short verse, two verse numbers appear in the same line. This causes a crash between the two marginal verse numbers. One way around this is to tell the ptx macros to bridge two verses and depending on the horizontal space available may cause the verses to stack vertically.",
+          "CodeSnippet": "\\bridgeVerses ACT13.30-31.\n\\bridgeVerses ACT23.26-27.\n\\bridgeVerses ROM1.22-23.\n\\bridgeVerses ROM3.15-16."
+        },
+        {
+          "Type": "comment%",
+          "Label": "Apply rounded rectangular box to bridged verses",
+          "Description": "This applies the specified rounded rectangular box (in .pdf format) to bridged verses",
+          "CodeSnippet": "\\SeparateVerseAdornmentsfalse\n\\newbox\\stretchedversestarbox\n\\setbox\\stretchedversestarbox=\\hbox{\\XeTeXpdffile 'c:/pathtofile/BridgedVerseRoundedBox.pdf' scaled 760 \\relax}\n\\def\\AdornVerseNumber#1{\\beginL\\rlap{\\hbox to \\ifadorningrange\\wd\\stretchedversestarbox\\else\\wd\\versestarbox\\fi{\\hfil #1\\hfil}}%\n    \\raise -4.5pt\\ifadorningrange\\copy\\stretchedversestarbox\\else\\copy\\versestarbox\\fi\\endL}"
+        }
+      ],
+      "Hooks": [
+        {
+          "Type": "insert",
+          "Label": "\\sethook{pos}{mrkr}{code}",
+          "Description": "Runs code at pos (before|start|end|after) style marker:\nbefore  - Runs before the style is set for the marker\nstart   - Runs within the styling of the marker before any text is output\nend    - Runs before the marker closes or the paragraph is closed for a paragraph style\nafter   - Runs after the marker is closed and after the paragraph is finished for a paragraph style."
+        },
+        {
+          "Type": "insert",
+          "Label": "\\setcvhook{#1}{code}",
+          "Description": "Runs code at the start of the reference #1\ne.g. GEN1.2 - At GEN 1:2\nGEN3.0 - Just before chapter 3 of Genesis\nall3.0 - Just before chapter 3 in all books"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\setbookhook{pos}{GEN}{code}",
+          "Description": "Runs code at pos (start|end) of GEN."
+        },
+        {
+          "Type": "insert",
+          "Label": "\\setbookhook{end}{final}{code}",
+          "Description": "Runs code at end of last book"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\sethook{final}{afterincludes}{code}",
+          "Description": "Runs code after the ??? fill in the blanks ???"
+        },
+        {
+          "Type": "insert",
+          "Label": "\\sethook{page}{2}{code}",
+          "Description": "Runs code just after page 1 has been written to the PDF."
+        },
+        {
+          "Type": "insert",
+          "Label": "\\setbetweenhook{mkr1}{mkr2}{code}",
+          "Description": "Runs code between paragraphs mkr1 and mkr2.\ne.g. insert a rule between the end of the introduction and before the chapter number.",
+          "CodeSnippet": "\\setbetweenhook{imte1}{c}{\\zrule|\\*}"
+        }
+      ],
+      "Tweaks": [
+        {
+          "Type": "comment%",
+          "Label": "Nudge chapter number down at specific \\nb chapters",
+          "Description": "The Burmese digit 6 rises rather high and crashes into the previous line when an \\nb (no-break para) is used after a \\c chapter. This snippet demonstrates how to lower the \\nb chapter number by a smidgen for the given references (in this example: JHN 16, 2CO 6, HEB 6).",
+          "CodeSnippet": "\\expandafter\\def\\csname raise-chapter.JHN16.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.2CO6.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.HEB6.0\\endcsname{-0.3}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Forces better calculation of the number of lines",
+          "Description": "Sometimes when your apply a +1 to a reference in an AdjList, it ends up doing a +2. To prevent this unwanted behaviour, you can force a more fine-grained adjustment at the specific verse location.",
+          "CodeSnippet": "\\setcvhook{LUK7.48}{\\pretolerance=1}\n\\setcvhook{LUK8.1}{\\pretolerance=100}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Set a larger space before footnote caller in the text",
+          "Description": "If the space before a footnote caller (defined by style zcf) needs to be increased, then this can be done by adding the following line.",
+          "CodeSnippet": "\\sethook{start}{zcf}{\\hskip 0.1em}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Move the qr word up to the end of previous line (if space permits)",
+          "Description": "Used in poetry and/or song books to allow a short qr word to move up to the previous word as long as there is adequate space (defined here as 0.3em) between the end of the last word, and the qr word, like 'Selah'.",
+          "CodeSnippet": "\\sethook{start}{qr}{\\unskip\\nobreak\\hfill\\penalty50\\hskip0.3em\\hbox{}\\nobreak\\hfill\\hbox\\bgroup}\n\\sethook{end}{qr}{\\egroup}"
+        }
+      ],
+      "Strong's": [
+        {
+          "Type": "comment%",
+          "Label": "Tabbed indent for glossary or Strong's index",
+          "Description": "When typesetting an indented list, such as a glossary or Strongs index, it looks neater if the main body starts at the same indent position as the rest of the paragraph. In this example, the Strongs number is in bold \\bd ... \\bd\\* and we can add a 'tab' after the Strongs number to make things line up neatly. Note that the \\setbookhook restricts this change to just the 'XXS' book.",
+          "CodeSnippet": "\\setbookhook{start}{XXS}{\n \\sethook{start}{bd}{\\setbox0=\\hbox{9999}\\hbox to \\wd0\\bgroup}\n \\sethook{end}{bd}{\\hfil\\egroup}}\n"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Change Strong's numbers from the 4-digit cell into a 4-in-a-line number",
+          "Description": "The 4-digit cell numbers for Strong's cross-references are a very handy and compact form, but these are not searchable in the PDF. If you want to see the 'unpacked' version of these numbers then add a new style \\\\myxts which can be styled as needed and add this snippet.",
+          "CodeSnippet": "\\catcode`\\@=11\n\\def\\mystrong#1{\\get@ttribute{strong}\\ifx\\attr@b\\relax\\else\\cstyle{#1}{\\attr@b}\\fi}\n\\sethook{start}{xts}{\\ifinn@te\\proc@strong{xts}\\else\\mystrong{myxts}\\fi}\n\n% or use this sethook instead if you want ALL Strong's numbers to \n% be 4-in-a-line strings instead of a 4-digit cell (even in the xref column).\n%\\sethook{start}{xts}{\\mystrong{myxts}}"
+        }
+      ],
+      "Other": [
+        {
+          "Type": "comment%",
+          "Label": "Special page numbering for a specific book",
+          "Description": "I need the page number for the glossary to restart numbering at one, and be prefixed with G-\n\nFirst, we reset the page number to one,  and then redefine the macro that prints the pagenumber.  (`\\\\folio` prints lower case roman numerals if the page number is negative, and numbers starting from 1 if positive).",
+          "CodeSnippet": "\\setbookhook{GLO}{start}{\\pageno=1 \\def\\pagenumber{G-\\\\folio}}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Horiz rule to fill left and right edges of \\s2 titles",
+          "Description": "When a number of minor section headings need to stand out from the surrounding text without occupying more vertical space, using a rule which fills out from the heading to the margin on each side can be quite an elegant solution.",
+          "CodeSnippet": "\\sethook{start}{s2}{\\leaders\\vrule height 2.5pt depth -2.25pt \\hfill \\kern.3em\\null}\n\\sethook{end}{s2}{\\kern.3em\\leaders\\vrule height 2.5pt depth -2.25pt \\hfill \\null}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Table of Contents right-align column 2",
+          "Description": "It sometimes looks better if the second column on the Table of Contents is right-aligned.",
+          "CodeSnippet": "\\deftocalign{2}{r}"
+        },
+        {
+          "Type": "comment%",
+          "Label": "Move colophon to after included pages",
+          "Description": "The first line replaces the normal colophon including code with code that will output the page. The second line puts the normal colophon including code after any included documents.",
+          "CodeSnippet": "\\sethook{bookend}{final}{\\layoutstylebreak\\pagebreak}\n\\sethook{final}{afterincludes}{\\layoutstylebreak\\singlecolumn\\zcolophon}"
+        },
+        {
+          "Type": "insert",
+          "Label": "Technique: Setting style parameters in ptxprint-mods.tex",
+          "Description": "This snippet is less a snippet as a technique. It shows two ways of setting style parameters from TeX.",
+          "CodeSnippet": "\\expandafter\\def\\csname v:position\\endcsname{inner}\n\n\\Marker v\\relax\n\\Position inner\\relax"
+        }
+      ],
+      "Tracing": [
+        {
+          "Type": "insert",
+          "Label": "f - footnotes",
+          "Description": "\\tracing{f}",
+          "CodeSnippet": "\\tracing{f}"
+        },
+        {
+          "Type": "insert",
+          "Label": "F - fonts",
+          "Description": "\\tracing{F}",
+          "CodeSnippet": "\\tracing{F}"
+        },
+        {
+          "Type": "insert",
+          "Label": "g & P - figs, esbs, piclists",
+          "Description": "\\tracing{g}\\tracing{P}\n(parsing of arguments, making of the figure, positioning the caption, position on the page, etc.)}",
+          "CodeSnippet": "\\tracing{g}\\tracing{P}"
+        },
+        {
+          "Type": "insert",
+          "Label": "j - paragraph adjustments",
+          "Description": "\\tracing{j}\n(for seeing where it loses sync)",
+          "CodeSnippet": "\\tracing{j}"
+        },
+        {
+          "Type": "insert",
+          "Label": "m - milestones",
+          "Description": "\\tracing{m}\n(includes QR codes & rules)",
+          "CodeSnippet": "\\tracing{m}"
+        },
+        {
+          "Type": "insert",
+          "Label": "o - output routines",
+          "Description": "\\tracing{o}\n(rebalancing)",
+          "CodeSnippet": "\\tracing{o}"
+        },
+        {
+          "Type": "insert",
+          "Label": "s - stylesheet",
+          "Description": "\\tracing{s}",
+          "CodeSnippet": "\\tracing{s}"
+        },
+        {
+          "Type": "insert",
+          "Label": "T - triggers",
+          "Description": "\\tracing{T}",
+          "CodeSnippet": "\\tracing{T}"
+        }
+      ]
+    },
+  "Adjust":
+    {
+      "Edits": [
+        {
+          "Type": "global",
+          "Label": "Remove all the redundant 0 lines",
+          "Description": "Remove (delete) all lines where no adjustment has been specified.",
+          "CodeSnippet": "[A-Z123]{3}[LR]?\\s\\d.+?[-+]+0([%[].+\\])?%?\\r?\\n > "
+        },
+        {
+          "Type": "line",
+          "Label": "Split line once for multi-para adjustments",
+          "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]% +[4]",
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
+        },
+        {
+          "Type": "linemulti",
+          "Label": "Split line multiple times for multi-para adjustments",
+          "Description": "Expand out the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
+        },
+        {
+          "Type": "globalmulti",
+          "Label": "Split ALL lines to a flatter list",
+          "Description": "Expand out ALL the multiple paragraphs\ne.g. JAS 4.6 +0[2]% +[3] +[4]\nbecomes:\nJAS 4.6 +0[2]\nJAS 4.6 +0[3]\nJAS +[4]%",
+          "CodeSnippet": "((% ?)?[A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?) (.+?)%(\\s[-+]+)(\\[\\d+\\])(.+?)?\\n > \\1 \\4\\n\\1\\g<5>0\\6%\\7\\n"
+        },
+        {
+          "Type": "global",
+          "Label": "Highlight all shrinkable paragraphs",
+          "Description": "Highlights any lines that could shrink (JAS 4.1 +-0) becomes (% JAS 4.1 -1)",
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?)\\s+(\\+-0)(.+?)? > % \\1 -1\\4"
+        }
+      ],
+      "-1 / +1": [
+        {
+          "Type": "line",
+          "Shortcut": "Ctrl+<",
+          "Label": "Shorten this paragraph (apply -1)",
+          "Description": "Shrink (shorten) the paragraph at the cursor position.",
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 -1\\n"
+        },
+        {
+          "Type": "line",
+          "Shortcut": "Ctrl+>",
+          "Label": "Lengthen this paragraph (apply +1)",
+          "Description": "Grow (lengthen) the paragraph at the cursor position.",
+          "CodeSnippet": "([A-Z123]{3}[LR]?\\s\\d+\\.\\d+(-\\d+)?).+?\\n > \\1 +1\\n"
+        }
+      ]
+    }
+}

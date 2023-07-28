@@ -64,7 +64,7 @@
   \def\toc1{\endlastp@rstyle{toc1}\bgroup\obeylines\t@cA}
   \def\toc2{\endlastp@rstyle{toc2}\bgroup\obeylines\t@cB}
   \def\toc3{\endlastp@rstyle{toc3}\bgroup\obeylines\t@cC}
-  \def\zthumbtab{\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
+  \def\zthumbtab{\endlastp@rstyle{zthumbtab}\bgroup\obeylines\th@mt@b} %Manual control of thumbtab text, from usfm file.
 
 }
 \m@kedigitsother
@@ -96,9 +96,16 @@
      \fi
      \begingroup
        \pr@tectspecials % protect \ZWSP etc from expansion in the TOC text
-       \liter@lkerns
-	   \ifdiglot\edef\tmp[\id@@@\c@rrdstat]\else\edef\tmp[\id@@@]\fi
-       \xdef\t@cline[\string\doTOCline {\tmp }{\toc@A }{\toc@B }{\toc@C }{\noexpand\the\pageno }]%
+       \pr@tectcustomch@rs
+       \deactiv@tecustomch@rs
+       \ifdiglot\edef\tmp[{\id@@@\c@rrdstat}]\else\edef\tmp[{\id@@@}]\fi
+       \edef\tmp[\string\doTOCline\tmp]%
+       \x@\addto@macro\x@\tmp\x@[\x@{\toc@A}]%
+       \x@\addto@macro\x@\tmp\x@[\x@{\toc@B}]%
+       \x@\addto@macro\x@\tmp\x@[\x@{\toc@C}]%
+       \let\ttmp\tmp
+       \x@\x@\x@\def\x@\x@\x@\tmp\x@\x@\x@[\x@\detokenize\x@[\ttmp ]]%
+       \x@\def\x@\t@cline\x@[\tmp{\the\pageno }]%
        \trace[t][\t@cline]\x@\write\x@\t@cfile\x@[\t@cline]%
      \endgroup
      \gdef\toc@A[]%
@@ -129,63 +136,64 @@
   \n@xt}
 
 \def\fnname{doTOCline}
+\newcount\t@ccount %unique count, as there are \globals around.
 \x@\def\csname\fnname\endcsname#1#2#3#4#5{%
 % ID, cell1, cell2, cell3, pagenum
   \trace{t}{\fnname\space #1 #2 #3 #4 #5}%
   \def\tablecategory{toc}\tr
-  \edef\t@mpa{#2}%
-  \edef\t@mpb{#3}%
-  \edef\t@mpc{#4}%
-  \global\count252=1
+  \def\t@mpa{#2}%
+  \def\t@mpb{#3}%
+  \def\t@mpc{#4}%
+  \global\t@ccount=1
   \ifx\t@mpa\empty\else
-    \ifcsname tocalign\the\count252\endcsname
-      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
+    \ifcsname tocalign\the\t@ccount\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\t@ccount\endcsname\the\t@ccount}%
     \else
-      \edef\t@mpd{tc\the\count252}%
+      \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{\t@mpd \space \t@mpa}%
     \csname \t@mpd\endcsname \t@mpa
-    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
-    \global\advance\count252 by 1
+    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \global\advance\t@ccount by 1
   \fi
   \ifx\t@mpb\empty\else
-    \ifcsname tocalign\the\count252\endcsname
-      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
-      \trace{t}{Found tocalign\the\count252}%
+    \ifcsname tocalign\the\t@ccount\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\t@ccount\endcsname\the\t@ccount}%
+      \trace{t}{Found tocalign\the\t@ccount}%
     \else
-      \edef\t@mpd{tc\the\count252}%
+      \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{\t@mpd \space \t@mpb}%
     \csname \t@mpd\endcsname \t@mpb
-    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
-    \global\advance\count252 by 1
+    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \global\advance\t@ccount by 1
   \fi
   \ifx\t@mpc\empty\else
-    \ifcsname tocalign\the\count252\endcsname
-      \edef\t@mpd{tc\csname tocalign\the\count252\endcsname\the\count252}%
+    \ifcsname tocalign\the\t@ccount\endcsname
+      \edef\t@mpd{tc\csname tocalign\the\t@ccount\endcsname\the\t@ccount}%
     \else
-      \edef\t@mpd{tc\the\count252}
+      \edef\t@mpd{tc\the\t@ccount}
     \fi
     \trace{t}{\t@mpd \space \t@mpc}
     \csname \t@mpd\endcsname \t@mpc
-    \ifcsname cat:toc|tc\the\count252 :fill\endcsname\else\d@ftoc{tc\the\count252 :fill}{\hfill}\fi
-    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
-    \global\advance\count252 by 1
+    \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
+    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \global\advance\t@ccount by 1
   \fi
-  \edef\t@mpd{tc\ifRTL\else r\fi\the\count252}
+  \edef\t@mpd{tc\ifRTL\else r\fi\the\t@ccount}
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
-  \trace{t}{\noexpand\tcr\the\count252 \space \t@mpd}
+  \trace{t}{\noexpand\tcr\the\t@ccount \space \t@mpd}
   \ifcsname l@drs\endcsname
-    \trace{t}{Refactor for last column \the\count252}
-    \deftocalign{\the\count252}{r}
-    \d@ftoc{tc\the\count252 :fill}{}
-    \ifcsname cat:toc|tc\the\count252 :verticalalign\endcsname\else\d@ftoc{tc\the\count252 :verticalalign}{b}\fi
-    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{}
-    \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\l@drs}
-    \ifRTL\d@ftoc{tc\the\count252 :leftmargin}{0}
-    \else\d@ftoc{tc\the\count252 :rightmargin}{0}\fi
+    \trace{t}{Refactor for last column \the\t@ccount}
+    \deftocalign{\the\t@ccount}{r}
+    \d@ftoc{tc\the\t@ccount :fill}{}
+    \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
+    \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{}
+    \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\l@drs}
+    \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
+    \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi
   \fi
   \gdef\tablecategory{}
 }
@@ -239,23 +247,23 @@
   \dimen0=\IndentUnit \dimen1=#2 \divide\dimen0 by \dimen1
   \ifdim\dimen0>1sp \dimen1=1pt \divide\dimen1 by \dimen0\else\dimen0=0pt\fi
   \edef\rm@{\strip@pt{\dimen1}}
-  \count252=1
+  \t@ccount=1
   \loop
-    \ifcsname tocalign\the\count252\endcsname
-      \x@\let\x@\the@lign\csname tocalign\the\count252\endcsname
+    \ifcsname tocalign\the\t@ccount\endcsname
+      \x@\let\x@\the@lign\csname tocalign\the\t@ccount\endcsname
     \else
       \def\the@lign{}
     \fi
-    \d@ftoc{tc\the\count252 :rightmargin}{\rm@}
-    \ifnum\count252>1 \d@ftoc{tc\the\count252 :leftmargin}{\rm@}\fi
+    \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
+    \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi
     \ifx\the@lign\cell@r \else
-      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\count252}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\leftskip=0pt\rightskip=0pt\l@drs}
     \fi
-    \d@ftoc{tc\the\count252 :fill}{\l@drs}
-    \advance\count252 by 1
-  \ifnum\count252<5\repeat
+    \d@ftoc{tc\the\t@ccount :fill}{\l@drs}
+    \advance\t@ccount by 1
+  \ifnum\t@ccount<5\repeat
 }
 \def\deftocalign#1#2{\x@\def\csname tocalign#1\endcsname{#2}}

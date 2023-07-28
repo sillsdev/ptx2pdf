@@ -227,8 +227,8 @@ class Diglot(Snippet):
 {notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
 {ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
 \def\addInt{{
-\zglot|L\*\ptxfile{{{project/intfile}}}
-\zglot|R\*\ptxfile{{{diglot/intfile}}}
+\zglot|L\*{project/intfile}
+\zglot|R\*{diglot/intfile}
 \zglot|\*}}
 \catcode `@=12
 
@@ -405,6 +405,7 @@ class ThumbTabs(Snippet):
         rotate = model["thumbtabs/rotate"]
         texlines.append("\\TabAutoRotatefalse")
         texlines.append("\\TabRotationNormal{}".format("false" if rotate else "true"))
+        texlines.append("\\TabsOddOnly{}".format("true" if model["thumbtabs/tabsoddonly"] else "false"))
         if rotate:
             rottype = int(model["thumbtabs/rotatetype"]) - 1
             texlines.append("\\TabTopToEdgeOdd{}".format("true" if rottype & 1 else "false"))
@@ -431,7 +432,7 @@ class Colophon(Snippet):
 class Grid(Snippet):
     regexes = []
     processTex = True
-    texCode = """
+    texCode = r"""
 \def\GraphPaperX{{{grid/xyadvance}{grid/units}}}
 \def\GraphPaperY{{{grid/xyadvance}{grid/units}}}
 \def\GraphPaperXoffset{{{grid/xoffset_}mm}}
@@ -443,4 +444,25 @@ class Grid(Snippet):
 \def\GraphPaperColMinor{{{minorcolor_}}} % Colour (R G B)
 """
     takesDiglot = False
+
+class AdjustLabelling(Snippet):
+    processTex = True
+    texCode = r'''
+{paper/ifgrid}\MarkAdjustPointstrue
+\expandafter\font\csname font<AP>\endcsname "Source Code Pro:extend=0.8,color=007f00" at 7pt % AdjustPar
+'''
+
+class ParaLabelling(Snippet):
+    processTex = True
+    texCode = r'''
+\catcode`\@=11
+\input marginnotes.tex
+\newcount\pcount \pcount=0
+{{\catcode`\~=12 \lccode`\~=32 \lowercase{{
+\gdef\parmkr{{\setbox0=\vbox{{\hbox{{\ch@rstylepls{{zpmkr}}~\m@rker\ch@rstylepls{{zpmkr}}*}}}}%
+    \advance\pcount by 1
+    \d@marginnote{{0}}{{\the\pcount}}{{zpmkr}}{{left}}}}
+}}
+{paper/ifgrid}\addtoeveryparhooks{{\parmkr}}
+'''
 

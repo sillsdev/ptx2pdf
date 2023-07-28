@@ -190,13 +190,19 @@ class PDFImage:
         if img.shape[-1] == 4:
             img = cmyk_vecto_rgb(img)
         hsvimg = rgb_vecto_hsv(img)
+        maxs = hsvimg[:,:,1].max()
+        maxv = hsvimg[:,:,2].max()
+        if maxs > 0. and maxv > 0.:
+            pass
+        else:
+            hashue = False
         #import pdb; pdb.set_trace()
         if hashue:
             # calculate as if all in the hsv colour range
             spotb = (1 - hsv[2]) - (1 - hsvimg[:,:,2])
             # replace out of range colours with grey
             m = np.logical_not(np.isclose(hsvimg[...,0], hsv[0], hrange))
-        if not hashue or not np.any(m):
+        if not hashue or not np.any(m) or hsv[1] == 0.:
             self.spotb = hsvimg[...,2]
             self.spotc = None
             self.colorspace = blackcspace
@@ -216,13 +222,24 @@ class PDFImage:
         self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
 
-    def cmyk_black(self):
+    def rgb_black(self):
         img = np.asarray(self.img) / 255.
         sda = img[...,0] - img[...,1]
         sdb = img[...,0] - img[...,2]
         cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01)
         if not cond:
             self.img = Image.frombytes(data=((img[...,2]) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
+            self.cs = self.colorspace = PdfName("DeviceGray")
+            return True
+        return False
+
+    def cmyk_black(self):
+        img = np.asarray(self.img) / 255.
+        sda = img[...,0] - img[...,1]
+        sdb = img[...,0] - img[...,2]
+        cond = np.any(np.abs(sda) > 0.01) or np.any(np.abs(sdb) > 0.01) or np.any(np.abs(img[...,3] > 0.01))
+        if not cond:
+            self.img = Image.frombytes(data=((np.maximum(img[...,2], img[...,3])) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
             self.cs = self.colorspace = PdfName("DeviceGray")
             return True
         return False

@@ -49,7 +49,9 @@
 %+cpar_starttypes
 % start title/intro/body, if not already in that mode, switching columns if needed
 \def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
-  \ifdiglot\else
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
     \ifnum\IntroColumns=\c@rrentcols\else
       \ifnum\IntroColumns=2 \doublecolumns\else\singlecolumn\fi
     \fi
@@ -57,7 +59,9 @@
   \global\@ntrotrue\global\t@tlefalse\global\b@dyfalse\fi}
 
 \def\st@rttitle{\TRACE{st@rttitle}\ift@tle\else
-  \ifdiglot\else 
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
     \ifnum\TitleColumns=\c@rrentcols\else
       \ifnum\TitleColumns=2 \doublecolumns\else\singlecolumn\fi
     \fi
@@ -69,9 +73,10 @@
 \def\st@rtbody{%\endhe@dings
  % \trace{o}{st@rtbody: b@dy\ifb@dy true\else false\fi}%
  \traceifset{st@rtbody}%
- \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker}%
-  \ifdiglot
-  \else
+ \ifNoBody\else\ifb@dy\else\trace{o}{st@rtbody by \m@rker,  diglot\ifdiglot true\else false\fi}%
+  \t@mptrue
+  \ifdiglot\ifseriesdiglot\else\t@mpfalse\fi\fi
+  \ift@mp
     \ifnum\BodyColumns=\c@rrentcols
       \count255=\lastpenalty
       \vskip\baselineskip
@@ -1259,15 +1264,15 @@
       \MSG{*** no-break at \id@@@\ifdiglot \c@rrdstat\fi\space\ch@pter, re-run to generate \string\DelayedChapter\space setting}%
       \def\t@std@lay{0}%
     \else 
-      \MSG{* no-break at \id@@@\space\ch@pter (\t@std@lay)}%
+      \MSG{* no-break at \id@@@\ifdiglot \c@rrdstat\fi\space\ch@pter (\t@std@lay)}%
     \fi
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \ifhmode
       \unskip\let\aft@rnb\space
     \else
       \let\aft@rnb\empty
       \leavevmode\str@t                                                           %(1)
     \fi
-    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
     \t@stpublishability{c}\ifn@npublishable
      \setbox\ch@pterbox=\box\voidb@x
     \else

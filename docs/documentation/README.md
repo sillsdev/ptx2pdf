@@ -234,11 +234,16 @@ Headers for normal pages with an even page number, e.g.:
 ### <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">Title-page Header</a>
 
 <a name="ptx2pdf-MacroSetupParameters-TitlepageHeader">
-Headers for pages that start with the title of a book. e.g.:
+Headers for pages that start with the title of a book are normally defined without 
+reference to the page being on an odd or oven page. e.g.:
 
 *   \def\RHtitleleft{```\empty```}
 *   \def\RHtitlecenter{```\empty```}
 *   \def\RHtitleright{```\empty```}
+
+There are, however,  also side-specific versions, e.g. `\def\RHtitleoddright{\pagenumber}` 
+Defining such  a value means it will take priority over the 'both sides'
+setting on the relevant page.
 
 </a>
 
@@ -258,6 +263,15 @@ Headers for a page that has neither verses nor titles, e.g. a glossary.
 
 For control over the footer, fifteen similar ```\def``` commands are available, beginning with ```\RF``` instead of ```\RH```.
 
+### <a name="ptx2pdf-MacroSetupParameters-HEADFOOT">Setting a complete set</a>
+It is sometimes desirable to set a complete set of the 6 header / footer postitions in one go.
+A convenience function has been implemented to allow this:
+```
+\HEADFOOTset{H}{noV}{\pageno}{\empty}{\empty}{\empty}{\empty}{\pageno}
+\HEADFOOTset{F}{noV}{Draft}{\empty}{\isodate}{\isodate}{\empty}{Draft}
+```
+Will, (assuming the left-most page is odd-numbered) on the put page numbers on introduction / glossary pages into the outside of the header, 'Draft' into the outside footer, and the date into the inside-edge of the footer.
+
 ### <a name="ptx2pdf-MacroSetupParameters-HeaderContent">Header/Footer Content macros</a>
 
 Any appropriate combination of text and TeX macros may be used in the header or footer slots. The following are provided for 
@@ -272,7 +286,7 @@ convenience.
 *   ```\hrsmins``` - the time of day 
 
 
-Literal text can also be included (e.g., to add dashes around a centered page number, ```\\def\RFtitlecenter{- \pagenumber -}```).
+Literal text can also be included (e.g., to add dashes around a centered page number, ```\\def\RFtitlecenter{-\pagenumber -}```).
 
 
 ### <a name="ptx2pdf-MacroSetupParameters-OtherHeaderSetup">Other Header Setup</a>
@@ -367,7 +381,7 @@ See <a href="thumbtabs.md">the feature-specific documentation</a> for a more ext
 * \def\TabBleed{```1pt```} - Amount the tab goes over the edge of the page. (default 1pt)
 
 
-## ><a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
+## <a name="ptx2pdf-MacroSetupParameters-Hooks">Hooks</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Hooks">
 
@@ -561,7 +575,7 @@ give the following results:
 * `\zifvarset|var="varname" emptyok=""\*`   -> true
 * `\zifvarset|var="varname" emptyok="rabbit"\*`   -> true
 
-### <a name="ptx2pdf-MacroSetupParameters-scriptTags"></a><a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">Appendix: Common OpenType script tags</a>
+### <a name="ptx2pdf-MacroSetupParameters-scriptTags">Appendix: Common OpenType script tags</a>
 
 <a name="ptx2pdf-MacroSetupParameters-Appendix:CommonOpenTypescripttags">
 

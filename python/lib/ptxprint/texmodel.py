@@ -25,7 +25,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # After universalopen to resolve circular import. Kludge
-from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid
+from ptxprint.snippets import FancyIntro, PDFx1aOutput, Diglot, FancyBorders, ThumbTabs, Colophon, Grid, AdjustLabelling, ParaLabelling
 
 def loosint(x):
     try:
@@ -123,7 +123,9 @@ class TexModel:
         "snippets/fancyborders":          ("c_borders", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
-        "snippets/grid":                  ("c_grid", None, Grid)
+        "snippets/grid":                  ("c_grid", None, Grid),
+        "snippets/adjlabelling":          ("c_markAdjPoints", None, AdjustLabelling),
+        "snippets/parlabelling":          ("c_showUSFMcodes", None, ParaLabelling)
     }
     _settingmappings = {
         "notes/xrcallers": "crossrefs",
@@ -753,20 +755,26 @@ class TexModel:
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
                                      + '.jpg" copy="None" ' + m.group(2)+ r'\fig*', l)
                     l = re.sub(r'(\\fig .*?src=")(.*?)(".*?\\fig\*)', lambda m:m.group(1)+m.group(2).replace("\\","/")+m.group(3), l)
+                    if re.match(r"^\s*\\rem\s", l.lower()):
+                        continue
                     fcontent.append(l.rstrip())
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write("\n".join(fcontent))
 
     def addInt(self, outfname):
         intfname = self.printer.getBookFilename('INT')
+        if intfname is None or not len(intfname):
+            return
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
         if os.path.exists(intfile):
             self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes, "INT", dat)
+            dat = runChanges(self.localChanges, "INT", dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
+        return outfname
 
     def flattenModule(self, infpath, outdir, usfm=None):
         outfpath = os.path.join(outdir, os.path.basename(infpath))
@@ -1161,7 +1169,7 @@ class TexModel:
         gloStyle = self._glossarymarkup.get(v, v)
         if v is not None and v != 'ai':
             if gloStyle is not None and len(v) == 2: # otherwise skip over OLD Glossary markup definitions
-                self.localChanges.append((None, regex.compile(r"\\\+?w ((?:.(?!\\\+w\*))+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
+                self.localChanges.append((None, regex.compile(r"\\\+?w ([^|]+?)(\|[^|]+?)?\\\+?w\*", flags=regex.M), gloStyle))
 
         if self.asBool("notes/includexrefs"): # This seems back-to-front, but it is correct because of the % if v
             self.localChanges.append((None, regex.compile(r'(?i)\\x .+?\\x\*', flags=regex.M), ''))
@@ -1172,11 +1180,12 @@ class TexModel:
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig ([^|]*\|){3}([aw]+)\|[^\\]*\\fig\*', flags=regex.M), ''))  # USFM2
                 self.localChanges.append((None, regex.compile(r'(?i)\\fig [^\\]*\bloc="[aw]+"[^\\]*\\fig\*', flags=regex.M), ''))    # USFM3
             def figtozfiga(m):
-                a = self.printer.picinfos.getAnchor(m.group(1), bk)
+                a = self.printer.picinfos.getAnchor(m.group(1), bk + (self.printer.digSuffix or ""))
                 if a is None:
                     return ""
                 ref = re.sub(r"^\S+\s+", r"", a)
                 return "\\zfiga|{}\\*".format(ref)
+            logger.debug(self.printer.picinfos)
             self.localChanges.append((None, regex.compile(r'\\fig.*?src="([^"]+?)".*?\\fig\*', flags=regex.M), figtozfiga))
             self.localChanges.append((None, regex.compile(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', flags=regex.M), figtozfiga))
 
@@ -1305,7 +1314,7 @@ class TexModel:
         # Remove any spaces before the \ior*
         self.localChanges.append((None, regex.compile(r"\s+(?=\\ior\*)", flags=regex.M), r"")) 
         # Escape special codes % and $ that could be in the text itself
-        self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx]\s)([{}])(\s?)".format("".join(self._specialchars)),
+        self.localChanges.append((None, regex.compile(r"(?<!\\\S*|\\[fx][^\\]*)([{}])(\s?)".format("".join(self._specialchars)),
                                                       flags=regex.M), lambda m:"\\"+self._specialchars[m.group(1)]+("\\space{}".format(m.group(2)) if m.group(2) else " ")))
 
         #self.localChanges.append((None, regex.compile(r"(?<=\n\r?)\r+"), ""))
@@ -1496,7 +1505,7 @@ class TexModel:
                         else:
                             template = cinfo['templates']['exceptIllustrations'].get(lang,
                                 cinfo['templates']['exceptIllustrations']['en'])
-                        cpystr = template.format(artstr.replace("_", "\u00A0") + exceptPgs)
+                        cpystr = template.format(artstr.replace("_", "\u00A0"), exceptPgs)
                         crdts.append("\\{} {}".format(mkr, cpystr))
             if self.dict['notes/ifxrexternalist']:
                 if self.dict['notes/xrlistsource'] == "standard":

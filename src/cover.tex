@@ -87,7 +87,7 @@
       \fi
     \egroup
     \trace{cov}{Request (#1) was (\the\PaperHeight x\the\PaperWidth) \ifcsname bpparam\endcsname bpparam=\bpp@ram\fi}%
-    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space hpadding and hbleed of \the\dimexpr \lble@d + \rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax|\the\dimexpr \b@dr@bot@pad\relax>, \the\dimexpr \tble@d\relax,\the\dimexpr \bble@d\relax}%
+    \trace{cov}{Wholepagepic is (\the\ht\wholepagepic+\the\dp\wholepagepic)x\the\wd\wholepagepic\space w <\the\dimexpr\b@dr@left@pad\relax, \fb@lpadding |\the\dimexpr \b@dr@right@pad\relax,\fb@rpadding>\space bdr,col hpadding and hbleed of \the\dimexpr \lble@d\relax + \the\dimexpr\rble@d\relax. Vpadding: <\the\dimexpr\b@dr@top@pad\relax,\fb@tpadding|\the\dimexpr \b@dr@bot@pad\relax,\fb@bpadding>, vbleed: \the\dimexpr \tble@d\relax+\the\dimexpr \bble@d\relax}%
     %\hskip \dimexpr \unble@d@lpad\relax
     %\trace{cov}{Unbleed apply \c@tprefix/\oldc@tegory: \unble@d@lpad}%
     \ifhasb@rder
@@ -168,6 +168,7 @@
   \x@\edef\csname cover-X-back\endcsname{\the\dimexpr \csname cover-x\endcsname - \csname cover-back-spinewrap\endcsname - \ifBookOpenLeft \wholec@vrrpad\else\wholec@vrlpad\fi\relax}%
   \x@\edef\csname cover-X-whole\endcsname{\the\dimexpr \csname cover-spine\endcsname +\csname cover-x\endcsname *2\relax }
   \x@\edef\csname cover-Y-whole\endcsname{\the\dimexpr \csname cover-y\endcsname \relax}
+  \trace{cov}{back=\csname cover-X-back\endcsname, spine=\csname cover-X-spine\endcsname, front=\csname cover-X-front\endcsname, cover-spine=\csname cover-spine\endcsname}%
   %  
 }
 \def\d@spine{{%
@@ -220,7 +221,7 @@
     \edef\lble@d{0pt}%
     \edef\rble@d{0pt}%
     \trace{cov}{Unrotated spine}%
-    \setbox0\hbox{\c@verbit{spine}{\topskip=0pt 
+    \setbox0\hbox to \csname cover-X-spine\endcsname{\c@verbit{spine}{\topskip=0pt
       \ifx\sp@ne\empty
         \leavevmode
       \else
@@ -273,6 +274,7 @@
     \fi
   \fi
   \trace{cov}{Front cover is \meaning\c@verfront}%
+  \trace{cov}{Back cover is \x@\meaning\csname periphcontents=coverback\endcsname}%
   \ifcsname periphcontents=coverback\endcsname\trace{cov}{coverback exists}%
     \x@\let\x@\tmp\csname periphcontents=coverback\endcsname \ifx\tmp\empty
       \trace{cov}{...but it's empty}%
@@ -326,7 +328,8 @@
     %    \tracingall
         %\ifble@d \vskip \tble@d plus 1fil minus 1fil \fi
         \ifBookOpenLeft
-          \hbox{{\leftble@d\c@verbit{front}{%
+          \hbox {%
+             \hbox to \csname cover-X-front\endcsname{\leftble@d\c@verbit{front}{%
                 \@@sR
                 \c@verfront
                 \@@rR
@@ -338,22 +341,24 @@
               \d@spine
               \@@rR
             }%
-            {\rightble@d
+            \hbox to \csname cover-X-back\endcsname{\rightble@d
               %\ble@dtrue
-              \c@verbit{back}{%
-                \@@sR
+              \c@verbit{back}{%\hsize=\csname cover-X-back\endcsname%
+                \@@sR%
                 \csname periphcontents=coverback\endcsname
                 \@@rR}}%
           }%
         \else
-          \hbox{\setbox0\hbox{\leftble@d
+          \hbox {%
+              \setbox0\hbox to \csname cover-X-back\endcsname{\leftble@d
               \ble@dtrue
-              \c@verbit{back}{%\ifRTL\beginR\fi
-                \@@sR
-                \csname periphcontents=coverback\endcsname
-                \@@rR
+              \c@verbit{back}{%\hsize=\csname cover-X-back\endcsname%\ifRTL\beginR\fi
+                \@@sR%
+                \csname periphcontents=coverback\endcsname%
+                \@@rR%
               }%
             }%
+            \trace{cov}{back cover is \l@gdims0 , width \the\textwidth , hsize=\the\hsize}%
             \box0
             {%
               \@@sR
@@ -361,7 +366,7 @@
               \d@spine
               \@@rR
             }%
-            \setbox0\hbox{\rightble@d
+            \setbox0\hbox to \csname cover-X-front\endcsname{\rightble@d
               \ble@dtrue
               \c@verbit{front}{%\ifRTL\beingR\fi
                 \@@sR

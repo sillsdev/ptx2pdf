@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+
+import csv, json, argparse, re, zipfile, io, time
+from math import sqrt
+
+def normalizeid(s):
+    m = re.match(r"^(\D{2})(\d+)(\D?)", s)
+    if not m:
+        return s
+    res = "{:2s}{:05d}{}".format(m.group(1).lower(), int(m.group(2)), m.group(3))
+    return res
+
+def most_popular(d):
+    res = []
+    curr = 0
+    for k, v in sorted(d.items(), key=lambda x: (-x[1], x[0])):
+        if int(v) > sqrt(curr):
+            res.append(k)
+            curr = int(v)
+    return res
+
+def utf8zipfile(zf, f, mode="r"):
+    t = time.gmtime()
+    zinfo = zipfile.ZipInfo(f, t[:6])
+    return io.TextIOWrapper(zf.open(zinfo, mode), "utf-8")
+
+parser = argparse.ArgumentParser()
+parser.add_argument("inzip", help="Input zipfile of images")
+parser.add_argument("outzip", help="Output release zipfile")
+parser.add_argument("-i", "--illustrations", help="Headered CSV file containing Image information")
+parser.add_argument("-H", "--harvest", help="Merge in harvest data")
+parser.add_argument("-I", "--id", default="", help="Image set identifier")
+args = parser.parse_args()
+
+zf = zipfile.ZipFile(args.inzip)
+filters = [re.sub(r"\..*?$", "", x) for x in zf.namelist() if re.match(r"^[a-z]{2}\d{5}", x)]
+
+data = {}
+langdat = {}
+refs = {}
+allsets = set()
+
+if args.harvest:
+    with open(args.harvest) as inf:
+        hdat = json.load(inf)
+    for k, v in hdat["images"].items():
+        tid = normalizeid(k)
+        allsets.add(tid[:2])
+        if filters is not None and tid not in filters:
+            continue
+        if not len(v):
+            continue
+        data.setdefault(tid, {})['refs'] = [x.replace(".", ":") for x in most_popular(v)]
+        for r in v.keys():
+            refs.setdefault(r, []).append(tid)
+
+if args.illustrations:
+    with open(args.illustrations, encoding="utf-8") as inf:
+        dr = csv.DictReader(inf)
+        for r in dr:
+            res = {}
+            tid = normalizeid(r['ID'])
+            allsets.add(tid[:2])
+            if filters is not None and tid not in filters:
+                continue
+            for k, v in r.items():
+                if k == "image":
+                    continue
+                if k == "id":
+                    v = normalize(v)
+                if " " in k:
+                    b = k.split()
+                    if len(b) == 2:
+                        if not v:
+                            continue
+                        if b[1] == "Title":
+                            langdat.setdefault(b[0].lower(), {}).setdefault(tid, {})['title'] = v
+                            continue
+                        elif b[1] == "Keywords":
+                            kwds = []
+                            langdat.setdefault(b[0].lower(), {}).setdefault(tid, {})['kwds'] = kwds
+                            c = v.split(";")
+                            for kw in c:
+                                for a in kw.split():
+                                    if len(a):
+                                        kwds.append(a)
+                            kwds.sort()
+                            continue
+                res[k.lower()] = v
+            if tid not in data:
+                print("No data for {}".format(tid))
+                newr = res.get('references', '').split(";")
+                newrefs = []
+                for r in newr:
+                    m = re.match(r"^(\S{3})(\d{2})\s*", r)
+                    if m:
+                        newrefs.append("{} {}:0".format(m.group(1), int(m.group(2))))
+                data[tid] = {'refs': newrefs}
+            #data.setdefault(tid, {}).update(res)
+
+zof = zipfile.ZipFile(args.outzip, "w", compression=zipfile.ZIP_DEFLATED)
+
+with utf8zipfile(zof, "illustrations.json", "w") as outf:
+    json.dump({"id": args.id,
+               "sets": sorted(allsets),
+               "images": data,
+               "references": {k:v for k,v in sorted(refs.items())}},
+                        outf, indent=True, ensure_ascii=False)
+
+for k, v in langdat.items():
+    with utf8zipfile(zof, "lang_{}.json".format(k), "w") as outf:
+        json.dump(v, outf, indent=True, ensure_ascii=False)
+
+for f in zf.namelist():
+    zof.writestr("images/"+f, zf.read(f), compress_type=zipfile.ZIP_STORED)

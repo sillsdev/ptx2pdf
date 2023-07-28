@@ -11,7 +11,8 @@ startchaps = list(zip([b for b in allbooks if 0 < int(chaps[b]) < 999],
 startchaps += [("special", startchaps[-1][1]+1)]
 startbooks = dict(startchaps)
 allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps[b]) < 999], []) + ['special']
-b64codes = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+# b64codes are irregular from MIME64 to make them sortable
+b64codes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
 
 def readvrs(fname):
@@ -53,12 +54,19 @@ class RefSeparators(dict):
         "range": "-",
         "sep": "\u200B",
         "verseonly": "v",
-        "end": "end"
+        "end": "end",
+        "nobook": False,
+        "nochap": False
     }
     def __init__(self, **kw):
         self.update(kw)
         for k, v in self._defaults.items():
             self[k] = kw.get(k, v)
+
+    def copy(self, **kw):
+        res = RefSeparators(**self)
+        res.update(kw)
+        return res
 
 class Reference:
 
@@ -82,7 +90,10 @@ class Reference:
         minverse = -1 if allowzero else 0
         sep = ""
         hasbook = False
-        if (lastref is None or lastref.book != self.book) and (this is None or this.book != self.book):
+        if addsep['nobook']:
+            res = []
+            hasbook = True
+        elif (lastref is None or lastref.book != self.book) and (this is None or this.book != self.book):
             res = ["{}".format(self.book if context is None else context.getLocalBook(self.book, level)).replace(" ", addsep['bksp'])]
             if lastref is not None and lastref.book is not None:
                 sep = addsep['books']
@@ -198,6 +209,22 @@ class Reference:
             self.loadvrs()
         coffset = self.vrs[books[self.book]][self.chap-1] + (self.chap - 1) * chapshift if self.chap > 1 else 0
         return self.vrs[books[self.book]][0] + coffset + self.verse
+
+    def numchaps(self):
+        if self.vrs is None:
+            self.loadvrs()
+        try:
+            return len(self.vrs[books[self.book]])
+        except (KeyError, IndexError):
+            return 0
+
+    def numverses(self):
+        if self.vrs is None:
+            self.loadvrs()
+        try:
+            return self.vrs[books[self.book]][self.chap] - (self.vrs[books[self.book]][self.chap - 1] if self.chap > 1 else 0)
+        except (KeyError, IndexError):
+            return 0
 
     @classmethod
     def fromtag(cls, s, remainder=False):
@@ -454,13 +481,15 @@ class BookNames(BaseBooks):
 class RefList(list):
     @classmethod
     def fromStr(cls, s, context=BaseBooks, starting=None, marks=None):
+        self = cls()
+        if s is None or not len(s):
+            return self
+
         rerefs = re.compile(r"[\s;,]+")
-        
         remarks = re.compile("^(["+"".join(marks)+r"])") if marks is not None else None
         rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
-        self = cls()
         curr = Reference(None, 0, -1) if starting is None else starting
         currmark = None
         nextmark = None

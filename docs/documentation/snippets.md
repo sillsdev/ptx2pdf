@@ -1,11 +1,10 @@
 This document exists because not everything that people might want to do is made available 
 in PTXprint via the UI. So this file contains a structured list of code snippets which can 
-be copied and pasted into the appropriate settings files. There are 4 sections:
+be copied and pasted into the appropriate settings files. There are 3 sections:
 
 * RegEx snippets
 * TeX snippets
 * Python scripts
-* Other techniques
 
 Each snippet has a second level title, a description, the code and then
 marked with a 3rd level is a section called `Implementation` that describes
@@ -28,7 +27,7 @@ line-breaking opportunity. But this team wanted to allow a soft-break after hyph
 We do not want to break in verse ranges, etc. where a hyphen is between digits. 
 
 ```perl
-"(?<=\s[^\\]*\D)-(?=\D)" > "-\u200B"
+'(?<=\s[^\\]*\D)-(?=\D)' > '-\u200B'
 ```
 
 ### Implementation
@@ -49,19 +48,9 @@ ideal for a list of glossary items. This replaces the \\p with \\ili only in the
 (This doesn't yet handle multi-paragraph entries.)
 
 ```perl
-at GLO "\\p \\k " > "\\ili \\k "
+at GLO '\\p \\k ' > '\\ili \\k '
 ```
 
-## Make each chapter start on a new page
-
-If you are wanting to produce a kid's chapter book of scripture with each chapter starting
-on a new page, then set the chapter label to something appropriate, like 'Chapter' and apply
-this rule to force a new page before the chapter begins, followed by a short rule under the
-chapter title.
-
-```perl
-"(\\c \d+)" > "\\pb\n\1\n\\zrule|\\*"
-```
 ## Mark headers with 3-letter book codes (temporarily)
 
 When working with a script that you cannot read, it is very helpful to place the book code in
@@ -69,7 +58,7 @@ the header (using the Alt book name) so that you can navigate easily within the 
 remember to comment out this expression before your final.
 
 ```perl
-"(\\id (...).*\n)" > "\1\\h1 \2\r\n"
+'(\\id (...).*\n)' > '\1\\h1 \2\r\n'
 ```
 
 ### Implementation
@@ -87,7 +76,7 @@ Sometimes you just need a blank page after the final text. Change the 'Amen.' to
 the last word in Revelation is.
 
 ```perl
-at REV 22:21 "Amen." >  "\1\n\\pb\n\\p \\bd ~\\bd*"
+at REV 22:21 'Amen.' >  '\1\n\\pb\n\\p \\bd ~\\bd*'
 ```
 
 ## Fancy book separators from Heading information
@@ -95,7 +84,7 @@ at REV 22:21 "Amen." >  "\1\n\\pb\n\\p \\bd ~\\bd*"
 Use the Header text for a book's title page along with a language-specific sub-heading.
 
 ```perl
-"(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)" > "\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is The New Testament in Wakawaka\4\\zrule\\*\4\\pb\4\5"
+'(?ms)(\\h )(.+?\r?\n)(.+?)(\r?\n)(\\mt)' > '\1\2\3\4\\zgap|2in\\*\4\\mt \2\\is The New Testament in Wakawaka\4\\zrule\\*\4\\pb\4\5'
 ```
 
 ### Implementation
@@ -122,7 +111,7 @@ Use a horizontal rule (line) after the introductory outline, before the 1st chap
 Just for the gospel of Mark, insert a page break BEFORE the title of the Introductory Outline.
 
 ```perl
-at MRK "(\\iot Outline)" > "\pb\r\n\1" 
+at MRK '(\\iot Outline)' > '\pb\r\n\1' 
 ```
 
 ## Insert pagebreak at specific location
@@ -130,7 +119,7 @@ at MRK "(\\iot Outline)" > "\pb\r\n\1"
 Push a particular section heading in the TDX book onto the next page.
 
 ```perl
-at TDX "(\\s1 Parables Jesus Told)" > "\\pb\r\n\1"
+at TDX '(\\s1 Parables Jesus Told)' > '\\pb\r\n\1'
 ```
 
 ## Make the ending of \\ior markers consistent
@@ -148,7 +137,7 @@ Usually pictures are defined in the USFM text, or added manually in the PicList.
 insert pictures through the specified changes, then this trick is useful.
 
 ```perl
-at EPH 6:13 "(armed soldier.)" > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
+at EPH 6:13 '(armed soldier.)' > '\1\\fig Soldier with armour|alt="Map Creator soldier with armour" src="ESG Armor of God(v2).png" size="col" ref="6:14-18"\\fig*'
 ```
 
 ## Auto lengthen poetry
@@ -158,8 +147,8 @@ But for a single column layout, we would like to merge all \\q2 into the previou
 turn every other \\q1 into a \\q2 to make it look like poetry.
 
 ```perl
-"\\q2 " > ""
-"(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1" > "\1\\q2"
+'\\q2 ' > ''
+'(\\q1(?:[^\\]|(\\[fx]).*?\2\*|\\v)+?)\\q1' > '\1\\q2'
 ```
 
 ### Implementation
@@ -178,7 +167,7 @@ Just for the XXS book, insert the first letter of each section of verncular rend
 before the block of renderings with their Strong's H and G numbers.
 
 ```perl
-at XXS "(\\m ?\r?\n(.))" > "\\s - \2 -\n\1"
+at XXS '(\\m ?\r?\n(.))' > '\\s - \2 -\n\1'
 ```
 
 ## Suppress introductory material for *some* books, but keep it for others
@@ -190,7 +179,7 @@ Here is the trick to suppress these in specific books. Just add this line to you
 file and replace BAK,XXA,XXE with whichever books you want the intro material stripped from.
 
 ```perl
-at BAK,XXA,XXE "\\i[so]\d?\s.+\r?\n" > ""
+at BAK,XXA,XXE '\\i[so]\d?\s.+\r?\n' > ''
 ```
 
 # TeX Snippets
@@ -276,29 +265,6 @@ But rather than having to calculate the width of the box for every change in
 point size, we measure the width of 4 digits and use that width to set the width
 of the hbox containing the Strong's number (which is always 4 digits or less).
 
-## Display paragraph markers next to each paragraph
-
-A typesetter may use changes.txt to change the paragraph style for typesetting
-reasons. It can be helpful to know which paragraph styles are being used for
-each paragraph. This snippet adds that capability.
-
-Notice that you will need to define a **character** style called zpmkr to style the marker
-text.
-
-[Note that this approach is currently buggy, as it changes the output in certain situations.]
-
-```tex
-\catcode`\@=11
-\input marginnotes.tex
-\newcount\pcount \pcount=0
-{\catcode`\~=12 \lccode`\~=32 \lowercase{
-\gdef\parmkr{\setbox0=\vbox{\hbox{\ch@rstylepls{zpmkr}~\m@rker\ch@rstylepls{zpmkr}*}}%
-    \advance\pcount by 1
-    \d@marginnote{0}{\the\pcount}{zpmkr}}
-}}
-\addtoeveryparhooks{\parmkr}
-```
-
 ## Forces better calculation of the number of lines 
 
 Sometimes when your apply a +1 to a reference in an AdjList, it ends up doing a +2.
@@ -340,7 +306,7 @@ for the given references (in this example: JHN 16, 2CO 6, HEB 6).
 ```tex
 \SeparateVerseAdornmentsfalse
 \newbox\stretchedversestarbox
-\setbox\stretchedversestarbox=\hbox{\XeTeXpdffile "c:/pathtofile/BridgedVerseRoundedBox.pdf" scaled 760 \relax}
+\setbox\stretchedversestarbox=\hbox{\XeTeXpdffile 'c:/pathtofile/BridgedVerseRoundedBox.pdf' scaled 760 \relax}
 \def\AdornVerseNumber#1{\beginL\rlap{\hbox to \ifadorningrange\wd\stretchedversestarbox\else\wd\versestarbox\fi{\hfil #1\hfil}}%
     \raise -4.5pt\ifadorningrange\copy\stretchedversestarbox\else\copy\versestarbox\fi\endL}
 ```
@@ -512,8 +478,8 @@ Of course if you always want inline numbers even in cross references, then the
 hook can be simplified and `\mystrong` always called.
 
 ## Special page numbering for a book
-"I want the page number for the glossary to restart numbers at one, and
-be prefixed with G-" 
+I need the page number for the glossary to restart numbering at one, and
+be prefixed with G- 
 ```tex
 \setbookhook{GLO}{start}{\pageno=1 \def\pagenumber{G-\folio}}
 ```
@@ -523,18 +489,17 @@ prints the pagenumber.  (`\folio` prints lower case roman numerals if the page
 number is negative, and numbers starting from 1 if positive).
 
 ## Move colophon to after included pages
+The first line replaces the normal colophon including code with code that will output the 
+page. The second line puts the normal colophon including code after any included documents.
 ```
 \sethook{bookend}{final}{\layoutstylebreak\pagebreak}
 \sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
 ```
 
-The first line replaces the normal colophon including code with code that will output the 
-page. The second line puts the normal colophon including code after any included documents.
-
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
 possible by calling an external script file (.py) and may be enabled by 
-the option "Process Text by Custom Script at start/end" on the Advanced tab.
+the option 'Process Text by Custom Script at start/end' on the Advanced tab.
 
 ## Process a file before/after PTXprint has processed it
 
@@ -547,10 +512,10 @@ unless you are performing multi-line find/replace operations.
 
 ```py
 import sys
-with open(sys.argv[2], "w", encoding="utf8") as outf:
-    with open(sys.argv[1], encoding="utf8") as inf:
+with open(sys.argv[2], 'w', encoding='utf8') as outf:
+    with open(sys.argv[1], encoding='utf8') as inf:
         for l in inf.readlines():
-            outf.write(l.replace("a", "A"))
+            outf.write(l.replace('a', 'A'))
 ```
 
 ## Process a file before/after PTXprint has processed it
@@ -564,19 +529,11 @@ substitutions that can also handle multiline changes (flags=re.M)
 
 ```py
 import sys, re
-with open(sys.argv[2], "w", encoding="utf8") as outf:
-    with open(sys.argv[1], encoding="utf8") as inf:
+with open(sys.argv[2], 'w', encoding='utf8') as outf:
+    with open(sys.argv[1], encoding='utf8') as inf:
         t = inf.read()
-        t = re.sub(r"<<\n", "\u00AB", t)
-        t = re.sub(r"\n\\m >>", "\u00BB", t, flags=re.M)
+        t = re.sub(r'<<\n', '\u00AB', t)
+        t = re.sub(r'\n\\m >>', '\u00BB', t, flags=re.M)
         outf.write(t)
 ```
 
-# Other Techniques
-
-## Creating a fancy front cover with ornaments
-
-Note: The older (and now redundant) description on how to do this has been removed.
-
-The process has been streamlined through the PTXprint UI where you can create a cover page 
-with ornamental borders etc. using the Cover tab, and selecting Generate Cover...

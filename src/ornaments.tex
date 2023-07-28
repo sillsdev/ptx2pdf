@@ -262,10 +262,6 @@
 \def\pdf@beginscope{\sysprotocol@literal{q}}
 \def\pdf@endscope{\sysprotocol@literal{Q}}
 
-\long\def\addto@macro#1#2{%
-  %\begingroup
-    \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
- %\endgroup}
 \def\pdf@special#1{\unskip\special{pdf:code #1}}
 \def\pdfcommands{}
 \def\pdfpath{}

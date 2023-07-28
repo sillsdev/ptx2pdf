@@ -42,20 +42,23 @@
 % Print the first reference from the mark data
 %
 \newif\ifOmitBookRef
-\def\f@rstref#1{\edef\t@st{#1}%
+\def\s@tf@rstr@f#1{\edef\t@st{#1}%
+ \let\@@firstref\empty
  \ifx\t@st\empty\else
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
-    \ifx\@book\empty\else
-     \ifOmitBookRef\else\@book\ \fi
-     \ifOmitChapterNumberRH\else\@chapter\fi
-     \ifVerseRefs
-      \ifOmitChapterNumberRH\else\cvs@p\fi
-      \@verse
-     \fi
-   \fi
+    \edef\@@firstref{\ifx\@book\empty\else
+      \ifOmitBookRef\else\@book\ \fi
+      \ifOmitChapterNumberRH\else\@chapter\fi
+      \ifVerseRefs
+        \ifOmitChapterNumberRH\else\cvs@p\fi
+        \@verse
+      \fi
+    \fi}%
   \fi\fi
- \fi}
+ \fi
+}
+\def\f@rstref#1{\s@tf@rstr@f{#1}\@@firstref}
 
 %
 % Print the last reference from the mark data
@@ -288,6 +291,7 @@
 \def\lastref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\l@stref{\p@gebotmark}\egroup\ifRTL\endR\fi}
 \def\rangeref{\ifRTL\beginR\fi\bgroup\ifdiglot\s@treffont\fi\r@ngerefs{\p@gefirstmark}{\p@gebotmark}\egroup\ifRTL\endR\fi}
 
+
 \def\header@defs#1{%polyglot references
   \def@cseq{firstref#1}{\headfoot #1{\f@rstref{\csname first#1mark\endcsname}}}
   \def@cseq{lastref#1}{\headfoot #1{\l@stref{\csname bot#1mark\endcsname}}}
@@ -352,5 +356,16 @@
 \def\RFtitleevencenter{\pagenumber}
 \def\RFtitleoddcenter{\pagenumber}
 \def\RFtitleright{\empty}
+
+\def\HEADFOOTset#1#2#3#4#5#6#7#8{%
+  \x@\def\csname R#1#2evenleft\endcsname{#3}%
+  \x@\def\csname R#1#2evencenter\endcsname{#4}%
+  \x@\def\csname R#1#2evenright\endcsname{#5}%
+  \x@\def\csname R#1#2oddleft\endcsname{#6}%
+  \x@\def\csname R#1#2oddcenter\endcsname{#7}%
+  \x@\def\csname R#1#2oddright\endcsname{#8}}%
+%usage: #1 H or F (head or foot)
+% #2 {}, {title} {noV}
+% #3-#8 Left,centre,right / left, centre,right for even,odd pages.
 
 \endinput

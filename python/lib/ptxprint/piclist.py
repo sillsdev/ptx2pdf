@@ -2,8 +2,12 @@
 from ptxprint.utils import refKey, universalopen, print_traceback, nonScriptureBooks
 from threading import Thread
 import configparser
-import regex, re
+import regex, re, logging
 import os, re, random, sys
+import logging
+import appdirs
+
+logger = logging.getLogger(__name__)
 
 posparms = ["alt", "src", "size", "pgpos", "copy", "caption", "ref", "x-xetex", "mirror", "scale"]
 pos3parms = ["src", "size", "pgpos", "ref", "copy", "alt", "x-xetex", "mirror", "scale", "media", 
@@ -23,7 +27,7 @@ _creditcomps = {'x-creditpos': 0, 'x-creditrot': 1, 'x-creditbox': 2}
 
 def newBase(fpath):
     doti = fpath.rfind(".")
-    f = os.path.basename(fpath[:doti])
+    f = os.path.basename(fpath[:doti] if doti >= 0 else fpath)
     cl = re.findall(r"(?i)_?((?=ab|cn|co|hk|lb|bk|ba|dy|gt|dh|mh|mn|wa|dn|ib)..\d{5})[abcABC]?$", f)
     if cl:
         return cl[0].lower()
@@ -257,7 +261,7 @@ class PicInfo(dict):
                 a = v['anchor'][:3]+("" if bkanchors else v['anchor'][3+len(srcpre):])
                 if mergeCaptions:
                     for s in tgts.get(a, []):
-                        if s.get('src', '') == v.get('src', ''):
+                        if newBase(s.get('src', '')) == newBase(v.get('src', '')):
                             if v.get('caption', '') != '':
                                 s['caption'+captionpre] = v.get('caption', '')
                             if v.get('ref', '') != '':
@@ -298,26 +302,34 @@ class PicInfo(dict):
         self.inthread = False
 
     def _fixPicinfo(self, vals): # USFM2 to USFM3 converter
-        p = vals['pgpos']
-        if all(x in "apw" for x in p):
-            vals['media'] = p
-            del vals['pgpos']
-        elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
-            vals['media'] = 'p'
-        else:
-            vals['loc'] = p
-            del vals['pgpos']
-        p = vals['size']
-        m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
-        if m:
-            vals['size'] = m[1]
-            if m[2] is not None and len(m[2]):
-                vals['scale'] = m[2]
+        if vals.get('pgpos', None) is not None:
+            p = vals['pgpos']
+            if all(x in "apw" for x in p):
+                vals['media'] = p
+                del vals['pgpos']
+            elif re.match(r"^[tbhpc][lrc]?[0-9]?$", p):
+                vals['media'] = 'p'
+            else:
+                vals['loc'] = p
+                del vals['pgpos']
+        if vals.get('size', None) is not None:
+            p = vals['size']
+            m = re.match(r"(col|span|page|full)(?:\*(\d+(?:\.\d*)))?$", p)
+            if m:
+                vals['size'] = m[1]
+                if m[2] is not None and len(m[2]):
+                    vals['scale'] = m[2]
         return vals
 
     def newkey(self, suffix=""):
-        self.keycounter += 1
-        return "pic{}{}".format(suffix, self.keycounter)
+        while True:
+            self.keycounter += 1
+            key = "pic{}{}".format(suffix, self.keycounter)
+            if key not in self:
+                return key
+
+    def addpic(self, suffix="", **kw):
+        self[self.newkey(suffix or "")] = kw
 
     def read_piclist(self, fname, suffix=""):
         if isinstance(fname, str):
@@ -356,39 +368,46 @@ class PicInfo(dict):
             inf.close()
         self.rmdups()
 
+    def _getanchor(self, m, txt, i):
+        t = regex.match(r"\\k\s(.*?)\\k\*.*?$", txt, regex.R|regex.S, endpos=m.start(0))
+        f = regex.match(r"\\fig.*?$", txt, regex.R|regex.S, endpos=m.start(0))
+        if t:
+            if f is None or t.start(0) > f.start(0):
+                res = (t.group(1).replace(" ", ""), "", "")
+            else:
+                res = (t.group(1).replace(" ", ""), "", "{:03d}".format(i+1))
+        else:
+            res = ("p", "", "{:03d}".format(i+1))
+        return res
+
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
-        m = regex.findall(r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?"
-                       r"\|([^\\]+?)?\|([^\\]+?)?\\fig\*", txt)
-        if len(m):
-            # print("usfm2:", lastv, m)
-            for i, f in enumerate(m):     # usfm 2
-                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'anchor': r, 'caption':f[5].strip()}
-                key = self.newkey(suffix)
-                self[key] = pic
-                for i, v in enumerate(f):
-                    pic[posparms[i]] = v
-                self._fixPicinfo(pic)
-        m = regex.findall(r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', txt)
-        if len(m):
-            # print("usfm3:", lastv, m)
-            for i, f in enumerate(m):     # usfm 3
-                # lastv = f[0] or lastv
-                if "|" in f[1]:
-                    break
-                a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                r = "{}{} {}{}{}".format(bk, suffix, *a)
-                pic = {'caption':f[0].strip(), 'anchor': r}
-                key = self.newkey(suffix)
-                self[key] = pic
-                labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f[1])
-                for l in labelParams:
-                    k,v = l.split("=")
-                    pic[k.strip()] = v.strip('"')
-                if 'media' not in pic:
-                    default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
-                    pic['media'] = 'paw' if default is None else default
+        logger.debug(f"Reading pics for {bk} + {suffix}")
+        for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
+                  (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
+            m = list(regex.finditer(b[0], txt))
+            if len(m):
+                for i, f in enumerate(m):     # usfm 2
+                    if bk == "GLO":
+                        a = self._getanchor(f, txt, i)
+                    else:
+                        a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                    r = "{}{} {}{}{}".format(bk, suffix, *a)
+                    pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
+                    key = self.newkey(suffix)
+                    self[key] = pic
+                    if b[1]:    # usfm 3
+                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
+                        for l in labelParams:
+                            k,v = l.split("=")
+                            pic[k.strip()] = v.strip('"')
+                        if 'media' not in pic:
+                            default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+                            pic['media'] = 'paw' if default is None else default
+                    else:       # usfm 2
+                        for j, v in enumerate(f.groups()):
+                            pic[posparms[j]] = v
+                        self._fixPicinfo(pic)
+                break
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
@@ -500,7 +519,10 @@ class PicInfo(dict):
                 if os.path.exists(p) and len(os.listdir(p)) > 0:
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
-                            self.srchlist += [dp]
+                            self.srchlist.append(dp)
+        uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+        if os.path.isdir(uddir):
+            self.srchlist.append(uddir)
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.model.get("t_imageTypeOrder").lower()
@@ -512,7 +534,7 @@ class PicInfo(dict):
                 self.extensions = extdflt
             else:
                 self.extensions = {x:i for i, x in enumerate(["tif", "tiff", "png", "jpg", "jpeg", "bmp", "pdf"])}
-                
+        logger.debug(f"{self.srchlist=} {self.extensions=}")
 
     def getFigureSources(self, filt=newBase, key='src path', keys=None, exclusive=False, data=None, mode=None):
         ''' Add source filename information to each figinfo, stored with the key '''
@@ -568,19 +590,20 @@ class PicInfo(dict):
     def set_positions(self, cols=1, randomize=False, suffix="", isBoth=False):
         picposns = { "L": {"col":  ("tl", "bl"),             "span": ("t", "b")},
                      "R": {"col":  ("tr", "br"),             "span": ("b", "t")},
-                     "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
+                     "":  {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")},
+                     "B": {"col":  ("tl", "tr", "bl", "br"), "span": ("t", "b")}}
         isdblcol = self.model.get("c_doublecolumn")
         if self.model.get('c_diglot') or self.model.isDiglot:
             cols = 2 if isBoth else 1
         for k, v in self.items():
             if cols == 1: # Single Column layout so change all tl+tr > t and bl+br > b
-                if 'pgpos' in v:
+                if v.get('pgpos', None) is not None:
                     v['pgpos'] = re.sub(r"([tb])[lr]", r"\1", v['pgpos'])
                 elif randomize:
                     v['pgpos'] = random.choice(picposns[suffix]['span'])
                 else:
                     v['pgpos'] = "t"
-            elif 'pgpos' not in v:
+            elif v.get('pgpos', None) is None:
                 posns = picposns[suffix].get(v.get('size', 'col'), picposns[suffix]["col"])
                 if randomize:
                     v['pgpos'] = random.choice(posns)
@@ -626,8 +649,12 @@ class PicInfo(dict):
                 continue
             if bk is not None and not v['anchor'].startswith(bk):
                 continue
-            return v['anchor']
-        return None
+            res = v['anchor']
+            break
+        else:
+            res = None
+        logger.debug(f"getAnchor({src}, {bk}) -> {res}")
+        return res
 
 def PicInfoUpdateProject(model, bks, allbooks, picinfos, suffix="", random=False, cols=1, doclear=True, clearsuffix=False):
     newpics = PicInfo(model)

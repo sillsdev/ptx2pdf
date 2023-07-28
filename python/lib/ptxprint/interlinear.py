@@ -92,6 +92,8 @@ class Interlinear:
                         if lid.startswith('Word:'):
                             wd = self.lexicon.get(lid, {}).get(gid, '')
                             lexemes.append((currange, str(wd)))
+                    elif e.tag == "AfterText":
+                        lexemes.append((currange, e.text))
                 elif event == "end":
                     if e.tag == "string":
                         curref = self.makeref(e.text)

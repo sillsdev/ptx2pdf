@@ -1,0 +1,111 @@
+﻿<ScriptureText>
+  <StyleSheet>usfm.sty</StyleSheet>
+  <BooksPresent>111111111111001110111011011101011110100111111111111111111111111111000000000000000000000000001100001111000010111000000000000</BooksPresent>
+  <LanguageIsoCode>wsg:Latn::</LanguageIsoCode>
+  <Language>Adilabad Gondi LAT</Language>
+  <MinParatextVersion>8.0.100.76</MinParatextVersion>
+  <FullName>WSG Adilabad Gondi LATIN (Telangana, India)</FullName>
+  <Encoding>65001</Encoding>
+  <Editable>T</Editable>
+  <Copyright>© 2010-2021 WSG Team, Wycliffe Bible Translators, Inc.</Copyright>
+  <Name>WSGlatin</Name>
+  <Guid>81d37800bccbbeef5fd5df2a3482243ad24be94c</Guid>
+  <AssociatedLexicalProject />
+  <FileNameBookNameForm>41MAT</FileNameBookNameForm>
+  <FileNamePrePart />
+  <FileNamePostPart>WSGlatin.SFM</FileNamePostPart>
+  <NormalizationForm>NFC</NormalizationForm>
+  <BiblicalTermsListSetting>Project:WSGlatin:ProjectBiblicalTerms.xml</BiblicalTermsListSetting>
+  <MatchBasedOnStems>F</MatchBasedOnStems>
+  <AllowReadAccess>F</AllowReadAccess>
+  <AllowSharingWithSLDR>F</AllowSharingWithSLDR>
+  <Visibility>Public</Visibility>
+  <TranslationInfo>Transliteration:WSG:9e944fc08f02acf9cc7033f4b006cc335e7ef48f</TranslationInfo>
+  <EncodingConverter />
+  <DefaultFont>Tahoma</DefaultFont>
+  <DefaultFontSize>12</DefaultFontSize>
+  <FontFeatures />
+  <HtmlLanguage />
+  <InterlinearModelText>WSGBT</InterlinearModelText>
+  <InterlinearRelatedLanguages.WSGBT>False</InterlinearRelatedLanguages.WSGBT>
+  <InterlinearExportText.WSGBT />
+  <InterlinearExportOnApprove.WSGBT>False</InterlinearExportOnApprove.WSGBT>
+  <SegmentOrder>a b c d e f g h</SegmentOrder>
+  <GuessTranslationsDestinationText>WSGBT</GuessTranslationsDestinationText>
+  <WordPrefixes />
+  <WordSuffixes>a
+taga
+te
+tun
+taṭ</WordSuffixes>
+  <StartingReference>MAT 1:1</StartingReference>
+  <EndingReference>REV 22:21</EndingReference>
+  <ContextLimit>4</ContextLimit>
+  <maxPhraseLength>25</maxPhraseLength>
+  <minPhraseLength>6</minPhraseLength>
+  <minOccurences>5</minOccurences>
+  <IncludeRef>Yes</IncludeRef>
+  <MatchCase>Yes</MatchCase>
+  <DotAll>No</DotAll>
+  <AdvancedView>False</AdvancedView>
+  <ValidPunctuation>- ‌ ‍ _†_ _©_ _[_ …_ _]_ »_ _« ]_ _[ :_ ’_ _‘ _( )_ ;_ ?_ !_ ”_ _“ ,_ ._</ValidPunctuation>
+  <InvalidPunctuation>_.. ....._ ‘_ _. *_ _‘_ _’_ ... _._ _*_ ! “ _” _”_ .._ (_ “_ ( _,_ ? , ” ..._ _?_ ~ . _“_ _/_ _/ _)_ /_ _(_ / _..._</InvalidPunctuation>
+  <CharacterAdvancedView>True</CharacterAdvancedView>
+  <ValidCharacters>  
+ a b c d e f g h i j k l m n o p q r s t u v x y ñ ā ē ī ō ś ū ḍ ḥ ḷ ṁ ṅ ṇ ṣ ṭ - ch ‌ ‍ . † V A D © W H E w ~ « » [ ] | ’ ‘ 7 9 8 6 ) ( 0 5 ; ? 4 ! 3 ” 2 “ : 1 , 
+ –</ValidCharacters>
+  <InvalidCharacters>&amp;   …</InvalidCharacters>
+  <OnlyListPhrases>No</OnlyListPhrases>
+  <ChapterVerseSeparator>:</ChapterVerseSeparator>
+  <ReferenceFinalPunctuation />
+  <PaOriginalStylesheetName />
+  <DefaultCrossRefCaller>-</DefaultCrossRefCaller>
+  <UsfmVersion>3</UsfmVersion>
+  <BookSourceForMarkerXt>ShortName</BookSourceForMarkerXt>
+  <BookSourceForMarkerR>ShortName</BookSourceForMarkerR>
+  <OriginRangeOption>NoteInAnyVerse</OriginRangeOption>
+  <CrossReferenceSettingsHaveBeenReviewed>T</CrossReferenceSettingsHaveBeenReviewed>
+  <RefsMustMatchVerseSegments>False</RefsMustMatchVerseSegments>
+  <SegmentsMustHaveFinalPunctuation>False</SegmentsMustHaveFinalPunctuation>
+  <NoSpaceBetweenBookAndChapter>False</NoSpaceBetweenBookAndChapter>
+  <RangeIndicator>-</RangeIndicator>
+  <SequenceIndicator>,</SequenceIndicator>
+  <ChapterRangeSeparator>–</ChapterRangeSeparator>
+  <BookSequenceSeparator>; </BookSequenceSeparator>
+  <ChapterNumberSeparator>; </ChapterNumberSeparator>
+  <ReferenceExtraMaterial>va</ReferenceExtraMaterial>
+  <NumberDecimalPoint>.</NumberDecimalPoint>
+  <NumberThousandsSeparator>,</NumberThousandsSeparator>
+  <NumberOrdinals>va</NumberOrdinals>
+  <NumberInitialPunctuation>–+"({&lt;[$</NumberInitialPunctuation>
+  <NumberFinalPunctuation>)}"&gt;.!?:],;</NumberFinalPunctuation>
+  <NumberMedialPunctuation>–/</NumberMedialPunctuation>
+  <NumberOrdinalType>suffix</NumberOrdinalType>
+  <HindiUrduNumberGrouping>T</HindiUrduNumberGrouping>
+  <NumberSettingsHaveBeenReviewed>T</NumberSettingsHaveBeenReviewed>
+  <BibleModuleAssociations>XXA:PNG OT stories.sfm</BibleModuleAssociations>
+  <InterlinearRelatedLanguages.ESVUS16>False</InterlinearRelatedLanguages.ESVUS16>
+  <InterlinearExportText.ESVUS16 />
+  <InterlinearExportOnApprove.ESVUS16>False</InterlinearExportOnApprove.ESVUS16>
+  <InterlinearModelTextId>438821f43685f80940531433e6a4da43beea05e6</InterlinearModelTextId>
+  <InterlinearExportTextId.WSGBT />
+  <ParallelPassagesBooks>000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</ParallelPassagesBooks>
+  <RemoveAllExisting>Yes</RemoveAllExisting>
+  <RoughLength>No</RoughLength>
+  <FontFilename>C:\Windows\Fonts\Tahoma.ttf</FontFilename>
+  <MinSample>yesu-</MinSample>
+  <RemoveGuessedHyphenation>No</RemoveGuessedHyphenation>
+  <AddAsteriskToAll>Yes</AddAsteriskToAll>
+  <DeprioritizeApproved>No</DeprioritizeApproved>
+  <ShowScores>Yes</ShowScores>
+  <OmitFields>fig</OmitFields>
+  <Spec_F_file>SpecFormatting.ref</Spec_F_file>
+  <ReviewNT>Yes</ReviewNT>
+  <ReviewOT>No</ReviewOT>
+  <SourceBibles>NLT</SourceBibles>
+  <IncludeKritikos>Yes</IncludeKritikos>
+  <InterlinearConversionCompletedBy>Mark Penny|Joanna Penny</InterlinearConversionCompletedBy>
+  <DefaultFootnoteCaller>+</DefaultFootnoteCaller>
+  <listOfOutputProjects>WSGlatin WSGgong WSGgonm</listOfOutputProjects>
+  <Naming PrePart="" PostPart="WSGlatin.SFM" BookNameForm="41MAT" />
+</ScriptureText>

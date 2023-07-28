@@ -40,6 +40,7 @@
 \newbox\topcr@p \newbox\bottomcr@p
 \def\makecr@ps{% construct the cropmark boxes for top and bottom of page
   \trace{cov}{makecrops bleeds=\the\bl@eds, pw=\the\PaperWidth}%
+  \trace{o}{id line (\the\pageno): \id@line}%
   \global\setbox\topcr@p=\vbox to 0pt{\toks0=\everypar\everypar={}\vss
     \hbox to \PaperWidth{%
       \kern -30pt \kern -\bl@eds
@@ -56,7 +57,7 @@
       \raise\dimexpr 12pt + \bl@eds \hbox to 0pt{\hss\vtop{{\hsize\PaperWidth \everypar={}
         \lineskiplimit=0pt \baselineskip=10pt
         \leftskip=0pt plus 1fil \rightskip=\leftskip \parfillskip=\leftskip
-        \noindent \hfil\beginL\idf@nt \jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi \endL\par
+        \noindent \hfil\beginL\idf@nt \id@line  \endL\par
         \ifdim\sp@newidth>0pt\hbox{\kern 0.5\PaperWidth\kern-0.5\sp@newidth\vrule height 6pt depth .5pt width .4pt
           \kern\sp@newidth\kern -0.4pt\vrule height 6pt depth .5pt width .4pt}\fi}}\hss}%
       \hss
@@ -113,6 +114,7 @@
 \newif\ifTabTopToEdgeOdd %Is the top of the text at the pageedge on odd pages
 \TabTopToEdgeEvenfalse
 \TabTopToEdgeOddfalse
+\newif\ifholdpageno\holdpagenofalse
 
 \newif\ifTabAutoRotate \TabAutoRotatetrue % Does autorotation of text occur?
 \newif\ifTabRotationNormal \TabRotationNormaltrue % TabRotationNormalfalse==rotate text (if auto-rotate off). (If auto-rotate on: invert autorotate logic, i.e. assume the \toc3 are narrower than they are tall).
@@ -337,6 +339,7 @@
  \fi
 }
 
+\newif\ifTabsOddOnly \TabsOddOnlyfalse
 \def\putthumbtab{%Using the current book ID, and the book's short name complete and position a thumbtab mark
   \initThumbT@bs%becomes \relax after 1st run, unless reset
   \let\st@rtatedge=T% Does a horizontal chunk of text in a box  start nearest to the page edge away from the binding (False for English on odd-numbered pages) (depends on page sequence, matching LTR/RTL)
@@ -356,7 +359,7 @@
  \trace{pt}{PTT nt:\the\NumTabs, bk:\b@okShort, pg:\the\pageno}%
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
  \XeTeXuseglyphmetrics=3
- \ifnum\NumTabs=0 \else
+ \ifnum \ifnum\NumTabs=0 0\else \ifTabsOddOnly\ifodd\pageno 1\else 0\fi\else 1\fi\fi =1
    \sett@bname{\id@@@}\gett@bgroup\x@\let\x@\tabnum\csname\t@bname -num\endcsname
   \trace{pt}{\t@bname, Tabnum: \tabnum}%
    \ifx\tabnum\relax\else %NOT ifx..  This allows setting the number to \relax and it'll disable it.
@@ -413,7 +416,8 @@
         \strip@pt{\dimen2} ] /TrimBox [0 0 \strip@pt{\dimen1} \space
         \strip@pt{\dimen2} ]>> }\fi
     \getm@rknum{pdftag}%Tag pages if pdftag mark is active issued.
-    \xdef\@@pdftag{\topmarks\m@rknum}%
+    \xdef\@@pdftag{\firstmarks\m@rknum}%
+    \trace{ma}{topmark for pdftag on page \the\pageno is '\@@pdftag'}%
     \ifx\@@pdftag\empty\else
       \special {pdf:put @thispage <</PieceInfo <</ptxprint 
           <</LastModified /D:20221126103720Z /Private <</Insertion /\@@pdftag>> >>
@@ -479,7 +483,6 @@
         \ifBindingGutter\if R\g@tterside\kern\BindingGutter\fi\fi
       }\hss}}
       \kern\bottomm@rgin}
-      %\vss}
     \vss
     \docr@pmarks
     \putthumbtab
@@ -519,8 +522,14 @@
 }
 %-c_shipcomplete
 %+c_docropmarks
+\def\m@keid@line{
+  \xdef\id@line{\jobname\ :: \timestamp \ifx\@@pdftag\empty\else\ ::\@@pdftag\fi}%
+  \ifx\lastid@line\id@line\else\setbox\topcr@p\box\voidb@x\global\let\lastid@line\id@line\fi
+}
+
 \def\docr@pmarks{%
     \ifCropMarks % if crop marks are enabled
+      \m@keid@line
       \ifvoid\topcr@p \bl@eds=0pt \makecr@ps \fi % create them (first time)
       \ifrotate\XeTeXupwardsmode=0\fi
       \vbox to 0pt{
@@ -799,7 +808,13 @@
   \holdXobjectsfalse
   \shipwithcr@pmarks{#1}%
   \pdfpagewidth=\dimen9 \pdfpageheight=\dimen8
-  \advancepageno
+  \holdpagenofalse
+  \ifcsname periph-\@@pdftag-nocount\endcsname
+    \x@\ifx\csname periph-\@@pdftag-nocount\endcsname\tr@e      
+      \holdpagenotrue
+    \fi
+  \fi
+  \ifholdpageno\else\advancepageno\fi
   \global\p@geonefalse
 %NB: dosupereject (from plain.tex) will continue triggering outputs as long as
 %there are footnotes/floats coming.
@@ -822,6 +837,7 @@
   \ifdim #3<0pt
     \dimen0=0pt
   \else
+    \m@keid@line
     \setbox1=\box\topcr@p \setbox2=\box\bottomcr@p
     \sp@newidth=#3 \bl@eds=#4 \makecr@ps
     \setbox\instopcr@p=\box\topcr@p \setbox\insbottomcr@p=\box\bottomcr@p

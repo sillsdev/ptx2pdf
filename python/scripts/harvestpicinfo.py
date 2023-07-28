@@ -5,6 +5,7 @@
 import sys, os, re
 import xml.etree.ElementTree as et
 import json, argparse
+import zipfile, unicodedata
 
 _bookslist = """GEN|50 EXO|40 LEV|27 NUM|36 DEU|34 JOS|24 JDG|21 RUT|4 1SA|31 2SA|24 1KI|22 2KI|25 1CH|29 2CH|36 EZR|10 NEH|13
         EST|10 JOB|42 PSA|150 PRO|31 ECC|12 SNG|8 ISA|66 JER|52 LAM|5 EZK|48 DAN|12 HOS|14 JOL|3 AMO|9 OBA|1 JON|4 MIC|7 NAM|3
@@ -63,6 +64,16 @@ def getBookFilename(ptsettings, bk, prjid=None):
     fname = bknamefmt.format(bkid=bk, bkcode=bookcodes.get(bk, 0))
     return fname
     
+def getcv(s):
+    t = re.sub("[\u2010-\u2015]", "-", re.sub(r"^.*?(\d+)[:.](.*?)$", r"\1.\2", s))
+    r = []
+    for c in t:
+        try:
+            r.append(str(unicodedata.digit(c)))
+        except ValueError:
+            r.append(c)
+    return "".join(r)
+
 def newBase(fpath):
     doti = fpath.rfind(".")
     f = os.path.basename(fpath[:doti])
@@ -118,6 +129,27 @@ def process_sfm(bk, fname):
                                 incHashRef(img2ref, newBase(f[0]), r)
     return count
 
+def process_dbl_zip(fname, results):
+    with zipfile.ZipFile(fname) as zf:
+        for f in zf.namelist():
+            if not f.endswith(".usx"):
+                continue
+            bk = re.sub(r"^.*/(.*?).usx$", r"\1", f)
+            process_usx(bk, zf.open(f), results)
+    return results
+
+def process_usx(bk, inf, results):
+    count = 0
+    for (ev, el) in et.iterparse(inf, events=["start"]):
+        if el.tag.startswith("fig"):
+            ref = el.get("ref", "").strip()
+            fname = el.get("file")
+            if fname is None or not len(ref):
+                continue
+            count += 1
+            incHashRef(results, newBase(fname), bk + " " + getcv(ref))
+    return count
+
 def universalopen(fname, cp=65001):
     """ Opens a file with the right codec from a small list and perhaps rewrites as utf-8 """
     encoding = "cp{}".format(cp) if str(cp) != "65001" else "utf-8"
@@ -169,61 +201,100 @@ def writeFile(outfile, **kw):
 # -------------------------------------------------------------------------------------------
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--indir", default="C:/My Paratext 9 Projects", help="Path to Paratext project tree")
+parser.add_argument("-d", "--dbl", action="store_true", help="Treat indir as directory of dbl zips")
 parser.add_argument("-o", "--outfile", default="HarvestedPictureInfo.json", help="Output JSON file")
 parser.add_argument("-a", "--all", action="store_true", help="Process ALL projects, not just Standard translation type")
 parser.add_argument("-v", "--byverse", action="store_true", help="Verse-level granularity instead of by chapter")
+parser.add_argument("-V", "--verbose", action="store_true", help="Be chatty")
+parser.add_argument("-M", "--max", type=int, default=0, help="Limit to M entries")
+parser.add_argument("-F", "--filter", action="store_true", help="Filter out non database images")
 args = parser.parse_args()
 # -------------------------------------------------------------------------------------------
 # This is where the main work is done - cycle through all the folders looking for valid projects
-for d in os.listdir(args.indir):
-    p = os.path.join(args.indir, d)
-    if not os.path.isdir(p):
-        continue
-    try:
-        print(p)
-        if not os.path.exists(os.path.join(p, 'Settings.xml')) \
-                and not any(x.lower().endswith("sfm") for x in os.listdir(p)):
-            continue
-        if d.lower().startswith("z"):
-            incHashRef(prjtypes, "ignored", "Starts with 'z'")
-            continue
-        totalCOUNT = 0
-        try:
-            pts = parsePTstngs(p)
-        except NameError:
-            continue
-        if pts is None:
-            # This happens for Resource projects
-            incHashRef(prjtypes, "ignored", "Resource Projects")
-            continue
-        # Read the project description to see if it contains "test" or "train"ing - and if so, ignore it
-        pdesc = pts.get("FullName", "").lower()
-        if "test" in pdesc or "train" in pdesc:
-            incHashRef(prjtypes, "ignored", "Test or Training Projects")
-            continue
-        # Read the 'Project type' so that we only look at 'Standard' projects (unless -a = all was passed in)
-        ptype = pts.get("TranslationInfo", "").split(":")[0]
-        if not args.all and not ptype.startswith("Standard"):
-            incHashRef(prjtypes, "ignored", ptype)
-            continue
 
-        incHashRef(prjtypes, "counted", ptype)
-        # Finally, we collect the info we need
-        bks = getAllBooks(p, d, pts)
-        for bk, v in bks.items():
-            if bk in OTnNTbooks:
-                COUNT = process_sfm(bk, v)  # This is where the hard work happens to look for pics in each book
-                incHashRef(counts, bk, COUNT)
-                totalCOUNT += COUNT
-                counts[bk][COUNT] +=1
-        if totalCOUNT != 0:
-            print(" "*60, "{}  {} pics".format(d, totalCOUNT))
-            incHashRef(picnopic, "Has pics")
-        else:
-            print(" "*50, d)
-            incHashRef(picnopic, "No pics")
-    except OSError:
-        pass
+def proc_usfms(indir):
+    for d in os.listdir(indir):
+        p = os.path.join(indir, d)
+        if not os.path.isdir(p):
+            continue
+        try:
+            print(p)
+            if not os.path.exists(os.path.join(p, 'Settings.xml')) \
+                    and not any(x.lower().endswith("sfm") for x in os.listdir(p)):
+                continue
+            if d.lower().startswith("z"):
+                incHashRef(prjtypes, "ignored", "Starts with 'z'")
+                continue
+            totalCOUNT = 0
+            try:
+                pts = parsePTstngs(p)
+            except NameError:
+                continue
+            if pts is None:
+                # This happens for Resource projects
+                incHashRef(prjtypes, "ignored", "Resource Projects")
+                continue
+            # Read the project description to see if it contains "test" or "train"ing - and if so, ignore it
+            pdesc = pts.get("FullName", "").lower()
+            if "test" in pdesc or "train" in pdesc:
+                incHashRef(prjtypes, "ignored", "Test or Training Projects")
+                continue
+            # Read the 'Project type' so that we only look at 'Standard' projects (unless -a = all was passed in)
+            ptype = pts.get("TranslationInfo", "").split(":")[0]
+            if not args.all and not ptype.startswith("Standard"):
+                incHashRef(prjtypes, "ignored", ptype)
+                continue
+
+            incHashRef(prjtypes, "counted", ptype)
+            # Finally, we collect the info we need
+            bks = getAllBooks(p, d, pts)
+            for bk, v in bks.items():
+                if bk in OTnNTbooks:
+                    COUNT = process_sfm(bk, v)  # This is where the hard work happens to look for pics in each book
+                    incHashRef(counts, bk, COUNT)
+                    totalCOUNT += COUNT
+                    counts[bk][COUNT] +=1
+            if totalCOUNT != 0:
+                print(" "*60, "{}  {} pics".format(d, totalCOUNT))
+                incHashRef(picnopic, "Has pics")
+            else:
+                print(" "*50, d)
+                incHashRef(picnopic, "No pics")
+        except OSError:
+            pass
+
+if args.dbl:
+    jobs = []
+    for dp, dn, fn in os.walk(args.indir):
+        for f in fn:
+            if f.endswith(".zip"):
+                jobs.append(os.path.join(dp, f))
+    for i, j in enumerate(jobs):
+        if args.max and i >= args.max:
+            break
+        if args.verbose:
+            print(f"{i}: {j}")
+        process_dbl_zip(j, img2ref)
+else:
+    proc_usfms(args.indir)
+
+if args.filter:
+    img2ref = {k: v for k,v in img2ref.items() if re.match(r"[a-z]{2}\d{5}$", k, re.I)}
+    for p, d in img2ref.items():
+        chaps = {}
+        for k, v in sorted(d.items(), key=lambda x:(-x[1], x[0])):
+            m = re.match(r"^(\S+) (\d+)\.(.*?)$", k)
+            if not m:
+                continue
+            bk = m.group(1)
+            chap = m.group(2)
+            verse = m.group(3)
+            cref = f"{bk} {chap}"
+            if cref in chaps:
+                chaps[cref][1] += v
+            else:
+                chaps[cref] = [verse, v]
+        img2ref[p] = {f"{c}.{v[0]}": v[1] for c, v in chaps.items()}
 
 # To flip the structure to be ref-based instead of img-based
 # for pic, dat in img2ref.items():

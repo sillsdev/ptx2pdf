@@ -13,8 +13,6 @@ from ptxprint.sfm.style import simple_parse, merge_sty, out_sty
 from ptxprint.piclist import PicInfo, PicChecks, PicInfoUpdateProject
 from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
-from ptxprint.pdfrw.pdfreader import PdfReader
-from ptxprint.pdfrw.uncompress import uncompress
 from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
 import ptxprint.scriptsnippets as scriptsnippets
@@ -33,8 +31,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.3.10"
-GitVersionStr = "2.3.10"
+VersionStr = "2.3.31"
+GitVersionStr = "2.3.31"
 ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -128,6 +126,7 @@ class ViewModel:
         self.artpgs = None
         self.spine = 0
         self.periphs = {}
+        self.digSuffix = None
 
         # private to this implementation
         self.dict = {}
@@ -289,7 +288,7 @@ class ViewModel:
             # return self.booklist
             return []
 
-    def getRefSeparators(self):
+    def getRefSeparators(self, **kw):
         if self.get("fcb_textDirection", "") == "rtl":
             res = None
         else:
@@ -297,6 +296,8 @@ class ViewModel:
             res = pts.getRefSeparators()
         if res is None:
             res = self.getScriptSnippet().getrefseps(self)
+        if len(kw):
+            res = res.copy(**kw)
         return res
 
     def switchFRTsettings(self):
@@ -745,10 +746,11 @@ class ViewModel:
         if self.get("ecb_book") == "":
             self.set("ecb_book", list(self.getAllBooks().keys())[0])
         if self.get("c_diglot") and not self.isDiglot:
-            self.diglotView = self.createDiglotView()
+            self.diglotView = self.createDiglotView("R")
         else:
             self.setPrintBtnStatus(2)
             self.diglotView = None
+            self.digSuffix = None
         self.loadingConfig = False
         if self.get("bl_fontR", skipmissing=True) is None:
             fname = self.ptsettings.get('DefaultFont', 'Arial')
@@ -1246,6 +1248,7 @@ class ViewModel:
             res = self.picinfos.load_files(self)
         else:
             res = self.picinfos.load_files(self, suffix="B")
+            self.diglotView.picinfos = self.picinfos
 #            digpicinfos = PicInfo(self.diglotView)
 #            if digpicinfos.load_files(self.diglotView, suffix="R"):
 #                mrgCptn = self.get("c_diglot2captions", False)
@@ -1331,6 +1334,22 @@ class ViewModel:
         self.periphs = {}
         with open(fpath, "w", encoding="utf-8") as outf:
             outf.write("\n".join(fcontent))
+
+    def isPeriphInFrontMatter(self, fpath=None, periphnames=[]):
+        if fpath is None:
+            fpath = self.configFRT()
+        usedperiphs = set()
+        if os.path.exists(fpath):
+            with open(fpath, encoding="utf-8") as inf:
+                for l in inf.readlines():
+                    if l.strip().startswith(r"\periph"):
+                        m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
+                        if m:
+                            fullname = m.group(1).strip().lower()
+                            periphid = m.group(2) or _periphids.get(fullname, fullname)
+                            if periphid in periphnames:
+                                return True
+        return False
 
     def generateHyphenationFile(self, inbooks=False, addsyls=False):
         listlimit = 63929
@@ -1547,7 +1566,7 @@ class ViewModel:
             usfms = self.get_usfms()
             mod = Module(os.path.join(fpath, bk), usfms, None)
             books.extend(mod.getBookRefs())
-        for bk in books:
+        for bk in books + ['INT']:
             fname = self.getBookFilename(bk, prjid)
             if fname is not None:
                 res[os.path.join(fpath, fname)] = os.path.basename(fname)
@@ -1673,7 +1692,7 @@ class ViewModel:
         res.update(ptres)
         return (res, cfgchanges, tmpfiles)
 
-    def createDiglotView(self):
+    def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
         prjid = self.get("fcb_diglotSecProject")
         cfgid = self.get("ecb_diglotSecConfig")
@@ -1685,10 +1704,13 @@ class ViewModel:
             digview.setPrjid(prjid)
             if cfgid is None or cfgid == "" or not digview.setConfigId(cfgid):
                 digview = None
+            digview.picinfos = self.picinfos
         if digview is None:
             self.setPrintBtnStatus(2, _("No Config found for Diglot"))
         else:
             digview.isDiglot = True
+            digview.digSuffix = suffix
+            self.digSuffix = "L"
         return digview
 
     def createArchive(self, filename=None):
@@ -1702,8 +1724,9 @@ class ViewModel:
             self.doError(_("Error: Cannot create Archive!"), secondary=_("The ZIP file seems to be open in another program."))
             return
         self._archiveAdd(zf, self.getBooks(files=True))
+        temps = []
         if self.diglotView is not None:
-            self.diglotView._archiveAdd(zf, self.getBooks(files=True), parent=self.prjid)
+            self.diglotView._archiveAdd(zf, self.getBooks(files=True) + ['INT'], parent=self.prjid)
             pf = "{}/local/ptxprint/{}/diglot.sty".format(self.prjid, self.configName())
             ipf = os.path.join(self.settings_dir, pf)
             if os.path.exists(ipf):
@@ -1712,8 +1735,8 @@ class ViewModel:
         runjob = RunJob(self, self.scriptsdir, self.scriptsdir, self.args, inArchive=True)
         runjob.doit(noview=True)
         res = runjob.wait()
-        temps = []
         found = False
+        # TODO: include burst pdfs
         for a in (".pdf", ):
             for d in ('', '..'):
                 for x in self.tempFiles:
@@ -1726,6 +1749,8 @@ class ViewModel:
             if os.path.exists(pf):
                 outfname = saferelpath(pf, self.settings_dir)
                 zf.write(pf, outfname)
+            else:
+                print(pf)
         ptxmacrospath = self.scriptsdir
         for dp, d, fs in os.walk(ptxmacrospath):
             for f in fs:
@@ -1779,6 +1804,8 @@ class ViewModel:
         # create a fontconfig
         zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
+        logger.debug(texfiles)
+        logger.debug(self.tempFiles)
         for t in texfiles:
             if t.endswith("_FRT.SFM"):
                 continue
@@ -1818,23 +1845,6 @@ set stack_size=32768""".format(self.configName())
                     res.write(fpath, f if d is None else os.path.join(d, f))
         return res
 
-    def getPDFconfig(self, fname):
-        trailer = PdfReader(fname)
-        p = trailer.Root.PieceInfo
-        if p is None:
-            return None
-        pp = p.ptxprint
-        if pp is None:
-            return None
-        pd = pp.Private
-        if not isinstance(pd, bytes):
-            uncompress([pd], leave_raw=True)
-            try:
-                return pd.stream
-            except AttributeError:
-                return None
-        return None
-        
     def unpackSettingsZip(self, zipdata, prjid, config, configpath):
         inf = BytesIO(zipdata)
         zf = ZipFile(inf, compression=ZIP_DEFLATED)

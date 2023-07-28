@@ -4,15 +4,14 @@
 \pb
 
 \periph Bible Introduction |id="intbible"
-\mt1 The Bible
-\rem What does this do?
+\mt1 The Bible (\the\periphdepth)
 \ip This might be the intro to a Bible. It might talk about how such a
 translation into this language is a good thing, and how the people of God
 should feed on His word in their homes and their home language.
 \zgap|10pt\*
 
 \periph NT Intro | id="intnt"
-\mt1 The New Testament
+\mt1 The New Testament (\the\periphdepth)
 \ip The New Testament is the part of the Bible that speaks about:
 \ip \zitems The birth of Jesus
 \ip \zitems The growth of the Church
@@ -22,4 +21,34 @@ should feed on His word in their homes and their home language.
 \periph Testing
 \is1 Testing a no-attrib periph
 \ip This periph has no attribute.
-\ip
+\periph Creatures|id="creaturesperiph"
+\zmakeinsert|creatures\*
+\zgetperiph|intbible\*
+\is Creatures of the Bible  \the\periphdepth
+
+\im bull and heiffers
+\io1 bulls  and heiffers were sacrificed in the OT. Castrated and injured animals 
+
+\im ram
+\io1 rams were one of the animals sacrificed in the OT
+
+\im serpent
+\io1 There are multiple serpents in scrupture.
+Quo reiciendis non a debitis expedita minus. Architecto non dolorem aliquid. Omnis dignissimos architecto iste repellat quibusdam. Sint est sit et possimus. Ut quis et voluptas.
+\io1
+Id placeat dolores dolorem nihil autem. Eos corrupti earum ea eius accusamus. Ullam consequatur et dignissimos debitis enim quia. Qui quaerat ullam saepe aut quod dolorem. Cumque sed in error sit commodi eaque possimus et.
+\io1
+Ea praesentium voluptas laborum aut. Ut et et et exercitationem. Omnis voluptatem cumque totam accusamus accusamus fugit hic. Pariatur illum velit id suscipit.
+\io1
+Deleniti consequatur eos non tempora vitae. Illo doloribus quae est dolor rerum est. Ullam id enim eos repellat et illo. Corrupti excepturi in aliquam ea eum quaerat et.
+
+\im fox
+\io1 
+The fox appears as a description of Herod in the New Testament. Foxes were not renowned for their cleverness, but as insignificant (e.g. compared to bears or lions) and not much of a threat. Thus describing Herod as a fox might have been an insult.
+
+\im lion 
+\io1
+Necessitatibus sunt eos inventore exercitationem et minus est sunt. Nihil ab sed pariatur sit aperiam. Expedita debitis vel ducimus assumenda dolore ad dolor id. Qui architecto accusantium illo inventore ducimus facere et officiis.
+\io1
+
+Consectetur nihil harum eligendi aut dolorem. Saepe debitis eveniet voluptate itaque iste nam. Voluptatibus assumenda ut vero. Nemo corrupti hic dolorem suscipit laudantium.

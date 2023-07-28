@@ -108,17 +108,17 @@
             }
         },
         "allIllustrations": {
-            "en": "All illustrations {0}",
-            "fr": "Toutes les illustrations {0}",
-            "hu": "Az összes illusztráció {0}",
-            "ro": "Toate ilustrațiile {0}",
-            "es": "Todas las ilustraciones {0}",
-            "fr": "Toutes les illustrations {0}"
+            "en": "All illustrations{1} {0}",
+            "fr": "Toutes les illustrations{1} {0}",
+            "hu": "Az összes illusztráció{1} {0}",
+            "ro": "Toate ilustrațiile{1} {0}",
+            "es": "Todas las ilustraciones{1} {0}",
+            "fr": "Toutes les illustrations{1} {0}"
         },
         "exceptIllustrations": {
-            "en": "All other illustrations {0}",
-            "fr": "Toute autre illustration {0}",
-            "es": "Todas las demás ilustraciones {0}"
+            "en": "All other illustrations{1} {0}",
+            "fr": "Toute autre illustration{1} {0}",
+            "es": "Todas las demás ilustraciones{1} {0}"
         },
         "openbible.info": {
             "en": "Cross references from www.openbible.info, ©_2021 licensed under CC-BY."
@@ -126,6 +126,7 @@
     },
     "copyrights": {
         "ab": {
+            "artist": "Unpermitted Use!",
             "copyright": {
                 "en": "©_ABS_WARNING: Unpermitted_Use!",
                 "es": "©_ABS_ADVERTENCIA: ¡Uso no permitido!",
@@ -142,6 +143,7 @@
             }
         },
         "cn": {
+            "artist": "David C Cook - NT",
             "copyright": {
                 "en": "©_1996_David_C._Cook."
             },
@@ -162,6 +164,7 @@
             }
         },
         "co": {
+            "artist": "David C Cook - OT",
             "copyright": {
                 "en": "©_1996_David_C._Cook."
             },
@@ -185,6 +188,7 @@
             }
         },
         "hk": {
+            "artist": "Horace Knowles",
             "copyright": {
                 "en": "by_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
                 "es": "por_Horace_Knowles ©_The_British \\& Foreign Bible Society, 1954, 1967, 1972, 1995.",
@@ -204,6 +208,7 @@
             }
         },
         "lb": {
+            "artist": "Louise Bass - BFBS",
             "copyright": {
                 "en": "by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "es": "por_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
@@ -223,6 +228,7 @@
             }
         },
         "bk": {
+            "artist": "Bass & Knowles",
             "copyright": {
                 "en": "by_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
                 "es": "por_Horace_Knowles revised by_Louise_Bass ©_The_British \\& Foreign Bible Society, 1994.",
@@ -242,6 +248,7 @@
             }
         },
         "ba": {
+            "artist": "Louise Bass",
             "copyright": {
                 "en": "used by_permission of_Louise_Bass.",
                 "es": "utilizado con_permiso de_Louise_Bass.",
@@ -258,6 +265,7 @@
             }
         },
         "dy": {
+            "artist": "Carolyn Dyk",
             "copyright": {
                 "en": "by_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
                 "es": "por_Carolyn_Dyk, ©_2001_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.",
@@ -277,6 +285,7 @@
             }
         },
         "gt": {
+            "artist": "Gordon Thompson",
             "copyright": {
                 "en": "by_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. and licensed under_the Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Gordon_Thompson ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
@@ -295,7 +304,24 @@
                 }
             }
         },
+        "sh": {
+            "artist": "Scott Hayes",
+            "copyright": {
+                "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license."
+            },
+            "sensitive": {
+                "en": "by_Scott_Hayes ©_2023_Scott_Hayes, licensed under_the Creative_Commons Attribution-NonCommercial-4.0 International (CC BY-NC 4.0) license."
+            },
+            "media": {
+                "default": "paw",
+                "limit": "paw",
+                "tip": {
+                    "en": "Any media is fine for non commercial use. For inquiries regarding a commercial license please email Scott Hayes at hayesvienna@gmail.com"
+                }
+            }
+        },
         "dh": {
+            "artist": "David Healey",
             "copyright": {
                 "en": "by_David_Healey ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_David_Healey ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
@@ -315,6 +341,7 @@
             }
         },
         "mh": {
+            "artist": "Michael Harrar",
             "copyright": {
                 "en": "by_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. and licensed under the_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
                 "es": "por_Michael_Harrar ©_2012_Wycliffe Bible Translators Inc. y con licencia bajo_Creative_Commons Attribution-NonCommercial-NoDerivatives 3.0 Australia License.",
@@ -334,6 +361,7 @@
             }
         },
         "mn": {
+            "artist": "Muze Tshilombo",
             "copyright": {
                 "en": "used by_permission_of_Muze_Tshilombo.",
                 "es": "utilizado con_permiso de_Muze_Tshilombo.",
@@ -350,6 +378,7 @@
             }
         },
         "wa": {
+            "artist": "Graham Wade",
             "copyright": {
                 "en": "by_Graham_Wade, ©_United Bible Societies, 1989.",
                 "es": "por_Graham_Wade, ©_United Bible Societies, 1989.",
@@ -371,6 +400,7 @@
             }
         },
         "dn": {
+            "artist": "Darwin Dunham",
             "copyright": {
                 "en": "by_Darwin_Dunham, ©_United Bible Societies, 1989.",
                 "es": "por_Darwin_Dunham, ©_United Bible Societies, 1989.",
@@ -392,6 +422,26 @@
             }
         },
         "ib": {
+            "artist": "Farid Faadil",
+            "copyright": {
+                "en": "(in color) by Dr._Farid_Faadil. ©_Biblica,_Inc. Used_by_permission. All_rights_reserved_worldwide.",
+                "es": "(en color) por_Dr._Farid_Faadil. ©_Biblica,_Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
+                "fr": "(en couleur) par_Dr._Farid_Faadil. ©_Biblica,_Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
+            },
+             "media": {
+                "default": "p",
+                "limit": "p",
+                "tip": {
+                    "en": "Only Print media",
+                    "es": "Sólo medios impresos",
+                    "fr": "Seulement les médias imprimés",
+                    "ro": "Numai pentru imprimare",
+                    "hu": "Csak nyomtatás"
+                }
+            }
+        },
+        "xb": {
+            "artist": "Unpermitted Use!",
             "copyright": {
                 "en": "©_BIBLICA_WARNING: Unpermitted_Use!",
                 "es": "©_BIBLICA_ADVERTENCIA: ¡Uso no permitido!",
@@ -404,24 +454,6 @@
                     "en": "Sorry, but permission to use these images in ANY media has been withdrawn!",
                     "es": "Lo sentimos, pero se ha retirado el permiso para utilizar estas imágenes en CUALQUIER medio de comunicación.",
                     "fr": "Désolé, mais l'autorisation d'utiliser ces images dans TOUS les médias a été retirée !"
-                }
-            }
-        },
-        "xb": {
-            "copyright": {
-                "en": "by_Farid_Faadil. Copyright ©_by_Biblica, Inc. Used_by_permission. All_rights_reserved_worldwide.",
-                "es": "por_Farid_Faadil. Copyright ©_by_Biblica, Inc. Usado_con_permiso. Todos_los_derechos_reservados_en_el_mundo.",
-                "fr": "de_Farid_Faadil. Copyright ©_par_Biblica, Inc. Utilisé_par_permission. Tous_droits_réservés dans le_monde_entier."
-            },
-             "media": {
-                "default": "p",
-                "limit": "p",
-                "tip": {
-                    "en": "Only Print media",
-                    "es": "Sólo medios impresos",
-                    "fr": "Seulement les médias imprimés",
-                    "ro": "Numai pentru imprimare",
-                    "hu": "Csak nyomtatás"
                 }
             }
         }

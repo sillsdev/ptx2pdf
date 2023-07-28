@@ -37,12 +37,16 @@
 \gdef\@@rem@#1^^M{\egroup\@@realrem }% Swallow first line like I thought it was designed to.
 %Code to read periph sections line by line.
 \gdef\@periph{%
-  \trace{ss}{periph: \sh@wstuff}%
+  \trace{per}{periph: \sh@wstuff}%
   \ifinperiph\endp@riph\inperiphfalse\else%
-  \ifsk@pping\egroup\fi%
+    \ifsk@pping\egroup\fi%
   \fi%
   \endlastp@rstyle{periph}\ifhe@dings\endhe@dings\fi%
-  \ifn@npublishable \message{Warining! periph is set nonpublishable (hidden) in general. This may be a mistake!}%
+  \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax\else%
+    \message{Malformed input near \c@rref: periph called while there was a pending chapter number (\csname ch@pter\g@tdstat waiting\endcsname)}%
+    \x@\global\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax%
+  \fi%
+  \ifn@npublishable \message{Warning! periph is set nonpublishable (hidden) in general. This may be a mistake!}%
     \egroup%
   \fi%
   \trace{per}{Starting periph group: \sh@wstuff}%
@@ -97,11 +101,16 @@
 \StorePeriph{backcover}
 \StorePeriph{cover}
 \StorePeriph{spine}
+\StorePeriph{coverwhole}
+\StorePeriph{coverfront}
+\StorePeriph{coverback}
+\StorePeriph{coverspine}
+\newm@rknum{pdftag}% registers and defines m@rknumpdftag
 
 \def\endp@riph{%
-  \trace{ss}{endp@riph: \sh@wstuff}%
+  \trace{per}{endp@riph: \sh@wstuff}%
+  \global\let\periphattr@b\periph@@@
   \ifst@ringperiph
-    \global\let\periphattr@b\attr@b
     \egroup\egroup
     \let\tmp\p@riphlines
     \x@\gdef\csname periphcontents\c@rrdstat=\periphattr@b\x@\endcsname\x@{%
@@ -114,10 +123,13 @@
     \endlastp@rstyle{endperiph}%
     \ifhe@dings\endhe@dings\fi
     \egroup
-    \everyeof{}%
-    \kill@PossParamCache
-    \ifPagebreakAfterPeriph\pb\fi
-  \fi\global\let\periph@@@\empty}
+    \trace{per}{ended group: \sh@wstuff}%
+    \ifnum\periphdepth=0 
+      \everyeof{}%
+      \kill@PossParamCache
+      \ifPagebreakAfterPeriph\pagebreak\fi
+    \fi
+  \fi}%\let\periph@@@\empty}
 \def\zendperiph{\endlastp@rstyle{zendperiph}%
   \ifhe@dings\endhe@dings\fi
   \ifinperiph\endp@riph\inperiphfalse\fi}
@@ -125,32 +137,120 @@
 \newif\ifStorePeriph\StorePeriphtrue % are *any* periphs stored?
 \newif\ifStoreAllPeriphs \StoreAllPeriphsfalse
 \newif\ifPagebreakAfterPeriph\PagebreakAfterPeriphtrue
+% Some periphs should be pulled out of the print-run and printed as part of a separate run 
+\def\PullPeriph#1{\x@\global\x@\let\csname @pullperiph-#1\endcsname\tr@e} 
+\def\NoPullPeriph#1{\x@\global\x@\let\csname @pullperiph-#1\endcsname\false}
+\def\@chk@pull#1{\let\tmp\empty\ifcsname @pullperiph-#1\endcsname \x@\let\x@\tmp\csname @pullperiph-#1\endcsname\fi}
+\PullPeriph{maps}
+\def\@@@chkp@riphname#1::\E{%
+  \edef\tmpb{#1}%
+  %\global\let\periph@@@\tmpb
+}
+\def\@@chkp@riphname#1:#2:#3\E{%
+  \edef\tmpa{#1}\edef\tmpb{#2}\edef\tmpc{#3}%
+  \trace{per}{Checking #1 : #2 : #3 for \periph@sep@print@name}%
+  \ifx\tmpa\periph@sep@print@name
+    \ifx\tmpc\usc@re
+      %\global\let\periph@@@\tmpb
+    \else
+      \x@\@@@chkp@riphname#2:#3\E
+    \fi
+    \trace{per}{marking insert for '\periph@@@'}%
+    %\StorePeriph{\periph@@@}%
+    \PullPeriph{\periph@@@}%
+    \m@rkpdftag{\periph@@@}%
+  \fi
+}
 
+\x@\def\csname MS:zgetperiph\endcsname{%
+  \get@ttribute{side}%
+  \ifx\attr@b\relax
+    \let\t@mpside\c@rrdstat
+  \else
+    \let\t@mpside\attr@b
+  \fi
+  \get@ttribute{id}%
+  \ifcsname periphcontents\t@mpside=\attr@b\endcsname
+    \let\periph@@@\attr@b
+    \@chk@pull{\periph@@@}%
+    \let\p@llpages=\tmp
+    \ifx\p@llpages\tr@e
+      \endgraf
+      \m@rkpdftag{\periph@@@}%
+    \else
+      %\marks\m@rknumpdftag{}%
+    \fi
+    \keeptriggerfalse
+    \advance\periphdepth by 1
+    \ifcsname keepperiph-\periph@@@\endcsname\keeptriggertrue\fi
+    \csname periphcontents\t@mpside=\periph@@@\endcsname
+    \advance\periphdepth by -1
+    \ifkeeptrigger\else
+      \x@\global\x@\let\csname periphcontents\t@mpside=\periph@@@\endcsname\undefined
+    \fi
+    \ifx\p@llpages\tr@e\ifnum\periphdepth=0
+      \m@rkpdftag{}%
+    \fi\fi
+  \fi
+}
+\newcount\periphdepth
+\def\m@rkpdftag#1{%
+  \pagebreak
+  \x@\marks\m@rknumpdftag{#1}%
+}
+
+\x@\def\csname MS:zmakeinsert\endcsname{%
+  \trace{per}{zmakeinsert inperiph\ifinperiph true \else false \fi  \the\periphdepth =1?}%
+  \ifinperiph
+    \ifnum\periphdepth=1
+      \endlastp@rstyle{makeinsert}%
+      \ifhe@dings\endhe@dings\fi
+      \get@ttribute{id}%
+      \let\@@pdftag\attr@b
+      \trace{per}{zmakeinsert tagging periph '\periph@@@' as '\@@pdftag' (\the\pagetotal, \the\pagegoal)}%
+      \m@rkpdftag{\@@pdftag}%
+      \showlists
+      \get@ttribute{nopagecount}%
+      \ifx\attr@b\relax\else
+        \x@\global\x@\let\csname periph-\@@pdftag-nocount\endcsname\attr@b % Page builder shouldn't increment page count for this.
+      \fi
+    \fi
+  \fi
+}
+\newcount\an@nymousperiphs
+\def\t@ganonymousperiph{\advance\an@nymousperiphs by 1
+  \edef\periph@@@{anonymous\the\an@nymousperiphs}%
+}
 \def\@@@periph #1|#2|#3\E{%
-  \trace{ss}{@@@periph #1|#2}%
+  \trace{per}{@@@periph #1|#2}%
   \def\tmp{#2}%
   \unset@ttribs
   \def\thisdefault@ttrkey{id}%
   \ifx\tmp\empty
-    \let\attr@b\empty
+    \t@ganonymousperiph
   \else\let\@ttributes\tmp
     \parse@ttribs{\@ttributes}%
     %\let\d@\apply@attr@specials
     %\x@\cstackdown \attribsus@d,\E
     \get@ttribute{id}%
     \ifx\attr@b\relax
-      \let\attr@b\empty
+      \t@ganonymousperiph
+    \else
+      \let\periph@@@\attr@b
+      \x@\@@chkp@riphname\attr@b::\E
+      \ifx\attr@b\tr@e \PullPeriph{\periph@@@}\m@rkpdftag{\periph@@@}\else
+        \ifx\attr@b\false \NoPullPeriph{\periph@@@}\fi
+      \fi
     \fi
   \fi
-  \trace{per}{Setting periph@@@ to `\attr@b` (#2)}%
-  \global\let\periph@@@\attr@b
+  \trace{per}{Set periph@@@ to `\periph@@@` (#2)}%
   \the\@idhooks
   \trace{per}{idhooks run}%
   \tempfalse
   \def\tmp{}%
   \ifStoreAllPeriphs\temptrue\fi
   \ifStorePeriph
-    \ifcsname storeperiph-\attr@b\endcsname 
+    \ifcsname storeperiph-\periph@@@\endcsname 
       \def\tmp{(periph type)}\temptrue
     \fi
   \fi
@@ -167,13 +267,25 @@
   \else 
     \st@ringperiphfalse
     \trace{per}{periph '\periph@@@' will not be stored}%
+    \advance\periphdepth by 1
     \inperiphtrue
     \catcode13=10
-    \everyeof{\trace{per}{end of file}\endp@riph}%
+    \everyeof{%
+      \ifhe@dings\endhe@dings\fi
+      \trace{per}{end of file}\endp@riph}%
     \aftergroup\@ndofperiphgroup%
     \let\n@xt\relax
   \fi
   \n@xt
 }
 
-\def\@ndofperiphgroup{\trace{per}{End of periph group}\global\let\periph@@@\empty\pagebreak}
+\def\@ndofperiphgroup{\trace{per}{End of periph group '\periphattr@b'. pd=\the\periphdepth, inperiph\ifinperiph true\else false\fi}%
+  \@chk@pull{\periph@@@}%
+  \let\p@llpages=\tmp
+  \marks\m@rknumpdftag{}%
+  \ifx\p@llpages\tr@e
+    \trace{per}{New Page to end insert}% 
+    \pagebreak
+  \fi
+  %\let\periph@@@\empty
+}

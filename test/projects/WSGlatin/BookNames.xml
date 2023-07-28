@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BookNames>
+  <book code="GEN" abbr="puṭ" short="puṭgaḍmi" long="puṭgaḍmita pustak" />
+  <book code="RUT" abbr="rūtu" short="rūtu" long="rūtu pustak" />
+  <book code="PRO" abbr="subut" short="subutkna" long="subutkna pustak" />
+  <book code="JON" abbr="yōna" short="yōna" long="yōna pustak" />
+  <book code="NAM" abbr="nāho" short="nāhom" long="nāhom pustak" />
+  <book code="MAT" abbr="matta" short="mattayi" long="mattayi lihi kīta cokoṭna kabur" />
+  <book code="MRK" abbr="mār" short="mārk" long="mārk lihi kīta cokoṭna kabur" />
+  <book code="LUK" abbr="lūka" short="lūka" long="lūkal lihi kīta cokoṭna kabur" />
+  <book code="JHN" abbr="yōha" short="yōhan" long="yōhan lihi kīta cokoṭna kabur" />
+  <book code="ACT" abbr="apo" short="apo. kā." long="apostulk kītaṅg kāmk" />
+  <book code="1TI" abbr="1timo" short="1va timoti" long="timotin lihi kīta modoḍa ciṭi" />
+  <book code="2TI" abbr="2timo" short="2va timoti" long="timotin lihi kīta reṇḍava ciṭi" />
+  <book code="TIT" abbr="tītu" short="tītu" long="tītun lihi kīta ciṭi" />
+  <book code="PHM" abbr="pile" short="pilemōn" long="pilemōntun lihi kīta ciṭi" />
+  <book code="HEB" abbr="hebri" short="hebri" long="hebriyulkun lihi kīta ciṭi" />
+  <book code="JAS" abbr="yāko" short="yākob" long="yākob lihi kīta ciṭi" />
+  <book code="BAK" abbr="" short="" long="yūdulkna jātitur bagavantan pārtana-vinti kiyval tarika" />
+  <book code="GLO" abbr="" short="" long="pūna selete kaṭin gosṭina artam" />
+  <book code="EXO" abbr="bahri" short="bahri pesival" long="bahri pesival pustak" />
+  <book code="LEV" abbr="kaṭoḍalira" short="kaṭoḍalira" long="kaṭoḍalira" />
+  <book code="NUM" abbr="isob" short="isobna" long="isobna pustak" />
+  <book code="DEU" abbr="reṇḍa" short="reṇḍava upadēs" long="reṇḍava upadēs pustak" />
+  <book code="JOS" abbr="yehō" short="yehōsuva" long="yehōsuva pustak" />
+  <book code="JDG" abbr="nāy" short="nāy vehvalira" long="nāy vehvalira pustak" />
+  <book code="1SA" abbr="1samu" short="1va samuyēl" long="samuyēl modoḍa pustak" />
+  <book code="2SA" abbr="2samu" short="2va samuyēl" long="samuyēl reṇḍava pustak" />
+  <book code="1KI" abbr="1rāja" short="1va rājalira" long="rājalira modoḍa pustak" />
+  <book code="2KI" abbr="2rāja" short="2va rājalira" long="rājalira reṇḍava pustak" />
+  <book code="1CH" abbr="1va jargtaṅg gaṭnana" short="1va jargtaṅg gaṭnana" long="1va jargtaṅg gaṭnana" />
+  <book code="2CH" abbr="2va jargtaṅg gaṭnana" short="2va jargtaṅg gaṭnana" long="2va jargtaṅg gaṭnana" />
+  <book code="EZR" abbr="ejra" short="ejra" long="ejra pustak" />
+  <book code="NEH" abbr="nehe" short="nehemya" long="nehemya pustak" />
+  <book code="EST" abbr="estēr" short="estēr" long="estēr pustak" />
+  <book code="JOB" abbr="yōbu" short="yōbu" long="yōbu" />
+  <book code="PSA" abbr="kīrta" short="kīrtankna" long="kīrtankna pustak" />
+  <book code="ECC" abbr="bōda karusval" short="bōda karusval" long="bōda karusval" />
+  <book code="SNG" abbr="svarg‌na pāṭa" short="svarg‌na pāṭa" long="svarg‌na pāṭa" />
+  <book code="ISA" abbr="yesa" short="yesaya" long="yesaya pustak" />
+  <book code="JER" abbr="ir" short="irmiya" long="irmiya pustak" />
+  <book code="LAM" abbr="duksatun tohval" short="duksatun tohval" long="duksatun tohval" />
+  <book code="EZK" abbr="yehej" short="yehejkel" long="yehejkel pustak" />
+  <book code="DAN" abbr="dāni" short="dāniyel" long="dāniyel pustak" />
+  <book code="HOS" abbr="hōse" short="hōseya" long="hōseya pustak" />
+  <book code="JOL" abbr="yōvel" short="yōvel" long="yōvel" />
+  <book code="AMO" abbr="āmos" short="āmos" long="āmos pustak" />
+  <book code="OBA" abbr="obadya" short="obadya" long="obadya" />
+  <book code="MIC" abbr="mīka" short="mīka" long="mīka pustak" />
+  <book code="HAB" abbr="habakuk" short="habakuk" long="habakuk" />
+  <book code="ZEP" abbr="jepanya" short="jepanya" long="jepanya" />
+  <book code="HAG" abbr="hagga" short="haggayi" long="haggayi pustak" />
+  <book code="ZEC" abbr="jekarya" short="jekarya" long="jekarya" />
+  <book code="MAL" abbr="malāki" short="malāki" long="malāki" />
+  <book code="ROM" abbr="rōma" short="rōma" long="rōmaturkun lihi kīta ciṭi" />
+  <book code="1CO" abbr="1kora" short="1va koranti" long="korantiturkun lihi kīta modoḍa ciṭi" />
+  <book code="2CO" abbr="2kora" short="2va koranti" long="korantiturkun lihi kīta reṇḍava ciṭi" />
+  <book code="GAL" abbr="galati" short="galati" long="galatiyaturkun lihi kīta ciṭi" />
+  <book code="EPH" abbr="epesi" short="epesi" long="epesiturkun lihi kīta ciṭi" />
+  <book code="PHP" abbr="pilipi" short="pilipi" long="pilipiturkun lihi kīta ciṭi" />
+  <book code="COL" abbr="kolasi" short="kolasi" long="kolasiturkun lihi kīta ciṭi" />
+  <book code="1TH" abbr="1tesa" short="1va tesalonika" long="tesalonikaturkun lihi kīta modoḍa ciṭi" />
+  <book code="2TH" abbr="2tesa" short="2va tesalonika" long="tesalonikaturkun lihi kīta reṇḍava ciṭi" />
+  <book code="1PE" abbr="1pētu" short="1va pēturu" long="pēturu lihi kīta modoḍa ciṭi" />
+  <book code="2PE" abbr="2pētu" short="2va pēturu" long="pēturu lihi kīta reṇḍava ciṭi" />
+  <book code="1JN" abbr="1yōha" short="1va yōhan" long="yōhan lihi kīta modoḍa ciṭi" />
+  <book code="2JN" abbr="2yōha" short="2va yōhan" long="yōhan lihi kīta reṇḍava ciṭi" />
+  <book code="3JN" abbr="3yōha" short="3va yōhan" long="yōhan lihi kīta mūḍava ciṭi" />
+  <book code="JUD" abbr="yūda" short="yūda" long="yūdal lihi kīta ciṭi" />
+  <book code="REV" abbr="ujagiri" short="ujagiri arusval" long="ujagiri arusval pustak" />
+  <book code="TOB" abbr="" short="" long="" />
+  <book code="JDT" abbr="" short="" long="" />
+  <book code="ESG" abbr="" short="" long="" />
+  <book code="WIS" abbr="" short="" long="" />
+  <book code="SIR" abbr="" short="" long="" />
+  <book code="BAR" abbr="" short="" long="" />
+  <book code="LJE" abbr="" short="" long="" />
+  <book code="S3Y" abbr="" short="" long="" />
+  <book code="SUS" abbr="" short="" long="" />
+  <book code="BEL" abbr="" short="" long="" />
+  <book code="1MA" abbr="" short="" long="" />
+  <book code="2MA" abbr="" short="" long="" />
+  <book code="3MA" abbr="" short="" long="" />
+  <book code="4MA" abbr="" short="" long="" />
+  <book code="1ES" abbr="" short="" long="" />
+  <book code="2ES" abbr="" short="" long="" />
+  <book code="MAN" abbr="" short="" long="" />
+  <book code="PS2" abbr="" short="" long="" />
+  <book code="ODA" abbr="" short="" long="" />
+  <book code="PSS" abbr="" short="" long="" />
+  <book code="JSA" abbr="" short="" long="" />
+  <book code="JDB" abbr="" short="" long="" />
+  <book code="TBS" abbr="" short="" long="" />
+  <book code="SST" abbr="" short="" long="" />
+  <book code="DNT" abbr="" short="" long="" />
+  <book code="BLT" abbr="" short="" long="" />
+  <book code="3ES" abbr="" short="" long="" />
+  <book code="EZA" abbr="" short="" long="" />
+  <book code="5EZ" abbr="" short="" long="" />
+  <book code="6EZ" abbr="" short="" long="" />
+  <book code="DAG" abbr="" short="" long="" />
+  <book code="PS3" abbr="" short="" long="" />
+  <book code="2BA" abbr="" short="" long="" />
+  <book code="LBA" abbr="" short="" long="" />
+  <book code="JUB" abbr="" short="" long="" />
+  <book code="ENO" abbr="" short="" long="" />
+  <book code="1MQ" abbr="" short="" long="" />
+  <book code="2MQ" abbr="" short="" long="" />
+  <book code="3MQ" abbr="" short="" long="" />
+  <book code="REP" abbr="" short="" long="" />
+  <book code="4BA" abbr="" short="" long="" />
+  <book code="LAO" abbr="" short="" long="" />
+  <book code="FRT" abbr="" short="" long="pavitra ātmataṅg kārvayk pavitra ātmata saktite apostulknaṅg kārvayk batal baga manta" />
+  <book code="XXE" abbr="" short="" long="pūna selete kaṭin gosṭina artam" />
+  <book code="XXF" abbr="" short="" long="pūna selete kaṭin gosṭina artam" />
+  <book code="XXG" abbr="" short="" long="pūna selete kaṭin gosṭina artam" />
+  <book code="***" abbr="" short="" long="" />
+  <book code="XXA" abbr="" short="" long="INTRODUCTION OLD TESTAMENT NEW TESTAMENT" />
+  <book code="XXB" abbr="" short="Maps" long="Maps" />
+  <book code="XXC" abbr="" short="" long="" />
+  <book code="XXD" abbr="" short="" long="" />
+  <book code="OTH" abbr="" short="" long="Transcription of JESUS film script" />
+  <book code="INT" abbr="" short="" long="gōṇḍi bāsata pūna niyamun bārete mune vehval gosṭi" />
+  <book code="CNC" abbr="" short="" long="Concordance" />
+  <book code="TDX" abbr="" short="" long="" />
+  <book code="NDX" abbr="" short="" long="Names Index" />
+</BookNames>

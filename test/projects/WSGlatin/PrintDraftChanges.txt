@@ -1,0 +1,12 @@
+# Hide the (10,000) markup
+'\([\d–,-]+\) ' > ''
+in "(?sm)\\qt-s\\*.+?\\qt-e\\*": "(?sm)(\\s .+?\r?\n(\\r .+?\r?\n\\p)?)" > "\\qt-e\\*\r\n\1\r\n\\qt-s\\*"
+
+'\u00AB'    >   '\u2018'          # use single open  curly quotes for unspoken words «
+'\u00BB'    >   '\u2019'          # use single close curly quotes for unspoken words »
+
+"\\imi \\k (\(\d\))\\k\*" > "\imi \1"
+
+'(\\h mārk)(\r?\n)' > '\1\2\\h1 Mark\2'
+'(\\h lūka)(\r?\n)' > '\1\2\\h1 Luke\2'
+'(\\h hebri)(\r?\n)' > '\1\2\\h1 Hebrews\2'

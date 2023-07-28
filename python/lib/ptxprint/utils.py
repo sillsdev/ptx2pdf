@@ -2,6 +2,8 @@ import gettext
 import locale, codecs, traceback
 import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
+from ptxprint.pdfrw.pdfreader import PdfReader
+from ptxprint.pdfrw.uncompress import uncompress
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
@@ -250,6 +252,23 @@ def universalopen(fname, rewrite=False, cp=65001):
 
 def print_traceback(f=None):
     traceback.print_stack(f=f)
+
+def getPDFconfig(fname):
+    trailer = PdfReader(fname)
+    p = trailer.Root.PieceInfo
+    if p is None:
+        return None
+    pp = p.ptxprint
+    if pp is None:
+        return None
+    pd = pp.Private
+    if not isinstance(pd, bytes):
+        uncompress([pd], leave_raw=True)
+        try:
+            return pd.stream
+        except AttributeError:
+            return None
+    return None
 
 if sys.platform == "linux":
 
@@ -517,16 +536,43 @@ def cachedData(filepath, fn):
         pickle.dump(res, outf)
     return res
 
+def extraDataDir(base, dirname, create=False):
+    uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), base)
+    if not os.path.exists(uddir):
+        if create:
+            os.makedirs(uddir)
+        else:
+            return None
+    if dirname is None:
+        try:
+            dirname = os.listdir(uddir)[0]
+        except IndexError:
+            return None
+    ddir = os.path.join(uddir, dirname)
+    if os.path.exists(ddir):
+        return ddir
+    elif create:
+        os.makedirs(ddir)
+        return ddir
+    else:
+        return None
+
 def xdvigetpages(xdv):
     with open(xdv, "rb") as inf:
         inf.seek(-12, 2)
         dat = inf.read(12).rstrip(b"\xdf")
+        if len(dat) < 5:
+            return 0
         postamble = unpack(">I", dat[-5:-1])[0]
         inf.seek(postamble, 0)
         dat = inf.read(5)
+        if len(dat) < 5:
+            return 0
         lastpage = unpack(">I", dat[1:])[0]
         inf.seek(lastpage, 0)
         dat = inf.read(5)
+        if len(dat) < 5:
+            return 0
         res = unpack(">I", dat[1:])[0]
     return res
 
@@ -738,3 +784,10 @@ def binsearch(arr, v, fn):
         else:
             return mid
     return mid
+
+def convert2mm(measure):
+    _unitConv = {'mm':1, 'cm':10, 'in':25.4, '"':25.4}
+    units = _unitConv.keys()
+    num = float(re.sub(r"([0-9\.]+).*", r"\1", str(measure)))
+    unit = str(measure)[len(str(num)):].strip(" ")
+    return (num * _unitConv[unit]) if unit in units else num

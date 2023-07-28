@@ -29,9 +29,11 @@
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% scantokens triggers eof. Therefore it should be wrapped in these:
-\def\p@sheof{\x@\toks\x@\x@0\x@{\the\everyeof}\everyeof{}}
-\def\p@peof{\x@\everyeof\x@{\the\toks0}}
+% scantokens triggers eof, and might be used to pull in code that makes other scantokens calls.
+% Therefore it should be wrapped in these: 
+\newcount\s@vedeofdepth
+\def\p@sheof{\advance\s@vedeofdepth by 1 \x@\def\csname eofsave\the\s@vedeofdepth\x@\endcsname\x@{\the\everyeof}\everyeof{}}
+\def\p@peof{\x@\x@\x@\everyeof\x@\x@\x@{\csname eofsave\the\s@vedeofdepth\endcsname}\x@\let\csname eofsave\the\s@vedeofdepth\endcsname\undefined\advance\s@vedeofdepth by -1 }% 1st expansion makes the csname into a macro name, second gets its contents
 % Utility macros for rotation, etc.
 \def\geom@xform@u{{1}{0}{0}{1}} % Normal
 \def\geom@xform@d{{-1}{0}{0}{-1}} %Rotate 180 / Flip both
@@ -81,8 +83,9 @@
   \egroup
 }
     
-      
+\long\def\addto@macro#1#2{%
+    \x@\x@\x@\def\x@\x@\x@#1\x@\x@\x@{\x@#1#2}}%
 
-      
-    
+\def\stripqu@te#1{\x@\@stripqu@te #1""\E\relax}
+\def\@stripqu@te #1"#2"#3\E{\def\@@result{#2}\ifx\@@result\empty\def\@@result{#1}\fi}
 

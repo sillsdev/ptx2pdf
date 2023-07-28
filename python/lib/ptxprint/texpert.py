@@ -33,7 +33,7 @@ texpertOptions = {
     "FigCaptionAdjust":   ["captionadj", (0., -10, 20, 1, 5), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
     "DefaultSpaceBeside": ["spbeside", (10., 0, 100, 1, 5), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
     "OptionalBreakPenalty": ["optbkpen", (300, 0, 10000, 10, 100), "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
-    "badspacepenalty":    ["badsppen", (100, 0, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]
+    "badspacepenalty":    ["badsppen", (100, -10000, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]
 }
 
 def widgetName(opt):

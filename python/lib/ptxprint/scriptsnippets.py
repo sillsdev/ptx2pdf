@@ -124,6 +124,17 @@ class thai(ScriptSnippet):
                (nonbody, re.compile('\u200B'), "")]
         return res
 
+class laoo(ScriptSnippet):
+    @classmethod
+    def regexes(cls, view):
+        res = [(None, re.compile(r'(\s)/'), r'\1'),
+               (None, re.compile('/([\\s\u0EC6])'), r'\1'),
+               (None, re.compile(r'/'), "\u200B"),
+               (None, re.compile(r'([^\u0E80-\u0EFF])\u200B'), r'\1'),
+               (None, re.compile(r'\u200B([^\\\u0E80-\u0EFF])'), r'\1'),
+               (nonbody, re.compile('\u200B'), "")]
+        return res
+
 class lana(ScriptSnippet):
     @classmethod
     def regexes(cls, view):

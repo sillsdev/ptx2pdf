@@ -218,7 +218,7 @@ class ParatextSettings:
         for k, v in ptrefsepvals.items():
             if v in self.dict:
                 foundsetting = True
-                vals[k] = self.dict[v]
+                vals[k] = re.sub(r"^(.*?)(\|.*)?$", r"\1", self.dict[v])
         if not foundsetting:
             self.refsep = None
         else:

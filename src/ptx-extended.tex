@@ -423,8 +423,9 @@
   \else
    \dimen1=\cp@ram
   \fi
-  \trace{e}{text box width is \the\dimen1}%
-  \hsize=\dimen1
+  \sb@rwidth=\dimen1
+  \trace{e}{text box width is \the\sb@rwidth}%
+  \hsize=\sb@rwidth
 }
 
 % Sidebar 
@@ -446,7 +447,7 @@
   \ifdoingt@ble\endt@ble\fi% Sidebars should close a table, too
   % kill cached possParam-\m@rker values  
   \kill@PossParamCache
-  \edef\hs@ze{\the\hsize}%
+  \edef\hs@ze{\the\hsize}% Size of outer content
   \s@tc@tpr@fix
   \edef\sb@numcuts{\the\@numcuts}%
   \trace{e}{Saving cutouts: \sb@numcuts}%
@@ -476,7 +477,7 @@
   \else
     \s@tsb@rwidth
   \fi
-  \trace{e}{startESB \the\dimen1 (ble@dthisbar\ifble@dthisbar true\else false\fi)}%
+  \trace{e}{startESB \the\sb@rwidth,\the\hsize (ble@dthisbar\ifble@dthisbar true\else false\fi)}%
   \kill@PossParamCache
   \sb@rchunkh@ight=\maxdimen
   \getsbp@ram{break}\ifx\cp@ram\relax\else \if\cp@ram F\else
@@ -490,6 +491,7 @@
   \fi\fi
   %\egroup\setbox\extb@x\vbox\bgroup
   \sb@rtopedge%\ifhmode\endgraf\fi
+  \trace{e}{sidebar really starting \the\hsize, \the\textwidth, \the\sb@rwidth}%
 }
 \newif\ifdoIntskip % Skip should be applied in the text area, not 
 
@@ -634,11 +636,16 @@
      \sb@rbotedge\ifhmode\endgraf\fi
    \fi
    %Pass some values out of the group (which won't affect enclosing side-bars)
-   \trace{e}{Ending group}%
+   \trace{e}{Ending group. hsz=\the\hsize , \the\sb@rwidth}%
+   \gdef\@fteresb{}%
+   \ifdim\hsize>\sb@rwidth
+     \message{**  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier}%  
+   \fi
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory\egroup 
-  %
+  \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
+     \global\tracingassigns=0
   % ^^^ END OF GROUP! ^^^
   %
   \global\p@ppingfalse%
@@ -653,7 +660,7 @@
   \s@tc@tpr@fix
   \x@\minip@rs@two\sb@rpos\end % Parse the location, ready to get the size of this sidebar's container
   \@@setsbp@cinswid 
-  \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x) in \sb@rpos: wd=\the\p@cinswid}%
+  \trace{e}{ESBE \c@tprefix(\the\ht\extb@x*\the\wd\extb@x) in \sb@rpos: wd=\the\p@cinswid, \the\sb@rwidth}%
   %\showbox\extb@x
   %\inextendedfalse
   \let\os@vedtpadding=\fb@tpadding%%Preserve old value
@@ -841,7 +848,7 @@
       \trace{e}{Adding \sb@rightshift to right of box}%
       \setbox\extchunkb@x\vbox{%
         \hbox{\box\extchunkb@x\hbox to \sb@rightshift{\hskip\fb@lpadding\box0\hss}}}\fi
-    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in \the\p@cinswid}%
+    \trace{e}{Chunk of extbox is \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extb@x (\the\ht\extb@x*\the\wd\extb@x) in insert \the\p@cinswid}%
     \xdef\thsch@nkdp{\the\dimexpr \dp\extchunkb@x\relax}%
     \getsbp@ram{spaceafter}%
     \ifx\cp@ram\relax
@@ -849,7 +856,7 @@
     \else
       \edef\sp@ceafter{\the\dimexpr\cp@ram\verticalsp@ceunit\relax}%
     \fi
-    \trace{e}{Before bg: \the\ht\extchunkb@x+\the\dp\extchunkb@x}%
+    \trace{e}{Before bg: \the\ht\extchunkb@x+\the\dp\extchunkb@x * \the\wd\extchunkb@x}%
     \ifx\h@scol\tr@e
       \setbox\extchunkb@x\vbox{%
         \ifx\bgf@gsp@c\relax\else
@@ -1077,11 +1084,11 @@
 \def\Position   #1\relax{\initc@t\setsbp@ram{posn}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Scale      #1\relax{\initc@t\setsbp@ram{scale}{#1}}% Where does it go on the page? (like figures, but also B for below notes)
 \def\Breakable   #1\relax{\initc@t\tempfalse\setbox0\hbox{\ifcat 1#1 \global\temptrue\fi}\iftemp\setsbp@ram{break}{#1}\else\setsbp@ram{break}{\uppercase{#1}}\fi} %Can the box page-break?
-\def\FgImage      #1\relax{\initc@t\setsbp@ram{fgfigname}{#1}\GenC@tFig{fg}}
+\def\FgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{fgfigname}{\@@result}\GenC@tFig{fg}}
 \def\FgImagePos   #1\relax{\initc@t\setsbp@ram{fgfigpos}{#1}\GenC@tFig{fg}}
 \def\FgImageScale   #1\relax{\initc@t\setsbp@ram{fgfigscale}{#1}\GenC@tFig{fg}}
 \def\FgImageScaleTo   #1\relax{\initc@t\setsbp@ram{fgfigscaleto}{#1}\GenC@tFig{fg}}
-\def\BgImage      #1\relax{\initc@t\setsbp@ram{bgfigname}{#1}\GenC@tFig{bg}}
+\def\BgImage      #1\relax{\initc@t\stripqu@te{#1}\setsbp@ram{bgfigname}{\@@result}\GenC@tFig{bg}}
 \def\BgImageScale   #1\relax{\initc@t\setsbp@ram{bgfigscale}{#1}\GenC@tFig{bg}}
 \def\BgImageScaleTo   #1\relax{\initc@t\setsbp@ram{bgfigscaleto}{#1}\GenC@tFig{bg}}
 \def\BgImagePos   #1\relax{\initc@t\setsbp@ram{bgfigpos}{#1}\GenC@tFig{bg}}
@@ -1120,15 +1127,15 @@
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3\E{%
-  \trace{e}{Figure "#1" "#2" "#3"}%
+  \trace{e}{Figure #1|#2|#3}%
   \dimen0=#3\relax
-  \openin\t@stread="#1" 
+  \openin\t@stread=#1 
    \ifeof\t@stread 
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
+    \setbox0\hbox{\picfilecomm@nd #1 #2}%
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%

@@ -112,6 +112,9 @@
 %LRspecific holds a list of things that get redefined on side-switching. Now split into Definitions and Dimensions.
 \def\LRspecificDef{AdornVerseNumber,VerticalSpaceFactor,LineSpacingFactor,regular,bold,italic,bolditalic,SpaceStretchFactor,SpaceShrinkFactor,ifOmitChapterNumber,ifOmitVerseNumberOne,MakeChapterLabel}
 \def\LRspecificDim{FontSizeUnit,le@dingunit,onel@neunit,verticalsp@ceunit,IndentUnit} 
+%LRspecificVarIf lists **internal boolean variables** that need to carry over from one paragraph to the next. For global config values, insert name in LRspecificDef, and add line(s) for newsideSpecificIf into initcolumndef@ults
+\def\LRspecificVarIf{dr@ppednumber,dr@ppedother}
+\def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
 \def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts} 
@@ -127,11 +130,17 @@
 % These do the looping
 \def\pr@cessSp@cific#1,#2\E{\def\t@st{#1}\ifx\t@st\empty\let\n@xt\l@stSpecific\else\let\n@xt\pr@cessSp@cific\wh@t{#1}\fi\n@xt #2,\E}
 \def\l@stSpecific#1\E{}
-\def\pr@cessSpecificAll{\edef\LRs{\LRspecificDef,\LRspecificDim,\LRspecificCount}\x@\pr@cessSp@cific \LRs,\E}
-\def\pr@cessSpecificDef{\edef\LRs{\LRspecificDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificAll{\edef\LRs{\LRspecificDef,\LRspecificDim,\LRspecificCount,\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificDef{\edef\LRs{\LRspecificDef,\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificVarDef{\edef\LRs{\LRspecificVarDef}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificDim{\edef\LRs{\LRspecificDim}\x@\pr@cessSp@cific \LRs,\E}
 \def\pr@cessSpecificCount{\edef\LRs{\LRspecificCount}\x@\pr@cessSp@cific \LRs,\E}
+\def\pr@cessSpecificVarIf{\edef\LRs{\LRspecificVarIf}\x@\pr@cessSp@cific \LRs,\E}
 
+\def\saveVarLRSpecific{%
+  \let\wh@t\s@veSpecificSideIf\pr@cessSpecificVarIf
+  \let\wh@t\s@veSpecificSideDef\pr@cessSpecificVarDef
+}
 % These are the things that might get called by the loop.
 
 % If theres a side-specific version, switch to it. If there's no side-specific version, 
@@ -160,6 +169,7 @@
    \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}%
   \fi
 }
+
 \def\s@veSpecificOrig#1{\ifcsname #1\endcsname \x@\let\csname #1\@rig\x@\endcsname\csname #1\endcsname
     \let\sSotmp=\col@do
     \def\col@do##1{\ch@ckLR{#1}{##1}}%
@@ -173,6 +183,10 @@
 
 \def\n@wSpecificDim#1{\x@\newdim@n\csname #1\sfx\endcsname \x@\global\csname #1\sfx\endcsname=-1sp 
 }
+% Savr the current if value 
+\def\s@veSpecificSideIf#1{\ifcsname if#1\endcsname \x@\csname if#1\endcsname \x@\let\csname IF#1\sfx\endcsname\tr@e\else \x@\let\csname IF#1\sfx\endcsname\false\fi\else\message{*** Probable typo: if#1 does not exist in side-specific switching}\fi}
+% set the if value based on the saved logic
+\def\sp@cificSideIf#1{\x@\ifx\csname #1\sfx\endcsname\tr@e\csname #1true\endcsname\else\csname #1false\endcsname\fi}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 \def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
@@ -193,6 +207,7 @@
     \let\wh@t\sp@cificSideDef\pr@cessSpecificDef
     \let\wh@t\sp@cificSideDim\pr@cessSpecificDim
     \let\wh@t\sp@cificSideCount\pr@cessSpecificCount
+    \let\wh@t\sp@cificSideIf\pr@cessSpecificVarIf
   \fi
 }% For use with style definitions, etc.
 
@@ -250,7 +265,7 @@
 \def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
 \def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
 \def\empty@cseq#1{\x@\xdef\csname #1\endcsname{}}% Helper function
-\def\newsideSpecificIf#1{% 'Tristate' if - true / false / default (where default means the side-specific logic ought to let the global value take precedence
+\def\newsideSpecificIf#1{% 'Tristate' if - true / false / default for configuration-file booleans (where default means the side-specific logic ought to let the global value take precedence
   \x@\def\csname #1true\endcsname{\x@\let\csname if#1\endcsname\iftrue}%
   \x@\def\csname #1false\endcsname{\x@\let\csname if#1\endcsname\iffalse}%
   \x@\def\csname #1default\endcsname{\x@\let\csname if#1\endcsname\undefined}%
@@ -268,8 +283,8 @@
     \empty@cseq{ch@plabel#1}% Chapter label
     \empty@cseq{@ch@pter#1}% Chapter Nuber
     \empty@cseq{@v@rse#1}% verse label
-    \newsideSpecificIf{OmitChapterNumber#1} % Control option
-    \newsideSpecificIf{OmitVerseNumberOne#1} % Control option
+    \newsideSpecificIf{OmitChapterNumber#1} % global config option
+    \newsideSpecificIf{OmitVerseNumberOne#1} % global config option
     \xdef@cseq{@cur#1ht}{0pt}% 
     \xdef@cseq{@cur#1dp}{0pt}% 
     \def@cseq{stylesheet#1}{\gdef\ds@ffix{#1}\stylesh@@t}% column-specific stylesheet
@@ -623,7 +638,7 @@
 \def\newm@rknum#1{%define a new m@rknum#1 which gets set as the next unused marks  register (assuming all marksN are registered with this function.
   {\count255=\numexpr \m@rksm@x+1\relax
   \x@\xdef\x@\m@rksm@x{\the\count255}%
-  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}%
+  \x@\xdef\csname m@rknum#1\endcsname{\m@rksm@x}}% Don't change this witout a lot of search and replace!
   \trace{ma}{newm@rknum #1 -> \m@rksm@x}%
 }
 \def\getm@rknum#1{%retrieve or get a new m@rknum#1
@@ -1003,6 +1018,7 @@
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
   \fi
+  \saveVarLRSpecific
   \x@\ifnum\csname saved\c@rrdstat penalty\endcsname=-10000
     \trace{D}{restoring savedpenalty (was\the\savedpenalty) to -10000 from saved\c@rrdstat penalty}%
     \global\savedpenalty=-10000
@@ -1029,6 +1045,7 @@
   \x@\global\x@\let\csname mcstack\c@rrdstat\endcsname\mcstack %save the current (stack) 
   \trace{d}{pr@sideswitch #1 (\c@rrdstat) pL:\the\dp\partialL, xL:\the\dp\excessL, pR:\the\dp\partialR, xR\the\dp\excessR, lp:\the\savedpenalty \ifallNeedEmptying\space  allNeedemptying\fi \ifdiglotcolh@scontent\space diglolcolh@scontent\fi}%
   \edef\tmp{#2}
+  
   \ifdiglotcolh@scontent
     \ifx\tmp\empty\else
       \save@cutouts{\c@rrdstat}%
@@ -1115,6 +1132,7 @@
 
 \def\polyglotcolumn#1{%
   \uppercase{\edef\reqcol{#1}}%
+  \seriesdiglotfalse
   \global\let\layoutstylebreak\enddigl@t
   \ifx\reqcol\empty\errmessage{polyglotcolumn may not be called with an empty argument}\fi
   \pr@sideswitch{polyglotcolumn #1}{\reqcol}% Before any non-fatal writes
@@ -1136,13 +1154,16 @@
     \global\let\c@rrdstat\empty
   \else\x@\monoglotcolumn\x@{\tmp}\fi}
 
+\newif\ifseriesdiglot
+
 \def\monoglotcolumn#1{%
   \trace{d}{monoglotcolumn #1 (\show@dstat)}%
   \ifcsname #1isDiglotColumn\endcsname % 
     \ifinptxfile
       \ifsk@pping\egroup\fi
       \endlastp@rstyle{monoglotcol}%
-      \diglottrue
+      \diglottrue % Use diglot settings/styles
+      \seriesdiglottrue %
       \@setside{#1}%
       \@@switchstyles{#1}%
     \else
@@ -1724,7 +1745,7 @@
 \def\@Poly@colstop#1#2#3{\edef\c@rrdstat{#3}\relax\@@colstop{#1}{#2}}
 
 \def\@prepare@upd@tep@rtial@simplecols{%
-  \trace{dp}{columns with contents: \cts@list (\the\curactivecols)}%
+  \trace{dP}{columns with contents: \cts@list (\the\curactivecols)}%
   \ifnum\curactivecols>0 
     \temptrue
     \let\col@do=\chk@head %is the relevant item a heading? set tempfalse if not

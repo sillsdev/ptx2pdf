@@ -78,6 +78,8 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImagePos', 'BgImageLow',
                 'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
                 'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding', 
+                'BorderTPadding', 'BorderBPadding', 'BorderLPadding', 'BorderRPadding', 
+                'BoxTPadding', 'BoxBPadding', 'BoxLPadding', 'BoxRPadding', 
                 'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderRef', 'NonJustifiedFill')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
@@ -190,6 +192,8 @@ def toFont(self, v, mrk=None, model=None, parm=None):
             return self.haskey(mrk, key)
         def __delitem__(subself, key):
             return self.sheet.get(mrk, {}).pop(key, None)
+        def __getitem__(subself, key):
+            return self.sheet.get(mrk, {}).get(key, None)
         def pop(subself, key, dflt):
             return self.sheet.get(mrk, {}).pop(key, dflt)
     regularfont = model.get("bl_fontR")
@@ -206,10 +210,14 @@ def toOneMax(self, v, mrk=None, model=None, parm=None):
     # print(f"TO: {mrk=} {v=} {res=}")
     return res
 
-def fromFileName(self, v, mrk=None, model=None):
-    return v
+def fromFileName(self, s, mrk=None, model=None):
+    v = re.sub(r"\\ ", " ", s)
+    return v.strip('"')
 
-def toFileName(self, v, mrk=None, model=None, parm=None):
+def toFileName(self, s, mrk=None, model=None, parm=None):
+    v = s.replace("\\", "/") # .replace(" ", "\\ ")
+    if v is not None and not v.startswith('"') and len(v):
+        return '"'+v+'"'
     return v
 
 _fieldmap = {
@@ -221,12 +229,12 @@ _fieldmap = {
     'leftmargin':       (fromFloat, toFloat, 0.),
     'rightmargin':      (fromFloat, toFloat, 0.),
     'nonjustifiedfill': (fromFloat, toFloat, 0.25),
-    'linespacing':      (fromFloat, toFloat, 0.),
-    'raise':            (asFloatPts, toFloatPts, None),
+    'linespacing':      (fromFloat, toFloat, 1.),
+    'raise':            (asFloatPts, toFloatPts, 0.),
     'baseline':         (asFloatPts, toFloatPts, None),
     'callerraise':      (asFloatPts, toFloatPts, None),
     'notecallerraise':  (asFloatPts, toFloatPts, None),
-    'fontsize':         (from12, to12, 0),
+    'fontsize':         (from12, to12, 12.),
     'spacebefore':      (from12, to12, 0),
     'spaceafter':       (from12, to12, 0),
     'fontname':         (fromFont, toFont, None),
@@ -278,6 +286,8 @@ class StyleEditor:
         return res
 
     def getval(self, mrk, key, default=None, baseonly=False):
+        if default is None:
+            default = _fieldmap.get(key.lower(), [None, None, None])[2]
         if mrk not in self.sheet:
             self.sheet[mrk] = Marker()
         res = self.sheet[mrk].get(key, None) if not baseonly else None
@@ -297,14 +307,14 @@ class StyleEditor:
                 return      # Probably a font which has edited the object for us
             else:
                 val = newval
-        oldval = self.basesheet[mrk].get(key, "") if mrk in self.basesheet else ""
+        # 'fixing' this to default to "" causes problems with things like \Italic where nothing is True
+        oldval = self.basesheet[mrk].get(key, None) if mrk in self.basesheet else None
         if mrk in self.sheet and key in self.sheet[mrk] and (val is None or val == oldval):
             del self.sheet[mrk][key]
-            return
         elif oldval != val and val is not None:
             if mrk not in self.sheet:
                 self.sheet[mrk] = Marker()
-            self.sheet[mrk][key] = val or ""
+            self.sheet[mrk][key] = val
         elif key in self.basesheet.get(mrk, {}) and val is None:
             del self.basesheet[mrk][key]
 
@@ -432,7 +442,7 @@ class StyleEditor:
         allstyles = self.allStyles()
         for m in newse.sheet.keys():
             if m not in allstyles:
-                self.addMarker(m, newse.getval(m, 'Name'))
+                self.addMarker(str(m), str(newse.getval(m, 'Name', "")))
             allkeys = newse.allValueKeys(m) | self.allValueKeys(m)
             for k in allkeys:
                 if exclfields is not None and k in exclfields:

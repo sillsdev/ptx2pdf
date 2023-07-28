@@ -62,7 +62,7 @@
     \fi
   \fi
 }
-\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi}
+\def\testm@rkerexists#1{\tempfalse\ifcsname m@rkerexists-#1\endcsname\temptrue\else\ifcsname m@rkerexists-#1\ds@ffix\endcsname\temptrue\fi\fi}
 \def\should@xist#1{\ifcsname m@rkerexists-#1\endcsname\else
   \trace{sC}{Remembering that #1 exists as a marker}%
   \remember@xists{#1}%
@@ -103,6 +103,8 @@
 \def \Color          #1\relax{\defp@ram{color}{#1}}
 \def \Background     #1\relax{\x@\checkh@x #1\end\edefp@ram{background}{\rgb@out}} %Store as r g b triplet
 \let \color\Color
+\let \colour\Color
+\let \Colour\Color
 \def \ColorName      #1\relax{}
 
 % For each property that affects formatting, define a macro to store the value
@@ -241,7 +243,7 @@
   \trace{sko}{'#2',\the\count255---> \@ut}%
   \ifnum\count255>0 \x@\stystack@pts#2\E\fi
 }
-\def\sh@wstuff{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph}
+\def\sh@wstuff{SHOWSTUFF: styst@k:\styst@k. mc:\mcstack. per:\periph@@@. grouplvl:\the\currentgrouplevel, \ifsk@pping\else not\fi skipping, \ifskipch@rstyle\else not\fi skipch@rstyle, \ifhe@dings\else not\fi he@dings, \iffirst@fterheading\else not\fi first@fterheading, \ifinperiph\else not\fi inperiph, \ifst@ringperiph\else not\fi st@ringperiph, periphdepth:\the\periphdepth}
 \def\SHOWSTUFF{\message{\sh@wstuff}}%
                 
 %returns \@@ut 
@@ -501,7 +503,22 @@
 \def\stackg@tp@ram#1\E{%\trace{sa}{tgp #1}%
   \getp@r@m{\p@ramcheck}{#1}\ifx\p@ram\relax\else\let\d@=\cstackrelax\fi}
 
-\def\getp@r@m#1#2{\x@\let\x@\p@ram\csname#2:#1\endcsname \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}\fi}
+\def\getp@r@m#1#2{\let\p@ram\relax\ifcsname #2:#1\endcsname \x@\let\x@\p@ram\csname#2:#1\endcsname\fi \ifx\p@ram\relax\trace{spv}{#2:#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}\fi}
+\def\dgetp@r@m#1#2{% Half-way house between a full getp@ram and raw getp@ram
+  \let\p@ram\relax
+  \ifcsname #2\c@rrdstat:#1\endcsname
+    \x@\let\x@\p@ram\csname#2\c@rrdstat:#1\endcsname
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2\c@rrdstat:#1 undefined}
+    \ifcsname #2:#1\endcsname
+      \x@\let\x@\p@ram\csname#2:#1\endcsname
+    \fi
+  \fi
+  \ifx\p@ram\relax
+    \trace{spv}{#2(\c@rrdstat):#1 undefined}\else\trace{sa}{#2:#1 found: \p@ram}%
+  \fi}
+  
 % build a list of results
 \def\cs@pushout#1{\ifx\@ut\empty\xdef\@ut{#1}\else\xdef\@ut{\@ut,#1}\fi}
 % prepend \@lso to #1 and build comma separated list of results
@@ -864,9 +881,11 @@
 %+csty_defv
 \newif\ifhangingverse
 
+\newif\ifkeepmarginversemarker
+\def\marginversemarker{}
 \catcode`-=11
 \def\setPrintVerse #1 #2.{\gdef\print@bleverse{#1-#2}}
-\def\noPrintVerse{\global\c@ncelfirstversetrue}
+\def\noPrintVerse{\global\c@ncelfirstversetrue\global\keepmarginversemarkertrue}
 \def\spl@tprintableverse{\x@\spl@tverses\print@bleverse --\relax}
 \catcode`-=12
 \def\pdfv@rsemark{%TODO: Not every verse.
@@ -892,7 +911,7 @@
   \spl@tprintableverse
   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
   %\ if not cancelling first verse, output verse number
-  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\else
+  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\ifkeepmarginversemarker\cstyle{zmvm}{\marginversemarker}\global\keepmarginversemarkerfalse\fi\else
    \ifrotateVerse
     \setbox0=\hbox{\printverse}\dimen0=\wd0%
     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
@@ -1749,6 +1768,11 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi}%
+ \ifdigl@tinuse\ifdiglot        
+   \seriesdiglotfalse
+ \else
+   \seriesdiglottrue
+ \fi\fi
  \preptxfile
  \openadjlist "\the\AdjListPath#1.adj"
  \openpiclist "\the\PicListPath#1.piclist"
@@ -1830,6 +1854,9 @@
  \def\d@something{\afterassignment\@ctivate \count255=}\the\do@ctive}  
 \def\deactiv@tecustomch@rs{% deactivate all the chars configured with \DefineActiveChar
  \def\d@something{\afterassignment\de@ctivate \count255=}\the\do@ctive}  
+\def\pr@tectch{\lccode`\~=\count255\lowercase{\let~\relax}}
+\def\pr@tectcustomch@rs{% Make customchars non-expanding on write
+ \def\d@something{\afterassignment\pr@tectch \count255=}\the\do@ctive \lccode`\~=`\\}  
 
 \m@kedigitsother
 % use numbers to allow sequences to work in \fig .. \fig*

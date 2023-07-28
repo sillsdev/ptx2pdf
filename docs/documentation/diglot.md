@@ -1,19 +1,20 @@
 # Diglot options and settings (XeTeX macros)
 
 ## General overview
-The diglot options allow for typesetting two (or more) versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two peices of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
+The diglot options allow for typesetting two (or more) versions in parallel, aligned by verse or paragraph. If that makes no sense, have a look at the samaple below, where the right hand column's paragraphs are one line shorter, but still the paragraphs in the two columns line up. To do this the two pieces of text require an extra pre-processing step and then a number of extra configuration controls to make things really beautiful.
 The preprocessing step picks `pairs' (or groups) of things that ought to be aligned, and puts these into what we can call a *chunk*. These
-pairs/tripples/quadruples  might be verses, paragraphs at the same  place, and so on. 
+pairs/groups might be verses, paragraphs at the same  place, and so on. 
 At the moment this step is done by a python program, one of 2 perl programs,  or by hand for small sections of text. The python program integrates better 
 with ptxprint, one of the perl programs is considerably older and both have more powerful/complex options.
 
 ![History of diglot](../../examples/diglot/history.png  "An example.")
 
+
 ## The structure of a diglot-friendly usfm file.
-The preprocessing step "shuffles" the two files together, interspersing them with instructions to switch sides. (For as-yet-uncertain reasons, these instructions seem to work much better if  preceeded by \p). There are four instructions:  ```\lefttext``` ```\righttext``` ```\nolefttext``` ```\norighttext```. The ```\nolefttext``` specifies that the text that follows ought to begin below any text remaining in the the left-hand column, and start a chunk that will not have any corresponding left-hand text.   A sample of the  file that produced the above image is given below. 
+The preprocessing step "shuffles" the two files together, interspersing them with instructions to switch sides. (For as-yet-uncertain reasons, these instructions seem to work much better if  preceeded by \p). There are four instructions:  ```\lefttext``` ```\righttext``` ```\nolefttext``` ```\norighttext```. The ```\nolefttext``` specifies that the text that follows ought to begin below any text remaining in the the left-hand column, and start a chunk that will not have any corresponding left-hand text.   A sample of the  file that produced the above image is given below.
 ```
 \lefttext
-\s The birth of diglot 
+\s The birth of diglot
 \p
 \norighttext
 \p
@@ -28,7 +29,7 @@ The preprocessing step "shuffles" the two files together, interspersing them wit
 The polyglot version of the above would look like this:
 ```
 \polyglotcolumn L
-\s The birth of diglot 
+\s The birth of diglot
 \p
 \polyglotendcols
 \polyglotcolumn L
@@ -49,6 +50,21 @@ Additional columns should be defined in the controlling `.tex` file:
 ```
 Note that this  must occur before any USFM files or stylesheets are loaded.
 
+
+## Hints to the merging step
+By default the 'scores' merge mechanism synchronises on verse and paragraph number. I.e. the first mid-verse paragraph in verse 2 on one side should be aligned with the first mid-verse paragraph in verse 2 on the other side. This looks beautiful when all is working but becomes problematic when the paragraphing does not agree.  One option is to disable forming chunks on paragraphs, the other is to insert manual 'hints' with the milestone `\zcolsync|id\*`  Except as below, these  hints should be in both files and have the same id.  If using multiple ids within a given verse, they  should occur in their sorted order (ie. A before Z).
+
+If the milestone is of form `\zcolsync|v2\*` or `\zcolsync|v23a\*`  (the position starts with v, a number, and an optional letter sequence) then the number overrides the current verse number. This is largely untested, but may help with versification differences.
+
+If the milestone is of the form `\zcolsync|p3\*` (the position starting with p, followed by a number, and including no spaces), then then the number overrides the natural paragraph count. This means that it is possible to make the alignment code ignore other places that might have a claim to being paragraph 3, and treat this position as that number, whether it would naturally 2 or 4.
+
+If such a milestone is adjacent to a paragraph, (including *after* one) then that paragraph mark begins the alignment chunk.  If the milestone is mid-text, then there is no attempt to guess what the paragraph style should be. The TeX code probably treats the style as `\p`   Unfortunately, the sequence `\p \zcolsync|whatever\* \v 2` causes a parser error at present; instead use `\zcolsync|whatever\* \p \v 2`
+
+Note that it is *not* the name of `\zcolsync` that helps with merging, but the 'diglotsync' text-property in the stylesheet. However the milestone `\zcolsync` is recognised by the code and removed from the output, so that it does not cause some unwanted issues in the layout.  Giving an alternative milestone the `diglotsync` text-property is thus possible but not recommended.
+```
+\TextProperties  nonpublishable diglotsync
+```
+
 ## Diglot-specific configuration items to go in custom stylesheets:
 
 Any ```\Marker```  can (theortically) be generic (e.g. 'p') or apply to a single column only ('pL' or 'pR' for left and right versions of 'p').
@@ -68,10 +84,15 @@ Background: when the code looks up a parameter for style 'p' it first looks up t
 \FontName DoulosSIL
 ```
 The left column will use:
-	DoulosSIL (column specific) at 11pt (default), 
+	DoulosSIL (column specific) at 11pt (default),
 and the right column will use:
 	Gentium (default) at 12pt (column specific).
 
+
+### stylesheetL and stylesheetR
+The PTXprint user interface code loads the primary and secondary styling with
+\stylesheetL and \stylesheetR respectively. This means that all styling applied
+via the user interface is side-specific (as `\Marker pL` above). Thus introductory material, etc. should be prefaced with `\zglot|L\*` etc. to specify which formatting set to use.
 
 
 ## Configuration items to go in foo-setup.tex (or main .tex file)
@@ -84,7 +105,7 @@ and the right column will use:
 If the footnotes from the 2 languages should be split (true) or merged together (false) (default: ```\diglotSepNotestrue```). Merging footnotes is almost certainly not a wise choice if both texts have footnotes, but if only one side has notes then it probably makes a lot of sense. The exact order of the footnotes is probably complicated and may even be unpredictable.
 
 - ```\diglotBalNotesfalse```
-If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors. 
+If a left column footnote steals space from the right column also, and vise-versa (default: ```\diglotBalNotesfalse```). If this is a good idea or not probably depends on a lot of factors.
 
 - `\DistinctNoteNumbering{f}` (default)
 - `\ParallelNoteNumbering{f}`
@@ -113,31 +134,31 @@ If there is diglot material this **must be set true** (i.e. ```\diglottrue```), 
 Column-specific control over chapter and verse numbers. The 'third state' of this boolean (which is the default) permits the 'global' boolean (without the `L` or 'R') to have control.
 
 
-- ```\VisTracetrue``` 
-- ```\VisTraceExtratrue``` 
+- ```\VisTracetrue```
+- ```\VisTraceExtratrue```
 Debugging options for really sticky problems; see end of this document.
 
 ### Header macros
-- ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefX``` and ```\lastrefX```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheets. 
+- ```\rangerefL```,  ```\rangerefR```, ```\rangerefA```   (and their companions ```\firstrefX``` and ```\lastrefX```) have now been defined, which display the book/chapter/verse ranges on a given column only. The appropriate font will be selected from the stylesheets.
 - Also available: ```\usdateX```, ```\ukdateX```, ```\isodateX```, ```\hrsminsX```, ```\timestampX``` which include font selection.
 - ```\headfootX{...}``` which selects the relevant font
-- ```\bookX `` and ```\bookaltX``` exist but as these are normally used in the rangeref (etc) expressions, they include no font switching, so they would need wrapping in `\headfootX{ }` 
+- ```\bookX `` and ```\bookaltX``` exist but as these are normally used in the rangeref (etc) expressions, they include no font switching, so they would need wrapping in `\headfootX{ }`
 
 ### Page layout options
 
-- ```\def\ColumnGutterFactor{15}``` 
+- ```\def\ColumnGutterFactor{15}```
 Gutter between the 2 cols, (measured in ```\FontSizeUnit```s), just like in two column mode.
 - ```\ColumnGutterRuletrue``` There should be a vertical rule(line) between columns of text.
 - ```\FigGutterRuletrue``` There should be a vertical rule between column-figures if there is one between the columns of text
 - ```\NoteGutterRuletrue``` There should be a vertical rule between footnotes if there is one between the columns of text
 - ```\JoinGutterRuletrue``` There should be no gap in the vertical rule between the one for the text body and the one for the notes. If false, there is no vertical rule in the gap controlled by `\AboveNoteSpace`.
 
-- ```\def\DiglotLFraction{0.55}```  
+- ```\def\DiglotLFraction{0.55}``` 
 Fraction of the space that is used by column L.  Similarly `\DiglotRFraction`, `\DiglotAFraction` etc. Unless multiple page layout (experimental)
-is used, the sum of all the fractions should be  1.0. If mulpiple pages layout is used, the sum of all fractions on their respective pages should be 1.0. 
+is used, the sum of all the fractions should be  1.0. If mulpiple pages layout is used, the sum of all fractions on their respective pages should be 1.0.
 No automatic verification of this is currently done, you'll just get ugly results.
 
--  ```\def\DiglotLeftFraction{0.5}``` ```\def\DiglotRightFraction{0.5}``` 
+-  ```\def\DiglotLeftFraction{0.5}``` ```\def\DiglotRightFraction{0.5}```
 Deprecated synonym for `\def\DiglotLFraction{0.5}` and `..glotRFraction...`
 
 Hopefully, the  above fractional controls (and the font-sizes from they style sheet) should enable even the most widely different translation styles and languages to balance in an overall pleasing way, without huge gaps under every chunk on one column.
@@ -172,26 +193,24 @@ will apply the ```\hangversenumber``` only for the left column.
 - ```\def\languageL{english}```
   Left column is in english. (Requires that the language's hypenation patterns have been loaded).
 
-- ```\def\languageR{nohyphen}``` 
+- ```\def\languageR{nohyphen}```
   Right column should not be hypenated
 
 
 ### Mixing diglot and monoglot text
 
-The font-switching code requires that ```\diglottrue``` must be specified before 
-any style sheets are loaded. However, it is now possible to have
+The font-switching code requires that ```\diglottrue``` must be specified before any style sheets are loaded. However, it is now possible to have 
 language-switching without the diglot layout:
 
 ```
 \zglot|L\*
 \monoglotcolumn L
 ```
-These (equivalent) commands performs all the font switching etc. that might be expected for a diglot text, but *without* 
-any of the column switching code being activated. 
+These (equivalent) commands performs all the font switching etc. that might be expected for a diglot text, but *without*  
+any of the column switching  and synchronising.
 The shorter milestone-like format is preferred as it is USFM-compliant, but the longer form works.
 The expectation is that this
-will be used in front-matter and back-matter books, etc. where  a single or dual-column layout 
-is best but font (and stylesheet) switching is still desired. 
+will be used in front-matter and back-matter books, etc. where  a single or dual-column layout is best but font (and stylesheet) switching is still desired. 
 
 Although this switches on `\diglottrue`, so that font switching functions
 correctly, it should be used in a USFM file that was started in single or dual
@@ -218,9 +237,9 @@ If this is defined, then old-stlye (broken) paragraph numbering for adjust lists
 ## Easy solutions to common problems
 
 ### Avoiding mismatched titles
-Sometimes the title or section headers can be misaligned. Seen by, for instance a book title being out of place by quarter of a line.  This is because the main program adjusts the title spacing in ways that the diglot code cannot discover (yet?). It is most noticable in book titles, but can also occur in multi-line section headings. The cause is normally that one side contains a taller letter than the other side, or a letter that descends below the line further. 
+Sometimes the title or section headers can be misaligned. Seen by, for instance a book title being out of place by quarter of a line.  This is because the main program adjusts the title spacing in ways that the diglot code cannot discover (yet?). It is most noticable in book titles, but can also occur in multi-line section headings. The cause is normally that one side contains a taller letter than the other side, or a letter that descends below the line further.
 
-If that's the case, and say one side has no descenders and the other contains a 'p', then the nasty work-around is to add ```\dstrut p``` to the side which has no 'p'. ```\dstrut```  swallows the letter that comes after it and replaces it with a non-visible object of zero width, exactly as high and deep as the letter it destroyed. 
+If that's the case, and say one side has no descenders and the other contains a 'p', then the nasty work-around is to add ```\dstrut p``` to the side which has no 'p'. ```\dstrut```  swallows the letter that comes after it and replaces it with a non-visible object of zero width, exactly as high and deep as the letter it destroyed.
 
 ### My cross-references look ugly
 With very small columns, and long booknames, you can end up with things looking like this:

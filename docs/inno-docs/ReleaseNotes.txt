@@ -1,8 +1,251 @@
-PTXprint 2.3.10 Release Notes
-2 May 2023
+PTXprint 2.3.31 Release Notes
+28 July 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
-________________________________________________________________________________
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.3.31 (28 July 2023)
+
+  * Add punctuation processing to interlinear
+  
+  * Fixed ifversehyphen bug
+  
+Bug fixes and Improvements in 2.3.30 (14 July 2023)
+
+  * Picture selector integrated into UI
+  
+  * Add installed imagesets to piclist search directories list
+  
+  * Fix bibrefs and verses
+  
+  * Refactor image sets (currently only Creative Commons image set available)
+  
+  * Add nobook to reference separators
+  
+  * Improved a few codelets
+  
+  * Improved manual syncing of no-verses text
+  
+  * Box/BorderL/R/T/BPadding added to style editor
+  
+  * Can now parse config and prjid from .zip archive without -Z
+  
+  * Set allNeedEmptyingfalse at diglotsetup: prevent staggered 1st titles
+
+Bug fixes and Improvements in 2.3.29 (4 July 2023)
+
+  * Improve column sync behaviour and document \zcolsync\* #851
+  
+  * Handle set_positions for B suffix (Left/Right/Both)
+  
+  * Remove rems from FRT on run
+  
+  * Make sure cover periphs run with diglot turned off
+  
+  * Fuzzy match diglot pic filenames when generating L+R piclist
+
+Bug fixes and Improvements in 2.3.28 (3 July 2023)
+
+  * Ensure USFM2 figs don't get picked up again as USFM3 (piclist generation)
+
+  * When 'Screen' PDF output is set, ensure the cover is also output
+  
+  * Add utility 'ptxunzippdf' to recover settings from PDF to specified folder 
+  
+  * Refactor view.getPDFconfig into utils
+  
+  * Diglot 'zcolsync' now accepts parameter and seems to work
+
+Bug fixes and Improvements in 2.3.27 (29 June 2023)
+
+  * Remove stray pdb trace causing style editor to hang/crash
+
+Bug fixes and Improvements in 2.3.26 (28 June 2023)
+
+  * Fix stray CRs in periph
+  
+Bug fixes and Improvements in 2.3.25 (28 June 2023)
+
+  * Have base and diglot views share the same picinfos (major change)
+  
+  * Add logging to picture extraction
+  
+  * Fix keyword finding when parsing figs
+  
+  * One command to set up all 6 header positions
+  
+  * Repair footnotes on chapter numbers
+  
+Bug fixes and Improvements in 2.3.24 (27 June 2023)
+
+  * Fix up pdf pages tree hierarchy in burst out insertions
+  
+  * Speed up PDF cover creation when set to screen (don't reprocess covers)
+  
+  * Refactor reading images from source files to insert GLO keyword terms
+  
+  * Improve pic copyright statement wording
+  
+Bug fixes and Improvements in 2.3.23 (26 June 2023)
+
+  * Change the manual highlighting color (Ctrl+Click) to Yellow
+  
+  * Prevent old keywords and descriptions carrying over to next picture
+  
+  * Add \marginversemarker{∙\kern 1pt} capability using \zmvm character style
+  
+  * Fix margin verse positions
+  
+  * Set appropriate defaults for lacking style settings
+  
+  * Fix generating and not generating covers
+  
+Bug fixes and Improvements in 2.3.22 (22 June 2023)
+
+  * Ensure that localChanges get run on INT book(s)
+  
+  * Add more components for Select Images dialog (work in progress)
+
+Bug fixes and Improvements in 2.3.21 (20 June 2023)
+
+  * Fix regex to handle nested \w glossary markup better
+  
+  * Implement \ifKeepAllFigures (global boolean to keep all pics)
+     and at specific locations e.g.  \KeepFigure{MAT}{1.1}{}
+
+Bug fixes and Improvements in 2.3.20 (8 June 2023)
+
+  * Allow monoglot GLO book(s) to use 2-column layout in a diglot
+    (enabled column-switching in serial-polyglots)
+  
+  * Finish(?) implementing zmakeinsert and multidepth periphs 
+  
+  * Reinstate IB series of illustrations with updated copyright info
+  
+  * Fix crashes with disabled footnotes in headings
+  
+  * Fix regression (covers stopped working)
+  
+  * Fix cmyk_black conversion in PDF finishing
+  
+  * Fix cover styling for diglots
+  
+  * Add test project for Covers, ToC, Thumbtabs and basic Front matter
+  
+Bug fixes and Improvements in 2.3.18 (5 June 2023)
+
+  * Add UI elements for 'OnlyOddTabs' and 'Extract Color Inserts' (work in progress)
+  
+  * Fix bug affecting Diglot Introductory material causing crash
+  
+  * Ensure INT books are added into archive
+  
+  * Fix loss of B&W images in print spot output (per image and globally)
+  
+  * Progress towards automatic pdf-tagging of relevant peripheries
+  
+Bug fixes and Improvements in 2.3.17 (2 June 2023)
+
+  * Added code snippets and actions to various tabs in View+Edit
+  
+  * Auto-create BASIC FRTlocal.sfm when Front Matter is enabled, & disable colophon
+  
+  * Implement KeepFigure (allowing re-use of illustrations within the job)
+  
+  * Include page gutter in Basic settings (as it was earlier)
+  
+  * Add support for QR code generation (using \zqrcode)
+  
+  * Use ifTabsOddOnly to set only tabs on odd pages
+  
+  * Add Lao script support as per Thai
+  
+  * Ensure that color pickers don't hide behind dialogs
+  
+  * Fixed magic adjust lines per page & color red when less than optimum (non-integer)
+  
+  * Don't overwrite \periphs in Front matter when (re-)creating the cover settings
+  
+  * Fixed path to Ornament Catalogue (on the cover settings dialog)
+  
+  * Fixed some cover merging errors
+  
+  * Fixed missing output intents in covers
+  
+  * Minor UI improvements based on user feedback from post-EMDC workshop
+  
+  * Tidy up cover box padding values and ensure cover boxes don't grow
+  
+  * Fixed setting figbleed properly
+  
+  * Protect stylesheet image paths against quotation marks
+  
+  * Add peripherals and new tracings to TechRef manual (ver0.85)
+  
+  * Fix coverartbleed from generating None
+  
+  * Enable multiline codelets, and allow ** as footnote caller
+  
+  * Add core code for bursting inserts (work in progress; need to add switches)
+  
+  * Add 'method' codelet ability (work in progress)
+
+Bug fixes and Improvements in 2.3.16 (24 May 2023)
+
+  * Don't output empty filenames in stylesheets
+  
+  * Several more fixes to the filename fixing styleeditor code
+  
+  * Hack up back cover page to not grow too wide
+  
+  * Started to add UI for image selector (unreleased)
+
+Bug fixes and Improvements in 2.3.15 (21 May 2023)
+
+  * Replace backslash with / in filenames in .sty files
+  
+  * And fix a bunch of minor bugs
+
+Bug fixes and Improvements in 2.3.13 (21 May 2023)
+
+  * Permit multi-character footnote callers to get through the SFM parser
+  
+  * Unset chapterwaiting earlier to prevent duplicate chapter numbers
+  
+  * Keep track of variables across diglot breaks
+  
+  * Fix paratext alternates for separator settings
+  
+  * Allow ToC files to include control sequences e.g. for font-switching
+  
+  * Revert styleeditor setval strcmp fix of f3ba39b. To get Italic setting to stick
+  
+  * Don't remember show USFMs since it changes layout
+  
+Bug fixes and Improvements in 2.3.12 (15 May 2023)
+
+  * Implemented ^95 notation for character styles
+  
+  * Promote font features with slash to start of the list
+  
+  * Added two additional options to Marks and Guides options:
+     * Show Adj Points
+     * Show USFM Codes
+
+  * Updated documentation:
+     * Added Techincal Reference Manual (to GitHub documentation)
+  
+  * Check if keepperiph has been defined before running the periphery
+  
+  * Fixed output intents for cover PDF (always print cover in color)
+  
+  * Make modules more resilient to missing text
+  
+  * Fixed active quotes not getting deactivated
+  
+  * Have search change UI level for widgets not in the present view
+  
+  * Ensure DBL buttons are visible even in Basic mode
 
 Bug fixes and Improvements in 2.3.10 (2 May 2023)
 
