@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
