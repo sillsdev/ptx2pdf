@@ -3903,7 +3903,7 @@ class GtkViewModel(ViewModel):
             msg = _("Making PDF...")
         elif stage == 'fn':
             msg = _("Finishing...")
-        else:
+        else: # assume 'pr'
             msg = _("Processing...")
         self.builder.get_object("t_find").set_placeholder_text(msg)
         # print(f'==> {msg}')
