@@ -1510,7 +1510,7 @@ class ViewModel:
     def finished(self):
         pass
 
-    def incrementProgress(self, inproc=False):
+    def incrementProgress(self, inproc=False, stage="pr", run=0):
         pass
 
     def getStyleSheets(self, cfgname=None, generated=False, prjid=None, subdir=""):

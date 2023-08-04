@@ -1,10 +1,10 @@
-PTXprint 2.3.33 Release Notes
+PTXprint 2.3.34 Release Notes
 4 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.33 (4 Aug 2023)
+Bug fixes and Improvements in 2.3.34 (4 Aug 2023)
 
   * Ensure marginal verse hyphens also appear with consecutive verses
   
