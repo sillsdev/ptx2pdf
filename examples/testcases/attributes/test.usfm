@@ -147,6 +147,8 @@ paragraphs.
 
 ISBN10:
 
+\zISBNbarcode|isbn="0-201-541992" \*
+And a test:
 \zISBNbarcode|isbn="0-201-54199" \*
 
 \pb

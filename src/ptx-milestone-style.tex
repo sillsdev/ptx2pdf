@@ -713,12 +713,15 @@
   \lineskip=10pt \lineskiplimit=0pt
   \ifnum\num@rgs=13 \barcode#1\relax\else
     \ifnum\num@rgs=10 \count255=0 %\tracingmacros=1\tracingassigns=1 
-      \let\r@code\empty\r@encodeten 978#1\relax\relax \fi
+      \let\r@code\empty\r@encodeten 978#1\relax\relax
+     \else
+      \MSG{*** ISBN Barcodes can have 10 or 13 digits (\the\num@rgs\space were supplied)}%
+     \fi
   \fi}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
-\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
+\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\trace{m}{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
 %
 %A beautiful ISBN has "ISBN 123-435-763-124" above the top exactly matching the
 %width of the barcode. Do some maths to get it right.  Adding up numbers above,
