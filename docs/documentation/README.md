@@ -543,6 +543,19 @@ respectively, as opposed to the normal 10ex. The normal size may be altered by e
 `\def\b@rheight{9ex}`  Text/numbers are displayed in the font Andika by default, the font can 
 be altered by: `\def\ISBNfont{Helvetica}`
 
+#### ISBN barcodes with a price code
+`\zISBNbarcode|isbn="01-234-56789" price="$8.45" pricecode="50845"\*`
+Some ISBN barcodes include a recommended sale price, using the EAN-5 extention,
+which can hold 5 digits.  Only a few countries (mainly English-speaking) seem
+to use this, but at least one document states that it is necessary for
+books to scan properly in some countries.  The `price` attribute  is the text
+that should be printed. The `pricecode` designates the currency (1st digit) and
+the price (digits 2-5). Wikipedia states that the currency digit should be: 0 or
+1: GBP, 3: AUD, 4: NZD, 5: USD, 6: CAD.
+
+If the pricecode is not supplied, then no price barcode will be generated.
+
+
 ### Misc. milestones
 `\zfiga|anchor\*` An anchor point for a figure from the piclist. See
 figures.md. It can also be used as a trigger point.
