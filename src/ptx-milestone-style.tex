@@ -665,7 +665,8 @@
 %
 \def\b@rheight{10ex}
 
-\def\barcode#1#2#3#4#5#6#7{\begingroup%
+\def\barcode#1#2#3#4#5#6#7{\begingroup% EAN13 barcode - used to encode ISBN10 (with a prefix and new checksum) and ISBN13 (directly)
+  \message{barcode #1 #2 #3 #4 #5 #6}%
   \dimen0=0.1em
   \def\stack##1##2{\oalign{##1\cr\hidewidth##2\hidewidth}}%
   \def\0##1{\kern##1\dimen0}%
@@ -687,6 +688,40 @@
     \or\G#3\L#4\G#5\G#6\L#7\or\G#3\G#4\L#5\G#6\L#7%
   \fi\01\11\01\11\01\bcR}
 
+\def\barcodeV#1#2#3#4#5#6{\begingroup% EAN5
+    \dimen0=0.1em
+    \dimen1=\b@rheight
+    \hskip -0.3em %Proper alignment
+    \edef\b@rheight{\the \dimexpr 0.7\dimen1\relax}%
+    \message{barcodeV (\b@rheight) #1 #2 #3 #4 #5 (#6)}%
+    \edef\@price{#6}%
+    \def\stack##1##2{\hbox{\vbox{\hbox{##2}\hbox{##1}}}}%
+    \def\0##1{\kern##1\dimen0}%
+    \def\1##1{\vrule depth 0pt height \b@rheight width##1\dimen0}%
+    \def\L##1{\ifcase##1\bc3211##1\or\bc2221##1\or\bc2122##1\or\bc1411##1%
+      \or\bc1132##1\or\bc1231##1\or\bc1114##1\or\bc1312##1\or\bc1213##1%
+      \or\bc3112##1\fi}%
+    \def\G##1{\bgroup\let\bc\bcg\L##1\egroup}% reverse
+    \def\S{\01\11}%
+    \def\bc##1##2##3##4##5{\stack{\0##1\1##2\0##3\1##4}##5}%
+    \def\bcg##1##2##3##4##5{\stack{\0##4\1##3\0##2\1##1}##5}%
+    \count255=\numexpr 3*#1 + 9*#2 + 3*#3 + 9*#4 + 3*#5\relax
+    \count254=\count255 
+    \loop\ifnum\count255 >9 \advance\count255 by -10 \repeat
+    \trace{m}{Calculated check digit for EAN-5: \the\count254->\the\count255}% 
+    \setbox1=\hbox{\vbox{\lineskip=0pt \baselineskip=0pt \relax\hbox{\stack{\01\11\01\12}{}\ifcase\count255 
+          \G#1\S\G#2\S\L#3\S\L#4\S\L#5 \or \G#1\S\L#2\S\G#3\S\L#4\S\L#5
+      \or \G#1\S\L#2\S\L#3\S\G#4\S\L#5 \or \G#1\S\L#2\S\L#3\S\L#4\S\G#5
+      \or \L#1\S\G#2\S\G#3\S\L#4\S\L#5 \or \L#1\S\L#2\S\G#3\S\G#4\S\L#5
+      \or \L#1\S\L#2\S\L#3\S\G#4\S\G#5 \or \L#1\S\G#2\S\L#3\S\G#4\S\L#5
+      \or \L#1\S\G#2\S\L#3\S\L#4\S\G#5 \or \L#1\S\L#2\S\G#3\S\L#4\S\G#5
+    \fi}\ifx\@price\empty\else\setbox0\hbox to 5em{\hss\@price\hss}\dimen0=\dimexpr \ht0 + \dp0 \relax\box0\kern-\dimen0 %
+       \fi}}%
+    %\showbox1
+    \box1
+  \endgroup
+}
+
 \newcount\num@rgs
 \def\@count@rgs#1#2{\let\n@xt\relax\ifx#1\relax\else\advance \num@rgs by 1\relax \ifx#2\relax \else\let\n@xt\@count@rgs \fi\fi \n@xt #2}
 \def\count@rgs#1{\num@rgs=0  \@count@rgs#1 \relax\relax\trace{m}{#1 has \the\num@rgs\space digits}}
@@ -707,19 +742,25 @@
   \fi
   \n@xt#3\relax
 }
+
 %ISBNs use minuses to separate number groups. There seems no guaranteed pattern
 %  Call barcode using stripped down version
 \def\bcode#1-{\count@rgs{#1}%
   \lineskip=10pt \lineskiplimit=0pt
   \ifnum\num@rgs=13 \barcode#1\relax\else
     \ifnum\num@rgs=10 \count255=0 %\tracingmacros=1\tracingassigns=1 
-      \let\r@code\empty\r@encodeten 978#1\relax\relax \fi
+      \let\r@code\empty\r@encodeten 978#1\relax\relax
+     \else
+      \MSG{*** ISBN Barcodes can have 10 or 13 digits (\the\num@rgs\space were supplied)}%
+     \fi
   \fi}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
-\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\message{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
+\def\isbn#1-#2-{\def\bc{#1#2}\def\pb{#2}\trace{m}{Building barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\isbn\fi\expandafter\next\bc-}
 %
+%\def\pr@ce#1.#2.{\def\bc{#1#2}\def\pb{#2}\trace{m}{Building price barcode: \bc (\pb)}\ifx\pb\emptything\let\next=\bcode\else\let\next=\pr@ce\fi\expandafter\next\bc.}
+
 %A beautiful ISBN has "ISBN 123-435-763-124" above the top exactly matching the
 %width of the barcode. Do some maths to get it right.  Adding up numbers above,
 %the barcode seems like it should be 12*.7+.4+.5+.4=9.7em wide. It actually
@@ -744,13 +785,35 @@
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
   \get@ttribute{isbn}%
   \ifx\attr@b\relax
-    \get@ttribute{var}\ifcsname ms:zvar=\attr@b\endcsname
-      \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
-      \let\attr@b\tmp
+    \get@ttribute{var}\ifx\attr@b\relax\else
+      \ifcsname ms:zvar=\attr@b\endcsname
+        \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
+        \let\attr@b\tmp
+      \fi
     \fi
   \fi
   \m@kenumber{\attr@b}%
-  \hbox{\ISBN{\@@result}}\egroup}
+  \hbox{\ISBN{\@@result}%
+    \get@ttribute{price}%
+    \ifx\attr@b\relax
+      \edef\@price{}%
+    \else
+      \edef\@price{\attr@b}%
+    \fi
+    \get@ttribute{pricecode}%
+    \ifx\attr@b\relax
+      \get@ttribute{pricevar}\ifx\attr@b\else
+        \ifcsname ms:zvar=\attr@b\endcsname
+          \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
+          \let\attr@b\tmp
+        \fi
+      \fi
+    \fi
+    \ifx\attr@b\relax\else
+      \m@kenumber{\attr@b}%
+      \belowISBN\x@\barcodeV \@@result{\@price}\relax\relax\relax\relax%
+    \fi
+  }\egroup}
 
 \def\proc@strong#1{%
   \get@ttribute{align}%

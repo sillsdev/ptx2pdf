@@ -25,7 +25,7 @@ from ptxprint.view import ViewModel, Path, VersionStr, GitVersionStr
 from ptxprint.gtkutils import getWidgetVal, setWidgetVal, setFontButton, makeSpinButton
 from ptxprint.utils import APP, setup_i18n, brent, xdvigetpages, allbooks, books, \
             bookcodes, chaps, print_traceback, pycodedir, getcaller, runChanges, \
-            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir
+            _, f_, textocol, _allbkmap, coltotex, UnzipDir, convert2mm, extraDataDir, getPDFconfig
 from ptxprint.ptsettings import ParatextSettings
 from ptxprint.gtkpiclist import PicList
 from ptxprint.piclist import PicChecks, PicInfo, PicInfoUpdateProject
@@ -3885,12 +3885,28 @@ class GtkViewModel(ViewModel):
             val = 0.10 if val < 0.1 else (1. + 19 * val) / 20
         wid.set_progress_fraction(val)
 
-    def incrementProgress(self, inproc=False):
+    def incrementProgress(self, inproc=False, stage="pr", run=0):
         if inproc:
             self._incrementProgress()
             while (Gtk.events_pending()):
                 Gtk.main_iteration_do(False)
         GLib.idle_add(self._incrementProgress)
+        currMsg = self.builder.get_object("t_find").get_placeholder_text()
+        if stage == 'gp': # Ask MH: Why does this one NEVER show up?
+            msg = _("Gathering pics...")
+        elif stage == 'lo':
+            if run > 0:
+                msg = _(f"Redoing layout {run}...")
+            else:
+                msg = _("Laying out...")
+        elif stage == 'xp':
+            msg = _("Making PDF...")
+        elif stage == 'fn':
+            msg = _("Finishing...")
+        else: # assume 'pr'
+            msg = _("Processing...")
+        self.builder.get_object("t_find").set_placeholder_text(msg)
+        # print(f'==> {msg}')
 
     def onIdle(self, fn, *args):
         GLib.idle_add(fn, *args)

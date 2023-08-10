@@ -147,7 +147,10 @@ paragraphs.
 
 ISBN10:
 
+\zISBNbarcode|isbn="0-201-541991" \*
+And a test:
 \zISBNbarcode|isbn="0-201-54199" \*
 
+\zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499"\*
 \pb
 \zfillsignature|pages="8" pagenos="do"\*

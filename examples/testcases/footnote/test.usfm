@@ -4,7 +4,7 @@
 \is1 This is an introductory title\f + \ft And a footnote on an introductory title\f*
 \ip And this is an introductory paragraph\f + \ft With a footnote on it\f*
 \c 1 \f + \ft a footnote on a chapter number\f*
-\s This is a title\f + \ft And this is a footnote on a title\f*
+\s This is a title\f + \ft And this is a footnote on a title. \fp It's quite long so that we can see if the linespacing is actually consistent, or if the callers make a difference or not.  \fp Footnotes with paragraph breaks used to always be a really big problem when the note style was paragraphed.\f*
 \p
 \v 1 This is normal \wj text.\wj*\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
 after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.

@@ -322,7 +322,7 @@ class RunJob:
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
             return
-        self.printer.incrementProgress(True)
+        self.printer.incrementProgress(True, stage="pr")
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
         self.tempFiles = []
@@ -561,7 +561,7 @@ class RunJob:
         # import pdb; pdb.set_trace()
         for i, j in enumerate(jobs):
             if len(jobs) >= 5 and i % (len(jobs) // 5) == 0:
-                info.printer.incrementProgress(True)
+                info.printer.incrementProgress(True, stage="pr")
             b = j[0][0].first.book if j[1] else j[0]
             logger.debug(f"Converting {b} in {self.tmpdir} from {self.prjdir}")
             try:
@@ -733,6 +733,7 @@ class RunJob:
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
+            self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext, digtexmodel=digtexmodel)
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
@@ -824,7 +825,7 @@ class RunJob:
         for a in cacheexts.keys():
             cachedata[a] = self.readfile(os.path.join(self.tmpdir, outfname.replace(".tex", "."+a)))
         while numruns < self.maxRuns:
-            self.printer.incrementProgress()
+            self.printer.incrementProgress(stage="lo", run=numruns)
             commentstr = " ".join([
                     "date="+datetime.today().isoformat(),
                     "ptxprint_version="+VersionStr,
@@ -891,7 +892,7 @@ class RunJob:
                 break
 
         if not self.noview and not self.args.testing and not self.res:
-            self.printer.incrementProgress()
+            self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile, info)
             cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
@@ -911,6 +912,7 @@ class RunJob:
                 self.res = 4 if runner.returncode else 0
             else:
                 self.res = 4 if runner else 0
+            self.printer.incrementProgress(stage="fn")
             if self.res == 0 and not self.procpdf(outfname, pdffile, info, cover=info['cover/makecoverpage'] != '%'):
                 self.res = 3
         print("Done")
@@ -967,6 +969,7 @@ class RunJob:
                     secondary="\n".join(warnings))
 
     def gatherIllustrations(self, info, jobs, ptfolder, digtexmodel=None):
+        self.printer.incrementProgress(stage="gp")
         logger.debug(f"Gathering illustrations: {self.printer.picinfos}")
         picinfos = self.printer.picinfos
         pageRatios = self.usablePageRatios(info)
@@ -1017,7 +1020,7 @@ class RunJob:
         else:
             self.printer.set("l_missingPictureCount", _("(0 Missing)"))
             self.printer.set("l_missingPictureString", "")
-        self.printer.incrementProgress()
+        # self.printer.incrementProgress(stage="lo")
         logger.debug("Illustrations gathered")
         return res
 

@@ -1239,6 +1239,7 @@
 \obeylines%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\pb=\pagebreak %pb isn't a paragraph style, 
+ \def\fp{\par\kern 1sp }
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
         \obeylines\@h}% \h gets stored as the book name (for references)
