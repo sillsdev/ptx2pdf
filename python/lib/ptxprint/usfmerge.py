@@ -1038,7 +1038,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         sheets['R']=appendsheet(s, sheets['R'])
     for k,s in stylesheets:
         logger.log(7, f"Appending {s} to stylesheet {k}")
-        sheets[k] = appendsheet(s,sheet[k])
+        sheets[k] = appendsheet(s,sheets[k])
     # Set-up potential synch points
     tmp=synchronise.split(",")
     if len(tmp)==1:

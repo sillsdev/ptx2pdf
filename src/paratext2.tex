@@ -632,11 +632,11 @@
     \ifRTL\beginR\fi % respect directionality
     \ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
-  \ifnum\interactionmode=1 \showlists\fi
+  %\ifnum\interactionmode=1 \showlists\fi
   \ifnewparnotes\else
     \makehboxofhboxes % make a single hbox for all notes of this class
     \unskip\unskip
-    \ifnum\interactionmode=1 \showbox 0\showlists\fi
+    %\ifnum\interactionmode=1 \showbox 0\showlists\fi
     \setbox0=\hbox{\unhbox0 \removehboxes}% add internote space                   %(1)
   \fi
   \trace{j}{maken@tepara #2 \c@rrdstat: baseline was \the\baselineskip}%
@@ -660,7 +660,7 @@
     \makevboxofhboxes
   \fi
   \ifnewparnotes
-    \ifnum\interactionmode=1 \showbox 3\showlists\fi
+    %\ifnum\interactionmode=1 \showbox 3\showlists\fi
     \penalty10000
     \unvbox3
   \else
@@ -684,27 +684,52 @@
 %
 % remove inside level of boxing and adding inter note space after each
 %     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
+\def\disc@rds#1{%
+  %\showlists
+  \@LOOP\tmpcount=\lastnodetype\tempfalse\trace{fp}{#1:LNT:\the\tmpcount}\advance\tmpcount by -10 \ifnum\tmpcount>0 \ifcase\tmpcount % 10= math
+      \or\disc@rdskip\unskip\temptrue  %11=glue
+      \or\disc@rdkern% 12=kern
+      \or\unpenalty\temptrue %13=penalty
+    \fi\fi
+    \iftemp\@REPEAT}
+\let\disc@rdskip\empty
+\let\disc@rdkern\empty
 \def\removehboxes{%
-  \unskip\setbox0=\lastbox\unskip
+  \disc@rds{rhb}%
+  \setbox0=\lastbox\disc@rds{Rhb}%
   \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
 %
 % Rather than make a single hbox, make
+\def\disc@rdskip@mvbohb{\dimen1=\lastskip\advance\dimen3 by \dimen1}%
+\def\disc@rdkern@mvbohb{\dimen0=\lastkern\unkern\temptrue}%
 \def\makevboxofhboxes{%
   \setbox3=\vbox{}%
   \setbox1=\hbox{}%
+  \dimen3=0pt
   \loop\tmpcount=\lastnodetype 
-    \ifnum\tmpcount=11 \dimen3=\lastskip\advance\dimen3 by \dimen1 \else\dimen3=\dimen1\fi\unskip
-    \dimen0=\lastkern\unkern\unpenalty\setbox2=\lastbox\dimen1=\lastskip\unskip 
-    \trace{f}{LNT:\the\tmpcount. Skip(s) of \the\dimen3, a kern of \the\dimen0, before curent box:\the\dimen1}%
+    \dimen0=0pt
+    \let\disc@rdskip\disc@rdskip@mvbohb
+    \let\disc@rdkern\disc@rdkern@mvbohb
+    \disc@rds{mvb}%
+    %\showboxdepth=4 \showlists
+    \let\disc@rdskip\empty
+    \let\disc@rdkern\empty
+    %\ifnum\tmpcount=11 \dimen1=\lastskip\advance\dimen3 by \dimen1 \fi\unskip
+    %\dimen0=\lastkern\unkern\unpenalty
+    \setbox2=\lastbox\dimen1=\lastskip\unskip 
+    \trace{fp}{Between boxes: skip(s) of \the\dimen3, kern of \the\dimen0, before curent box:\the\dimen1}%
+    \dimen3=\dimen1
     \ifdim\dimen0=1sp % Special value
-      %%%TODO: Get dimen4 properly - fp indent.
-      \dimen4=10pt
+      \getp@ram{firstindent}{fp}{fp}%
+      \dimen4=5pt
+      \ifx\p@ram\relax\else\dimen4=\p@ram \IndentUnit \fi
+      \trace{f}{firstlineindent is \the\dimen4, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
       \setbox3=\vbox{\hbox{}%The empty hbox forces a baselineskip
         \penalty\interfootnotelinepenalty
-        \leavevmode\kern\dimen4\unhbox1{\removehboxes}\endgraf\showlists\unvbox3}%
+        \noindent\leavevmode\hbox{}\kern\dimen4\unhbox1{\removehboxes}\endgraf\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\unvbox3}%
     \fi
     \ifhbox2\setbox1=\hbox{\box2\unhbox1}\repeat
-  \ifhbox1\setbox3=\vbox{\noindent\leavevmode\unhbox1{\removehboxes}\endgraf\unvbox3}\fi%
+  \ifhbox1\setbox3=\vbox{\noindent\leavevmode\unhbox1{\removehboxes}\endgraf\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\unvbox3}\fi%
 } 
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
