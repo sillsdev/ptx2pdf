@@ -299,7 +299,8 @@
     \ifp@ranotes
       \ifdim \dimen0>0pt \kern-\dimen0\fi
       \ifvoid\csname endn@te-#1\endcsname\else
-        \maken@tepara{\csname endn@te-#1\endcsname}{#1}%
+        \setbox0=\vbox{\maken@tepara{\csname endn@te-#1\endcsname}{#1}}%
+        \unvbox0
       \fi
     \else 
       \s@tbaseline{#1}{#1}%
@@ -514,7 +515,7 @@
 \f@rstnotetrue
 \def\footnoterule{\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\n@tewidth}{%
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
-  \FootNoteRuleRightIndent}}
+  \FootNoteRuleRightIndent}\hrule height 0pt depth 0pt width 0pt}% 
 
 \def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt \vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 % what's this for? \kern -\dimen1
