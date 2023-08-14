@@ -880,9 +880,22 @@
 % Patch in special handling for \c and \v.
 %+csty_defv
 \newif\ifhangingverse
+\newif\ifnoparstartmvm \noparstartmvmtrue
 
 \newif\ifkeepmarginversemarker
 \def\marginversemarker{}
+\def\outputmvmkr{%Output a marker at the spot where a marginal verse comes from
+  \let\tmp\marginversemarker
+  \ifnoparstartmvm
+    \ifx\prev@rsemode\empty\else % prev@rsemode is empty mid-paragraph
+      \let\tmp\empty
+    \fi
+  \fi
+  \ifx\tmp\empty\else
+    \cstyle{zmvm}{\marginversemarker}%
+  \fi
+}
+
 \catcode`-=11
 \def\setPrintVerse #1 #2.{\gdef\print@bleverse{#1-#2}}
 \def\noPrintVerse{\global\c@ncelfirstversetrue\global\keepmarginversemarkertrue}
@@ -911,7 +924,7 @@
   \spl@tprintableverse
   \pdfv@rsemark % make book.chapter:verse mark (plural if this is a range)
   %\ if not cancelling first verse, output verse number
-  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\ifkeepmarginversemarker\cstyle{zmvm}{\marginversemarker}\global\keepmarginversemarkerfalse\fi\else
+  \ifc@ncelfirstverse\trace{V}{Cancelling \ch@pter:\v@rse}\ifkeepmarginversemarker\outputmvmkr\global\keepmarginversemarkerfalse\fi\else
    \ifrotateVerse
     \setbox0=\hbox{\printverse}\dimen0=\wd0%
     \dimen1=\ht0\dimen2=0.5\dimen0\advance\dimen2 -0.5\ht0%
