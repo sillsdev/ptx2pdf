@@ -6,7 +6,7 @@ _______________________________________________________________
 
 Bug fixes and Improvements in 2.3.35 (17 Aug 2023)
 
-  * Try to eliminate SegFault due to issue with progress reporting
+  * Try to eliminate SegFault due to issue with progress reporting (#888)
   
   * Fix faulty Hebrew digit mapping
   
@@ -19,6 +19,8 @@ Bug fixes and Improvements in 2.3.35 (17 Aug 2023)
   * Restore previous footnote behaviour by default
   
   * Optionally only let margin verse markers print when not paragraph-initial (#886)
+  
+  * Improve error message when USFM file hits a Syntax Error (#889)
   
 Bug fixes and Improvements in 2.3.34 (4 Aug 2023)
 

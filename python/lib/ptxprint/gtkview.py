@@ -1366,7 +1366,12 @@ class GtkViewModel(ViewModel):
         try:
             self.callback(self)
         except Exception as e:
-            s = traceback.format_exc()
+            if "SyntaxError" in str(type(e)):
+            # if "SyntaxError" in type(e):
+                s = _("Failed due to an error in the USFM file.") + "\n" + \
+                    _("Run the Basic Checks in Paratext and try again.") + "\n"
+            else:
+                s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
             self.doError(s, copy2clip=True)
             unlockme()
