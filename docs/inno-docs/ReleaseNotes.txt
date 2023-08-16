@@ -1,9 +1,25 @@
 PTXprint 2.3.34 Release Notes
-4 Aug 2023
+17 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.35 (17 Aug 2023)
+
+  * Try to eliminate SegFault due to issue with progress reporting
+  
+  * Fix faulty Hebrew digit mapping
+  
+  * Make barcode errors print a warning rather than fail silently
+  
+  * Support barcode price information
+  
+  * Paragraph breaks in paragraphed text now functioning as expected
+  
+  * Restore previous footnote behaviour by default
+  
+  * Optionally only let margin verse markers print when not paragraph-initial (#886)
+  
 Bug fixes and Improvements in 2.3.34 (4 Aug 2023)
 
   * Ensure marginal verse hyphens also appear with consecutive verses
