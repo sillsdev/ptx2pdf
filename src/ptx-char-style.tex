@@ -297,9 +297,8 @@
    \trace{s}{endch@rstyle \oldch@rstyle\space from \newch@rstyle}%
    \tempfalse
    \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-   \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
-   \ifx\@ttriblist\empty\else
-     \trace{A}{\@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
+   \ifx\@ttributes\empty\else
+     \trace{A}{@ttributes not empty. \@ttributes (\csname @ttriblist-\oldch@rstyle\endcsname)}%
      \parse@ttribs{\@ttributes}%
    \fi
    \global\let\h@@kstyst@k\styst@k
@@ -317,7 +316,7 @@
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-     \ifx\@ttriblist\empty\trace{s}{No attributes}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
+     \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\ulp@ram\p@ram
      \else
@@ -341,7 +340,7 @@
          \message{Double underline  for \newch@rstyle}%
        \fi\fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
-       \ifx\@ttributes\empty\else% If there are attributes, call an appropriate hook	
+       \ifx\@ttributes\empty\else% If there are actually attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
          \trace{A}{Special atributes done. trying complex-\oldch@rstyle}%

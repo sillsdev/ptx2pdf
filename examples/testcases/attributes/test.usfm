@@ -54,7 +54,7 @@ dignissimos ducimus\w qui|a\w*blanditiis praesentium voluptatum deleniti atque c
 \p
 \v 5 \qt-s|foo\*Unknown attribution\qt-e\* libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.
 \p 
-\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to page \zpage|Spirit\*.
+\v 5b Now here is a \w jump|link-href="#pgtop1"\w*, as is \w this|link-href="TST 1:3"\w*, but this isn't. This is \w jump|link-href="#Spirit"\w* to Spirit on page \zpage|Spirit\*.
 \p
 \zmine-s\* 
 \s T A test of a custom milestone
@@ -83,7 +83,7 @@ enter the second time into his mother's womb, and be born?
 \p  Verily, verily, I say unto thee, Except a man be born of
 water and of the Spirit, he cannot enter into the kingdom of God.
 \v  6 That which is born of the flesh is flesh; and that which is born of the
-Spirit is \jmp |link-id="Spirit"\jmp*spirit.
+Spirit is \jmp spirit|link-id="Spirit"\jmp*.
 \v  7 Marvel not that I said unto thee, Ye must be born again.
 \v  8 The wind bloweth where it listeth, and thou hearest the sound thereof, but
 canst not tell whence it cometh, and whither it goeth: so is every one that is
@@ -134,7 +134,7 @@ What about nested attributed words? \w \+pn like this word|type="underline"\+pn*
 \p_90
 \v 6 This verse has \zfwide wide text\zfwide* (fixed) and is set narrow from a p_90
 
-\p The so-called '\zwide cascade\zwide*' wide character style uses +[extend=1.7], allowing it to inherit features set by the paragraph. For extend, this means that a scaling (multiplication) occurs.
+\p The so-called '\zwide cascade|link-id="cascade" outline-entry="Description of cascade" outline-level="2" \zwide*' wide character style uses +[extend=1.7], allowing it to inherit features set by the paragraph. For extend, this means that a scaling (multiplication) occurs.
 \p The so-called '\zfwide fixed\zfwide*' wide character style uses
 =[extend=1.7]  in the style sheet (processed similarly to :extend=1.7 output by
 the UI), which ignores any features (such as extend) that might have been
@@ -145,12 +145,12 @@ The paragraph adjusting rule (^90) always applies, otherwise it might become
 impossible to adjust some
 paragraphs.
 
-ISBN10:
-
+\jmp ISBN10:| link-id="ISBNs" outline-entry="10 Digit ISBN" outline-level="2"\jmp*
 \zISBNbarcode|isbn="0-201-541991" \*
 And a test:
 \zISBNbarcode|isbn="0-201-54199" \*
 
-\zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499"\*
+\p
+\w | link-id="ISBNprice" outline-entry="ISBN with pricing" outline-level="1"\w* \zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499"\* 
 \pb
 \zfillsignature|pages="8" pagenos="do"\*
