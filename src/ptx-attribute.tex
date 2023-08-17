@@ -157,9 +157,20 @@
 \x@\let\csname https:schema\endcsname\pdfURL
 \x@\let\csname prj:schema\endcsname\pdfPRJ
 
-\def\PDFposfromattr{\ifActions\raise\the\baselineskip\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos null]}}\fi}
+\def\PDFposfromattr{\ifActions\raise\the\baselineskip\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
 \SetSpeciallAttribs{link-id}{\PDFposfromattr\noexpand\makelabelfromattr}{}
-\SetSpeciallAttribs{link-href}{\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end}{\special{pdf:eann}}
+\SetSpeciallAttribs{link-href}{\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi}{\ifx\attr@b\empty\else\special{pdf:eann}\fi}
+\SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
+
+\def\m@keoutlinefromattr#1{\get@ttribute{link-id}\ifx\attr@b\relax
+    \message{Unable to make outline entry for #1, no link-id field specified}
+  \else
+    \PDFposfromattr
+    \let\tmpattrb\attr@b
+    \get@ttribute{outline-level}\ifx\attr@b\relax \def\attr@b{2}\fi% Outline level:0:book, 1:chapter
+    \special{pdf:outline \attr@b\space << /Title (#1) /A << /S /GoTo /D (\tmpattrb) >> >>}%
+  \fi
+}
 %%%%%%%%%
 %
 \def\def@endm@rker#1+#2+#3\E{\edef\end@marker{\if #1\ss@ChrP +\fi#2}}
