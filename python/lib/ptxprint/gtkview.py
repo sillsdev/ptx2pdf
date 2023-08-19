@@ -111,6 +111,13 @@ _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali"
     "Osmanya", "Pahawh-Hmong", "Rumi", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
     "Tai-Tham-Tham", "Takri", "Tamil", "Telugu", "Thai", "Tibetan", "Tirhuta", "Vai", "Wancho", "Warang-Citi", "Western-Cham"]
 
+_progress = {
+    'gp' : _("Gathering pics..."),
+    'lo' : _("Laying out..."),
+    'xp' : _("Making PDF..."),
+    'fn' : _("Finishing..."),
+    'pr' : _("Processing...")
+}
 _ui_minimal = """
 bx_statusBar fcb_uiLevel t_find
 fcb_filterXrefs fcb_interfaceLang c_quickRun
@@ -3897,21 +3904,10 @@ class GtkViewModel(ViewModel):
                 Gtk.main_iteration_do(False)
         GLib.idle_add(self._incrementProgress)
         currMsg = self.builder.get_object("t_find").get_placeholder_text()
-        if stage == 'gp': # Ask MH: Why does this one NEVER show up?
-            msg = _("Gathering pics...")
-        elif stage == 'lo':
-            if run > 0:
-                msg = _(f"Redoing layout {run}...")
-            else:
-                msg = _("Laying out...")
-        elif stage == 'xp':
-            msg = _("Making PDF...")
-        elif stage == 'fn':
-            msg = _("Finishing...")
-        else: # assume 'pr'
-            msg = _("Processing...")
-        self.builder.get_object("t_find").set_placeholder_text(msg)
-        # print(f'==> {msg}')
+        msg = _progress[stage]
+        if stage == 'lo' and run > 0:
+            msg = _(f"Redoing layout {run}...")
+        GLib.idle_add(lambda: self.builder.get_object("t_find").set_placeholder_text(msg))
 
     def onIdle(self, fn, *args):
         GLib.idle_add(fn, *args)
