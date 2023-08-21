@@ -1,9 +1,17 @@
 PTXprint 2.3.35 Release Notes
-17 Aug 2023
+21 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.36 (21 Aug 2023)
+
+  * Implement outline-entry attribute (#597) for jump links in PDF
+    \jmp John the Baptist|link-id="article-john_the_baptist" 
+         outline-entry="John the Baptist" outline-level="2"\jmp*
+  
+  * Allow modification of book end rule (#892)
+  
 Bug fixes and Improvements in 2.3.35 (17 Aug 2023)
 
   * Try to eliminate SegFault due to issue with progress reporting (#888)
