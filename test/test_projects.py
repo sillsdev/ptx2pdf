@@ -47,7 +47,7 @@ if sys.platform == "win32":
             pt_bindir = queryvalue(ptob, 'Program_Files_Directory_Ptw'+version)
         pt_settings = queryvalue(ptob, 'Settings_Directory')
     
-    pt_bindir = pt_bindir + ("\\" if pt_bindir[-1] != "\\" else "") + "xetex\\bin\\"
+    pt_bindir = pt_bindir + ("\\" if pt_bindir[-1] != "\\" else "") + "xetex\\bin\\windows\\"
     
 else:
     pt_bindir = ""

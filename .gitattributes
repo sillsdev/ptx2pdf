@@ -35,3 +35,4 @@
 *.ods    binary
 *.tfm    binary
 python/scripts/ptxprint text ident
+ls-R     text
