@@ -520,6 +520,18 @@
   \fi
 }
 
+\x@\def\csname MS:zsetref\endcsname{%
+  \get@ttribute{book}\ifx\attr@b\relax\else
+    \global\let\id@@@\attr@b
+  \fi
+  \get@ttribute{chapter}\ifx\attr@b\relax\else
+    \global\let\ch@pter\attr@b
+  \fi
+  \get@ttribute{verse}\ifx\attr@b\relax\else
+    \global\let\v@rse\attr@b
+  \fi
+}
+
 \x@\def\csname MS:zcustombotmark\endcsname{%
   \getcustomm@rknum
   \botmarks\custommarknum
