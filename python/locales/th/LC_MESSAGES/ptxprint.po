@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-26 11:23+0100\n"
-"PO-Revision-Date: 2023-07-26 10:24\n"
+"POT-Creation-Date: 2023-08-23 14:51+0100\n"
+"PO-Revision-Date: 2023-08-23 13:52\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -42,7 +42,7 @@ msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:47 lib/ptxprint/gtkstyleditor.py:63
 msgid "Introduction"
-msgstr ""
+msgstr "แนะนำ"
 
 #: lib/ptxprint/gtkstyleditor.py:47 lib/ptxprint/gtkstyleditor.py:64
 #: lib/ptxprint/gtkstyleditor.py:65 lib/ptxprint/gtkstyleditor.py:66
@@ -56,7 +56,7 @@ msgstr ""
 #: lib/ptxprint/gtkstyleditor.py:47 lib/ptxprint/gtkstyleditor.py:68
 #: lib/ptxprint/gtkstyleditor.py:69
 msgid "Poetry"
-msgstr ""
+msgstr "กวีนิพนธ์, บทประพันธ์"
 
 #: lib/ptxprint/gtkstyleditor.py:48 lib/ptxprint/gtkstyleditor.py:70
 #: lib/ptxprint/gtkstyleditor.py:71 lib/ptxprint/gtkstyleditor.py:72
@@ -78,7 +78,7 @@ msgstr ""
 #: lib/ptxprint/gtkstyleditor.py:81 lib/ptxprint/gtkstyleditor.py:82
 #: lib/ptxprint/gtkstyleditor.py:83 temp.glade:9159
 msgid "Footnotes"
-msgstr ""
+msgstr "เชิงอรรถ"
 
 #: lib/ptxprint/gtkstyleditor.py:48
 msgid "Cross References"
@@ -156,7 +156,7 @@ msgid "Font Scale:"
 msgstr ""
 
 #: lib/ptxprint/gtkstyleditor.py:198 lib/ptxprint/gtkstyleditor.py:507
-#: lib/ptxprint/gtkview.py:3090 temp.glade:19853 temp.glade:27167
+#: lib/ptxprint/gtkview.py:3102 temp.glade:19853 temp.glade:27167
 #: temp.glade:27748
 msgid "Color:"
 msgstr ""
@@ -177,63 +177,83 @@ msgstr ""
 msgid "Set Font..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:456
+#: lib/ptxprint/gtkview.py:115
+msgid "Gathering pics..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:116
+msgid "Laying out..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:117
+msgid "Making PDF..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:118
+msgid "Finishing..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:119 lib/ptxprint/gtkview.py:1372
+msgid "Processing..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:463
 msgid "\n"
 "PTXprint Version {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:464
+#: lib/ptxprint/gtkview.py:471
 #, python-brace-format
 msgid "Mailto: <{who2email}>"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:470 lib/ptxprint/gtkview.py:475
+#: lib/ptxprint/gtkview.py:477 lib/ptxprint/gtkview.py:482
 msgid "This message has been copied to the clipboard."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:472
+#: lib/ptxprint/gtkview.py:479
 msgid "The letter above has been copied to the clipboard."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:473
+#: lib/ptxprint/gtkview.py:480
 msgid "Send it by e-mail to: {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:492
+#: lib/ptxprint/gtkview.py:499
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory where your USFM projects\n"
 "are (or will be) stored. Or click cancel to exit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:836
+#: lib/ptxprint/gtkview.py:843
 msgid "No project set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:969
+#: lib/ptxprint/gtkview.py:976
 msgid "No matches found - try another search term"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1188
+#: lib/ptxprint/gtkview.py:1195
 msgid "Can't set {} in the model"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1309
 msgid "Font(s) not set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1316
+#: lib/ptxprint/gtkview.py:1323
 msgid "Printing busy"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1320 lib/ptxprint/runjob.py:355
+#: lib/ptxprint/gtkview.py:1327 lib/ptxprint/runjob.py:355
 msgid "No books to print"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1323
+#: lib/ptxprint/gtkview.py:1330
 msgid "One of more fonts have not been set yet"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1348
+#: lib/ptxprint/gtkview.py:1355
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -242,431 +262,440 @@ msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "                        Do you want to try again?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1353
+#: lib/ptxprint/gtkview.py:1360
 msgid "The old PDF file is open!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1356
+#: lib/ptxprint/gtkview.py:1363
 msgid "Close the old PDF file before you try again."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1365
-msgid "Processing..."
+#: lib/ptxprint/gtkview.py:1378
+msgid "Failed due to an error in the USFM file."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1380
+#: lib/ptxprint/gtkview.py:1379
+msgid "Run the Basic Checks in Paratext and try again."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:1392
 msgid "Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1387
+#: lib/ptxprint/gtkview.py:1399
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1411
 msgid "Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({})."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1511
 msgid "Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1510
+#: lib/ptxprint/gtkview.py:1522
 msgid "But the 'Default' folder could not be erased completely:"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1517
+#: lib/ptxprint/gtkview.py:1529
 msgid "The 'Default' config settings have been reset."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1521
+#: lib/ptxprint/gtkview.py:1533
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1521 lib/ptxprint/gtkview.py:1526
-#: lib/ptxprint/gtkview.py:1529 lib/ptxprint/gtkview.py:1535
+#: lib/ptxprint/gtkview.py:1533 lib/ptxprint/gtkview.py:1538
+#: lib/ptxprint/gtkview.py:1541 lib/ptxprint/gtkview.py:1547
 msgid "Folder: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1526 lib/ptxprint/gtkview.py:1535
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:1538 lib/ptxprint/gtkview.py:1547
+#: lib/ptxprint/gtkview.py:4297
 msgid "Cannot delete folder from disk!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1529
+#: lib/ptxprint/gtkview.py:1541
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1641 lib/ptxprint/gtkview.py:3658
-#: lib/ptxprint/gtkview.py:3674 lib/ptxprint/runjob.py:415 temp.glade:24503
+#: lib/ptxprint/gtkview.py:1653 lib/ptxprint/gtkview.py:3670
+#: lib/ptxprint/gtkview.py:3686 lib/ptxprint/runjob.py:415 temp.glade:24503
 msgid "Previous PDF (_1)"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Fonts"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Scripts"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1651 temp.glade:22920
+#: lib/ptxprint/gtkview.py:1663 temp.glade:22920
 msgid "Peripherals"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1654 temp.glade:16094 temp.glade:32237
+#: lib/ptxprint/gtkview.py:1666 temp.glade:16094 temp.glade:32237
 msgid "Pictures"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1657 temp.glade:16722
+#: lib/ptxprint/gtkview.py:1669 temp.glade:16722
 msgid "Diglot"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1660 temp.glade:25098
+#: lib/ptxprint/gtkview.py:1672 temp.glade:25098
 msgid "Finishing"
-msgstr ""
+msgstr "จบ"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Notes+"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Refs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1664 temp.glade:10844
+#: lib/ptxprint/gtkview.py:1676 temp.glade:10844
 msgid "Cross-References"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1667 temp.glade:24127
+#: lib/ptxprint/gtkview.py:1679 temp.glade:24127
 msgid "Cover"
-msgstr ""
+msgstr "คลุม"
 
-#: lib/ptxprint/gtkview.py:1671 lib/ptxprint/gtkview.py:1672
+#: lib/ptxprint/gtkview.py:1683 lib/ptxprint/gtkview.py:1684
 msgid "Tabs"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1673 lib/ptxprint/gtkview.py:1674
+#: lib/ptxprint/gtkview.py:1685 lib/ptxprint/gtkview.py:1686
 msgid "Borders"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1685 temp.glade:21410
+#: lib/ptxprint/gtkview.py:1697 temp.glade:21410
 msgid "Advanced"
-msgstr ""
+msgstr "ก้าวหน้า"
 
-#: lib/ptxprint/gtkview.py:1820
+#: lib/ptxprint/gtkview.py:1832
 msgid "Use One Column\n"
 "Layout for These Books:"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1834
 msgid "Use Two Column\n"
 "Layout for These Books:"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1981
+#: lib/ptxprint/gtkview.py:1993
 msgid "The Book in focus is not within scope"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:1982
+#: lib/ptxprint/gtkview.py:1994
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "No Secondary Project Set"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2023
+#: lib/ptxprint/gtkview.py:2035
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2036
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2139
+#: lib/ptxprint/gtkview.py:2151
 msgid "\\rem Click the Generate button (above) to start the process of creating Front Matter..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2178 lib/ptxprint/gtkview.py:2184
+#: lib/ptxprint/gtkview.py:2190 lib/ptxprint/gtkview.py:2196
 msgid "View Only..."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2190
+#: lib/ptxprint/gtkview.py:2202
 msgid "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2223
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
 "Click on View/Edit... button to see more."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2219
+#: lib/ptxprint/gtkview.py:2231
 msgid "This file doesn't exist yet.\n\n"
 "Try clicking...                      \n"
 "   * the 'Generate' button                      \n"
 "   * the 'Print' button to create the PDF first"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:2943
+#: lib/ptxprint/gtkview.py:2955
 msgid "File not found"
-msgstr ""
+msgstr "ไม่พบแฟ้ม"
 
-#: lib/ptxprint/gtkview.py:3093
+#: lib/ptxprint/gtkview.py:3105
 msgid "'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3311
+#: lib/ptxprint/gtkview.py:3323
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Save changes?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Do you wish to save the changes you made?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3328
+#: lib/ptxprint/gtkview.py:3340
 msgid "File: "
-msgstr ""
+msgstr "แฟ้ม: "
 
-#: lib/ptxprint/gtkview.py:3375
+#: lib/ptxprint/gtkview.py:3387
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3383
+#: lib/ptxprint/gtkview.py:3395
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3454
+#: lib/ptxprint/gtkview.py:3466
 msgid "Select the location and name for the Archive file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3494
+#: lib/ptxprint/gtkview.py:3506
 msgid "Select the folder containing image files"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3584
+#: lib/ptxprint/gtkview.py:3596
 msgid "Imported Settings!"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3591
+#: lib/ptxprint/gtkview.py:3603
 msgid "Select a PDF (or ZIP archive) to import the settings from"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3605
+#: lib/ptxprint/gtkview.py:3617
 msgid "PDF/ZIP Import Config Error"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3606
+#: lib/ptxprint/gtkview.py:3618
 msgid "Cannot find any settings to import from the selected file.\n\n"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3607
+#: lib/ptxprint/gtkview.py:3619
 msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3608
+#: lib/ptxprint/gtkview.py:3620
 msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3619
+#: lib/ptxprint/gtkview.py:3631
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3624
+#: lib/ptxprint/gtkview.py:3636
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3629
+#: lib/ptxprint/gtkview.py:3641
 msgid "Select Watermark PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3634
+#: lib/ptxprint/gtkview.py:3646
 msgid "Select Page Border PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3639
+#: lib/ptxprint/gtkview.py:3651
 msgid "Select Section Header PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3644
+#: lib/ptxprint/gtkview.py:3656
 msgid "Select End of Book PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3649
+#: lib/ptxprint/gtkview.py:3661
 msgid "Select Verse Decorator PDF file"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3654
+#: lib/ptxprint/gtkview.py:3666
 msgid "Select a PDF file to compare with"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3775
+#: lib/ptxprint/gtkview.py:3787
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3777 temp.glade:26257
+#: lib/ptxprint/gtkview.py:3789 temp.glade:26257
 msgid "Print (Make PDF)"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3783
+#: lib/ptxprint/gtkview.py:3795
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3785
+#: lib/ptxprint/gtkview.py:3797
 msgid "Return to Primary"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3851
+#: lib/ptxprint/gtkview.py:3863
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:3852
+#: lib/ptxprint/gtkview.py:3864
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:3909
+#, python-brace-format
+msgid "Redoing layout {run}..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4118
 msgid "USFM syntax error"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:4118
 msgid "Syntax error: {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4134 lib/ptxprint/gtkview.py:4975
-#: lib/ptxprint/gtkview.py:4990
+#: lib/ptxprint/gtkview.py:4151 lib/ptxprint/gtkview.py:4992
+#: lib/ptxprint/gtkview.py:5007
 msgid "Choose Image"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:4297
 msgid "Image Set: "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4371
+#: lib/ptxprint/gtkview.py:4388
 msgid "Unsupported Locale"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4372
+#: lib/ptxprint/gtkview.py:4389
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4552
+#: lib/ptxprint/gtkview.py:4569
 msgid "Strong's Index generated in: {}"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4598
+#: lib/ptxprint/gtkview.py:4615
 msgid " \\periphs in Front Matter"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Overwrite"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Create"
-msgstr ""
+msgstr "สร้าง"
 
-#: lib/ptxprint/gtkview.py:4690 lib/ptxprint/gtkview.py:5217
+#: lib/ptxprint/gtkview.py:4707 lib/ptxprint/gtkview.py:5234
 msgid "Please fill in any missing <Values> on"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4691 lib/ptxprint/gtkview.py:5218
+#: lib/ptxprint/gtkview.py:4708 lib/ptxprint/gtkview.py:5235
 msgid "the Peripherals tab before proceeding."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4692
+#: lib/ptxprint/gtkview.py:4709
 msgid "Update the ISBN number or deleted the entry."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4745
+#: lib/ptxprint/gtkview.py:4762
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4777
+#: lib/ptxprint/gtkview.py:4794
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "Internet Access Disabled"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4826
+#: lib/ptxprint/gtkview.py:4843
 msgid "<Type Value Here>"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4843
+#: lib/ptxprint/gtkview.py:4860
 msgid "Variable Name"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:4903
+#: lib/ptxprint/gtkview.py:4920
 msgid "Category Name"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5005
+#: lib/ptxprint/gtkview.py:5022
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5102
+#: lib/ptxprint/gtkview.py:5119
 msgid "What did Mary say that God had done?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5105
+#: lib/ptxprint/gtkview.py:5122
 msgid "What does it means to bless someone?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5106
+#: lib/ptxprint/gtkview.py:5123
 msgid "What do you know about the high priest?"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5143 temp.glade:23895
+#: lib/ptxprint/gtkview.py:5160 temp.glade:23895
 msgid "Main Title   -   Subtitle"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5145
+#: lib/ptxprint/gtkview.py:5162
 msgid "Main\n"
 "Title\n\n"
 "Subtitle"
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5202
+#: lib/ptxprint/gtkview.py:5219
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr ""
 
-#: lib/ptxprint/gtkview.py:5203
+#: lib/ptxprint/gtkview.py:5220
 msgid "No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again."
 msgstr ""
 
 #: lib/ptxprint/picselect.py:124 temp.glade:1836 temp.glade:2071
 #: temp.glade:2097 temp.glade:15311
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่รู้จัก"
 
 #: lib/ptxprint/runjob.py:30 lib/ptxprint/runjob.py:57
 msgid "Probably a TeX macro problem - contact support, or post a bug report"
@@ -847,43 +876,43 @@ msgstr ""
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:821
+#: lib/ptxprint/runjob.py:822
 msgid "table of contents"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:822
+#: lib/ptxprint/runjob.py:823
 msgid "image copyrights"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:823
+#: lib/ptxprint/runjob.py:824
 msgid "chapter positions"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:870
+#: lib/ptxprint/runjob.py:871
 msgid "Rerunning because the {} changed"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:879
+#: lib/ptxprint/runjob.py:880
 msgid "Rerunning because the delayed file asked us to"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:966
+#: lib/ptxprint/runjob.py:968
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:1015
+#: lib/ptxprint/runjob.py:1018
 msgid "({} Missing)"
-msgstr ""
+msgstr "({} หายไป)"
 
-#: lib/ptxprint/runjob.py:1016
+#: lib/ptxprint/runjob.py:1019
 msgid "Missing Pictures: {}"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:1018 temp.glade:14018
+#: lib/ptxprint/runjob.py:1021 temp.glade:14018
 msgid "(0 Missing)"
 msgstr ""
 
-#: lib/ptxprint/runjob.py:1144
+#: lib/ptxprint/runjob.py:1147
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr ""
@@ -920,7 +949,7 @@ msgstr ""
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr ""
 
-#: lib/ptxprint/texmodel.py:1478
+#: lib/ptxprint/texmodel.py:1479
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr ""
 
@@ -1134,21 +1163,21 @@ msgstr ""
 
 #: lib/ptxprint/utils.py:394 temp.glade:12214 temp.glade:12267 temp.glade:12320
 msgid "First Reference"
-msgstr ""
+msgstr "อ้างอิงแรก"
 
 #: lib/ptxprint/utils.py:395 temp.glade:12215 temp.glade:12268 temp.glade:12321
 msgid "Last Reference"
-msgstr ""
+msgstr "อ้างอิงล่าสุด"
 
 #: lib/ptxprint/utils.py:396 temp.glade:12216 temp.glade:12269 temp.glade:12322
 #: temp.glade:12946
 msgid "Reference Range"
-msgstr ""
+msgstr "ช่วงค่าอ้างอิง"
 
 #: lib/ptxprint/utils.py:397 temp.glade:12213 temp.glade:12266 temp.glade:12319
 #: temp.glade:12945
 msgid "Page Number"
-msgstr ""
+msgstr "หมายเลขหน้า"
 
 #: lib/ptxprint/utils.py:398 temp.glade:12217 temp.glade:12270 temp.glade:12323
 msgid "Book (\\h)"
@@ -1169,7 +1198,7 @@ msgstr ""
 #: lib/ptxprint/utils.py:402 temp.glade:12212 temp.glade:12265 temp.glade:12318
 #: temp.glade:12944
 msgid "-empty-"
-msgstr ""
+msgstr "-ว่าง-"
 
 #: lib/ptxprint/view.py:307
 msgid "FRT must not be included in the list of books"
@@ -1315,7 +1344,7 @@ msgstr ""
 
 #: temp.glade:1156
 msgid "NONE"
-msgstr ""
+msgstr "ไม่มี"
 
 #: temp.glade:1169
 msgid "All"
@@ -1331,19 +1360,19 @@ msgstr ""
 
 #: temp.glade:1181
 msgid "Approved"
-msgstr ""
+msgstr "ได้รับอนุมัติ"
 
 #: temp.glade:1195 temp.glade:1443 temp.glade:1750 temp.glade:1862
 #: temp.glade:1936 temp.glade:2387 temp.glade:2461 temp.glade:2501
 #: temp.glade:2673 temp.glade:2885 temp.glade:27606
 msgid "Left"
-msgstr ""
+msgstr "ซ้าย"
 
 #: temp.glade:1199 temp.glade:1447 temp.glade:1754 temp.glade:1870
 #: temp.glade:1944 temp.glade:2395 temp.glade:2469 temp.glade:2505
 #: temp.glade:2685 temp.glade:2889 temp.glade:27535
 msgid "Right"
-msgstr ""
+msgstr "ขวา"
 
 #: temp.glade:1203 temp.glade:1451 temp.glade:1758 temp.glade:1874
 #: temp.glade:1948 temp.glade:2391 temp.glade:2465 temp.glade:2509
@@ -1367,7 +1396,7 @@ msgstr ""
 
 #: temp.glade:1237 temp.glade:1346 temp.glade:3649 temp.glade:31162
 msgid "Default"
-msgstr ""
+msgstr "ค่าเริ่มต้น"
 
 #: temp.glade:1248
 msgid "Han1"
@@ -1467,15 +1496,15 @@ msgstr ""
 
 #: temp.glade:1350
 msgid "Arabic-Hindi"
-msgstr ""
+msgstr "ภาษาอาหรับภาษาฮินดี"
 
 #: temp.glade:1354
 msgid "Arabic-Farsi"
-msgstr ""
+msgstr "อาหรับเปอร์เซีย"
 
 #: temp.glade:1358
 msgid "Burmese"
-msgstr ""
+msgstr "พม่า"
 
 #: temp.glade:1372
 msgid "Pri (Left)"
@@ -1503,17 +1532,17 @@ msgstr ""
 
 #: temp.glade:1425 temp.glade:32787
 msgid "New Testament"
-msgstr ""
+msgstr "พันธสัญญาใหม่"
 
 #: temp.glade:1429 temp.glade:32768
 msgid "Old Testament"
-msgstr ""
+msgstr "พันธสัญญาเดิม"
 
 #: temp.glade:1459 temp.glade:1866 temp.glade:1918 temp.glade:1940
 #: temp.glade:2517 temp.glade:2681 temp.glade:2761 temp.glade:2901
 #: temp.glade:12156
 msgid "Center"
-msgstr ""
+msgstr "ศูนย์"
 
 #: temp.glade:1460 temp.glade:2518 temp.glade:2902
 msgid "5"
@@ -1522,7 +1551,7 @@ msgstr ""
 #: temp.glade:1557 temp.glade:1720 temp.glade:1892 temp.glade:2123
 #: temp.glade:2563
 msgid "None"
-msgstr ""
+msgstr "ไม่มี"
 
 #: temp.glade:1561
 msgid "format as bold"
@@ -1676,7 +1705,7 @@ msgstr ""
 
 #: temp.glade:1970
 msgid "Never"
-msgstr ""
+msgstr "ไม่เคย"
 
 #: temp.glade:1974
 msgid "Odd"
@@ -1880,15 +1909,15 @@ msgstr ""
 
 #: temp.glade:2567
 msgid "English"
-msgstr ""
+msgstr "อังกฤษ"
 
 #: temp.glade:2571
 msgid "French"
-msgstr ""
+msgstr "ฝรั่งเศส"
 
 #: temp.glade:2575
 msgid "Indonesian"
-msgstr ""
+msgstr "อินโดนีเซีย"
 
 #: temp.glade:2579
 msgid "Portugese"
@@ -1896,7 +1925,7 @@ msgstr ""
 
 #: temp.glade:2583
 msgid "Spanish"
-msgstr ""
+msgstr "สเปน"
 
 #: temp.glade:2603
 msgid "Keep wildcard*"
@@ -2030,7 +2059,7 @@ msgstr ""
 
 #: temp.glade:3136
 msgid "Choose Books:"
-msgstr ""
+msgstr "เลือกหนังสือ:"
 
 #: temp.glade:3137
 msgid "Choose books selector"
@@ -2101,11 +2130,11 @@ msgstr ""
 
 #: temp.glade:3386
 msgid "To:"
-msgstr ""
+msgstr "ถึง:"
 
 #: temp.glade:3403 temp.glade:16371
 msgid "DBL"
-msgstr ""
+msgstr "ห้อง"
 
 #: temp.glade:3404 temp.glade:16372
 msgid "Diglot: Get text from Digital Bible Library (DBL)"
@@ -2235,7 +2264,7 @@ msgstr ""
 
 #: temp.glade:3756
 msgid "Copyright:"
-msgstr ""
+msgstr "ลิขสิทธิ์:"
 
 #: temp.glade:3767
 msgid "Copyright details"
@@ -2320,7 +2349,7 @@ msgstr ""
 
 #: temp.glade:3894
 msgid "Basic"
-msgstr ""
+msgstr "พื้นฐาน"
 
 #: temp.glade:3946
 msgid "Binding\n"
@@ -2363,7 +2392,7 @@ msgstr ""
 
 #: temp.glade:4059
 msgid "Page Size:"
-msgstr ""
+msgstr "หน้าขนาด:"
 
 #: temp.glade:4068
 msgid "Page size setting"
@@ -2371,11 +2400,11 @@ msgstr ""
 
 #: temp.glade:4078 temp.glade:24243
 msgid "210mm, 297mm (A4)"
-msgstr ""
+msgstr "210 มม. 297 มม. (A4)"
 
 #: temp.glade:4079
 msgid "148mm, 210mm (A5)"
-msgstr ""
+msgstr "มม. 210 มม. (A5)"
 
 #: temp.glade:4080
 msgid "105mm, 148mm (A6)"
@@ -2403,11 +2432,11 @@ msgstr ""
 
 #: temp.glade:4086 temp.glade:24246
 msgid "8.5in, 11in (Letter)"
-msgstr ""
+msgstr "ใน 8.5, 11 นิ้ว (ตัวอักษร)"
 
 #: temp.glade:4087
 msgid "5.5in, 8.5in (1/2 Letter)"
-msgstr ""
+msgstr "5.5 นิ้ว 8.5 นิ้ว (1/2 ตัวอักษร)"
 
 #: temp.glade:4088
 msgid "5.25in, 8.25in (133x210mm)"
@@ -2592,7 +2621,7 @@ msgstr ""
 
 #: temp.glade:4457
 msgid "Page Setup"
-msgstr ""
+msgstr "ตั้งค่าหน้ากระดาษ"
 
 #: temp.glade:4493
 msgid "Gutter width for two column layout"
@@ -2903,7 +2932,7 @@ msgstr ""
 
 #: temp.glade:5683
 msgid "Margins"
-msgstr ""
+msgstr "ระยะขอบ"
 
 #: temp.glade:5703
 msgid "Page Setup, Font Size and Line Spacing. \n"
@@ -2912,19 +2941,19 @@ msgstr ""
 
 #: temp.glade:5706 temp.glade:32285
 msgid "Layout"
-msgstr ""
+msgstr "เค้าโครง"
 
 #: temp.glade:5763
 msgid "Bold:"
-msgstr ""
+msgstr "หนา:"
 
 #: temp.glade:5775
 msgid "Italic:"
-msgstr ""
+msgstr "ตัวเอียง:"
 
 #: temp.glade:5787
 msgid "Bold Italic:"
-msgstr ""
+msgstr "ตัวเอียงตัวหนา:"
 
 #: temp.glade:5799
 msgid "Body Text\n"
@@ -3013,7 +3042,7 @@ msgstr ""
 
 #: temp.glade:5960
 msgid "Font Configuration"
-msgstr ""
+msgstr "กำหนดค่าแบบอักษร"
 
 #: temp.glade:5992
 msgid "Find Missing\n"
@@ -3100,7 +3129,7 @@ msgstr ""
 
 #: temp.glade:6158
 msgid "Create List"
-msgstr ""
+msgstr "สร้างรายการ"
 
 #: temp.glade:6159
 msgid "Create Hyphenation List"
@@ -3131,7 +3160,7 @@ msgstr ""
 
 #: temp.glade:6207
 msgid "Hyphenation"
-msgstr ""
+msgstr "ยัติภังค์"
 
 #: temp.glade:6251
 msgid "Between Words"
@@ -3603,7 +3632,7 @@ msgstr ""
 
 #: temp.glade:7197 temp.glade:17482
 msgid "Section Headings"
-msgstr ""
+msgstr "ส่วนหัว"
 
 #: temp.glade:7198
 msgid "Enable section headings"
@@ -4657,7 +4686,7 @@ msgstr ""
 #: temp.glade:24482 temp.glade:26764 temp.glade:29132 temp.glade:30491
 #: temp.glade:31926
 msgid "Select..."
-msgstr ""
+msgstr "เลือก..."
 
 #: temp.glade:9807
 msgid "Select a custom cross-reference list"
@@ -4665,7 +4694,7 @@ msgstr ""
 
 #: temp.glade:9828
 msgid "Standard"
-msgstr ""
+msgstr "มาตรฐาน"
 
 #: temp.glade:9829
 msgid "Source of cross-references: Standard list"
@@ -4750,7 +4779,7 @@ msgstr ""
 
 #: temp.glade:9963
 msgid "Custom"
-msgstr ""
+msgstr "ประเพณี"
 
 #: temp.glade:9964
 msgid "Source of cross-references: Custom .xrf list"
@@ -5215,7 +5244,7 @@ msgstr ""
 
 #: temp.glade:11855
 msgid "Category"
-msgstr ""
+msgstr "ประเภท"
 
 #: temp.glade:11873
 msgid "Extended Footnote (\\ef)"
@@ -5227,7 +5256,7 @@ msgstr ""
 
 #: temp.glade:11915 temp.glade:13420 temp.glade:18246 temp.glade:22591
 msgid "Add"
-msgstr ""
+msgstr "เพิ่ม"
 
 #: temp.glade:11916
 msgid "Add sidebar category to filter"
@@ -5383,7 +5412,7 @@ msgstr ""
 
 #: temp.glade:12545
 msgid "Chapter"
-msgstr ""
+msgstr "บท"
 
 #: temp.glade:12549
 msgid "By default, the chapter number will be included\n"
@@ -5431,7 +5460,7 @@ msgstr ""
 
 #: temp.glade:12660
 msgid "Book"
-msgstr ""
+msgstr "หนังสือ"
 
 #: temp.glade:12664
 msgid "By default, the book name will be included\n"
@@ -5624,11 +5653,11 @@ msgstr ""
 
 #: temp.glade:13276
 msgid "Description"
-msgstr ""
+msgstr "คำอธิบาย"
 
 #: temp.glade:13291
 msgid "Copyright"
-msgstr ""
+msgstr "ลิขสิทธิ์"
 
 #: temp.glade:13305
 msgid "Media"
@@ -6067,7 +6096,7 @@ msgstr ""
 
 #: temp.glade:14374
 msgid "Caption:"
-msgstr ""
+msgstr "คำอธิบาย:"
 
 #: temp.glade:14385
 msgid "By default, the caption will be followed by a Ch:Vs\n"
@@ -6298,7 +6327,7 @@ msgstr ""
 
 #: temp.glade:14883 temp.glade:26197 temp.glade:31339
 msgid "Print"
-msgstr ""
+msgstr "พิมพ์"
 
 #: temp.glade:14887
 msgid "Can be used in Print/PDF publications. "
@@ -6442,7 +6471,7 @@ msgstr ""
 
 #: temp.glade:15275 temp.glade:15543 temp.glade:15597
 msgid "Yes"
-msgstr ""
+msgstr "ใช่"
 
 #: temp.glade:15276
 msgid "Picture checklist: What is happening is clear"
@@ -6450,7 +6479,7 @@ msgstr ""
 
 #: temp.glade:15293 temp.glade:15561 temp.glade:15615
 msgid "No"
-msgstr ""
+msgstr "ไม่ใช่"
 
 #: temp.glade:15294
 msgid "Picture checklist: What is happening is NOT clear"
@@ -6640,7 +6669,7 @@ msgstr ""
 
 #: temp.glade:15711
 msgid "Date"
-msgstr ""
+msgstr "วัน"
 
 #: temp.glade:15721
 msgid "Picture checklist: Approved by initials"
@@ -6766,7 +6795,7 @@ msgstr ""
 
 #: temp.glade:16220 temp.glade:31883
 msgid "(None)"
-msgstr ""
+msgstr "(ไม่มี)"
 
 #: temp.glade:16232
 msgid "Diglot: Secondary project name"
@@ -7388,7 +7417,7 @@ msgstr ""
 
 #: temp.glade:18057
 msgid "Find:"
-msgstr ""
+msgstr "ค้นหา:"
 
 #: temp.glade:18067
 msgid "Find style"
@@ -7417,7 +7446,7 @@ msgstr ""
 
 #: temp.glade:18291
 msgid "Edit"
-msgstr ""
+msgstr "แก้ไข"
 
 #: temp.glade:18295
 msgid "Click to Edit additional  \n"
@@ -7448,7 +7477,7 @@ msgstr ""
 
 #: temp.glade:18419
 msgid "Bold"
-msgstr ""
+msgstr "ตัวหนา"
 
 #: temp.glade:18420
 msgid "Styles: Bold"
@@ -7456,7 +7485,7 @@ msgstr ""
 
 #: temp.glade:18435
 msgid "Italic"
-msgstr ""
+msgstr "ตัวเอียง"
 
 #: temp.glade:18436
 msgid "Styles: Italic"
@@ -7507,7 +7536,7 @@ msgstr ""
 
 #: temp.glade:18543
 msgid "Font:"
-msgstr ""
+msgstr "ตัวอักษร:"
 
 #: temp.glade:18587
 msgid "This a factor or proportion of the base font size.\n"
@@ -7896,7 +7925,7 @@ msgstr ""
 
 #: temp.glade:19833
 msgid "Width:"
-msgstr ""
+msgstr "ความกว้าง:"
 
 #: temp.glade:19851
 msgid "Background shading color."
@@ -8007,7 +8036,7 @@ msgstr ""
 
 #: temp.glade:20188
 msgid "start"
-msgstr ""
+msgstr "เริ่มต้น"
 
 #: temp.glade:20192
 msgid "Execute processing script BEFORE running \n"
@@ -8018,7 +8047,7 @@ msgstr ""
 
 #: temp.glade:20210
 msgid "end"
-msgstr ""
+msgstr "สิ้นสุด"
 
 #: temp.glade:20214
 msgid "Execute processing script AFTER running \n"
@@ -8054,7 +8083,7 @@ msgstr ""
 #: temp.glade:20293 temp.glade:20317 temp.glade:20339 temp.glade:20409
 #: temp.glade:20431 temp.glade:20449 temp.glade:22363
 msgid "Edit..."
-msgstr ""
+msgstr "แก้ไข..."
 
 #: temp.glade:20294
 msgid "Edit changes files"
@@ -8429,7 +8458,7 @@ msgstr ""
 
 #: temp.glade:21195
 msgid "Plugins:"
-msgstr ""
+msgstr "ปลั๊กอิน:"
 
 #: temp.glade:21205
 msgid "List of plugins"
@@ -8652,7 +8681,7 @@ msgstr ""
 
 #: temp.glade:21748
 msgid "Front Matter"
-msgstr ""
+msgstr "หน้าเรื่อง"
 
 #: temp.glade:21773 temp.glade:25215
 msgid "To balance columns of text on a page it is possible\n"
@@ -8688,7 +8717,7 @@ msgstr ""
 
 #: temp.glade:21892 temp.glade:21918
 msgid "Settings"
-msgstr ""
+msgstr "จัดตั้งขึ้น"
 
 #: temp.glade:21979
 msgid "View and edit various control\n"
@@ -8866,7 +8895,7 @@ msgstr "ชื่อ"
 
 #: temp.glade:22542 temp.glade:34582
 msgid "Value"
-msgstr ""
+msgstr "ค่า"
 
 #: temp.glade:22573
 msgid "Delete a peripheral variable"
@@ -10036,7 +10065,7 @@ msgstr ""
 
 #: temp.glade:26036
 msgid "Check for updates..."
-msgstr ""
+msgstr "ตรวจสอบปรับปรุง..."
 
 #: temp.glade:26040
 msgid "A newer version of PTXprint is available.\n"
@@ -10228,7 +10257,7 @@ msgstr ""
 
 #: temp.glade:26589 temp.glade:31483 temp.glade:35029
 msgid "Description:"
-msgstr ""
+msgstr "คำอธิบาย:"
 
 #: temp.glade:26602
 msgid "Open.Bible site"
@@ -11057,7 +11086,7 @@ msgstr ""
 
 #: temp.glade:29686 temp.glade:29989
 msgid "Warning!"
-msgstr ""
+msgstr "คำเตือน!"
 
 #: temp.glade:29701 temp.glade:30004
 msgid "This operation can overwrite \n"
@@ -11191,7 +11220,7 @@ msgstr ""
 
 #: temp.glade:30262
 msgid "OR"
-msgstr ""
+msgstr "หรือ"
 
 #: temp.glade:30271
 msgid "Download Sample\n"
@@ -11472,7 +11501,7 @@ msgstr ""
 
 #: temp.glade:31258
 msgid "Filter"
-msgstr ""
+msgstr "ตัวกรอง"
 
 #: temp.glade:31272
 msgid "Code"
@@ -11503,7 +11532,7 @@ msgstr ""
 
 #: temp.glade:31453
 msgid "Keywords:"
-msgstr ""
+msgstr "คำสำคัญ:"
 
 #: temp.glade:31464
 msgid "Note that if a reference only contains\n"
@@ -11515,7 +11544,7 @@ msgstr ""
 
 #: temp.glade:31470
 msgid "Reference:"
-msgstr ""
+msgstr "อ้างอิง:"
 
 #: temp.glade:31495
 msgid "shepherd, sheep, lamb, shoulder, carry"
@@ -11609,7 +11638,7 @@ msgstr ""
 
 #: temp.glade:31899
 msgid "Project:"
-msgstr ""
+msgstr "โครงการ:"
 
 #: temp.glade:31916
 msgid "Configuration:"
@@ -11657,7 +11686,7 @@ msgstr ""
 
 #: temp.glade:32107
 msgid "Copyright Information"
-msgstr ""
+msgstr "ข้อมูลลิขสิทธิ์"
 
 #: temp.glade:32185
 msgid "How to handle differences:"
@@ -11747,7 +11776,7 @@ msgstr ""
 
 #: temp.glade:32749
 msgid "All Books"
-msgstr ""
+msgstr "หนังสือทั้งหมด"
 
 #: temp.glade:32753
 msgid "Click to turn ALL books on/off."
@@ -11771,7 +11800,7 @@ msgstr ""
 
 #: temp.glade:32825
 msgid "Extra Material"
-msgstr ""
+msgstr "วัสดุเสริม"
 
 #: temp.glade:32829
 msgid "Click to turn Extra books on/off."
@@ -11779,7 +11808,7 @@ msgstr ""
 
 #: temp.glade:32856
 msgid "Reset All"
-msgstr ""
+msgstr "รีเซ็ตทั้งหมด"
 
 #: temp.glade:32860
 msgid "Click to turn OFF all books."
@@ -11808,7 +11837,7 @@ msgstr ""
 
 #: temp.glade:33014
 msgid "Books:"
-msgstr ""
+msgstr "หนังสือ:"
 
 #: temp.glade:33064
 msgid "PTXprint: Copy Configuration To..."
@@ -12183,7 +12212,7 @@ msgstr ""
 
 #: temp.glade:34342
 msgid "Definition"
-msgstr ""
+msgstr "คำจำกัดความ"
 
 #: temp.glade:34343
 msgid "Strong's index entry: Include definitions"
@@ -12298,7 +12327,7 @@ msgstr ""
 
 #: temp.glade:34792
 msgid "Notes"
-msgstr ""
+msgstr "หมายเหตุ"
 
 #: temp.glade:34796
 msgid "This is the Description field from the\n"
@@ -12394,7 +12423,7 @@ msgstr ""
 
 #: temp.glade:35161
 msgid "End Marker:"
-msgstr ""
+msgstr "เครื่องหมายสิ้นสุด:"
 
 #: temp.glade:35170
 msgid "Add/Edit marker dialog: End Marker (code)"
