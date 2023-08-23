@@ -1,8 +1,18 @@
 PTXprint 2.3.36 Release Notes
-21 Aug 2023
+23 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.37 (23 Aug 2023)
+
+  * Move away from some W32TeX file locations
+  
+  * Update to TeX Live 2023 (on Windows)
+    from the main TeX Live project https://tug.org/texlive/
+
+  * Implement \zsetref milestone (#894)
+    e.g. \zsetref|book="LUK" chapter="1" verse="1" \*
 
 Bug fixes and Improvements in 2.3.36 (21 Aug 2023)
 
