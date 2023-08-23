@@ -272,8 +272,12 @@ class Usfm:
         reduce(_g, self.doc[0], res)
         return res
 
+    def make_zsetref(self, ref, book, parent, pos):
+        res = sfm.Element('zsetref', pos, parent=parent, meta=self.sheets['zsetref'])
+        res.append(sfm.Text('|book="{}" bkid="{}", chapter="{}" verse="{}"'.format(book, ref.book, ref.chap, ref.verse)))
+        return res
 
-    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False):
+    def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True):
         ''' Creates a document consisting of only the text covered by the reference
             ranges. refrange is a RefList of RefRange or a RefRange'''
         self.addorncv()
@@ -315,7 +319,18 @@ class Usfm:
                 a.extend(e_[:])
             return a
         res = []
+        if addzsetref:
+            for e in self.doc[0]:
+                if isinstance(e, sfm.Element) and e.name == 'h':
+                    bkname = str(e[0]).strip()
+                    break
+            else:
+                bkname = refranges[0].first.book
         for c in chaps:
+            if addzsetref:
+                minref = min(refranges[r].first for r in c[1])
+                if minref.verse > 0:
+                    res.append(self.make_zsetref(minref, bkname, c[0][0].parent, c[0][0].pos))
             for chap in c[0]:
                 _g(res, (chap, c[1]))
         return res
@@ -328,7 +343,17 @@ class Usfm:
             if isinstance(c, sfm.Element) and c.name == "c":
                 break
             res.append(c)
-        res.extend(self.subdoc(refrange, removes=removes, keepchap=True))
+        subres = self.subdoc(refrange, removes=removes, keepchap=True)
+        for i, e in enumerate(subres):
+            if isinstance(e, sfm.Element) and e.meta.get('styletype', '').lower() == 'paragraph':
+                if i > 0:
+                    n = sfm.Element('p', subres[0].pos, parent=subres[0].parent, meta=self.sheets['p'])
+                    for c in subres[:i]:
+                        c.parent = n
+                    n.extend(subres[:i])
+                    subres[:i] = [n]
+                break
+        res.extend(subres)
         return self.copy([res])
 
     def iter(self, e):
@@ -826,7 +851,9 @@ class Module:
             book = None
         if book is None:
             return []
-        return book.subdoc(ref, removes=removes, strippara=strippara)
+        res = book.subdoc(ref, removes=removes, strippara=strippara, addzsetref=False)
+        zsetref = book.make_zsetref(ref.first, self.usfms.booknames.getLocalBook(ref.first.book, 1), res[0].parent, res[0].pos)
+        return [zsetref] + res
 
     def new_element(self, e, name, content):
         return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \
