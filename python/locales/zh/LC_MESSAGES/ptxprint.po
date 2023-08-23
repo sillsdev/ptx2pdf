@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-26 11:23+0100\n"
-"PO-Revision-Date: 2023-07-26 10:24\n"
+"POT-Creation-Date: 2023-08-23 14:51+0100\n"
+"PO-Revision-Date: 2023-08-23 13:52\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -159,7 +159,7 @@ msgid "Font Scale:"
 msgstr "字型缩放比例:"
 
 #: lib/ptxprint/gtkstyleditor.py:198 lib/ptxprint/gtkstyleditor.py:507
-#: lib/ptxprint/gtkview.py:3090 temp.glade:19853 temp.glade:27167
+#: lib/ptxprint/gtkview.py:3102 temp.glade:19853 temp.glade:27167
 #: temp.glade:27748
 msgid "Color:"
 msgstr "颜色："
@@ -180,65 +180,85 @@ msgstr "所需元素 {} 未设置。请设置。"
 msgid "Set Font..."
 msgstr "设置字型..."
 
-#: lib/ptxprint/gtkview.py:456
+#: lib/ptxprint/gtkview.py:115
+msgid "Gathering pics..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:116
+msgid "Laying out..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:117
+msgid "Making PDF..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:118
+msgid "Finishing..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:119 lib/ptxprint/gtkview.py:1372
+msgid "Processing..."
+msgstr "正在处理..."
+
+#: lib/ptxprint/gtkview.py:463
 msgid "\n"
 "PTXprint Version {}"
 msgstr "\n"
 "PTXprint版本{}"
 
-#: lib/ptxprint/gtkview.py:464
+#: lib/ptxprint/gtkview.py:471
 #, python-brace-format
 msgid "Mailto: <{who2email}>"
 msgstr "Mailto: <{who2email}>"
 
-#: lib/ptxprint/gtkview.py:470 lib/ptxprint/gtkview.py:475
+#: lib/ptxprint/gtkview.py:477 lib/ptxprint/gtkview.py:482
 msgid "This message has been copied to the clipboard."
 msgstr "此消息已复制到剪贴板。"
 
-#: lib/ptxprint/gtkview.py:472
+#: lib/ptxprint/gtkview.py:479
 msgid "The letter above has been copied to the clipboard."
 msgstr "上述字母已复制到剪贴板中。"
 
-#: lib/ptxprint/gtkview.py:473
+#: lib/ptxprint/gtkview.py:480
 msgid "Send it by e-mail to: {}"
 msgstr "通过电子邮件发送至：{}"
 
-#: lib/ptxprint/gtkview.py:492
+#: lib/ptxprint/gtkview.py:499
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory where your USFM projects\n"
 "are (or will be) stored. Or click cancel to exit."
 msgstr "《圣经辅助工具》未安装在此系统。\n"
 "请定位您存储的USFM 项目的文件夹。或者点击取消退出。"
 
-#: lib/ptxprint/gtkview.py:836
+#: lib/ptxprint/gtkview.py:843
 msgid "No project set"
 msgstr "无项目设置"
 
-#: lib/ptxprint/gtkview.py:969
+#: lib/ptxprint/gtkview.py:976
 msgid "No matches found - try another search term"
 msgstr "未找到匹配项 - 尝试另一个搜索词"
 
-#: lib/ptxprint/gtkview.py:1188
+#: lib/ptxprint/gtkview.py:1195
 msgid "Can't set {} in the model"
 msgstr "无法在模型中设置 {}"
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1309
 msgid "Font(s) not set"
 msgstr "字型未设置"
 
-#: lib/ptxprint/gtkview.py:1316
+#: lib/ptxprint/gtkview.py:1323
 msgid "Printing busy"
 msgstr "已经在打印中"
 
-#: lib/ptxprint/gtkview.py:1320 lib/ptxprint/runjob.py:355
+#: lib/ptxprint/gtkview.py:1327 lib/ptxprint/runjob.py:355
 msgid "No books to print"
 msgstr "无要打印的书"
 
-#: lib/ptxprint/gtkview.py:1323
+#: lib/ptxprint/gtkview.py:1330
 msgid "One of more fonts have not been set yet"
 msgstr "有一个或多个字体还没有被设置"
 
-#: lib/ptxprint/gtkview.py:1348
+#: lib/ptxprint/gtkview.py:1355
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -252,172 +272,176 @@ msgstr "                   >> 请关闭PDF文件 <<<                     \n\n"
 " 更多细节请参见“阅读器”选项卡上的'链接'。                            \n\n"
 "                        您想再试一次吗？"
 
-#: lib/ptxprint/gtkview.py:1353
+#: lib/ptxprint/gtkview.py:1360
 msgid "The old PDF file is open!"
 msgstr "旧的 PDF 文件已打开！"
 
-#: lib/ptxprint/gtkview.py:1356
+#: lib/ptxprint/gtkview.py:1363
 msgid "Close the old PDF file before you try again."
 msgstr "再次尝试之前，关闭旧的PDF文件。"
 
-#: lib/ptxprint/gtkview.py:1365
-msgid "Processing..."
-msgstr "正在处理..."
+#: lib/ptxprint/gtkview.py:1378
+msgid "Failed due to an error in the USFM file."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:1380
+#: lib/ptxprint/gtkview.py:1379
+msgid "Run the Basic Checks in Paratext and try again."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:1392
 msgid "Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."
 msgstr "注意：由于在文本中包括Strong's数字，可能需要一段时间来制作PDF。"
 
-#: lib/ptxprint/gtkview.py:1387
+#: lib/ptxprint/gtkview.py:1399
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
 msgstr "注意：要转换图片到选定的PDF输出格式（{}）需要一定时间。"
 
-#: lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1411
 msgid "Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({})."
-msgstr ""
+msgstr "将 PDF 输出格式 ({}) 的拇指标签设置为 \"仅在奇数页上显示\"。"
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1511
 msgid "Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."
-msgstr ""
+msgstr "注：版权声明太长。已将其放在 Colophon 中（见 Peripherals 选项卡）。"
 
-#: lib/ptxprint/gtkview.py:1510
+#: lib/ptxprint/gtkview.py:1522
 msgid "But the 'Default' folder could not be erased completely:"
 msgstr "“默认”文件夹似乎无法完全删除："
 
-#: lib/ptxprint/gtkview.py:1517
+#: lib/ptxprint/gtkview.py:1529
 msgid "The 'Default' config settings have been reset."
 msgstr "”默认“配置设置已重置。"
 
-#: lib/ptxprint/gtkview.py:1521
+#: lib/ptxprint/gtkview.py:1533
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "发生内部错误，试图删除目录树"
 
-#: lib/ptxprint/gtkview.py:1521 lib/ptxprint/gtkview.py:1526
-#: lib/ptxprint/gtkview.py:1529 lib/ptxprint/gtkview.py:1535
+#: lib/ptxprint/gtkview.py:1533 lib/ptxprint/gtkview.py:1538
+#: lib/ptxprint/gtkview.py:1541 lib/ptxprint/gtkview.py:1547
 msgid "Folder: "
 msgstr "文件夹： "
 
-#: lib/ptxprint/gtkview.py:1526 lib/ptxprint/gtkview.py:1535
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:1538 lib/ptxprint/gtkview.py:1547
+#: lib/ptxprint/gtkview.py:4297
 msgid "Cannot delete folder from disk!"
 msgstr "无法从磁盘删除文件夹！"
 
-#: lib/ptxprint/gtkview.py:1529
+#: lib/ptxprint/gtkview.py:1541
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "非标准输出文件夹需要手动删除"
 
-#: lib/ptxprint/gtkview.py:1641 lib/ptxprint/gtkview.py:3658
-#: lib/ptxprint/gtkview.py:3674 lib/ptxprint/runjob.py:415 temp.glade:24503
+#: lib/ptxprint/gtkview.py:1653 lib/ptxprint/gtkview.py:3670
+#: lib/ptxprint/gtkview.py:3686 lib/ptxprint/runjob.py:415 temp.glade:24503
 msgid "Previous PDF (_1)"
 msgstr "上一个PDF文件 (_1)"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Fonts"
 msgstr "字型"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Scripts"
 msgstr "脚本"
 
-#: lib/ptxprint/gtkview.py:1651 temp.glade:22920
+#: lib/ptxprint/gtkview.py:1663 temp.glade:22920
 msgid "Peripherals"
 msgstr "外设"
 
-#: lib/ptxprint/gtkview.py:1654 temp.glade:16094 temp.glade:32237
+#: lib/ptxprint/gtkview.py:1666 temp.glade:16094 temp.glade:32237
 msgid "Pictures"
 msgstr "图片"
 
-#: lib/ptxprint/gtkview.py:1657 temp.glade:16722
+#: lib/ptxprint/gtkview.py:1669 temp.glade:16722
 msgid "Diglot"
 msgstr "双语书"
 
-#: lib/ptxprint/gtkview.py:1660 temp.glade:25098
+#: lib/ptxprint/gtkview.py:1672 temp.glade:25098
 msgid "Finishing"
 msgstr "即将完成"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Notes+"
 msgstr "注释+"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Refs"
 msgstr "交叉引用"
 
-#: lib/ptxprint/gtkview.py:1664 temp.glade:10844
+#: lib/ptxprint/gtkview.py:1676 temp.glade:10844
 msgid "Cross-References"
 msgstr "交叉引用"
 
-#: lib/ptxprint/gtkview.py:1667 temp.glade:24127
+#: lib/ptxprint/gtkview.py:1679 temp.glade:24127
 msgid "Cover"
 msgstr "封皮"
 
-#: lib/ptxprint/gtkview.py:1671 lib/ptxprint/gtkview.py:1672
+#: lib/ptxprint/gtkview.py:1683 lib/ptxprint/gtkview.py:1684
 msgid "Tabs"
 msgstr "层压圣经标签"
 
-#: lib/ptxprint/gtkview.py:1673 lib/ptxprint/gtkview.py:1674
+#: lib/ptxprint/gtkview.py:1685 lib/ptxprint/gtkview.py:1686
 msgid "Borders"
 msgstr "边框"
 
-#: lib/ptxprint/gtkview.py:1685 temp.glade:21410
+#: lib/ptxprint/gtkview.py:1697 temp.glade:21410
 msgid "Advanced"
 msgstr "高级版"
 
-#: lib/ptxprint/gtkview.py:1820
+#: lib/ptxprint/gtkview.py:1832
 msgid "Use One Column\n"
 "Layout for These Books:"
 msgstr "给这些书目\n"
 "使用单列布局："
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1834
 msgid "Use Two Column\n"
 "Layout for These Books:"
 msgstr "给这些书目\n"
 "使用双列布局："
 
-#: lib/ptxprint/gtkview.py:1981
+#: lib/ptxprint/gtkview.py:1993
 msgid "The Book in focus is not within scope"
 msgstr "当前书卷不在范围内"
 
-#: lib/ptxprint/gtkview.py:1982
+#: lib/ptxprint/gtkview.py:1994
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "要生成调整列表, 该书必须要\n"
 "在打印的书卷列表中。"
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "No Secondary Project Set"
 msgstr "未设置次要项目"
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "要为双语书生成调整列表， \n"
 "次要项目必须设置在“双语书”选项卡上。"
 
-#: lib/ptxprint/gtkview.py:2023
+#: lib/ptxprint/gtkview.py:2035
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "一个或多个段落调整文件已存在！"
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2036
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "您要覆盖上面列出的文件吗？"
 
-#: lib/ptxprint/gtkview.py:2139
+#: lib/ptxprint/gtkview.py:2151
 msgid "\\rem Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr "\\rem 单击 \"生成 \"按钮（如上图），开始创建 \"前置事项\"..."
 
-#: lib/ptxprint/gtkview.py:2178 lib/ptxprint/gtkview.py:2184
+#: lib/ptxprint/gtkview.py:2190 lib/ptxprint/gtkview.py:2196
 msgid "View Only..."
 msgstr "仅限查看..."
 
-#: lib/ptxprint/gtkview.py:2190
+#: lib/ptxprint/gtkview.py:2202
 msgid "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr "在菜单栏选择“高级设置”，选择想查看或编辑的设置。"
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2223
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -427,7 +451,7 @@ msgstr "\n\n"
 "[文件已被截断以显示]                                                                                        \n"
 "详情请点击查看/编辑... 按钮。"
 
-#: lib/ptxprint/gtkview.py:2219
+#: lib/ptxprint/gtkview.py:2231
 msgid "This file doesn't exist yet.\n\n"
 "Try clicking...                      \n"
 "   * the 'Generate' button                      \n"
@@ -437,15 +461,15 @@ msgstr "该文件尚不存在。\n\n"
 "   * “生成”按钮                      \n"
 "   *“打印”按钮来创建PDF。"
 
-#: lib/ptxprint/gtkview.py:2943
+#: lib/ptxprint/gtkview.py:2955
 msgid "File not found"
 msgstr "文件未找到"
 
-#: lib/ptxprint/gtkview.py:3093
+#: lib/ptxprint/gtkview.py:3105
 msgid "'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"
-msgstr ""
+msgstr "启用彩色文本 \"现已开启。(详见 \"字体+脚本 \"选项卡）。"
 
-#: lib/ptxprint/gtkview.py:3311
+#: lib/ptxprint/gtkview.py:3323
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -453,178 +477,183 @@ msgstr "\n"
 "该文件尚不存在！\n"
 "在这里进行编辑并点击“保存”来创建它。"
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Save changes?"
 msgstr "是否保存更改？"
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Do you wish to save the changes you made?"
 msgstr "是否要保存您的更改？"
 
-#: lib/ptxprint/gtkview.py:3328
+#: lib/ptxprint/gtkview.py:3340
 msgid "File: "
 msgstr "文件: "
 
-#: lib/ptxprint/gtkview.py:3375
+#: lib/ptxprint/gtkview.py:3387
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% 这是专门为PTXprint使用的 {} 项目的 .tex 文件。\n"
 "% 保存的配置名称：{}\n"
 
-#: lib/ptxprint/gtkview.py:3383
+#: lib/ptxprint/gtkview.py:3395
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% 这是专门为PTXprint使用的{} 项目的 .tex 预处理文件。\n"
 "% 保存的配置名称：{}\n"
 
-#: lib/ptxprint/gtkview.py:3454
+#: lib/ptxprint/gtkview.py:3466
 msgid "Select the location and name for the Archive file"
 msgstr "选择归档文件的位置和名称"
 
-#: lib/ptxprint/gtkview.py:3494
+#: lib/ptxprint/gtkview.py:3506
 msgid "Select the folder containing image files"
 msgstr "选择包含图像文件的文件夹"
 
-#: lib/ptxprint/gtkview.py:3584
+#: lib/ptxprint/gtkview.py:3596
 msgid "Imported Settings!"
-msgstr ""
+msgstr "导入设置！"
 
-#: lib/ptxprint/gtkview.py:3591
+#: lib/ptxprint/gtkview.py:3603
 msgid "Select a PDF (or ZIP archive) to import the settings from"
-msgstr ""
+msgstr "选择 PDF（或 ZIP 压缩包），从其中导入设置"
 
-#: lib/ptxprint/gtkview.py:3605
+#: lib/ptxprint/gtkview.py:3617
 msgid "PDF/ZIP Import Config Error"
-msgstr ""
+msgstr "PDF/ZIP 导入配置错误"
 
-#: lib/ptxprint/gtkview.py:3606
+#: lib/ptxprint/gtkview.py:3618
 msgid "Cannot find any settings to import from the selected file.\n\n"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3607
-msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3608
-msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
-msgstr ""
+msgstr "无法从所选文件中找到任何要导入的设置。\n\n"
 
 #: lib/ptxprint/gtkview.py:3619
+msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
+msgstr "如果从 PDF 文件（用 PTXprint 2.3 或更高版本创建）导入，请检查 "
+
+#: lib/ptxprint/gtkview.py:3620
+msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
+msgstr "如果创建时启用了 \"在 PDF 中包含配置设置 \"选项。"
+
+#: lib/ptxprint/gtkview.py:3631
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "为前页选择一个或多个PDF"
 
-#: lib/ptxprint/gtkview.py:3624
+#: lib/ptxprint/gtkview.py:3636
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "为附录选择一个或多个PDF"
 
-#: lib/ptxprint/gtkview.py:3629
+#: lib/ptxprint/gtkview.py:3641
 msgid "Select Watermark PDF file"
 msgstr "选择水印PDF文件"
 
-#: lib/ptxprint/gtkview.py:3634
+#: lib/ptxprint/gtkview.py:3646
 msgid "Select Page Border PDF file"
 msgstr "选择页面边框 PDF 文件"
 
-#: lib/ptxprint/gtkview.py:3639
+#: lib/ptxprint/gtkview.py:3651
 msgid "Select Section Header PDF file"
 msgstr "选择章节页眉 PDF 文件"
 
-#: lib/ptxprint/gtkview.py:3644
+#: lib/ptxprint/gtkview.py:3656
 msgid "Select End of Book PDF file"
 msgstr "选择书尾PDF文件"
 
-#: lib/ptxprint/gtkview.py:3649
+#: lib/ptxprint/gtkview.py:3661
 msgid "Select Verse Decorator PDF file"
 msgstr "选择经句装饰器PDF 文件"
 
-#: lib/ptxprint/gtkview.py:3654
+#: lib/ptxprint/gtkview.py:3666
 msgid "Select a PDF file to compare with"
 msgstr "选择一个要对比的PDF文件"
 
-#: lib/ptxprint/gtkview.py:3775
+#: lib/ptxprint/gtkview.py:3787
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "切换到其它\n"
 "双语书项目"
 
-#: lib/ptxprint/gtkview.py:3777 temp.glade:26257
+#: lib/ptxprint/gtkview.py:3789 temp.glade:26257
 msgid "Print (Make PDF)"
 msgstr "打印 (制作PDF)"
 
-#: lib/ptxprint/gtkview.py:3783
+#: lib/ptxprint/gtkview.py:3795
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "保存并返回到\n"
 "双语书项目"
 
-#: lib/ptxprint/gtkview.py:3785
+#: lib/ptxprint/gtkview.py:3797
 msgid "Return to Primary"
 msgstr "返回初级"
 
-#: lib/ptxprint/gtkview.py:3851
+#: lib/ptxprint/gtkview.py:3863
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "注意：常规字型已支持文本中的所有字符。"
 
-#: lib/ptxprint/gtkview.py:3852
+#: lib/ptxprint/gtkview.py:3864
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "不需要后备字体，因此\n"
 "\"使用后备字体\"选项将被禁用。"
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:3909
+#, python-brace-format
+msgid "Redoing layout {run}..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4118
 msgid "USFM syntax error"
 msgstr "USFM语法错误"
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:4118
 msgid "Syntax error: {}"
 msgstr "语法错误。{}"
 
-#: lib/ptxprint/gtkview.py:4134 lib/ptxprint/gtkview.py:4975
-#: lib/ptxprint/gtkview.py:4990
+#: lib/ptxprint/gtkview.py:4151 lib/ptxprint/gtkview.py:4992
+#: lib/ptxprint/gtkview.py:5007
 msgid "Choose Image"
 msgstr "选择图像"
 
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:4297
 msgid "Image Set: "
-msgstr ""
+msgstr "图像集： "
 
-#: lib/ptxprint/gtkview.py:4371
+#: lib/ptxprint/gtkview.py:4388
 msgid "Unsupported Locale"
 msgstr "不支持的语言"
 
-#: lib/ptxprint/gtkview.py:4372
+#: lib/ptxprint/gtkview.py:4389
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "您的系统不支持此语言设置，您可能需要安装它"
 
-#: lib/ptxprint/gtkview.py:4552
+#: lib/ptxprint/gtkview.py:4569
 msgid "Strong's Index generated in: {}"
 msgstr "史特朗索引生成于：{}"
 
-#: lib/ptxprint/gtkview.py:4598
+#: lib/ptxprint/gtkview.py:4615
 msgid " \\periphs in Front Matter"
-msgstr ""
+msgstr " \\前言"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Overwrite"
-msgstr ""
+msgstr "重写"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Create"
-msgstr ""
+msgstr "创建"
 
-#: lib/ptxprint/gtkview.py:4690 lib/ptxprint/gtkview.py:5217
+#: lib/ptxprint/gtkview.py:4707 lib/ptxprint/gtkview.py:5234
 msgid "Please fill in any missing <Values> on"
 msgstr "请填写所有遗漏的 <Values>"
 
-#: lib/ptxprint/gtkview.py:4691 lib/ptxprint/gtkview.py:5218
+#: lib/ptxprint/gtkview.py:4708 lib/ptxprint/gtkview.py:5235
 msgid "the Peripherals tab before proceeding."
-msgstr ""
+msgstr "在继续之前，请点击 \"外设 \"选项卡。"
 
-#: lib/ptxprint/gtkview.py:4692
+#: lib/ptxprint/gtkview.py:4709
 msgid "Update the ISBN number or deleted the entry."
-msgstr ""
+msgstr "更新国际标准书号或删除条目。"
 
-#: lib/ptxprint/gtkview.py:4745
+#: lib/ptxprint/gtkview.py:4762
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -632,68 +661,70 @@ msgstr "提示：该隔行对照选项与“字型+文字”页面上的\n"
 "\"字母间的间距调整 \"不兼容。\n"
 "所以这个选项刚被禁用。"
 
-#: lib/ptxprint/gtkview.py:4777
+#: lib/ptxprint/gtkview.py:4794
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "PTXprint的更新版本（{}）已经推出。\n"
 "点击访问网站的下载页面。"
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "Internet Access Disabled"
 msgstr "互联网接入已禁用"
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "已使用菜单栏的“高级设置”选项，禁用所有互联网URL"
 
-#: lib/ptxprint/gtkview.py:4826
+#: lib/ptxprint/gtkview.py:4843
 msgid "<Type Value Here>"
 msgstr "<Type Value Here>"
 
-#: lib/ptxprint/gtkview.py:4843
+#: lib/ptxprint/gtkview.py:4860
 msgid "Variable Name"
 msgstr "变量名称"
 
-#: lib/ptxprint/gtkview.py:4903
+#: lib/ptxprint/gtkview.py:4920
 msgid "Category Name"
 msgstr "类别名称"
 
-#: lib/ptxprint/gtkview.py:5005
+#: lib/ptxprint/gtkview.py:5022
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "警告：无法完全删除\n"
 "一个或多个临时文件夹："
 
-#: lib/ptxprint/gtkview.py:5102
+#: lib/ptxprint/gtkview.py:5119
 msgid "What did Mary say that God had done?"
 msgstr "对于上帝的行为，马利亚是怎么说的？"
 
-#: lib/ptxprint/gtkview.py:5105
+#: lib/ptxprint/gtkview.py:5122
 msgid "What does it means to bless someone?"
 msgstr "祝福别人是什么意思？"
 
-#: lib/ptxprint/gtkview.py:5106
+#: lib/ptxprint/gtkview.py:5123
 msgid "What do you know about the high priest?"
 msgstr "你对大祭司有多少了解？"
 
-#: lib/ptxprint/gtkview.py:5143 temp.glade:23895
+#: lib/ptxprint/gtkview.py:5160 temp.glade:23895
 msgid "Main Title   -   Subtitle"
-msgstr ""
+msgstr "主标题 - 字幕"
 
-#: lib/ptxprint/gtkview.py:5145
+#: lib/ptxprint/gtkview.py:5162
 msgid "Main\n"
 "Title\n\n"
 "Subtitle"
-msgstr ""
+msgstr "主要\n"
+"标题\n\n"
+"字幕"
 
-#: lib/ptxprint/gtkview.py:5202
+#: lib/ptxprint/gtkview.py:5219
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
 msgstr "此功能仅限于对David C Cook插图的许可请求。 "
 
-#: lib/ptxprint/gtkview.py:5203
+#: lib/ptxprint/gtkview.py:5220
 msgid "No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again."
-msgstr ""
+msgstr "未检测到 DCC 插图。先点击 \"打印（制作 PDF）\"，然后再试一次。"
 
 #: lib/ptxprint/picselect.py:124 temp.glade:1836 temp.glade:2071
 #: temp.glade:2097 temp.glade:15311
@@ -870,11 +901,11 @@ msgstr "创建失败： "
 
 #: lib/ptxprint/runjob.py:459
 msgid "Faulty PDF, could not parse"
-msgstr ""
+msgstr "PDF 有问题，无法解析"
 
 #: lib/ptxprint/runjob.py:467
 msgid "Bad xdvi file, probably failed to load a picture or font"
-msgstr ""
+msgstr "xdvi 文件有问题，可能是加载图片或字体失败"
 
 #: lib/ptxprint/runjob.py:478
 msgid "Rerun to fix: "
@@ -900,43 +931,43 @@ msgstr "在《圣经辅助工具》中运行基本检查以确保在两个双语
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - 双语书合并错误！"
 
-#: lib/ptxprint/runjob.py:821
+#: lib/ptxprint/runjob.py:822
 msgid "table of contents"
 msgstr "目录"
 
-#: lib/ptxprint/runjob.py:822
+#: lib/ptxprint/runjob.py:823
 msgid "image copyrights"
 msgstr "图像版权所有"
 
-#: lib/ptxprint/runjob.py:823
+#: lib/ptxprint/runjob.py:824
 msgid "chapter positions"
 msgstr "章节位置"
 
-#: lib/ptxprint/runjob.py:870
+#: lib/ptxprint/runjob.py:871
 msgid "Rerunning because the {} changed"
 msgstr "重新运行，因为{} 已更改"
 
-#: lib/ptxprint/runjob.py:879
+#: lib/ptxprint/runjob.py:880
 msgid "Rerunning because the delayed file asked us to"
-msgstr ""
+msgstr "重新运行，因为延迟文件要求我们"
 
-#: lib/ptxprint/runjob.py:966
+#: lib/ptxprint/runjob.py:968
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "警告：无法定位装饰型 PDF:"
 
-#: lib/ptxprint/runjob.py:1015
+#: lib/ptxprint/runjob.py:1018
 msgid "({} Missing)"
 msgstr "({}缺失)"
 
-#: lib/ptxprint/runjob.py:1016
+#: lib/ptxprint/runjob.py:1019
 msgid "Missing Pictures: {}"
 msgstr "缺失的图片：{}"
 
-#: lib/ptxprint/runjob.py:1018 temp.glade:14018
+#: lib/ptxprint/runjob.py:1021 temp.glade:14018
 msgid "(0 Missing)"
 msgstr "(0项缺少)"
 
-#: lib/ptxprint/runjob.py:1144
+#: lib/ptxprint/runjob.py:1147
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "错误：无法将 {}\n"
@@ -974,7 +1005,7 @@ msgstr "并检查changes.txt中是否有错误规则导致出错。"
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr "因语法错误无法正常化文本： "
 
-#: lib/ptxprint/texmodel.py:1478
+#: lib/ptxprint/texmodel.py:1479
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem 警告：在页面 {} 中找不到针对: {} 的版权声明"
 
@@ -1156,11 +1187,11 @@ msgstr "移动拇指标签文本"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Space between picture & caption"
-msgstr ""
+msgstr "图片与标题之间的空格"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Increase/Reduce the gap between figures and their captions"
-msgstr ""
+msgstr "增加/减少数字与标题之间的差距"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Default space beside picture"
@@ -1341,7 +1372,9 @@ msgstr "警告：打印失败，存档不完整。"
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the user-interface. The PDFs are produced by enhanced \n"
 "XeTeX macros (ptx2pdf) with a long and reliable history."
-msgstr ""
+msgstr "PTXprint 使用 Python 和 PyGTK3 构建，使用 Glade\n"
+"用户界面。PDF 文件由增强的 \n"
+"XeTeX 宏（ptx2pdf）生成，该宏历史悠久，性能可靠。"
 
 #: temp.glade:870
 msgid "PTXprint Homepage"
@@ -1367,15 +1400,15 @@ msgstr "一个已保存的配置可以复制到\n"
 
 #: temp.glade:1110
 msgid "David Healey"
-msgstr ""
+msgstr "大卫-希利"
 
 #: temp.glade:1115
 msgid "Darwin Dunham"
-msgstr ""
+msgstr "达尔文-邓纳姆"
 
 #: temp.glade:1129
 msgid "IB"
-msgstr ""
+msgstr "IB"
 
 #: temp.glade:1156
 msgid "NONE"
@@ -1435,99 +1468,99 @@ msgstr "默认设置"
 
 #: temp.glade:1248
 msgid "Han1"
-msgstr ""
+msgstr "Han1"
 
 #: temp.glade:1251
 msgid "Han2"
-msgstr ""
+msgstr "Han2"
 
 #: temp.glade:1254
 msgid "Han3"
-msgstr ""
+msgstr "Han3"
 
 #: temp.glade:1257
 msgid "Han4"
-msgstr ""
+msgstr "Han4"
 
 #: temp.glade:1260
 msgid "Han5"
-msgstr ""
+msgstr "Han5"
 
 #: temp.glade:1263
 msgid "Vectorian1"
-msgstr ""
+msgstr "向量1"
 
 #: temp.glade:1266
 msgid "Vectorian2"
-msgstr ""
+msgstr "矢量2"
 
 #: temp.glade:1269
 msgid "Vectorian3"
-msgstr ""
+msgstr "矢量3"
 
 #: temp.glade:1272
 msgid "Vectorian4"
-msgstr ""
+msgstr "向量4"
 
 #: temp.glade:1275
 msgid "v85"
-msgstr ""
+msgstr "v85"
 
 #: temp.glade:1278
 msgid "v85r"
-msgstr ""
+msgstr "v85r"
 
 #: temp.glade:1281
 msgid "v85out"
-msgstr ""
+msgstr "v85out"
 
 #: temp.glade:1284
 msgid "v86c"
-msgstr ""
+msgstr "v86c"
 
 #: temp.glade:1287
 msgid "c86out"
-msgstr ""
+msgstr "c86out"
 
 #: temp.glade:1290
 msgid "v88"
-msgstr ""
+msgstr "v88"
 
 #: temp.glade:1293
 msgid "v88r"
-msgstr ""
+msgstr "v88r"
 
 #: temp.glade:1296
 msgid "v88c"
-msgstr ""
+msgstr "v88c"
 
 #: temp.glade:1299
 msgid "v88out"
-msgstr ""
+msgstr "v88out"
 
 #: temp.glade:1312 temp.glade:2295
 msgid "bleed: overflow the page into the cropped area"
-msgstr ""
+msgstr "出血：使页面溢出裁剪区域"
 
 #: temp.glade:1316 temp.glade:2299
 msgid "colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)"
-msgstr ""
+msgstr "colbleed：页面溢出到裁剪区域的程度与颜色溢出的程度相同（通常图像的溢出程度较低）。"
 
 #: temp.glade:1320 temp.glade:2303
 msgid "inner: the area that text could cover (vertically this extends to the inner edge of the border)"
-msgstr ""
+msgstr "inner：文本可覆盖的区域（垂直方向上，该区域延伸至边框的内边缘）"
 
 #: temp.glade:1324 temp.glade:2307
 msgid "outer: the outermost of the coloured box or the border"
-msgstr ""
+msgstr "outer：最外层的彩框或边框"
 
 #: temp.glade:1328 temp.glade:2311
 msgid "border: the outer edge of the border"
-msgstr ""
+msgstr "边框：边框的外边缘"
 
 #: temp.glade:1332 temp.glade:2315
 msgid "box: the coloured box"
-msgstr ""
+msgstr "盒：彩盒"
 
 #: temp.glade:1350
 msgid "Arabic-Hindi"
@@ -1980,7 +2013,7 @@ msgstr "两端对齐"
 
 #: temp.glade:2677
 msgid "LeftBal"
-msgstr ""
+msgstr "左巴尔"
 
 #: temp.glade:2769
 msgid "Gridded Center"
@@ -2269,7 +2302,9 @@ msgstr "(可选）关于配置的说明"
 msgid "Dots indicate that a\n"
 "password has been set\n"
 "for this configuration."
-msgstr ""
+msgstr "点表示为该配置设置了\n"
+"密码\n"
+"。"
 
 #: temp.glade:3582
 msgid "Lock configuration"
@@ -2287,7 +2322,17 @@ msgid "When Config is UNLOCKED:\n"
 "saved or the configuration to be deleted.\n\n"
 "Note that the Default config cannot be\n"
 "locked."
-msgstr ""
+msgstr "Config is UNLOCKED（配置已解锁）时：\n"
+"点击设置密码，以防止\n"
+"任何人意外更改\n"
+"已保存的设置或删除\n"
+"配置。\n\n"
+"Config is LOCKED（配置已锁定）时：\n"
+"单击输入密码以解锁此\n"
+"配置，并允许 \n"
+"保存更改或删除配置。\n\n"
+"请注意，默认配置不能被\n"
+"锁定。"
 
 #: temp.glade:3612
 msgid "Copy configuration to other projects "
@@ -2327,7 +2372,7 @@ msgstr "为要保存的配置输入一个名称。\n\n"
 
 #: temp.glade:3676
 msgid "Import settings from PDFs, ZIP files or other Configurations"
-msgstr ""
+msgstr "从 PDF、ZIP 文件或其他配置文件导入设置"
 
 #: temp.glade:3680
 msgid "Warning! This may overwrite existing settings.\n\n"
@@ -2336,7 +2381,12 @@ msgid "Warning! This may overwrite existing settings.\n\n"
 "settings from other PDFs, ZIP archives or from \n"
 "a different project configuration into the current\n"
 "configuration."
-msgstr ""
+msgstr "警告！这可能会覆盖现有设置。\n\n"
+"此按钮将打开 \"导入设置 \"对话框\n"
+"，您可以在此选择各种选项，将 \n"
+"设置从其他 PDF、ZIP 压缩包或从 \n"
+"不同的项目配置导入到当前的\n"
+"配置中。"
 
 #: temp.glade:3717
 msgid "Saved/Shared Configuration"
@@ -2621,7 +2671,20 @@ msgid "Fine Tune Line Spacing:\n\n"
 "If you prefer to keep the exact line spacing specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Top or Bottom Margin."
-msgstr ""
+msgstr "微调行距：\n\n"
+"只有当 PTXprint 建议\n"
+"稍微缩小或扩大行距，以尽量减少页面上浪费的 \n"
+"垂直空间时，此按钮才会激活。点击接受建议。\n\n"
+"如果 \n"
+"页面上有多于半行的 \"空余 \"空间，那么行间距将略微缩小，以便\n"
+"在页面上多容纳一行文本。\n\n"
+"如果 \n"
+"页面上的 \"空余 \"空间少于半行，那么行间距将略微增大，以便 \n"
+"更均匀地填满页面（与 \n"
+"的文本行数相同）。\n\n"
+"如果您希望保持指定的精确行距， \n"
+"，那么请不要点击此选项。请使用类似的\n"
+"按钮来调整顶边距或底边距。"
 
 #: temp.glade:4239
 msgid "Mirror Pages"
@@ -2666,7 +2729,10 @@ msgid "Enable Guides or a Grid to sit behind the\n"
 "text to assist with final adjustments; \n"
 "or enable a Watermark to show behind the text;\n"
 "or turn on USFM codes temporarily."
-msgstr ""
+msgstr "在\n"
+"文本后面启用指南或网格，以帮助进行最后调整；在 \n"
+"文本后面显示水印或启用水印；\n"
+"或临时打开 USFM 代码。"
 
 #: temp.glade:4294
 msgid "Outer Gutter"
@@ -2999,7 +3065,20 @@ msgid "Fine Tune Top Margin:\n\n"
 "If you prefer to keep the exact top margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Bottom Margin."
-msgstr ""
+msgstr "微调顶边距：\n\n"
+"只有当 PTXprint 建议\n"
+"稍微缩小或扩大顶边距，以尽量减少页面上浪费的 \n"
+"垂直空间时，此按钮才会激活。点击接受建议。\n\n"
+"如果 \n"
+"页面上有多于半行的 \"空余 \"空间，那么顶边距将略微缩小，以便\n"
+"在页面上多容纳一行文本。\n\n"
+"如果 \n"
+"页面上的 \"空余 \"空间少于半行，那么顶边距将略微增大，以便 \n"
+"更均匀地填满页面（与 \n"
+"的文本行数相同）。\n\n"
+"如果您希望保持指定的精确顶边距， \n"
+"，那么请不要点击此选项。请使用类似的\n"
+"按钮调整行距或下边距。"
 
 #: temp.glade:5009
 msgid "Tweak bottom margin (auto adjust)"
@@ -3020,7 +3099,20 @@ msgid "Fine Tune Bottom Margin:\n\n"
 "If you prefer to keep the exact bottom margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Top Margin."
-msgstr ""
+msgstr "微调底边距：\n\n"
+"只有当 PTXprint 建议\n"
+"稍微缩小或扩大底边距，以尽量减少页面上浪费的 \n"
+"垂直空间时，此按钮才会激活。点击接受建议。\n\n"
+"如果 \n"
+"页面上有多于半行的 \"空余 \"空间，则底边距将略微缩小，以便\n"
+"在页面上多容纳一行文本。\n\n"
+"如果 \n"
+"页面上的 \"空余 \"空间少于半行，那么底部边距将略微增加，以便 \n"
+"更均匀地填满页面（与 \n"
+"相同的文本行数）。\n\n"
+"如果您希望保持指定的精确底边距， \n"
+"，那么请不要点击此选项。请使用类似的\n"
+"按钮调整行距或顶边距。"
 
 #: temp.glade:5356
 msgid "Place Footer Text Above the Bottom Margin"
@@ -3832,7 +3924,7 @@ msgstr "这一选项只有在选择了词汇书\n"
 
 #: temp.glade:6948
 msgid "Start 1st Chapter on a New Page"
-msgstr ""
+msgstr "从新的一页开始第一章"
 
 #: temp.glade:6949
 msgid "Start new page after introduction"
@@ -3848,18 +3940,21 @@ msgstr "使用这个选项，可以在一本书的序言部分后自动 \n"
 
 #: temp.glade:6969
 msgid "All Chapters"
-msgstr ""
+msgstr "所有章节"
 
 #: temp.glade:6970
 msgid "Start every chapter on a new page"
-msgstr ""
+msgstr "每一章都从新的一页开始"
 
 #: temp.glade:6974
 msgid "Use this option to force a page break before\n"
 "every chapter. This is most commonly used\n"
 "for testing materials when each chapter needs\n"
 "to be printed and given to a different person."
-msgstr ""
+msgstr "使用该选项可在\n"
+"每章之前强制分页。这最常用于\n"
+"测试材料，因为每一章都需要\n"
+"打印并交给不同的人。"
 
 #: temp.glade:7002
 msgid "Beginning and Ending Material"
@@ -4450,16 +4545,17 @@ msgstr "外设书卷通常有不止一\n"
 
 #: temp.glade:7981
 msgid "Enable Ornaments"
-msgstr ""
+msgstr "启用装饰品"
 
 #: temp.glade:7982
 msgid "Enable ornamental borders and rules"
-msgstr ""
+msgstr "启用装饰性边框和规则"
 
 #: temp.glade:7986
 msgid "Enable this option to make use of\n"
 "ornamental borders and rules."
-msgstr ""
+msgstr "启用该选项可使用\n"
+"装饰性边框和规则。"
 
 #: temp.glade:8009
 msgid "Other Features"
@@ -6658,7 +6754,7 @@ msgstr "如果你要出版（即超过50份）任何带有David C Cook或\n"
 
 #: temp.glade:13635
 msgid "Get Pictures..."
-msgstr ""
+msgstr "获取图片..."
 
 #: temp.glade:13664
 msgid "Image"
@@ -6912,7 +7008,16 @@ msgid "PTXprint normally searches in multiple locations\n"
 "then select this option. This should speed up searches\n"
 "for images, but may result in some images not being\n"
 "found at all."
-msgstr ""
+msgstr "PTXprint 通常会搜索多个位置\n"
+"，以找到所需的插图（包括 \"figures\"、\n"
+"\"local/figures \"和左侧指定的文件夹）。\n\n"
+"默认情况下，它还会搜索这些\n"
+"位置的所有子文件夹。\n\n"
+"如果您希望只搜索直接指定的文件夹\n"
+"（而不搜索任何子文件夹）\n"
+"，请选择此选项。这将加快\n"
+"对图片的搜索速度，但可能导致某些图片根本无法\n"
+"。"
 
 #: temp.glade:14029
 msgid "Remove Image Borders"
@@ -8114,31 +8219,41 @@ msgid "When the different texts of a diglot are merged, there are various \n"
 "* Scored (Chapter) - as a minimum, forces alignment at chapters breaks \n\n"
 "* Scored (Verses) - as a minimum, forces alignment at each verse, which \n"
 "  can result in a lot of breaks!"
-msgstr ""
+msgstr "当合并 diglot 的不同文本时，可以使用各种 \n"
+"算法来获得最佳的整体效果：\n\n"
+"* 基于文档--试图利用文档结构尽可能地对齐 \n"
+"  段落；但当 \n"
+"  每个文本的段落结构截然不同时，对齐很容易混淆。\n\n"
+"* 章节--根据章节和诗句对齐，而不是根据结构对齐\n\n"
+"* 分数--使用加权分数的另一种算法，\n"
+"  ，当诗句编号匹配时，尝试对齐段落\n\n"
+"* 分数（章节）--最低限度，强制在章节中断处对齐 \n\n"
+"* 分数（诗句）--最低限度，强制在每一节诗句处对齐， \n"
+"  ，这可能导致大量中断！"
 
 #: temp.glade:16601
 msgid "Merging mode:"
-msgstr ""
+msgstr "合并模式："
 
 #: temp.glade:16631
 msgid "Document based"
-msgstr ""
+msgstr "基于文件"
 
 #: temp.glade:16632
 msgid "Chapter Verse"
-msgstr ""
+msgstr "章 节"
 
 #: temp.glade:16633
 msgid "Scored"
-msgstr ""
+msgstr "得分"
 
 #: temp.glade:16634
 msgid "Scored (Chapter)"
-msgstr ""
+msgstr "得分（章）"
 
 #: temp.glade:16635
 msgid "Scored (Verse)"
-msgstr ""
+msgstr "得分（诗句）"
 
 #: temp.glade:16653
 msgid "Diglot or Discript"
@@ -8395,17 +8510,19 @@ msgstr "点击以跳转到样式编辑器中\n"
 
 #: temp.glade:17280
 msgid "Only Show on Odd Pages"
-msgstr ""
+msgstr "只显示在奇数页上"
 
 #: temp.glade:17281
 msgid "Thumb tabs: Only Show on Odd Pages"
-msgstr ""
+msgstr "拇指标签：只显示在奇数页上"
 
 #: temp.glade:17285
 msgid "When printing thumb tabs on thin paper,\n"
 "it is preferable to only print these tabs on\n"
 "a single side of the page (the odd pages)."
-msgstr ""
+msgstr "在薄纸上打印拇指标签时，\n"
+"，最好只在\n"
+"页面的单面（奇数页）上打印这些标签。"
 
 #: temp.glade:17303
 msgid "Thumb Tabs"
@@ -9890,7 +10007,10 @@ msgid "Some advanced features load extra code\n"
 "that is not normally needed. List them\n"
 "here if you need to use them.\n"
 "e.g. polyglot-simplepages"
-msgstr ""
+msgstr "一些高级功能会加载通常不需要的额外代码\n"
+"。如果需要使用，请在此列出\n"
+"。\n"
+"例如 polyglot-simplepages"
 
 #: temp.glade:21195
 msgid "Plugins:"
@@ -10135,7 +10255,36 @@ msgid "Use the following codes to include special text in front matter:\n\n"
 "on the Peripherals tab. For example:\n"
 "  \\mt1 \\zvar|maintitle\\*\n"
 "  \\mt2 \\zvar|subtitle\\*"
-msgstr ""
+msgstr "使用以下代码在封面中包含特殊文本：\n\n"
+"  \\nopagenums - 关闭页码\n"
+"  \\dopagenums - 打开页码\n"
+"  \\resetpagenums # - 其中 # 是页码\n"
+"（将 # 设为 -1，则罗马数字为 i、ii、iii、iv、v...）。)\n\n"
+"  \\pc \\zcopyright - 基本选项卡中的版权声明\n"
+"  \\pc \\zlicense - 基本选项卡中的许可证声明\n"
+"  \\pc \\zimagecopyrights - 生成的带有版权归属的图片列表\n"
+"  \\pc \\zimagecopyrightsfr - 同上，但本地化（fr = 法语）\n\n"
+"  \\zbl|3\\* - 插入 3 个空行\n"
+"  \\zgap|1.5in\\*\n\n"
+"包括一个或多个目录：\n"
+"  \\ztoc|<keyword>\\*\n"
+"其中 <keyword> 可以替换为\n"
+"  main - 主要的、包罗万象的目录\n"
+"  pre - 经文之前的任何书籍（FRT、INT）\n"
+"  ot - 只列出旧约书籍\n"
+"  heb - 根据希伯来文 TaNaKh 排序的旧约书籍\n"
+"  dc - 只列出申命记正典书籍\n"
+"  nt - 只列出新约书籍\n"
+"  post - REV 之后的书籍（GLO、BAK, TDX, NDX, XXA-G)\n"
+"  sorta - 按字母顺序（主要）排列的列表 \\toc1\n"
+"  sortb - 按字母顺序（主要）排列的列表 \\toc2\n"
+"  sortc - 按字母顺序（主要）排列的列表 \\toc3\n\n"
+"除上述代码外，您还可以指定\n"
+"您自己配置的 \\zvar|variables\\* 作为占位符。\n"
+"单击 \"Edit Variables...（编辑变量...）\"为外设选项卡上的这些变量赋值\n"
+"。例如\n"
+"  \\mt1 \\zvar|maintitle\\*\n"
+"  \\mt2 \\zvar|subtitle\\*"
 
 #: temp.glade:21657
 msgid "Autosave"
@@ -10815,36 +10964,41 @@ msgstr "在封皮页使用书脊"
 
 #: temp.glade:23435
 msgid "1. Create Cover Settings..."
-msgstr ""
+msgstr "1.创建封面设置..."
 
 #: temp.glade:23436
 msgid "Generate Cover (Basic settings to create a cover)"
-msgstr ""
+msgstr "生成封面（创建封面的基本设置）"
 
 #: temp.glade:23441
 msgid "Creating a cover from nothing takes a lot of effort.\n"
 "This tool enables you to create various kinds of\n"
 "covers which can easily be enhanced. "
-msgstr ""
+msgstr "白手起家制作封面需要耗费大量精力。\n"
+"该工具可让您创建各种\n"
+"封面，并可轻松对其进行增强。 "
 
 #: temp.glade:23457
 msgid "2. Edit Cover Content..."
-msgstr ""
+msgstr "2.编辑封面内容..."
 
 #: temp.glade:23458
 msgid "Edit Front Matter (where cover content is defiined)"
-msgstr ""
+msgstr "编辑封面（定义封面内容）"
 
 #: temp.glade:23463
 msgid "Switch to the View+Edit tab to\n"
 "show the Front Matter file where\n"
 "the content for the Cover page\n"
 "can be adjusted as needed."
-msgstr ""
+msgstr "切换到 \"查看+编辑 \"选项卡，\n"
+"显示 \"首页 \"文件，\n"
+"，可根据需要调整封面页\n"
+"的内容。"
 
 #: temp.glade:23482
 msgid "3. Print (Make Cover PDF)"
-msgstr ""
+msgstr "3.打印（制作封面 PDF）"
 
 #: temp.glade:23489
 msgid "Once 'Create Cover' is enabled, every time\n"
@@ -10856,11 +11010,19 @@ msgid "Once 'Create Cover' is enabled, every time\n"
 "opened rather than the cover PDF.\n\n"
 "Clicking this button will ensure that the cover PDF\n"
 "will be displayed once it has been created."
-msgstr ""
+msgstr "一旦启用 \"创建封面\"，每次点击\n"
+"\"打印（制作 PDF）\"时，除了\n"
+"通常的文本内容 PDF 外，还会创建一个单独的 \n"
+"封面 PDF。\n\n"
+"但是，如果另一个选项卡（封面选项卡除外）\n"
+"处于活动状态，则会自动打开文本内容 PDF 而不是封面 PDF\n"
+"。\n\n"
+"单击此按钮将确保封面 PDF\n"
+"在创建后显示。"
 
 #: temp.glade:23532
 msgid "Generate cover: Art Bleed setting"
-msgstr ""
+msgstr "生成封面美术出血设置"
 
 #: temp.glade:23535 temp.glade:23632
 msgid "Art Bleed is specifically for hard cover binding\n"
@@ -10868,7 +11030,11 @@ msgid "Art Bleed is specifically for hard cover binding\n"
 "beyond the size of the cover in order to wrap\n"
 "around the hard cover and stuck down under\n"
 "the inner backing sheet. (Units: mm)"
-msgstr ""
+msgstr "Art Bleed（艺术出血）专门用于硬皮装订\n"
+"，它是一种设置，可使图像超出\n"
+"的尺寸，以便将\n"
+"包在硬皮上，并贴在\n"
+"的内底纸下面。(单位：毫米）"
 
 #: temp.glade:23543 temp.glade:23568
 msgid "5.0"
@@ -10876,7 +11042,7 @@ msgstr "5.0"
 
 #: temp.glade:23557
 msgid "Generate cover: Bleed setting"
-msgstr ""
+msgstr "生成盖板：出血设置"
 
 #: temp.glade:23560 temp.glade:23584
 msgid "Bleed is the section of artwork that \n"
@@ -10884,19 +11050,23 @@ msgid "Bleed is the section of artwork that \n"
 "This ensures that the image goes right\n"
 "to the edge of the cover after it has \n"
 "been trimmed. (Units: mm)"
-msgstr ""
+msgstr "出血是指 \n"
+"超出纸张裁切范围的部分。 \n"
+"这可确保图像在 \n"
+"裁切后，能正确地\n"
+"到封面的边缘。(单位：毫米）"
 
 #: temp.glade:23591
 msgid "Bleed:"
-msgstr ""
+msgstr "出血："
 
 #: temp.glade:23600
 msgid "Show Cover Crop Marks"
-msgstr ""
+msgstr "显示覆盖作物标记"
 
 #: temp.glade:23601
 msgid "Generate cover: Include bleed area and cropmarks"
-msgstr ""
+msgstr "生成封面：包括出血区域和裁剪标记"
 
 #: temp.glade:23605
 msgid "When printing and binding books in bulk\n"
@@ -10906,15 +11076,21 @@ msgid "When printing and binding books in bulk\n"
 "to be shown on the cover page. So if you \n"
 "cannot uncheck this option, then disable \n"
 "the 'Include Spine' setting (above) and retry."
-msgstr ""
+msgstr "在大量印刷和装订书籍时，通常需要\n"
+"裁剪标记，以指示\n"
+"在何处对出版物进行裁剪。\n\n"
+"包括书脊会强制在封面页上显示裁剪标记\n"
+"。因此，如果 \n"
+"无法取消选中此选项，请禁用 \n"
+"\"包括书脊 \"设置（如上），然后重试。"
 
 #: temp.glade:23639
 msgid "Art Bleed:"
-msgstr ""
+msgstr "艺术出血："
 
 #: temp.glade:23654
 msgid "Crop Marks + Bleed Settings"
-msgstr ""
+msgstr "裁剪标记 + 冲洗设置"
 
 #: temp.glade:23682 temp.glade:24060
 msgid "Click to edit the Sidebar properties \n"
@@ -10930,7 +11106,7 @@ msgstr "在样式标签上点击编辑侧边栏属性 \n"
 
 #: temp.glade:23765
 msgid "Back Cover"
-msgstr ""
+msgstr "封底"
 
 #: temp.glade:23782
 msgid "\n"
@@ -10939,7 +11115,12 @@ msgid "\n"
 "in the Front Matter\n"
 "settings of the\n"
 "View+Edit tab.\n"
-msgstr ""
+msgstr "\n"
+"该\n"
+"部分的文本可在\n"
+"View+Edit 选项卡的 Front Matter\n"
+"设置中设置\n"
+"。\n"
 
 #: temp.glade:23829
 msgid "ISBN Bar\n"
@@ -10967,11 +11148,11 @@ msgstr "可选的二级标题"
 
 #: temp.glade:24096
 msgid "Create Cover"
-msgstr ""
+msgstr "创建封面"
 
 #: temp.glade:24097
 msgid "Create an outer Cover"
-msgstr ""
+msgstr "创建外罩"
 
 #: temp.glade:24124
 msgid "Set parameters for the cover\n"
@@ -11146,11 +11327,12 @@ msgstr "如果您的打印机有折页机， \n"
 #: temp.glade:24408
 msgid "Create Cover as \n"
 "a Separate PDF"
-msgstr ""
+msgstr "将封面创建为 \n"
+"一个单独的 PDF 文件"
 
 #: temp.glade:24410
 msgid "Pagination: Create the cover as a stand-alone PDF"
-msgstr ""
+msgstr "分页：将封面创建为独立的 PDF 文件"
 
 #: temp.glade:24415
 msgid "This option is only available if Create Cover is\n"
@@ -11158,7 +11340,11 @@ msgid "This option is only available if Create Cover is\n"
 "you plan to print the outer (wrapper) cover\n"
 "separately from the book's content. This is often\n"
 "the case if cardstock, or a colour cover is used."
-msgstr ""
+msgstr "只有在 \"封面 \"选项卡上启用了 \"创建封面 \"\n"
+"，此选项才可用。如果\n"
+"打算将封面（封套）\n"
+"与图书内容分开打印，请启用此选项。如果使用卡片纸或彩色封面，\n"
+"。"
 
 #: temp.glade:24439
 msgid "Whether you need a simple booklet\n"
@@ -11219,7 +11405,7 @@ msgstr "用颜色来突出差异"
 
 #: temp.glade:24562
 msgid "Compare PDFs: Colour of new text"
-msgstr ""
+msgstr "比较 PDF：新文本的颜色"
 
 #: temp.glade:24565
 msgid "Set the color to use when\n"
@@ -11241,7 +11427,7 @@ msgstr "显示新的文本，\n"
 
 #: temp.glade:24585
 msgid "Compare PDFs: Colour of old text"
-msgstr ""
+msgstr "比较 PDF：旧文本的颜色"
 
 #: temp.glade:24588 temp.glade:24692
 msgid "Set the color to use when\n"
@@ -11291,7 +11477,7 @@ msgstr "与 \n"
 
 #: temp.glade:24653
 msgid "Compare PDFs: Set maximum diff pages to show"
-msgstr ""
+msgstr "比较 PDF：设置显示的最大差异页数"
 
 #: temp.glade:24657
 msgid "The PDF showing differences between the old\n"
@@ -11299,16 +11485,21 @@ msgid "The PDF showing differences between the old\n"
 "resulting file rather large. Use this option to\n"
 "limit the number of \"Diff\" pages created.\n"
 "This will also potentially speed up the process."
-msgstr ""
+msgstr "显示新旧\n"
+"之间差异的 PDF 包含图像，这使得\n"
+"生成的文件相当大。使用该选项可\n"
+"限制创建的 \"差异 \"页面的数量。\n"
+"这也有可能加快处理速度。"
 
 #: temp.glade:24689
 msgid "Compare PDFs: Maximum pages of differences to show"
-msgstr ""
+msgstr "比较 PDF：显示差异的最大页数"
 
 #: temp.glade:24701
 msgid "Show Max\n"
 "Diff Pages:"
-msgstr ""
+msgstr "显示最大\n"
+"差分页："
 
 #: temp.glade:24722
 msgid "This tool allows you to compare 2 different\n"
@@ -11324,7 +11515,7 @@ msgstr "比较PDF文件"
 
 #: temp.glade:24760
 msgid "PDF output format (Screen, RGB, CMYK, B/W, spot)"
-msgstr ""
+msgstr "PDF 输出格式（屏幕、RGB、CMYK、黑白、专色）"
 
 #: temp.glade:24765
 msgid "Select the appropriate standard \n"
@@ -11508,11 +11699,11 @@ msgstr "容许色差（%）："
 
 #: temp.glade:25032
 msgid "Extract Color Inserts"
-msgstr ""
+msgstr "提取彩色插页"
 
 #: temp.glade:25033
 msgid "Extract Color Insert pages (as separate PDFs)"
-msgstr ""
+msgstr "提取彩色插入页面（作为单独的 PDF 文件）"
 
 #: temp.glade:25037
 msgid "Extract the special peripheral materials\n"
@@ -11520,7 +11711,11 @@ msgid "Extract the special peripheral materials\n"
 "PDFs to be printed in color and inserted\n"
 "manually during the binding process.\n\n"
 "Note that the cover is always extracted."
-msgstr ""
+msgstr "将名为 \"maps \"或 \"insert_*\"的特殊外围材料\n"
+"提取为单独的 \n"
+"PDF 文件，以便在装订过程中进行彩色打印并手动插入\n"
+"。\n\n"
+"请注意，封面始终会被提取出来。"
 
 #: temp.glade:25075
 msgid "PDF Details"
@@ -11903,7 +12098,7 @@ msgstr "启用这个选项可以更快地输出 \n"
 
 #: temp.glade:26161
 msgid "Create Diff"
-msgstr ""
+msgstr "创建差分"
 
 #: temp.glade:26162
 msgid "Compare PDFs: Create 'diff' PDF"
@@ -11917,7 +12112,13 @@ msgid "Enable this option to generate a PDF showing the \n"
 "If any differences are found, it should open the \n"
 "\"Diff\" PDF in the default PDF viewer.\n\n"
 "Shortcut: Ctrl-D"
-msgstr ""
+msgstr "启用此选项可生成一个 PDF，显示当前 PDF 与 \n"
+"所选先前版本（在 \"比较 PDF \"下的 \"整理\n"
+"\"选项卡上设置）之间的 \n"
+"差异。\n\n"
+"如果发现任何差异，则应在默认 PDF 查看器中打开 \n"
+"\"Diff\" PDF。\n\n"
+"快捷键Ctrl-D"
 
 #: temp.glade:26201
 msgid "The configuration displayed now is for the \n"
@@ -12027,7 +12228,9 @@ msgstr "PTXprint将创建一个\n"
 msgid "Step 3.\n"
 "Assign a Name\n"
 "for the Project:"
-msgstr ""
+msgstr "第 3 步。\n"
+"为项目指定一个名称\n"
+"："
 
 #: temp.glade:26476
 msgid "Assign a name to a DBL bundle"
@@ -12064,14 +12267,21 @@ msgid "If you don't already have a DBL bundle, then\n"
 "from an online scripture repository.\n\n"
 "If you already have the required DBL bundle,\n"
 "then skip this first step."
-msgstr ""
+msgstr "如果您还没有 DBL 捆绑本，那么\n"
+"，您可以从在线经文库下载相关文本 \n"
+"。\n\n"
+"如果您已经拥有所需的 DBL 捆绑本，\n"
+"，那么请跳过第一步。"
 
 #: temp.glade:26572
 msgid "[Optional]     Step 1.\n"
 "Download a DBL\n"
 "Bundle (USX) from\n"
 "an Online Repository"
-msgstr ""
+msgstr "[Optional]     步骤 1。\n"
+"从\n"
+"在线存储库下载 DBL\n"
+"Bundle (USX)"
 
 #: temp.glade:26589 temp.glade:31483 temp.glade:35029
 msgid "Description:"
@@ -12091,7 +12301,11 @@ msgid "There are hundreds of DBL bundles available\n"
 "download and use in a publication.\n\n"
 "Use resources which contain the text\n"
 "and select the USX download option."
-msgstr ""
+msgstr "在 Open.Bible 网站\n"
+"上有数百个 DBL 捆绑包，您可以\n"
+"下载并在出版物中使用。\n\n"
+"使用包含文本\n"
+"的资源，并选择 USX 下载选项。"
 
 #: temp.glade:26647
 msgid "PTXprint: Sidebar Image Settings"
@@ -12309,15 +12523,15 @@ msgstr "侧边栏背景图像：尺寸过大管理"
 
 #: temp.glade:27324
 msgid "Sidebar background image: Scale Image to Inner/Outer/Bleed area "
-msgstr ""
+msgstr "侧边栏背景图像：将图像缩放至内部/外部/空白区域 "
 
 #: temp.glade:27328 temp.glade:29301
 msgid "Select where the image should extend to."
-msgstr ""
+msgstr "选择图像的延伸位置。"
 
 #: temp.glade:27354
 msgid "Scale To:"
-msgstr ""
+msgstr "刻度至"
 
 #: temp.glade:27367
 msgid "Background Image Advanced Settings"
@@ -12421,7 +12635,9 @@ msgstr "边框对话框。水平边框填充 "
 msgid "The horizontal space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "边框内侧 \n"
+"边缘与其内侧方框外边缘 \n"
+"之间的水平空间。"
 
 #: temp.glade:27874
 msgid "Borders dialog: Vertical border padding "
@@ -12431,7 +12647,9 @@ msgstr "边框对话框：垂直边框填充 "
 msgid "The vertical space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "边框内侧 \n"
+"边缘与其内侧方框外边缘 \n"
+"之间的垂直空间。"
 
 #: temp.glade:27900
 msgid "The space between the (inside) edge of the border\n"
@@ -12734,15 +12952,15 @@ msgstr "语言："
 
 #: temp.glade:28899
 msgid "PTXprint: Cover Wizard"
-msgstr ""
+msgstr "PTXprint：封面向导"
 
 #: temp.glade:28925
 msgid "Create/Overwrite \\periphs in Front Matter"
-msgstr ""
+msgstr "在封面中创建/改写 （periphs in Front Matter"
 
 #: temp.glade:28926
 msgid "Generate cover: Overwrite Periphs in Front Matter"
-msgstr ""
+msgstr "生成封面覆写封面中的周边内容"
 
 #: temp.glade:28930
 msgid "If this option is enabled, then any existing settings for\n"
@@ -12752,166 +12970,191 @@ msgid "If this option is enabled, then any existing settings for\n"
 "   id='coverfront', id='coverspine', id='coverback, id='coverwhole'\n\n"
 "So, if you have already customized these settings, then leave this\n"
 "option unchecked."
-msgstr ""
+msgstr "如果启用此选项，\n"
+"\"正面内容\"（在 \"查看+编辑 \"选项卡上）中封面的任何现有设置\n"
+"都将重置为默认值。受影响的\n"
+"设置如下：\n"
+"   id='coverfront', id='coverpine', id='coverback, id='coverwhole'\n\n"
+"因此，如果您已经自定义了这些设置，请不要选中此\n"
+"选项。"
 
 #: temp.glade:29021
 msgid "Generate cover: Scale Text Size"
-msgstr ""
+msgstr "生成封面缩放文字大小"
 
 #: temp.glade:29024 temp.glade:29069 temp.glade:29426
 msgid "The \\mt1 and \\mt2 styles are used for the\n"
 "title and subtitle on the cover page. Use\n"
 "this setting to increase size of such titles."
-msgstr ""
+msgstr "\n"
+"封面上的标题和副标题使用 \\mt1 和 \\mt2 样式。使用\n"
+"这一设置可增大此类标题的尺寸。"
 
 #: temp.glade:29048
 msgid "Generate cover: Text Color"
-msgstr ""
+msgstr "生成封面文本颜色"
 
 #: temp.glade:29052
 msgid "Set the color of the title and subtitle text."
-msgstr ""
+msgstr "设置标题和副标题文本的颜色。"
 
 #: temp.glade:29075
 msgid "Scale Text Size:"
-msgstr ""
+msgstr "缩放文字大小："
 
 #: temp.glade:29084
 msgid "Generate cover: Select Ornamental Border"
-msgstr ""
+msgstr "生成封面：选择装饰边框"
 
 #: temp.glade:29088 temp.glade:29369
 msgid "A selection of ornamental borders are available\n"
 "to choose from, or a custom-made border may\n"
 "be applied to the front cover page."
-msgstr ""
+msgstr "\n"
+"，也可在封面页上定制边框\n"
+"。"
 
 #: temp.glade:29114
 msgid "Generate cover: Select Background Shading"
-msgstr ""
+msgstr "生成封面：选择背景阴影"
 
 #: temp.glade:29118 temp.glade:29171
 msgid "Set the background color for the cover."
-msgstr ""
+msgstr "设置封面的背景颜色。"
 
 #: temp.glade:29133
 msgid "Generate cover: Select Background Picure (or Image)"
-msgstr ""
+msgstr "生成封面选择背景图片（或图像）"
 
 #: temp.glade:29153
 msgid "<== Select an image file for the background"
-msgstr ""
+msgstr "<== 选择背景图像文件"
 
 #: temp.glade:29167
 msgid "Generate cover: Select Border Color"
-msgstr ""
+msgstr "生成封面选择边框颜色"
 
 #: temp.glade:29184
 msgid "Background Shading:"
-msgstr ""
+msgstr "背景阴影："
 
 #: temp.glade:29185
 msgid "Generate cover: Enable Background Shading"
-msgstr ""
+msgstr "生成封面：启用背景阴影"
 
 #: temp.glade:29189
 msgid "Enable this option to apply shading\n"
 "to the entire cover."
-msgstr ""
+msgstr "启用此选项可将阴影\n"
+"应用于整个封面。"
 
 #: temp.glade:29203
 msgid "Background Picture:"
-msgstr ""
+msgstr "背景图片："
 
 #: temp.glade:29204 temp.glade:29226
 msgid "Generate cover: Enable Background Picture (or Image)"
-msgstr ""
+msgstr "生成封面：启用背景图片（或图像）"
 
 #: temp.glade:29208
 msgid "Enable this option to place a picture\n"
 "(or image) on the entire cover (so\n"
 "it wraps around onto the back cover).\n"
 "Use a landscape-oriented image."
-msgstr ""
+msgstr "启用此选项可在整个封面上放置图片\n"
+"（或图像）（这样\n"
+"，它就会环绕到封底）。\n"
+"使用横向图片。"
 
 #: temp.glade:29225
 msgid "Only on Front Cover"
-msgstr ""
+msgstr "仅限封面"
 
 #: temp.glade:29230
 msgid "Enable this option to only place the\n"
 "selected image on the front cover (so\n"
 "it does not wrap onto the back cover). \n"
 "Use a portrait-oriented image."
-msgstr ""
+msgstr "启用此选项可仅将\n"
+"选定的图像放在封面上（因此\n"
+"，它不会包在封底上）。 \n"
+"使用纵向图像。"
 
 #: temp.glade:29247
 msgid "Generate cover: Set Transparency of Background Picture"
-msgstr ""
+msgstr "生成封面设置背景图片的透明度"
 
 #: temp.glade:29250
 msgid "Set the transparency (Alpha) of the \n"
 "background picture which appears\n"
 "behind any shading if any.\n"
 " "
-msgstr ""
+msgstr "设置 \n"
+"背景图片的透明度（Alpha），如果有任何阴影，\n"
+"。\n"
+" "
 
 #: temp.glade:29272
 msgid "Generate cover: Set Transparency of Background Shading"
-msgstr ""
+msgstr "生成封面：设置背景阴影的透明度"
 
 #: temp.glade:29276
 msgid "Set the transparency (Alpha) of the \n"
 "background shading which appears\n"
 "on top of the image if there is one.\n"
 " "
-msgstr ""
+msgstr "设置 \n"
+"背景阴影的透明度（Alpha），如果有的话，\n"
+"。\n"
+" "
 
 #: temp.glade:29297
 msgid "Generate cover: Select Scale Picture To Area"
-msgstr ""
+msgstr "生成封面选择缩放图片至区域"
 
 #: temp.glade:29328
 msgid "Text Color:"
-msgstr ""
+msgstr "文字颜色"
 
 #: temp.glade:29342
 msgid "Border Color:"
-msgstr ""
+msgstr "边框颜色"
 
 #: temp.glade:29355
 msgid "Shading Color:"
-msgstr ""
+msgstr "阴影颜色"
 
 #: temp.glade:29364
 msgid "Ornamental Border:"
-msgstr ""
+msgstr "装饰边框："
 
 #: temp.glade:29365
 msgid "Generate cover: Enable Ornamental Border"
-msgstr ""
+msgstr "生成封面：启用装饰边框"
 
 #: temp.glade:29388
 msgid "The transparency (alpha channel) values on the sliders below\n"
 "range from 0 (completely transparent) to 1 (completely opaque)."
-msgstr ""
+msgstr "\n"
+"下方滑块上的透明度（alpha 通道）值范围从 0（完全透明）到 1（完全不透明）。"
 
 #: temp.glade:29391
 msgid "Transparency"
-msgstr ""
+msgstr "透明度"
 
 #: temp.glade:29409
 msgid "Click to Open a PDF containing a catalog\n"
 "of the various Ornamental Borders (pgs 4-7)."
-msgstr ""
+msgstr "单击打开 PDF 文件，其中包含各种装饰边框的目录\n"
+"（第 4-7 页）。"
 
 #: temp.glade:29431
 msgid "Scale Picure To:"
-msgstr ""
+msgstr "缩放图片至"
 
 #: temp.glade:29450
 msgid "Cover Page Settings"
-msgstr ""
+msgstr "封面设置"
 
 #: temp.glade:29464
 msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
@@ -12920,7 +13163,12 @@ msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
 "     on the View+Edit tab) ONLY IF the option below is enabled:\n"
 "The \\periphs affected are as follows:\n"
 "     id='coverfront', id='coverspine', id='coverback, id='coverwhole'"
-msgstr ""
+msgstr "请注意，当您点击 \"创建封面设置 \"时，PTXprint 将\n"
+"     (a) 更新封面样式定义（样式编辑器设置）\n"
+"     (b) 只有启用以下选项，才会覆盖（封面设置）定义（\"视图+编辑 \"选项卡上的 \"正面设置 \"\n"
+"     ）：\n"
+"受影响的封面样式如下：\n"
+"     id='coverfront', id='coverpine', id='coverback, id='coverwhole'."
 
 #: temp.glade:29497
 msgid "PTXprint: Generate Front Matter"
@@ -13121,18 +13369,21 @@ msgstr "当生成图片列表时"
 
 #: temp.glade:30062
 msgid "PTXprint: Install an Image Set..."
-msgstr ""
+msgstr "PTXprint：安装图像集..."
 
 #: temp.glade:30137
 msgid "Illustrations have been packaged \n"
 "for use in Scripture publications."
-msgstr ""
+msgstr "插图已打包 \n"
+"，供经文出版物使用。"
 
 #: temp.glade:30166
 msgid "After downloading an Image Set\n"
 "you need to tell PTXprint where the\n"
 ".zip file is saved so it can be installed."
-msgstr ""
+msgstr "下载图像集\n"
+"后，您需要告诉 PTXprint\n"
+".zip 文件的保存位置，以便安装。"
 
 #: temp.glade:30182
 msgid "Locate the downloaded Image Set \n"
@@ -13140,13 +13391,19 @@ msgid "Locate the downloaded Image Set \n"
 "in your 'Downloads' folder.\n\n"
 "DO NOT UNZIP THE FILE - this will\n"
 "be done for you automatically."
-msgstr ""
+msgstr "找到下载的图像集 \n"
+"文件 (.zip)，该文件可能位于 \n"
+"的 \"下载 \"文件夹中。\n\n"
+"请勿解压缩文件 -\n"
+"将自动为您完成解压缩。"
 
 #: temp.glade:30189
 msgid "Option 2: Locate an\n"
 "Image Set .zip File\n"
 "to be installed:"
-msgstr ""
+msgstr "选项 2：找到要安装的\n"
+"Image Set .zip 文件\n"
+"："
 
 #: temp.glade:30220
 msgid "If you don't already have appropriate\n"
@@ -13156,22 +13413,31 @@ msgid "If you don't already have appropriate\n"
 "publications from one of the links.\n\n"
 "If you already have an Image Set (.zip)\n"
 "file downloaded then skip this first step."
-msgstr ""
+msgstr "如果您还没有合适的\n"
+"经文插图，那么您可以\n"
+"从其中一个链接下载一个图像集，该图像集包含\n"
+"低分辨率插图，供\n"
+"出版物试用。\n\n"
+"如果您已经下载了图像集 (.zip)\n"
+"文件，请跳过第一步。"
 
 #: temp.glade:30231
 msgid "Option 1: Download and\n"
 "Install Image Set from \n"
 "the Online Repository"
-msgstr ""
+msgstr "选项 1：从 \n"
+"在线存储库下载并\n"
+"安装镜像集"
 
 #: temp.glade:30262
 msgid "OR"
-msgstr ""
+msgstr "或"
 
 #: temp.glade:30271
 msgid "Download Sample\n"
 "B/W Image Set"
-msgstr ""
+msgstr "下载样本\n"
+"黑白图像集"
 
 #: temp.glade:30309
 msgid "Guides, Crop Marks, Watermark and Grid Settings"
@@ -13195,25 +13461,27 @@ msgstr "启用此选项将打开各种参考线 \n"
 
 #: temp.glade:30396
 msgid "Show Adjust Points"
-msgstr ""
+msgstr "显示调整点"
 
 #: temp.glade:30397
 msgid "Marks & Guides dialog: Show adjust points"
-msgstr ""
+msgstr "标记和导线对话框：显示调整点"
 
 #: temp.glade:30401
 msgid "When using an AdjList to grow or shrink\n"
 "paragraphs, it can be helpful to display the\n"
 "adjust points in the margin of the text."
-msgstr ""
+msgstr "当使用 AdjList 增大或缩小\n"
+"段落时，在文本的边距中显示\n"
+"调整点可能会有所帮助。"
 
 #: temp.glade:30416
 msgid "Show USFM Codes"
-msgstr ""
+msgstr "显示 USFM 代码"
 
 #: temp.glade:30417
 msgid "Marks & Guides dialog: Show USFM codes"
-msgstr ""
+msgstr "标记和指南对话框：显示 USFM 代码"
 
 #: temp.glade:30421
 msgid "Show the USFM marker of paragraphs.\n"
@@ -13223,7 +13491,13 @@ msgid "Show the USFM marker of paragraphs.\n"
 "markers visible will result in changes to the\n"
 "layout. Only use this feature temporarily\n"
 "when trying to identify a marker."
-msgstr ""
+msgstr "显示段落的 USFM 标记。\n"
+"这在使用 changes.txt\n\n"
+"增加或\n"
+"缩小段落时非常有用。请注意，在某些情况下，显示这些\n"
+"标记会导致\n"
+"布局发生变化。只有在试图识别标记时才临时使用此功能\n"
+"。"
 
 #: temp.glade:30441
 msgid "Show Error Bars For Overfull Lines"
@@ -13382,15 +13656,15 @@ msgstr "如果标记线和参考线不足，\n"
 
 #: temp.glade:30836
 msgid "Select Images..."
-msgstr ""
+msgstr "选择图像..."
 
 #: temp.glade:30853
 msgid "Download Image Set..."
-msgstr ""
+msgstr "下载图像集..."
 
 #: temp.glade:30854
 msgid "Download an Image Set from an online source"
-msgstr ""
+msgstr "从在线资源下载图像集"
 
 #: temp.glade:30858
 msgid "If you don't already have appropriate\n"
@@ -13398,7 +13672,11 @@ msgid "If you don't already have appropriate\n"
 "download an Image Set which contains\n"
 "low-resolution illustrations for trial\n"
 "publications from one of the links."
-msgstr ""
+msgstr "如果您还没有合适的\n"
+"经文插图，那么您可以从其中一个链接\n"
+"下载一套图像，其中包含\n"
+"低分辨率插图，供\n"
+"出版物试用。"
 
 #: temp.glade:30899
 msgid "Import the selected images\n"
@@ -13406,95 +13684,107 @@ msgid "Import the selected images\n"
 "where an appropriate caption\n"
 "should be added and other\n"
 "image properties selected."
-msgstr ""
+msgstr "将选定的图像\n"
+"导入当前配置\n"
+"，在此应添加适当的标题\n"
+"并选择其他\n"
+"图像属性。"
 
 #: temp.glade:31080
 msgid "Search:"
-msgstr ""
+msgstr "搜索："
 
 #: temp.glade:31092
 msgid "Limit to Range\n"
 "of References:"
-msgstr ""
+msgstr "限制范围\n"
+"："
 
 #: temp.glade:31104
 msgid "e.g. LUK ACT HEB JAS"
-msgstr ""
+msgstr "例如：LUK ACT HEB JAS"
 
 #: temp.glade:31119
 msgid "Artist(s):"
-msgstr ""
+msgstr "艺术家"
 
 #: temp.glade:31131
 msgid "Image Set:"
-msgstr ""
+msgstr "图像集："
 
 #: temp.glade:31140
 msgid "Image Selection Dialog: Search for an image by keyword"
-msgstr ""
+msgstr "图像选择对话框：按关键字搜索图像"
 
 #: temp.glade:31146
 msgid "(lamb|sheep)+shepherd"
-msgstr ""
+msgstr "(羔羊|绵羊)+牧羊人"
 
 #: temp.glade:31187
 msgid "Scripture Reference"
-msgstr ""
+msgstr "经文参考"
 
 #: temp.glade:31191
 msgid "Sort the images according to\n"
 "the canonical order of scripture."
-msgstr ""
+msgstr "按照\n"
+"经文的正典顺序排列图像。"
 
 #: temp.glade:31206
 msgid "Frequency of Use"
-msgstr ""
+msgstr "使用频率"
 
 #: temp.glade:31210
 msgid "Sort the images based on how\n"
 "often other projects use them.\n"
 "The most popular illustrations\n"
 "appear at the top of the list."
-msgstr ""
+msgstr "根据\n"
+"其他项目使用图片的频率对图片进行排序。\n"
+"最受欢迎的插图\n"
+"会出现在列表顶部。"
 
 #: temp.glade:31229
 msgid "Sort Images By:"
-msgstr ""
+msgstr "图片排序方式"
 
 #: temp.glade:31258
 msgid "Filter"
-msgstr ""
+msgstr "过滤器"
 
 #: temp.glade:31272
 msgid "Code"
-msgstr ""
+msgstr "代码"
 
 #: temp.glade:31285
 msgid "Artist Name"
-msgstr ""
+msgstr "艺术家姓名"
 
 #: temp.glade:31316
 msgid "Search + Update Images"
-msgstr ""
+msgstr "搜索 + 更新图片"
 
 #: temp.glade:31344
 msgid "Filter for illustrations that can be\n"
 "used in Print/PDF publications. "
-msgstr ""
+msgstr "筛选可用于\n"
+"印刷/PDF 出版物的插图。 "
 
 #: temp.glade:31363
 msgid "Filter for illustrations that can be\n"
 "used in mobile phone Apps. "
-msgstr ""
+msgstr "筛选可在手机应用程序\n"
+"中使用的插图。 "
 
 #: temp.glade:31381
 msgid "Filter for illustrations that can be\n"
 "used on websites. "
-msgstr ""
+msgstr "筛选可用于\n"
+"网站的插图。 "
 
 #: temp.glade:31453
 msgid "Keywords:"
-msgstr ""
+msgstr "关键词："
 
 #: temp.glade:31464
 msgid "Note that if a reference only contains\n"
@@ -13502,47 +13792,51 @@ msgid "Note that if a reference only contains\n"
 "specific verse mentioned), then the\n"
 "illustration will be placed in the middle\n"
 "of the chapter."
-msgstr ""
+msgstr "请注意，如果参考文献只包含\n"
+"书名和章节编号（未提及\n"
+"具体经文），则\n"
+"插图将放在\n"
+"章节中间。"
 
 #: temp.glade:31470
 msgid "Reference:"
-msgstr ""
+msgstr "参考资料"
 
 #: temp.glade:31495
 msgid "shepherd, sheep, lamb, shoulder, carry"
-msgstr ""
+msgstr "牧羊人, 绵羊, 小羊, 肩膀, 携带"
 
 #: temp.glade:31509
 msgid "MAT 12:15, LUK 22:7; ACT 8:3"
-msgstr ""
+msgstr "亚 12:15，路 22:7；徒 8:3"
 
 #: temp.glade:31524
 msgid "The shepherd carries a lamb."
-msgstr ""
+msgstr "牧羊人抱着小羊"
 
 #: temp.glade:31538
 msgid "cn01234, David C Cook - NT"
-msgstr ""
+msgstr "cn01234, David C Cook - NT"
 
 #: temp.glade:31551
 msgid "ID, Artist:"
-msgstr ""
+msgstr "ID，艺术家："
 
 #: temp.glade:31627
 msgid "Clear Selection"
-msgstr ""
+msgstr "清除选择"
 
 #: temp.glade:31665
 msgid "PTXprint: Import Settings Into Current Configuration..."
-msgstr ""
+msgstr "PTXprint：将设置导入当前配置..."
 
 #: temp.glade:31696
 msgid "RESET"
-msgstr ""
+msgstr "重置"
 
 #: temp.glade:31697
 msgid "Reset the current Configuration's UI settings"
-msgstr ""
+msgstr "重置当前配置的用户界面设置"
 
 #: temp.glade:31701
 msgid "Warning!\n"
@@ -13551,15 +13845,20 @@ msgid "Warning!\n"
 "their default values.\n\n"
 "Note that it will NOT reset the Style \n"
 "settings stored in the .sty files."
-msgstr ""
+msgstr "警告！\n"
+"这将把当前配置的所有用户界面设置 \n"
+"重置为\n"
+"的默认值。\n\n"
+"请注意，它不会重置存储在 .sty 文件中的样式 \n"
+"设置。"
 
 #: temp.glade:31795
 msgid "PDF file (with embedded settings) or ZIP archive file"
-msgstr ""
+msgstr "PDF 文件（内嵌设置）或 ZIP 压缩文件"
 
 #: temp.glade:31796
 msgid "Import: From existing PDF file or ZIP archive"
-msgstr ""
+msgstr "导入：从现有 PDF 文件或 ZIP 存档导入"
 
 #: temp.glade:31800
 msgid "It is possible to import settings from an\n"
@@ -13569,7 +13868,13 @@ msgid "It is possible to import settings from an\n"
 "on the Finishing tab).\n\n"
 "Importing from a PTXprint ZIP archive \n"
 "(created on the Help tab) is also possible."
-msgstr ""
+msgstr "可以从\n"
+"现有的 PDF 文件中导入设置，该文件是由 PTXprint 在\n"
+"之前制作的。但这只有在设置\n"
+"嵌入 PDF 文件时才有效。(在 \"加工 \"选项卡上启用\n"
+"）。\n\n"
+"也可以从 PTXprint ZIP 压缩包 \n"
+"（在 \"帮助 \"选项卡上创建）中导入。"
 
 #: temp.glade:31824
 msgid "A Previously Saved Configuration:"
@@ -13619,7 +13924,11 @@ msgid "Select either a PTXprint PDF or ZIP archive\n"
 "Importing from a PDF will only work if the\n"
 "PDF contains the PTXprint configuration\n"
 "settings (as enabled on the Finishing tab)."
-msgstr ""
+msgstr "选择一个 PTXprint PDF 或 ZIP 档案\n"
+"来导入设置。\n\n"
+"只有当\n"
+"PDF 包含 PTXprint 配置\n"
+"设置（在 \"加工 \"选项卡上启用）时，从 PDF 导入才有效。"
 
 #: temp.glade:31998
 msgid "Source of Settings"
@@ -13655,15 +13964,15 @@ msgstr "版权信息"
 
 #: temp.glade:32185
 msgid "How to handle differences:"
-msgstr ""
+msgstr "如何处理分歧："
 
 #: temp.glade:32195
 msgid "Add Any New Pictures"
-msgstr ""
+msgstr "添加任何新图片"
 
 #: temp.glade:32212
 msgid "Remove Any Old Pictures"
-msgstr ""
+msgstr "删除任何旧照片"
 
 #: temp.glade:32268
 msgid "Enabling this option will import (overwrite) the page size, \n"
@@ -13681,11 +13990,13 @@ msgstr "启用该选项将导入主要的字型和文字设置、间距和连字
 msgid "This will selectively import any Styles which are different from the Default settings.\n"
 "This will also import styles from ptxprint-mods.sty, but not from custom.sty.\n"
 "You may also want to RESET the current configuration (see below) before importing styles."
-msgstr ""
+msgstr "这将有选择性地导入任何与默认设置不同的样式。\n"
+"这也会导入 ptxprint-mods.sty 中的样式，但不会导入 custom.sty 中的样式。\n"
+"在导入样式之前，可能还需要重置当前配置（见下文）。"
 
 #: temp.glade:32377
 msgid "Override ALL Style Settings"
-msgstr ""
+msgstr "覆盖所有样式设置"
 
 #: temp.glade:32381
 msgid "Normally only styles that have not been changed\n"
@@ -13693,11 +14004,15 @@ msgid "Normally only styles that have not been changed\n"
 "But if you require ALL styles to be updated\n"
 "regardless of whether they have already been\n"
 "modified locally, then enable this option."
-msgstr ""
+msgstr "通常只导入接收配置中尚未更改的样式\n"
+"。\n"
+"但如果您要求更新\n"
+"中的所有样式，而不管它们是否已在本地修改过\n"
+"，那么请启用此选项。"
 
 #: temp.glade:32439
 msgid "Other settings can be imported as needed:"
-msgstr ""
+msgstr "其他设置可根据需要导入："
 
 #: temp.glade:32471
 msgid "Body Tab settings"
@@ -13717,7 +14032,7 @@ msgstr "标签+边框设置"
 
 #: temp.glade:32534
 msgid "Overwrite Front Matter"
-msgstr ""
+msgstr "覆盖封面"
 
 #: temp.glade:32549
 msgid "Advanced settings"
@@ -13727,7 +14042,9 @@ msgstr "高级设置"
 msgid "This includes everything on the Advanced tab\n"
 "with the exception of Custom Script processing\n"
 "and Customized Styles (custom.sty)."
-msgstr ""
+msgstr "这包括 \"高级 \"选项卡\n"
+"上的所有内容，但 \"自定义脚本处理\n"
+"\"和 \"自定义样式 (custom.sty) \"除外。"
 
 #: temp.glade:32579
 msgid "Cover settings"
@@ -13735,7 +14052,7 @@ msgstr "封面设置"
 
 #: temp.glade:32595
 msgid "Front +Back Matter"
-msgstr ""
+msgstr "封面+封底"
 
 #: temp.glade:32671
 msgid "Select Books To Export to PDF"
@@ -14399,12 +14716,13 @@ msgstr "史特朗索引：允许不平衡行存在"
 
 #: temp.glade:34792
 msgid "Notes"
-msgstr ""
+msgstr "说明"
 
 #: temp.glade:34796
 msgid "This is the Description field from the\n"
 "project's Biblical Terms renderings."
-msgstr ""
+msgstr "这是\n"
+"项目《圣经术语》效果图中的描述字段。"
 
 #: temp.glade:34835
 msgid "PTXprint: Add/Edit Style"

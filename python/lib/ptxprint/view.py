@@ -31,8 +31,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.3.34"
-GitVersionStr = "2.3.34"
+VersionStr = "2.3.37"
+GitVersionStr = "2.3.37"
 ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -1819,7 +1819,7 @@ REM To run this batch script (in Windows) change the extension
 REM from .txt to .bat and then type: runtex.bat <Enter>
 cd local\\ptxprint\\{0}
 for %%i in (xetex.exe) do set truetex=%%~$PATH:i
-if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\xetex.exe
+if "%truetex%" == "" set truetex=C:\\Program Files\\PTXprint\\xetex\\bin\\windows\\xetex.exe
 set FONTCONFIG_FILE=%cd%\\..\\..\\..\\fonts.conf
 set TEXINPUTS=.;%cd%\\..\\..\\..\\src\\;
 set hyph_size=32749

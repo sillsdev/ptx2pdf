@@ -22,7 +22,7 @@ elif sys.platform == "win32":
     CREATE_NO_WINDOW = 0x08000000
 
     def fclist(family, pattern):
-        a = [os.path.join(pt_bindir(), "xetex", "bin", "fc-list.exe").replace("\\", "/"),
+        a = [os.path.join(pt_bindir(), "xetex", "bin", "windows", "fc-list.exe").replace("\\", "/"),
                 '"'+family+'"', '":style='+pattern+'"', 'file']
         return subprocess.check_output(a, creationflags=CREATE_NO_WINDOW).decode("utf-8", errors="ignore")
 
@@ -31,7 +31,7 @@ elif sys.platform == "win32":
             del kw['shell']
         if 'path' in kw:
             if kw['path'] == 'xetex':
-                path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("\\", "/")
+                path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("\\", "/")
                 a = [[path] + list(a[0])[1:]] + [x.replace('"', '') for x in a[1:]]
             del kw['path']
         else:
@@ -40,7 +40,7 @@ elif sys.platform == "win32":
         return res
 
     def call(*a, **kw):
-        path = os.path.join(pt_bindir(), "xetex", "bin", a[0][0]+".exe").replace("/", "\\")
+        path = os.path.join(pt_bindir(), "xetex", "bin", "windows", a[0][0]+".exe").replace("/", "\\")
         newa = [[path] + a[0][1:]] + list(a)[1:]
         res = subprocess.call(*newa, creationflags=CREATE_NO_WINDOW, **kw)
         return res

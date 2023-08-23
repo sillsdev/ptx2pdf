@@ -58,7 +58,7 @@ pictures use the default. For `chapter`s in a `\\nb` run-on paragraph,  the
 allowable slop is set to permit the chapter number to raise by one line. line
 above.  The limits  are controlled by the following commands:
 
- ```
+```
 \setCutoutSlopDefault{RAISE}{LOWER}
 \setCutoutSlop{droppic3}{RAISE}{LOWER}
 ```

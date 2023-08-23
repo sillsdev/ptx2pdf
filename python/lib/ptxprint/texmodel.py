@@ -1230,7 +1230,8 @@ class TexModel:
                         regex.compile(r"(\d)\s(\p{L})"), r"\1\u00A0\2"))
                         
         # Temporary fix to stop blowing up when \fp is found in notes (need a longer term TeX solution from DG or MH)
-        self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
+        # Solved on the TeX side on 11-Aug-2023, so we no longer need this hack below:
+        # self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
             self.localChanges.append((self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")),

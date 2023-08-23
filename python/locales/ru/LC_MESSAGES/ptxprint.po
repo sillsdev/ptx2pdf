@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-26 11:23+0100\n"
-"PO-Revision-Date: 2023-07-26 10:24\n"
+"POT-Creation-Date: 2023-08-23 14:51+0100\n"
+"PO-Revision-Date: 2023-08-23 13:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -160,7 +160,7 @@ msgid "Font Scale:"
 msgstr "Масштаб шрифта:"
 
 #: lib/ptxprint/gtkstyleditor.py:198 lib/ptxprint/gtkstyleditor.py:507
-#: lib/ptxprint/gtkview.py:3090 temp.glade:19853 temp.glade:27167
+#: lib/ptxprint/gtkview.py:3102 temp.glade:19853 temp.glade:27167
 #: temp.glade:27748
 msgid "Color:"
 msgstr "Цвет:"
@@ -171,7 +171,7 @@ msgstr "Подробнее..."
 
 #: lib/ptxprint/gtkstyleditor.py:458
 msgid "Complex style"
-msgstr ""
+msgstr "Сложный стиль"
 
 #: lib/ptxprint/gtkstyleditor.py:672
 msgid "Required element {} is not set. Please set it."
@@ -181,30 +181,50 @@ msgstr "Необходимый элемент {} не установлен. По
 msgid "Set Font..."
 msgstr "Установить шрифт..."
 
-#: lib/ptxprint/gtkview.py:456
+#: lib/ptxprint/gtkview.py:115
+msgid "Gathering pics..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:116
+msgid "Laying out..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:117
+msgid "Making PDF..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:118
+msgid "Finishing..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:119 lib/ptxprint/gtkview.py:1372
+msgid "Processing..."
+msgstr "Обработка..."
+
+#: lib/ptxprint/gtkview.py:463
 msgid "\n"
 "PTXprint Version {}"
 msgstr "\n"
 "Версия PTXprint {}"
 
-#: lib/ptxprint/gtkview.py:464
+#: lib/ptxprint/gtkview.py:471
 #, python-brace-format
 msgid "Mailto: <{who2email}>"
-msgstr ""
+msgstr "Mailto: <{who2email}>"
 
-#: lib/ptxprint/gtkview.py:470 lib/ptxprint/gtkview.py:475
+#: lib/ptxprint/gtkview.py:477 lib/ptxprint/gtkview.py:482
 msgid "This message has been copied to the clipboard."
 msgstr "Это сообщение было скопировано в буфер обмена."
 
-#: lib/ptxprint/gtkview.py:472
+#: lib/ptxprint/gtkview.py:479
 msgid "The letter above has been copied to the clipboard."
-msgstr ""
+msgstr "Приведенное выше письмо было скопировано в буфер обмена."
 
-#: lib/ptxprint/gtkview.py:473
+#: lib/ptxprint/gtkview.py:480
 msgid "Send it by e-mail to: {}"
-msgstr ""
+msgstr "Отправьте его по электронной почте на адрес: {}"
 
-#: lib/ptxprint/gtkview.py:492
+#: lib/ptxprint/gtkview.py:499
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory where your USFM projects\n"
 "are (or will be) stored. Or click cancel to exit."
@@ -212,35 +232,35 @@ msgstr "Paratext не установлен в системе.\n"
 "Пожалуйста, найдите каталог, в котором сохранены ваши USFM проекты\n"
 "или нажмите \"Отмена\" для выхода."
 
-#: lib/ptxprint/gtkview.py:836
+#: lib/ptxprint/gtkview.py:843
 msgid "No project set"
 msgstr "Проект не установлен"
 
-#: lib/ptxprint/gtkview.py:969
+#: lib/ptxprint/gtkview.py:976
 msgid "No matches found - try another search term"
 msgstr "Не найдено совпадений - попробуйте другой поисковый запрос"
 
-#: lib/ptxprint/gtkview.py:1188
+#: lib/ptxprint/gtkview.py:1195
 msgid "Can't set {} in the model"
 msgstr "Невозможно установить {} в модели"
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1309
 msgid "Font(s) not set"
 msgstr "Шрифт(ы) не заданы"
 
-#: lib/ptxprint/gtkview.py:1316
+#: lib/ptxprint/gtkview.py:1323
 msgid "Printing busy"
 msgstr "Печать занята"
 
-#: lib/ptxprint/gtkview.py:1320 lib/ptxprint/runjob.py:355
+#: lib/ptxprint/gtkview.py:1327 lib/ptxprint/runjob.py:355
 msgid "No books to print"
 msgstr "Нет книг для печати"
 
-#: lib/ptxprint/gtkview.py:1323
+#: lib/ptxprint/gtkview.py:1330
 msgid "One of more fonts have not been set yet"
 msgstr "Один из нескольких шрифтов еще не установлен"
 
-#: lib/ptxprint/gtkview.py:1348
+#: lib/ptxprint/gtkview.py:1355
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -254,170 +274,176 @@ msgstr "                   >>> ПОЖАЛУЙСТА ЗАКРЫТЬ PDF <<       
 " Подробнее см. в разделе \"Ссылки\" на вкладке Просмотр.                            \n\n"
 "                        Вы хотите попробовать еще раз?"
 
-#: lib/ptxprint/gtkview.py:1353
+#: lib/ptxprint/gtkview.py:1360
 msgid "The old PDF file is open!"
 msgstr "Старый PDF-файл открыт!"
 
-#: lib/ptxprint/gtkview.py:1356
+#: lib/ptxprint/gtkview.py:1363
 msgid "Close the old PDF file before you try again."
 msgstr "Закройте старый PDF-файл перед повторной попыткой."
 
-#: lib/ptxprint/gtkview.py:1365
-msgid "Processing..."
-msgstr "Обработка..."
+#: lib/ptxprint/gtkview.py:1378
+msgid "Failed due to an error in the USFM file."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:1380
+#: lib/ptxprint/gtkview.py:1379
+msgid "Run the Basic Checks in Paratext and try again."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:1392
 msgid "Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."
 msgstr "Примечание: Создание PDF-файла может занять некоторое время из-за включения в текст цифр Стронга."
 
-#: lib/ptxprint/gtkview.py:1387
+#: lib/ptxprint/gtkview.py:1399
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
 msgstr "Примечание: Конвертирование изображений для выбранного выходного формата PDF ({}) может занять некоторое время."
 
-#: lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1411
 msgid "Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({})."
-msgstr ""
+msgstr "Для выходного формата PDF ({}) для миниатюрных вкладок установлено значение \"Показывать только на нечетных страницах\"."
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1511
 msgid "Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."
-msgstr ""
+msgstr "Примечание: Заявление об авторских правах слишком длинное. Оно помещено в колофон (см. вкладку \"Периферия\")."
 
-#: lib/ptxprint/gtkview.py:1510
+#: lib/ptxprint/gtkview.py:1522
 msgid "But the 'Default' folder could not be erased completely:"
-msgstr ""
+msgstr "Однако полностью удалить папку 'Default' не удалось:"
 
-#: lib/ptxprint/gtkview.py:1517
+#: lib/ptxprint/gtkview.py:1529
 msgid "The 'Default' config settings have been reset."
 msgstr "Настройки конфигурации \"По умолчанию\" были сброшены."
 
-#: lib/ptxprint/gtkview.py:1521
+#: lib/ptxprint/gtkview.py:1533
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "Произошла внутренняя ошибка, попытка удалить дерево каталогов"
 
-#: lib/ptxprint/gtkview.py:1521 lib/ptxprint/gtkview.py:1526
-#: lib/ptxprint/gtkview.py:1529 lib/ptxprint/gtkview.py:1535
+#: lib/ptxprint/gtkview.py:1533 lib/ptxprint/gtkview.py:1538
+#: lib/ptxprint/gtkview.py:1541 lib/ptxprint/gtkview.py:1547
 msgid "Folder: "
 msgstr "Папка: "
 
-#: lib/ptxprint/gtkview.py:1526 lib/ptxprint/gtkview.py:1535
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:1538 lib/ptxprint/gtkview.py:1547
+#: lib/ptxprint/gtkview.py:4297
 msgid "Cannot delete folder from disk!"
 msgstr "Невозможно удалить папку с диска!"
 
-#: lib/ptxprint/gtkview.py:1529
+#: lib/ptxprint/gtkview.py:1541
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Нестандартная выходная папка должна быть удалена вручную"
 
-#: lib/ptxprint/gtkview.py:1641 lib/ptxprint/gtkview.py:3658
-#: lib/ptxprint/gtkview.py:3674 lib/ptxprint/runjob.py:415 temp.glade:24503
+#: lib/ptxprint/gtkview.py:1653 lib/ptxprint/gtkview.py:3670
+#: lib/ptxprint/gtkview.py:3686 lib/ptxprint/runjob.py:415 temp.glade:24503
 msgid "Previous PDF (_1)"
 msgstr "Предыдущий PDF (_1)"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Fonts"
 msgstr "Шрифты"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Scripts"
 msgstr "Скрипты"
 
-#: lib/ptxprint/gtkview.py:1651 temp.glade:22920
+#: lib/ptxprint/gtkview.py:1663 temp.glade:22920
 msgid "Peripherals"
 msgstr "Перифералы"
 
-#: lib/ptxprint/gtkview.py:1654 temp.glade:16094 temp.glade:32237
+#: lib/ptxprint/gtkview.py:1666 temp.glade:16094 temp.glade:32237
 msgid "Pictures"
 msgstr "Картинки"
 
-#: lib/ptxprint/gtkview.py:1657 temp.glade:16722
+#: lib/ptxprint/gtkview.py:1669 temp.glade:16722
 msgid "Diglot"
 msgstr "Двуязычный"
 
-#: lib/ptxprint/gtkview.py:1660 temp.glade:25098
+#: lib/ptxprint/gtkview.py:1672 temp.glade:25098
 msgid "Finishing"
 msgstr "Отделка"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Notes+"
 msgstr "Заметки+"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Refs"
 msgstr "Ссылки"
 
-#: lib/ptxprint/gtkview.py:1664 temp.glade:10844
+#: lib/ptxprint/gtkview.py:1676 temp.glade:10844
 msgid "Cross-References"
 msgstr "Перекрестные ссылки"
 
-#: lib/ptxprint/gtkview.py:1667 temp.glade:24127
+#: lib/ptxprint/gtkview.py:1679 temp.glade:24127
 msgid "Cover"
-msgstr ""
+msgstr "Обложка"
 
-#: lib/ptxprint/gtkview.py:1671 lib/ptxprint/gtkview.py:1672
+#: lib/ptxprint/gtkview.py:1683 lib/ptxprint/gtkview.py:1684
 msgid "Tabs"
 msgstr "Вкладки"
 
-#: lib/ptxprint/gtkview.py:1673 lib/ptxprint/gtkview.py:1674
+#: lib/ptxprint/gtkview.py:1685 lib/ptxprint/gtkview.py:1686
 msgid "Borders"
 msgstr "Границы"
 
-#: lib/ptxprint/gtkview.py:1685 temp.glade:21410
+#: lib/ptxprint/gtkview.py:1697 temp.glade:21410
 msgid "Advanced"
 msgstr "Расширенные"
 
-#: lib/ptxprint/gtkview.py:1820
+#: lib/ptxprint/gtkview.py:1832
 msgid "Use One Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Для этих книг используйте одноколоночный макет\n"
+":"
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1834
 msgid "Use Two Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Для этих книг используйте двухколоночный макет\n"
+":"
 
-#: lib/ptxprint/gtkview.py:1981
+#: lib/ptxprint/gtkview.py:1993
 msgid "The Book in focus is not within scope"
 msgstr "Книга в фокусе не охвачена"
 
-#: lib/ptxprint/gtkview.py:1982
+#: lib/ptxprint/gtkview.py:1994
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "Для генерации AdjList книга должна быть\n"
 "в списке книг, подлежащих печати."
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "No Secondary Project Set"
 msgstr "Вторичный проект не установлен"
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "Чтобы сгенерировать AdjList для цифрового диска, \n"
 "дополнительный проект должен быть установлен на вкладке Diglot."
 
-#: lib/ptxprint/gtkview.py:2023
+#: lib/ptxprint/gtkview.py:2035
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "Одно или несколько параграфов Adjust файл(ы) уже существует!"
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2036
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Вы хотите ПРОВЕРИТЬ вышеперечисленные файлы?"
 
-#: lib/ptxprint/gtkview.py:2139
+#: lib/ptxprint/gtkview.py:2151
 msgid "\\rem Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr "\\rem Нажмите кнопку Generate (вверху), чтобы начать процесс создания Front Matter..."
 
-#: lib/ptxprint/gtkview.py:2178 lib/ptxprint/gtkview.py:2184
+#: lib/ptxprint/gtkview.py:2190 lib/ptxprint/gtkview.py:2196
 msgid "View Only..."
 msgstr "Смотреть только..."
 
-#: lib/ptxprint/gtkview.py:2190
+#: lib/ptxprint/gtkview.py:2202
 msgid "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr "Используйте вкладку \"Дополнительно\", чтобы выбрать параметры, которые вы хотите просмотреть или изменить."
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2223
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -427,7 +453,7 @@ msgstr "\n\n"
 "[Файл был усечен для отображения]                                            \n"
 "Нажмите на кнопку View/Edit..., чтобы увидеть больше."
 
-#: lib/ptxprint/gtkview.py:2219
+#: lib/ptxprint/gtkview.py:2231
 msgid "This file doesn't exist yet.\n\n"
 "Try clicking...                      \n"
 "   * the 'Generate' button                      \n"
@@ -437,15 +463,15 @@ msgstr "Этот файл еще не существует.\n\n"
 "   * кнопку \"Создать\"                      \n"
 "   * кнопку \"Печать\", чтобы сначала создать PDF-файл."
 
-#: lib/ptxprint/gtkview.py:2943
+#: lib/ptxprint/gtkview.py:2955
 msgid "File not found"
 msgstr "Файл не найден"
 
-#: lib/ptxprint/gtkview.py:3093
+#: lib/ptxprint/gtkview.py:3105
 msgid "'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"
-msgstr ""
+msgstr "Функция \"Включить цветной текст\" теперь включена. (Подробности см. на вкладке Шрифты+Скрипт)."
 
-#: lib/ptxprint/gtkview.py:3311
+#: lib/ptxprint/gtkview.py:3323
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -453,178 +479,183 @@ msgstr "\n"
 "Этот файл еще не существует!\n\n"
 "Редактировать здесь и нажмите кнопку 'Сохранить', чтобы создать его."
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Save changes?"
 msgstr "Сохранить изменения?"
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Do you wish to save the changes you made?"
 msgstr "Хотите ли вы сохранить сделанные изменения?"
 
-#: lib/ptxprint/gtkview.py:3328
+#: lib/ptxprint/gtkview.py:3340
 msgid "File: "
 msgstr "Файл: "
 
-#: lib/ptxprint/gtkview.py:3375
+#: lib/ptxprint/gtkview.py:3387
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Это файл .tex специфичный для проекта {}, используемого в PTXprint.\n"
 "% Сохраненное имя конфигурации: {}\n"
 
-#: lib/ptxprint/gtkview.py:3383
+#: lib/ptxprint/gtkview.py:3395
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Это файл .tex для проекта {}, используемого в PTXprint.\n"
 "% Сохраненное имя конфигурации: {}\n"
 
-#: lib/ptxprint/gtkview.py:3454
+#: lib/ptxprint/gtkview.py:3466
 msgid "Select the location and name for the Archive file"
 msgstr "Выберите расположение и имя файла архива"
 
-#: lib/ptxprint/gtkview.py:3494
+#: lib/ptxprint/gtkview.py:3506
 msgid "Select the folder containing image files"
 msgstr "Выберите папку, содержащую файлы изображений"
 
-#: lib/ptxprint/gtkview.py:3584
+#: lib/ptxprint/gtkview.py:3596
 msgid "Imported Settings!"
-msgstr ""
+msgstr "Импортные настройки!"
 
-#: lib/ptxprint/gtkview.py:3591
+#: lib/ptxprint/gtkview.py:3603
 msgid "Select a PDF (or ZIP archive) to import the settings from"
-msgstr ""
+msgstr "Выберите PDF-файл (или ZIP-архив), из которого будут импортированы настройки"
 
-#: lib/ptxprint/gtkview.py:3605
+#: lib/ptxprint/gtkview.py:3617
 msgid "PDF/ZIP Import Config Error"
-msgstr ""
+msgstr "Ошибка конфигурации импорта PDF/ZIP"
 
-#: lib/ptxprint/gtkview.py:3606
+#: lib/ptxprint/gtkview.py:3618
 msgid "Cannot find any settings to import from the selected file.\n\n"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3607
-msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3608
-msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
-msgstr ""
+msgstr "Не удается найти параметры для импорта из выбранного файла.\n\n"
 
 #: lib/ptxprint/gtkview.py:3619
+msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
+msgstr "При импорте из PDF-файла (созданного с помощью PTXprint версии 2.3 или более поздней) проверьте "
+
+#: lib/ptxprint/gtkview.py:3620
+msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
+msgstr "если он был создан с включенной опцией 'Include Config Settings Within PDF'."
+
+#: lib/ptxprint/gtkview.py:3631
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Выберите один или несколько PDF (ы) для FRONT вопроса"
 
-#: lib/ptxprint/gtkview.py:3624
+#: lib/ptxprint/gtkview.py:3636
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Выберите один или несколько PDF (ы) для вопросов BACK"
 
-#: lib/ptxprint/gtkview.py:3629
+#: lib/ptxprint/gtkview.py:3641
 msgid "Select Watermark PDF file"
 msgstr "Выберите PDF-файл водяного знака"
 
-#: lib/ptxprint/gtkview.py:3634
+#: lib/ptxprint/gtkview.py:3646
 msgid "Select Page Border PDF file"
 msgstr "Выберите PDF-файл страницы"
 
-#: lib/ptxprint/gtkview.py:3639
+#: lib/ptxprint/gtkview.py:3651
 msgid "Select Section Header PDF file"
 msgstr "Выберите раздел заголовка PDF файла"
 
-#: lib/ptxprint/gtkview.py:3644
+#: lib/ptxprint/gtkview.py:3656
 msgid "Select End of Book PDF file"
 msgstr "Выберите файл конца книги PDF"
 
-#: lib/ptxprint/gtkview.py:3649
+#: lib/ptxprint/gtkview.py:3661
 msgid "Select Verse Decorator PDF file"
 msgstr "Выберите PDF файл стиха Decorator"
 
-#: lib/ptxprint/gtkview.py:3654
+#: lib/ptxprint/gtkview.py:3666
 msgid "Select a PDF file to compare with"
 msgstr "Выберите файл PDF для сравнения"
 
-#: lib/ptxprint/gtkview.py:3775
+#: lib/ptxprint/gtkview.py:3787
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Переключиться на другой проект\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:3777 temp.glade:26257
+#: lib/ptxprint/gtkview.py:3789 temp.glade:26257
 msgid "Print (Make PDF)"
 msgstr "Распечатать (сделать PDF)"
 
-#: lib/ptxprint/gtkview.py:3783
+#: lib/ptxprint/gtkview.py:3795
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Сохранить и вернуться к\n"
 "проекту Diglot"
 
-#: lib/ptxprint/gtkview.py:3785
+#: lib/ptxprint/gtkview.py:3797
 msgid "Return to Primary"
 msgstr "Возврат к странице Первичный"
 
-#: lib/ptxprint/gtkview.py:3851
+#: lib/ptxprint/gtkview.py:3863
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: Обычный шрифт уже поддерживает все символы в тексте."
 
-#: lib/ptxprint/gtkview.py:3852
+#: lib/ptxprint/gtkview.py:3864
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Резервный шрифт не требуется, поэтому\n"
 "опция \"Использовать резервный шрифт\" будет отключена."
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:3909
+#, python-brace-format
+msgid "Redoing layout {run}..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4118
 msgid "USFM syntax error"
 msgstr "Синтаксическая ошибка USFM"
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:4118
 msgid "Syntax error: {}"
 msgstr "Ошибка синтаксиса: {}"
 
-#: lib/ptxprint/gtkview.py:4134 lib/ptxprint/gtkview.py:4975
-#: lib/ptxprint/gtkview.py:4990
+#: lib/ptxprint/gtkview.py:4151 lib/ptxprint/gtkview.py:4992
+#: lib/ptxprint/gtkview.py:5007
 msgid "Choose Image"
 msgstr "Выбрать изображение"
 
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:4297
 msgid "Image Set: "
-msgstr ""
+msgstr "Набор изображений: "
 
-#: lib/ptxprint/gtkview.py:4371
+#: lib/ptxprint/gtkview.py:4388
 msgid "Unsupported Locale"
 msgstr "Неподдерживаемый языковой стандарт"
 
-#: lib/ptxprint/gtkview.py:4372
+#: lib/ptxprint/gtkview.py:4389
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Этот языковой стандарт не поддерживается в вашей системе, вам может понадобиться ее установить"
 
-#: lib/ptxprint/gtkview.py:4552
+#: lib/ptxprint/gtkview.py:4569
 msgid "Strong's Index generated in: {}"
 msgstr "Индекс Стронга, созданный в: {}"
 
-#: lib/ptxprint/gtkview.py:4598
+#: lib/ptxprint/gtkview.py:4615
 msgid " \\periphs in Front Matter"
-msgstr ""
+msgstr " \\периферия на переднем плане"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Overwrite"
-msgstr ""
+msgstr "Перезапись"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Create"
-msgstr ""
+msgstr "Создать"
 
-#: lib/ptxprint/gtkview.py:4690 lib/ptxprint/gtkview.py:5217
+#: lib/ptxprint/gtkview.py:4707 lib/ptxprint/gtkview.py:5234
 msgid "Please fill in any missing <Values> on"
-msgstr ""
+msgstr "Пожалуйста, заполните все недостающие <Values> на"
 
-#: lib/ptxprint/gtkview.py:4691 lib/ptxprint/gtkview.py:5218
+#: lib/ptxprint/gtkview.py:4708 lib/ptxprint/gtkview.py:5235
 msgid "the Peripherals tab before proceeding."
-msgstr ""
+msgstr "на вкладке Периферийные устройства, прежде чем приступить к работе."
 
-#: lib/ptxprint/gtkview.py:4692
+#: lib/ptxprint/gtkview.py:4709
 msgid "Update the ISBN number or deleted the entry."
-msgstr ""
+msgstr "Обновить номер ISBN или удалить запись."
 
-#: lib/ptxprint/gtkview.py:4745
+#: lib/ptxprint/gtkview.py:4762
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -632,69 +663,71 @@ msgstr "FYI: Эта опция подстрочного интерфейса н�
 "\"Регулировка интервалов между буквами\" на странице шрифтов + скриптов.\n"
 "Эта опция только что была отключена."
 
-#: lib/ptxprint/gtkview.py:4777
+#: lib/ptxprint/gtkview.py:4794
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Доступна более новая версия PTXprint ({}).\n"
 "Нажмите, чтобы посетить страницу загрузки на сайте."
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "Internet Access Disabled"
 msgstr "Доступ в Интернет для инвалидов"
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Все интернет-адреса были отключены \n"
 "с помощью опции на вкладке Дополнительно"
 
-#: lib/ptxprint/gtkview.py:4826
+#: lib/ptxprint/gtkview.py:4843
 msgid "<Type Value Here>"
 msgstr "<Type Value Here>"
 
-#: lib/ptxprint/gtkview.py:4843
+#: lib/ptxprint/gtkview.py:4860
 msgid "Variable Name"
 msgstr "Имя переменной"
 
-#: lib/ptxprint/gtkview.py:4903
+#: lib/ptxprint/gtkview.py:4920
 msgid "Category Name"
 msgstr "Название категории"
 
-#: lib/ptxprint/gtkview.py:5005
+#: lib/ptxprint/gtkview.py:5022
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Предупреждение: Не удалось полностью удалить\n"
 "некоторую временную папку (папки):"
 
-#: lib/ptxprint/gtkview.py:5102
+#: lib/ptxprint/gtkview.py:5119
 msgid "What did Mary say that God had done?"
-msgstr ""
+msgstr "Что, по словам Марии, сделал Бог?"
 
-#: lib/ptxprint/gtkview.py:5105
+#: lib/ptxprint/gtkview.py:5122
 msgid "What does it means to bless someone?"
-msgstr ""
+msgstr "Что значит благословить кого-то?"
 
-#: lib/ptxprint/gtkview.py:5106
+#: lib/ptxprint/gtkview.py:5123
 msgid "What do you know about the high priest?"
-msgstr ""
+msgstr "Что вы знаете о первосвященнике?"
 
-#: lib/ptxprint/gtkview.py:5143 temp.glade:23895
+#: lib/ptxprint/gtkview.py:5160 temp.glade:23895
 msgid "Main Title   -   Subtitle"
-msgstr ""
+msgstr "Основное название - Субтитры"
 
-#: lib/ptxprint/gtkview.py:5145
+#: lib/ptxprint/gtkview.py:5162
 msgid "Main\n"
 "Title\n\n"
 "Subtitle"
-msgstr ""
+msgstr "Главная\n"
+"Название\n\n"
+"Подзаголовок"
 
-#: lib/ptxprint/gtkview.py:5202
+#: lib/ptxprint/gtkview.py:5219
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
-msgstr ""
+msgstr "Эта возможность ограничена запросами на разрешение иллюстраций David C Cook. "
 
-#: lib/ptxprint/gtkview.py:5203
+#: lib/ptxprint/gtkview.py:5220
 msgid "No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again."
-msgstr ""
+msgstr "Иллюстрации DCC не обнаружены. Сначала нажмите кнопку 'Печать (Сделать PDF)', а затем повторите попытку."
 
 #: lib/ptxprint/picselect.py:124 temp.glade:1836 temp.glade:2071
 #: temp.glade:2097 temp.glade:15311
@@ -845,7 +878,7 @@ msgstr "Некорректный проект"
 
 #: lib/ptxprint/runjob.py:431
 msgid "No differences found"
-msgstr ""
+msgstr "Различий не обнаружено"
 
 #: lib/ptxprint/runjob.py:450 lib/ptxprint/runjob.py:452
 msgid "Layout problems were encountered on page(s): "
@@ -872,11 +905,11 @@ msgstr "Не удалось создать: "
 
 #: lib/ptxprint/runjob.py:459
 msgid "Faulty PDF, could not parse"
-msgstr ""
+msgstr "Неисправный PDF, не удалось разобрать"
 
 #: lib/ptxprint/runjob.py:467
 msgid "Bad xdvi file, probably failed to load a picture or font"
-msgstr ""
+msgstr "Плохой файл xdvi, возможно, не удалось загрузить изображение или шрифт"
 
 #: lib/ptxprint/runjob.py:478
 msgid "Rerun to fix: "
@@ -902,43 +935,43 @@ msgstr "Запустите Basic Checks в Paratext, чтобы убедитьс
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Ошибка при слиянии цифрового диска!"
 
-#: lib/ptxprint/runjob.py:821
+#: lib/ptxprint/runjob.py:822
 msgid "table of contents"
 msgstr "содержание"
 
-#: lib/ptxprint/runjob.py:822
+#: lib/ptxprint/runjob.py:823
 msgid "image copyrights"
 msgstr "авторские права изображения"
 
-#: lib/ptxprint/runjob.py:823
+#: lib/ptxprint/runjob.py:824
 msgid "chapter positions"
 msgstr "позиции главы"
 
-#: lib/ptxprint/runjob.py:870
+#: lib/ptxprint/runjob.py:871
 msgid "Rerunning because the {} changed"
 msgstr "Возобновление из-за изменения {}"
 
-#: lib/ptxprint/runjob.py:879
+#: lib/ptxprint/runjob.py:880
 msgid "Rerunning because the delayed file asked us to"
-msgstr ""
+msgstr "Повторное выполнение, поскольку отложенный файл попросил нас"
 
-#: lib/ptxprint/runjob.py:966
+#: lib/ptxprint/runjob.py:968
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Предупреждение: Не удалось найти файлы PDF(ы):"
 
-#: lib/ptxprint/runjob.py:1015
+#: lib/ptxprint/runjob.py:1018
 msgid "({} Missing)"
 msgstr "({} Отсутствует)"
 
-#: lib/ptxprint/runjob.py:1016
+#: lib/ptxprint/runjob.py:1019
 msgid "Missing Pictures: {}"
 msgstr "Пропавшие картинки: {}"
 
-#: lib/ptxprint/runjob.py:1018 temp.glade:14018
+#: lib/ptxprint/runjob.py:1021 temp.glade:14018
 msgid "(0 Missing)"
 msgstr "(0 отсутствует)"
 
-#: lib/ptxprint/runjob.py:1144
+#: lib/ptxprint/runjob.py:1147
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Ошибка: Невозможно скопировать изображение {}\n"
@@ -976,217 +1009,217 @@ msgstr "И проверьте, не вызвало ли ошибку (ошибк
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr "Не удалось нормализовать текст из-за синтаксической ошибки. "
 
-#: lib/ptxprint/texmodel.py:1478
+#: lib/ptxprint/texmodel.py:1479
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rem Warning: Не найдено заявление об авторских правах: {} на страницах {}"
 
 #: lib/ptxprint/texpert.py:9
 msgid "Endnotes at Each Book"
-msgstr ""
+msgstr "Примечания к каждой книге"
 
 #: lib/ptxprint/texpert.py:9
 msgid "Output endnotes at the end of each book"
-msgstr ""
+msgstr "Вывод концевых сносок в конце каждой книги"
 
 #: lib/ptxprint/texpert.py:10
 msgid "Final Page Notes Down"
-msgstr ""
+msgstr "Заметки на последней странице"
 
 #: lib/ptxprint/texpert.py:10
 msgid "Push notes on the final page to the bottom of the page"
-msgstr ""
+msgstr "Заметки на последней странице сдвинуть в нижнюю часть страницы"
 
 #: lib/ptxprint/texpert.py:11
 msgid "Mark Trigger Points"
-msgstr ""
+msgstr "Отметить триггерные точки"
 
 #: lib/ptxprint/texpert.py:11
 msgid "Display trigger points in output"
-msgstr ""
+msgstr "Отображение точек срабатывания в выходных данных"
 
 #: lib/ptxprint/texpert.py:12
 msgid "Mid-Page Footnotes"
-msgstr ""
+msgstr "Сноски на середине страницы"
 
 #: lib/ptxprint/texpert.py:12
 msgid "Should footnotes go before a single-double column transition"
-msgstr ""
+msgstr "Должны ли сноски идти перед переходом на одну двойную колонку"
 
 #: lib/ptxprint/texpert.py:13
 msgid "No Top Space"
-msgstr ""
+msgstr "Отсутствие верхнего пространства"
 
 #: lib/ptxprint/texpert.py:13
 msgid "Don’t insert space above headings at the start of a column"
-msgstr ""
+msgstr "Не вставляйте пробелы над заголовками в начале колонки"
 
 #: lib/ptxprint/texpert.py:14
 msgid "Allow Indent Para with Cutouts"
-msgstr ""
+msgstr "Разрешить отступ Para с вырезами"
 
 #: lib/ptxprint/texpert.py:14
 msgid "Allow indented paragraphs at chapter start with cutouts"
-msgstr ""
+msgstr "Разрешить абзацные отступы в начале главы с вырезами"
 
 #: lib/ptxprint/texpert.py:15
 msgid "Allow Indent Para After Heading"
-msgstr ""
+msgstr "Разрешить отступ Para после заголовка"
 
 #: lib/ptxprint/texpert.py:15
 msgid "Allow indented paragraphs following a heading"
-msgstr ""
+msgstr "Разрешить абзацы с отступом после заголовка"
 
 #: lib/ptxprint/texpert.py:16
 msgid "No PDF Bookmarks"
-msgstr ""
+msgstr "Отсутствие закладок в PDF"
 
 #: lib/ptxprint/texpert.py:16
 msgid "Don’t output PDF bookmarks"
-msgstr ""
+msgstr "Не выводить закладки в формате PDF"
 
 #: lib/ptxprint/texpert.py:17
 msgid "Allow Active Links in PDF"
-msgstr ""
+msgstr "Разрешить активные ссылки в PDF"
 
 #: lib/ptxprint/texpert.py:17
 msgid "Make links active inside PDF"
-msgstr ""
+msgstr "Сделать ссылки активными внутри PDF"
 
 #: lib/ptxprint/texpert.py:18
 msgid "Use Book Codes in PDF Bookmarks"
-msgstr ""
+msgstr "Использование кодов книг в закладках PDF"
 
 #: lib/ptxprint/texpert.py:18
 msgid "Use book codes instead of book names in bookmarks"
-msgstr ""
+msgstr "Использовать в закладках коды книг вместо их названий"
 
 #: lib/ptxprint/texpert.py:19
 msgid "Disable Transparency in PDF"
-msgstr ""
+msgstr "Отключение прозрачности в PDF"
 
 #: lib/ptxprint/texpert.py:19
 msgid "Disable transparency output in PDF"
-msgstr ""
+msgstr "Отключение вывода прозрачности в PDF"
 
 #: lib/ptxprint/texpert.py:20
 msgid "Default Figures Top Left"
-msgstr ""
+msgstr "Рисунки по умолчанию Вверху слева"
 
 #: lib/ptxprint/texpert.py:20
 msgid "Default figure positions to top left"
-msgstr ""
+msgstr "По умолчанию рисунок располагается слева вверху"
 
 #: lib/ptxprint/texpert.py:21
 msgid "Ref Before Caption"
-msgstr ""
+msgstr "Ссылка До надписи"
 
 #: lib/ptxprint/texpert.py:21
 msgid "Output reference before caption"
-msgstr ""
+msgstr "Выходная ссылка перед надписью"
 
 #: lib/ptxprint/texpert.py:22
 msgid "Show Caption Before Image"
-msgstr ""
+msgstr "Показать надпись перед изображением"
 
 #: lib/ptxprint/texpert.py:22
 msgid "Output caption before image"
-msgstr ""
+msgstr "Вывод надписи перед изображением"
 
 #: lib/ptxprint/texpert.py:23
 msgid "Use \\toc3 for Tab Text"
-msgstr ""
+msgstr "Использование \\toc3 для текста табуляции"
 
 #: lib/ptxprint/texpert.py:23
 msgid "Use \\toc3 for tab text if no \\zthumbtab"
-msgstr ""
+msgstr "Используйте \\toc3 для текста табуляции, если он отсутствует \\zthumbtab"
 
 #: lib/ptxprint/texpert.py:24
 msgid "Show Diglot Trace Marks"
-msgstr ""
+msgstr "Показать трассировочные метки Diglot"
 
 #: lib/ptxprint/texpert.py:24
 msgid "Insert visible trace marks in diglot output"
-msgstr ""
+msgstr "Вставка видимых меток трассировки в вывод diglot"
 
 #: lib/ptxprint/texpert.py:25
 msgid "Extra Trace Mark Info"
-msgstr ""
+msgstr "Дополнительная информация о следовых метках"
 
 #: lib/ptxprint/texpert.py:25
 msgid "Add extra information to diglot trace marks"
-msgstr ""
+msgstr "Добавление дополнительной информации к меткам трассировки в diglot"
 
 #: lib/ptxprint/texpert.py:26
 msgid "Underline Spaces"
-msgstr ""
+msgstr "Подчеркнутые пространства"
 
 #: lib/ptxprint/texpert.py:26
 msgid "Underline spaces in underlined runs"
-msgstr ""
+msgstr "Подчеркивание пробелов в подчеркнутых фрагментах"
 
 #: lib/ptxprint/texpert.py:28
 msgid "Auto Calc Optimum Chapter Size"
-msgstr ""
+msgstr "Автоматический расчет оптимального размера главы"
 
 #: lib/ptxprint/texpert.py:28
 msgid "Attempt to automatically calculate drop chapter number size"
-msgstr ""
+msgstr "Попытка автоматического расчета размера номера главы падения"
 
 #: lib/ptxprint/texpert.py:29
 msgid "Tilde is No Break Space"
-msgstr ""
+msgstr "Тильда - это пространство без разрыва"
 
 #: lib/ptxprint/texpert.py:29
 msgid "Treat ~ as non breaking space"
-msgstr ""
+msgstr "Рассматривать ~ как неразрывное пространство"
 
 #: lib/ptxprint/texpert.py:31
 msgid "Penalty for inserting hyphen"
-msgstr ""
+msgstr "Штраф за вставку дефиса"
 
 #: lib/ptxprint/texpert.py:31
 msgid "Hyphenation penalty"
-msgstr ""
+msgstr "Штраф за гифенацию"
 
 #: lib/ptxprint/texpert.py:32
 msgid "Thumbtab rotated adjustment"
-msgstr ""
+msgstr "Регулировка поворота вкладки большого пальца"
 
 #: lib/ptxprint/texpert.py:32
 msgid "Shift thumbtab text"
-msgstr ""
+msgstr "Сдвиг текста вкладки большого пальца"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Space between picture & caption"
-msgstr ""
+msgstr "Пробел между изображением и надписью"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Increase/Reduce the gap between figures and their captions"
-msgstr ""
+msgstr "Увеличить/сократить расстояние между рисунками и подписями к ним"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Default space beside picture"
-msgstr ""
+msgstr "Пространство по умолчанию рядом с изображением"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Picture horizontal margin*2"
-msgstr ""
+msgstr "Горизонтальное поле изображения*2"
 
 #: lib/ptxprint/texpert.py:35
 msgid "Optional break penalty"
-msgstr ""
+msgstr "Дополнительный штраф за перерыв"
 
 #: lib/ptxprint/texpert.py:35
 msgid "Penalty for the optional break"
-msgstr ""
+msgstr "Штраф за необязательный перерыв"
 
 #: lib/ptxprint/texpert.py:36
 msgid "Bad space penalty"
-msgstr ""
+msgstr "Штраф за неудачное расположение"
 
 #: lib/ptxprint/texpert.py:36
 msgid "A bad but not impossible place to breal"
-msgstr ""
+msgstr "Плохое, но не невозможное место для леща"
 
 #: lib/ptxprint/utils.py:394 temp.glade:12214 temp.glade:12267 temp.glade:12320
 msgid "First Reference"
@@ -1237,7 +1270,7 @@ msgstr "Опция 'Front Matter' теперь включена для вас н
 
 #: lib/ptxprint/view.py:642
 msgid "Syntax Error Warning"
-msgstr ""
+msgstr "Предупреждение об ошибке синтаксиса"
 
 #: lib/ptxprint/view.py:649
 msgid "PTXprint {} - Bible Layout for Everyone!"
@@ -1343,7 +1376,9 @@ msgstr "Предупреждение: Задание печати не удал�
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the user-interface. The PDFs are produced by enhanced \n"
 "XeTeX macros (ptx2pdf) with a long and reliable history."
-msgstr ""
+msgstr "PTXprint построен на Python и PyGTK3 с использованием Glade для пользовательского интерфейса\n"
+". Для создания PDF-файлов используются усовершенствованные макросы \n"
+"XeTeX (ptx2pdf), имеющие долгую и надежную историю."
 
 #: temp.glade:870
 msgid "PTXprint Homepage"
@@ -1371,15 +1406,15 @@ msgstr "Сохраненная конфигурация может быть ск
 
 #: temp.glade:1110
 msgid "David Healey"
-msgstr ""
+msgstr "Дэвид Хили"
 
 #: temp.glade:1115
 msgid "Darwin Dunham"
-msgstr ""
+msgstr "Дарвин Данэм"
 
 #: temp.glade:1129
 msgid "IB"
-msgstr ""
+msgstr "IB"
 
 #: temp.glade:1156
 msgid "NONE"
@@ -1439,99 +1474,99 @@ msgstr "По умолчанию"
 
 #: temp.glade:1248
 msgid "Han1"
-msgstr ""
+msgstr "Han1"
 
 #: temp.glade:1251
 msgid "Han2"
-msgstr ""
+msgstr "Han2"
 
 #: temp.glade:1254
 msgid "Han3"
-msgstr ""
+msgstr "Han3"
 
 #: temp.glade:1257
 msgid "Han4"
-msgstr ""
+msgstr "Han4"
 
 #: temp.glade:1260
 msgid "Han5"
-msgstr ""
+msgstr "Han5"
 
 #: temp.glade:1263
 msgid "Vectorian1"
-msgstr ""
+msgstr "Vectorian1"
 
 #: temp.glade:1266
 msgid "Vectorian2"
-msgstr ""
+msgstr "Vectorian2"
 
 #: temp.glade:1269
 msgid "Vectorian3"
-msgstr ""
+msgstr "Векторный3"
 
 #: temp.glade:1272
 msgid "Vectorian4"
-msgstr ""
+msgstr "Vectorian4"
 
 #: temp.glade:1275
 msgid "v85"
-msgstr ""
+msgstr "v85"
 
 #: temp.glade:1278
 msgid "v85r"
-msgstr ""
+msgstr "v85r"
 
 #: temp.glade:1281
 msgid "v85out"
-msgstr ""
+msgstr "v85out"
 
 #: temp.glade:1284
 msgid "v86c"
-msgstr ""
+msgstr "v86c"
 
 #: temp.glade:1287
 msgid "c86out"
-msgstr ""
+msgstr "c86out"
 
 #: temp.glade:1290
 msgid "v88"
-msgstr ""
+msgstr "v88"
 
 #: temp.glade:1293
 msgid "v88r"
-msgstr ""
+msgstr "v88r"
 
 #: temp.glade:1296
 msgid "v88c"
-msgstr ""
+msgstr "v88c"
 
 #: temp.glade:1299
 msgid "v88out"
-msgstr ""
+msgstr "v88out"
 
 #: temp.glade:1312 temp.glade:2295
 msgid "bleed: overflow the page into the cropped area"
-msgstr ""
+msgstr "bleed: перелив страницы в обрезанную область"
 
 #: temp.glade:1316 temp.glade:2299
 msgid "colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)"
-msgstr ""
+msgstr "colbleed: залить страницу в обрезанную область в той же степени, что и цвета (обычно изображения затекают меньше)"
 
 #: temp.glade:1320 temp.glade:2303
 msgid "inner: the area that text could cover (vertically this extends to the inner edge of the border)"
-msgstr ""
+msgstr "inner: область, которую может занимать текст (по вертикали она простирается до внутреннего края границы)"
 
 #: temp.glade:1324 temp.glade:2307
 msgid "outer: the outermost of the coloured box or the border"
-msgstr ""
+msgstr "outer: крайняя часть цветного поля или границы"
 
 #: temp.glade:1328 temp.glade:2311
 msgid "border: the outer edge of the border"
-msgstr ""
+msgstr "border: внешний край границы"
 
 #: temp.glade:1332 temp.glade:2315
 msgid "box: the coloured box"
-msgstr ""
+msgstr "коробка: цветная коробка"
 
 #: temp.glade:1350
 msgid "Arabic-Hindi"
@@ -1678,7 +1713,7 @@ msgstr "Печать-CMYK"
 
 #: temp.glade:1792
 msgid "Print-Gray (B/W)"
-msgstr ""
+msgstr "Печать серая (ч/б)"
 
 #: temp.glade:1796
 msgid "Print-Spot"
@@ -1984,7 +2019,7 @@ msgstr "По ширине"
 
 #: temp.glade:2677
 msgid "LeftBal"
-msgstr ""
+msgstr "LeftBal"
 
 #: temp.glade:2769
 msgid "Gridded Center"
@@ -2277,7 +2312,9 @@ msgstr "(Необязательно) Примечания о конфигура�
 msgid "Dots indicate that a\n"
 "password has been set\n"
 "for this configuration."
-msgstr ""
+msgstr "\n"
+"Точки указывают на то, что для данной конфигурации установлен пароль\n"
+"."
 
 #: temp.glade:3582
 msgid "Lock configuration"
@@ -2295,7 +2332,17 @@ msgid "When Config is UNLOCKED:\n"
 "saved or the configuration to be deleted.\n\n"
 "Note that the Default config cannot be\n"
 "locked."
-msgstr ""
+msgstr "\n"
+"Когда конфигурация разблокирована:\n"
+"Щелкните, чтобы задать пароль, не позволяющий никому случайно изменить\n"
+"сохраненные настройки или удалить\n"
+"конфигурацию.\n\n"
+"When Config is LOCKED:\n"
+"Нажмите, чтобы ввести пароль для разблокирования этой\n"
+"конфигурации и разрешения сохранения изменений \n"
+"или удаления конфигурации.\n\n"
+"Обратите внимание, что конфигурация по умолчанию не может быть\n"
+"заблокирована."
 
 #: temp.glade:3612
 msgid "Copy configuration to other projects "
@@ -2335,7 +2382,7 @@ msgstr "Введите имя для сохранения конфигураци
 
 #: temp.glade:3676
 msgid "Import settings from PDFs, ZIP files or other Configurations"
-msgstr ""
+msgstr "Импорт настроек из PDF-файлов, ZIP-файлов или других конфигураций"
 
 #: temp.glade:3680
 msgid "Warning! This may overwrite existing settings.\n\n"
@@ -2344,7 +2391,12 @@ msgid "Warning! This may overwrite existing settings.\n\n"
 "settings from other PDFs, ZIP archives or from \n"
 "a different project configuration into the current\n"
 "configuration."
-msgstr ""
+msgstr "Внимание! Это может привести к перезаписи существующих настроек.\n\n"
+"Эта кнопка открывает диалог Импорт настроек\n"
+", в котором можно выбрать различные опции для импорта \n"
+"настроек из других PDF-файлов, ZIP-архивов или из \n"
+"другой конфигурации проекта в текущую\n"
+"конфигурацию."
 
 #: temp.glade:3717
 msgid "Saved/Shared Configuration"
@@ -2633,7 +2685,20 @@ msgid "Fine Tune Line Spacing:\n\n"
 "If you prefer to keep the exact line spacing specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Top or Bottom Margin."
-msgstr ""
+msgstr "Тонкая настройка межстрочного интервала:\n\n"
+"Эта кнопка активна только тогда, когда PTXprint предлагает\n"
+"немного уменьшить или увеличить межстрочный интервал, чтобы свести к минимуму неиспользуемое \n"
+"вертикальное пространство на странице. Щелкните, чтобы принять предложение.\n\n"
+"Если на странице \n"
+"имеется более половины свободного пространства, то межстрочный интервал немного уменьшится, чтобы\n"
+"уместить на странице еще одну строку текста.\n\n"
+"Если на странице \n"
+"остается менее половины свободного места, то межстрочный интервал немного увеличивается, чтобы \n"
+"заполнить страницу более равномерно (при том же количестве строк \n"
+").\n\n"
+"Если вы предпочитаете сохранить точно заданный межстрочный интервал, \n"
+"то НЕ выбирайте эту опцию. Вместо этого воспользуйтесь аналогичной кнопкой\n"
+"для настройки верхнего или нижнего поля."
 
 #: temp.glade:4239
 msgid "Mirror Pages"
@@ -2678,7 +2743,10 @@ msgid "Enable Guides or a Grid to sit behind the\n"
 "text to assist with final adjustments; \n"
 "or enable a Watermark to show behind the text;\n"
 "or turn on USFM codes temporarily."
-msgstr ""
+msgstr "Включите направляющие или сетку за текстом\n"
+"для окончательной настройки; \n"
+"или включите водяной знак за текстом;\n"
+"или временно включите коды USFM."
 
 #: temp.glade:4294
 msgid "Outer Gutter"
@@ -2751,7 +2819,8 @@ msgstr "Расстояние, на которое следует отступа�
 #: temp.glade:4385
 msgid "Base\n"
 "Indent:"
-msgstr ""
+msgstr "База\n"
+"Отступ:"
 
 #: temp.glade:4405
 msgid "This is the base font size for default paragraph \n"
@@ -2893,7 +2962,15 @@ msgid "If this setting is checked on, but\n"
 "setting near the end of the Body tab\n"
 "which is only accessible when using\n"
 "the Full View mode."
-msgstr ""
+msgstr "Если эта настройка включена, но\n"
+"неактивна, то это связано с тем, что активна программа Diglot\n"
+"(которая, очевидно, должна использовать \n"
+"двухколоночную раскладку).\n\n"
+"Если вы получаете неожиданный результат, проверьте\n"
+"настройку \"Use One/Two Column Layout ...\"\n"
+"в конце вкладки Body\n"
+", которая доступна только при использовании\n"
+"режима Full View."
 
 #: temp.glade:4756
 msgid "Header spacing"
@@ -3018,7 +3095,20 @@ msgid "Fine Tune Top Margin:\n\n"
 "If you prefer to keep the exact top margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Bottom Margin."
-msgstr ""
+msgstr "Тонкая настройка верхнего поля:\n\n"
+"Эта кнопка активна только в том случае, если PTXprint предлагает\n"
+"немного уменьшить или увеличить верхнее поле, чтобы минимизировать неиспользуемое \n"
+"вертикальное пространство на странице. Щелкните, чтобы принять предложение.\n\n"
+"Если на странице \n"
+"имеется более половины строки \"свободного\" пространства, то верхнее поле немного уменьшится, чтобы\n"
+"разместить на странице еще одну строку текста.\n\n"
+"Если на странице \n"
+"остается менее половины свободного места, то верхнее поле немного увеличивается, чтобы \n"
+"заполнить страницу более равномерно (с тем же количеством строк текста \n"
+").\n\n"
+"Если вы предпочитаете сохранить точно заданное верхнее поле, \n"
+"то НЕ выбирайте эту опцию. Вместо этого используйте аналогичную кнопку\n"
+"для настройки межстрочного интервала или нижнего поля."
 
 #: temp.glade:5009
 msgid "Tweak bottom margin (auto adjust)"
@@ -3039,11 +3129,24 @@ msgid "Fine Tune Bottom Margin:\n\n"
 "If you prefer to keep the exact bottom margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Top Margin."
-msgstr ""
+msgstr "Тонкая настройка нижнего поля:\n\n"
+"Эта кнопка активна только тогда, когда PTXprint предлагает\n"
+"немного уменьшить или увеличить нижнее поле, чтобы свести к минимуму неиспользуемое \n"
+"вертикальное пространство на странице. Щелкните, чтобы принять предложение.\n\n"
+"Если на странице \n"
+"имеется более половины строки \"свободного\" пространства, то нижнее поле немного уменьшится, чтобы\n"
+"разместить на странице еще одну строку текста.\n\n"
+"Если на странице \n"
+"остается менее половины свободного места, то нижнее поле немного увеличивается, чтобы \n"
+"заполнить страницу более равномерно (тем же количеством строк \n"
+").\n\n"
+"Если вы предпочитаете сохранить точно заданное нижнее поле, \n"
+"то НЕ выбирайте эту опцию. Вместо этого используйте аналогичную кнопку\n"
+"для настройки межстрочного интервала или верхнего поля."
 
 #: temp.glade:5356
 msgid "Place Footer Text Above the Bottom Margin"
-msgstr ""
+msgstr "Размещение текста нижнего колонтитула над нижней границей"
 
 #: temp.glade:5357
 msgid "Don't place footer in the margin area"
@@ -3056,7 +3159,12 @@ msgid "Normally the footer page number sits\n"
 "be placed above the bottom margin (where\n"
 "the text would normally flow until) then \n"
 "enable this option."
-msgstr ""
+msgstr "Обычно номер страницы нижнего колонтитула располагается\n"
+"на нижнем поле. \n\n"
+"Однако если вам необходимо, чтобы номер страницы\n"
+"располагался над нижним полем (где\n"
+"обычно располагается текст), то \n"
+"включите эту опцию."
 
 #: temp.glade:5390
 msgid "The distance (mm) from the edge of the page\n"
@@ -3732,17 +3840,20 @@ msgstr "ja = японский\n"
 #: temp.glade:6725
 msgid "RTL Book\n"
 "Binding"
-msgstr ""
+msgstr "RTL Book\n"
+"Переплет"
 
 #: temp.glade:6727
 msgid "Set the binding to Right (for RTL publications)"
-msgstr ""
+msgstr "Установить привязку к правому краю (для RTL-публикаций)"
 
 #: temp.glade:6731
 msgid "Enable this for Right-to-Left\n"
 "publications (so that the book\n"
 "is bound on the right hand side)."
-msgstr ""
+msgstr "Включите эту опцию для публикаций на сайте\n"
+"(чтобы книга\n"
+"была переплетена с правой стороны)."
 
 #: temp.glade:6752
 msgid "Writing System"
@@ -3860,7 +3971,7 @@ msgstr "Эта опция доступна только в том случае, 
 
 #: temp.glade:6948
 msgid "Start 1st Chapter on a New Page"
-msgstr ""
+msgstr "Начать первую главу с новой страницы"
 
 #: temp.glade:6949
 msgid "Start new page after introduction"
@@ -3876,18 +3987,21 @@ msgstr "Используйте эту опцию, чтобы автоматич�
 
 #: temp.glade:6969
 msgid "All Chapters"
-msgstr ""
+msgstr "Все главы"
 
 #: temp.glade:6970
 msgid "Start every chapter on a new page"
-msgstr ""
+msgstr "Начинайте каждую главу с новой страницы"
 
 #: temp.glade:6974
 msgid "Use this option to force a page break before\n"
 "every chapter. This is most commonly used\n"
 "for testing materials when each chapter needs\n"
 "to be printed and given to a different person."
-msgstr ""
+msgstr "С помощью этой опции можно принудительно установить разрыв страницы перед\n"
+"каждой главы. Чаще всего этот параметр\n"
+"используется в тестовых материалах, когда каждую главу необходимо\n"
+"распечатать и выдать разным людям."
 
 #: temp.glade:7002
 msgid "Beginning and Ending Material"
@@ -3999,7 +4113,7 @@ msgstr "Предотвратить сиротские слова"
 
 #: temp.glade:7148
 msgid "Prevent orphan words at end of paragraph or start of line."
-msgstr ""
+msgstr "Предотвращение появления лишних слов в конце абзаца или начале строки."
 
 #: temp.glade:7152
 msgid "This option limits short words\n"
@@ -4008,7 +4122,12 @@ msgid "This option limits short words\n"
 "It also prevents short words at \n"
 "the end of sentences from starting \n"
 "on a new line."
-msgstr ""
+msgstr "Эта опция ограничивает короткие слова\n"
+"в конце абзацев от \n"
+"самостоятельного появления на строке.\n"
+"Она также не позволяет коротким словам \n"
+"в конце предложений начинать \n"
+"с новой строки."
 
 #: temp.glade:7169
 msgid "Justify Paragraphs"
@@ -4051,7 +4170,7 @@ msgstr "Снимите этот флажок, если вы не хотите, �
 #: temp.glade:7225 temp.glade:7277 temp.glade:7532 temp.glade:7584
 #: temp.glade:12700
 msgid "Click to edit the marker's properties on the Styles tab."
-msgstr ""
+msgstr "Нажмите для редактирования свойств маркера на вкладке Styles."
 
 #: temp.glade:7250
 msgid "Parallel Passage Refs "
@@ -4215,7 +4334,13 @@ msgid "Normally you should leave this checked.\n\n"
 "for consistency) then this option can\n"
 "be unchecked (to omit the verse text\n"
 "and everything else in the main body)."
-msgstr ""
+msgstr "Обычно этот флажок следует оставить.\n\n"
+"НО... если вам требуется распечатка только\n"
+"введений к книгам (обычно для\n"
+"окончательной проверки или\n"
+"согласованности), то этот параметр можно\n"
+"снять (чтобы опустить текст стихов\n"
+"и все остальное в основном тексте)."
 
 #: temp.glade:7663
 msgid "Use Special Features\n"
@@ -4304,7 +4429,8 @@ msgstr "Глава\n"
 #: temp.glade:7751
 msgid "Use One/Two Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Для этих книг используйте одно/двухколоночный макет\n"
+":"
 
 #: temp.glade:7753
 msgid "Enable 1 or 2 column layout for certain books"
@@ -4394,7 +4520,7 @@ msgstr "Отметьте этот параметр, если книга INT со
 
 #: temp.glade:7875
 msgid "Define how glossary words should appear in the text"
-msgstr ""
+msgstr "Определить, как слова глоссария должны быть представлены в тексте"
 
 #: temp.glade:7878
 msgid "Glossary words may be marked up \n"
@@ -4404,12 +4530,19 @@ msgid "Glossary words may be marked up \n"
 "If you wish to apply your own custom\n"
 "styling to \\w then select the \\w ...\\w*\n"
 "character style option."
-msgstr ""
+msgstr "Слова глоссария могут быть помечены \n"
+"тегами \\w glossary\\w*. Укажите\n"
+", как эти слова должны выглядеть\n"
+"в печатном виде.\n\n"
+"Если вы хотите применить к \\w свой собственный\n"
+"стиль, выберите опцию \\w ...\\w*\n"
+"стиль символов."
 
 #: temp.glade:7888
 msgid "Glossary Word\n"
 "Appearance:"
-msgstr ""
+msgstr "Глоссарий Слово\n"
+"Внешний вид:"
 
 #: temp.glade:7900
 msgid "Markup for glossary words in text"
@@ -4471,16 +4604,17 @@ msgstr "Периферийные книги часто имеют более о�
 
 #: temp.glade:7981
 msgid "Enable Ornaments"
-msgstr ""
+msgstr "Включить орнаменты"
 
 #: temp.glade:7982
 msgid "Enable ornamental borders and rules"
-msgstr ""
+msgstr "Включить декоративные бордюры и правила"
 
 #: temp.glade:7986
 msgid "Enable this option to make use of\n"
 "ornamental borders and rules."
-msgstr ""
+msgstr "Включите эту опцию, чтобы использовать декоративные границы и правила\n"
+"."
 
 #: temp.glade:8009
 msgid "Other Features"
@@ -4620,7 +4754,7 @@ msgstr "При нажатии этой кнопки происходит пер�
 
 #: temp.glade:8232
 msgid "Override hidden/automatic Footnote caller settings"
-msgstr ""
+msgstr "Переопределение скрытых/автоматических настроек вызова сносок"
 
 #: temp.glade:8233
 msgid "Override Footnote Settings in Text"
@@ -5064,7 +5198,7 @@ msgstr "Обычно перекрестные ссылки расположен�
 
 #: temp.glade:9293
 msgid "Override hidden/automatic Cross-reference caller settings"
-msgstr ""
+msgstr "Отмена скрытых/автоматических настроек перекрестного вызова"
 
 #: temp.glade:9294
 msgid "Override Cross-Reference Settings in Text"
@@ -5603,7 +5737,7 @@ msgstr "Если определенное слово встречается бо
 
 #: temp.glade:10130
 msgid "Click to edit the Strong's 4 digit cell number properties on the Styles tab."
-msgstr ""
+msgstr "Нажмите для редактирования свойств 4-значного номера ячейки Strong на вкладке Styles."
 
 #: temp.glade:10156
 msgid "Strong's References"
@@ -5940,76 +6074,88 @@ msgid "Enter the language code for the questions\n"
 "to be included. Usually this will be a 3-letter\n"
 "Ethnologue code (but other language tags\n"
 "such as en-US, fr, es are also acceptable)."
-msgstr ""
+msgstr "Введите код языка для включаемых вопросов\n"
+". Обычно это трехбуквенный код\n"
+"Ethnologue (но допустимы и другие языковые теги\n"
+", такие как en-US, fr, es)."
 
 #: temp.glade:11597
 msgid "Language Code:"
-msgstr ""
+msgstr "Код языка:"
 
 #: temp.glade:11618
 msgid "Show Overview Questions"
-msgstr ""
+msgstr "Вопросы по обзору выставки"
 
 #: temp.glade:11619
 msgid "Transcelerator: Show overview questions"
-msgstr ""
+msgstr "Трансселератор: Вопросы по обзору шоу"
 
 #: temp.glade:11623
 msgid "Overview questions are designed to test\n"
 "the general understanding of the passage."
-msgstr ""
+msgstr "Обзорные вопросы предназначены для проверки\n"
+"общего понимания отрывка."
 
 #: temp.glade:11639
 msgid "Number the Questions"
-msgstr ""
+msgstr "Пронумеровать вопросы"
 
 #: temp.glade:11640
 msgid "Transcelerator: Number the questions"
-msgstr ""
+msgstr "Трансселератор: Пронумеровать вопросы"
 
 #: temp.glade:11644
 msgid "This option enables the questions to be\n"
 "numbered sequentially for each book."
-msgstr ""
+msgstr "Эта опция позволяет последовательно пронумеровать вопросы\n"
+"для каждой книги."
 
 #: temp.glade:11661
 msgid "Include Chapter:Verse References"
-msgstr ""
+msgstr "Включить ссылки на главы и стихи"
 
 #: temp.glade:11662
 msgid "Transcelerator: Include ch:vs references"
-msgstr ""
+msgstr "Трансселератор: Включить ссылки на ch:vs"
 
 #: temp.glade:11666
 msgid "This option enables the questions to\n"
 "include the chapter:verse numbers.\n\n"
 "If the questions are also being numbered\n"
 "then the reference will in parenthesis (ch:vs)."
-msgstr ""
+msgstr "Эта опция позволяет включать в вопросы\n"
+"номера глав и стихов.\n\n"
+"Если вопросы также нумеруются\n"
+", то ссылка будет в скобках (ch:vs)."
 
 #: temp.glade:11689
 msgid "Example Questions:"
-msgstr ""
+msgstr "Примерные вопросы:"
 
 #: temp.glade:11715
 msgid "13. (3:25) What does it means to bless someone?\n"
 "14. (4:6) What do you know about the high priest?"
-msgstr ""
+msgstr "13. (3:25) Что значит благословить кого-то?\n"
+"14. (4:6) Что вы знаете о первосвященнике?"
 
 #: temp.glade:11733
 msgid "Click to edit the Extended Footnote\n"
 "properties on the Styles tab. \n\n"
 "The line spacing factor will modify\n"
 "the space between the questions."
-msgstr ""
+msgstr "Нажмите для редактирования свойств расширенной сноски\n"
+"на вкладке Стили. \n\n"
+"Коэффициент межстрочного интервала будет изменять\n"
+"пространство между вопросами."
 
 #: temp.glade:11762
 msgid "Include Transcelerator Questions"
-msgstr ""
+msgstr "Включить вопросы трансселератора"
 
 #: temp.glade:11763
 msgid "Include (Transcelerator) Checking Questions"
-msgstr ""
+msgstr "Контрольные вопросы по программе Include (Transcelerator)"
 
 #: temp.glade:11767
 msgid "Use this option to include questions which\n"
@@ -6020,7 +6166,14 @@ msgid "Use this option to include questions which\n"
 "Note that this option is only made available if\n"
 "the Transcelerator plugin's data folder for the\n"
 "project can be located."
-msgstr ""
+msgstr "Используйте эту опцию для включения вопросов, которые\n"
+"были созданы с помощью инструмента SIL Transcelerator\n"
+"для проверки понимания.\n\n"
+"Они будут отображаться в нижней части страницы\n"
+"в области, обычно используемой для учебных заметок.\n\n"
+"Обратите внимание, что эта опция доступна только в том случае, если\n"
+"можно найти папку данных плагина Transcelerator для проекта\n"
+"."
 
 #: temp.glade:11855
 msgid "Category"
@@ -6088,12 +6241,13 @@ msgstr "Используйте этот параметр, чтобы огран�
 
 #: temp.glade:12045
 msgid "Study Notes + Questions"
-msgstr ""
+msgstr "Конспекты + вопросы"
 
 #: temp.glade:12081
 msgid "Control how Footnotes, Cross-references\n"
 "Study Notes and Questions should appear."
-msgstr ""
+msgstr "Контролируйте отображение сносок, перекрестных ссылок\n"
+"и вопросов."
 
 #: temp.glade:12084
 msgid "Notes+Refs"
@@ -6690,7 +6844,7 @@ msgstr "Обновить подписи:\n"
 
 #: temp.glade:13607
 msgid " Request Permission... "
-msgstr ""
+msgstr " Запросить разрешение... "
 
 #: temp.glade:13613
 msgid "If you are publishing (i.e. more than 50 copies) any\n"
@@ -6699,11 +6853,16 @@ msgid "If you are publishing (i.e. more than 50 copies) any\n"
 "permission. Click this button to generate the text\n"
 "to be sent to ScripturePicturePermissions_intl@sil.org\n"
 "requesting permission."
-msgstr ""
+msgstr "Если вы публикуете (т.е. более 50 экземпляров) какие-либо\n"
+"материалы с иллюстрациями Дэвида Кука или\n"
+"Scripture Press, вы должны получить предварительное\n"
+"разрешение. Нажмите эту кнопку, чтобы создать текст\n"
+"для отправки на адрес ScripturePicturePermissions_intl@sil.org\n"
+"с просьбой о разрешении."
 
 #: temp.glade:13635
 msgid "Get Pictures..."
-msgstr ""
+msgstr "Get Pictures..."
 
 #: temp.glade:13664
 msgid "Image"
@@ -6960,7 +7119,16 @@ msgid "PTXprint normally searches in multiple locations\n"
 "then select this option. This should speed up searches\n"
 "for images, but may result in some images not being\n"
 "found at all."
-msgstr ""
+msgstr "Для поиска нужных иллюстраций PTXprint обычно ищет их в нескольких местах\n"
+"(включая \"figures\",\n"
+"\"local/figures\" и в папке, указанной слева).\n\n"
+"По умолчанию поиск выполняется также во всех вложенных папках этих папок\n"
+".\n\n"
+"Если вы предпочитаете, чтобы поиск осуществлялся только в папке\n"
+", указанной непосредственно (и НЕ искал в подпапках)\n"
+", то выберите эту опцию. Это ускорит поиск\n"
+"изображений, но может привести к тому, что некоторые изображения\n"
+"вообще не будут найдены."
 
 #: temp.glade:14029
 msgid "Remove Image Borders"
@@ -7074,7 +7242,15 @@ msgid "The anchor specifies what page in a book a picture will appear on. It app
 "               a glossary entry \\k John the Baptist\\k*\n\n"
 "You can copy-and-paste a glossary word or phrase after typing GLO k. and PTXprint will automatically strip the spaces for you.\n\n"
 "Where there are no intervening anchors, you can anchor to the Nth paragraph of e.g. poetry or a keyterm definition, by specifying the paragraph number after an = sign. For example, GLO k.Harp=2 or PSA 23.4=3. This can avoid the need to insert an explicit milestone to anchor a cutout if there is a page or column break after the start of the verse."
-msgstr ""
+msgstr "Якорь указывает, на какой странице книги появится картинка. Она появляется на той же странице, что и ее якорь в тексте. Вы можете изменить ссылку на якорь на несколько стихов, чтобы изменить страницу, на которой она появляется.\n\n"
+"Якорная ссылка должна состоять из кода книги, за которым, возможно, следует L или R (в случае биглота), затем пробел, затем внутрикнижное место, содержащее точку (точка). В книге Священного Писания внутрикнижным местоположением является Chap.Verse, где стих точно соответствует значению \\v. В других книгах местоположение в книге может быть любым, если оно уникально для данной книги и содержит точку (точка).\n\n"
+"Якорные ссылки для диглоссариев используют суффикс L или R в трехбуквенном коде книги, чтобы указать, с каким текстом должна быть связана картинка - с первичным (L) или вторичным (R).\n\n"
+"В книге глоссария (GLO) имеется специальная поддержка \\k Keywords\\k*, при которой внутрикнижное расположение k.keyword(s) привязывает картинку к соответствующему термину. Расположение в книге должно совпадать со значением \\k-ключевого слова или фразы\\k*, при этом пробелы должны быть удалены. Например,\n\n"
+"    GLO k.Altar - привяжет картинку к \\k Altar\\k*\n"
+"    GLO k.JohntheBaptist - привяжет картинку к\n"
+"               записи глоссария \\k John the Baptist\\k*\n\n"
+"Вы можете скопировать и вставить слово или фразу глоссария после ввода GLO k., и PTXprint автоматически удалит пробелы для вас.\n\n"
+"При отсутствии промежуточных якорей можно привязаться к N-му абзацу, например, стихотворения или определения ключевого слова, указав номер абзаца после знака =. Например, GLO k.Harp=2 или PSA 23.4=3. Это позволяет избежать необходимости вставлять явную веху для привязки вырезки, если после начала стиха имеется разрыв страницы или колонки."
 
 #: temp.glade:14329
 msgid "Anchor Ref:"
@@ -7392,7 +7568,15 @@ msgid "Some vertical position options allow a picture\n"
 "but the cutout will not affect earlier paragraphs. \n"
 "Note that negative and fractional paragraph \n"
 "counts are invalid."
-msgstr ""
+msgstr "Некоторые параметры вертикального положения позволяют перемещать изображение\n"
+"вверх или вниз на определенное количество строк\n"
+"или абзацев.\n\n"
+"-Отрицательные (минус) значения указывают на перемещение вверх.\n"
+"+Положительные (плюсовые) значения указывают на перемещение ВНИЗ.\n\n"
+"Отрицательные значения для вырезов поднимают изображение,\n"
+"но при этом вырез не затрагивает предыдущие абзацы. \n"
+"Обратите внимание, что отрицательные и дробные значения для абзацев \n"
+"недействительны."
 
 #: temp.glade:14820
 msgid "Number of\n"
@@ -8154,31 +8338,41 @@ msgid "When the different texts of a diglot are merged, there are various \n"
 "* Scored (Chapter) - as a minimum, forces alignment at chapters breaks \n\n"
 "* Scored (Verses) - as a minimum, forces alignment at each verse, which \n"
 "  can result in a lot of breaks!"
-msgstr ""
+msgstr "При объединении различных текстов биглота существуют различные \n"
+"алгоритмы, которые могут быть использованы для получения наилучшего результата:\n\n"
+"* Document based - пытается использовать структуру документа для выравнивания \n"
+"  абзацев, насколько это возможно; но выравнивание легко сбивается, когда \n"
+"  каждый текст имеет очень разную структуру абзацев.\n\n"
+"* Chapter Verse - выравнивание по главам и стихам вместо структуры\n\n"
+"* Scored - альтернативный алгоритм, использующий взвешенные баллы, который\n"
+"  пытается выровнять абзацы, если номера стихов совпадают\n\n"
+"* Scored (Chapter) - как минимум, заставляет выравнивать по главам с разрывами \n\n"
+"* Scored (Verses) - как минимум, заставляет выравнивать по каждому стиху, что \n"
+"  может привести к большому количеству разрывов!"
 
 #: temp.glade:16601
 msgid "Merging mode:"
-msgstr ""
+msgstr "Режим слияния:"
 
 #: temp.glade:16631
 msgid "Document based"
-msgstr ""
+msgstr "На основе документов"
 
 #: temp.glade:16632
 msgid "Chapter Verse"
-msgstr ""
+msgstr "Глава Стихия"
 
 #: temp.glade:16633
 msgid "Scored"
-msgstr ""
+msgstr "Забито"
 
 #: temp.glade:16634
 msgid "Scored (Chapter)"
-msgstr ""
+msgstr "Зачет (глава)"
 
 #: temp.glade:16635
 msgid "Scored (Verse)"
-msgstr ""
+msgstr "Зачет (стих)"
 
 #: temp.glade:16653
 msgid "Diglot or Discript"
@@ -8436,17 +8630,19 @@ msgstr "Нажмите, чтобы перейти к соответствующ�
 
 #: temp.glade:17280
 msgid "Only Show on Odd Pages"
-msgstr ""
+msgstr "Показывать только на нечетных страницах"
 
 #: temp.glade:17281
 msgid "Thumb tabs: Only Show on Odd Pages"
-msgstr ""
+msgstr "Пальцевые вкладки: Показывать только на нечетных страницах"
 
 #: temp.glade:17285
 msgid "When printing thumb tabs on thin paper,\n"
 "it is preferable to only print these tabs on\n"
 "a single side of the page (the odd pages)."
-msgstr ""
+msgstr "При печати миниатюрных вкладок на тонкой бумаге\n"
+"предпочтительнее печатать их только на\n"
+"одной стороне страницы (на нечетных страницах)."
 
 #: temp.glade:17303
 msgid "Thumb Tabs"
@@ -8731,7 +8927,8 @@ msgstr "Стили: Коэффициент размера шрифта"
 #: temp.glade:18397
 msgid "Scale Relative \n"
 "to Parent"
-msgstr ""
+msgstr "Шкала Отношение \n"
+"к родителям"
 
 #: temp.glade:18399
 msgid "Styles: Scale relative to parent"
@@ -8740,7 +8937,8 @@ msgstr "Стили: Масштаб относительно родителя"
 #: temp.glade:18404
 msgid "The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the surrounding text font size then enable this option. Note that \n"
 "\\p has a FontSize of 12 in the underlying stylesheet."
-msgstr ""
+msgstr "Размер шрифта обычно вычисляется относительно текущей единицы размера шрифта. Если вы предпочитаете указывать размер относительно размера шрифта окружающего текста, то включите эту опцию. Заметим, что \n"
+"\\p имеет FontSize, равный 12 в нижележащей таблице стилей."
 
 #: temp.glade:18419
 msgid "Bold"
@@ -8851,12 +9049,18 @@ msgid "Calculated absolute point size \n"
 "The (↑Ascender ↓Descender) values \n"
 "from the base line for this font are \n"
 "provided for reference."
-msgstr ""
+msgstr "Рассчитывается абсолютный размер точки \n"
+"с учетом текущего базового размера шрифта\n"
+"(который задается на вкладке Layout).\n\n"
+"Значения (↑Ascender ↓Descender) \n"
+"от базовой линии для данного шрифта приведены \n"
+"для справки."
 
 #: temp.glade:18666
 msgid "<span foreground=\"blue\">11.7pt\n"
 "(↑6.6 ↓2.2)</span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">11.7pt\n"
+"(↑6.6 ↓2.2)</span>"
 
 #: temp.glade:18680
 msgid "If any modifications to the typeface\n"
@@ -8866,12 +9070,19 @@ msgid "If any modifications to the typeface\n"
 "stretch= (or shrink) font horizontally\n"
 "bold= embolden value (faux bold)\n"
 "ital= slant value (faux italics)"
-msgstr ""
+msgstr "Если были выбраны какие-либо модификации шрифта\n"
+", то они будут\n"
+"отображены здесь.\n\n"
+"GR = включено графическое начертание\n"
+"растянуть= (или уменьшить) шрифт по горизонтали\n"
+"bold= полужирное начертание\n"
+"ital= наклонное начертание (искусственный курсив)"
 
 #: temp.glade:18691
 msgid "<span foreground=\"blue\">GR stretch=95%\n"
 "<b>bold=1.8</b> <i>ital=0.15</i></span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">GR stretch=95%\n"
+"<b>bold=1.8</b> <i>ital=0.15</i></span>"
 
 #: temp.glade:18716
 msgid "Character Settings"
@@ -9015,7 +9226,7 @@ msgstr "Пространство после\n"
 
 #: temp.glade:19165
 msgid "Styles: Maximum ragged (fill) space"
-msgstr ""
+msgstr "Стили: Максимально разорванное (заполненное) пространство"
 
 #: temp.glade:19168 temp.glade:19211
 msgid "How much of the column-width can be\n"
@@ -9032,12 +9243,26 @@ msgid "How much of the column-width can be\n"
 "Discretionary breaks (//) will be ignored if \n"
 "breaking there would leave more than this \n"
 "much space."
-msgstr ""
+msgstr "Сколько процентов от ширины колонки может занимать\n"
+"пустое пространство у неоправданного края? Это\n"
+"влияет на перенос строки в середине абзаца и \n"
+"может привести к растягиванию других интервалов, если \n"
+"в противном случае строка будет слишком короткой. Это \n"
+"не препятствует тому, чтобы последняя строка абзаца\n"
+"была короче.\n\n"
+"Это значение задается как доля ширины колонки\n"
+", при этом разумные значения\n"
+"находятся в диапазоне от 0,20 до 0,75 (где 1,00\n"
+"представляет собой всю ширину колонки).\n"
+"Дискретные разрывы (//) будут игнорироваться, если \n"
+"разрыв оставит больше \n"
+"места."
 
 #: temp.glade:19227
 msgid "Maximum\n"
 "Ragged Space:"
-msgstr ""
+msgstr "Максимальное\n"
+"раггированное пространство:"
 
 #: temp.glade:19253
 msgid "Paragraph Settings"
@@ -9639,7 +9864,12 @@ msgid "This sets how far (in ems) the underline \n"
 "the baseline.\n\n"
 "If positive (or zero), it is the distance\n"
 "below the bottom of any descenders."
-msgstr ""
+msgstr "Здесь задается, на каком расстоянии (в эм) от текста находится подчеркивание \n"
+"и относительно чего оно расположено. \n\n"
+"Если значение отрицательное, то это расстояние ниже базовой линии \n"
+".\n\n"
+"В положительном (или нулевом) случае это расстояние\n"
+"ниже нижней границы всех нисходящих линий."
 
 #: temp.glade:20671
 msgid "Start new page threshold (page full factor)"
@@ -9910,7 +10140,10 @@ msgid "Some advanced features load extra code\n"
 "that is not normally needed. List them\n"
 "here if you need to use them.\n"
 "e.g. polyglot-simplepages"
-msgstr ""
+msgstr "Некоторые расширенные возможности загружают дополнительный код\n"
+", который обычно не нужен. Перечислите их\n"
+"здесь, если вам нужно их использовать.\n"
+"например, polyglot-simplepages"
 
 #: temp.glade:21195
 msgid "Plugins:"
@@ -9978,17 +10211,19 @@ msgstr "ptxprint может использовать либо фактическ
 
 #: temp.glade:21349
 msgid "Show TeXpert Hacks"
-msgstr ""
+msgstr "Показать хаки TeXpert"
 
 #: temp.glade:21350
 msgid "Show tab with expert level controls (TeXpert mode)"
-msgstr ""
+msgstr "Показать вкладку с элементами управления экспертного уровня (режим TeXpert)"
 
 #: temp.glade:21354
 msgid "An additional 'TeXpert Hacks' tab exists for\n"
 "those who are familiar with TeX and need to\n"
 "change the code or various other parameters."
-msgstr ""
+msgstr "Дополнительная вкладка \"TeXpert Hacks\" существует для\n"
+"тех, кто знаком с TeX и кому необходимо\n"
+"изменить код или другие параметры."
 
 #: temp.glade:21376
 msgid "Compatibility"
@@ -10151,7 +10386,36 @@ msgid "Use the following codes to include special text in front matter:\n\n"
 "on the Peripherals tab. For example:\n"
 "  \\mt1 \\zvar|maintitle\\*\n"
 "  \\mt2 \\zvar|subtitle\\*"
-msgstr ""
+msgstr "Для включения специального текста в титульный лист используйте следующие коды:\n\n"
+"  \\nopagenums - выключить нумерацию страниц\n"
+"  \\dopagenums - включить нумерацию страниц\n"
+"  \\resetpagenums # - где # - номер страницы\n"
+"(установка # в -1 дает римские цифры i,ii,iii,iv,v,...) \\pc \\zcopyright - заявление об авторских правах с вкладки Basic \\zimagecopyrights - заявление о лицензии.)\n\n"
+"  \\pc \\zcopyright - заявление об авторских правах с вкладки Basic\n"
+"  \\pc \\zlicense - заявление о лицензии с вкладки Basic\n"
+"  \\pc \\zimagecopyrights - создаваемый список изображений с указанием авторства\n"
+"  \\pc \\zimagecopyrightsfr - как выше, но локализованный (fr = French)\n\n"
+"  \\zbl|3\\* - вставляет 3 пустые строки\n"
+"  \\zgap|1.5in\\*\n\n"
+"Включить одно или несколько оглавлений:\n"
+"  \\ztoc|<keyword>\\*\n"
+"Где <keyword> может быть заменено на:\n"
+"  main - основное, всеохватывающее оглавление\n"
+"  pre - любая книга, предшествующая Писанию (FRT, INT)\n"
+"  ot - перечислены только ветхозаветные книги\n"
+"  heb - книги ВЗ, отсортированные по еврейскому ТаНаХ\n"
+"  dc - перечислены только книги Второзаветного канона\n"
+"  nt - перечислены только книги Нового Завета\n"
+"  post - книги, появившиеся после REV (GLO, BAK, TDX, NDX, XXA-G)\n"
+"  sorta - алфавитный (основной) список с сортировкой по \\toc1\n"
+"  sortb - алфавитный (основной) список с сортировкой по \\toc2\n"
+"  sortc - алфавитный (основной) список с сортировкой по \\toc3\n\n"
+"Кроме вышеперечисленных кодов, Вы можете указать\n"
+"свои собственные \\zvar|variables\\*, специфичные для Вашей конфигурации.\n"
+"Для присвоения значений этим переменным\n"
+"на вкладке Peripherals нажмите кнопку 'Edit Variables...'. Например:\n"
+"  \\mt1 \\zvar|maintitle\\*\n"
+"  \\mt2 \\zvar|subtitle\\*."
 
 #: temp.glade:21657
 msgid "Autosave"
@@ -10165,7 +10429,7 @@ msgstr "Сохраняйте любые изменения, внесенные �
 
 #: temp.glade:21675
 msgid "Adjust display font size "
-msgstr ""
+msgstr "Настройка размера шрифта дисплея "
 
 #: temp.glade:21679
 msgid "Use this slider to adjust\n"
@@ -10173,7 +10437,11 @@ msgid "Use this slider to adjust\n"
 "View+Edit tab as well as\n"
 "in other locations that use \n"
 "a specialized font or script."
-msgstr ""
+msgstr "С помощью этого ползунка можно настроить\n"
+"размер текста на вкладке\n"
+"View+Edit, а также\n"
+"в других местах, где используется \n"
+"специализированный шрифт или начертание."
 
 #: temp.glade:21748
 msgid "Front Matter"
@@ -10663,20 +10931,25 @@ msgid "To calculate the spine width you need to\n"
 "paper. Select one or the other, but keep in\n"
 "mind that the exact thickness (in microns)\n"
 "will result in the most accurate calculation.\t"
-msgstr ""
+msgstr "Для расчета ширины корешка необходимо\n"
+"использовать либо вес, либо толщину\n"
+"бумаги.\n"
+"Выберите тот или иной вариант, но имейте в виду, что точная толщина (в микронах)\n"
+"приведет к наиболее точному расчету.\t"
 
 #: temp.glade:22984
 msgid "Set Paper:"
-msgstr ""
+msgstr "Комплект бумаги:"
 
 #: temp.glade:22993
 msgid "Set the paper thickness to calculate spine width"
-msgstr ""
+msgstr "Установите толщину бумаги для расчета ширины корешка"
 
 #: temp.glade:22996
 msgid "Set the paper weight (GSM)\n"
 "or thickness (microns)."
-msgstr ""
+msgstr "Установите вес бумаги (GSM)\n"
+"или толщину (микроны)."
 
 #: temp.glade:23003 temp.glade:23110
 msgid "70"
@@ -10684,44 +10957,49 @@ msgstr "70"
 
 #: temp.glade:23017
 msgid "Orientation (rotation) of cover spine text"
-msgstr ""
+msgstr "Ориентация (поворот) текста на корешке обложки"
 
 #: temp.glade:23021
 msgid "Adjust the spine \n"
 "text orientation.\n"
-msgstr ""
+msgstr "Отрегулируйте ориентацию текста на корешке \n"
+".\n"
 
 #: temp.glade:23051
 msgid "Rotate Spine:"
-msgstr ""
+msgstr "Вращение позвоночника:"
 
 #: temp.glade:23060 temp.glade:23263 temp.glade:23303
 msgid "Adjust thickness of spine to compensate for cover thickness"
-msgstr ""
+msgstr "Отрегулируйте толщину корешка, чтобы компенсировать толщину обложки"
 
 #: temp.glade:23063 temp.glade:23085
 msgid "Adjust the thickness of spine to \n"
 "include the thickness of the cover."
-msgstr ""
+msgstr "Отрегулируйте толщину корешка, чтобы \n"
+"учитывал толщину обложки."
 
 #: temp.glade:23068
 msgid "0.14"
-msgstr ""
+msgstr "0.14"
 
 #: temp.glade:23091
 msgid "Cover Thickness\n"
 "Adjustment (mm):"
-msgstr ""
+msgstr "Толщина крышки\n"
+"Регулировка (мм):"
 
 #: temp.glade:23101
 msgid "Total number of pages in publication"
-msgstr ""
+msgstr "Общее количество страниц в публикации"
 
 #: temp.glade:23104 temp.glade:23188
 msgid "The number of pages is filled in\n"
 "automatically but can also be \n"
 "manually adjusted."
-msgstr ""
+msgstr "Количество страниц заполняется\n"
+"автоматически, но может быть также \n"
+"настроено вручную."
 
 #: temp.glade:23129
 msgid "Weight (GSM)"
@@ -10729,7 +11007,7 @@ msgstr "Вес (GSM)"
 
 #: temp.glade:23130
 msgid "Set paper weight (GSM) for spine width calculation"
-msgstr ""
+msgstr "Установите вес бумаги (GSM) для расчета ширины корешка"
 
 #: temp.glade:23134
 msgid "Weight of the paper being\n"
@@ -10749,7 +11027,7 @@ msgstr "Толщина (микрон)"
 
 #: temp.glade:23155
 msgid "Set paper thickness (microns) for spine width calculation"
-msgstr ""
+msgstr "Установите толщину бумаги (в микронах) для расчета ширины корешка"
 
 #: temp.glade:23159
 msgid "To be more precise in the calculation\n"
@@ -10763,90 +11041,105 @@ msgstr "Для более точного расчета\n"
 
 #: temp.glade:23184
 msgid "Override Total Page Count:"
-msgstr ""
+msgstr "Переопределить общее количество страниц:"
 
 #: temp.glade:23206
 msgid "34.526 mm"
-msgstr ""
+msgstr "34,526 мм"
 
 #: temp.glade:23221
 msgid "The width of the spine (mm) is\n"
 "automatically calculated using\n"
 "the values above."
-msgstr ""
+msgstr "Ширина корешка (мм)\n"
+"автоматически рассчитывается по\n"
+"значениям, приведенным выше."
 
 #: temp.glade:23228
 msgid "Total Spine Width:"
-msgstr ""
+msgstr "Общая ширина корешка:"
 
 #: temp.glade:23249 temp.glade:23266
 msgid "If you want the spine graphic or\n"
 "colour to spill over onto the back\n"
 "cover page, then set the amount\n"
 "of overlap here (mm)."
-msgstr ""
+msgstr "Если вы хотите, чтобы графика корешка или цвет\n"
+"переливались на заднюю\n"
+"страницу обложки, то задайте здесь величину\n"
+"перекрытия (мм)."
 
 #: temp.glade:23253
 msgid "Overlap onto\n"
 "Back Cover (mm):"
-msgstr ""
+msgstr "Нахлест на заднюю крышку\n"
+"(мм):"
 
 #: temp.glade:23288 temp.glade:23306
 msgid "If you want the spine graphic or\n"
 "colour to spill over onto the front\n"
 "cover page, then set the amount\n"
 "of overlap here (mm)."
-msgstr ""
+msgstr "Если необходимо, чтобы графика корешка или цвет\n"
+"перетекали на титульный лист\n"
+", то задайте здесь величину\n"
+"перекрытия (мм)."
 
 #: temp.glade:23293
 msgid "Overlap onto\n"
 "Front Cover (mm):"
-msgstr ""
+msgstr "Наложение на переднюю крышку\n"
+"(мм):"
 
 #: temp.glade:23341
 msgid "Spine Overlap"
-msgstr ""
+msgstr "Перекрытие позвоночника"
 
 #: temp.glade:23376
 msgid "Include Spine"
-msgstr ""
+msgstr "Включить корешок"
 
 #: temp.glade:23377
 msgid "SUse Spine on Cover Page"
-msgstr ""
+msgstr "Корешок SUse на титульной странице"
 
 #: temp.glade:23435
 msgid "1. Create Cover Settings..."
-msgstr ""
+msgstr "1. Создайте настройки обложки..."
 
 #: temp.glade:23436
 msgid "Generate Cover (Basic settings to create a cover)"
-msgstr ""
+msgstr "Generate Cover (Основные настройки для создания обложки)"
 
 #: temp.glade:23441
 msgid "Creating a cover from nothing takes a lot of effort.\n"
 "This tool enables you to create various kinds of\n"
 "covers which can easily be enhanced. "
-msgstr ""
+msgstr "Создание обложки из ничего требует больших усилий.\n"
+"Этот инструмент позволяет создавать различные виды обложек\n"
+", которые можно легко улучшить. "
 
 #: temp.glade:23457
 msgid "2. Edit Cover Content..."
-msgstr ""
+msgstr "2. Редактирование содержания обложки..."
 
 #: temp.glade:23458
 msgid "Edit Front Matter (where cover content is defiined)"
-msgstr ""
+msgstr "Редактирование титульного листа (где определяется содержание обложки)"
 
 #: temp.glade:23463
 msgid "Switch to the View+Edit tab to\n"
 "show the Front Matter file where\n"
 "the content for the Cover page\n"
 "can be adjusted as needed."
-msgstr ""
+msgstr "Переключитесь на вкладку View+Edit, чтобы\n"
+"показать файл Front Matter, в котором\n"
+"содержание титульной страницы\n"
+"может быть скорректировано по мере необходимости."
 
 #: temp.glade:23482
 msgid "3. Print (Make Cover PDF)"
-msgstr ""
+msgstr "3. Печать (сделать обложку PDF)"
 
 #: temp.glade:23489
 msgid "Once 'Create Cover' is enabled, every time\n"
@@ -10858,11 +11151,19 @@ msgid "Once 'Create Cover' is enabled, every time\n"
 "opened rather than the cover PDF.\n\n"
 "Clicking this button will ensure that the cover PDF\n"
 "will be displayed once it has been created."
-msgstr ""
+msgstr "После включения функции \"Создать обложку\" при каждом нажатии кнопки\n"
+"\"Печать (Создать PDF)\" будет создаваться отдельная \n"
+"обложка PDF в дополнение к\n"
+"обычной PDF с текстовым содержимым.\n\n"
+"Однако если активна другая вкладка (кроме вкладки \"Обложка\")\n"
+", то автоматически будет открываться не обложка, а PDF с текстовым содержимым\n"
+".\n\n"
+"Щелчок на этой кнопке гарантирует, что после создания обложки PDF\n"
+"будет отображаться именно она."
 
 #: temp.glade:23532
 msgid "Generate cover: Art Bleed setting"
-msgstr ""
+msgstr "Создать обложку: Настройка Art Bleed"
 
 #: temp.glade:23535 temp.glade:23632
 msgid "Art Bleed is specifically for hard cover binding\n"
@@ -10870,15 +11171,19 @@ msgid "Art Bleed is specifically for hard cover binding\n"
 "beyond the size of the cover in order to wrap\n"
 "around the hard cover and stuck down under\n"
 "the inner backing sheet. (Units: mm)"
-msgstr ""
+msgstr "Art Bleed предназначен специально для переплета твердой обложки\n"
+"и представляет собой настройку, позволяющую вывести изображения\n"
+"за пределы обложки, чтобы обернуть их\n"
+"вокруг твердой обложки и засунуть под\n"
+"внутренний лист подложки. (Единицы измерения: мм)"
 
 #: temp.glade:23543 temp.glade:23568
 msgid "5.0"
-msgstr ""
+msgstr "5.0"
 
 #: temp.glade:23557
 msgid "Generate cover: Bleed setting"
-msgstr ""
+msgstr "Сгенерировать крышку: Настройка обводки"
 
 #: temp.glade:23560 temp.glade:23584
 msgid "Bleed is the section of artwork that \n"
@@ -10886,19 +11191,23 @@ msgid "Bleed is the section of artwork that \n"
 "This ensures that the image goes right\n"
 "to the edge of the cover after it has \n"
 "been trimmed. (Units: mm)"
-msgstr ""
+msgstr "Обводка - это участок иллюстрации, который \n"
+"выходит за пределы места обреза бумаги. \n"
+"Благодаря этому изображение доходит\n"
+"до края обложки после ее \n"
+"обрезки. (Единицы измерения: мм)"
 
 #: temp.glade:23591
 msgid "Bleed:"
-msgstr ""
+msgstr "Кровотечение:"
 
 #: temp.glade:23600
 msgid "Show Cover Crop Marks"
-msgstr ""
+msgstr "Показать метки покровных культур"
 
 #: temp.glade:23601
 msgid "Generate cover: Include bleed area and cropmarks"
-msgstr ""
+msgstr "Создать обложку: Включить область обводки и обрезки"
 
 #: temp.glade:23605
 msgid "When printing and binding books in bulk\n"
@@ -10908,29 +11217,37 @@ msgid "When printing and binding books in bulk\n"
 "to be shown on the cover page. So if you \n"
 "cannot uncheck this option, then disable \n"
 "the 'Include Spine' setting (above) and retry."
-msgstr ""
+msgstr "При массовой печати и переплете книг\n"
+"обычно требуются метки обрезки, чтобы указать\n"
+"место обрезки издания.\n\n"
+"Если включить корешок, то метки обрезки\n"
+"будут отображаться на титульном листе. Поэтому если \n"
+"не удается снять этот флажок, отключите \n"
+"настройку \"Включить корешок\" (см. выше) и повторите попытку."
 
 #: temp.glade:23639
 msgid "Art Bleed:"
-msgstr ""
+msgstr "Art Bleed:"
 
 #: temp.glade:23654
 msgid "Crop Marks + Bleed Settings"
-msgstr ""
+msgstr "Марки обрезки + настройки обводки"
 
 #: temp.glade:23682 temp.glade:24060
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Front Cover."
-msgstr ""
+msgstr "Нажмите для редактирования свойств боковой панели \n"
+"на вкладке Стили для обложки."
 
 #: temp.glade:23704
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Spine."
-msgstr ""
+msgstr "Щелкните для редактирования свойств боковой панели \n"
+"на вкладке Стили для корешка."
 
 #: temp.glade:23765
 msgid "Back Cover"
-msgstr ""
+msgstr "Задняя обложка"
 
 #: temp.glade:23782
 msgid "\n"
@@ -10939,42 +11256,50 @@ msgid "\n"
 "in the Front Matter\n"
 "settings of the\n"
 "View+Edit tab.\n"
-msgstr ""
+msgstr "\n"
+"Текст для этого раздела\n"
+"можно задать\n"
+"в настройках Front Matter\n"
+"вкладки\n"
+"View+Edit.\n"
 
 #: temp.glade:23829
 msgid "ISBN Bar\n"
 "  Code"
-msgstr ""
+msgstr "ISBN Bar\n"
+"  Code"
 
 #: temp.glade:23849
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Back Cover."
-msgstr ""
+msgstr "Нажмите для редактирования свойств боковой панели \n"
+"на вкладке Стили для задней обложки."
 
 #: temp.glade:23959
 msgid "Main Title"
-msgstr ""
+msgstr "Основное заглавие"
 
 #: temp.glade:23976
 msgid "Subtitle"
-msgstr ""
+msgstr "Субтитры"
 
 #: temp.glade:24041
 msgid "Optional Lower Title"
-msgstr ""
+msgstr "Необязательное нижнее название"
 
 #: temp.glade:24096
 msgid "Create Cover"
-msgstr ""
+msgstr "Создать обложку"
 
 #: temp.glade:24097
 msgid "Create an outer Cover"
-msgstr ""
+msgstr "Создание внешнего покрытия"
 
 #: temp.glade:24124
 msgid "Set parameters for the cover\n"
 "of the publication."
-msgstr ""
+msgstr "Задайте параметры для обложки\n"
+"публикации."
 
 #: temp.glade:24172 temp.glade:24272
 msgid "How many pages will be printed on\n"
@@ -11011,7 +11336,8 @@ msgstr "Это фактический размер листа бумаги\n"
 #: temp.glade:24199
 msgid "Physical\n"
 "Paper Size:"
-msgstr ""
+msgstr "Физический\n"
+"Размер бумаги:"
 
 #: temp.glade:24212 temp.glade:24347
 msgid "A signature is a collection of pages folded\n"
@@ -11099,12 +11425,15 @@ msgstr "(Скоро будет...)\n"
 msgid "The minimum width of the area to\n"
 "be cut after folding of the signature.\n"
 "Measured in millimeters (mm)."
-msgstr ""
+msgstr "Минимальная ширина области, которую\n"
+"необходимо обрезать после складывания подписи.\n"
+"Измеряется в миллиметрах (мм)."
 
 #: temp.glade:24334
 msgid "Fold Cut \n"
 "Margin (mm):"
-msgstr ""
+msgstr "Fold Cut \n"
+"Margin (mm):"
 
 #: temp.glade:24344
 msgid "Pagination: Sheets per signature (pages per form)"
@@ -11143,11 +11472,12 @@ msgstr "Если вы навязываете принтер с фальцева�
 #: temp.glade:24408
 msgid "Create Cover as \n"
 "a Separate PDF"
-msgstr ""
+msgstr "Создать обложку в виде \n"
+"отдельного PDF-файла"
 
 #: temp.glade:24410
 msgid "Pagination: Create the cover as a stand-alone PDF"
-msgstr ""
+msgstr "Пагинация: Создание обложки как отдельного PDF-файла"
 
 #: temp.glade:24415
 msgid "This option is only available if Create Cover is\n"
@@ -11155,7 +11485,11 @@ msgid "This option is only available if Create Cover is\n"
 "you plan to print the outer (wrapper) cover\n"
 "separately from the book's content. This is often\n"
 "the case if cardstock, or a colour cover is used."
-msgstr ""
+msgstr "Эта опция доступна только в том случае, если на вкладке Обложка\n"
+"включена опция Создать обложку. Включите эту опцию, если\n"
+"планируете печатать внешнюю (оберточную) обложку\n"
+"отдельно от содержания книги. Это часто\n"
+"происходит, если используется кардсток или цветная обложка."
 
 #: temp.glade:24439
 msgid "Whether you need a simple booklet\n"
@@ -11209,7 +11543,9 @@ msgstr "Сравните PDF-файлы: "
 msgid "Use this color to show anything\n"
 "that has been added (or moved to\n"
 "the current location) in the new PDF."
-msgstr ""
+msgstr "Используйте этот цвет, чтобы показать все\n"
+", что было добавлено (или перемещено на\n"
+"текущее место) в новом PDF."
 
 #: temp.glade:24552
 msgid "Color to Highlight Differences"
@@ -11217,7 +11553,7 @@ msgstr "Цвет для выделения различий"
 
 #: temp.glade:24562
 msgid "Compare PDFs: Colour of new text"
-msgstr ""
+msgstr "Сравнение PDF-файлов: Цвет нового текста"
 
 #: temp.glade:24565
 msgid "Set the color to use when\n"
@@ -11226,16 +11562,22 @@ msgid "Set the color to use when\n"
 "Use this color to show anything\n"
 "that has been added (or moved to\n"
 "the current location) in the new PDF."
-msgstr ""
+msgstr "Установите цвет, который будет использоваться при обнаружении\n"
+"различий между\n"
+"старым и новым PDF-файлами.\n\n"
+"Используйте этот цвет, чтобы показать все\n"
+", что было добавлено (или перемещено на\n"
+"текущее место) в новом PDF."
 
 #: temp.glade:24575
 msgid "Show New Text\n"
 "or Position in:"
-msgstr ""
+msgstr "Показать новый текст\n"
+"или Положение в:"
 
 #: temp.glade:24585
 msgid "Compare PDFs: Colour of old text"
-msgstr ""
+msgstr "Сравнение PDF-файлов: Цвет старого текста"
 
 #: temp.glade:24588 temp.glade:24692
 msgid "Set the color to use when\n"
@@ -11244,18 +11586,26 @@ msgid "Set the color to use when\n"
 "Use this color to show anything\n"
 "that has been deleted (or moved from\n"
 "the previous location) in the old PDF."
-msgstr ""
+msgstr "Установите цвет, который будет использоваться при обнаружении\n"
+"различий между\n"
+"старым и новым PDF-файлами.\n\n"
+"Используйте этот цвет, чтобы показать все\n"
+", что было удалено (или перемещено с\n"
+"прежнего места) в старом PDF."
 
 #: temp.glade:24598
 msgid "Show Old Text\n"
 "or Position in:"
-msgstr ""
+msgstr "Показать старый текст\n"
+"или позицию в:"
 
 #: temp.glade:24611
 msgid "Use this color to show anything\n"
 "that has been deleted (or moved from\n"
 "the previous location) in the old PDF."
-msgstr ""
+msgstr "Используйте этот цвет, чтобы показать все\n"
+", что было удалено (или перемещено из\n"
+"предыдущего места) в старом PDF-файле."
 
 #: temp.glade:24632
 msgid "Select a particular PDF file to be compared \n"
@@ -11279,7 +11629,7 @@ msgstr "Сравнить с \n"
 
 #: temp.glade:24653
 msgid "Compare PDFs: Set maximum diff pages to show"
-msgstr ""
+msgstr "Сравнение PDF-файлов: Установите максимальное количество страниц, на которых будут отображаться различия"
 
 #: temp.glade:24657
 msgid "The PDF showing differences between the old\n"
@@ -11287,16 +11637,21 @@ msgid "The PDF showing differences between the old\n"
 "resulting file rather large. Use this option to\n"
 "limit the number of \"Diff\" pages created.\n"
 "This will also potentially speed up the process."
-msgstr ""
+msgstr "PDF-файл, показывающий различия между старым\n"
+"и новым, содержит изображения, которые делают\n"
+"результирующий файл довольно большим. Используйте эту опцию, чтобы\n"
+"ограничить количество создаваемых страниц \"Diff\".\n"
+"Это также потенциально ускорит процесс."
 
 #: temp.glade:24689
 msgid "Compare PDFs: Maximum pages of differences to show"
-msgstr ""
+msgstr "Сравнение PDF-файлов: Максимальное количество страниц, на которых будут показаны различия"
 
 #: temp.glade:24701
 msgid "Show Max\n"
 "Diff Pages:"
-msgstr ""
+msgstr "Показать максимум\n"
+"Diff Pages:"
 
 #: temp.glade:24722
 msgid "This tool allows you to compare 2 different\n"
@@ -11312,7 +11667,7 @@ msgstr "Сравнить PDF-файлы"
 
 #: temp.glade:24760
 msgid "PDF output format (Screen, RGB, CMYK, B/W, spot)"
-msgstr ""
+msgstr "Выходной формат PDF (Screen, RGB, CMYK, ч/б, spot)"
 
 #: temp.glade:24765
 msgid "Select the appropriate standard \n"
@@ -11498,11 +11853,11 @@ msgstr "Допустимость (%):"
 
 #: temp.glade:25032
 msgid "Extract Color Inserts"
-msgstr ""
+msgstr "Вытяжные цветные вставки"
 
 #: temp.glade:25033
 msgid "Extract Color Insert pages (as separate PDFs)"
-msgstr ""
+msgstr "Извлечение страниц с цветной вставкой (в виде отдельных PDF-файлов)"
 
 #: temp.glade:25037
 msgid "Extract the special peripheral materials\n"
@@ -11510,7 +11865,11 @@ msgid "Extract the special peripheral materials\n"
 "PDFs to be printed in color and inserted\n"
 "manually during the binding process.\n\n"
 "Note that the cover is always extracted."
-msgstr ""
+msgstr "Извлеките специальные периферийные материалы\n"
+"с именами 'maps' или 'insert_*' в виде отдельных \n"
+"PDF-файлов, которые будут распечатаны в цвете и вставлены\n"
+"вручную в процессе переплета.\n\n"
+"Обратите внимание, что обложка извлекается всегда."
 
 #: temp.glade:25075
 msgid "PDF Details"
@@ -11526,19 +11885,19 @@ msgstr "Опции для управления пагинацией, форма�
 
 #: temp.glade:25229
 msgid "Misc Settings"
-msgstr ""
+msgstr "Прочие настройки"
 
 #: temp.glade:25249
 msgid "Strongs Refs"
-msgstr ""
+msgstr "Strongs Refs"
 
 #: temp.glade:25302
 msgid "Adjust expert-level settings."
-msgstr ""
+msgstr "Настройте параметры экспертного уровня."
 
 #: temp.glade:25304
 msgid "TeXpert Hacks"
-msgstr ""
+msgstr "TeXpert Hacks"
 
 #: temp.glade:25350
 msgid "Current Project Path:"
@@ -11894,7 +12253,7 @@ msgstr "Включение этой опции ускорит вывод \n"
 
 #: temp.glade:26161
 msgid "Create Diff"
-msgstr ""
+msgstr "Создать дифф"
 
 #: temp.glade:26162
 msgid "Compare PDFs: Create 'diff' PDF"
@@ -11908,7 +12267,13 @@ msgid "Enable this option to generate a PDF showing the \n"
 "If any differences are found, it should open the \n"
 "\"Diff\" PDF in the default PDF viewer.\n\n"
 "Shortcut: Ctrl-D"
-msgstr ""
+msgstr "Включите эту опцию для создания PDF-файла, показывающего \n"
+"различия между текущим PDF-файлом и \n"
+"выбранной предыдущей версией (задается на вкладке \"Финишная обработка\"\n"
+"в разделе \"Сравнение PDF\").\n\n"
+"Если различия найдены, то необходимо открыть \n"
+"\"Diff\" PDF в программе просмотра PDF по умолчанию.\n\n"
+"Ярлык: Ctrl-D"
 
 #: temp.glade:26201
 msgid "The configuration displayed now is for the \n"
@@ -12020,7 +12385,9 @@ msgstr "PTXprint создаст папку проекта\n"
 msgid "Step 3.\n"
 "Assign a Name\n"
 "for the Project:"
-msgstr ""
+msgstr "Шаг 3.\n"
+"Назначьте имя\n"
+"для проекта:"
 
 #: temp.glade:26476
 msgid "Assign a name to a DBL bundle"
@@ -12056,14 +12423,21 @@ msgid "If you don't already have a DBL bundle, then\n"
 "from an online scripture repository.\n\n"
 "If you already have the required DBL bundle,\n"
 "then skip this first step."
-msgstr ""
+msgstr "Если у вас еще нет пакета DBL, то\n"
+"вы можете загрузить соответствующий текст \n"
+"из онлайнового хранилища Священных Писаний.\n\n"
+"Если у вас уже есть необходимый набор DBL,\n"
+", то пропустите этот первый шаг."
 
 #: temp.glade:26572
 msgid "[Optional]     Step 1.\n"
 "Download a DBL\n"
 "Bundle (USX) from\n"
 "an Online Repository"
-msgstr ""
+msgstr "[Optional]     Шаг 1.\n"
+"Загрузите пакет DBL\n"
+"Bundle (USX) с веб-сайта\n"
+"an Online Repository."
 
 #: temp.glade:26589 temp.glade:31483 temp.glade:35029
 msgid "Description:"
@@ -12083,7 +12457,11 @@ msgid "There are hundreds of DBL bundles available\n"
 "download and use in a publication.\n\n"
 "Use resources which contain the text\n"
 "and select the USX download option."
-msgstr ""
+msgstr "На сайте Open.Bible доступны сотни DBL-пакетов\n"
+", которые вы можете\n"
+"скачать и использовать в публикации.\n\n"
+"Используйте ресурсы, содержащие текст\n"
+", и выберите опцию загрузки USX."
 
 #: temp.glade:26647
 msgid "PTXprint: Sidebar Image Settings"
@@ -12302,15 +12680,15 @@ msgstr "Фоновое изображение боковой панели: Уп�
 
 #: temp.glade:27324
 msgid "Sidebar background image: Scale Image to Inner/Outer/Bleed area "
-msgstr ""
+msgstr "Фоновое изображение боковой панели: Масштабирование изображения на внутреннюю/внешнюю/загрязненную область "
 
 #: temp.glade:27328 temp.glade:29301
 msgid "Select where the image should extend to."
-msgstr ""
+msgstr "Выберите место, до которого должно простираться изображение."
 
 #: temp.glade:27354
 msgid "Scale To:"
-msgstr ""
+msgstr "Масштаб до:"
 
 #: temp.glade:27367
 msgid "Background Image Advanced Settings"
@@ -12414,7 +12792,9 @@ msgstr "Диалоговое окно \"Границы\": Отступы от г
 msgid "The horizontal space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Горизонтальное пространство между внутренним \n"
+"краем границы и внешним \n"
+"краем поля внутри нее."
 
 #: temp.glade:27874
 msgid "Borders dialog: Vertical border padding "
@@ -12424,7 +12804,9 @@ msgstr "Диалоговое окно \"Границы\": Отступы от в
 msgid "The vertical space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Вертикальное пространство между внутренним \n"
+"краем границы и внешним \n"
+"краем поля внутри нее."
 
 #: temp.glade:27900
 msgid "The space between the (inside) edge of the border\n"
@@ -12734,15 +13116,15 @@ msgstr "Язык:"
 
 #: temp.glade:28899
 msgid "PTXprint: Cover Wizard"
-msgstr ""
+msgstr "PTXprint: Мастер обложек"
 
 #: temp.glade:28925
 msgid "Create/Overwrite \\periphs in Front Matter"
-msgstr ""
+msgstr "Создание/переписывание \\перифов на первой странице"
 
 #: temp.glade:28926
 msgid "Generate cover: Overwrite Periphs in Front Matter"
-msgstr ""
+msgstr "Создать обложку: Перезапись периферийных элементов в титульном листе"
 
 #: temp.glade:28930
 msgid "If this option is enabled, then any existing settings for\n"
@@ -12752,166 +13134,191 @@ msgid "If this option is enabled, then any existing settings for\n"
 "   id='coverfront', id='coverspine', id='coverback, id='coverwhole'\n\n"
 "So, if you have already customized these settings, then leave this\n"
 "option unchecked."
-msgstr ""
+msgstr "Если эта опция включена, то все существующие настройки для\n"
+"обложки в разделе Front Matter (на вкладке View+Edit)\n"
+"будут сброшены к значениям по умолчанию. Ниже приведены \\перипетии, затрагивающие\n"
+":\n"
+"   id='coverfront', id='coverpine', id='coverback', id='coverwhole'\n\n"
+"Поэтому, если вы уже настроили эти параметры, оставьте эту\n"
+"опцию не отмеченной."
 
 #: temp.glade:29021
 msgid "Generate cover: Scale Text Size"
-msgstr ""
+msgstr "Создать обложку: Масштаб Размер текста"
 
 #: temp.glade:29024 temp.glade:29069 temp.glade:29426
 msgid "The \\mt1 and \\mt2 styles are used for the\n"
 "title and subtitle on the cover page. Use\n"
 "this setting to increase size of such titles."
-msgstr ""
+msgstr "Стили \\mt1 и \\mt2 используются для заголовка и подзаголовка\n"
+"на титульной странице. Используйте\n"
+"для увеличения размера таких заголовков."
 
 #: temp.glade:29048
 msgid "Generate cover: Text Color"
-msgstr ""
+msgstr "Создать обложку: Цвет текста"
 
 #: temp.glade:29052
 msgid "Set the color of the title and subtitle text."
-msgstr ""
+msgstr "Установите цвет текста заголовка и подзаголовка."
 
 #: temp.glade:29075
 msgid "Scale Text Size:"
-msgstr ""
+msgstr "Масштаб Размер текста:"
 
 #: temp.glade:29084
 msgid "Generate cover: Select Ornamental Border"
-msgstr ""
+msgstr "Создать покрытие: Выберите декоративный бордюр"
 
 #: temp.glade:29088 temp.glade:29369
 msgid "A selection of ornamental borders are available\n"
 "to choose from, or a custom-made border may\n"
 "be applied to the front cover page."
-msgstr ""
+msgstr "На выбор предлагаются декоративные рамки\n"
+", а на титульный лист можно нанести рамку по индивидуальному заказу\n"
+"."
 
 #: temp.glade:29114
 msgid "Generate cover: Select Background Shading"
-msgstr ""
+msgstr "Создать покрытие: Выберите Затенение фона"
 
 #: temp.glade:29118 temp.glade:29171
 msgid "Set the background color for the cover."
-msgstr ""
+msgstr "Установите цвет фона для обложки."
 
 #: temp.glade:29133
 msgid "Generate cover: Select Background Picure (or Image)"
-msgstr ""
+msgstr "Создать обложку: Выберите фоновый рисунок (или изображение)"
 
 #: temp.glade:29153
 msgid "<== Select an image file for the background"
-msgstr ""
+msgstr "<== Выбор файла изображения для фона"
 
 #: temp.glade:29167
 msgid "Generate cover: Select Border Color"
-msgstr ""
+msgstr "Создать обложку: Выберите цвет границы"
 
 #: temp.glade:29184
 msgid "Background Shading:"
-msgstr ""
+msgstr "Фоновое затенение:"
 
 #: temp.glade:29185
 msgid "Generate cover: Enable Background Shading"
-msgstr ""
+msgstr "Генерировать покрытие: Включить затенение фона"
 
 #: temp.glade:29189
 msgid "Enable this option to apply shading\n"
 "to the entire cover."
-msgstr ""
+msgstr "Включите эту опцию, чтобы применить затенение\n"
+"ко всему покрытию."
 
 #: temp.glade:29203
 msgid "Background Picture:"
-msgstr ""
+msgstr "Фоновый рисунок:"
 
 #: temp.glade:29204 temp.glade:29226
 msgid "Generate cover: Enable Background Picture (or Image)"
-msgstr ""
+msgstr "Генерировать обложку: Включить фоновый рисунок (или изображение)"
 
 #: temp.glade:29208
 msgid "Enable this option to place a picture\n"
 "(or image) on the entire cover (so\n"
 "it wraps around onto the back cover).\n"
 "Use a landscape-oriented image."
-msgstr ""
+msgstr "Включите этот параметр, чтобы разместить фотографию\n"
+"(или изображение) на всей обложке (так, чтобы\n"
+"заворачивалась на заднюю обложку).\n"
+"Используйте изображение, ориентированное на ландшафт."
 
 #: temp.glade:29225
 msgid "Only on Front Cover"
-msgstr ""
+msgstr "Только на лицевой стороне обложки"
 
 #: temp.glade:29230
 msgid "Enable this option to only place the\n"
 "selected image on the front cover (so\n"
 "it does not wrap onto the back cover). \n"
 "Use a portrait-oriented image."
-msgstr ""
+msgstr "Включите этот параметр, чтобы поместить выбранное изображение\n"
+"только на переднюю обложку (таким образом,\n"
+"не будет распространяться на заднюю обложку). \n"
+"Использовать изображение, ориентированное на портрет."
 
 #: temp.glade:29247
 msgid "Generate cover: Set Transparency of Background Picture"
-msgstr ""
+msgstr "Создать обложку: Установить прозрачность фонового изображения"
 
 #: temp.glade:29250
 msgid "Set the transparency (Alpha) of the \n"
 "background picture which appears\n"
 "behind any shading if any.\n"
 " "
-msgstr ""
+msgstr "Установите прозрачность (Alpha) фонового рисунка \n"
+", который отображается\n"
+"за любой штриховкой, если таковая имеется.\n"
+" "
 
 #: temp.glade:29272
 msgid "Generate cover: Set Transparency of Background Shading"
-msgstr ""
+msgstr "Сгенерировать обложку: Установить прозрачность затенения фона"
 
 #: temp.glade:29276
 msgid "Set the transparency (Alpha) of the \n"
 "background shading which appears\n"
 "on top of the image if there is one.\n"
 " "
-msgstr ""
+msgstr "Установите прозрачность (Alpha) фоновой тени \n"
+", которая появляется\n"
+"поверх изображения, если таковое имеется.\n"
+" "
 
 #: temp.glade:29297
 msgid "Generate cover: Select Scale Picture To Area"
-msgstr ""
+msgstr "Создать обложку: Выберите Масштабировать изображение по площади"
 
 #: temp.glade:29328
 msgid "Text Color:"
-msgstr ""
+msgstr "Цвет текста:"
 
 #: temp.glade:29342
 msgid "Border Color:"
-msgstr ""
+msgstr "Цвет границы:"
 
 #: temp.glade:29355
 msgid "Shading Color:"
-msgstr ""
+msgstr "Цвет затенения:"
 
 #: temp.glade:29364
 msgid "Ornamental Border:"
-msgstr ""
+msgstr "Декоративный бордюр:"
 
 #: temp.glade:29365
 msgid "Generate cover: Enable Ornamental Border"
-msgstr ""
+msgstr "Создать покрытие: Включить декоративный бордюр"
 
 #: temp.glade:29388
 msgid "The transparency (alpha channel) values on the sliders below\n"
 "range from 0 (completely transparent) to 1 (completely opaque)."
-msgstr ""
+msgstr "Значения прозрачности (альфа-канала) на ползунках ниже\n"
+"варьируются от 0 (полностью прозрачный) до 1 (полностью непрозрачный)."
 
 #: temp.glade:29391
 msgid "Transparency"
-msgstr ""
+msgstr "Прозрачность"
 
 #: temp.glade:29409
 msgid "Click to Open a PDF containing a catalog\n"
 "of the various Ornamental Borders (pgs 4-7)."
-msgstr ""
+msgstr "Щелкните, чтобы открыть PDF-файл, содержащий каталог\n"
+"различных декоративных бордюров (стр. 4-7)."
 
 #: temp.glade:29431
 msgid "Scale Picure To:"
-msgstr ""
+msgstr "Масштабное изображение к:"
 
 #: temp.glade:29450
 msgid "Cover Page Settings"
-msgstr ""
+msgstr "Настройки титульной страницы"
 
 #: temp.glade:29464
 msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
@@ -12920,7 +13327,12 @@ msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
 "     on the View+Edit tab) ONLY IF the option below is enabled:\n"
 "The \\periphs affected are as follows:\n"
 "     id='coverfront', id='coverspine', id='coverback, id='coverwhole'"
-msgstr ""
+msgstr "Обратите внимание, что при нажатии на кнопку Создать настройки обложки PTXprint будет:\n"
+"     (a) обновит определения стиля обложки (настройки редактора стилей)\n"
+"     (b) перезапишет определения \\перифов (настройки Front Matter\n"
+"     на вкладке View+Edit) ТОЛЬКО ЕСЛИ включена указанная ниже опция:\n"
+"\\периферии:\n"
+"     id='coverfront', id='coverpine', id='coverback', id='coverwhole'."
 
 #: temp.glade:29497
 msgid "PTXprint: Generate Front Matter"
@@ -13124,18 +13536,21 @@ msgstr "При создании фотосписка"
 
 #: temp.glade:30062
 msgid "PTXprint: Install an Image Set..."
-msgstr ""
+msgstr "PTXprint: Установить набор изображений..."
 
 #: temp.glade:30137
 msgid "Illustrations have been packaged \n"
 "for use in Scripture publications."
-msgstr ""
+msgstr "Иллюстрации упакованы по адресу \n"
+"для использования в изданиях Священного Писания."
 
 #: temp.glade:30166
 msgid "After downloading an Image Set\n"
 "you need to tell PTXprint where the\n"
 ".zip file is saved so it can be installed."
-msgstr ""
+msgstr "После загрузки набора изображений\n"
+"необходимо указать PTXprint, куда сохраняется файл\n"
+".zip, чтобы он мог быть установлен."
 
 #: temp.glade:30182
 msgid "Locate the downloaded Image Set \n"
@@ -13143,13 +13558,19 @@ msgid "Locate the downloaded Image Set \n"
 "in your 'Downloads' folder.\n\n"
 "DO NOT UNZIP THE FILE - this will\n"
 "be done for you automatically."
-msgstr ""
+msgstr "Найдите загруженный файл набора изображений \n"
+"(.zip), который, скорее всего, находится по адресу \n"
+"в папке \"Загрузки\".\n\n"
+"НЕ распаковывайте файл -\n"
+"это будет сделано автоматически."
 
 #: temp.glade:30189
 msgid "Option 2: Locate an\n"
 "Image Set .zip File\n"
 "to be installed:"
-msgstr ""
+msgstr "Вариант 2: Найдите файл\n"
+"Image Set .zip\n"
+"для установки:"
 
 #: temp.glade:30220
 msgid "If you don't already have appropriate\n"
@@ -13159,22 +13580,31 @@ msgid "If you don't already have appropriate\n"
 "publications from one of the links.\n\n"
 "If you already have an Image Set (.zip)\n"
 "file downloaded then skip this first step."
-msgstr ""
+msgstr "Если у вас еще нет подходящих\n"
+"иллюстраций к Священному Писанию, то вы можете\n"
+"скачать набор изображений, содержащий\n"
+"иллюстрации низкого разрешения для пробных\n"
+"публикаций, по одной из ссылок.\n\n"
+"Если у вас уже есть загруженный файл Image Set (.zip)\n"
+", то пропустите этот первый шаг."
 
 #: temp.glade:30231
 msgid "Option 1: Download and\n"
 "Install Image Set from \n"
 "the Online Repository"
-msgstr ""
+msgstr "Вариант 1: Загрузить и\n"
+"установить набор образов из \n"
+"онлайн-репозитория."
 
 #: temp.glade:30262
 msgid "OR"
-msgstr ""
+msgstr "ИЛИ"
 
 #: temp.glade:30271
 msgid "Download Sample\n"
 "B/W Image Set"
-msgstr ""
+msgstr "Скачать образец\n"
+"Набор ч/б изображений"
 
 #: temp.glade:30309
 msgid "Guides, Crop Marks, Watermark and Grid Settings"
@@ -13198,25 +13628,27 @@ msgstr "Включение этой опции включит различные
 
 #: temp.glade:30396
 msgid "Show Adjust Points"
-msgstr ""
+msgstr "Показать точки регулировки"
 
 #: temp.glade:30397
 msgid "Marks & Guides dialog: Show adjust points"
-msgstr ""
+msgstr "Диалог \"Марки и направляющие\": Показать точки настройки"
 
 #: temp.glade:30401
 msgid "When using an AdjList to grow or shrink\n"
 "paragraphs, it can be helpful to display the\n"
 "adjust points in the margin of the text."
-msgstr ""
+msgstr "При использовании списка AdjList для увеличения или уменьшения абзацев\n"
+"может быть полезным отображение точек настройки\n"
+"на полях текста."
 
 #: temp.glade:30416
 msgid "Show USFM Codes"
-msgstr ""
+msgstr "Показать коды USFM"
 
 #: temp.glade:30417
 msgid "Marks & Guides dialog: Show USFM codes"
-msgstr ""
+msgstr "Диалог \"Марки и справочники\": Показать коды USFM"
 
 #: temp.glade:30421
 msgid "Show the USFM marker of paragraphs.\n"
@@ -13226,7 +13658,13 @@ msgid "Show the USFM marker of paragraphs.\n"
 "markers visible will result in changes to the\n"
 "layout. Only use this feature temporarily\n"
 "when trying to identify a marker."
-msgstr ""
+msgstr "Показать USFM-маркеры абзацев.\n"
+"Это может быть полезно при увеличении и\n"
+"уменьшении абзацев с помощью changes.txt\n\n"
+"Обратите внимание, что в некоторых ситуациях видимость этих\n"
+"маркеров приводит к изменениям в макете\n"
+". Используйте эту функцию только временно\n"
+"при попытке определить маркер."
 
 #: temp.glade:30441
 msgid "Show Error Bars For Overfull Lines"
@@ -13388,15 +13826,15 @@ msgstr "Если стандартные правила и руководства
 
 #: temp.glade:30836
 msgid "Select Images..."
-msgstr ""
+msgstr "Выбрать изображения..."
 
 #: temp.glade:30853
 msgid "Download Image Set..."
-msgstr ""
+msgstr "Скачать набор изображений..."
 
 #: temp.glade:30854
 msgid "Download an Image Set from an online source"
-msgstr ""
+msgstr "Загрузка набора изображений из онлайнового источника"
 
 #: temp.glade:30858
 msgid "If you don't already have appropriate\n"
@@ -13404,7 +13842,11 @@ msgid "If you don't already have appropriate\n"
 "download an Image Set which contains\n"
 "low-resolution illustrations for trial\n"
 "publications from one of the links."
-msgstr ""
+msgstr "Если у вас еще нет подходящих\n"
+"иллюстраций к Священному Писанию, то по одной из ссылок вы можете\n"
+"скачать набор изображений, содержащий\n"
+"иллюстрации низкого разрешения для пробных\n"
+"публикаций."
 
 #: temp.glade:30899
 msgid "Import the selected images\n"
@@ -13412,95 +13854,107 @@ msgid "Import the selected images\n"
 "where an appropriate caption\n"
 "should be added and other\n"
 "image properties selected."
-msgstr ""
+msgstr "Импортируйте выбранные изображения\n"
+"в текущую конфигурацию\n"
+", где необходимо добавить соответствующую надпись\n"
+"и выбрать другие свойства изображения\n"
+"."
 
 #: temp.glade:31080
 msgid "Search:"
-msgstr ""
+msgstr "Поиск:"
 
 #: temp.glade:31092
 msgid "Limit to Range\n"
 "of References:"
-msgstr ""
+msgstr "Limit to Range\n"
+"of References:"
 
 #: temp.glade:31104
 msgid "e.g. LUK ACT HEB JAS"
-msgstr ""
+msgstr "например, LUK ACT HEB JAS"
 
 #: temp.glade:31119
 msgid "Artist(s):"
-msgstr ""
+msgstr "Художник(и):"
 
 #: temp.glade:31131
 msgid "Image Set:"
-msgstr ""
+msgstr "Набор изображений:"
 
 #: temp.glade:31140
 msgid "Image Selection Dialog: Search for an image by keyword"
-msgstr ""
+msgstr "Диалог выбора изображения: Поиск изображения по ключевому слову"
 
 #: temp.glade:31146
 msgid "(lamb|sheep)+shepherd"
-msgstr ""
+msgstr "(ягненок|овца)+пастух"
 
 #: temp.glade:31187
 msgid "Scripture Reference"
-msgstr ""
+msgstr "Ссылка на Писание"
 
 #: temp.glade:31191
 msgid "Sort the images according to\n"
 "the canonical order of scripture."
-msgstr ""
+msgstr "Отсортируйте изображения в соответствии с\n"
+"каноническим порядком Священного Писания."
 
 #: temp.glade:31206
 msgid "Frequency of Use"
-msgstr ""
+msgstr "Частота использования"
 
 #: temp.glade:31210
 msgid "Sort the images based on how\n"
 "often other projects use them.\n"
 "The most popular illustrations\n"
 "appear at the top of the list."
-msgstr ""
+msgstr "Отсортируйте изображения по тому, насколько часто\n"
+"используются в других проектах.\n"
+"Наиболее популярные иллюстрации\n"
+"появляются в верхней части списка."
 
 #: temp.glade:31229
 msgid "Sort Images By:"
-msgstr ""
+msgstr "Сортировать изображения по:"
 
 #: temp.glade:31258
 msgid "Filter"
-msgstr ""
+msgstr "Фильтр"
 
 #: temp.glade:31272
 msgid "Code"
-msgstr ""
+msgstr "Код"
 
 #: temp.glade:31285
 msgid "Artist Name"
-msgstr ""
+msgstr "Имя художника"
 
 #: temp.glade:31316
 msgid "Search + Update Images"
-msgstr ""
+msgstr "Поиск + обновление изображений"
 
 #: temp.glade:31344
 msgid "Filter for illustrations that can be\n"
 "used in Print/PDF publications. "
-msgstr ""
+msgstr "Фильтр иллюстраций, которые могут быть использованы в печатных изданиях\n"
+". "
 
 #: temp.glade:31363
 msgid "Filter for illustrations that can be\n"
 "used in mobile phone Apps. "
-msgstr ""
+msgstr "Фильтр для иллюстраций, которые могут быть использованы в приложениях для мобильных телефонов\n"
+". "
 
 #: temp.glade:31381
 msgid "Filter for illustrations that can be\n"
 "used on websites. "
-msgstr ""
+msgstr "Фильтр для иллюстраций, которые можно использовать на сайтах\n"
+". "
 
 #: temp.glade:31453
 msgid "Keywords:"
-msgstr ""
+msgstr "Ключевые слова:"
 
 #: temp.glade:31464
 msgid "Note that if a reference only contains\n"
@@ -13508,47 +13962,51 @@ msgid "Note that if a reference only contains\n"
 "specific verse mentioned), then the\n"
 "illustration will be placed in the middle\n"
 "of the chapter."
-msgstr ""
+msgstr "Обратите внимание, что если ссылка содержит\n"
+"только номер книги и главы (без указания\n"
+"конкретного стиха), то иллюстрация\n"
+"будет размещена в середине\n"
+"главы."
 
 #: temp.glade:31470
 msgid "Reference:"
-msgstr ""
+msgstr "Ссылка:"
 
 #: temp.glade:31495
 msgid "shepherd, sheep, lamb, shoulder, carry"
-msgstr ""
+msgstr "пастух, овца, ягненок, плечо, нести"
 
 #: temp.glade:31509
 msgid "MAT 12:15, LUK 22:7; ACT 8:3"
-msgstr ""
+msgstr "МАТ 12:15, ЛУК 22:7; АКТ 8:3"
 
 #: temp.glade:31524
 msgid "The shepherd carries a lamb."
-msgstr ""
+msgstr "Пастух несет ягненка."
 
 #: temp.glade:31538
 msgid "cn01234, David C Cook - NT"
-msgstr ""
+msgstr "cn01234, David C Cook - NT"
 
 #: temp.glade:31551
 msgid "ID, Artist:"
-msgstr ""
+msgstr "ID, Художник:"
 
 #: temp.glade:31627
 msgid "Clear Selection"
-msgstr ""
+msgstr "Очистить выбор"
 
 #: temp.glade:31665
 msgid "PTXprint: Import Settings Into Current Configuration..."
-msgstr ""
+msgstr "PTXprint: Импорт настроек в текущую конфигурацию..."
 
 #: temp.glade:31696
 msgid "RESET"
-msgstr ""
+msgstr "СБРОС"
 
 #: temp.glade:31697
 msgid "Reset the current Configuration's UI settings"
-msgstr ""
+msgstr "Сброс настроек пользовательского интерфейса текущей конфигурации"
 
 #: temp.glade:31701
 msgid "Warning!\n"
@@ -13557,15 +14015,20 @@ msgid "Warning!\n"
 "their default values.\n\n"
 "Note that it will NOT reset the Style \n"
 "settings stored in the .sty files."
-msgstr ""
+msgstr "Внимание!\n"
+"При этом все настройки пользовательского интерфейса \n"
+"для текущей конфигурации будут сброшены к значениям по умолчанию\n"
+".\n\n"
+"Обратите внимание, что при этом НЕ будут сброшены настройки стилей \n"
+", хранящиеся в файлах .sty."
 
 #: temp.glade:31795
 msgid "PDF file (with embedded settings) or ZIP archive file"
-msgstr ""
+msgstr "Файл PDF (со встроенными настройками) или файл архива ZIP"
 
 #: temp.glade:31796
 msgid "Import: From existing PDF file or ZIP archive"
-msgstr ""
+msgstr "Импорт: Из существующего PDF-файла или ZIP-архива"
 
 #: temp.glade:31800
 msgid "It is possible to import settings from an\n"
@@ -13575,46 +14038,55 @@ msgid "It is possible to import settings from an\n"
 "on the Finishing tab).\n\n"
 "Importing from a PTXprint ZIP archive \n"
 "(created on the Help tab) is also possible."
-msgstr ""
+msgstr "Существует возможность импорта настроек из существующего\n"
+"PDF-файла, созданного ранее\n"
+"программой PTXprint. Но это возможно только в том случае, если настройки\n"
+"встроены в PDF-файл. (Эта опция включается\n"
+"на вкладке Finishing).\n\n"
+"Также возможен импорт из ZIP-архива PTXprint \n"
+"(создается на вкладке Help)."
 
 #: temp.glade:31824
 msgid "A Previously Saved Configuration:"
-msgstr ""
+msgstr "Ранее сохраненная конфигурация:"
 
 #: temp.glade:31825
 msgid "Import: From Saved Configuration"
-msgstr ""
+msgstr "Импорт: Из сохраненной конфигурации"
 
 #: temp.glade:31845
 msgid "Import: Project name"
-msgstr ""
+msgstr "Импорт: Название проекта"
 
 #: temp.glade:31850 temp.glade:31896
 msgid "Select the project from which the\n"
 "settings will be imported."
-msgstr ""
+msgstr "Выберите проект, из которого будут импортированы настройки\n"
+"."
 
 #: temp.glade:31872
 msgid "Import: Project configuration"
-msgstr ""
+msgstr "Импорт: Конфигурация проекта"
 
 #: temp.glade:31876 temp.glade:31911
 msgid "Select a configuration from the\n"
 "selected project from which the\n"
 "settings will be imported."
-msgstr ""
+msgstr "Выберите конфигурацию из выбранного проекта\n"
+", из которого будут импортированы настройки\n"
+"."
 
 #: temp.glade:31899
 msgid "Project:"
-msgstr ""
+msgstr "Проект:"
 
 #: temp.glade:31916
 msgid "Configuration:"
-msgstr ""
+msgstr "Конфигурация:"
 
 #: temp.glade:31927
 msgid "Select PDF to import settings from"
-msgstr ""
+msgstr "Выберите PDF для импорта настроек из файла"
 
 #: temp.glade:31931
 msgid "Select either a PTXprint PDF or ZIP archive\n"
@@ -13622,71 +14094,79 @@ msgid "Select either a PTXprint PDF or ZIP archive\n"
 "Importing from a PDF will only work if the\n"
 "PDF contains the PTXprint configuration\n"
 "settings (as enabled on the Finishing tab)."
-msgstr ""
+msgstr "Выберите PDF-файл PTXprint или ZIP-архив\n"
+"для импорта настроек.\n\n"
+"Импорт из PDF-файла будет работать только в том случае, если PDF-файл\n"
+"содержит настройки конфигурации PTXprint\n"
+"(как указано на вкладке Finishing)."
 
 #: temp.glade:31998
 msgid "Source of Settings"
-msgstr ""
+msgstr "Источник настроек"
 
 #: temp.glade:32029
 msgid "Import Entire PicList \"as is\" (overwrite existing PicList)"
-msgstr ""
+msgstr "Импортировать весь список PicList \"как есть\" (перезаписать существующий список PicList)"
 
 #: temp.glade:32030
 msgid "Import: Entire PicList \"as is\" (overwrite existing PicList)"
-msgstr ""
+msgstr "Импорт: Весь список PicList \"как есть\" (перезапись существующего списка PicList)"
 
 #: temp.glade:32048
 msgid "Import Elements of PicList (preserving existing PicList)"
-msgstr ""
+msgstr "Импорт элементов PicList (с сохранением существующего PicList)"
 
 #: temp.glade:32049
 msgid "Import: Elements of PicList (preserving existing PicList)"
-msgstr ""
+msgstr "Импорт: Элементы PicList (с сохранением существующего PicList)"
 
 #: temp.glade:32076
 msgid "Captions"
-msgstr ""
+msgstr "Надписи"
 
 #: temp.glade:32091
 msgid "Size, Position, Mirror, Rotation settings"
-msgstr ""
+msgstr "Настройки размеров, положения, зеркала, поворота"
 
 #: temp.glade:32107
 msgid "Copyright Information"
-msgstr ""
+msgstr "Информация об авторских правах"
 
 #: temp.glade:32185
 msgid "How to handle differences:"
-msgstr ""
+msgstr "Как справляться с разногласиями:"
 
 #: temp.glade:32195
 msgid "Add Any New Pictures"
-msgstr ""
+msgstr "Добавление новых изображений"
 
 #: temp.glade:32212
 msgid "Remove Any Old Pictures"
-msgstr ""
+msgstr "Удаление старых фотографий"
 
 #: temp.glade:32268
 msgid "Enabling this option will import (overwrite) the page size, \n"
 "column-layout, margins, header and footer, and related settings."
-msgstr ""
+msgstr "При включении этой опции будут импортированы (перезаписаны) размер страницы, разметка колонок \n"
+", поля, верхний и нижний колонтитулы и другие настройки."
 
 #: temp.glade:32316
 msgid "Enabling this option will import the major font and script settings, spacing and hyphenation\n"
 "settings. (Note: It will not alter any fonts that have been directly set within Styles.)"
-msgstr ""
+msgstr "При включении этой опции будут импортированы основные настройки шрифтов, интервалов и дефисов\n"
+". (Примечание: При этом не будут изменены шрифты, заданные непосредственно в Стили)."
 
 #: temp.glade:32364
 msgid "This will selectively import any Styles which are different from the Default settings.\n"
 "This will also import styles from ptxprint-mods.sty, but not from custom.sty.\n"
 "You may also want to RESET the current configuration (see below) before importing styles."
-msgstr ""
+msgstr "При этом будут выборочно импортированы все стили, отличающиеся от настроек по умолчанию.\n"
+"При этом также будут импортированы стили из файла ptxprint-mods.sty, но не из файла custom.sty.\n"
+"Перед импортом стилей можно также сбросить текущую конфигурацию (см. ниже)."
 
 #: temp.glade:32377
 msgid "Override ALL Style Settings"
-msgstr ""
+msgstr "Отмена всех настроек стиля"
 
 #: temp.glade:32381
 msgid "Normally only styles that have not been changed\n"
@@ -13694,49 +14174,55 @@ msgid "Normally only styles that have not been changed\n"
 "But if you require ALL styles to be updated\n"
 "regardless of whether they have already been\n"
 "modified locally, then enable this option."
-msgstr ""
+msgstr "Обычно импортируются только те стили, которые не были изменены\n"
+"в принимающей конфигурации.\n"
+"Но если требуется, чтобы обновлялись ВСЕ стили\n"
+"независимо от того, были ли они уже\n"
+"изменены локально, то включите эту опцию."
 
 #: temp.glade:32439
 msgid "Other settings can be imported as needed:"
-msgstr ""
+msgstr "При необходимости могут быть импортированы и другие настройки:"
 
 #: temp.glade:32471
 msgid "Body Tab settings"
-msgstr ""
+msgstr "Настройки вкладки Body Tab"
 
 #: temp.glade:32487
 msgid "Notes+Refs settings"
-msgstr ""
+msgstr "Настройки Notes+Refs"
 
 #: temp.glade:32503
 msgid "Header+Footer settings"
-msgstr ""
+msgstr "Настройки верхнего и нижнего колонтитулов"
 
 #: temp.glade:32519
 msgid "Tabs+Borders settings"
-msgstr ""
+msgstr "Настройки табуляции+границы"
 
 #: temp.glade:32534
 msgid "Overwrite Front Matter"
-msgstr ""
+msgstr "Переписывание титульного листа"
 
 #: temp.glade:32549
 msgid "Advanced settings"
-msgstr ""
+msgstr "Дополнительные настройки"
 
 #: temp.glade:32553
 msgid "This includes everything on the Advanced tab\n"
 "with the exception of Custom Script processing\n"
 "and Customized Styles (custom.sty)."
-msgstr ""
+msgstr "Сюда относится все, что находится на вкладке Advanced\n"
+", за исключением обработки Custom Script\n"
+"и Customized Styles (custom.sty)."
 
 #: temp.glade:32579
 msgid "Cover settings"
-msgstr ""
+msgstr "Настройки крышки"
 
 #: temp.glade:32595
 msgid "Front +Back Matter"
-msgstr ""
+msgstr "Лицевая сторона + оборотная сторона"
 
 #: temp.glade:32671
 msgid "Select Books To Export to PDF"
@@ -13786,7 +14272,9 @@ msgstr "Нажмите, чтобы выключить все книги."
 msgid "The FRT book in Paratext contains front matter\n"
 "for a publication. Visit the Peripherals page to\n"
 "set up front matter for this publication."
-msgstr ""
+msgstr "Книга FRT в Paratext содержит фронтматериал\n"
+"для издания. Посетите страницу Периферийные устройства, чтобы\n"
+"настроить фронт-материал для этой публикации."
 
 #: temp.glade:32893
 msgid "Why is FRT not listed?"
@@ -14403,12 +14891,13 @@ msgstr "Индекс Стронга: Разрешить несимметричн
 
 #: temp.glade:34792
 msgid "Notes"
-msgstr ""
+msgstr "Примечания"
 
 #: temp.glade:34796
 msgid "This is the Description field from the\n"
 "project's Biblical Terms renderings."
-msgstr ""
+msgstr "Это поле Description из рендеринга библейских терминов проекта\n"
+"."
 
 #: temp.glade:34835
 msgid "PTXprint: Add/Edit Style"

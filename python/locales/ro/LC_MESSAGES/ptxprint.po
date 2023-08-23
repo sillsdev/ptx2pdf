@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ptxprint\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-07-26 11:23+0100\n"
-"PO-Revision-Date: 2023-07-26 10:24\n"
+"POT-Creation-Date: 2023-08-23 14:51+0100\n"
+"PO-Revision-Date: 2023-08-23 13:52\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Language: ro_RO\n"
@@ -160,7 +160,7 @@ msgid "Font Scale:"
 msgstr "Font Scale:"
 
 #: lib/ptxprint/gtkstyleditor.py:198 lib/ptxprint/gtkstyleditor.py:507
-#: lib/ptxprint/gtkview.py:3090 temp.glade:19853 temp.glade:27167
+#: lib/ptxprint/gtkview.py:3102 temp.glade:19853 temp.glade:27167
 #: temp.glade:27748
 msgid "Color:"
 msgstr "Culoare:"
@@ -181,30 +181,50 @@ msgstr "Elementul necesar {} nu este setat. Vă rugăm să-l setaţi."
 msgid "Set Font..."
 msgstr "Set Font..."
 
-#: lib/ptxprint/gtkview.py:456
+#: lib/ptxprint/gtkview.py:115
+msgid "Gathering pics..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:116
+msgid "Laying out..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:117
+msgid "Making PDF..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:118
+msgid "Finishing..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:119 lib/ptxprint/gtkview.py:1372
+msgid "Processing..."
+msgstr "Procesarea..."
+
+#: lib/ptxprint/gtkview.py:463
 msgid "\n"
 "PTXprint Version {}"
 msgstr "\n"
 "PTXprint Version {}"
 
-#: lib/ptxprint/gtkview.py:464
+#: lib/ptxprint/gtkview.py:471
 #, python-brace-format
 msgid "Mailto: <{who2email}>"
-msgstr ""
+msgstr "Mailto: <{who2email}>"
 
-#: lib/ptxprint/gtkview.py:470 lib/ptxprint/gtkview.py:475
+#: lib/ptxprint/gtkview.py:477 lib/ptxprint/gtkview.py:482
 msgid "This message has been copied to the clipboard."
 msgstr "Acest mesaj a fost copiat în clipboard."
 
-#: lib/ptxprint/gtkview.py:472
+#: lib/ptxprint/gtkview.py:479
 msgid "The letter above has been copied to the clipboard."
-msgstr ""
+msgstr "Scrisoarea de mai sus a fost copiată în clipboard."
 
-#: lib/ptxprint/gtkview.py:473
+#: lib/ptxprint/gtkview.py:480
 msgid "Send it by e-mail to: {}"
-msgstr ""
+msgstr "Trimiteți-o prin e-mail la adresa: {}"
 
-#: lib/ptxprint/gtkview.py:492
+#: lib/ptxprint/gtkview.py:499
 msgid "Paratext is not installed on this system.\n"
 "Please locate the directory where your USFM projects\n"
 "are (or will be) stored. Or click cancel to exit."
@@ -212,35 +232,35 @@ msgstr "Paratext nu este instalat pe acest sistem.\n"
 "Vă rugăm să localizați directorul unde proiectele dvs USFM\n"
 "sunt (sau vor fi). Sau faceți clic pe anulare pentru a ieși."
 
-#: lib/ptxprint/gtkview.py:836
+#: lib/ptxprint/gtkview.py:843
 msgid "No project set"
 msgstr "Niciun proiect setat"
 
-#: lib/ptxprint/gtkview.py:969
+#: lib/ptxprint/gtkview.py:976
 msgid "No matches found - try another search term"
 msgstr "Nu s-au găsit rezultate - încercați un alt termen de căutare"
 
-#: lib/ptxprint/gtkview.py:1188
+#: lib/ptxprint/gtkview.py:1195
 msgid "Can't set {} in the model"
 msgstr "Nu se poate seta {} în model"
 
-#: lib/ptxprint/gtkview.py:1302
+#: lib/ptxprint/gtkview.py:1309
 msgid "Font(s) not set"
 msgstr "Font(urile) nu sunt setate"
 
-#: lib/ptxprint/gtkview.py:1316
+#: lib/ptxprint/gtkview.py:1323
 msgid "Printing busy"
 msgstr "Imprimare ocupată"
 
-#: lib/ptxprint/gtkview.py:1320 lib/ptxprint/runjob.py:355
+#: lib/ptxprint/gtkview.py:1327 lib/ptxprint/runjob.py:355
 msgid "No books to print"
 msgstr "Nicio carte de tipărit"
 
-#: lib/ptxprint/gtkview.py:1323
+#: lib/ptxprint/gtkview.py:1330
 msgid "One of more fonts have not been set yet"
 msgstr "Unul sau mai multe fonturi nu au fost încă setate"
 
-#: lib/ptxprint/gtkview.py:1348
+#: lib/ptxprint/gtkview.py:1355
 msgid "                   >>> PLEASE CLOSE the PDF <<<                     \n\n"
 "{}\n\n"
 " Or use a different PDF viewer which will                              \n"
@@ -254,170 +274,176 @@ msgstr "                   >>> Închide PDF-ul <<                     \n\n"
 " Vezi secțiunea 'Link-uri' pe Vizualizator pentru mai multe detalii.                            \n\n"
 "                        Doriți să încercați din nou?"
 
-#: lib/ptxprint/gtkview.py:1353
+#: lib/ptxprint/gtkview.py:1360
 msgid "The old PDF file is open!"
 msgstr "Vechiul fișier PDF este deschis!"
 
-#: lib/ptxprint/gtkview.py:1356
+#: lib/ptxprint/gtkview.py:1363
 msgid "Close the old PDF file before you try again."
 msgstr "Închideți vechiul fișier PDF înainte de a încerca din nou."
 
-#: lib/ptxprint/gtkview.py:1365
-msgid "Processing..."
-msgstr "Procesarea..."
+#: lib/ptxprint/gtkview.py:1378
+msgid "Failed due to an error in the USFM file."
+msgstr ""
 
-#: lib/ptxprint/gtkview.py:1380
+#: lib/ptxprint/gtkview.py:1379
+msgid "Run the Basic Checks in Paratext and try again."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:1392
 msgid "Note: It may take a while for the PDF to be produced due to including Strong's numbers in the text."
 msgstr "Notă: Este posibil să dureze ceva timp până când PDF-ul va fi produs din cauza includerii numerelor Strong în text."
 
-#: lib/ptxprint/gtkview.py:1387
+#: lib/ptxprint/gtkview.py:1399
 msgid "Note: It may take a while for pictures to convert for selected PDF Output Format ({})."
 msgstr "Notă: Este posibil să dureze ceva timp pentru ca imaginile să fie convertite pentru formatul de ieșire PDF selectat ({})."
 
-#: lib/ptxprint/gtkview.py:1399
+#: lib/ptxprint/gtkview.py:1411
 msgid "Thumb tabs set to 'Only Show on Odd Pages' for PDF Output Format ({})."
-msgstr ""
+msgstr "Filele de degetul mare setate la \"Afișare numai pe paginile impare\" pentru formatul de ieșire PDF ({})."
 
-#: lib/ptxprint/gtkview.py:1499
+#: lib/ptxprint/gtkview.py:1511
 msgid "Note: Copyright statement is too long. It has been placed in the Colophon (see Peripherals tab)."
-msgstr ""
+msgstr "Notă: Declarația privind drepturile de autor este prea lungă. Aceasta a fost plasată în Colophon (a se vedea fila Periferice)."
 
-#: lib/ptxprint/gtkview.py:1510
+#: lib/ptxprint/gtkview.py:1522
 msgid "But the 'Default' folder could not be erased completely:"
-msgstr ""
+msgstr "Dar dosarul \"Default\" nu a putut fi șters complet:"
 
-#: lib/ptxprint/gtkview.py:1517
+#: lib/ptxprint/gtkview.py:1529
 msgid "The 'Default' config settings have been reset."
 msgstr "Setările de configurare \"Default\" au fost resetate."
 
-#: lib/ptxprint/gtkview.py:1521
+#: lib/ptxprint/gtkview.py:1533
 msgid "Internal error occurred, trying to delete a directory tree"
 msgstr "A apărut o eroare internă, încercarea de a șterge un arbore director"
 
-#: lib/ptxprint/gtkview.py:1521 lib/ptxprint/gtkview.py:1526
-#: lib/ptxprint/gtkview.py:1529 lib/ptxprint/gtkview.py:1535
+#: lib/ptxprint/gtkview.py:1533 lib/ptxprint/gtkview.py:1538
+#: lib/ptxprint/gtkview.py:1541 lib/ptxprint/gtkview.py:1547
 msgid "Folder: "
 msgstr "Dosar: "
 
-#: lib/ptxprint/gtkview.py:1526 lib/ptxprint/gtkview.py:1535
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:1538 lib/ptxprint/gtkview.py:1547
+#: lib/ptxprint/gtkview.py:4297
 msgid "Cannot delete folder from disk!"
 msgstr "Nu se poate șterge folderul de pe disc!"
 
-#: lib/ptxprint/gtkview.py:1529
+#: lib/ptxprint/gtkview.py:1541
 msgid "Non-standard output folder needs to be deleted manually"
 msgstr "Dosarul de ieșire nestandardizat trebuie șters manual"
 
-#: lib/ptxprint/gtkview.py:1641 lib/ptxprint/gtkview.py:3658
-#: lib/ptxprint/gtkview.py:3674 lib/ptxprint/runjob.py:415 temp.glade:24503
+#: lib/ptxprint/gtkview.py:1653 lib/ptxprint/gtkview.py:3670
+#: lib/ptxprint/gtkview.py:3686 lib/ptxprint/runjob.py:415 temp.glade:24503
 msgid "Previous PDF (_1)"
 msgstr "PDF anterior (_1)"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Fonts"
 msgstr "Fonturi"
 
-#: lib/ptxprint/gtkview.py:1647
+#: lib/ptxprint/gtkview.py:1659
 msgid "Scripts"
 msgstr "Scripturi"
 
-#: lib/ptxprint/gtkview.py:1651 temp.glade:22920
+#: lib/ptxprint/gtkview.py:1663 temp.glade:22920
 msgid "Peripherals"
 msgstr "Perifuri"
 
-#: lib/ptxprint/gtkview.py:1654 temp.glade:16094 temp.glade:32237
+#: lib/ptxprint/gtkview.py:1666 temp.glade:16094 temp.glade:32237
 msgid "Pictures"
 msgstr "Imagini"
 
-#: lib/ptxprint/gtkview.py:1657 temp.glade:16722
+#: lib/ptxprint/gtkview.py:1669 temp.glade:16722
 msgid "Diglot"
 msgstr "Carte bilingvă"
 
-#: lib/ptxprint/gtkview.py:1660 temp.glade:25098
+#: lib/ptxprint/gtkview.py:1672 temp.glade:25098
 msgid "Finishing"
 msgstr "Finisare"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Notes+"
 msgstr "Note+"
 
-#: lib/ptxprint/gtkview.py:1663
+#: lib/ptxprint/gtkview.py:1675
 msgid "Refs"
 msgstr "Refs"
 
-#: lib/ptxprint/gtkview.py:1664 temp.glade:10844
+#: lib/ptxprint/gtkview.py:1676 temp.glade:10844
 msgid "Cross-References"
 msgstr "Trimitere"
 
-#: lib/ptxprint/gtkview.py:1667 temp.glade:24127
+#: lib/ptxprint/gtkview.py:1679 temp.glade:24127
 msgid "Cover"
-msgstr ""
+msgstr "Copertă"
 
-#: lib/ptxprint/gtkview.py:1671 lib/ptxprint/gtkview.py:1672
+#: lib/ptxprint/gtkview.py:1683 lib/ptxprint/gtkview.py:1684
 msgid "Tabs"
 msgstr "Tabs"
 
-#: lib/ptxprint/gtkview.py:1673 lib/ptxprint/gtkview.py:1674
+#: lib/ptxprint/gtkview.py:1685 lib/ptxprint/gtkview.py:1686
 msgid "Borders"
 msgstr "Frontiere"
 
-#: lib/ptxprint/gtkview.py:1685 temp.glade:21410
+#: lib/ptxprint/gtkview.py:1697 temp.glade:21410
 msgid "Advanced"
 msgstr "Avansat"
 
-#: lib/ptxprint/gtkview.py:1820
+#: lib/ptxprint/gtkview.py:1832
 msgid "Use One Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Utilizați o coloană\n"
+"Layout pentru aceste cărți:"
 
-#: lib/ptxprint/gtkview.py:1822
+#: lib/ptxprint/gtkview.py:1834
 msgid "Use Two Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Utilizați două coloane\n"
+"Layout pentru aceste cărți:"
 
-#: lib/ptxprint/gtkview.py:1981
+#: lib/ptxprint/gtkview.py:1993
 msgid "The Book in focus is not within scope"
 msgstr "Cartea în discuție nu se încadrează în domeniul de aplicare"
 
-#: lib/ptxprint/gtkview.py:1982
+#: lib/ptxprint/gtkview.py:1994
 msgid "To generate an AdjList, the book must be\n"
 "in the list of books to be printed."
 msgstr "Pentru a genera un AdjList, cartea trebuie să fie\n"
 "în lista de cărţi ce vor fi tipărite."
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "No Secondary Project Set"
 msgstr "Niciun proiect secundar"
 
-#: lib/ptxprint/gtkview.py:2005
+#: lib/ptxprint/gtkview.py:2017
 msgid "In order to generate an AdjList for a diglot, the \n"
 "Secondary project must be set on the Diglot tab."
 msgstr "Pentru a genera un AdjList pentru o cifră, proiectul \n"
 "Secundar trebuie să fie setat în fila Diglot"
 
-#: lib/ptxprint/gtkview.py:2023
+#: lib/ptxprint/gtkview.py:2035
 msgid "One or more Paragraph Adjust file(s) already exist!"
 msgstr "Unul sau mai multe paragrafe Reglaţi fişierele deja existente!"
 
-#: lib/ptxprint/gtkview.py:2024
+#: lib/ptxprint/gtkview.py:2036
 msgid "\n\n"
 "Do you want to OVERWRITE the above-listed file(s)?"
 msgstr "\n\n"
 "Doriți să faceți OVERWRITE fișierele enumerate mai sus?"
 
-#: lib/ptxprint/gtkview.py:2139
+#: lib/ptxprint/gtkview.py:2151
 msgid "\\rem Click the Generate button (above) to start the process of creating Front Matter..."
-msgstr ""
+msgstr "\\rem Dați clic pe butonul Generare (de mai sus) pentru a începe procesul de creare a materialelor de față..."
 
-#: lib/ptxprint/gtkview.py:2178 lib/ptxprint/gtkview.py:2184
+#: lib/ptxprint/gtkview.py:2190 lib/ptxprint/gtkview.py:2196
 msgid "View Only..."
 msgstr "Vezi doar..."
 
-#: lib/ptxprint/gtkview.py:2190
+#: lib/ptxprint/gtkview.py:2202
 msgid "Use the 'Advanced' tab to select which settings you want to view or edit."
 msgstr "Utilizați fila \"Advanced\" (Avansat) pentru a selecta setările pe care doriți să le vizualizați sau să le editați."
 
-#: lib/ptxprint/gtkview.py:2211
+#: lib/ptxprint/gtkview.py:2223
 msgid "\n\n"
 "-------------------------------------                                            \n"
 "[File has been truncated for display]                                            \n"
@@ -427,7 +453,7 @@ msgstr "\n\n"
 "[Fișierul a fost trunchiat pentru afișare]                                            \n"
 "Faceți clic pe butonul View/Edit... pentru a vedea mai multe."
 
-#: lib/ptxprint/gtkview.py:2219
+#: lib/ptxprint/gtkview.py:2231
 msgid "This file doesn't exist yet.\n\n"
 "Try clicking...                      \n"
 "   * the 'Generate' button                      \n"
@@ -437,15 +463,15 @@ msgstr "Acest fișier nu există încă.\n\n"
 "   * butonul \"Generate\" (Generare)                      \n"
 "   * butonul \"Print\" (Imprimare) pentru a crea mai întâi fișierul PDF"
 
-#: lib/ptxprint/gtkview.py:2943
+#: lib/ptxprint/gtkview.py:2955
 msgid "File not found"
 msgstr "Fișier nedescoperit"
 
-#: lib/ptxprint/gtkview.py:3093
+#: lib/ptxprint/gtkview.py:3105
 msgid "'Enable Colored Text' has now been turned on. (See Fonts+Script tab for details.)"
-msgstr ""
+msgstr "\"Enable Colored Text\" a fost activată. (Consultați fila Fonturi+Script pentru detalii.)"
 
-#: lib/ptxprint/gtkview.py:3311
+#: lib/ptxprint/gtkview.py:3323
 msgid "\n"
 "This file doesn't exist yet!\n\n"
 "Edit here and Click 'Save' to create it."
@@ -453,178 +479,183 @@ msgstr "\n"
 "Acest fişier nu există încă!\n\n"
 "Editaţi aici şi faceţi clic pe 'Salvează' pentru a-l crea."
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Save changes?"
 msgstr "Salvați modificările?"
 
-#: lib/ptxprint/gtkview.py:3327
+#: lib/ptxprint/gtkview.py:3339
 msgid "Do you wish to save the changes you made?"
 msgstr "Doriți să salvați modificările efectuate?"
 
-#: lib/ptxprint/gtkview.py:3328
+#: lib/ptxprint/gtkview.py:3340
 msgid "File: "
 msgstr "Dosar: "
 
-#: lib/ptxprint/gtkview.py:3375
+#: lib/ptxprint/gtkview.py:3387
 msgid "% This is the .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex specific pentru proiectul {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:3383
+#: lib/ptxprint/gtkview.py:3395
 msgid "% This is the preprocessing .tex file specific for the {} project used by PTXprint.\n"
 "% Saved Configuration name: {}\n"
 msgstr "% Acesta este fișierul .tex preprocesat specific proiectului {} folosit de PTXprint.\n"
 "% Nume de configurare salvat: {}\n"
 
-#: lib/ptxprint/gtkview.py:3454
+#: lib/ptxprint/gtkview.py:3466
 msgid "Select the location and name for the Archive file"
 msgstr "Selectează locația și numele fișierului arhivă"
 
-#: lib/ptxprint/gtkview.py:3494
+#: lib/ptxprint/gtkview.py:3506
 msgid "Select the folder containing image files"
 msgstr "Selectaţi folderul care conţine fişiere imagine"
 
-#: lib/ptxprint/gtkview.py:3584
+#: lib/ptxprint/gtkview.py:3596
 msgid "Imported Settings!"
-msgstr ""
+msgstr "Setări importate!"
 
-#: lib/ptxprint/gtkview.py:3591
+#: lib/ptxprint/gtkview.py:3603
 msgid "Select a PDF (or ZIP archive) to import the settings from"
-msgstr ""
+msgstr "Selectați un PDF (sau o arhivă ZIP) din care să importați setările"
 
-#: lib/ptxprint/gtkview.py:3605
+#: lib/ptxprint/gtkview.py:3617
 msgid "PDF/ZIP Import Config Error"
-msgstr ""
+msgstr "Eroare de configurare a importului PDF/ZIP"
 
-#: lib/ptxprint/gtkview.py:3606
+#: lib/ptxprint/gtkview.py:3618
 msgid "Cannot find any settings to import from the selected file.\n\n"
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3607
-msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
-msgstr ""
-
-#: lib/ptxprint/gtkview.py:3608
-msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
-msgstr ""
+msgstr "Nu se găsesc setări de importat din fișierul selectat.\n\n"
 
 #: lib/ptxprint/gtkview.py:3619
+msgid "If importing from a PDF (created with PTXprint version 2.3 or later) check "
+msgstr "Dacă importați dintr-un PDF (creat cu PTXprint versiunea 2.3 sau o versiune ulterioară), verificați "
+
+#: lib/ptxprint/gtkview.py:3620
+msgid "if it was created with 'Include Config Settings Within PDF' option enabled."
+msgstr "dacă a fost creat cu opțiunea \"Includeți setările de configurare în PDF\" activată."
+
+#: lib/ptxprint/gtkview.py:3631
 msgid "Select one or more PDF(s) for FRONT matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia FRONT"
 
-#: lib/ptxprint/gtkview.py:3624
+#: lib/ptxprint/gtkview.py:3636
 msgid "Select one or more PDF(s) for BACK matter"
 msgstr "Selectaţi unul sau mai multe PDF(uri) pentru materia BACK"
 
-#: lib/ptxprint/gtkview.py:3629
+#: lib/ptxprint/gtkview.py:3641
 msgid "Select Watermark PDF file"
 msgstr "Selectați fișierul PDF filigran"
 
-#: lib/ptxprint/gtkview.py:3634
+#: lib/ptxprint/gtkview.py:3646
 msgid "Select Page Border PDF file"
 msgstr "Selectați fișierul PDF pagină"
 
-#: lib/ptxprint/gtkview.py:3639
+#: lib/ptxprint/gtkview.py:3651
 msgid "Select Section Header PDF file"
 msgstr "Selectaţi fişierul PDF secţiune antet"
 
-#: lib/ptxprint/gtkview.py:3644
+#: lib/ptxprint/gtkview.py:3656
 msgid "Select End of Book PDF file"
 msgstr "Selectați Sfârșitul fișierului PDF al Cărții"
 
-#: lib/ptxprint/gtkview.py:3649
+#: lib/ptxprint/gtkview.py:3661
 msgid "Select Verse Decorator PDF file"
 msgstr "Selectați fișierul PDF al Decoratorului Verse"
 
-#: lib/ptxprint/gtkview.py:3654
+#: lib/ptxprint/gtkview.py:3666
 msgid "Select a PDF file to compare with"
 msgstr "Selectați un fișier PDF cu care să faceți comparația"
 
-#: lib/ptxprint/gtkview.py:3775
+#: lib/ptxprint/gtkview.py:3787
 msgid "Switch to Other\n"
 "Diglot Project"
 msgstr "Comutați la proiectul Alt\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:3777 temp.glade:26257
+#: lib/ptxprint/gtkview.py:3789 temp.glade:26257
 msgid "Print (Make PDF)"
 msgstr "Imprimați (Faceți PDF)"
 
-#: lib/ptxprint/gtkview.py:3783
+#: lib/ptxprint/gtkview.py:3795
 msgid "Save & Return to\n"
 "Diglot Project"
 msgstr "Salvați și reveniți la proiectul\n"
 "Diglot"
 
-#: lib/ptxprint/gtkview.py:3785
+#: lib/ptxprint/gtkview.py:3797
 msgid "Return to Primary"
 msgstr "Întoarcerea la primar"
 
-#: lib/ptxprint/gtkview.py:3851
+#: lib/ptxprint/gtkview.py:3863
 msgid "FYI: The Regular font already supports all the characters in the text."
 msgstr "FYI: Fontul obișnuit acceptă deja toate caracterele din text."
 
-#: lib/ptxprint/gtkview.py:3852
+#: lib/ptxprint/gtkview.py:3864
 msgid "A fallback font is not required so\n"
 "the 'Use Fallback Font' option will be disabled."
 msgstr "Un font de rezervă nu este necesar astfel încât\n"
 "opțiunea „Folosește Fallback Font” va fi dezactivată."
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:3909
+#, python-brace-format
+msgid "Redoing layout {run}..."
+msgstr ""
+
+#: lib/ptxprint/gtkview.py:4118
 msgid "USFM syntax error"
 msgstr "Eroare de sintaxă USFM"
 
-#: lib/ptxprint/gtkview.py:4101
+#: lib/ptxprint/gtkview.py:4118
 msgid "Syntax error: {}"
 msgstr "Eroare de sintaxă: {}"
 
-#: lib/ptxprint/gtkview.py:4134 lib/ptxprint/gtkview.py:4975
-#: lib/ptxprint/gtkview.py:4990
+#: lib/ptxprint/gtkview.py:4151 lib/ptxprint/gtkview.py:4992
+#: lib/ptxprint/gtkview.py:5007
 msgid "Choose Image"
 msgstr "Alege imagine"
 
-#: lib/ptxprint/gtkview.py:4280
+#: lib/ptxprint/gtkview.py:4297
 msgid "Image Set: "
-msgstr ""
+msgstr "Set de imagini: "
 
-#: lib/ptxprint/gtkview.py:4371
+#: lib/ptxprint/gtkview.py:4388
 msgid "Unsupported Locale"
 msgstr "Localizare nesuportată"
 
-#: lib/ptxprint/gtkview.py:4372
+#: lib/ptxprint/gtkview.py:4389
 msgid "This locale is not supported on your system, you may need to install it"
 msgstr "Această localizare nu este suportată pe sistemul dvs., poate fi necesar să o instalați"
 
-#: lib/ptxprint/gtkview.py:4552
+#: lib/ptxprint/gtkview.py:4569
 msgid "Strong's Index generated in: {}"
 msgstr "Indicele Strong's Index generat în: {}"
 
-#: lib/ptxprint/gtkview.py:4598
+#: lib/ptxprint/gtkview.py:4615
 msgid " \\periphs in Front Matter"
-msgstr ""
+msgstr " \\perifețe în prima pagină"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Overwrite"
-msgstr ""
+msgstr "Suprascrieți"
 
-#: lib/ptxprint/gtkview.py:4602
+#: lib/ptxprint/gtkview.py:4619
 msgid "Create"
-msgstr ""
+msgstr "Creați"
 
-#: lib/ptxprint/gtkview.py:4690 lib/ptxprint/gtkview.py:5217
+#: lib/ptxprint/gtkview.py:4707 lib/ptxprint/gtkview.py:5234
 msgid "Please fill in any missing <Values> on"
-msgstr ""
+msgstr "Vă rugăm să completați orice informație care lipsește pe <Values> pe"
 
-#: lib/ptxprint/gtkview.py:4691 lib/ptxprint/gtkview.py:5218
+#: lib/ptxprint/gtkview.py:4708 lib/ptxprint/gtkview.py:5235
 msgid "the Peripherals tab before proceeding."
-msgstr ""
+msgstr "fila Periferice înainte de a continua."
 
-#: lib/ptxprint/gtkview.py:4692
+#: lib/ptxprint/gtkview.py:4709
 msgid "Update the ISBN number or deleted the entry."
-msgstr ""
+msgstr "Actualizați numărul ISBN sau ștergeți intrarea."
 
-#: lib/ptxprint/gtkview.py:4745
+#: lib/ptxprint/gtkview.py:4762
 msgid "FYI: This Interlinear option is not compatible with the\n"
 "'Spacing Adjustments Between Letters' on the Fonts+Script page.\n"
 "So that option has just been disabled."
@@ -632,69 +663,71 @@ msgstr "FYI: Această opțiune interliniară nu este compatibilă cu\n"
 "'Ajustări de spațiu între litere' pe pagina Fonts+Script.\n"
 "Această opţiune a fost doar dezactivată."
 
-#: lib/ptxprint/gtkview.py:4777
+#: lib/ptxprint/gtkview.py:4794
 msgid "A newer version of PTXprint ({}) is available.\n"
 "Click to visit download page on the website."
 msgstr "Este disponibilă o versiune mai nouă a PTXprint ({}).\n"
 "Faceți clic pentru a vizita pagina de descărcare de pe site."
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "Internet Access Disabled"
 msgstr "Acces la internet pentru persoane cu handicap"
 
-#: lib/ptxprint/gtkview.py:4798
+#: lib/ptxprint/gtkview.py:4815
 msgid "All Internet URLs have been disabled \n"
 "using the option on the Advanced Tab"
 msgstr "Toate URL-urile de internet au fost dezactivate \n"
 "folosind opțiunea din fila Advanced Tab (Avansat)"
 
-#: lib/ptxprint/gtkview.py:4826
+#: lib/ptxprint/gtkview.py:4843
 msgid "<Type Value Here>"
 msgstr "<Type Value Here>"
 
-#: lib/ptxprint/gtkview.py:4843
+#: lib/ptxprint/gtkview.py:4860
 msgid "Variable Name"
 msgstr "Nume Variabilă"
 
-#: lib/ptxprint/gtkview.py:4903
+#: lib/ptxprint/gtkview.py:4920
 msgid "Category Name"
 msgstr "Denumirea categoriei"
 
-#: lib/ptxprint/gtkview.py:5005
+#: lib/ptxprint/gtkview.py:5022
 msgid "Warning: Could not completely delete\n"
 "some temporary folder(s):"
 msgstr "Avertisment: Nu s-a putut șterge complet\n"
 "unele foldere temporare:"
 
-#: lib/ptxprint/gtkview.py:5102
+#: lib/ptxprint/gtkview.py:5119
 msgid "What did Mary say that God had done?"
-msgstr ""
+msgstr "Ce a spus Maria că a făcut Dumnezeu?"
 
-#: lib/ptxprint/gtkview.py:5105
+#: lib/ptxprint/gtkview.py:5122
 msgid "What does it means to bless someone?"
-msgstr ""
+msgstr "Ce înseamnă să binecuvântezi pe cineva?"
 
-#: lib/ptxprint/gtkview.py:5106
+#: lib/ptxprint/gtkview.py:5123
 msgid "What do you know about the high priest?"
-msgstr ""
+msgstr "Ce știi despre marele preot?"
 
-#: lib/ptxprint/gtkview.py:5143 temp.glade:23895
+#: lib/ptxprint/gtkview.py:5160 temp.glade:23895
 msgid "Main Title   -   Subtitle"
-msgstr ""
+msgstr "Titlu principal - Subtitlu"
 
-#: lib/ptxprint/gtkview.py:5145
+#: lib/ptxprint/gtkview.py:5162
 msgid "Main\n"
 "Title\n\n"
 "Subtitle"
-msgstr ""
+msgstr "Principal\n"
+"Titlu\n\n"
+"Subtitlu"
 
-#: lib/ptxprint/gtkview.py:5202
+#: lib/ptxprint/gtkview.py:5219
 msgid "This feature is limited to permission requests for David C Cook illustrations. "
-msgstr ""
+msgstr "Această funcție este limitată la cererile de permisiune pentru ilustrațiile lui David C. Cook. "
 
-#: lib/ptxprint/gtkview.py:5203
+#: lib/ptxprint/gtkview.py:5220
 msgid "No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again."
-msgstr ""
+msgstr "Nu au fost detectate ilustrații DCC. Faceți clic pe \"Print (Make PDF)\" mai întâi și apoi încercați din nou."
 
 #: lib/ptxprint/picselect.py:124 temp.glade:1836 temp.glade:2071
 #: temp.glade:2097 temp.glade:15311
@@ -845,7 +878,7 @@ msgstr "Proiect ilegal"
 
 #: lib/ptxprint/runjob.py:431
 msgid "No differences found"
-msgstr ""
+msgstr "Nu s-au constatat diferențe"
 
 #: lib/ptxprint/runjob.py:450 lib/ptxprint/runjob.py:452
 msgid "Layout problems were encountered on page(s): "
@@ -872,11 +905,11 @@ msgstr "Creare eșuată: "
 
 #: lib/ptxprint/runjob.py:459
 msgid "Faulty PDF, could not parse"
-msgstr ""
+msgstr "PDF defect, nu a putut fi analizat"
 
 #: lib/ptxprint/runjob.py:467
 msgid "Bad xdvi file, probably failed to load a picture or font"
-msgstr ""
+msgstr "Fișier xdvi necorespunzător, probabil nu a reușit să încarce o imagine sau un font"
 
 #: lib/ptxprint/runjob.py:478
 msgid "Rerun to fix: "
@@ -902,43 +935,43 @@ msgstr "Rulează verificările de bază în Paratext pentru a se asigura că nu 
 msgid "PTXprint [{}] - Diglot Merge Error!"
 msgstr "PTXprint [{}] - Diglot Merge Eroare!"
 
-#: lib/ptxprint/runjob.py:821
+#: lib/ptxprint/runjob.py:822
 msgid "table of contents"
 msgstr "tabel cu conținutul"
 
-#: lib/ptxprint/runjob.py:822
+#: lib/ptxprint/runjob.py:823
 msgid "image copyrights"
 msgstr "drepturi de autor imagine"
 
-#: lib/ptxprint/runjob.py:823
+#: lib/ptxprint/runjob.py:824
 msgid "chapter positions"
 msgstr "Pozițiile capitolului"
 
-#: lib/ptxprint/runjob.py:870
+#: lib/ptxprint/runjob.py:871
 msgid "Rerunning because the {} changed"
 msgstr "Rerunning deoarece {} s-a schimbat"
 
-#: lib/ptxprint/runjob.py:879
+#: lib/ptxprint/runjob.py:880
 msgid "Rerunning because the delayed file asked us to"
-msgstr ""
+msgstr "Reluare pentru că dosarul întârziat ne-a cerut să"
 
-#: lib/ptxprint/runjob.py:966
+#: lib/ptxprint/runjob.py:968
 msgid "Warning: Could not locate decorative PDF(s):"
 msgstr "Avertisment: PDF(urile) decorative nu au putut fi localizate:"
 
-#: lib/ptxprint/runjob.py:1015
+#: lib/ptxprint/runjob.py:1018
 msgid "({} Missing)"
 msgstr "({} Lipsesc)"
 
-#: lib/ptxprint/runjob.py:1016
+#: lib/ptxprint/runjob.py:1019
 msgid "Missing Pictures: {}"
 msgstr "Imagini lipsă: {}"
 
-#: lib/ptxprint/runjob.py:1018 temp.glade:14018
+#: lib/ptxprint/runjob.py:1021 temp.glade:14018
 msgid "(0 Missing)"
 msgstr "(0 lipsă)"
 
-#: lib/ptxprint/runjob.py:1144
+#: lib/ptxprint/runjob.py:1147
 msgid "Error: Unable to copy {}\n"
 "       image to {} in tmpPics folder"
 msgstr "Eroare: Nu se poate copia {}\n"
@@ -976,217 +1009,217 @@ msgstr "Și verificați dacă o regulă greșită din changes.txt a cauzat eroar
 msgid "Failed to normalize texts due to a Syntax Error: "
 msgstr "Nu s-a reușit normalizarea textelor din cauza unei erori de sintaxă: "
 
-#: lib/ptxprint/texmodel.py:1478
+#: lib/ptxprint/texmodel.py:1479
 msgid "\\rem Warning: No copyright statement found for: {} on pages {}"
 msgstr "\\rAtenție: Nu s-a găsit nicio declarație privind drepturile de autor pentru: {} pe paginile {}"
 
 #: lib/ptxprint/texpert.py:9
 msgid "Endnotes at Each Book"
-msgstr ""
+msgstr "Note de subsol la fiecare carte"
 
 #: lib/ptxprint/texpert.py:9
 msgid "Output endnotes at the end of each book"
-msgstr ""
+msgstr "Note finale de ieșire la sfârșitul fiecărei cărți"
 
 #: lib/ptxprint/texpert.py:10
 msgid "Final Page Notes Down"
-msgstr ""
+msgstr "Pagina finală Note jos"
 
 #: lib/ptxprint/texpert.py:10
 msgid "Push notes on the final page to the bottom of the page"
-msgstr ""
+msgstr "Împingeți notele de pe ultima pagină în partea de jos a paginii"
 
 #: lib/ptxprint/texpert.py:11
 msgid "Mark Trigger Points"
-msgstr ""
+msgstr "Marcați punctele de declanșare"
 
 #: lib/ptxprint/texpert.py:11
 msgid "Display trigger points in output"
-msgstr ""
+msgstr "Afișarea punctelor de declanșare în ieșire"
 
 #: lib/ptxprint/texpert.py:12
 msgid "Mid-Page Footnotes"
-msgstr ""
+msgstr "Note de subsol la mijlocul paginii"
 
 #: lib/ptxprint/texpert.py:12
 msgid "Should footnotes go before a single-double column transition"
-msgstr ""
+msgstr "Ar trebui ca notele de subsol să meargă înaintea unei tranziții pe o singură coloană dublă"
 
 #: lib/ptxprint/texpert.py:13
 msgid "No Top Space"
-msgstr ""
+msgstr "Fără spațiu superior"
 
 #: lib/ptxprint/texpert.py:13
 msgid "Don’t insert space above headings at the start of a column"
-msgstr ""
+msgstr "Nu inserați spațiu deasupra titlurilor de la începutul unei coloane"
 
 #: lib/ptxprint/texpert.py:14
 msgid "Allow Indent Para with Cutouts"
-msgstr ""
+msgstr "Permiteți Indent Para cu decupaje"
 
 #: lib/ptxprint/texpert.py:14
 msgid "Allow indented paragraphs at chapter start with cutouts"
-msgstr ""
+msgstr "Permiteți paragrafe indentate la începutul capitolului cu decupaje"
 
 #: lib/ptxprint/texpert.py:15
 msgid "Allow Indent Para After Heading"
-msgstr ""
+msgstr "Permiteți Indentarea Para după titlu"
 
 #: lib/ptxprint/texpert.py:15
 msgid "Allow indented paragraphs following a heading"
-msgstr ""
+msgstr "Permiteți paragrafe indentate după un titlu"
 
 #: lib/ptxprint/texpert.py:16
 msgid "No PDF Bookmarks"
-msgstr ""
+msgstr "Nu există marcaje PDF"
 
 #: lib/ptxprint/texpert.py:16
 msgid "Don’t output PDF bookmarks"
-msgstr ""
+msgstr "Nu scoateți marcaje PDF"
 
 #: lib/ptxprint/texpert.py:17
 msgid "Allow Active Links in PDF"
-msgstr ""
+msgstr "Permiteți link-uri active în PDF"
 
 #: lib/ptxprint/texpert.py:17
 msgid "Make links active inside PDF"
-msgstr ""
+msgstr "Faceți link-uri active în interiorul PDF"
 
 #: lib/ptxprint/texpert.py:18
 msgid "Use Book Codes in PDF Bookmarks"
-msgstr ""
+msgstr "Utilizați codurile de carte în marcajele PDF"
 
 #: lib/ptxprint/texpert.py:18
 msgid "Use book codes instead of book names in bookmarks"
-msgstr ""
+msgstr "Utilizați codurile cărților în loc de numele cărților în marcaje"
 
 #: lib/ptxprint/texpert.py:19
 msgid "Disable Transparency in PDF"
-msgstr ""
+msgstr "Dezactivați transparența în PDF"
 
 #: lib/ptxprint/texpert.py:19
 msgid "Disable transparency output in PDF"
-msgstr ""
+msgstr "Dezactivați ieșirea transparenței în PDF"
 
 #: lib/ptxprint/texpert.py:20
 msgid "Default Figures Top Left"
-msgstr ""
+msgstr "Cifre implicite În stânga sus"
 
 #: lib/ptxprint/texpert.py:20
 msgid "Default figure positions to top left"
-msgstr ""
+msgstr "Poziții implicite ale figurii în stânga sus"
 
 #: lib/ptxprint/texpert.py:21
 msgid "Ref Before Caption"
-msgstr ""
+msgstr "Ref Before Caption"
 
 #: lib/ptxprint/texpert.py:21
 msgid "Output reference before caption"
-msgstr ""
+msgstr "Referință de ieșire înainte de legendă"
 
 #: lib/ptxprint/texpert.py:22
 msgid "Show Caption Before Image"
-msgstr ""
+msgstr "Arată legenda înainte de imagine"
 
 #: lib/ptxprint/texpert.py:22
 msgid "Output caption before image"
-msgstr ""
+msgstr "Legenda de ieșire înainte de imagine"
 
 #: lib/ptxprint/texpert.py:23
 msgid "Use \\toc3 for Tab Text"
-msgstr ""
+msgstr "Utilizați \\toc3 pentru textul Tab"
 
 #: lib/ptxprint/texpert.py:23
 msgid "Use \\toc3 for tab text if no \\zthumbtab"
-msgstr ""
+msgstr "Folosiți \\toc3 pentru textul de tabulare dacă nu există \\zthumbtab"
 
 #: lib/ptxprint/texpert.py:24
 msgid "Show Diglot Trace Marks"
-msgstr ""
+msgstr "Afișați marcajele de urmărire Diglot"
 
 #: lib/ptxprint/texpert.py:24
 msgid "Insert visible trace marks in diglot output"
-msgstr ""
+msgstr "Introduceți semne de urmărire vizibile în ieșirea diglot"
 
 #: lib/ptxprint/texpert.py:25
 msgid "Extra Trace Mark Info"
-msgstr ""
+msgstr "Informații suplimentare despre marcajul de urmărire"
 
 #: lib/ptxprint/texpert.py:25
 msgid "Add extra information to diglot trace marks"
-msgstr ""
+msgstr "Adăugați informații suplimentare la semnele de urmărire diglot"
 
 #: lib/ptxprint/texpert.py:26
 msgid "Underline Spaces"
-msgstr ""
+msgstr "Subliniați spațiile"
 
 #: lib/ptxprint/texpert.py:26
 msgid "Underline spaces in underlined runs"
-msgstr ""
+msgstr "Subliniați spațiile din rândurile subliniate"
 
 #: lib/ptxprint/texpert.py:28
 msgid "Auto Calc Optimum Chapter Size"
-msgstr ""
+msgstr "Auto Calc Dimensiunea optimă a capitolului"
 
 #: lib/ptxprint/texpert.py:28
 msgid "Attempt to automatically calculate drop chapter number size"
-msgstr ""
+msgstr "Încercarea de a calcula automat dimensiunea numărului de capitol de scădere"
 
 #: lib/ptxprint/texpert.py:29
 msgid "Tilde is No Break Space"
-msgstr ""
+msgstr "Tilde este No Break Space"
 
 #: lib/ptxprint/texpert.py:29
 msgid "Treat ~ as non breaking space"
-msgstr ""
+msgstr "Tratați ~ ca spațiu fără rupere"
 
 #: lib/ptxprint/texpert.py:31
 msgid "Penalty for inserting hyphen"
-msgstr ""
+msgstr "Sancțiunea pentru introducerea unei cratime"
 
 #: lib/ptxprint/texpert.py:31
 msgid "Hyphenation penalty"
-msgstr ""
+msgstr "Penalizare pentru silabisire"
 
 #: lib/ptxprint/texpert.py:32
 msgid "Thumbtab rotated adjustment"
-msgstr ""
+msgstr "Ajustarea rotită a filei degetului mare"
 
 #: lib/ptxprint/texpert.py:32
 msgid "Shift thumbtab text"
-msgstr ""
+msgstr "Mutarea textului thumbtab"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Space between picture & caption"
-msgstr ""
+msgstr "Spațiu între imagine și legendă"
 
 #: lib/ptxprint/texpert.py:33
 msgid "Increase/Reduce the gap between figures and their captions"
-msgstr ""
+msgstr "Creșterea/reducerea distanței dintre figuri și legendele acestora"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Default space beside picture"
-msgstr ""
+msgstr "Spațiu implicit lângă imagine"
 
 #: lib/ptxprint/texpert.py:34
 msgid "Picture horizontal margin*2"
-msgstr ""
+msgstr "Marja orizontală a imaginii*2"
 
 #: lib/ptxprint/texpert.py:35
 msgid "Optional break penalty"
-msgstr ""
+msgstr "Penalitate de pauză opțională"
 
 #: lib/ptxprint/texpert.py:35
 msgid "Penalty for the optional break"
-msgstr ""
+msgstr "Penalizare pentru pauza opțională"
 
 #: lib/ptxprint/texpert.py:36
 msgid "Bad space penalty"
-msgstr ""
+msgstr "Penalitate pentru spațiu rău"
 
 #: lib/ptxprint/texpert.py:36
 msgid "A bad but not impossible place to breal"
-msgstr ""
+msgstr "Un loc rău, dar nu imposibil pentru a breal"
 
 #: lib/ptxprint/utils.py:394 temp.glade:12214 temp.glade:12267 temp.glade:12320
 msgid "First Reference"
@@ -1237,7 +1270,7 @@ msgstr "Opțiunea 'Front Matter' a fost acum activată pentru dvs. pe pagina Per
 
 #: lib/ptxprint/view.py:642
 msgid "Syntax Error Warning"
-msgstr ""
+msgstr "Avertizare de eroare de sintaxă"
 
 #: lib/ptxprint/view.py:649
 msgid "PTXprint {} - Bible Layout for Everyone!"
@@ -1343,7 +1376,9 @@ msgstr "Avertisment: Lucrarea de imprimare a eșuat și, prin urmare, arhiva est
 msgid "PTXprint is built with Python & PyGTK3, using Glade for\n"
 "the user-interface. The PDFs are produced by enhanced \n"
 "XeTeX macros (ptx2pdf) with a long and reliable history."
-msgstr ""
+msgstr "PTXprint este construit cu Python și PyGTK3, folosind Glade pentru\n"
+"interfața cu utilizatorul. PDF-urile sunt produse de macros XeTeX îmbunătățite \n"
+"(ptx2pdf), cu o istorie lungă și fiabilă."
 
 #: temp.glade:870
 msgid "PTXprint Homepage"
@@ -1371,15 +1406,15 @@ msgstr "O configurație salvată poate fi copiată pe\n"
 
 #: temp.glade:1110
 msgid "David Healey"
-msgstr ""
+msgstr "David Healey"
 
 #: temp.glade:1115
 msgid "Darwin Dunham"
-msgstr ""
+msgstr "Darwin Dunham"
 
 #: temp.glade:1129
 msgid "IB"
-msgstr ""
+msgstr "IB"
 
 #: temp.glade:1156
 msgid "NONE"
@@ -1439,99 +1474,99 @@ msgstr "Implicit"
 
 #: temp.glade:1248
 msgid "Han1"
-msgstr ""
+msgstr "Han1"
 
 #: temp.glade:1251
 msgid "Han2"
-msgstr ""
+msgstr "Han2"
 
 #: temp.glade:1254
 msgid "Han3"
-msgstr ""
+msgstr "Han3"
 
 #: temp.glade:1257
 msgid "Han4"
-msgstr ""
+msgstr "Han4"
 
 #: temp.glade:1260
 msgid "Han5"
-msgstr ""
+msgstr "Han5"
 
 #: temp.glade:1263
 msgid "Vectorian1"
-msgstr ""
+msgstr "Vectorian1"
 
 #: temp.glade:1266
 msgid "Vectorian2"
-msgstr ""
+msgstr "Vectorian2"
 
 #: temp.glade:1269
 msgid "Vectorian3"
-msgstr ""
+msgstr "Vectorian3"
 
 #: temp.glade:1272
 msgid "Vectorian4"
-msgstr ""
+msgstr "Vectorian4"
 
 #: temp.glade:1275
 msgid "v85"
-msgstr ""
+msgstr "v85"
 
 #: temp.glade:1278
 msgid "v85r"
-msgstr ""
+msgstr "v85r"
 
 #: temp.glade:1281
 msgid "v85out"
-msgstr ""
+msgstr "v85out"
 
 #: temp.glade:1284
 msgid "v86c"
-msgstr ""
+msgstr "v86c"
 
 #: temp.glade:1287
 msgid "c86out"
-msgstr ""
+msgstr "c86out"
 
 #: temp.glade:1290
 msgid "v88"
-msgstr ""
+msgstr "v88"
 
 #: temp.glade:1293
 msgid "v88r"
-msgstr ""
+msgstr "v88r"
 
 #: temp.glade:1296
 msgid "v88c"
-msgstr ""
+msgstr "v88c"
 
 #: temp.glade:1299
 msgid "v88out"
-msgstr ""
+msgstr "v88out"
 
 #: temp.glade:1312 temp.glade:2295
 msgid "bleed: overflow the page into the cropped area"
-msgstr ""
+msgstr "sângerare: depășirea paginii în zona decupată"
 
 #: temp.glade:1316 temp.glade:2299
 msgid "colbleed: overflow the page into the cropped area as much as the colours do (normally images bleed less)"
-msgstr ""
+msgstr "colbleed: depășește pagina în zona decupată la fel de mult ca și culorile (în mod normal, imaginile sângerează mai puțin)."
 
 #: temp.glade:1320 temp.glade:2303
 msgid "inner: the area that text could cover (vertically this extends to the inner edge of the border)"
-msgstr ""
+msgstr "interior: zona pe care ar putea să o acopere textul (pe verticală, aceasta se extinde până la marginea interioară a marginii)"
 
 #: temp.glade:1324 temp.glade:2307
 msgid "outer: the outermost of the coloured box or the border"
-msgstr ""
+msgstr "exterior: cea mai exterioară dintre căsuțele colorate sau marginea."
 
 #: temp.glade:1328 temp.glade:2311
 msgid "border: the outer edge of the border"
-msgstr ""
+msgstr "margine: marginea exterioară a marginii"
 
 #: temp.glade:1332 temp.glade:2315
 msgid "box: the coloured box"
-msgstr ""
+msgstr "caseta: caseta colorată"
 
 #: temp.glade:1350
 msgid "Arabic-Hindi"
@@ -1678,7 +1713,7 @@ msgstr "Imprimare-CMYK"
 
 #: temp.glade:1792
 msgid "Print-Gray (B/W)"
-msgstr ""
+msgstr "Imprimare-gri (B/N)"
 
 #: temp.glade:1796
 msgid "Print-Spot"
@@ -1984,7 +2019,7 @@ msgstr "Justificat"
 
 #: temp.glade:2677
 msgid "LeftBal"
-msgstr ""
+msgstr "LeftBal"
 
 #: temp.glade:2769
 msgid "Gridded Center"
@@ -2276,7 +2311,8 @@ msgstr "(Opțional) Note despre configurare"
 msgid "Dots indicate that a\n"
 "password has been set\n"
 "for this configuration."
-msgstr ""
+msgstr "Punctele indică faptul că a fost setată o parolă\n\n"
+"pentru această configurație."
 
 #: temp.glade:3582
 msgid "Lock configuration"
@@ -2294,7 +2330,17 @@ msgid "When Config is UNLOCKED:\n"
 "saved or the configuration to be deleted.\n\n"
 "Note that the Default config cannot be\n"
 "locked."
-msgstr ""
+msgstr "Când Config este DEBLOCAT:\n"
+"Faceți clic pentru a seta o parolă pentru a împiedica\n"
+"pe oricine să modifice accidental\n"
+"setările salvate sau să șteargă configurația\n"
+".\n\n"
+"When Config is LOCKED (Când configurația este BLOCATĂ):\n"
+"Faceți clic pentru a introduce parola pentru a debloca această configurație\n"
+"și a permite salvarea modificărilor \n"
+"sau ștergerea configurației.\n\n"
+"Rețineți că configurația implicită nu poate fi\n"
+"blocată."
 
 #: temp.glade:3612
 msgid "Copy configuration to other projects "
@@ -2334,7 +2380,7 @@ msgstr "Introduceți un nume pentru ca configurația să fie salvată.\n\n"
 
 #: temp.glade:3676
 msgid "Import settings from PDFs, ZIP files or other Configurations"
-msgstr ""
+msgstr "Importați setări din PDF-uri, fișiere ZIP sau alte configurații"
 
 #: temp.glade:3680
 msgid "Warning! This may overwrite existing settings.\n\n"
@@ -2343,7 +2389,12 @@ msgid "Warning! This may overwrite existing settings.\n\n"
 "settings from other PDFs, ZIP archives or from \n"
 "a different project configuration into the current\n"
 "configuration."
-msgstr ""
+msgstr "Atenție! Acest lucru poate suprascrie setările existente.\n\n"
+"Acest buton va deschide fereastra de dialog Import Settings\n"
+", unde puteți selecta diverse opțiuni pentru a importa \n"
+"setările din alte PDF-uri, arhive ZIP sau din \n"
+"o altă configurație de proiect în configurația curentă\n"
+"."
 
 #: temp.glade:3717
 msgid "Saved/Shared Configuration"
@@ -2633,7 +2684,20 @@ msgid "Fine Tune Line Spacing:\n\n"
 "If you prefer to keep the exact line spacing specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Top or Bottom Margin."
-msgstr ""
+msgstr "Reglați cu precizie spațierea liniilor:\n\n"
+"Acest buton este activ numai atunci când PTXprint are o sugestie pentru\n"
+"pentru a micșora sau extinde ușor spațierea între rânduri pentru a minimiza spațiul vertical irosit \n"
+"pe pagină. Faceți clic pentru a accepta sugestia.\n\n"
+"Dacă există mai mult de o jumătate de rând de spațiu \"liber\" pe \n"
+"pagină, atunci spațierea între linii va scădea ușor pentru a\n"
+"încăpea încă un rând de text pe pagină.\n\n"
+"Dacă există mai puțin de o jumătate de rând de spațiu \"liber\" pe pagina \n"
+", atunci spațierea între rânduri va crește ușor pentru ca \n"
+"să umple pagina mai uniform (cu același număr de \n"
+"rânduri de text).\n\n"
+"Dacă preferați să păstrați spațierea exactă a rândurilor specificată, \n"
+"atunci NU faceți clic pe această opțiune. În schimb, folosiți butonul similar\n"
+"pentru a ajusta Marja superioară sau inferioară."
 
 #: temp.glade:4239
 msgid "Mirror Pages"
@@ -2678,7 +2742,10 @@ msgid "Enable Guides or a Grid to sit behind the\n"
 "text to assist with final adjustments; \n"
 "or enable a Watermark to show behind the text;\n"
 "or turn on USFM codes temporarily."
-msgstr ""
+msgstr "Activați ghidaje sau o grilă care să stea în spatele textului\n"
+"pentru a vă ajuta la ajustările finale; \n"
+"sau activați un filigran care să apară în spatele textului;\n"
+"sau activați temporar codurile USFM."
 
 #: temp.glade:4294
 msgid "Outer Gutter"
@@ -2751,7 +2818,8 @@ msgstr "Spaţiul cu care paragrafele\n"
 #: temp.glade:4385
 msgid "Base\n"
 "Indent:"
-msgstr ""
+msgstr "Baza\n"
+"Indentare:"
 
 #: temp.glade:4405
 msgid "This is the base font size for default paragraph \n"
@@ -2893,7 +2961,15 @@ msgid "If this setting is checked on, but\n"
 "setting near the end of the Body tab\n"
 "which is only accessible when using\n"
 "the Full View mode."
-msgstr ""
+msgstr "Dacă această setare este activată, dar\n"
+"este inactivă, acest lucru se datorează faptului că Diglot este\n"
+"activ (care, în mod evident, trebuie să utilizeze \n"
+"aspectul cu două coloane).\n\n"
+"Dacă obțineți un rezultat neașteptat, verificați\n"
+"setarea \"Use One/Two Column Layout ...\"\n"
+"de la sfârșitul filei Body (Corp)\n"
+"care este accesibilă numai atunci când se utilizează\n"
+"modul Full View (Vizualizare completă)."
 
 #: temp.glade:4756
 msgid "Header spacing"
@@ -3018,7 +3094,20 @@ msgid "Fine Tune Top Margin:\n\n"
 "If you prefer to keep the exact top margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Bottom Margin."
-msgstr ""
+msgstr "Reglarea fină a marjei superioare:\n\n"
+"Acest buton este activ numai atunci când PTXprint are o sugestie pentru\n"
+"pentru a micșora sau extinde ușor marja superioară pentru a minimiza spațiul vertical irosit \n"
+"pe pagină. Faceți clic pentru a accepta sugestia.\n\n"
+"Dacă există mai mult de o jumătate de rând de spațiu \"liber\" pe pagina \n"
+", atunci marja superioară se va micșora ușor pentru a\n"
+"încăpea încă un rând de text pe pagină.\n\n"
+"Dacă există mai puțin de o jumătate de rând de spațiu \"liber\" pe pagina \n"
+", atunci marja superioară va crește ușor pentru a \n"
+"umple pagina mai uniform (cu același număr de \n"
+"rânduri de text).\n\n"
+"Dacă preferați să păstrați exact marja superioară specificată, \n"
+"atunci NU faceți clic pe această opțiune. În schimb, utilizați butonul similar\n"
+"pentru a ajusta fie Spațierea între linii, fie Marja de jos."
 
 #: temp.glade:5009
 msgid "Tweak bottom margin (auto adjust)"
@@ -3039,11 +3128,24 @@ msgid "Fine Tune Bottom Margin:\n\n"
 "If you prefer to keep the exact bottom margin specified, \n"
 "then do NOT click this option. Instead, use the similar\n"
 "button to adjust either the Line Spacing or Top Margin."
-msgstr ""
+msgstr "Fine Tune Margine inferioară:\n\n"
+"Acest buton este activ numai atunci când PTXprint are o sugestie pentru\n"
+"pentru a micșora sau extinde ușor marja de jos pentru a minimiza spațiul vertical irosit \n"
+"pe pagină. Faceți clic pentru a accepta sugestia.\n\n"
+"Dacă există mai mult de o jumătate de rând de spațiu \"liber\" pe pagina \n"
+", atunci marja de jos se va micșora ușor pentru a\n"
+"încadra încă un rând de text pe pagină.\n\n"
+"Dacă există mai puțin de o jumătate de rând de spațiu \"liber\" pe pagina \n"
+", atunci marja de jos va crește ușor pentru a \n"
+"umple pagina mai uniform (cu același număr de \n"
+"rânduri de text).\n\n"
+"Dacă preferați să păstrați exact marja de jos specificată, \n"
+"atunci NU faceți clic pe această opțiune. În schimb, utilizați butonul similar\n"
+"pentru a ajusta fie Spațierea între linii, fie Marja superioară."
 
 #: temp.glade:5356
 msgid "Place Footer Text Above the Bottom Margin"
-msgstr ""
+msgstr "Așezați textul de subsol deasupra marjei de jos"
 
 #: temp.glade:5357
 msgid "Don't place footer in the margin area"
@@ -3056,7 +3158,12 @@ msgid "Normally the footer page number sits\n"
 "be placed above the bottom margin (where\n"
 "the text would normally flow until) then \n"
 "enable this option."
-msgstr ""
+msgstr "În mod normal, numărul paginii de subsol se află\n"
+"în marginea de jos. \n\n"
+"Cu toate acestea, dacă aveți nevoie ca numărul de pagină\n"
+"să fie plasat deasupra marginii de jos (unde\n"
+"textul ar curge în mod normal până la), atunci \n"
+"activați această opțiune."
 
 #: temp.glade:5390
 msgid "The distance (mm) from the edge of the page\n"
@@ -3732,17 +3839,20 @@ msgstr "ja = japonez\n"
 #: temp.glade:6725
 msgid "RTL Book\n"
 "Binding"
-msgstr ""
+msgstr "Carte RTL\n"
+"Legătură"
 
 #: temp.glade:6727
 msgid "Set the binding to Right (for RTL publications)"
-msgstr ""
+msgstr "Setați legătura la dreapta (pentru publicații RTL)"
 
 #: temp.glade:6731
 msgid "Enable this for Right-to-Left\n"
 "publications (so that the book\n"
 "is bound on the right hand side)."
-msgstr ""
+msgstr "Activați această opțiune pentru publicațiile de la dreapta la stânga\n"
+"(astfel încât cartea\n"
+"să fie legată pe partea dreaptă)."
 
 #: temp.glade:6752
 msgid "Writing System"
@@ -3859,7 +3969,7 @@ msgstr "Această opţiune este disponibilă doar dacă este selectată şi carte
 
 #: temp.glade:6948
 msgid "Start 1st Chapter on a New Page"
-msgstr ""
+msgstr "Începeți primul capitol pe o pagină nouă"
 
 #: temp.glade:6949
 msgid "Start new page after introduction"
@@ -3875,18 +3985,21 @@ msgstr "Utilizați această opțiune pentru a face automat o pauză de pagină \
 
 #: temp.glade:6969
 msgid "All Chapters"
-msgstr ""
+msgstr "Toate capitolele"
 
 #: temp.glade:6970
 msgid "Start every chapter on a new page"
-msgstr ""
+msgstr "Începeți fiecare capitol pe o pagină nouă"
 
 #: temp.glade:6974
 msgid "Use this option to force a page break before\n"
 "every chapter. This is most commonly used\n"
 "for testing materials when each chapter needs\n"
 "to be printed and given to a different person."
-msgstr ""
+msgstr "Utilizați această opțiune pentru a forța o pauză de pagină înainte de\n"
+"fiecare capitol. Această opțiune este utilizată cel mai frecvent\n"
+"pentru materiale de testare, atunci când fiecare capitol trebuie să fie tipărit și dat unei persoane diferite\n"
+"."
 
 #: temp.glade:7002
 msgid "Beginning and Ending Material"
@@ -3998,7 +4111,7 @@ msgstr "Prevenire cuvinte orfane"
 
 #: temp.glade:7148
 msgid "Prevent orphan words at end of paragraph or start of line."
-msgstr ""
+msgstr "Împiedicați cuvintele orfane la sfârșitul paragrafului sau la începutul rândului."
 
 #: temp.glade:7152
 msgid "This option limits short words\n"
@@ -4007,7 +4120,12 @@ msgid "This option limits short words\n"
 "It also prevents short words at \n"
 "the end of sentences from starting \n"
 "on a new line."
-msgstr ""
+msgstr "Această opțiune limitează cuvintele scurte\n"
+"la sfârșitul paragrafelor de la \n"
+"care apar pe o linie de sine stătătoare.\n"
+"De asemenea, împiedică cuvintele scurte de la \n"
+"sfârșitul propozițiilor să înceapă \n"
+"pe o nouă linie."
 
 #: temp.glade:7169
 msgid "Justify Paragraphs"
@@ -4050,7 +4168,7 @@ msgstr "Debifați această opțiune dacă nu doriți ca\n"
 #: temp.glade:7225 temp.glade:7277 temp.glade:7532 temp.glade:7584
 #: temp.glade:12700
 msgid "Click to edit the marker's properties on the Styles tab."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile marcajului în fila Stiluri."
 
 #: temp.glade:7250
 msgid "Parallel Passage Refs "
@@ -4214,7 +4332,12 @@ msgid "Normally you should leave this checked.\n\n"
 "for consistency) then this option can\n"
 "be unchecked (to omit the verse text\n"
 "and everything else in the main body)."
-msgstr ""
+msgstr "În mod normal, ar trebui să lăsați această opțiune bifată.\n\n\n"
+"DAR... dacă aveți nevoie de o imprimare doar a\n"
+"introducerilor cărților (de obicei pentru\n"
+"verificarea finală sau pentru a verifica\n"
+"coerența), atunci această opțiune poate fi debifată (pentru a omite textul versetului\n"
+"și tot restul din corpul principal)."
 
 #: temp.glade:7663
 msgid "Use Special Features\n"
@@ -4303,7 +4426,8 @@ msgstr "Capitolul\n"
 #: temp.glade:7751
 msgid "Use One/Two Column\n"
 "Layout for These Books:"
-msgstr ""
+msgstr "Utilizați o coloană sau două coloane\n"
+"Layout pentru aceste cărți:"
 
 #: temp.glade:7753
 msgid "Enable 1 or 2 column layout for certain books"
@@ -4393,7 +4517,7 @@ msgstr "Bifați această opțiune în cazul în care cartea INT conține \n"
 
 #: temp.glade:7875
 msgid "Define how glossary words should appear in the text"
-msgstr ""
+msgstr "Definiți modul în care cuvintele din glosar trebuie să apară în text"
 
 #: temp.glade:7878
 msgid "Glossary words may be marked up \n"
@@ -4403,12 +4527,19 @@ msgid "Glossary words may be marked up \n"
 "If you wish to apply your own custom\n"
 "styling to \\w then select the \\w ...\\w*\n"
 "character style option."
-msgstr ""
+msgstr "Cuvintele din glosar pot fi marcate \n"
+"cu etichete \\w glossary\\w*. Precizați\n"
+"modul în care aceste cuvinte trebuie să apară\n"
+"în textul tipărit.\n\n"
+"Dacă doriți să aplicați propria stilizare personalizată\n"
+"la \\w, selectați opțiunea de stil de caracter \\w ...\\w*\n"
+"."
 
 #: temp.glade:7888
 msgid "Glossary Word\n"
 "Appearance:"
-msgstr ""
+msgstr "Glosar Cuvânt\n"
+"Aspect:"
 
 #: temp.glade:7900
 msgid "Markup for glossary words in text"
@@ -4470,16 +4601,17 @@ msgstr "Cărţile periferice au adesea mai mult de un\n"
 
 #: temp.glade:7981
 msgid "Enable Ornaments"
-msgstr ""
+msgstr "Activați Ornamente"
 
 #: temp.glade:7982
 msgid "Enable ornamental borders and rules"
-msgstr ""
+msgstr "Activați borduri ornamentale și reguli"
 
 #: temp.glade:7986
 msgid "Enable this option to make use of\n"
 "ornamental borders and rules."
-msgstr ""
+msgstr "Activați această opțiune pentru a utiliza marginile și regulile ornamentale\n"
+"."
 
 #: temp.glade:8009
 msgid "Other Features"
@@ -4620,7 +4752,7 @@ msgstr "Făcând clic pe acest buton vei reîncărca\n"
 
 #: temp.glade:8232
 msgid "Override hidden/automatic Footnote caller settings"
-msgstr ""
+msgstr "Suprascrieți setările ascunse/automate ale apelantului de note de subsol"
 
 #: temp.glade:8233
 msgid "Override Footnote Settings in Text"
@@ -5064,7 +5196,7 @@ msgstr "În mod normal, referințele încrucișate sunt aranjate unul după\n"
 
 #: temp.glade:9293
 msgid "Override hidden/automatic Cross-reference caller settings"
-msgstr ""
+msgstr "Suprascrieți setările ascunse/automate ale apelantului de referință încrucișată"
 
 #: temp.glade:9294
 msgid "Override Cross-Reference Settings in Text"
@@ -5604,7 +5736,7 @@ msgstr "În cazul în care un anumit cuvânt apare de mai multe ori\n"
 
 #: temp.glade:10130
 msgid "Click to edit the Strong's 4 digit cell number properties on the Styles tab."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile numărului de celule Strong cu 4 cifre din fila Styles (Stiluri)."
 
 #: temp.glade:10156
 msgid "Strong's References"
@@ -5942,76 +6074,88 @@ msgid "Enter the language code for the questions\n"
 "to be included. Usually this will be a 3-letter\n"
 "Ethnologue code (but other language tags\n"
 "such as en-US, fr, es are also acceptable)."
-msgstr ""
+msgstr "Introduceți codul de limbă pentru întrebările\n"
+"care trebuie incluse. De obicei, acesta va fi un cod de 3 litere\n"
+"Ethnologue (dar sunt acceptate și alte etichete de limbă\n"
+", cum ar fi en-US, fr, es)."
 
 #: temp.glade:11597
 msgid "Language Code:"
-msgstr ""
+msgstr "Codul limbii:"
 
 #: temp.glade:11618
 msgid "Show Overview Questions"
-msgstr ""
+msgstr "Întrebări de prezentare generală a spectacolului"
 
 #: temp.glade:11619
 msgid "Transcelerator: Show overview questions"
-msgstr ""
+msgstr "Transcelerator: Afișați întrebări de prezentare generală"
 
 #: temp.glade:11623
 msgid "Overview questions are designed to test\n"
 "the general understanding of the passage."
-msgstr ""
+msgstr "Întrebările de ansamblu sunt concepute pentru a testa\n"
+"înțelegerea generală a pasajului."
 
 #: temp.glade:11639
 msgid "Number the Questions"
-msgstr ""
+msgstr "Numerotați întrebările"
 
 #: temp.glade:11640
 msgid "Transcelerator: Number the questions"
-msgstr ""
+msgstr "Transcelerator: Numărați întrebările"
 
 #: temp.glade:11644
 msgid "This option enables the questions to be\n"
 "numbered sequentially for each book."
-msgstr ""
+msgstr "Această opțiune permite ca întrebările să fie\n"
+"numerotate secvențial pentru fiecare carte."
 
 #: temp.glade:11661
 msgid "Include Chapter:Verse References"
-msgstr ""
+msgstr "Includeți referințe la capitole și versete"
 
 #: temp.glade:11662
 msgid "Transcelerator: Include ch:vs references"
-msgstr ""
+msgstr "Transcelerator: Includeți referințe ch:vs"
 
 #: temp.glade:11666
 msgid "This option enables the questions to\n"
 "include the chapter:verse numbers.\n\n"
 "If the questions are also being numbered\n"
 "then the reference will in parenthesis (ch:vs)."
-msgstr ""
+msgstr "Această opțiune permite ca întrebările\n"
+"să includă numerele capitolelor și versetelor.\n\n"
+"În cazul în care întrebările sunt numerotate și pe\n"
+", atunci referința va fi pusă între paranteze (ch:vs)."
 
 #: temp.glade:11689
 msgid "Example Questions:"
-msgstr ""
+msgstr "Exemple de întrebări:"
 
 #: temp.glade:11715
 msgid "13. (3:25) What does it means to bless someone?\n"
 "14. (4:6) What do you know about the high priest?"
-msgstr ""
+msgstr "13. (3:25) Ce înseamnă să binecuvântezi pe cineva?\n"
+"14. (4:6) Ce știi despre marele preot?"
 
 #: temp.glade:11733
 msgid "Click to edit the Extended Footnote\n"
 "properties on the Styles tab. \n\n"
 "The line spacing factor will modify\n"
 "the space between the questions."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile notei de subsol extinse\n"
+"din fila Stiluri. \n\n"
+"Factorul de spațiere a liniilor va modifica\n"
+"spațiul dintre întrebări."
 
 #: temp.glade:11762
 msgid "Include Transcelerator Questions"
-msgstr ""
+msgstr "Includeți întrebări Transcelerator"
 
 #: temp.glade:11763
 msgid "Include (Transcelerator) Checking Questions"
-msgstr ""
+msgstr "Includeți (Transcelerator) Întrebări de verificare"
 
 #: temp.glade:11767
 msgid "Use this option to include questions which\n"
@@ -6022,7 +6166,14 @@ msgid "Use this option to include questions which\n"
 "Note that this option is only made available if\n"
 "the Transcelerator plugin's data folder for the\n"
 "project can be located."
-msgstr ""
+msgstr "Utilizați această opțiune pentru a include întrebări care\n"
+"au fost create cu instrumentul SIL Transcelerator\n"
+"în scopul testării înțelegerii.\n\n"
+"Acestea vor fi afișate în partea de jos a paginii\n"
+"în zona utilizată în mod normal pentru Study Notes.\n\n"
+"Rețineți că această opțiune este disponibilă numai dacă\n"
+"poate fi localizat dosarul de date al plugin-ului Transcelerator pentru proiectul\n"
+"."
 
 #: temp.glade:11855
 msgid "Category"
@@ -6090,12 +6241,13 @@ msgstr "Utilizați această opțiune pentru a restricționa afișarea anumitor c
 
 #: temp.glade:12045
 msgid "Study Notes + Questions"
-msgstr ""
+msgstr "Note de studiu + Întrebări"
 
 #: temp.glade:12081
 msgid "Control how Footnotes, Cross-references\n"
 "Study Notes and Questions should appear."
-msgstr ""
+msgstr "Controlați modul în care trebuie să apară notele de subsol, referințele încrucișate\n"
+"Note de studiu și întrebări."
 
 #: temp.glade:12084
 msgid "Notes+Refs"
@@ -6692,7 +6844,7 @@ msgstr "Actualizați legendele:\n"
 
 #: temp.glade:13607
 msgid " Request Permission... "
-msgstr ""
+msgstr " Cereți permisiunea... "
 
 #: temp.glade:13613
 msgid "If you are publishing (i.e. more than 50 copies) any\n"
@@ -6701,11 +6853,16 @@ msgid "If you are publishing (i.e. more than 50 copies) any\n"
 "permission. Click this button to generate the text\n"
 "to be sent to ScripturePicturePermissions_intl@sil.org\n"
 "requesting permission."
-msgstr ""
+msgstr "Dacă publicați (adică mai mult de 50 de exemplare) orice material\n"
+"cu ilustrații de la David C. Cook sau\n"
+"Scripture Press, trebuie să obțineți în prealabil permisiunea\n"
+". Faceți clic pe acest buton pentru a genera textul\n"
+"care va fi trimis la ScripturePicturePermissions_intl@sil.org\n"
+"solicitând permisiunea."
 
 #: temp.glade:13635
 msgid "Get Pictures..."
-msgstr ""
+msgstr "Obțineți imagini..."
 
 #: temp.glade:13664
 msgid "Image"
@@ -6962,7 +7119,16 @@ msgid "PTXprint normally searches in multiple locations\n"
 "then select this option. This should speed up searches\n"
 "for images, but may result in some images not being\n"
 "found at all."
-msgstr ""
+msgstr "În mod normal, PTXprint caută în mai multe locații\n"
+"pentru a localiza ilustrațiile necesare (inclusiv \"figures\",\n"
+"\"local/figures\" și în dosarul specificat în stânga).\n\n"
+"În mod implicit, caută, de asemenea, în toate subfolderele acestor locații\n"
+".\n\n"
+"Dacă preferați ca acesta să caute doar în dosarul\n"
+"specificat direct (și să NU caute în niciun subdosar)\n"
+", atunci selectați această opțiune. Acest lucru ar trebui să accelereze căutările\n"
+"pentru imagini, dar este posibil ca unele imagini să nu fie\n"
+"găsite deloc."
 
 #: temp.glade:14029
 msgid "Remove Image Borders"
@@ -7076,7 +7242,15 @@ msgid "The anchor specifies what page in a book a picture will appear on. It app
 "               a glossary entry \\k John the Baptist\\k*\n\n"
 "You can copy-and-paste a glossary word or phrase after typing GLO k. and PTXprint will automatically strip the spaces for you.\n\n"
 "Where there are no intervening anchors, you can anchor to the Nth paragraph of e.g. poetry or a keyterm definition, by specifying the paragraph number after an = sign. For example, GLO k.Harp=2 or PSA 23.4=3. This can avoid the need to insert an explicit milestone to anchor a cutout if there is a page or column break after the start of the verse."
-msgstr ""
+msgstr "Ancora specifică pagina din carte pe care va apărea o imagine. Aceasta apare pe aceeași pagină ca și ancora sa din text. Puteți modifica Anchor Ref cu câteva versuri pentru a schimba pagina pe care apare.\n\n"
+"Un Anchor Ref trebuie să fie alcătuit dintr-un cod de carte, urmat eventual de L sau R (în cazul unui diglot), apoi de un spațiu, apoi de o locație în carte care conține un punct (punct). Într-o carte scripturală, locația în interiorul cărții este Cap.Verse, unde Versetele se potrivește exact cu valoarea \\v. În cazul altor cărți, locația din interiorul cărții poate fi orice, atâta timp cât este unică în cartea respectivă și conține un punct (punct).\n\n"
+"Anchor Refs for Diglots utilizează sufixul L sau R din codul de 3 litere al cărții pentru a indica dacă imaginea trebuie asociată cu textul primar (L) sau cu textul secundar (R).\n\n"
+"În cartea de glosar (GLO) există un suport special pentru \\k Keywords\\k* în care localizarea în carte a k.keyword(s) va ancora o imagine la termenul corespunzător. Locația în carte trebuie să corespundă cu valoarea cuvântului cheie sau a frazei \\kk*, fără spațiile aferente. De exemplu,\n\n"
+"    GLO k.Altar - va face legătura cu \\k Altar\\k*\n"
+"    GLO k.Ioan Botezătorul - va face legătura între o imagine și\n"
+"               o intrare din glosar \\k Ioan Botezătorul\\k*\n\n"
+"Puteți copia și lipi un cuvânt sau o frază din glosar după ce ați tastat GLO k. și PTXprint va elimina automat spațiile pentru dumneavoastră.\n\n"
+"În cazul în care nu există puncte de ancorare intermediare, vă puteți ancora la al N-lea paragraf, de exemplu, al poeziei sau al definiției unui termen cheie, specificând numărul paragrafului după semnul =. De exemplu, GLO k.Harp=2 sau PSA 23.4=3. Acest lucru poate evita necesitatea de a insera o bornă explicită pentru a ancora un decupaj dacă există o pauză de pagină sau de coloană după începutul versului."
 
 #: temp.glade:14329
 msgid "Anchor Ref:"
@@ -7395,7 +7569,15 @@ msgid "Some vertical position options allow a picture\n"
 "but the cutout will not affect earlier paragraphs. \n"
 "Note that negative and fractional paragraph \n"
 "counts are invalid."
-msgstr ""
+msgstr "Unele opțiuni de poziționare verticală permit ca o imagine\n"
+"să fie mutată în sus sau în jos cu un număr de linii\n"
+"sau paragrafe.\n\n"
+"-Valorile negative (minus) specifică deplasarea în sus.\n"
+"Valorile +Positive (plus) specifică deplasarea în jos.\n\n"
+"Valorile negative pentru decupaje ridică imaginea,\n"
+"dar decupajul nu va afecta paragrafele anterioare. \n"
+"Rețineți că numărătorile negative și fracționare ale paragrafelor \n"
+"nu sunt valabile."
 
 #: temp.glade:14820
 msgid "Number of\n"
@@ -8157,31 +8339,41 @@ msgid "When the different texts of a diglot are merged, there are various \n"
 "* Scored (Chapter) - as a minimum, forces alignment at chapters breaks \n\n"
 "* Scored (Verses) - as a minimum, forces alignment at each verse, which \n"
 "  can result in a lot of breaks!"
-msgstr ""
+msgstr "Atunci când diferitele texte ale unui diglot sunt fuzionate, există diverși algoritmi \n"
+"care pot fi utilizați pentru a obține cel mai bun rezultat general:\n\n"
+"* Bazat pe document - încearcă să utilizeze structura documentului pentru a alinia pe cât posibil \n"
+"  paragrafele; dar alinierea este ușor de confundat atunci când \n"
+"  fiecare text are o structură a paragrafelor foarte diferită.\n\n"
+"* Chapter Verse - aliniază pe capitole și versete în loc de structură\n\n"
+"* Scored - un algoritm alternativ care utilizează scoruri ponderate și care\n"
+"  încearcă să alinieze paragrafele atunci când numerele versetelor corespund\n\n"
+"* Scored (Chapter) - ca minim, forțează alinierea la pauzele din capitole \n\n"
+"* Scored (Verses) - ca minim, forțează alinierea la fiecare verset, ceea ce \n"
+"  poate duce la multe pauze!"
 
 #: temp.glade:16601
 msgid "Merging mode:"
-msgstr ""
+msgstr "Modul de fuziune:"
 
 #: temp.glade:16631
 msgid "Document based"
-msgstr ""
+msgstr "Bazat pe documente"
 
 #: temp.glade:16632
 msgid "Chapter Verse"
-msgstr ""
+msgstr "Capitolul Versete"
 
 #: temp.glade:16633
 msgid "Scored"
-msgstr ""
+msgstr "A marcat"
 
 #: temp.glade:16634
 msgid "Scored (Chapter)"
-msgstr ""
+msgstr "Scorul (capitol)"
 
 #: temp.glade:16635
 msgid "Scored (Verse)"
-msgstr ""
+msgstr "Scorul (Verset)"
 
 #: temp.glade:16653
 msgid "Diglot or Discript"
@@ -8439,17 +8631,19 @@ msgstr "Faceţi clic pentru a sări la marcajul corespunzător\n"
 
 #: temp.glade:17280
 msgid "Only Show on Odd Pages"
-msgstr ""
+msgstr "Afișează numai pe paginile impare"
 
 #: temp.glade:17281
 msgid "Thumb tabs: Only Show on Odd Pages"
-msgstr ""
+msgstr "File de degetul mare: Se afișează numai pe paginile impare"
 
 #: temp.glade:17285
 msgid "When printing thumb tabs on thin paper,\n"
 "it is preferable to only print these tabs on\n"
 "a single side of the page (the odd pages)."
-msgstr ""
+msgstr "Atunci când imprimați filele degetului mare pe hârtie subțire,\n"
+", este preferabil să imprimați aceste file doar pe\n"
+"o singură față a paginii (paginile impare)."
 
 #: temp.glade:17303
 msgid "Thumb Tabs"
@@ -8734,7 +8928,8 @@ msgstr "Stiluri: Factorul de mărime a fontului"
 #: temp.glade:18397
 msgid "Scale Relative \n"
 "to Parent"
-msgstr ""
+msgstr "Scară Relativă \n"
+"la părinte"
 
 #: temp.glade:18399
 msgid "Styles: Scale relative to parent"
@@ -8743,7 +8938,8 @@ msgstr "Stiluri: Scala în raport cu părintele"
 #: temp.glade:18404
 msgid "The Font Size is usually calculated as relative to the current Font Size Unit. If you prefer to specify an an amount relative to the surrounding text font size then enable this option. Note that \n"
 "\\p has a FontSize of 12 in the underlying stylesheet."
-msgstr ""
+msgstr "Dimensiunea fontului este de obicei calculată în raport cu unitatea de dimensiune a fontului curent. Dacă preferați să specificați o valoare în raport cu dimensiunea fontului textului înconjurător, activați această opțiune. Rețineți că \n"
+"\\p are o dimensiune a fontului de 12 în foaia de stil de bază."
 
 #: temp.glade:18419
 msgid "Bold"
@@ -8854,12 +9050,18 @@ msgid "Calculated absolute point size \n"
 "The (↑Ascender ↓Descender) values \n"
 "from the base line for this font are \n"
 "provided for reference."
-msgstr ""
+msgstr "Dimensiunea absolută a punctului calculată \n"
+"având în vedere dimensiunea fontului de bază curentă\n"
+"(care este setată în fila Layout).\n\n"
+"Valorile (↑Ascender ↓Descender) \n"
+"de la linia de bază pentru acest font sunt \n"
+"furnizate ca referință."
 
 #: temp.glade:18666
 msgid "<span foreground=\"blue\">11.7pt\n"
 "(↑6.6 ↓2.2)</span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">11.7pt\n"
+"(↑6.6 ↓2.2)</span>"
 
 #: temp.glade:18680
 msgid "If any modifications to the typeface\n"
@@ -8869,12 +9071,19 @@ msgid "If any modifications to the typeface\n"
 "stretch= (or shrink) font horizontally\n"
 "bold= embolden value (faux bold)\n"
 "ital= slant value (faux italics)"
-msgstr ""
+msgstr "În cazul în care au fost selectate modificări ale fontului\n"
+", acestea vor fi afișate aici pe\n"
+".\n\n"
+"GR= Grafitul a fost activat\n"
+"stretch= (sau micșorarea) fontului pe orizontală\n"
+"bold= valoare de îmbogățire (faux bold)\n"
+"ital= valoare de înclinare (faux italic)"
 
 #: temp.glade:18691
 msgid "<span foreground=\"blue\">GR stretch=95%\n"
 "<b>bold=1.8</b> <i>ital=0.15</i></span>"
-msgstr ""
+msgstr "<span foreground=\"blue\">GR stretch=95%\n"
+"<b>bold=1.8</b> <i>ital=0.15</i></span>"
 
 #: temp.glade:18716
 msgid "Character Settings"
@@ -9018,7 +9227,7 @@ msgstr "Spațiu după\n"
 
 #: temp.glade:19165
 msgid "Styles: Maximum ragged (fill) space"
-msgstr ""
+msgstr "Stiluri: Spațiu maxim (de umplere)"
 
 #: temp.glade:19168 temp.glade:19211
 msgid "How much of the column-width can be\n"
@@ -9035,12 +9244,26 @@ msgid "How much of the column-width can be\n"
 "Discretionary breaks (//) will be ignored if \n"
 "breaking there would leave more than this \n"
 "much space."
-msgstr ""
+msgstr "Cât din lățimea coloanei poate fi\n"
+"spațiu gol la o margine nejustificată? Acest lucru\n"
+"afectează întreruperea rândului la mijlocul paragrafului și \n"
+"poate cauza întinderea altor spații dacă \n"
+"linia ar fi prea scurtă în caz contrar. Aceasta \n"
+"nu împiedică ca ultimul rând al unui paragraf\n"
+"să fie mai scurt.\n\n"
+"Această valoare este stabilită ca proporție a lățimii coloanei\n"
+", valorile sensibile fiind\n"
+"cu un interval de la 0,20 la 0,75 (unde 1,00\n"
+"reprezintă întreaga lățime a coloanei).\n"
+"Întreruperile discreționare (//) vor fi ignorate dacă \n"
+"întreruperea acolo ar lăsa mai mult decât acest \n"
+"mult spațiu."
 
 #: temp.glade:19227
 msgid "Maximum\n"
 "Ragged Space:"
-msgstr ""
+msgstr "Maxim\n"
+"Spațiu de rabat:"
 
 #: temp.glade:19253
 msgid "Paragraph Settings"
@@ -9640,7 +9863,12 @@ msgid "This sets how far (in ems) the underline \n"
 "the baseline.\n\n"
 "If positive (or zero), it is the distance\n"
 "below the bottom of any descenders."
-msgstr ""
+msgstr "Aceasta stabilește cât de departe (în ems) se află sublinierea \n"
+"sub text și în raport cu ce se află aceasta. \n\n"
+"Dacă este negativă, este distanța de sub \n"
+"linia de bază.\n\n"
+"Dacă este pozitivă (sau zero), este distanța\n"
+"sub partea de jos a oricărei linii descendente."
 
 #: temp.glade:20671
 msgid "Start new page threshold (page full factor)"
@@ -9910,7 +10138,10 @@ msgid "Some advanced features load extra code\n"
 "that is not normally needed. List them\n"
 "here if you need to use them.\n"
 "e.g. polyglot-simplepages"
-msgstr ""
+msgstr "Unele caracteristici avansate încarcă cod suplimentar\n"
+", care în mod normal nu este necesar. Listați-le\n"
+"aici dacă trebuie să le folosiți.\n"
+"de exemplu, polyglot-simplepages"
 
 #: temp.glade:21195
 msgid "Plugins:"
@@ -9978,17 +10209,19 @@ msgstr "ptxprint poate utiliza fie valorile glicozilelor reale dintr-o linie, fi
 
 #: temp.glade:21349
 msgid "Show TeXpert Hacks"
-msgstr ""
+msgstr "Arată TeXpert Hacks"
 
 #: temp.glade:21350
 msgid "Show tab with expert level controls (TeXpert mode)"
-msgstr ""
+msgstr "Afișați fila cu controale la nivel de expert (modul TeXpert)"
 
 #: temp.glade:21354
 msgid "An additional 'TeXpert Hacks' tab exists for\n"
 "those who are familiar with TeX and need to\n"
 "change the code or various other parameters."
-msgstr ""
+msgstr "Există o filă suplimentară \"TeXpert Hacks\" pentru\n"
+"cei care sunt familiarizați cu TeX și care trebuie să modifice\n"
+"codul sau diverși alți parametri."
 
 #: temp.glade:21376
 msgid "Compatibility"
@@ -10151,7 +10384,36 @@ msgid "Use the following codes to include special text in front matter:\n\n"
 "on the Peripherals tab. For example:\n"
 "  \\mt1 \\zvar|maintitle\\*\n"
 "  \\mt2 \\zvar|subtitle\\*"
-msgstr ""
+msgstr "Folosiți următoarele coduri pentru a include text special în prima pagină:\n\n"
+"  \\nopagenums - dezactivează numerele de pagină\n"
+"  \\dopagenums - activează numărul de pagină\n"
+"  \\resetpagenums # - unde # este numărul de pagină\n"
+"(dacă setați # la -1, veți obține cifre romane i,ii,iii,iii,iv,v,...)\n\n"
+"  \\pc \\zcopyright - declarație de copyright din fila Basic\n"
+"  \\pc \\zlicense - declarație de licență din fila Basic\n"
+"  \\pc \\zimagecopyrights - listă generată de imagini cu atribuirea drepturilor de autor\n"
+"  \\pc \\zimagecopyrightsfr - ca mai sus, dar localizată (fr = franceză)\n\n"
+"  \\zbl|3\\* - inserează 3 linii goale\n"
+"  \\zgap|1.5in\\*\n\n"
+"Pentru a include unul sau mai multe cuprinsuri:\n"
+"  \\ztoc|<keyword>\\*\n"
+"Unde <keyword> poate fi înlocuit cu:\n"
+"  main - cuprinsul principal, atotcuprinzător\n"
+"  pre - orice carte anterioară Scripturii (FRT, INT)\n"
+"  ot - sunt listate doar cărțile Vechiului Testament\n"
+"  heb - cărțile VT sortate în funcție de TaNaKh ebraică\n"
+"  dc - sunt listate doar cărțile canonice Deutero\n"
+"  nt - sunt listate doar cărțile Noului Testament\n"
+"  post - cărțile care apar după REV (GLO, BAK, TDX, NDX, XXA-G)\n"
+"  sorta - listă alfabetică (principală) ordonată după \\toc1\n"
+"  sortb - listă alfabetică (principală) ordonată după \\toc2\n"
+"  sortc - listă alfabetică (principală) ordonată după \\toc3\n\n"
+"În plus față de codurile menționate mai sus, puteți specifica\n"
+"propriile \\zvar|variabile\\* specifice configurației, ca și substituenți.\n"
+"Faceți clic pe \"Edit Variables...\" (Editare variabile...) pentru a atribui valori acestor variabile\n"
+"în fila Peripherals (Periferice). De exemplu:\n"
+"  \\mt1 \\zvar \\zvar|maintitle\\*\n"
+"  \\mt2 \\zvar \\zvar|subtitle\\*"
 
 #: temp.glade:21657
 msgid "Autosave"
@@ -10165,7 +10427,7 @@ msgstr "Salvați orice modificare efectuată sub\n"
 
 #: temp.glade:21675
 msgid "Adjust display font size "
-msgstr ""
+msgstr "Reglați dimensiunea fontului de afișare "
 
 #: temp.glade:21679
 msgid "Use this slider to adjust\n"
@@ -10173,7 +10435,11 @@ msgid "Use this slider to adjust\n"
 "View+Edit tab as well as\n"
 "in other locations that use \n"
 "a specialized font or script."
-msgstr ""
+msgstr "Utilizați acest cursor pentru a ajusta\n"
+"dimensiunea textului din\n"
+"fila Vizualizare+Edit, precum și\n"
+"în alte locații care utilizează \n"
+"un font sau un script specializat."
 
 #: temp.glade:21748
 msgid "Front Matter"
@@ -10663,20 +10929,25 @@ msgid "To calculate the spine width you need to\n"
 "paper. Select one or the other, but keep in\n"
 "mind that the exact thickness (in microns)\n"
 "will result in the most accurate calculation.\t"
-msgstr ""
+msgstr "Pentru a calcula lățimea coloanei vertebrale, trebuie să\n"
+"folosiți fie greutatea, fie grosimea hârtiei\n"
+". Selectați una sau cealaltă, dar rețineți\n"
+"că grosimea exactă (în microni)\n"
+"va duce la cel mai precis calcul.\t"
 
 #: temp.glade:22984
 msgid "Set Paper:"
-msgstr ""
+msgstr "Set de hârtie:"
 
 #: temp.glade:22993
 msgid "Set the paper thickness to calculate spine width"
-msgstr ""
+msgstr "Setați grosimea hârtiei pentru a calcula lățimea coloanei vertebrale"
 
 #: temp.glade:22996
 msgid "Set the paper weight (GSM)\n"
 "or thickness (microns)."
-msgstr ""
+msgstr "Setați greutatea hârtiei (GSM)\n"
+"sau grosimea (microni)."
 
 #: temp.glade:23003 temp.glade:23110
 msgid "70"
@@ -10684,44 +10955,49 @@ msgstr "70"
 
 #: temp.glade:23017
 msgid "Orientation (rotation) of cover spine text"
-msgstr ""
+msgstr "Orientarea (rotația) textului de pe copertă și a coloanei vertebrale"
 
 #: temp.glade:23021
 msgid "Adjust the spine \n"
 "text orientation.\n"
-msgstr ""
+msgstr "Reglați orientarea textului din coloana vertebrală \n"
+".\n"
 
 #: temp.glade:23051
 msgid "Rotate Spine:"
-msgstr ""
+msgstr "Rotiți coloana vertebrală:"
 
 #: temp.glade:23060 temp.glade:23263 temp.glade:23303
 msgid "Adjust thickness of spine to compensate for cover thickness"
-msgstr ""
+msgstr "Ajustați grosimea coloanei vertebrale pentru a compensa grosimea copertei"
 
 #: temp.glade:23063 temp.glade:23085
 msgid "Adjust the thickness of spine to \n"
 "include the thickness of the cover."
-msgstr ""
+msgstr "Reglați grosimea coloanei vertebrale la \n"
+"pentru a include grosimea copertei."
 
 #: temp.glade:23068
 msgid "0.14"
-msgstr ""
+msgstr "0.14"
 
 #: temp.glade:23091
 msgid "Cover Thickness\n"
 "Adjustment (mm):"
-msgstr ""
+msgstr "Grosimea capacului\n"
+"Ajustare (mm):"
 
 #: temp.glade:23101
 msgid "Total number of pages in publication"
-msgstr ""
+msgstr "Numărul total de pagini din publicație"
 
 #: temp.glade:23104 temp.glade:23188
 msgid "The number of pages is filled in\n"
 "automatically but can also be \n"
 "manually adjusted."
-msgstr ""
+msgstr "Numărul de pagini este completat automat pe\n"
+", dar poate fi ajustat manual și pe \n"
+"."
 
 #: temp.glade:23129
 msgid "Weight (GSM)"
@@ -10729,7 +11005,7 @@ msgstr "Greutate (GSM)"
 
 #: temp.glade:23130
 msgid "Set paper weight (GSM) for spine width calculation"
-msgstr ""
+msgstr "Setați greutatea hârtiei (GSM) pentru calcularea lățimii coloanei vertebrale"
 
 #: temp.glade:23134
 msgid "Weight of the paper being\n"
@@ -10749,7 +11025,7 @@ msgstr "Grosime (microni)"
 
 #: temp.glade:23155
 msgid "Set paper thickness (microns) for spine width calculation"
-msgstr ""
+msgstr "Setați grosimea hârtiei (microni) pentru calcularea lățimii coloanei vertebrale"
 
 #: temp.glade:23159
 msgid "To be more precise in the calculation\n"
@@ -10763,90 +11039,105 @@ msgstr "Pentru a fi mai precis în calculul\n"
 
 #: temp.glade:23184
 msgid "Override Total Page Count:"
-msgstr ""
+msgstr "Suprascrieți numărul total de pagini:"
 
 #: temp.glade:23206
 msgid "34.526 mm"
-msgstr ""
+msgstr "34,526 mm"
 
 #: temp.glade:23221
 msgid "The width of the spine (mm) is\n"
 "automatically calculated using\n"
 "the values above."
-msgstr ""
+msgstr "Lățimea coloanei vertebrale (mm) este\n"
+"calculată automat folosind\n"
+"valorile de mai sus."
 
 #: temp.glade:23228
 msgid "Total Spine Width:"
-msgstr ""
+msgstr "Lățimea totală a coloanei vertebrale:"
 
 #: temp.glade:23249 temp.glade:23266
 msgid "If you want the spine graphic or\n"
 "colour to spill over onto the back\n"
 "cover page, then set the amount\n"
 "of overlap here (mm)."
-msgstr ""
+msgstr "Dacă doriți ca grafica coloanei vertebrale sau culoarea\n"
+"să se extindă pe pagina de gardă\n"
+", setați aici valoarea\n"
+"de suprapunere (mm)."
 
 #: temp.glade:23253
 msgid "Overlap onto\n"
 "Back Cover (mm):"
-msgstr ""
+msgstr "Suprapunere pe\n"
+"Capacul din spate (mm):"
 
 #: temp.glade:23288 temp.glade:23306
 msgid "If you want the spine graphic or\n"
 "colour to spill over onto the front\n"
 "cover page, then set the amount\n"
 "of overlap here (mm)."
-msgstr ""
+msgstr "Dacă doriți ca grafica coloanei vertebrale sau culoarea\n"
+"să se extindă pe pagina de față\n"
+"coperta, setați aici valoarea\n"
+"de suprapunere (mm)."
 
 #: temp.glade:23293
 msgid "Overlap onto\n"
 "Front Cover (mm):"
-msgstr ""
+msgstr "Suprapunere pe\n"
+"Coperta frontală (mm):"
 
 #: temp.glade:23341
 msgid "Spine Overlap"
-msgstr ""
+msgstr "Suprapunerea coloanei vertebrale"
 
 #: temp.glade:23376
 msgid "Include Spine"
-msgstr ""
+msgstr "Includeți coloana vertebrală"
 
 #: temp.glade:23377
 msgid "SUse Spine on Cover Page"
-msgstr ""
+msgstr "SUse Spine pe pagina de gardă"
 
 #: temp.glade:23435
 msgid "1. Create Cover Settings..."
-msgstr ""
+msgstr "1. Creați setările de copertă..."
 
 #: temp.glade:23436
 msgid "Generate Cover (Basic settings to create a cover)"
-msgstr ""
+msgstr "Generate Cover (Setări de bază pentru a crea o copertă)"
 
 #: temp.glade:23441
 msgid "Creating a cover from nothing takes a lot of effort.\n"
 "This tool enables you to create various kinds of\n"
 "covers which can easily be enhanced. "
-msgstr ""
+msgstr "Crearea unei coperte din nimic necesită mult efort.\n"
+"Acest instrument vă permite să creați diverse tipuri de coperți\n"
+", care pot fi ușor îmbunătățite. "
 
 #: temp.glade:23457
 msgid "2. Edit Cover Content..."
-msgstr ""
+msgstr "2. Editați conținutul copertei..."
 
 #: temp.glade:23458
 msgid "Edit Front Matter (where cover content is defiined)"
-msgstr ""
+msgstr "Editați prima pagină (unde este definit conținutul copertei)"
 
 #: temp.glade:23463
 msgid "Switch to the View+Edit tab to\n"
 "show the Front Matter file where\n"
 "the content for the Cover page\n"
 "can be adjusted as needed."
-msgstr ""
+msgstr "Treceți la fila View+Edit (Vizualizare+Modificare) pentru\n"
+"pentru a afișa fișierul Front Matter (Materie de față), unde\n"
+"conținutul paginii de copertă\n"
+"poate fi ajustat după cum este necesar."
 
 #: temp.glade:23482
 msgid "3. Print (Make Cover PDF)"
-msgstr ""
+msgstr "3. Imprimați (Faceți coperta PDF)"
 
 #: temp.glade:23489
 msgid "Once 'Create Cover' is enabled, every time\n"
@@ -10858,11 +11149,19 @@ msgid "Once 'Create Cover' is enabled, every time\n"
 "opened rather than the cover PDF.\n\n"
 "Clicking this button will ensure that the cover PDF\n"
 "will be displayed once it has been created."
-msgstr ""
+msgstr "Odată activată opțiunea \"Create Cover\" (Creare copertă), de fiecare dată când se face clic pe\n"
+"\"Print (Make PDF)\" (Imprimați (Faceți PDF)), se va crea o copertă PDF \n"
+"separată, în plus față de\n"
+"PDF-ul obișnuit cu conținut de text.\n\n"
+"Cu toate acestea, dacă este activă o altă filă (alta decât cea a copertei)\n"
+", PDF-ul cu conținut de text va fi deschis automat\n"
+"în loc de PDF-ul de copertă.\n\n"
+"Dacă se face clic pe acest buton, se va asigura că PDF-ul de copertă\n"
+"va fi afișat după ce a fost creat."
 
 #: temp.glade:23532
 msgid "Generate cover: Art Bleed setting"
-msgstr ""
+msgstr "Generați acoperire: Setarea Art Bleed"
 
 #: temp.glade:23535 temp.glade:23632
 msgid "Art Bleed is specifically for hard cover binding\n"
@@ -10870,15 +11169,19 @@ msgid "Art Bleed is specifically for hard cover binding\n"
 "beyond the size of the cover in order to wrap\n"
 "around the hard cover and stuck down under\n"
 "the inner backing sheet. (Units: mm)"
-msgstr ""
+msgstr "Art Bleed este special pentru legătoria cu copertă tare\n"
+"și este setarea care permite imaginilor să depășească\n"
+"dimensiunea copertei pentru a se înfășura\n"
+"în jurul copertei tari și a fi lipite sub\n"
+"foaia de suport interioară. (Unități: mm)"
 
 #: temp.glade:23543 temp.glade:23568
 msgid "5.0"
-msgstr ""
+msgstr "5.0"
 
 #: temp.glade:23557
 msgid "Generate cover: Bleed setting"
-msgstr ""
+msgstr "Generați acoperire: Setarea sângerării"
 
 #: temp.glade:23560 temp.glade:23584
 msgid "Bleed is the section of artwork that \n"
@@ -10886,19 +11189,23 @@ msgid "Bleed is the section of artwork that \n"
 "This ensures that the image goes right\n"
 "to the edge of the cover after it has \n"
 "been trimmed. (Units: mm)"
-msgstr ""
+msgstr "Sângerarea este secțiunea din lucrarea de artă care \n"
+"depășește partea de tăiere a hârtiei. \n"
+"Astfel, se asigură că imaginea ajunge până la\n"
+"la marginea copertei după ce aceasta a fost tăiată \n"
+". (Unități: mm)"
 
 #: temp.glade:23591
 msgid "Bleed:"
-msgstr ""
+msgstr "Sângerează:"
 
 #: temp.glade:23600
 msgid "Show Cover Crop Marks"
-msgstr ""
+msgstr "Afișați marcajele culturilor de acoperire"
 
 #: temp.glade:23601
 msgid "Generate cover: Include bleed area and cropmarks"
-msgstr ""
+msgstr "Generați acoperire: Includeți zona de sângerare și semnele de tăiere"
 
 #: temp.glade:23605
 msgid "When printing and binding books in bulk\n"
@@ -10908,29 +11215,37 @@ msgid "When printing and binding books in bulk\n"
 "to be shown on the cover page. So if you \n"
 "cannot uncheck this option, then disable \n"
 "the 'Include Spine' setting (above) and retry."
-msgstr ""
+msgstr "La tipărirea și legarea cărților în volum mare\n"
+"sunt de obicei necesare semne de tăiere pentru a indica pe\n"
+"unde trebuie tăiată publicația.\n\n"
+"Includerea coloanei vertebrale va obliga ca semnele de tăiere\n"
+"să fie afișate pe pagina de gardă. Așadar, dacă \n"
+"nu puteți debifa această opțiune, dezactivați \n"
+"setarea \"Include Spine\" (mai sus) și încercați din nou."
 
 #: temp.glade:23639
 msgid "Art Bleed:"
-msgstr ""
+msgstr "Art Bleed:"
 
 #: temp.glade:23654
 msgid "Crop Marks + Bleed Settings"
-msgstr ""
+msgstr "Mărcile de tăiere + Setări de sângerare"
 
 #: temp.glade:23682 temp.glade:24060
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Front Cover."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile barei laterale \n"
+"în fila Stiluri pentru Coperta."
 
 #: temp.glade:23704
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Spine."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile barei laterale \n"
+"în fila Stiluri pentru coloana vertebrală."
 
 #: temp.glade:23765
 msgid "Back Cover"
-msgstr ""
+msgstr "Coperta din spate"
 
 #: temp.glade:23782
 msgid "\n"
@@ -10939,7 +11254,12 @@ msgid "\n"
 "in the Front Matter\n"
 "settings of the\n"
 "View+Edit tab.\n"
-msgstr ""
+msgstr "\n"
+"Textul pentru această secțiune\n"
+"poate fi setat\n"
+"în setările pentru Front Matter\n"
+"din fila\n"
+"View+Edit.\n"
 
 #: temp.glade:23829
 msgid "ISBN Bar\n"
@@ -10949,32 +11269,34 @@ msgstr ""
 #: temp.glade:23849
 msgid "Click to edit the Sidebar properties \n"
 "on the Styles tab for the Back Cover."
-msgstr ""
+msgstr "Faceți clic pentru a edita proprietățile barei laterale \n"
+"în fila Stiluri pentru coperta din spate."
 
 #: temp.glade:23959
 msgid "Main Title"
-msgstr ""
+msgstr "Titlu principal"
 
 #: temp.glade:23976
 msgid "Subtitle"
-msgstr ""
+msgstr "Subtitlu"
 
 #: temp.glade:24041
 msgid "Optional Lower Title"
-msgstr ""
+msgstr "Opțional Titlu inferior"
 
 #: temp.glade:24096
 msgid "Create Cover"
-msgstr ""
+msgstr "Creați coperta"
 
 #: temp.glade:24097
 msgid "Create an outer Cover"
-msgstr ""
+msgstr "Creați un capac exterior"
 
 #: temp.glade:24124
 msgid "Set parameters for the cover\n"
 "of the publication."
-msgstr ""
+msgstr "Setați parametrii pentru coperta\n"
+"a publicației."
 
 #: temp.glade:24172 temp.glade:24272
 msgid "How many pages will be printed on\n"
@@ -11011,7 +11333,8 @@ msgstr "Aceasta este dimensiunea reală a foii de\n"
 #: temp.glade:24199
 msgid "Physical\n"
 "Paper Size:"
-msgstr ""
+msgstr "Fizic\n"
+"Dimensiunea hârtiei:"
 
 #: temp.glade:24212 temp.glade:24347
 msgid "A signature is a collection of pages folded\n"
@@ -11099,12 +11422,15 @@ msgstr "(În curând...)\n"
 msgid "The minimum width of the area to\n"
 "be cut after folding of the signature.\n"
 "Measured in millimeters (mm)."
-msgstr ""
+msgstr "Lățimea minimă a zonei care urmează să\n"
+"fie tăiată după plierea semnăturii.\n"
+"Se măsoară în milimetri (mm)."
 
 #: temp.glade:24334
 msgid "Fold Cut \n"
 "Margin (mm):"
-msgstr ""
+msgstr "Fold Cut \n"
+"Marjă (mm):"
 
 #: temp.glade:24344
 msgid "Pagination: Sheets per signature (pages per form)"
@@ -11143,11 +11469,12 @@ msgstr "Dacă vă impuneți o imprimantă cu o mașină de pliere, \n"
 #: temp.glade:24408
 msgid "Create Cover as \n"
 "a Separate PDF"
-msgstr ""
+msgstr "Creați coperta ca \n"
+"un PDF separat"
 
 #: temp.glade:24410
 msgid "Pagination: Create the cover as a stand-alone PDF"
-msgstr ""
+msgstr "Paginare: Creați coperta ca un PDF de sine stătător"
 
 #: temp.glade:24415
 msgid "This option is only available if Create Cover is\n"
@@ -11155,7 +11482,11 @@ msgid "This option is only available if Create Cover is\n"
 "you plan to print the outer (wrapper) cover\n"
 "separately from the book's content. This is often\n"
 "the case if cardstock, or a colour cover is used."
-msgstr ""
+msgstr "Această opțiune este disponibilă numai dacă opțiunea Create Cover (Creare copertă) este activată la\n"
+"în fila Cover (Copertă). Activați această opțiune dacă\n"
+"intenționați să tipăriți coperta exterioară (învelitoarea)\n"
+"separat de conținutul cărții. Acest lucru este adesea\n"
+"cazul în care se utilizează carton sau o copertă color."
 
 #: temp.glade:24439
 msgid "Whether you need a simple booklet\n"
@@ -11209,7 +11540,9 @@ msgstr "Comparați PDF-uri: "
 msgid "Use this color to show anything\n"
 "that has been added (or moved to\n"
 "the current location) in the new PDF."
-msgstr ""
+msgstr "Utilizați această culoare pentru a afișa orice\n"
+"care a fost adăugat (sau mutat la\n"
+"locația curentă) în noul PDF."
 
 #: temp.glade:24552
 msgid "Color to Highlight Differences"
@@ -11217,7 +11550,7 @@ msgstr "Culoare pentru a evidenția diferențele"
 
 #: temp.glade:24562
 msgid "Compare PDFs: Colour of new text"
-msgstr ""
+msgstr "Comparați PDF-uri: Culoarea textului nou"
 
 #: temp.glade:24565
 msgid "Set the color to use when\n"
@@ -11226,16 +11559,22 @@ msgid "Set the color to use when\n"
 "Use this color to show anything\n"
 "that has been added (or moved to\n"
 "the current location) in the new PDF."
-msgstr ""
+msgstr "Setați culoarea care trebuie utilizată atunci când se constată diferențe\n"
+"între\n"
+"PDF-urile vechi și cele noi.\n\n"
+"Folosiți această culoare pentru a afișa orice\n"
+"care a fost adăugat (sau mutat la\n"
+"locația curentă) în noul PDF."
 
 #: temp.glade:24575
 msgid "Show New Text\n"
 "or Position in:"
-msgstr ""
+msgstr "Afișare text nou\n"
+"sau Poziționare în:"
 
 #: temp.glade:24585
 msgid "Compare PDFs: Colour of old text"
-msgstr ""
+msgstr "Comparați PDF-uri: Culoarea textului vechi"
 
 #: temp.glade:24588 temp.glade:24692
 msgid "Set the color to use when\n"
@@ -11244,18 +11583,26 @@ msgid "Set the color to use when\n"
 "Use this color to show anything\n"
 "that has been deleted (or moved from\n"
 "the previous location) in the old PDF."
-msgstr ""
+msgstr "Setați culoarea care trebuie utilizată atunci când se constată diferențe\n"
+"între\n"
+"PDF-urile vechi și cele noi.\n\n"
+"Utilizați această culoare pentru a arăta orice\n"
+"care a fost șters (sau mutat de la\n"
+"locația anterioară) în vechiul PDF."
 
 #: temp.glade:24598
 msgid "Show Old Text\n"
 "or Position in:"
-msgstr ""
+msgstr "Arată textul vechi\n"
+"sau Poziție în:"
 
 #: temp.glade:24611
 msgid "Use this color to show anything\n"
 "that has been deleted (or moved from\n"
 "the previous location) in the old PDF."
-msgstr ""
+msgstr "Utilizați această culoare pentru a afișa orice\n"
+"care a fost șters (sau mutat de la\n"
+"locația anterioară) în vechiul PDF."
 
 #: temp.glade:24632
 msgid "Select a particular PDF file to be compared \n"
@@ -11279,7 +11626,7 @@ msgstr "Comparați cu \n"
 
 #: temp.glade:24653
 msgid "Compare PDFs: Set maximum diff pages to show"
-msgstr ""
+msgstr "Comparați PDF-uri: Setați numărul maxim de pagini de diferență care trebuie afișate"
 
 #: temp.glade:24657
 msgid "The PDF showing differences between the old\n"
@@ -11287,16 +11634,21 @@ msgid "The PDF showing differences between the old\n"
 "resulting file rather large. Use this option to\n"
 "limit the number of \"Diff\" pages created.\n"
 "This will also potentially speed up the process."
-msgstr ""
+msgstr "PDF-ul care arată diferențele dintre vechiul\n"
+"și noul conține imagini care fac ca fișierul rezultat\n"
+"să fie destul de mare. Folosiți această opțiune pentru a\n"
+"limita numărul de pagini \"Diff\" create.\n"
+"De asemenea, acest lucru va accelera potențial procesul."
 
 #: temp.glade:24689
 msgid "Compare PDFs: Maximum pages of differences to show"
-msgstr ""
+msgstr "Comparați PDF-uri: Numărul maxim de pagini de diferențe care trebuie afișate"
 
 #: temp.glade:24701
 msgid "Show Max\n"
 "Diff Pages:"
-msgstr ""
+msgstr "Afișați Max\n"
+"Diff Pages:"
 
 #: temp.glade:24722
 msgid "This tool allows you to compare 2 different\n"
@@ -11312,7 +11664,7 @@ msgstr "Comparați PDF-uri"
 
 #: temp.glade:24760
 msgid "PDF output format (Screen, RGB, CMYK, B/W, spot)"
-msgstr ""
+msgstr "Format de ieșire PDF (ecran, RGB, CMYK, B/N, spot)"
 
 #: temp.glade:24765
 msgid "Select the appropriate standard \n"
@@ -11498,11 +11850,11 @@ msgstr "Toleranță (%):"
 
 #: temp.glade:25032
 msgid "Extract Color Inserts"
-msgstr ""
+msgstr "Inserții de culoare extrasă"
 
 #: temp.glade:25033
 msgid "Extract Color Insert pages (as separate PDFs)"
-msgstr ""
+msgstr "Extrageți paginile de inserție color (ca PDF-uri separate)"
 
 #: temp.glade:25037
 msgid "Extract the special peripheral materials\n"
@@ -11510,7 +11862,11 @@ msgid "Extract the special peripheral materials\n"
 "PDFs to be printed in color and inserted\n"
 "manually during the binding process.\n\n"
 "Note that the cover is always extracted."
-msgstr ""
+msgstr "Extrageți materialele periferice speciale\n"
+"denumite \"maps\" sau \"insert_*\" ca PDF-uri separate \n"
+"pentru a fi tipărite în culori și inserate manual\n"
+"în timpul procesului de legare.\n\n"
+"Rețineți că coperta este întotdeauna extrasă."
 
 #: temp.glade:25075
 msgid "PDF Details"
@@ -11526,19 +11882,19 @@ msgstr "Opțiuni de control al paginării,\n"
 
 #: temp.glade:25229
 msgid "Misc Settings"
-msgstr ""
+msgstr "Setări diverse"
 
 #: temp.glade:25249
 msgid "Strongs Refs"
-msgstr ""
+msgstr "Strongs Refs"
 
 #: temp.glade:25302
 msgid "Adjust expert-level settings."
-msgstr ""
+msgstr "Reglați setările la nivel de expert."
 
 #: temp.glade:25304
 msgid "TeXpert Hacks"
-msgstr ""
+msgstr "TeXpert Hacks"
 
 #: temp.glade:25350
 msgid "Current Project Path:"
@@ -11894,7 +12250,7 @@ msgstr "Activarea acestei opțiuni va oferi o ieșire mai rapidă pe \n"
 
 #: temp.glade:26161
 msgid "Create Diff"
-msgstr ""
+msgstr "Creați Diff"
 
 #: temp.glade:26162
 msgid "Compare PDFs: Create 'diff' PDF"
@@ -11908,7 +12264,13 @@ msgid "Enable this option to generate a PDF showing the \n"
 "If any differences are found, it should open the \n"
 "\"Diff\" PDF in the default PDF viewer.\n\n"
 "Shortcut: Ctrl-D"
-msgstr ""
+msgstr "Activați această opțiune pentru a genera un PDF care să arate \n"
+"diferențele dintre PDF-ul curent și versiunea anterioară selectată \n"
+"(setată în fila Finisare\n"
+"în secțiunea \"Comparare PDF-uri\").\n\n"
+"Dacă sunt găsite diferențe, ar trebui să se deschidă PDF-ul \n"
+"\"Diff\" în vizualizatorul PDF implicit.\n\n"
+"Shortcut (scurtătură): Ctrl-D"
 
 #: temp.glade:26201
 msgid "The configuration displayed now is for the \n"
@@ -12020,7 +12382,9 @@ msgstr "PTXprint va crea un folder Nou paratext proiect\n"
 msgid "Step 3.\n"
 "Assign a Name\n"
 "for the Project:"
-msgstr ""
+msgstr "Pasul 3.\n"
+"Atribuiți un nume\n"
+"pentru proiect:"
 
 #: temp.glade:26476
 msgid "Assign a name to a DBL bundle"
@@ -12056,14 +12420,21 @@ msgid "If you don't already have a DBL bundle, then\n"
 "from an online scripture repository.\n\n"
 "If you already have the required DBL bundle,\n"
 "then skip this first step."
-msgstr ""
+msgstr "Dacă nu aveți deja un pachet DBL, atunci\n"
+"puteți descărca un text relevant \n"
+"de la un depozit online de scripturi.\n\n"
+"Dacă aveți deja pachetul DBL necesar,\n"
+", atunci săriți peste acest prim pas."
 
 #: temp.glade:26572
 msgid "[Optional]     Step 1.\n"
 "Download a DBL\n"
 "Bundle (USX) from\n"
 "an Online Repository"
-msgstr ""
+msgstr "[Optional]     Pasul 1.\n"
+"Descărcați un pachet DBL\n"
+"Bundle (USX) de la\n"
+"un depozit online"
 
 #: temp.glade:26589 temp.glade:31483 temp.glade:35029
 msgid "Description:"
@@ -12083,7 +12454,11 @@ msgid "There are hundreds of DBL bundles available\n"
 "download and use in a publication.\n\n"
 "Use resources which contain the text\n"
 "and select the USX download option."
-msgstr ""
+msgstr "Există sute de pachete DBL disponibile\n"
+"pe site-ul web Open.Bible, pe care le puteți descărca\n"
+"și utiliza într-o publicație.\n\n"
+"Utilizați resursele care conțin textul\n"
+"și selectați opțiunea de descărcare USX."
 
 #: temp.glade:26647
 msgid "PTXprint: Sidebar Image Settings"
@@ -12303,15 +12678,15 @@ msgstr "Imaginea de fundal a barei laterale: Managementul supradimensionat"
 
 #: temp.glade:27324
 msgid "Sidebar background image: Scale Image to Inner/Outer/Bleed area "
-msgstr ""
+msgstr "Imaginea de fundal a barei laterale: Scalați imaginea la zona interioară/exterioară/scurtă "
 
 #: temp.glade:27328 temp.glade:29301
 msgid "Select where the image should extend to."
-msgstr ""
+msgstr "Selectați până unde trebuie să se extindă imaginea."
 
 #: temp.glade:27354
 msgid "Scale To:"
-msgstr ""
+msgstr "Scară către:"
 
 #: temp.glade:27367
 msgid "Background Image Advanced Settings"
@@ -12415,7 +12790,9 @@ msgstr "Dialogul Frontiere: Căptușeală orizontală a marginilor "
 msgid "The horizontal space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Spațiul orizontal dintre marginea interioară \n"
+"a marginii și marginea exterioară \n"
+"a casetei din interiorul acesteia."
 
 #: temp.glade:27874
 msgid "Borders dialog: Vertical border padding "
@@ -12425,7 +12802,9 @@ msgstr "Dialogul Frontiere: Căptușeala marginilor verticale "
 msgid "The vertical space between the inside \n"
 "edge of the border and the outside edge \n"
 "of the box inside it."
-msgstr ""
+msgstr "Spațiul vertical dintre marginea interioară \n"
+"a marginii și marginea exterioară \n"
+"a casetei din interiorul acesteia."
 
 #: temp.glade:27900
 msgid "The space between the (inside) edge of the border\n"
@@ -12736,15 +13115,15 @@ msgstr "Limbă:"
 
 #: temp.glade:28899
 msgid "PTXprint: Cover Wizard"
-msgstr ""
+msgstr "PTXprint: Expertul în coperți"
 
 #: temp.glade:28925
 msgid "Create/Overwrite \\periphs in Front Matter"
-msgstr ""
+msgstr "Creați/scrieți peste \\perifețe în antet"
 
 #: temp.glade:28926
 msgid "Generate cover: Overwrite Periphs in Front Matter"
-msgstr ""
+msgstr "Generați acoperire: Suprascrieți peripețiile din frontispiciu"
 
 #: temp.glade:28930
 msgid "If this option is enabled, then any existing settings for\n"
@@ -12754,166 +13133,191 @@ msgid "If this option is enabled, then any existing settings for\n"
 "   id='coverfront', id='coverspine', id='coverback, id='coverwhole'\n\n"
 "So, if you have already customized these settings, then leave this\n"
 "option unchecked."
-msgstr ""
+msgstr "Dacă această opțiune este activată, atunci toate setările existente pentru\n"
+"coperta din pagina de gardă (din fila Vizualizare+Editare)\n"
+"vor fi resetate la valorile implicite. \\iperechile afectate\n"
+"sunt următoarele:\n"
+"   id='coverfront', id='coverpine', id='coverback, id='coverwhole'\n\n"
+"Așadar, dacă ați personalizat deja aceste setări, lăsați această opțiune\n"
+"debifată."
 
 #: temp.glade:29021
 msgid "Generate cover: Scale Text Size"
-msgstr ""
+msgstr "Generați acoperire: Scară Dimensiunea textului"
 
 #: temp.glade:29024 temp.glade:29069 temp.glade:29426
 msgid "The \\mt1 and \\mt2 styles are used for the\n"
 "title and subtitle on the cover page. Use\n"
 "this setting to increase size of such titles."
-msgstr ""
+msgstr "Stilurile \\mt1 și \\mt2 sunt utilizate pentru titlul și subtitlul\n"
+"de pe pagina de gardă. Utilizați\n"
+"această setare pentru a mări dimensiunea acestor titluri."
 
 #: temp.glade:29048
 msgid "Generate cover: Text Color"
-msgstr ""
+msgstr "Generați acoperire: Culoare text"
 
 #: temp.glade:29052
 msgid "Set the color of the title and subtitle text."
-msgstr ""
+msgstr "Setați culoarea textului din titlu și subtitlu."
 
 #: temp.glade:29075
 msgid "Scale Text Size:"
-msgstr ""
+msgstr "Dimensiunea textului:"
 
 #: temp.glade:29084
 msgid "Generate cover: Select Ornamental Border"
-msgstr ""
+msgstr "Generați acoperire: Selectați Bordura ornamentală"
 
 #: temp.glade:29088 temp.glade:29369
 msgid "A selection of ornamental borders are available\n"
 "to choose from, or a custom-made border may\n"
 "be applied to the front cover page."
-msgstr ""
+msgstr "Există o selecție de margini ornamentale disponibile\n"
+"sau se poate aplica o margine personalizată\n"
+"pe prima pagină de copertă."
 
 #: temp.glade:29114
 msgid "Generate cover: Select Background Shading"
-msgstr ""
+msgstr "Generați acoperire: Selectați Umbrire fundal"
 
 #: temp.glade:29118 temp.glade:29171
 msgid "Set the background color for the cover."
-msgstr ""
+msgstr "Setați culoarea de fundal pentru copertă."
 
 #: temp.glade:29133
 msgid "Generate cover: Select Background Picure (or Image)"
-msgstr ""
+msgstr "Generați acoperire: Selectați imaginea de fundal (sau imaginea)"
 
 #: temp.glade:29153
 msgid "<== Select an image file for the background"
-msgstr ""
+msgstr "<== Selectați un fișier imagine pentru fundal"
 
 #: temp.glade:29167
 msgid "Generate cover: Select Border Color"
-msgstr ""
+msgstr "Generați acoperire: Selectați culoarea marginii"
 
 #: temp.glade:29184
 msgid "Background Shading:"
-msgstr ""
+msgstr "Umbrirea fundalului:"
 
 #: temp.glade:29185
 msgid "Generate cover: Enable Background Shading"
-msgstr ""
+msgstr "Generați acoperire: Activați umbrirea fundalului"
 
 #: temp.glade:29189
 msgid "Enable this option to apply shading\n"
 "to the entire cover."
-msgstr ""
+msgstr "Activați această opțiune pentru a aplica umbrirea\n"
+"la întreaga copertă."
 
 #: temp.glade:29203
 msgid "Background Picture:"
-msgstr ""
+msgstr "Imagine de fundal:"
 
 #: temp.glade:29204 temp.glade:29226
 msgid "Generate cover: Enable Background Picture (or Image)"
-msgstr ""
+msgstr "Generați acoperire: Activați imaginea de fundal (sau imaginea)"
 
 #: temp.glade:29208
 msgid "Enable this option to place a picture\n"
 "(or image) on the entire cover (so\n"
 "it wraps around onto the back cover).\n"
 "Use a landscape-oriented image."
-msgstr ""
+msgstr "Activați această opțiune pentru a plasa o fotografie\n"
+"(sau o imagine) pe întreaga copertă (astfel încât\n"
+"se înfășoară pe coperta din spate).\n"
+"Utilizați o imagine orientată spre peisaj."
 
 #: temp.glade:29225
 msgid "Only on Front Cover"
-msgstr ""
+msgstr "Doar pe coperta din față"
 
 #: temp.glade:29230
 msgid "Enable this option to only place the\n"
 "selected image on the front cover (so\n"
 "it does not wrap onto the back cover). \n"
 "Use a portrait-oriented image."
-msgstr ""
+msgstr "Activați această opțiune pentru a plasa imaginea selectată\n"
+"numai pe coperta din față (astfel încât\n"
+"să nu se extindă pe coperta din spate). \n"
+"Utilizați o imagine orientată spre portret."
 
 #: temp.glade:29247
 msgid "Generate cover: Set Transparency of Background Picture"
-msgstr ""
+msgstr "Generați acoperire: Setați transparența imaginii de fundal"
 
 #: temp.glade:29250
 msgid "Set the transparency (Alpha) of the \n"
 "background picture which appears\n"
 "behind any shading if any.\n"
 " "
-msgstr ""
+msgstr "Setați transparența (Alpha) a imaginii de fundal \n"
+"care apare pe\n"
+"în spatele oricărei umbre, dacă există.\n"
+" "
 
 #: temp.glade:29272
 msgid "Generate cover: Set Transparency of Background Shading"
-msgstr ""
+msgstr "Generați acoperire: Setați transparența umbrei de fundal"
 
 #: temp.glade:29276
 msgid "Set the transparency (Alpha) of the \n"
 "background shading which appears\n"
 "on top of the image if there is one.\n"
 " "
-msgstr ""
+msgstr "Setați transparența (Alpha) a umbririi fundalului \n"
+"care apare\n"
+"deasupra imaginii, dacă există una.\n"
+" "
 
 #: temp.glade:29297
 msgid "Generate cover: Select Scale Picture To Area"
-msgstr ""
+msgstr "Generați acoperire: Selectați Scale Picture To Area"
 
 #: temp.glade:29328
 msgid "Text Color:"
-msgstr ""
+msgstr "Culoarea textului:"
 
 #: temp.glade:29342
 msgid "Border Color:"
-msgstr ""
+msgstr "Culoare de frontieră:"
 
 #: temp.glade:29355
 msgid "Shading Color:"
-msgstr ""
+msgstr "Culoare de umbrire:"
 
 #: temp.glade:29364
 msgid "Ornamental Border:"
-msgstr ""
+msgstr "Graniță ornamentală:"
 
 #: temp.glade:29365
 msgid "Generate cover: Enable Ornamental Border"
-msgstr ""
+msgstr "Generați acoperire: Activați Bordura ornamentală"
 
 #: temp.glade:29388
 msgid "The transparency (alpha channel) values on the sliders below\n"
 "range from 0 (completely transparent) to 1 (completely opaque)."
-msgstr ""
+msgstr "Valorile de transparență (canal alfa) de pe cursoarele de sub\n"
+"variază de la 0 (complet transparent) la 1 (complet opac)."
 
 #: temp.glade:29391
 msgid "Transparency"
-msgstr ""
+msgstr "Transparență"
 
 #: temp.glade:29409
 msgid "Click to Open a PDF containing a catalog\n"
 "of the various Ornamental Borders (pgs 4-7)."
-msgstr ""
+msgstr "Faceți clic pentru a deschide un fișier PDF care conține un catalog\n"
+"al diferitelor borduri ornamentale (paginile 4-7)."
 
 #: temp.glade:29431
 msgid "Scale Picure To:"
-msgstr ""
+msgstr "Scară Picură la:"
 
 #: temp.glade:29450
 msgid "Cover Page Settings"
-msgstr ""
+msgstr "Setări pentru pagina de gardă"
 
 #: temp.glade:29464
 msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
@@ -12922,7 +13326,12 @@ msgid "Note that when you click on Create Cover Settings, PTXprint will:\n"
 "     on the View+Edit tab) ONLY IF the option below is enabled:\n"
 "The \\periphs affected are as follows:\n"
 "     id='coverfront', id='coverspine', id='coverback, id='coverwhole'"
-msgstr ""
+msgstr "Rețineți că atunci când faceți clic pe Create Cover Settings (Creare setări copertă), PTXprint va:\n"
+"     (a) va actualiza definițiile stilului de copertă (setările Style Editor)\n"
+"     (b) va suprascrie definițiile \\periph (setările Front Matter\n"
+"     din fila View+Edit) NUMAI DACĂ opțiunea de mai jos este activată:\n"
+"\\periph-urile afectate sunt următoarele:\n"
+"     id='coverfront', id='coverspine', id='coverback, id='coverwhole'"
 
 #: temp.glade:29497
 msgid "PTXprint: Generate Front Matter"
@@ -13126,18 +13535,21 @@ msgstr "Când se generează o listă de imagini"
 
 #: temp.glade:30062
 msgid "PTXprint: Install an Image Set..."
-msgstr ""
+msgstr "PTXprint: Instalarea unui set de imagini..."
 
 #: temp.glade:30137
 msgid "Illustrations have been packaged \n"
 "for use in Scripture publications."
-msgstr ""
+msgstr "Ilustrațiile au fost împachetate \n"
+"pentru a fi utilizate în publicațiile biblice."
 
 #: temp.glade:30166
 msgid "After downloading an Image Set\n"
 "you need to tell PTXprint where the\n"
 ".zip file is saved so it can be installed."
-msgstr ""
+msgstr "După ce ați descărcat un set de imagini\n"
+", trebuie să îi spuneți lui PTXprint unde este salvat fișierul .zip\n"
+", astfel încât acesta să poată fi instalat."
 
 #: temp.glade:30182
 msgid "Locate the downloaded Image Set \n"
@@ -13145,13 +13557,19 @@ msgid "Locate the downloaded Image Set \n"
 "in your 'Downloads' folder.\n\n"
 "DO NOT UNZIP THE FILE - this will\n"
 "be done for you automatically."
-msgstr ""
+msgstr "Localizați fișierul descărcat Image Set \n"
+"(.zip), care se află probabil la adresa \n"
+"în dosarul \"Downloads\".\n\n"
+"NU DESCHIDEȚI FIȘIERUL - acest lucru se va face automat pentru dvs. pe\n"
+"."
 
 #: temp.glade:30189
 msgid "Option 2: Locate an\n"
 "Image Set .zip File\n"
 "to be installed:"
-msgstr ""
+msgstr "Opțiunea 2: Localizați un fișier .zip\n"
+"Image Set .zip\n"
+"care urmează să fie instalat:"
 
 #: temp.glade:30220
 msgid "If you don't already have appropriate\n"
@@ -13161,22 +13579,31 @@ msgid "If you don't already have appropriate\n"
 "publications from one of the links.\n\n"
 "If you already have an Image Set (.zip)\n"
 "file downloaded then skip this first step."
-msgstr ""
+msgstr "Dacă nu dispuneți deja de ilustrații adecvate\n"
+"pentru scripturi, puteți descărca de pe unul dintre linkurile de pe\n"
+"un set de imagini care conține\n"
+"ilustrații de rezoluție redusă pentru publicațiile de probă\n"
+".\n\n"
+"Dacă aveți deja un fișier Image Set (.zip)\n"
+"descărcat, atunci săriți peste acest prim pas."
 
 #: temp.glade:30231
 msgid "Option 1: Download and\n"
 "Install Image Set from \n"
 "the Online Repository"
-msgstr ""
+msgstr "Opțiunea 1: Descărcați și\n"
+"Instalați setul de imagini de pe \n"
+"depozitul online"
 
 #: temp.glade:30262
 msgid "OR"
-msgstr ""
+msgstr "OR"
 
 #: temp.glade:30271
 msgid "Download Sample\n"
 "B/W Image Set"
-msgstr ""
+msgstr "Descărcați exemplul\n"
+"Set de imagini B/N"
 
 #: temp.glade:30309
 msgid "Guides, Crop Marks, Watermark and Grid Settings"
@@ -13200,25 +13627,27 @@ msgstr "Activarea acestei opțiuni va porni diverse ghiduri \n"
 
 #: temp.glade:30396
 msgid "Show Adjust Points"
-msgstr ""
+msgstr "Afișați punctele de ajustare"
 
 #: temp.glade:30397
 msgid "Marks & Guides dialog: Show adjust points"
-msgstr ""
+msgstr "Marks & Guides dialog: Afișare puncte de ajustare"
 
 #: temp.glade:30401
 msgid "When using an AdjList to grow or shrink\n"
 "paragraphs, it can be helpful to display the\n"
 "adjust points in the margin of the text."
-msgstr ""
+msgstr "Atunci când utilizați o listă de ajustare pentru a mări sau micșora paragrafele\n"
+", poate fi util să afișați punctele de ajustare\n"
+"în marginea textului."
 
 #: temp.glade:30416
 msgid "Show USFM Codes"
-msgstr ""
+msgstr "Arată codurile USFM"
 
 #: temp.glade:30417
 msgid "Marks & Guides dialog: Show USFM codes"
-msgstr ""
+msgstr "Marks & Guides dialog: Afișați codurile USFM"
 
 #: temp.glade:30421
 msgid "Show the USFM marker of paragraphs.\n"
@@ -13228,7 +13657,13 @@ msgid "Show the USFM marker of paragraphs.\n"
 "markers visible will result in changes to the\n"
 "layout. Only use this feature temporarily\n"
 "when trying to identify a marker."
-msgstr ""
+msgstr "Afișează marcajul USFM al paragrafelor.\n"
+"Acest lucru poate fi util atunci când creșteți și\n"
+"micșorați paragrafele folosind changes.txt\n\n"
+"Rețineți că, în unele situații, dacă acești markeri\n"
+"sunt vizibili, vor rezulta modificări ale machetei\n"
+". Utilizați această funcție doar temporar\n"
+"atunci când încercați să identificați un marker."
 
 #: temp.glade:30441
 msgid "Show Error Bars For Overfull Lines"
@@ -13390,15 +13825,15 @@ msgstr "Dacă regulile și ghidurile standard sunt inadecvate\n"
 
 #: temp.glade:30836
 msgid "Select Images..."
-msgstr ""
+msgstr "Selectați Imagini..."
 
 #: temp.glade:30853
 msgid "Download Image Set..."
-msgstr ""
+msgstr "Descărcați setul de imagini..."
 
 #: temp.glade:30854
 msgid "Download an Image Set from an online source"
-msgstr ""
+msgstr "Descărcați un set de imagini dintr-o sursă online"
 
 #: temp.glade:30858
 msgid "If you don't already have appropriate\n"
@@ -13406,7 +13841,11 @@ msgid "If you don't already have appropriate\n"
 "download an Image Set which contains\n"
 "low-resolution illustrations for trial\n"
 "publications from one of the links."
-msgstr ""
+msgstr "Dacă nu dispuneți deja de ilustrații adecvate\n"
+"pentru scripturi, puteți descărca de pe unul dintre linkurile de pe\n"
+"un set de imagini care conține\n"
+"ilustrații de rezoluție redusă pentru publicațiile de probă\n"
+"."
 
 #: temp.glade:30899
 msgid "Import the selected images\n"
@@ -13414,95 +13853,107 @@ msgid "Import the selected images\n"
 "where an appropriate caption\n"
 "should be added and other\n"
 "image properties selected."
-msgstr ""
+msgstr "Importați imaginile selectate\n"
+"în configurația curentă\n"
+", unde trebuie adăugată o legendă corespunzătoare\n"
+"și selectate alte proprietăți ale imaginii\n"
+"."
 
 #: temp.glade:31080
 msgid "Search:"
-msgstr ""
+msgstr "Căutare:"
 
 #: temp.glade:31092
 msgid "Limit to Range\n"
 "of References:"
-msgstr ""
+msgstr "Limit to Range\n"
+"de referințe:"
 
 #: temp.glade:31104
 msgid "e.g. LUK ACT HEB JAS"
-msgstr ""
+msgstr "de exemplu, LUK ACT HEB JAS"
 
 #: temp.glade:31119
 msgid "Artist(s):"
-msgstr ""
+msgstr "Artist(i):"
 
 #: temp.glade:31131
 msgid "Image Set:"
-msgstr ""
+msgstr "Set de imagini:"
 
 #: temp.glade:31140
 msgid "Image Selection Dialog: Search for an image by keyword"
-msgstr ""
+msgstr "Dialogul de selectare a imaginii: Căutați o imagine după un cuvânt cheie"
 
 #: temp.glade:31146
 msgid "(lamb|sheep)+shepherd"
-msgstr ""
+msgstr "(miel|oaie)+păstor"
 
 #: temp.glade:31187
 msgid "Scripture Reference"
-msgstr ""
+msgstr "Referință din Scriptură"
 
 #: temp.glade:31191
 msgid "Sort the images according to\n"
 "the canonical order of scripture."
-msgstr ""
+msgstr "Sortați imaginile în conformitate cu\n"
+"ordinea canonică a Scripturii."
 
 #: temp.glade:31206
 msgid "Frequency of Use"
-msgstr ""
+msgstr "Frecvența de utilizare"
 
 #: temp.glade:31210
 msgid "Sort the images based on how\n"
 "often other projects use them.\n"
 "The most popular illustrations\n"
 "appear at the top of the list."
-msgstr ""
+msgstr "Sortați imaginile în funcție de\n"
+"frecvența cu care alte proiecte le folosesc.\n"
+"Cele mai populare ilustrații\n"
+"apar în partea de sus a listei."
 
 #: temp.glade:31229
 msgid "Sort Images By:"
-msgstr ""
+msgstr "Sortează imaginile după:"
 
 #: temp.glade:31258
 msgid "Filter"
-msgstr ""
+msgstr "Filtru"
 
 #: temp.glade:31272
 msgid "Code"
-msgstr ""
+msgstr "Cod"
 
 #: temp.glade:31285
 msgid "Artist Name"
-msgstr ""
+msgstr "Numele artistului"
 
 #: temp.glade:31316
 msgid "Search + Update Images"
-msgstr ""
+msgstr "Căutare + Actualizare imagini"
 
 #: temp.glade:31344
 msgid "Filter for illustrations that can be\n"
 "used in Print/PDF publications. "
-msgstr ""
+msgstr "Filtrează pentru ilustrații care pot fi\n"
+"utilizate în publicații tipărite/PDF. "
 
 #: temp.glade:31363
 msgid "Filter for illustrations that can be\n"
 "used in mobile phone Apps. "
-msgstr ""
+msgstr "Filtru pentru ilustrații care pot fi\n"
+"utilizate în aplicații pentru telefoane mobile. "
 
 #: temp.glade:31381
 msgid "Filter for illustrations that can be\n"
 "used on websites. "
-msgstr ""
+msgstr "Filtrează pentru ilustrații care pot fi\n"
+"utilizate pe site-uri web. "
 
 #: temp.glade:31453
 msgid "Keywords:"
-msgstr ""
+msgstr "Cuvinte-cheie:"
 
 #: temp.glade:31464
 msgid "Note that if a reference only contains\n"
@@ -13510,47 +13961,51 @@ msgid "Note that if a reference only contains\n"
 "specific verse mentioned), then the\n"
 "illustration will be placed in the middle\n"
 "of the chapter."
-msgstr ""
+msgstr "Rețineți că, dacă o referință conține doar\n"
+"numărul cărții și al capitolului (fără a menționa vreun verset specific\n"
+"), atunci ilustrația\n"
+"va fi plasată în mijlocul\n"
+"capitolului."
 
 #: temp.glade:31470
 msgid "Reference:"
-msgstr ""
+msgstr "Referință:"
 
 #: temp.glade:31495
 msgid "shepherd, sheep, lamb, shoulder, carry"
-msgstr ""
+msgstr "cioban, oaie, miel, umăr, purta"
 
 #: temp.glade:31509
 msgid "MAT 12:15, LUK 22:7; ACT 8:3"
-msgstr ""
+msgstr "MAT 12:15, LUK 22:7; ACT 8:3"
 
 #: temp.glade:31524
 msgid "The shepherd carries a lamb."
-msgstr ""
+msgstr "Ciobanul poartă un miel."
 
 #: temp.glade:31538
 msgid "cn01234, David C Cook - NT"
-msgstr ""
+msgstr "cn01234, David C Cook - NT"
 
 #: temp.glade:31551
 msgid "ID, Artist:"
-msgstr ""
+msgstr "ID, Artist:"
 
 #: temp.glade:31627
 msgid "Clear Selection"
-msgstr ""
+msgstr "Ștergeți selecția"
 
 #: temp.glade:31665
 msgid "PTXprint: Import Settings Into Current Configuration..."
-msgstr ""
+msgstr "PTXprint: Importarea setărilor în configurația curentă..."
 
 #: temp.glade:31696
 msgid "RESET"
-msgstr ""
+msgstr "RESET"
 
 #: temp.glade:31697
 msgid "Reset the current Configuration's UI settings"
-msgstr ""
+msgstr "Resetarea setărilor UI ale configurației curente"
 
 #: temp.glade:31701
 msgid "Warning!\n"
@@ -13559,15 +14014,20 @@ msgid "Warning!\n"
 "their default values.\n\n"
 "Note that it will NOT reset the Style \n"
 "settings stored in the .sty files."
-msgstr ""
+msgstr "Atenție!\n"
+"Această operațiune va reseta TOATE setările UI \n"
+"pentru configurația curentă la\n"
+"valorile lor implicite.\n\n"
+"Rețineți că NU se vor reseta setările Style \n"
+"stocate în fișierele .sty."
 
 #: temp.glade:31795
 msgid "PDF file (with embedded settings) or ZIP archive file"
-msgstr ""
+msgstr "Fișier PDF (cu setări încorporate) sau arhivă ZIP"
 
 #: temp.glade:31796
 msgid "Import: From existing PDF file or ZIP archive"
-msgstr ""
+msgstr "Import: De la un fișier PDF existent sau o arhivă ZIP"
 
 #: temp.glade:31800
 msgid "It is possible to import settings from an\n"
@@ -13577,46 +14037,55 @@ msgid "It is possible to import settings from an\n"
 "on the Finishing tab).\n\n"
 "Importing from a PTXprint ZIP archive \n"
 "(created on the Help tab) is also possible."
-msgstr ""
+msgstr "Este posibil să importați setări dintr-un fișier PDF existent\n"
+"produs anterior\n"
+"de PTXprint. Dar acest lucru funcționează numai dacă setările\n"
+"sunt încorporate în PDF. (Acest lucru este activat\n"
+"în fila Finishing).\n\n"
+"De asemenea, este posibilă importarea dintr-o arhivă ZIP PTXprint \n"
+"(creată în fila Help)."
 
 #: temp.glade:31824
 msgid "A Previously Saved Configuration:"
-msgstr ""
+msgstr "O configurație salvată anterior:"
 
 #: temp.glade:31825
 msgid "Import: From Saved Configuration"
-msgstr ""
+msgstr "Import: Din configurația salvată"
 
 #: temp.glade:31845
 msgid "Import: Project name"
-msgstr ""
+msgstr "Import: Numele proiectului"
 
 #: temp.glade:31850 temp.glade:31896
 msgid "Select the project from which the\n"
 "settings will be imported."
-msgstr ""
+msgstr "Selectați proiectul din care vor fi importate setările\n"
+"."
 
 #: temp.glade:31872
 msgid "Import: Project configuration"
-msgstr ""
+msgstr "Import: Configurația proiectului"
 
 #: temp.glade:31876 temp.glade:31911
 msgid "Select a configuration from the\n"
 "selected project from which the\n"
 "settings will be imported."
-msgstr ""
+msgstr "Selectați o configurație din proiectul\n"
+"selectat din care vor fi importate setările\n"
+"."
 
 #: temp.glade:31899
 msgid "Project:"
-msgstr ""
+msgstr "Proiect:"
 
 #: temp.glade:31916
 msgid "Configuration:"
-msgstr ""
+msgstr "Configurație:"
 
 #: temp.glade:31927
 msgid "Select PDF to import settings from"
-msgstr ""
+msgstr "Selectați PDF pentru a importa setările din"
 
 #: temp.glade:31931
 msgid "Select either a PTXprint PDF or ZIP archive\n"
@@ -13624,71 +14093,79 @@ msgid "Select either a PTXprint PDF or ZIP archive\n"
 "Importing from a PDF will only work if the\n"
 "PDF contains the PTXprint configuration\n"
 "settings (as enabled on the Finishing tab)."
-msgstr ""
+msgstr "Selectați fie o arhivă PTXprint PDF, fie o arhivă ZIP\n"
+"din care să importați setările.\n\n"
+"Importul dintr-un PDF va funcționa numai dacă\n"
+"PDF conține setările de configurare PTXprint\n"
+"(așa cum sunt activate în fila Finishing)."
 
 #: temp.glade:31998
 msgid "Source of Settings"
-msgstr ""
+msgstr "Sursa de setări"
 
 #: temp.glade:32029
 msgid "Import Entire PicList \"as is\" (overwrite existing PicList)"
-msgstr ""
+msgstr "Importați întreaga listă de imagini \"ca atare\" (suprascrieți lista de imagini existentă)"
 
 #: temp.glade:32030
 msgid "Import: Entire PicList \"as is\" (overwrite existing PicList)"
-msgstr ""
+msgstr "Import: Întreaga listă de imagini \"ca atare\" (suprascrie lista de imagini existentă)"
 
 #: temp.glade:32048
 msgid "Import Elements of PicList (preserving existing PicList)"
-msgstr ""
+msgstr "Importarea elementelor din PicList (păstrând PicListul existent)"
 
 #: temp.glade:32049
 msgid "Import: Elements of PicList (preserving existing PicList)"
-msgstr ""
+msgstr "Import: Elemente din PicList (păstrând PicListul existent)"
 
 #: temp.glade:32076
 msgid "Captions"
-msgstr ""
+msgstr "Legende"
 
 #: temp.glade:32091
 msgid "Size, Position, Mirror, Rotation settings"
-msgstr ""
+msgstr "Setări de dimensiune, poziție, oglindă, rotație"
 
 #: temp.glade:32107
 msgid "Copyright Information"
-msgstr ""
+msgstr "Informații privind drepturile de autor"
 
 #: temp.glade:32185
 msgid "How to handle differences:"
-msgstr ""
+msgstr "Cum să gestionați diferențele:"
 
 #: temp.glade:32195
 msgid "Add Any New Pictures"
-msgstr ""
+msgstr "Adăugați imagini noi"
 
 #: temp.glade:32212
 msgid "Remove Any Old Pictures"
-msgstr ""
+msgstr "Îndepărtați orice imagini vechi"
 
 #: temp.glade:32268
 msgid "Enabling this option will import (overwrite) the page size, \n"
 "column-layout, margins, header and footer, and related settings."
-msgstr ""
+msgstr "Activarea acestei opțiuni va importa (suprascrie) dimensiunea paginii, \n"
+"structura coloanelor, marginile, antetul și subsolul și setările aferente."
 
 #: temp.glade:32316
 msgid "Enabling this option will import the major font and script settings, spacing and hyphenation\n"
 "settings. (Note: It will not alter any fonts that have been directly set within Styles.)"
-msgstr ""
+msgstr "Activarea acestei opțiuni va importa principalele setări de fonturi și scripturi, precum și setările de spațiere și cratimă\n"
+". (Notă: Nu va modifica fonturile care au fost setate direct în Styles)."
 
 #: temp.glade:32364
 msgid "This will selectively import any Styles which are different from the Default settings.\n"
 "This will also import styles from ptxprint-mods.sty, but not from custom.sty.\n"
 "You may also want to RESET the current configuration (see below) before importing styles."
-msgstr ""
+msgstr "Acest lucru va importa selectiv orice stiluri care sunt diferite de setările implicite.\n"
+"De asemenea, va importa stiluri din ptxprint-mods.sty, dar nu și din custom.sty.\n"
+"De asemenea, este posibil să doriți să resetați configurația curentă (a se vedea mai jos) înainte de a importa stiluri."
 
 #: temp.glade:32377
 msgid "Override ALL Style Settings"
-msgstr ""
+msgstr "Suprascrieți TOATE setările de stil"
 
 #: temp.glade:32381
 msgid "Normally only styles that have not been changed\n"
@@ -13696,49 +14173,55 @@ msgid "Normally only styles that have not been changed\n"
 "But if you require ALL styles to be updated\n"
 "regardless of whether they have already been\n"
 "modified locally, then enable this option."
-msgstr ""
+msgstr "În mod normal, vor fi importate numai stilurile care nu au fost modificate\n"
+"în configurația de primire.\n"
+"Dar dacă doriți ca TOATE stilurile să fie actualizate\n"
+", indiferent dacă au fost deja\n"
+"modificate la nivel local, activați această opțiune."
 
 #: temp.glade:32439
 msgid "Other settings can be imported as needed:"
-msgstr ""
+msgstr "Alte setări pot fi importate după cum este necesar:"
 
 #: temp.glade:32471
 msgid "Body Tab settings"
-msgstr ""
+msgstr "Setări ale filei Corp"
 
 #: temp.glade:32487
 msgid "Notes+Refs settings"
-msgstr ""
+msgstr "Setări Note+Referințe"
 
 #: temp.glade:32503
 msgid "Header+Footer settings"
-msgstr ""
+msgstr "Setări Header+Footer"
 
 #: temp.glade:32519
 msgid "Tabs+Borders settings"
-msgstr ""
+msgstr "Setări Tabs+Borders"
 
 #: temp.glade:32534
 msgid "Overwrite Front Matter"
-msgstr ""
+msgstr "Suprascrieți prima pagină"
 
 #: temp.glade:32549
 msgid "Advanced settings"
-msgstr ""
+msgstr "Setări avansate"
 
 #: temp.glade:32553
 msgid "This includes everything on the Advanced tab\n"
 "with the exception of Custom Script processing\n"
 "and Customized Styles (custom.sty)."
-msgstr ""
+msgstr "Aceasta include tot ceea ce se găsește în fila Advanced\n"
+", cu excepția procesării scripturilor personalizate\n"
+"și a stilurilor personalizate (custom.sty)."
 
 #: temp.glade:32579
 msgid "Cover settings"
-msgstr ""
+msgstr "Setări ale capacului"
 
 #: temp.glade:32595
 msgid "Front +Back Matter"
-msgstr ""
+msgstr "Materie față + spate"
 
 #: temp.glade:32671
 msgid "Select Books To Export to PDF"
@@ -13788,7 +14271,9 @@ msgstr "Click pentru a dezactiva toate cărţile."
 msgid "The FRT book in Paratext contains front matter\n"
 "for a publication. Visit the Peripherals page to\n"
 "set up front matter for this publication."
-msgstr ""
+msgstr "Cartea FRT din Paratext conține materialul de față\n"
+"pentru o publicație. Vizitați pagina Periferice pentru\n"
+"pentru a configura frontispiciul pentru această publicație."
 
 #: temp.glade:32893
 msgid "Why is FRT not listed?"
@@ -14405,12 +14890,13 @@ msgstr "Indicele Strong: Permiteți linii dezechilibrate"
 
 #: temp.glade:34792
 msgid "Notes"
-msgstr ""
+msgstr "Note"
 
 #: temp.glade:34796
 msgid "This is the Description field from the\n"
 "project's Biblical Terms renderings."
-msgstr ""
+msgstr "Acesta este câmpul Descriere din randările Termeni biblici ale proiectului\n"
+"."
 
 #: temp.glade:34835
 msgid "PTXprint: Add/Edit Style"
