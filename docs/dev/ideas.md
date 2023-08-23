@@ -12,11 +12,6 @@ Presumably this is something about deep nesting of code inside box definitions, 
 This is true for held objects (not outputting them in the current stream, but putting them into a global box
 used at shipout) or in-stream cases.
 
-### Cropping
-Hard cropping of xform objects means that they'll need to be
-defined in some other way, with the object 
-extending past the normal containing box.
-
 ----------------
 
 
