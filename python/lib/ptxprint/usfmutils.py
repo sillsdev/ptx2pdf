@@ -322,18 +322,18 @@ class Usfm:
                 a.extend(e_[:])
             return a
         res = []
-        if addzsetref:
-            for e in self.doc[0]:
-                if isinstance(e, sfm.Element) and e.name == 'h':
-                    bkname = str(e[0]).strip()
-                    break
-            else:
-                bkname = refranges[0].first.book
+#        if addzsetref:
+#            for e in self.doc[0]:
+#                if isinstance(e, sfm.Element) and e.name == 'h':
+#                    bkname = str(e[0]).strip()
+#                    break
+#            else:
+#                bkname = refranges[0].first.book
         for c in chaps:
             if addzsetref:
                 minref = min(refranges[r].first for r in c[1])
                 if minref.verse > 0:
-                    res.append(self.make_zsetref(minref, bkname, c[0][0].parent, c[0][0].pos))
+                    res.append(self.make_zsetref(minref, None, c[0][0].parent, c[0][0].pos))
             for chap in c[0]:
                 _g(res, (chap, c[1]))
         return res
