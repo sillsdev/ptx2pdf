@@ -522,7 +522,7 @@
 
 \x@\def\csname MS:zsetref\endcsname{%
   \get@ttribute{book}\ifx\attr@b\relax\else
-    \global\let\@book\attr@b
+    \x@\global\x@\let\csname book\g@tdstat\endcsname\attr@b
   \fi
   \get@ttribute{bkid}\ifx\attr@b\relax\else
     \global\let\id@@@\attr@b
