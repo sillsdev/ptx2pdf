@@ -43,7 +43,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 ;libcrypto-1_1-x64.dll,librsvg-2-2.dll,
 
 [InstallDelete]
-Type: files; Name: "{app}\xetex\*"
+Type: files; Name: "{app}\xetex\bin\*"
 
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
