@@ -66,7 +66,7 @@ Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Fl
 Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache,bin"
-Source: "xetex\bin\windows*"; DestDir: "{app}\xetex\bin"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "xetex\bin\windows\*"; DestDir: "{app}\xetex\bin\"; Flags: ignoreversion recursesubdirs createallsubdirs
 #include "AdwaitaIcons.txt"
 Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
 
