@@ -41,6 +41,10 @@ Name: "russian";    MessagesFile: "compiler:Languages\Russian.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 ;libcrypto-1_1-x64.dll,librsvg-2-2.dll,
+
+[InstallDelete]
+Type: filesandordirs; Name: "{app}\xetex"; Flags: recursesubdirs
+
 [Files]
 Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
