@@ -1,10 +1,21 @@
 PTXprint 2.3.37 Release Notes
-23 Aug 2023
+25 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.37 (23 Aug 2023)
+Bug fixes and Improvements in 2.3.38 (25 Aug 2023)
+
+  * Fix installer to handle new XeTeX directory structure
+  
+  * Add a DLL that fmtutil.exe needs (part of #894)
+  
+  * Don't use book= in zsetref since nobody ever wants the 
+    header to come from the scripture. (Famous last words?)
+  
+  * Minor updates to documentation and Crowdin synchronisation
+  
+Bug fixes and Improvements in 2.3.37 (23 Aug 2023)- withdrawn
 
   * Move away from some W32TeX file locations
   
@@ -22,7 +33,7 @@ Bug fixes and Improvements in 2.3.36 (21 Aug 2023)
   
   * Allow modification of book end rule (#892)
   
-Bug fixes and Improvements in 2.3.35 (17 Aug 2023)
+Bug fixes and Improvements in 2.3.35 (17 Aug 2023) - withdrawn
 
   * Try to eliminate SegFault due to issue with progress reporting (#888)
   
