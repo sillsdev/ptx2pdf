@@ -440,7 +440,7 @@
 
 \newif\ifble@dthisbar
 \def\@@sbar#1{%
-  \trace{e}{Starting side bar (\sb@rmarker) from \m@rker, \the\lastdepth}%
+  \trace{e}{Starting side bar (#1/\sb@rmarker) from \m@rker, \the\lastdepth}%
   \ble@dthisbarfalse
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
   \ifsk@pping \egroup 
@@ -459,7 +459,7 @@
   \ifnum\sb@numcuts>0
     \save@cutouts{esb}%
   \fi
-  \mcpush{\ss@Sbar}{\sb@rmarker}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
+  \mcpush{\ss@Sbar}{#1}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \edef\sb@rmarker{#1}%
     \let\m@rker\sb@rmarker
     \s@tsb@rwidth\inextendedtrue

@@ -2,6 +2,7 @@
 \h small test file
 \c 1
 \s This is a title
+\sr 1:1-5
 \p
 \v 1 This is normal text. There are 4 hook positions: before, start, end,
 after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
@@ -156,6 +157,6 @@ And we're back to the outer one again.
 \p This is the next paragraph.
 \p This is the next paragraph.
 \p This is the next paragraph.
-\p This is the next paragraph.
+\pr This is the next paragraph.
 \esbe
 
