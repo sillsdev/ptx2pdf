@@ -533,6 +533,29 @@ def getsign(b, v, a):
         r = "+" + r
     return r
 
+
+class Splash(Thread):
+    def __init__(self, window):
+        super(Splash, self).__init__()
+        logger.debug("Creating Splash")
+        self.window = window
+        self.window.set_position(Gtk.WindowPosition.CENTER)
+        self.window.set_default_size(400, 250)
+        self.window.connect('destroy', Gtk.main_quit)
+
+    def run(self):
+        logger.debug("Starting Splash")
+        GObject.threads_init()
+        self.window.set_auto_startup_notification(False)
+        self.window.show_all()
+        self.window.set_auto_startup_notification(True)
+        Gtk.main()
+
+    def destroy(self):
+        self.window.destroy()
+        logger.debug("Finishing Splash")
+
+
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -608,6 +631,14 @@ class GtkViewModel(ViewModel):
             # _ui_keepHidden.remove("tb_Cover")
             # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
+
+        if not self.args.quiet:
+            splashw = self.builder.get_object("w_splash")
+            self.splash = Splash(splashw)   # threads don't like being gced?
+            self.splash.start()
+        else:
+            self.splash = None
+
         self.isDisplay = True
         self.searchWidget = []
         self.painted = set()
@@ -697,26 +728,6 @@ class GtkViewModel(ViewModel):
         self.buf = []
         self.uneditedText = {}
         self.cursors = []
-        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
-            self.buf.append(GtkSource.Buffer())
-            self.cursors.append((0,0))
-            view = GtkSource.View.new_with_buffer(self.buf[i])
-            scroll = self.builder.get_object("scroll_" + k)
-            scroll.add(view)
-            self.fileViews.append((self.buf[i], view))
-            view.set_left_margin(8)
-            view.set_top_margin(6)
-            view.set_bottom_margin(24)  
-            view.set_show_line_numbers(True if i > 1 else False)
-            view.set_editable(False if i in [2,3,4] else True)
-            view.pageid = "scroll_"+k
-            view.connect("focus-out-event", self.onViewerLostFocus)
-            view.connect("focus-in-event", self.onViewerFocus)
-            if not i in [2,3,4]: # Ignore the uneditable views
-                # Set up signals to pick up any edits in the TextView window
-                for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
-                             "backspace", "cut-clipboard", "paste-clipboard"]:
-                    view.connect(evnt, self.onViewEdited) 
             
         if self.get("c_colophon") and self.get("txbf_colophon") == "":
             self.set("txbf_colophon", _defaultColophon)
@@ -724,6 +735,7 @@ class GtkViewModel(ViewModel):
         # Keep this tooltip safe for later
         self.frtMatterTooltip = self.builder.get_object("btn_infoViewEdit").get_tooltip_text()
 
+        logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
         self.styleEditor = StyleEditorView(self)
         self.pubvarlist = self.builder.get_object("ls_zvarList")
@@ -842,6 +854,36 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(o).set_sensitive(False)
         self.setPrintBtnStatus(1, _("No project set"))
         self.updateDialogTitle()
+
+        if self.splash is not None:
+            self.splash.destroy()
+#        try:
+#            self.splash.join()  #<--- This line is killing it
+#        except RuntimeError:
+#            pass        
+
+        logger.debug("Creating source views")
+        for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
+            self.buf.append(GtkSource.Buffer())
+            self.cursors.append((0,0))
+            view = GtkSource.View.new_with_buffer(self.buf[i])
+            scroll = self.builder.get_object("scroll_" + k)
+            scroll.add(view)
+            self.fileViews.append((self.buf[i], view))
+            view.set_left_margin(8)
+            view.set_top_margin(6)
+            view.set_bottom_margin(24)  
+            view.set_show_line_numbers(True if i > 1 else False)
+            view.set_editable(False if i in [2,3,4] else True)
+            view.pageid = "scroll_"+k
+            view.connect("focus-out-event", self.onViewerLostFocus)
+            view.connect("focus-in-event", self.onViewerFocus)
+            if not i in [2,3,4]: # Ignore the uneditable views
+                # Set up signals to pick up any edits in the TextView window
+                for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
+                             "backspace", "cut-clipboard", "paste-clipboard"]:
+                    view.connect(evnt, self.onViewEdited) 
+
         logger.debug("Setting project")
         if self.pendingPid is not None:
             self.set("fcb_project", self.pendingPid)
@@ -883,6 +925,7 @@ class GtkViewModel(ViewModel):
         tvfonts.set_model(lsfonts)
         self.setupTeXOptions()
         self.onUILevelChanged(None)
+
         logger.debug("Starting UI")
         try:
             Gtk.main()
