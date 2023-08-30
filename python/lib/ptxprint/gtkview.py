@@ -534,28 +534,6 @@ def getsign(b, v, a):
     return r
 
 
-class Splash(Thread):
-    def __init__(self, window):
-        super(Splash, self).__init__()
-        logger.debug("Creating Splash")
-        self.window = window
-        self.window.set_position(Gtk.WindowPosition.CENTER)
-        self.window.set_default_size(400, 250)
-        self.window.connect('destroy', Gtk.main_quit)
-
-    def run(self):
-        logger.debug("Starting Splash")
-        GObject.threads_init()
-        self.window.set_auto_startup_notification(False)
-        self.window.show_all()
-        self.window.set_auto_startup_notification(True)
-        Gtk.main()
-
-    def destroy(self):
-        self.window.destroy()
-        logger.debug("Finishing Splash")
-
-
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
@@ -574,6 +552,15 @@ class GtkViewModel(ViewModel):
                 windll.shcore.SetProcessDpiAwareness(2)  # DPI_AWARENESS_PER_MONITOR_AWARE
             except:
                 windll.user32.SetProcessDPIAware()  # Fallback for older Windows versions
+
+        if not self.args.quiet:
+            if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+                cmds = [os.path.join(sys._MEIPASS, 'runsplash'), os.path.join(pycodedir(), 'splash.glade')]
+            else:
+                cmds = [sys.executable, os.path.join(pycodedir(), "runsplash.py"), os.path.join(pycodedir(), "splash.glade")]
+            self.splash = subprocess.Popen(cmds)
+        else:
+            self.splash = None
 
         self._setup_css()
         self.radios = {}
@@ -622,8 +609,9 @@ class GtkViewModel(ViewModel):
                         self.allControls.append(nid)
                         if pre == "btn" and nid not in modelbtns:
                             self.btnControls.add(nid)
+        logger.debug("Loading glade")
         xml_text = et.tostring(tree.getroot(), encoding='unicode', method='xml')
-        self.builder = Gtk.Builder.new_from_string(xml_text, -1)
+        self.builder.add_from_string(xml_text)
         #    self.builder.set_translation_domain(APP)
         #    self.builder.add_from_file(gladefile)
         self.builder.connect_signals(self)
@@ -631,13 +619,6 @@ class GtkViewModel(ViewModel):
             # _ui_keepHidden.remove("tb_Cover")
             # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
-
-        if not self.args.quiet:
-            splashw = self.builder.get_object("w_splash")
-            self.splash = Splash(splashw)   # threads don't like being gced?
-            self.splash.start()
-        else:
-            self.splash = None
 
         self.isDisplay = True
         self.searchWidget = []
@@ -855,13 +836,6 @@ class GtkViewModel(ViewModel):
         self.setPrintBtnStatus(1, _("No project set"))
         self.updateDialogTitle()
 
-        if self.splash is not None:
-            self.splash.destroy()
-#        try:
-#            self.splash.join()  #<--- This line is killing it
-#        except RuntimeError:
-#            pass        
-
         logger.debug("Creating source views")
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
@@ -925,6 +899,9 @@ class GtkViewModel(ViewModel):
         tvfonts.set_model(lsfonts)
         self.setupTeXOptions()
         self.onUILevelChanged(None)
+
+        if self.splash is not None:
+            self.splash.terminate()
 
         logger.debug("Starting UI")
         try:

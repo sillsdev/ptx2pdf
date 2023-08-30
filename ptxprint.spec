@@ -52,7 +52,7 @@ if sys.platform in ("win32", "cygwin"):
 else:
     binaries = []
 
-a = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
+a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
              pathex =   ['python/lib'],
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
@@ -94,9 +94,9 @@ a = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
              noarchive = False)
-pyz = PYZ(a.pure, a.zipped_data)
-exe = EXE(pyz,
-          a.scripts,
+pyz1 = PYZ(a1.pure, a1.zipped_data)
+exe1 = EXE(pyz1,
+          a1.scripts,
           [],
           exclude_binaries=True,
           name='PTXprint',
@@ -110,10 +110,41 @@ exe = EXE(pyz,
           windowed=True,
           console = False,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
-coll = COLLECT(exe,
-               a.binaries,
-               a.zipfiles,
-               a.datas,
+
+a2 = Analysis(['python/lib/ptxprint/runsplash.py'],
+             pathex = ['python/lib'],
+             binaries = binaries,
+             datas = [('python/lib/ptxprint/splash.glade', 'ptxprint')],
+             hookspath = [],
+             runtime_hooks = [],
+             excludes = ['tkinter', 'scipy'],
+             win_no_prefer_redirects = False,
+             win_private_assemblies = False,
+             noarchive = False)
+pyz2 = PYZ(a2.pure, a2.zipped_data)
+exe2 = EXE(pyz2,
+          a2.scripts,
+          [],
+          exclude_binaries=True,
+          name='runsplash',
+          debug = False,
+          bootloader_ignore_signals = False,
+          strip = False,
+          upx = False,
+          onefile = False,
+          upx_exclude = ['tcl'],
+          runtime_tmpdir = None,
+          windowed=True,
+          console = False)
+
+coll = COLLECT(exe1,
+               a1.binaries,
+               a1.zipfiles,
+               a1.datas,
+               exe2,
+               a2.binaries,
+               a2.zipfiles,
+               a2.datas,
                strip=False,
                upx=True,
                upx_exclude=['tcl'],
