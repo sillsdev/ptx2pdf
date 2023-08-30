@@ -782,15 +782,34 @@
 %seems to come out to 9.5.  To account for kerning after the glyph width I set the text to a width 9.55
 \newdimen\ISBNfontdim
 \ISBNfontdim=10pt
+\newif\ifnoScaleAboveISBNtext\noScaleAboveISBNtextfalse
+
 \def\ISBNfont{Andika}
-\def\ISBN#1{\leavevmode\font\belowISBN="\ISBNfont" at \ISBNfontdim
-  \trace{m}{ISBN barcode for \attr@b}%
-  \bgroup\belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
-  %I don't assme the above will work exactly, so measure with a space and typeset with a \hfil.
-  \font\aboveISBN="\ISBNfont"  at 0.02\dimen0
-  \belowISBN\vbox{\lineskip=0.2ex \hbox{\hbox to 0.9em{}\hbox to 9.55em{\aboveISBN ISBN\hfil#1}}
-%\hbox{\hbox to 0.9em{}\vrule width 9.5em depth 1pt height 0pt}
-  \hbox{\expandafter\isbn#1--}}\egroup}
+\def\ISBN#1{\leavevmode
+  \bgroup\font\belowISBN="\ISBNfont" at \ISBNfontdim
+  %\trace{m}
+` \trace{m}{ISBN barcode for \attr@b, using \ISBNfont at \the\ISBNfontdim}%
+  \belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
+  %I don't assme the above will work exactly, so measure with a space and typeset with a some glue.
+  \edef\tmp{\the\dimexpr 0.02\dimen0\relax}%
+  \ifnoScaleAboveISBNtext
+    \edef\tmp{\ISBNfontdim}%
+  \else
+    \trace{m}{dimen0 is \the\dimen0, font will be at \tmp}%
+  \fi
+  \font\aboveISBN="\ISBNfont"  at \tmp \relax
+  %\trace{m}{dimen0 is \the\dimen0. AboveISBNfont is \tmp}%
+  \vbox{\lineskip=0.2ex \everypar={}%
+   %\message{here we go....}%
+   \hbox{\hbox to 0.9em{\hss}%
+      \aboveISBN \hbox to 9.55em{\hskip 0pt minus 0.5ex ISBN\hskip 0.3em plus 1fil minus 0.25em #1\hskip 0pt minus 0.5ex}}%
+   %\message{Drawing ISBN}%
+   \belowISBN
+   \hbox{\expandafter\isbn#1--}
+  }%
+  \egroup
+  %\message{ISBN done}%
+}
 
 
 %\zISBNbarcode accepts 2 options: height="normal/medium/short" and isbn
