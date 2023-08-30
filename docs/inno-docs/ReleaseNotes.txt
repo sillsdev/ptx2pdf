@@ -1,9 +1,21 @@
 PTXprint 2.3.38 Release Notes
-25 Aug 2023
+31 Aug 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.39 (31 Aug 2023)
+
+  * Re-introduce a simple splash screen while loading [ptxprint -q to disable]
+    (especially useful for new Paratext 9.4 users)
+  
+  * Make zfiga work on the cover (three letter book code = COV)
+  
+  * Have an initial font selected (#901)
+  
+  * Track down an odd font in a RTL (Nastiliq) project, and introduce
+    workaround \noScaleAboveISBNtexttrue to stop ISBN causing crash.
+  
 Bug fixes and Improvements in 2.3.38 (25 Aug 2023)
 
   * Fix installer to handle new XeTeX directory structure

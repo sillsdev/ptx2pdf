@@ -31,88 +31,85 @@ THE SOFTWARE.
   <!-- interface-description USFM typesetting -->
   <!-- interface-copyright SIL International -->
   <object class="GtkWindow" id="w_splash">
-    <property name="width_request">450</property>
-    <property name="height_request">270</property>
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
+    <property name="halign">start</property>
+    <property name="valign">start</property>
     <property name="title" translatable="yes">Welcome to PTXprint!</property>
     <property name="resizable">False</property>
-    <property name="window_position">center</property>
-    <property name="default_width">440</property>
-    <property name="default_height">250</property>
+    <property name="window-position">center</property>
+    <property name="default-width">440</property>
+    <property name="default-height">250</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="decorated">False</property>
     <property name="gravity">center</property>
     <child>
-      <placeholder/>
-    </child>
-    <child>
-      <object class="GtkBox">
+      <object class="GtkFrame">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="orientation">vertical</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">6</property>
+        <property name="margin-end">6</property>
+        <property name="margin-bottom">6</property>
+        <property name="label-xalign">0</property>
         <child>
-          <object class="GtkGrid">
+          <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="margin_left">15</property>
-            <property name="margin_right">15</property>
-            <property name="margin_top">4</property>
-            <property name="column_spacing">20</property>
+            <property name="can-focus">False</property>
+            <property name="halign">start</property>
+            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkLabel">
+              <!-- n-columns=2 n-rows=1 -->
+              <object class="GtkGrid">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="margin_right">21</property>
-                <property name="label" translatable="yes">Loading font list...
+                <property name="can-focus">False</property>
+                <property name="margin-left">15</property>
+                <property name="margin-right">15</property>
+                <property name="margin-start">20</property>
+                <property name="margin-end">20</property>
+                <property name="column-spacing">20</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="label">PTXprint (2.3.38)
 
-If you have enough time to read this message, 
-then you probably have too many fonts installed!
-
-Consider uninstalling those that are never used.</property>
+Loading...</property>
+                    <attributes>
+                      <attribute name="weight" value="normal"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="pixbuf">62859-open-book-icon(128).png</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
               </object>
               <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">1</property>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
               </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="halign">start</property>
-                <property name="label" translatable="yes">PTXprint (0.6.2 Beta)</property>
-                <attributes>
-                  <attribute name="weight" value="ultrabold"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="left_attach">1</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="can_focus">False</property>
-                <property name="pixbuf">62859-open-book-icon(128).png</property>
-              </object>
-              <packing>
-                <property name="left_attach">0</property>
-                <property name="top_attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <placeholder/>
             </child>
           </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
+        </child>
+        <child type="label">
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
         </child>
       </object>
     </child>
   </object>
 </interface>
-
