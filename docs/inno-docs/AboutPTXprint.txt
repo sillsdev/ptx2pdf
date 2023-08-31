@@ -4,7 +4,7 @@ PTXprint - AboutPTXprint.txt
 
 PTXprint is an easy-to-use program which harnesses the power of extended macros from PTX2PDF which is a XeTeX based macro package for typesetting USFM formatted (Paratext) scripture files. 
 
-PTXprint is available for both Linux and Windows from the main home page: https://software.sil.org/ptxprint/#downloads
+PTXprint is available for both Linux and Windows from the main home page: https://software.sil.org/ptxprint/download
 It is 64-bit software and will NOT run on 32-bit versions of Windows. It is recommended to be used with Paratext 8 (or later), but can also work even if Paratext is NOT installed. It is not (yet) part of the Paratext ecosystem, so does not get automatically updated. Please check the home page regularly for updated versions.
 
 There is a Scripture Software Community page dedicated to PTXprint (https://community.scripture.software.sil.org/c/ptxprint/27) where you can get assistance from other PTXprint users.
@@ -34,12 +34,14 @@ runs PTXprint, and output PDF files will be created in C:\Temp folder instead of
 "C:\Program Files\PTXprint\PTXprint.exe" -h
 will show the commandline usage parameters (as seen below)
  
-usage: ptxprint [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY] [-P]
-                [-b BOOKS] [-R RUNS] [-L LANG] [-m MACROS] [-l LOGGING]
-                [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]
-                [--nofontcache] [-A ACTION] [-D DEFINE] [--debug] [-C CAPTURE]
-                [-z EXTRAS]
-                [pid]
+usage: PTXprint.exe [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY]
+                    [-P] [-b BOOKS] [-Z ZIP] [-R RUNS] [-q] [-L LANG]
+                    [-n PORT] [-m MACROS] [-N] [-l LOGGING]
+                    [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]
+                    [--nofontcache] [-A ACTION] [-F DIFFFILE]
+                    [--diffpages DIFFPAGES] [-D DEFINE] [--debug] [-C CAPTURE]
+                    [-z EXTRAS] [-V PDFVERSION] [-I]
+                    [pid]
 
 positional arguments:
   pid                   Project id or full path to a ptxprint.cfg file
@@ -56,13 +58,17 @@ optional arguments:
                         Directory to store temporary files in
   -P, --print           Hits print
   -b BOOKS, --books BOOKS
-                        Space separated bookid list to set
+                        Reference list to print (as in Choose Books)
+  -Z ZIP, --zip ZIP     Unzip into project directory and delete at end
   -R RUNS, --runs RUNS  limit xetex runs
+  -q, --quiet           No splash screen. Limit output
   -L LANG, --lang LANG  Set UI language code
+  -n PORT, --port PORT  Listen on given port
   -m MACROS, --macros MACROS
                         Directory containing TeX macros (paratext2.tex)
+  -N, --nointernet      Disable all internet access
   -l LOGGING, --logging LOGGING
-                        Enable logging level [DEBUG, *INFO*, WARN, ERROR]
+                        Logging level [DEBUG, *INFO*, WARN, ERROR, number]
   --logfile LOGFILE     Set logging file [ptxprint.log] or "none"
   --timeout TIMEOUT     xetex runtime timeout
   -T, --testing         Run in testing, output xdv
@@ -71,9 +77,18 @@ optional arguments:
   --nofontcache         Don't use system fonts
   -A ACTION, --action ACTION
                         Run view method instead of print
+  -F DIFFFILE, --difffile DIFFFILE
+                        Create difference PDF against PDF file
+  --diffpages DIFFPAGES
+                        Maximum number of pages to insert in diff file
   -D DEFINE, --define DEFINE
                         set UI component=value. Repeatable
   --debug               Give debug output
+  -C CAPTURE, --capture CAPTURE
+                        Capture interaction events to file. Not to be used yet
   -z EXTRAS, --extras EXTRAS
-                        Special bit flags: 0 - verbose xdvipdfmx call
-  
+                        Special bit flags: 0-3 - verbosity of xdvipdfmx
+  -V PDFVERSION, --pdfversion PDFVERSION
+                        PDF Version to read and write * 10 (default=14)
+  -I, --identify        add widget names to tooltips
+

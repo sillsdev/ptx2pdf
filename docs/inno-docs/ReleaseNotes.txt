@@ -1,8 +1,14 @@
 PTXprint 2.3.39 Release Notes
-31 Aug 2023
+1 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.40 (1 Sep 2023)
+
+  * Solve overwriting issue with small ISBN barcodes
+  
+  * Refactor runsplash to find images in pyinstaller build
 
 Bug fixes and Improvements in 2.3.39 (31 Aug 2023)
 
