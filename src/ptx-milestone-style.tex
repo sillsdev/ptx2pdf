@@ -799,7 +799,7 @@
   \fi
   \font\aboveISBN="\ISBNfont"  at \tmp \relax
   %\trace{m}{dimen0 is \the\dimen0. AboveISBNfont is \tmp}%
-  \vbox{\lineskip=0.2ex \everypar={}%
+  \vbox{\lineskip=0.2ex \lineskiplimit=0pt \everypar={}%
    %\message{here we go....}%
    \hbox{\hbox to 0.9em{\hss}%
       \aboveISBN \hbox to 9.55em{\hskip 0pt minus 0.5ex ISBN\hskip 0.3em plus 1fil minus 0.25em #1\hskip 0pt minus 0.5ex}}%
