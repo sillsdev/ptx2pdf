@@ -1,7 +1,8 @@
 \id TST Test file
 \h small test file
+\mt1 Test case 
 \c 1
-\s This is a title
+\s This is a title\f + \ft Footnote from title\f*
 \sr 1:1-5
 \p
 \v 1 This is normal text. There are 4 hook positions: before, start, end,
@@ -19,7 +20,7 @@ now inside a qt-s..qt-e block \nd*
 \cat inl\cat*
 \p This is an esb with 
 \p category "\showTheCategory"
-\p It is put inline\f + \ft hmm \f* 
+\p It is put inline\f + \ft Footnote from inline box \f* 
 \esbe
 
 \esb
@@ -146,7 +147,7 @@ formatting.
 \b
 
 \s Testing
-\p Can we really put a sidebar in a sidebar?
+\p Can we \testpoint really put a sidebar in a sidebar?
 \p
 \esb \cat inl\cat*
 \p This is the outer sidebar

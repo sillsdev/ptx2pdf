@@ -47,6 +47,11 @@
 %-cpar_testintro
 
 %+cpar_starttypes
+\def\chkintrobody{% What sort of paragraph is this?
+  \t@mpfalse\iftoplevelp@r\t@mptrue\fi\ift@plevel@utobox\t@mptrue\fi
+  \ift@mp\if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+}
+  
 % start title/intro/body, if not already in that mode, switching columns if needed
 \def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
   \t@mptrue
@@ -107,19 +112,23 @@
 \newif\ifhe@dings
 \newdimen\headingtopspace
 \newbox\he@dingbox
-\def\endhe@dings{\ifhe@dings\trace{h}{endhe@dings}%
+\def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
   \egroup \showbox\he@dingbox
    \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
   \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
-  \ifBoxHeadings
+  \ift@plevel@utobox
     \ifdim\dimexpr \ht\he@dingbox+ \dp\he@dingbox\relax>0pt 
       \box\he@dingbox
       \he@dingsfalse
+      \endlastp@rstyle{end\B@xtype}\penalty10000
       \@sbe
-    \else 
+      %\showlists
+      \let\B@xtype\empty
+      \t@plevel@utoboxfalse
+      \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
     \fi
   \else
     \ifdim\ht\he@dingbox>0pt 
@@ -130,6 +139,7 @@
   \unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
+  \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
 }
 \newif\iffirst@fterheading
@@ -259,6 +269,7 @@
    \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
      \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \penalty10023
    \fi\fi
    \cutoutcarryover 
  \fi
@@ -521,31 +532,43 @@
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}{\m@rker}%
+  \let\B@xtype\empty%
   \ifx\p@ram\t@tle
     \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
-    \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
+    \ift@tle\else
+      \ifhe@dings\endhe@dings\fi
+      \ifBoxTitle\iftoplevelp@r
+        \def\B@xtype{title}%
+      \fi\fi
+    \fi
     \iftoplevelp@r\st@rttitle\fi
     \global\he@dingstyletrue 
   \else\ifx\p@ram\s@ction                                                       %(1)
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
     \global\he@dingstyletrue
   \else\ifx\p@ram\oth@r
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
     \if@ntromarker\else\global\he@dingstyletrue\fi
   \else
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
   \fi\fi\fi                                                                     %(2)
-  \ifBoxHeadings
+  \ifBoxHeadings\iftoplevelp@r
     \ifhe@dingstyle\ifhe@dings\else
-      \trace{eh}{Starting headingsbox for \m@rker}%
-      \let\tmphb\m@rker
-      \@sb\cat headingsbox\cat*
-      \let\m@rker\tmphb
+      \ift@tle\else
+        \def\B@xtype{headings}%
+      \fi
     \fi\fi
-  \fi  
+  \fi\fi
+  \ifx\B@xtype\empty\else
+    \t@plevel@utoboxtrue
+    \trace{eh}{Starting \B@xtype box for \m@rker}%
+    \let\tmphb\m@rker
+    \x@\@sb\x@\cat\B@xtype box\cat*
+    \let\m@rker\tmphb
+  \fi
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
   \op@ninghooks{before}{\m@rker}{\styst@k}%

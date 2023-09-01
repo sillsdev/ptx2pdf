@@ -409,7 +409,9 @@
     \fi\fi
     \if h\tempc\relax\else% Don't store width for class h or class p sidebars, as they may appear full width or single column
       \if p\tempc\relax\else
-        \setsbp@ram{w@dth}{\the\dimen1}%
+        \if c\tempc\relax\else
+          \setsbp@ram{w@dth}{\the\dimen1}%
+        \fi
       \fi
     \fi
     \let\t@mploc\tempc % Will be overwriting tempc soon
@@ -1050,7 +1052,7 @@
           \d@figureFull\extchunkb@x
         \fi
         \ifx\picl@c\loc@Cut
-          \unskip\unskip
+          \ifinner\unskip\unskip\fi
           \d@figureCut\extchunkb@x
           %\showlists
           %\ifhmode |+\fi
