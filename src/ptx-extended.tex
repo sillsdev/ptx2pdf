@@ -948,6 +948,7 @@
     \ifx\c@tegory\DebugBorderCat \bgroup\def\@im{\the\interactionmode}\interactionmode=2 \showboxdepth=99\showboxbreadth=99\showbox\extchunkb@x
        \interactionmode=\@im \egroup 
     \fi
+    \getsbp@ram{firstindent}\ifx\cp@ram\relax\p@chshift=0pt\else\p@chshift=\cp@ram\IndentUnit\fi
     \let\sp@ceafter\empty
     \let\fstb@drtop=\relax
     \trace{e}{After border, chunk is  now \the\ht\extchunkb@x+\the\dp\extchunkb@x*\the\wd\extchunkb@x}%

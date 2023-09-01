@@ -128,7 +128,7 @@
     %WARNING: There must not be a space after the text(before \or / \else / \fi) or (re)-initialisation will break
     \edef\p@ramid{\ifcase\p@ramnumber UNK-0\or alt\or src\or size\or loc\or copy\or caption\or ref\or x-xetex\or mirror\or
         scale\or media\or pgpos\or x-credit\or x-creditpos\or
-        x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\else UNK-\the\p@ramnumber\fi}%
+        x-creditrot\or x-creditbox\or x-spacebeside\or x-spacebefore\or x-spaceafter\or x-edgeadjust\else UNK-\the\p@ramnumber\fi}%
   \fi
 }
 \newif\ifusfmthree \usfmthreefalse
@@ -818,6 +818,8 @@
   \setf@gval{\sp@cebeside}{spacebeside}{pt}{\DefaultSpaceBeside}% absolute value
   \setf@gval{\sp@cebefore}{spacebefore}{}{0}%  in \onel@neunit
   \setf@gval{\sp@ceafter}{spaceafter}{}{0}% in \onel@neunit
+  \setf@gval{\tmp}{edgeadjust}{}{0}% in same units as margins - \IndentUnit
+  \p@chshift=\tmp\IndentUnit
   \trace{g}{Figure \the\im@gecount\space size=\size@ption, scale=\sizem@ltiple, loc=\loc@ption \ifpicUsesIns, picins=\the\p@cins\fi, hsz=\the\hsize}%
   \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
   \setbox0=\vbox{%
@@ -1011,7 +1013,7 @@
 
 \def\@lignpic#1{%Align pic (or whatever) according to pic@lign
   \def\l@ftedge{\hss}\def\r@ghtedge{\hss}%
-  \ifx\pic@lign\@lignLeft\def\l@ftedge{}\fi
+  \ifx\pic@lign\@lignLeft\def\l@ftedge{\kern\p@chshift}\fi
   \ifx\pic@lign\@lignRight\def\r@ghtedge{}\fi
   \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
   \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
@@ -1194,8 +1196,10 @@
   \fi
   %\advance\dimen1 by \baselineskip
   \advance\dimen1 by \c@tskipfrac\baselineskip
-  \dimen2=\wd#1\advance\dimen2 by \sp@cebeside\relax\dimen3=\hs@ze \advance\dimen3 by -\dimen2
-  \ifdim\dimen3<5em\message{*** \w@tsit specification of \csname size@ption\endcsname \csname sizem@ltiple\endcsname (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
+  \dimen2=\wd#1\advance\dimen2 by \sp@cebeside\relax
+  \advance\dimen2 by \p@chshift
+  \dimen3=\hs@ze \advance\dimen3 by -\dimen2
+  \ifdim\dimen3<5em\message{** \w@tsit specification of \csname size@ption\endcsname \csname sizem@ltiple\endcsname (at \ch@pter:\v@rse) leaves \the\dimen3 \space for text. That's probably not enough.}\fi
   \raise@test{\dr@pthingid}%
   \ifx\t@str@ise\relax\else
     \advance\dimen1 by -\t@str@ise\baselineskip
@@ -1205,21 +1209,21 @@
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
     \edef\thing@side{L}%
-    \setbox#1\hbox to \hsize{\box#1\hss}%
+    \setbox#1\hbox to \hsize{\ifdim \p@chshift=0pt\else\kern\p@chshift\fi\box#1\hss}%
   \else
     \ifx\l@cspec\@lignRight
       \let\c@tcmd\rightcutout
       \edef\thing@side{R}%
-      \setbox#1\hbox to \hsize{\hss\box#1}%
+      \setbox#1\hbox to \hsize{\hss\box#1\ifdim \p@chshift=0pt\else\kern\p@chshift\fi}%
     \else
-      \message{*** Unknown cutout position \l@cspec, picture misplaced}%
+      \message{!! Unknown cutout position \l@cspec, picture misplaced}%
       \let\c@tcmd\rightcutout
       \edef\thing@side{R}%
       \setbox#1\hbox to \hsize{\hss\box#1\hss}%
     \fi
   \fi
   \delay@test{\dr@pthingid}%
-  \ifx\t@std@lay\relax \MSG{*** Cutout for picture \the\im@gecount, (\ifdiglot\dc@rref\else\c@rref\fi) re-run to generate \string\DelayedItem\space setting}%
+  \ifx\t@std@lay\relax \MSG{** Cutout for picture \the\im@gecount, (\ifdiglot\dc@rref\else\c@rref\fi) re-run to generate \string\DelayedItem\space setting}%
   \else\MSG{* Cutout for picture \the\im@gecount\space at \ifdiglot\dc@rref\else\c@rref\fi, delay is \t@std@lay}\fi
   %
   \ifx\t@std@lay\relax
@@ -1230,7 +1234,7 @@
   %\ifhmode 2|\fi
   \write@delayedthing{\dr@pthingid}{\the\tmpcount}{\the\dimen2}{\the\count255}{\c@tskip}{\thing@side}%
   \ifx\t@std@lay\relax
-    \MSG{*** Image in cutout at \ifdiglot\dc@rref\else\c@rref\fi, re-run to generate \string\DelayedItem\space settings}%
+    \MSG{** Image in cutout at \ifdiglot\dc@rref\else\c@rref\fi, re-run to generate \string\DelayedItem\space settings}%
   \else\fi
   \add@pending{\dr@pthingid}{\ifdiglot\dc@rref\else\c@rref\fi}{0}{\the\dimen2}{\the\count255}{\the\tmpcount}{\thing@side}%
   \ifx\gr@phic\w@tsit
@@ -1291,6 +1295,7 @@
 \newdimen\p@cinswid
 \newdimen\p@cwidth
 \newdimen\p@cheight
+\newdimen\p@chshift % Shift pic relative to an edge.
 \newdimen\otherinsht % In a diglot, an insert doesn't affect availht if it's smaller
 
 \newif\ifmorep@rams
