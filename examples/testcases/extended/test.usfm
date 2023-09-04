@@ -46,10 +46,10 @@ veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
 \v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? 
 \p
 \v 4
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
 \v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, 
@@ -128,7 +128,7 @@ This is a p paragraph of category "\showTheCategory" and is testing the appropri
 formatting.
 \m The end. Back to '\showTheCategory'
 
-\s Poetic line-breaks
+\s1 Poetic line-breaks
 \p The following lines show the effect of altering the NonJustifiedFill parameter:
 \m\bd Normal (0.25)\bd*
 

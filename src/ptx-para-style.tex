@@ -114,7 +114,7 @@
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
-  \egroup \showbox\he@dingbox
+  \egroup %\showbox\he@dingbox
    \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
@@ -142,6 +142,7 @@
   \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
 }
+\let\zendheadings\endhe@dings
 \newif\iffirst@fterheading
 %-cpar_endheadings
 
@@ -564,8 +565,12 @@
   \fi\fi
   \ifx\B@xtype\empty\else
     \t@plevel@utoboxtrue
-    \trace{eh}{Starting \B@xtype box for \m@rker}%
     \let\tmphb\m@rker
+    \testm@rkerexists{cat:\m@rker box|esb}%
+    \iftemp\let\B@xtype\m@rker
+      \trace{eh}{Style exists for \m@rker box}%
+    \fi
+    \trace{eh}{Starting \B@xtype box for \m@rker}%
     \x@\@sb\x@\cat\B@xtype box\cat*
     \let\m@rker\tmphb
   \fi
