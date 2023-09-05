@@ -733,8 +733,10 @@ class RunJob:
         logger.debug("diglot styfile is {}".format(info['diglot/ptxprintstyfile_']))
         info["document/piclistfile"] = ""
         if info.asBool("document/ifinclfigs"):
+            print("Gathering pictures...")
             self.printer.incrementProgress(stage="gp")
             self.picfiles = self.gatherIllustrations(info, jobs, self.args.paratext, digtexmodel=digtexmodel)
+            print("Finished gathering pictures...")
             # self.texfiles += self.gatherIllustrations(info, jobs, self.args.paratext)
         texfiledat = info.asTex(filedir=self.tmpdir, jobname=outfname.replace(".tex", ""), extra=extra, digtexmodel=digtexmodel)
         with open(os.path.join(self.tmpdir, outfname), "w", encoding="utf-8") as texf:
@@ -1013,10 +1015,10 @@ class RunJob:
         info["document/piclistfile"] = outfname
 
         if len(missingPics):
-            print(missingPics)
             missingPicList = ["{}".format(", ".join(list(set(missingPics))))]
             self.printer.set("l_missingPictureCount", _("({} Missing)").format(len(set(missingPics))))
             self.printer.set("l_missingPictureString", _("Missing Pictures: {}").format("\n".join(missingPicList)))
+            logger.debug("Missing Pictures: {}".format("\n".join(missingPicList)))
         else:
             self.printer.set("l_missingPictureCount", _("(0 Missing)"))
             self.printer.set("l_missingPictureString", "")
@@ -1069,9 +1071,9 @@ class RunJob:
         p = im.load()
         iw = im.size[0]
         ih = im.size[1]
-        if ratio is not None and iw/ih < ratio:
-            onlyRGBAimage = im.convert("RGBA")
-            newWidth = int(ih * ratio)
+        if ratio is not None and iw/ih < ratio or im.mode == "RGBA":
+            onlyRGBAimage = im.convert("RGBA") if im.mode != "RGBA" else im
+            newWidth = int(ih * ratio) if ratio is not None and iw/ih < ratio else iw
             compimg = Image.new("RGBA", (newWidth, ih), color=(255, 255, 255, 255))
             compimg.alpha_composite(onlyRGBAimage, (int((newWidth-iw)/2),0))
             iw = compimg.size[0]
@@ -1133,7 +1135,7 @@ class RunJob:
         # If either the source image is a TIF (or) the proportions aren't right for page dimensions 
         # then we first need to convert to a JPG and/or pad with which space on either side
         if cropme or (ratio is not None and iw/ih < ratio) \
-                  or os.path.splitext(srcpath)[1].lower().startswith(".tif"): # (.tif or .tiff)
+                  or os.path.splitext(srcpath)[1].lower() in (".tif", ".tiff", ".png"):
             tgtpath = os.path.splitext(tgtpath)[0]+".jpg"
             #try:
             self.convertToJPGandResize(ratio, srcpath, tgtpath, cropme)

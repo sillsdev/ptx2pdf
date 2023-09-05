@@ -551,6 +551,7 @@ class PicInfo(dict):
                 continue
             newk = filt(f['src']) if filt is not None else f['src']
             newfigs.setdefault(newk, []).append(k)
+        logger.debug(f"{newfigs=}")
         for srchdir in self.srchlist:
             if srchdir is None or not os.path.exists(srchdir):
                 continue
@@ -566,6 +567,7 @@ class PicInfo(dict):
                         continue
                     filepath = os.path.join(subdir, f)
                     nB = filt(f) if filt is not None else f
+                    logger.debug(f"{nB=} {nB in newfigs} {f=}")
                     if nB not in newfigs:
                         continue
                     for k in newfigs[nB]:

@@ -400,7 +400,7 @@ class PicList:
                         self.setPreview(None)
                 self.parent.updatePicChecks(val)       # only update checks if src exists
                 self.mask_media(currow)
-                if val != oldval: # New source implies new destination file
+                if True: # val != oldval: # New source implies new destination file
                     currow[_piclistfields.index('cleardest')] = True
             elif key == "size" and val != oldval: # Trigger a new copy of the image, since ratio may change
                 currow[_piclistfields.index('cleardest')] = True

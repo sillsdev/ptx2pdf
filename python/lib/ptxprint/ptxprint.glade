@@ -3133,8 +3133,9 @@ to be printed from the project.</property>
                             </child>
                             <child>
                               <object class="GtkRadioButton" id="r_book_multiple">
-                                <property name="label" translatable="yes">Choose Books:</property>
-                                <property name="name">Choose books selector</property>
+                                <property name="label" translatable="yes">Portions or
+Multi-book:</property>
+                                <property name="name">Choose books or enter ranges to print</property>
                                 <property name="width-request">98</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -3279,20 +3280,24 @@ Shortcut: Ctrl-B</property>
                                     <property name="name">Multiple books editable list entry</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
-                                    <property name="tooltip-text" translatable="yes">After selecting one or more books to be
-printed, the book codes will be listed here.
-This list is editable, so books can be re-ordered
-if need be.
-
-A list of references can also be entered manually
-for ranges of scripture to be printed. For example:
+                                    <property name="tooltip-text" translatable="yes">A list of references can be entered if printing less
+than an entire book or chapter, or if you need to
+include portions from several books. For example:
   JHN 2:1-12
   MRK 1-5
   PSA 23; 100; 117
   EXO 20:12-17 MAT 5:3-11
   GEN 1:1-2:3 PSA 23:1-end LUK 15:11-32 GLO
 
+If working on several books, use the Choose...
+button to select multiple books. For example:
+  LUK ACT GLO NDX
+prints Luke, Acts, Glossary and Names Index.
+The list is editable, so books can be re-ordered
+if need be (for example, for the Hebrew canon).
+
 Shortcut: Ctrl-B</property>
+                                    <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                     <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
                                   </object>
