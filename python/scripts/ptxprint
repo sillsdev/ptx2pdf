@@ -126,7 +126,7 @@ if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
 from ptxprint.font import initFontCache, cachepath, writefontsconf
 
-fontconfig_path = writefontsconf()
+fontconfig_path = writefontsconf(args.fontpath)
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
