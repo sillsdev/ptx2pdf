@@ -339,6 +339,7 @@ class PicInfo(dict):
                                                         if self.model is not None else 65001)
         else:
             inf = fname
+        logger.debug(f"{fname=} {suffix=}")
         for l in (x.strip() for x in inf.readlines()):
             if not len(l) or l.startswith("%"):
                 continue
@@ -354,6 +355,7 @@ class PicInfo(dict):
                 k = "{}{} {}".format(r[0][:3], s, r[1])
             else:
                 k = "{}{}".format(r[0], s)
+            logger.debug(f"REMOVE ME! {r=} {k=} {s=}")
             pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
             self[self.newkey(suffix)] = pic
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!
@@ -373,9 +375,9 @@ class PicInfo(dict):
         f = regex.match(r"\\fig.*?$", txt, regex.R|regex.S, endpos=m.start(0))
         if t:
             if f is None or t.start(0) > f.start(0):
-                res = (t.group(1).replace(" ", ""), "", "")
+                res = ("k." + t.group(1).replace(" ", ""), "", "")
             else:
-                res = (t.group(1).replace(" ", ""), "", "{:03d}".format(i+1))
+                res = ("k." + t.group(1).replace(" ", ""), "", "{:03d}".format(i+1))
         else:
             res = ("p", "", "{:03d}".format(i+1))
         return res
@@ -393,6 +395,8 @@ class PicInfo(dict):
                         a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
                     r = "{}{} {}{}{}".format(bk, suffix, *a)
                     pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
+                    if bk == 'GLO':
+                        pic.update(pgpos="p", scale="0.5")
                     key = self.newkey(suffix)
                     self[key] = pic
                     if b[1]:    # usfm 3
