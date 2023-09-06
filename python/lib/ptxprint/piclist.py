@@ -381,7 +381,7 @@ class PicInfo(dict):
         return res
 
     def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
-        logger.debug(f"Reading pics for {bk} + {suffix}")
+        # logger.debug(f"Reading pics for {bk} + {suffix}")
         for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
                   (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
             m = list(regex.finditer(b[0], txt))
@@ -567,7 +567,7 @@ class PicInfo(dict):
                         continue
                     filepath = os.path.join(subdir, f)
                     nB = filt(f) if filt is not None else f
-                    logger.debug(f"{nB=} {nB in newfigs} {f=}")
+                    # logger.debug(f"{nB=} {nB in newfigs} {f=}")
                     if nB not in newfigs:
                         continue
                     for k in newfigs[nB]:

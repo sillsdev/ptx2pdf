@@ -3134,7 +3134,7 @@ to be printed from the project.</property>
                             <child>
                               <object class="GtkRadioButton" id="r_book_multiple">
                                 <property name="label" translatable="yes">Portions or
-Multi-book:</property>
+Multiple Books:</property>
                                 <property name="name">Choose books or enter ranges to print</property>
                                 <property name="width-request">98</property>
                                 <property name="visible">True</property>
@@ -3296,8 +3296,12 @@ prints Luke, Acts, Glossary and Names Index.
 The list is editable, so books can be re-ordered
 if need be (for example, for the Hebrew canon).
 
+Note that verse ranges spanning multiple books
+are not permitted: For example, 
+  MAT 1:1-REV 22:21   does not work.
+
 Shortcut: Ctrl-B</property>
-                                    <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5</property>
+                                    <property name="placeholder-text" translatable="yes">e.g. GEN 1:1-2:3 JHN 1:1-5    or    LUK ACT GLO    or    GEN EXO LEV NUM DEU</property>
                                     <signal name="focus-out-event" handler="onBkLstFocusOutEvent" swapped="no"/>
                                     <signal name="key-press-event" handler="onBkLstKeyPressed" swapped="no"/>
                                   </object>

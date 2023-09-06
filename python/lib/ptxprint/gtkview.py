@@ -620,6 +620,7 @@ class GtkViewModel(ViewModel):
             # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
 
+        self.lastUpdatetime = time.time()
         self.isDisplay = True
         self.searchWidget = []
         self.painted = set()
@@ -4784,9 +4785,14 @@ class GtkViewModel(ViewModel):
                                "So that option has just been disabled."))
 
     def checkUpdates(self, background=True):
-        logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
+        if time.time() - self.lastUpdatetime < 900: # i.e. checked less than 15 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 15 mins since startup or last check")
+            return
+        else:
+            logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
+            self.lastUpdatetime = time.time()
         if sys.platform != "win32":
             return
         version = None
