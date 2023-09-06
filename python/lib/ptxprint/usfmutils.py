@@ -856,6 +856,8 @@ class Module:
             return []
         res = book.subdoc(ref, removes=removes, strippara=strippara, addzsetref=False)
         #zsetref = book.make_zsetref(ref.first, self.usfms.booknames.getLocalBook(ref.first.book, 1), res[0].parent, res[0].pos)
+        if not len(res):
+            return res
         zsetref = book.make_zsetref(ref.first, None, res[0].parent, res[0].pos)
         return [zsetref] + res
 
