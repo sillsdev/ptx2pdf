@@ -784,7 +784,7 @@ class TexModel:
         usfms = self.printer.get_usfms()
         try:
             mod = Module(infpath, usfms, self, usfm=usfm)
-            res = mod.parse()
+            res = mod.parse(self)
         except SyntaxError as e:
             return (None, e)
         if usfm is not None:

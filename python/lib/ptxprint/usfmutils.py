@@ -763,11 +763,11 @@ class Module:
         res = sreduce(_e, _t, self.doc.doc, books)
         return res
 
-    def parse(self):
+    def parse(self, model):
         if self.doc.doc is None:
             return []
         #self.removes = set()
-        self.removes = set((sum((e[0] for e in exclusionmap.values()), [])))
+        self.removes = set((sum((e[0] for e in exclusionmap.values() if e[1] is None or model[e[1]]), [])))
         final = sum(map(self.parse_element, self.doc.doc), [])
         return final
 
