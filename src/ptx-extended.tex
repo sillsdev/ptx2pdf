@@ -289,10 +289,10 @@
   \fi
   \ifx\pgn@\relax
     \whichp@ge=\pageno
-    \trace{e}{Sidebar \the\im@gecount may not be aligned properly}%
+    \trace{e}{Sidebar \the\im@gecount\space may not be aligned properly}%
   \else
     \whichp@ge=\pgn@
-    \trace{e}{Sidebar \the\im@gecount was on page \pgn@ last time. [\the\pageno]}%
+    \trace{e}{Sidebar \the\im@gecount\space was on page \pgn@ last time. [\the\pageno]}%
   \fi
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
@@ -318,6 +318,8 @@
     \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
+      \prepb@rderdims
+      \set@ref@dims
       \p@rsefigscale{fg}%
       \dimen0=\fgfig@dim@wd
       \edef\fgfigsp@c{\fgfigsp@c \fgfig@scale@wd}%
@@ -546,8 +548,13 @@
     \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
     \trace{e}{Set skips for #1 (\scale@ref) image to <\fig@lskip|\fig@rskip>}%
   \else
-    \x@\edef\x@\fig@lskip{\the\dimexpr -\csname @@text@ofs\endcsname \relax plus 1 fil}%
-    \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@text@ofs\endcsname \relax plus 1 fil}%
+    \ifcsname @@text@ofs\endcsname
+      \x@\edef\x@\fig@lskip{\the\dimexpr -\@@text@ofs\relax plus 1 fil}%
+      \x@\edef\x@\fig@rskip{\the\dimexpr \@@text@ofs\relax plus 1 fil}%
+    \else
+      \x@\edef\x@\fig@lskip{0pt plus 1 fil}%
+      \x@\edef\x@\fig@rskip{0pt plus 1 fil}%
+    \fi
     \trace{e}{Set skips for #1 (unknown:\scale@ref) image to <\fig@lskip|\fig@rskip>}%
   \fi
 }
@@ -618,6 +625,32 @@
 \newif\ifsb@rfillpage
 
 \def\figbleed{5pt}
+\def\set@ref@dims{%Set reference dimensions
+  \ifdim\wd\extb@x>0pt 
+    \edef\text@ref@w@dth{\the\wd\extb@x}%
+    \edef\inner@ref@w@dth{\the\wd\extb@x}%
+    \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
+  \else
+    \edef\text@ref@w@dth{\the\hsize}%
+    \edef\inner@ref@w@dth{\the\hsize}%
+    \edef\border@ref@w@dth{\the\dimexpr\hsize + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \hsize + \fb@lpadding + \fb@rpadding\relax}%
+  \fi
+  \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
+  \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
+  \edef\text@ref@rskip{0pt plus 1fil minus 1fil}%
+  % Fall back to text lskip/rskip for inner
+  \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
+  \def\@@text@ofs{0pt}%
+  \def\@@box@ofs{\fb@lpadding}%
+  \def\@@border@ofs{\b@dr@left@pad}%
+  \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
+  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
+  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
+  %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
+}
+
 \def\@@sbe{%The real meat of an esbe
    \getsbp@ram{posn}%
    \gdef\pic@lign{c}% How does the sidebar align within the box?
@@ -686,22 +719,7 @@
   \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
   \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
   \edef\fbble@d{\ifdim \bble@d > \figbleed \figbleed\else\bble@d\fi}%
-  \edef\text@ref@w@dth{\the\wd\extb@x}%
-  \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
-  \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
-  \edef\text@ref@rskip{0pt plus 1fil minus 1fil}%
-  % Fall back to text lskip/rskip for inner
-  \edef\inner@ref@w@dth{\the\wd\extb@x}%
-  \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
-  \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
-  \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
-  \def\@@text@ofs{0pt}%
-  \def\@@box@ofs{\fb@lpadding}%
-  \def\@@border@ofs{\b@dr@left@pad}%
-  \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
-  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
-  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
-  %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
+  \set@ref@dims
   \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
   \ifx\cp@ram\relax
     \let\sb@rheightspec\empty
