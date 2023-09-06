@@ -617,7 +617,7 @@ class ViewModel:
             self.readCopyrights()
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.picinfos = None
-            self.loadPics(mustLoad=False)
+            self.loadPics(mustLoad=False, force=True)
             pts = self._getPtSettings()
             if pts is not None:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
@@ -1234,20 +1234,20 @@ class ViewModel:
                                     "{}-{}.piclist".format(self.prjid, self.configName())))
         self.picChecksView.writeCfg(os.path.join(self.settings_dir, self.prjid), self.configName())
 
-    def loadPics(self, mustLoad=True, fromdata=True):
+    def loadPics(self, mustLoad=True, fromdata=True, force=False):
         if self.loadingConfig:
             return
         if self.picinfos is None:
             self.picinfos = PicInfo(self)
-        else:
-            self.savePics(fromdata=fromdata)
+        elif force:
+#            self.savePics(fromdata=fromdata)
             self.picinfos.clear(self)
         if not self.get("c_includeillustrations"):
             return
         if self.diglotView is None:
-            res = self.picinfos.load_files(self)
+            res = self.picinfos.load_files(self, force=force)
         else:
-            res = self.picinfos.load_files(self, suffix="B")
+            res = self.picinfos.load_files(self, suffix="B", force=force)
             self.diglotView.picinfos = self.picinfos
 #            digpicinfos = PicInfo(self.diglotView)
 #            if digpicinfos.load_files(self.diglotView, suffix="R"):
@@ -1258,7 +1258,8 @@ class ViewModel:
 #                elif mode == "sec":
 #                    self.picinfos.merge("R", "L", mergeCaptions=mrgCptn, nonMergedBooks=nonScriptureBooks)
         if res:
-            self.savePics(fromdata=fromdata)
+            pass
+#            self.savePics(fromdata=fromdata)
         elif mustLoad:
             self.onGeneratePicListClicked(None)
             

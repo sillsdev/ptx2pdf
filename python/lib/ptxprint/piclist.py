@@ -4,8 +4,7 @@ from threading import Thread
 import configparser
 import regex, re, logging
 import os, re, random, sys
-import logging
-import appdirs
+import appdirs, traceback
 
 logger = logging.getLogger(__name__)
 
@@ -212,7 +211,9 @@ class PicInfo(dict):
         self.loaded = False
         self.srchlist = []
 
-    def load_files(self, parent, suffix=""):
+    def load_files(self, parent, suffix="", force=False):
+        if self.loaded and not force:
+            return True
         if self.inthread:
             return False
         else:
@@ -339,7 +340,8 @@ class PicInfo(dict):
                                                         if self.model is not None else 65001)
         else:
             inf = fname
-        logger.debug(f"{fname=} {suffix=}")
+        logger.debug(f"{fname=} {suffix=} {self.loaded=}")
+        logger.debug("".join(traceback.format_stack()))
         for l in (x.strip() for x in inf.readlines()):
             if not len(l) or l.startswith("%"):
                 continue
@@ -355,7 +357,7 @@ class PicInfo(dict):
                 k = "{}{} {}".format(r[0][:3], s, r[1])
             else:
                 k = "{}{}".format(r[0], s)
-            logger.debug(f"REMOVE ME! {r=} {k=} {s=}")
+            #logger.debug(f"REMOVE ME! {r=} {k=} {s=}")
             pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
             self[self.newkey(suffix)] = pic
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!

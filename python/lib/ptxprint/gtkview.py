@@ -2369,8 +2369,8 @@ class GtkViewModel(ViewModel):
             self.picListView.updateinfo(self.picinfos)
         super().savePics(fromdata=fromdata, force=force)
 
-    def loadPics(self, mustLoad=True, fromdata=True):
-        super().loadPics(mustLoad=mustLoad, fromdata=fromdata)
+    def loadPics(self, mustLoad=True, fromdata=True, force=False):
+        super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
 
     def onSavePicListEdits(self, btn):
@@ -2505,7 +2505,7 @@ class GtkViewModel(ViewModel):
         pics = self.get("c_includeillustrations")
         self.colorTabs()
         if pics:
-            self.loadPics()
+            self.loadPics(force=False)
         else:
             self.picinfos.clear(self)
             self.picListView.clear()
@@ -3160,7 +3160,7 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
-        self.updateProjectSettings(None, saveCurrConfig=True, configName="Default")
+        self.updateProjectSettings(None, saveCurrConfig=True, configName=self.pendingConfig or "Default")
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
@@ -3797,7 +3797,7 @@ class GtkViewModel(ViewModel):
             self.setPrintBtnStatus(2)
             self.diglotView = None
         self.updateDialogTitle()
-        self.loadPics(mustLoad=False)
+        self.loadPics(mustLoad=False, force=True)
 
     def onDiglotSwitchClicked(self, btn):
         oprjid = None
@@ -3856,7 +3856,7 @@ class GtkViewModel(ViewModel):
         else:
             self.setPrintBtnStatus(2)
             self.diglotView = None
-        self.loadPics()
+        self.loadPics(force=True)
         self.updateDialogTitle()
         
     def onGenerateHyphenationListClicked(self, btn):
