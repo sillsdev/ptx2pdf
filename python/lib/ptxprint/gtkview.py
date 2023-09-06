@@ -1534,7 +1534,7 @@ class GtkViewModel(ViewModel):
     def onDeleteConfig(self, btn):
         cfg = self.get("t_savedConfig")
         delCfgPath = self.configPath(cfgname=cfg)
-        sec = None
+        sec = ""
         if cfg == 'Default':
             self.resetToInitValues()
             try:

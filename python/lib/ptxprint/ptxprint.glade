@@ -3136,7 +3136,7 @@ to be printed from the project.</property>
                                 <property name="label" translatable="yes">Portions or
 Multiple Books:</property>
                                 <property name="name">Choose books or enter ranges to print</property>
-                                <property name="width-request">98</property>
+                                <property name="width-request">110</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="receives-default">False</property>
@@ -3473,7 +3473,7 @@ be viewed or edited in Paratext.</property>
                                 <property name="column-spacing">6</property>
                                 <child>
                                   <object class="GtkLabel" id="l_cfgName">
-                                    <property name="width-request">118</property>
+                                    <property name="width-request">124</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Type a name for the current configuration
@@ -3527,7 +3527,7 @@ or other advanced file-based settings.</property>
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="l_notes">
-                                    <property name="width-request">80</property>
+                                    <property name="width-request">124</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Optional: Provide a description about the
@@ -3758,7 +3758,7 @@ configuration.</property>
                             <property name="column-spacing">6</property>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width-request">118</property>
+                                <property name="width-request">124</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
@@ -3816,7 +3816,7 @@ Paratext project settings.</property>
                             </child>
                             <child>
                               <object class="GtkLabel">
-                                <property name="width-request">80</property>
+                                <property name="width-request">124</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="halign">end</property>
