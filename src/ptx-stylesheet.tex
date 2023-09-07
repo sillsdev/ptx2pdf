@@ -1782,9 +1782,8 @@
 \newif\ifinptxfile
 \def\ptxfile#1{
  \message{ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi}%
- \ifdigl@tinuse\ifdiglot        
-   \seriesdiglotfalse
- \else
+ \seriesdiglotfalse % Set this so we know it's always valid
+ \ifdigl@tinuse\ifdiglot\else
    \seriesdiglottrue
  \fi\fi
  \preptxfile

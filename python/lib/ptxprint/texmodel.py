@@ -402,10 +402,10 @@ class TexModel:
             ratio = float(self.dict['document/diglotprifraction'])
             # print(f"{ratio=}")
             if ratio > 0.5:
-                lhfil = "\\hskip 0pt plus {}fil".format(f2s(ratio/(1-ratio)-1))
+                lhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s(ratio/(1-ratio)-1))
                 rhfil = ""
             else:
-                rhfil = "\\hskip 0pt plus {}fil".format(f2s((1-ratio)/ratio-1))
+                rhfil = "\\ifdiglot\\ifseriesdiglot\\else\\hskip 0pt plus {}fil\\fi\\fi".format(f2s((1-ratio)/ratio-1))
                 lhfil = ""
         self.dict['footer/oddcenter'] = t
         self.dict['footer/evencenter'] = t
