@@ -106,8 +106,6 @@
 % Headings are set into a box, so that they can be measured and adjusted for the grid
 %
 %+cpar_endheadings
-\newif\ifBoxHeadings
-\newif\ifBoxTitle
 \newif\ift@plevel@utobox
 \newif\ifhe@dings
 \newdimen\headingtopspace
@@ -538,7 +536,7 @@
     \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else
       \ifhe@dings\endhe@dings\fi
-      \ifBoxTitle\iftoplevelp@r
+      \iftoplevelp@r\t@stpublishability{cat:titlebox|esb}\ifn@npublishable\else
         \def\B@xtype{title}%
       \fi\fi
     \fi
@@ -556,13 +554,21 @@
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
     \chkintrobody
   \fi\fi\fi                                                                     %(2)
-  \ifBoxHeadings\iftoplevelp@r
-    \ifhe@dingstyle\ifhe@dings\else
+  \iftoplevelp@r\ifhe@dingstyle\ifhe@dings\else
       \ift@tle\else
-        \def\B@xtype{headings}%
+        \testm@rkerexists{cat:\m@rker box|esb}\iftemp
+          \t@stpublishability{cat:\m@rker box|esb}\ifn@npublishable\else
+            \let\B@xtype\m@rker
+          \fi
+        \else
+          \testm@rkerexists{cat:headingsbox|esb}\iftemp
+            \t@stpublishability{cat:headingsbox|esb}\ifn@npublishable\else
+              \def\B@xtype{headings}%
+            \fi
+          \fi
+        \fi
       \fi
-    \fi\fi
-  \fi\fi
+  \fi\fi\fi
   \ifx\B@xtype\empty\else
     \t@plevel@utoboxtrue
     \let\tmphb\m@rker
