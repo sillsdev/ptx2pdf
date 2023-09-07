@@ -397,7 +397,7 @@ class PicInfo(dict):
                     r = "{}{} {}{}{}".format(bk, suffix, *a)
                     pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
                     if bk == 'GLO':
-                        pic.update(pgpos="p", scale="0.5")
+                        pic.update(pgpos="p", scale="0.7")
                     key = self.newkey(suffix)
                     self[key] = pic
                     if b[1]:    # usfm 3

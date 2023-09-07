@@ -4794,8 +4794,8 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
-        if time.time() - self.lastUpdatetime < 900: # i.e. checked less than 15 mins ago
-            logger.debug("Check for updates didn't run as it hasn't been 15 mins since startup or last check")
+        if time.time() - self.lastUpdatetime < 1800: # i.e. checked less than 30 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 30 mins since startup or last check")
             return
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
