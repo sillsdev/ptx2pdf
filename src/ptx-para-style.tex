@@ -166,6 +166,7 @@
   \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
       \ifhmode\endgraf\lastdepth=\prevdepth\fi % Not sure why, but sometiems we get here in hmode
+      \edef\oldprevdepth{\the\prevdepth}%
       \prevdepth=0pt
       % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
       \setbox0=\vbox{\box#1}%
@@ -173,7 +174,7 @@
       \ifVisTraceExtra
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
       \fi
-	  \ift@tle\lastdepth=0pt \fi
+      \ift@tle\lastdepth=0pt \fi
       \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
       \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
@@ -189,6 +190,7 @@
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
       \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
+      \ifdim\oldprevdepth<0pt \prevdepth=\oldprevdepth\fi
   \fi
 }
 

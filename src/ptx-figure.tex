@@ -1154,7 +1154,7 @@
   \fi
   \trace{g}{cut skip is \c@tskip (\c@tskipfrac)}%
 }
-
+\newif\ifimmediatefigure \immediatefigurefalse
 \def\d@figureCut#1{% Expects: count255=number of lines gap, \c@tskip=delay
   \mkstr@t
   \dimen0=\ht#1%
@@ -1191,7 +1191,9 @@
   \else
      \trace{g}{Cutout for \dr@pthingid\space was in vertical mode. Setting slop to 0}%
      \setCutoutSlop{\dr@pthingid}{0}{0}%
-     \leavevmode %needed for keyterm-based figures, at least
+     \ifimmediatefigure\else 
+        \leavevmode %needed for keyterm-based figures, at least
+    \fi
      \tmpcount=0
   \fi
   %\advance\dimen1 by \baselineskip
@@ -1222,6 +1224,7 @@
       \setbox#1\hbox to \hsize{\hss\box#1\hss}%
     \fi
   \fi
+  \ifimmediatefigure\pl@cecutoutfigvmode{#1}{-0.8}\prevdepth=-1000pt\leavevmode\fi
   \delay@test{\dr@pthingid}%
   \ifx\t@std@lay\relax \MSG{** Cutout for picture \the\im@gecount, (\ifdiglot\dc@rref\else\c@rref\fi) re-run to generate \string\DelayedItem\space setting}%
   \else\MSG{* Cutout for picture \the\im@gecount\space at \ifdiglot\dc@rref\else\c@rref\fi, delay is \t@std@lay}\fi
@@ -1242,9 +1245,7 @@
   \else
     \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}}%
     \else
-        \vskip -1\baselineskip
-       % \vrule height 0pt depth 1pt width 10ex\kern-1pt
-        \vbox to 0pt{\box#1\vss}%
+      \ifimmediatefigure\else\pl@cecutoutfigvmode{#1}{-1}\fi%
     \fi
   \fi
   \run@pending
@@ -1256,6 +1257,12 @@
      %% \strut\vadjust pre{\box#1}%
       %\trace{g}{rightcutout \the\dimen2, \c@tskip, \the\count255}%\
   %\fi
+}
+\def\pl@cecutoutfigvmode#1#2{%
+       % \vrule height 0pt depth 1pt width 10ex\kern-1pt
+        \vbox to 0pt{
+          \vskip #2\baselineskip
+          \box#1\vss}%
 }
 %-cfig_dofigure_7
 

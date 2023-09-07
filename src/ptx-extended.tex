@@ -364,7 +364,7 @@
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
-          \prevdepth=1000pt % Ignore the presence of the figure
+          \prevdepth=-1000pt % Ignore the presence of the figure
           \let\w@tsit\gr@phic
           \def\w@tsit{graphicInSidebar}%
           \trace{e}{Cutout for esb category '\c@tegory' (\tempa\tempb) will be: \fgfigsp@c}%
@@ -391,7 +391,10 @@
             \advance\count255 by 1
             \trace{e}{Cutout should be \the\count255 lines}%
             \def\thisw@tsitslop{{0}{0}}%
-            \d@figureCut\this@pic\unvbox\voidb@x}%
+            \immediatefiguretrue
+            \d@figureCut\this@pic\unvbox\voidb@x
+            \immediatefigurefalse
+          }%
         \fi
       \fi
     \fi
@@ -464,7 +467,7 @@
     \mcpush{\ss@Para}{\if@ntro ip\else p\fi}%
     \textwidth=\hsize
     \sb@rchunkh@ight=\maxdimen
-    \prevdepth=1000pt
+    \prevdepth=-1000pt
     \c@th@@ks{\st@rtsb@r}%
 }
 \newdimen\sb@rchunkh@ight
@@ -493,6 +496,7 @@
   \fi\fi
   %\egroup\setbox\extb@x\vbox\bgroup
   \sb@rtopedge%\ifhmode\endgraf\fi
+  \prevdepth=-1000pt
   \trace{e}{sidebar really starting \the\hsize, \the\textwidth, \the\sb@rwidth}%
 }
 \newif\ifdoIntskip % Skip should be applied in the text area, not 
@@ -664,7 +668,9 @@
    \ifhmode\par\fi
    \ifx\sb@rbotedge\empty\else
      \ifdim\prevdepth<\baselineskip
-       \vskip-\prevdepth
+       \ifdim\prevdepth>0pt
+         \vskip-\prevdepth
+       \fi
      \fi
      \sb@rbotedge\ifhmode\endgraf\fi
    \fi
