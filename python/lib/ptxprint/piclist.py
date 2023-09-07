@@ -357,7 +357,6 @@ class PicInfo(dict):
                 k = "{}{} {}".format(r[0][:3], s, r[1])
             else:
                 k = "{}{}".format(r[0], s)
-            #logger.debug(f"REMOVE ME! {r=} {k=} {s=}")
             pic = {'anchor': k, 'caption': r[2] if len(r) > 2 else ""}
             self[self.newkey(suffix)] = pic
             if len(m) > 6: # must be USFM2, so|grab|all|the|different|pieces!

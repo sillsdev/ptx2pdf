@@ -153,7 +153,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-r_book_module btn_chooseBibleModule lb_bibleModule 
+r_book_module btn_chooseBibleModule lb_bibleModule btn_editModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
@@ -2356,10 +2356,10 @@ class GtkViewModel(ViewModel):
                 # m()
 
         if ty.startswith('comment'):
-            txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n\n"
+            txt = f"{ty[7:]} {codelet['Label']}\n{code_codelet}\n"
             buf.insert(cursor_iter, txt)
         else:
-            txt = f"{code_codelet}\n\n"
+            txt = f"{code_codelet}\n"
             buf.insert(cursor_iter, txt)
 
     def savePics(self, fromdata=False, force=False):
@@ -3401,6 +3401,13 @@ class GtkViewModel(ViewModel):
         self._editProcFile("PrintDraftChanges.txt", "prj")
         self._editProcFile("changes.txt", "cfg")
         self.onRefreshViewerTextClicked(None)
+        
+    def onEditModule(self, btn):
+        print(f"{self.moduleFile=} {self.builder.get_object('lb_bibleModule').get_label()=} ")
+        if self.moduleFile is not None:
+        
+            self._editProcFile(str(self.moduleFile), "prj")
+            self.onRefreshViewerTextClicked(None)
         
     def onEditModsTeX(self, btn):
         cfgname = self.configName()

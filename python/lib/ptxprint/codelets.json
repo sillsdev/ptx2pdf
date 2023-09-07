@@ -324,21 +324,33 @@
       "Insert": [
         {
           "Type": "comment#",
+          "Label": "Insert a page break",
+          "Description": "Insert a page break before the introductory outline. Note that you will have to translate the word 'Outline'.",
+          "CodeSnippet": "'(\\\\iot Outline)' > '\\\\pb\\r\\n\\1'"
+        },
+        {
+          "Type": "comment#",
           "Label": "Insert line break within Intro Outline",
           "Description": "Within the \\io1 line, break the line between 'some' and 'words'.",
           "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\LINESEP words'"
         },
         {
           "Type": "comment#",
-          "Label": "Insert a rule before \\iot",
-          "Description": "Insert a rule before the introductory outline. Note that you will have to translate the word 'Outline'.",
-          "CodeSnippet": "'(\\\\iot Outline)' > '\\\\pb\\r\\n\\1' "
-        },
-        {
-          "Type": "comment#",
           "Label": "Insert a rule before \\c 1 starts",
           "Description": "Insert a rule after the intro (for all books)",
           "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\*\\r\\n\\1 '"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert a shorter rule before any chapter starts",
+          "Description": "Insert a shorter and thinner rule before a chapter begins (for all books)",
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|width=\".3\" thick=\".5pt\"\\*\\r\\n\\1 '"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Insert an ornamental rule before any chapter starts",
+          "Description": "Insert an ornamental rule before a chapter begins (for all books)",
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -421,6 +433,49 @@
           "Label": "Change \\p to \\nb ",
           "Description": "No-break paragraph: Commonly used in cases where the previous paragraph spans the chapter boundary.",
           "CodeSnippet": "at JHN 16:0 ACT 8:0 1CO 11:0 2CO 2:0,6:0,7:0 COL 2:0,4:0 HEB 10:0 '\\\\p' > '\\\\nb'"
+        }
+      ]
+    },
+  ".sfm":
+    {
+      "Insert": [
+        {
+          "Type": "insert",
+          "Label": "Insert a side bar with Category",
+          "Description": "Insert a side bar with a category of 'People'",
+          "CodeSnippet": "\\esb \\cat People\\cat*\n\\p Place contents of Sidebar in here...\n\\esbe"
+        },
+        {
+          "Type": "insert",
+          "Label": "Insert a page break",
+          "Description": "Insert a page break.",
+          "CodeSnippet": "\\pb"
+        },
+        {
+          "Type": "insert",
+          "Label": "Insert a picture",
+          "Description": "Insert an illustration at a particular reference.",
+          "CodeSnippet": "\\fig Optional Caption for Picture|alt=\"Roman soldier\" src=\"ArmorOfGodDiagram.png\" size=\"col\" ref=\"6:14-18\"\\fig\\*"
+        }
+      ],
+      "Rules/Lines": [
+        {
+          "Type": "insert",
+          "Label": "Insert a simple rule",
+          "Description": "Insert a horizontal line (rule) across the page / column.",
+          "CodeSnippet": "\\pc \\zrule\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Insert a short, thin rule",
+          "Description": "Insert a short, thin rule.",
+          "CodeSnippet": "\\pc \\zrule|width=\".3\" thick=\".5pt\"\\*"
+        },
+        {
+          "Type": "insert",
+          "Label": "Insert an ornamental rule",
+          "Description": "Insert an ornamental rule",
+          "CodeSnippet": "\\pc \\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*"
         }
       ]
     },

@@ -39,12 +39,13 @@ def writefontsconf(extras, archivedir=None):
                 break
         else:
             dirs.append(os.path.abspath('fonts'))
-    for e in extras:
-        if e is None:
-            continue
-        abse = os.path.abspath(e)
-        if os.path.exists(abse):
-            dirs.append(abse)
+    if extras is not None:
+        for e in extras:
+            if e is None:
+                continue
+            abse = os.path.abspath(e)
+            if os.path.exists(abse):
+                dirs.append(abse)
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
     res = fontconfig_template.format(**inf)

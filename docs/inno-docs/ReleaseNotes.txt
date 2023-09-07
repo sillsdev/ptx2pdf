@@ -1,9 +1,29 @@
 PTXprint 2.3.40 Release Notes
-1 Sep 2023
+7 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.41 (7 Sep 2023)
+
+  * First attempt at Left/right adjustment of sidebars / figures (#903)
+  
+  * Fixed figure scaling issues for sidebar foreground images 
+  
+  * Fixed don't blow up in modules if a pulled in snippet is empty
+  
+  * Set module inclusions based on UI settings
+  
+  * Make sure check for updates doesn't run too often
+  
+  * Fixed missing k. from generated piclists for GLO entries
+  
+  * Fixed minimise piclist loading and don't save on load
+  
+  * Add -f fontpath to fonts.conf on run
+  
+  * Add button to edit module definition files within View/Editor tab
+  
 Bug fixes and Improvements in 2.3.40 (1 Sep 2023)
 
   * Solve overwriting issue with small ISBN barcodes
