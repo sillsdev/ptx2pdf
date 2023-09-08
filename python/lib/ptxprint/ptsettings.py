@@ -1,9 +1,11 @@
 import os, re
 import xml.etree.ElementTree as et
-import regex
+import regex, logging
 from ptxprint.utils import allbooks, books, bookcodes, chaps
 from ptxprint.unicode.UnicodeSets import flatten
 from ptxprint.reference import RefSeparators
+
+logger = logging.getLogger(__name__)
 
 ptrefsepvals = {
     'books': 'BookSequenceSeparator',
@@ -37,6 +39,7 @@ class ParatextSettings:
                 break
         else:
             self.inferValues()
+        logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
         path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
         if os.path.exists(path):
             self.read_bookNames(path)
@@ -138,9 +141,9 @@ class ParatextSettings:
         #self.dict['Copyright'] = ""
         self.dict['DefaultFont'] = ""
         self.dict['Encoding'] = 65001
-        self.calcbookspresent()
+        self.calcbookspresent(inferred=True)
 
-    def calcbookspresent(self):
+    def calcbookspresent(self, inferred=False):
         self.bookmap = {}
         booksfound = set()
         bookspresent = [0] * len(allbooks)
@@ -156,6 +159,8 @@ class ParatextSettings:
                     bookspresent[v-1] = 1
                     self.bookmap[k] = fname
                     booksfound.add(fname)
+            if not len(booksfound) and not inferred:     # buggy Settings.xml that doesn't fit the directory tree
+                self.inferValues()
         else:
             for f in os.listdir(path):
                 if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
