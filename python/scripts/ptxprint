@@ -158,6 +158,7 @@ else:
     if not os.path.exists(os.path.dirname(conffile)):
         os.makedirs(os.path.dirname(conffile))
     config.add_section("init")
+    config.add_section("projects")
 logging.debug("Loaded config")
 
 if args.lang is None:

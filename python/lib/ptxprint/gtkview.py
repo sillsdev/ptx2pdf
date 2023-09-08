@@ -1605,7 +1605,7 @@ class GtkViewModel(ViewModel):
 
     def updateSavedConfigList(self):
         self.configNoUpdate = True
-        currConf = self.get("ecb_savedConfig")
+        currConf = self.userconfig.get("projects", self.prjid, fallback=self.get("ecb_savedConfig"))
         self.cb_savedConfig.remove_all()
         savedConfigs = self.getConfigList(self.prjid)
         if len(savedConfigs):
@@ -3160,7 +3160,13 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
-        self.updateProjectSettings(None, saveCurrConfig=True, configName=self.pendingConfig or "Default")
+        cfgname = self.pendingConfig
+        prjid = self.get("fcb_project")
+        if not cfgname:
+            cfgname = self.userconfig.get('projects', prjid, fallback=None)
+        if not cfgname:
+            cfgname = "Default"
+        self.updateProjectSettings(prjid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
@@ -3205,6 +3211,9 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "project", self.prjid)
             if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
+                if not self.userconfig.has_section("projects"):
+                    self.userconfig.add_section("projects")
+                self.userconfig.set('projects', self.prjid, self.configId)
         books = self.getBooks()
         if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()
