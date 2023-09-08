@@ -16,6 +16,11 @@ fontconfig_template = """<?xml version="1.0"?>
     <include ignore_missing="yes">/etc/fonts/fonts.conf</include>
     <include ignore_missing="yes" prefix="xdg">fontconfig/conf.d</include>
     <include ignore_missing="yes" prefix="xdg">fontconfig/fonts.conf</include>
+    <selectfont>
+        <rejectfont>
+            <glob>*.woff</glob>
+        </rejectfont>
+    </selectfont>
 </fontconfig>
 """
 
@@ -130,6 +135,8 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
+                if path[:-4].lower() not in (".ttf", ".otf"):
+                    continue
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
                 else:
