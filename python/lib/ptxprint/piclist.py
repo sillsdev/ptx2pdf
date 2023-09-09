@@ -198,6 +198,11 @@ class PicInfo(dict):
         self.keycounter = 0
         self.mode = None
 
+    def copy(self):
+        res = PicInfo(self.model)
+        res.update({k:v.copy() for k, v in self.items()})
+        return res
+        
     def clear(self, model=None):
         super().clear()
         if model is not None:

@@ -996,11 +996,12 @@ class RunJob:
         missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".piclist"
-        for k, v in list(picinfos.items()):
+        localPicInfos = picinfos.copy()
+        for k, v in list(localPicInfos.items()):
             m = v.get('media', '')
             key = v.get('anchor', '')[:3]
             if m and 'p' not in m:
-                del picinfos[k]
+                del localPicInfos[k]
                 continue
             if t := v.get('caption', ''):
                 v['caption'] = runChanges(info.changes, key+'CAP', t)
@@ -1010,7 +1011,7 @@ class RunJob:
                 v['captionR'] = runChanges(digtexmodel.changes, key+'CAP', t)
             if digtexmodel and (t := v.get('refR', '')):
                 v['refR'] = runChanges(digtexmodel.changes, key+'REF', t)
-        picinfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        localPicInfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 
