@@ -134,7 +134,6 @@ messages = [
 # ptxfile #1 \ifdigl@tinuse \ifdiglot diglot \else monoglot in diglot doc \fi\else monoglot\fi
 # Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}
 
-
 # Compile all message patterns into a single regular expression
 message_regex = '|'.join(f'({pattern})' for _, pattern in messages)
 # print(message_regex)
@@ -165,7 +164,7 @@ def summarize_log_file(log_file_path):
 # Function to search for and summarize recent *ptxp.log files
 def search_and_summarize_recent_logs(root_folder):
     # Calculate the date one week ago from today
-    one_week_ago = datetime.datetime.now() - datetime.timedelta(days=365)
+    one_week_ago = datetime.datetime.now() - datetime.timedelta(days=7)
 
     for foldername, subfolders, filenames in os.walk(root_folder):
         for filename in filenames:
@@ -183,5 +182,4 @@ def search_and_summarize_recent_logs(root_folder):
 # Main program
 if __name__ == "__main__":
     root_folder = r"C:\My Paratext 9 Projects"
-    # root_folder = r"C:\Users\Mark\Downloads"
     search_and_summarize_recent_logs(root_folder)

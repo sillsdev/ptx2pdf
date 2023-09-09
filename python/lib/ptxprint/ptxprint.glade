@@ -25521,7 +25521,7 @@ an issue using this link.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">6</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -25540,7 +25540,7 @@ version before reporting an issue.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">5</property>
+                                    <property name="top-attach">6</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -25619,27 +25619,6 @@ file or the Changes.txt file as appropriate.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="l_createZipArchiveXtra">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">In order to keep the size of the file to a minimum
-you are encouraged to turn off features (pictures?)
-that don't affect the issue being reported.</property>
-                                    <property name="halign">end</property>
-                                    <property name="valign">start</property>
-                                    <property name="vexpand">True</property>
-                                    <property name="label" translatable="yes">For technical support, create an archive
-and send it to ptxprint_support@sil.org</property>
-                                    <property name="wrap">True</property>
-                                    <property name="xalign">1</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">0</property>
-                                    <property name="top-attach">10</property>
-                                    <property name="width">3</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="btn_createZipArchiveXtra">
                                     <property name="label" translatable="yes">Create Archive...</property>
                                     <property name="name">Create archive...</property>
@@ -25651,9 +25630,16 @@ and send it to ptxprint_support@sil.org</property>
 required to replicate this configuration.
 Useful for long-term archiving; but also
 used to access technical support.
+
+In order to keep the size of the file to a 
+minimum you are encouraged to turn 
+off features (pictures?) that don't affect
+the issue being reported.
+
 Examine the contents of the ZIPped 
-archive file before e-mailing it to:
-ptxprint_support@sil.org</property>
+archive file before e-mailing it to your
+organization's technical support team:
+ptxprint_support@&lt;your.org's.address&gt;</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-start">16</property>
@@ -25666,7 +25652,7 @@ ptxprint_support@sil.org</property>
                                 </child>
                                 <child>
                                   <object class="GtkLinkButton" id="lb_community">
-                                    <property name="label" translatable="yes">Get help from other PTXprint users</property>
+                                    <property name="label" translatable="yes">The PTXprint User Community</property>
                                     <property name="name">Link to PTXprint user community site</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -25679,7 +25665,7 @@ ptxprint_support@sil.org</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">6</property>
+                                    <property name="top-attach">5</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -25690,12 +25676,15 @@ ptxprint_support@sil.org</property>
                                     <property name="tooltip-text" translatable="yes">Scripture Software Community site where you can 
 interact with other PTXprint users and the developers.</property>
                                     <property name="halign">end</property>
-                                    <property name="label" translatable="yes">User Community:</property>
+                                    <property name="label" translatable="yes">Got a Question? Get Help and Support from:</property>
                                     <property name="justify">right</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                    </attributes>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">6</property>
+                                    <property name="top-attach">5</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -25830,6 +25819,9 @@ by deleting unneeded files.</property>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">10</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>

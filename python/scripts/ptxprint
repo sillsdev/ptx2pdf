@@ -146,10 +146,14 @@ conffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint_us
 config = configparser.ConfigParser(interpolation=None)
 if os.path.exists(conffile):
     config.read(conffile, encoding="utf-8")
-    if args.pid is None and config.has_option("init", "project"):
-        args.pid = config.get('init', 'project')
-        if args.config is None and config.has_option("init", "config"):
-            args.config = config.get('init', 'config')
+    if args.pid is None:
+        if config.has_option("init", "project"):
+            args.pid = config.get('init', 'project')
+            if args.config is None and config.has_option("init", "config"):
+                args.config = config.get('init', 'config')
+    else: # pid was specified
+        if args.config is None and config.has_option("projects", args.pid):
+            args.config = config.get("projects", args.pid)
     if not args.paratext and config.has_option("init", "paratext"):
         args.paratext = config.get("init", "paratext")
         if not os.path.exists(args.paratext):

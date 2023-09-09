@@ -177,7 +177,7 @@ fr_Footer l_ftrcenter ecb_ftrcenter
 tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders
 c_useCustomFolder btn_selectFigureFolder lb_selectFigureFolder
-l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra btn_deleteTempFiles btn_about
+l_homePage lb_homePage btn_createZipArchiveXtra btn_deleteTempFiles btn_about
 l_complexScript btn_scrsettings 
 rule_marginalVerses c_marginalverses l_marginVrsPosn fcb_marginVrsPosn l_columnShift s_columnShift
 fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapters l_glossaryMarkupStyle fcb_glossaryMarkupStyle
@@ -3160,12 +3160,8 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
-        cfgname = self.pendingConfig
         prjid = self.get("fcb_project")
-        if not cfgname:
-            cfgname = self.userconfig.get('projects', prjid, fallback=None)
-        if not cfgname:
-            cfgname = "Default"
+        cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
         self.updateProjectSettings(prjid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
