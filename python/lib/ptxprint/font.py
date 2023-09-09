@@ -135,7 +135,7 @@ class TTFontCache:
                 continue
             try:
                 (path, full) = f.strip().split(": ")
-                if path[:-4].lower() not in (".ttf", ".otf"):
+                if path[-4:].lower() not in (".ttf", ".otf"):
                     continue
                 if ":style=" in full:
                     (name, style) = full.split(':style=')
