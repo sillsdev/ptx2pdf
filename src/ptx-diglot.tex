@@ -1997,7 +1997,7 @@
 \def\@writep@ge{%
   \trace{d}{@writep@ge \the\pageno (\the\MaxPages)}%
   \ifnum\pageno>\MaxPages
-    \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\MaxPagesPerChunk) for this job)}%
+    \errmessage{Pagecount (\the\pageno) has exceeded \MaxPages (\the\MaxPages). This probably means something has gone wrong. (or you should increase MaxPages or MaxPagesPerChunk (\the\MaxPagesPerChunk) for this job)}%
   \fi
   \csname @start@writep@ge@\diglotlayout\endcsname
   \setdiglotN@rmal

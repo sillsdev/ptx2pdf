@@ -1,101 +1,114 @@
 import os, re, datetime
 
-# I = Info/Ignore
-# W = Warning
-# E = Error
+# Categories:
+#  I = Info/Ignore
+#  W = Warning
+#  E = Error
+
+# Responses (multiple values possible) Most likley problem first:
+#  R = Rerun and see if that fixes it.
+#  U = Fix usfm
+#  P = Fix piclist or relevant figure definition
+#  A = Fix Adjlist
+#  S = Fix stylesheet
+#  T = Contact programming team (TeX)
+#  Y = Contact programming team (python)
+#  E = Configuration environment (including ptxprint-mods.tex, file locations, etc)
+#  
+
 
 messages = [
-    ("W", r"Reached end of book without finding \\esbe\."),
-    ("W", r"Unable to find label for .+? Re-run or correct typo at/near .+"),
-    ("W", r"Unable to find reference for .+? Re-run or correct typo at/near .+"),
-    ("W", r"set@ht passed null value"),
-    ("W", r"dimension .+? does not exist"),
-    ("W", r"\*\* Probable typo: if.+? does not exist in side-specific switching"),
-    ("W", r"unknown style type .+"),
-    ("E", r"! ERROR! Improper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
-    ("E", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
-    ("E", r"Cannot continue"),
-    ("W", r"Cannot re-use undefined variable .+"),
-    ("E", r"Invalid key found when parsing .+? OrnamentScaleRef : '.+?' \(given: .+?\)"),
-    ("W", r"No room for data in QRcode versions till .+"),
-    ("E", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something has gone wrong\. \(or you should increase MaxPages or MaxPagesPerChunk \(\d+\) for this job\)"),
-    ("W", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
-    ("E", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
-    ("E", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
-    ("W", r"Table column overflow, reducing resolution"),
-    ("W", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
-    ("W", r"Did not use all pictures in list\. Waiting for .+"),
-    ("W", r'Paratext stylesheet \".+?\" not found'),
-    ("W", r"Abandoning ship with nothing on the page"),
-    ("E", r"\*\*\* .+? text called from inside footnote?!?"),
-    ("W", r"Warning! periph is set nonpublishable \(hidden\) in general\. This may be a mistake!"),
-    ("E", r"INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!"),
-    ("W", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
-    ("W", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
-    ("E", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
-    ("E", r"Number of bits does not correspond to the computed value"),
-    ("W", r"Image crop not supported"),
-    ("W", r"Expected rotate=.+? or similar in definition of picture .+"),
-    ("W", r"Eh? .+? called for .+? and empty parameter"),
-    ("W", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
-    ("W", r'Thumb tab contents \".+?\" too wide for tab width'),
-    ("E", r"Error in stylsheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
-    ("W", r"polyglotcolumn may not be called with an empty argument"),
-    ("E", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
-    ("E", r"Invalid syntax parsing .+? \(given: .+?\)"),
-    ("W", r"n\.b\. You can load optional plugins with \(some of\) .+? or .+?"),
-    ("W", r"Setting drop-cap size to .+"),
-    ("W", r"! Cover sidebar '.+?' is currently '.+?\. It must be Fcf or similar"),
-    ("E", r'! Parent style \".+?\" referenced for borders by \".+?  does not exist!'),
-    ("W", r"! Unknown borderstyle '.+?\. Known styles: .+?"),
-    ("W", r'! zornament milestone must have a valid pattern=\"\.\.\.\" set'),
-    ("W", r"!! Unknown cutout position .+?, picture misplaced"),
-    ("E", r"!!! EEK\. Internal error detected\. .+? met during trial, somewhere near .+?"),
-    ("E", r".+? is already a diglot column\. You can only define it as one once!"),
-    ("W", r"\*\*  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier"),
-    ("W", r"\*\* Only .+? pictures were used out of .+? defined\. Piclist may have errors or perhaps contain references for other books\. Unused references: .+"),
-    ("W", r"\*\*\* Figure .+? on page .+?, but previously seen on .+?\. Work-around is to move the anchor to a different verse or alter the size/placement\."),
-    ("E", r"\*\*\* Picture .+? wide in .+? space\.\s+Did you mean to use col, instead of span?"),
-    ("W", r"\*\*\* WARNING: Sidebar or colophon might not print on page \d+\. \(.+? high, and  page is .+?\)\."),
-    ("E", r"\+\+\+RARE CONDITION MET\. Maybe doing wrong thing on page \d+, debug posn .+?\. Toggle with NoMergeReflow.+"),
-    ("W", r"\+\+\+Uh oh\. Didn't expect this\. Now what? Discards .+? > topskip .+"),
-    ("E", r"Cannot define zero-size ornament .+? properly"),
-    ("W", r"Column deltas for book: .+"),
-    ("E", r"Could not interpret position .+? for .+?:.+"),
-    ("E", r"Could not parse Border .+"),
-    ("E", r"Could not understand / interpret position .+? for .+?:.+"),
-    ("W", r"Defining .+? as an additional polyglot column\."),
-    ("E", r"Double underline  for .+"),
-    ("E", r"EEK! Still in trial! on page \d+, somewhere near .+?\. Expect synchronisation and text loss"),
-    ("W", r"End-milestone of class '.+?', id '.+?' partially matched one or"),
-    ("W", r"Forcing page break"),
-    ("E", r"MISSING IMAGE: .+? ->"),
-    ("W", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
-    ("E", r"No space for text on page!"),
-    ("E", r"Not a PDF file, page=\.\.\. only supported on PDFs"),
-    ("W", r"Ornamental border: unrecognised control char '.+?'"),
-    ("W", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
-    ("W", r"Polyglot: layout across .+? pages"),
-    ("W", r'Reading Paratext stylesheet \".+?\" \(.+?\)\.\.\.'),
-    ("W", r"Rotating spine\s(anti clockwise|clockwise)"),
-    ("W", r"Setting .+? drop-cap size to .+"),
-    ("W", r"Setting up column-specific values for columns: .+"),
-    ("W", r"SkipMissingFigtrue: Missing figure .+? ignored\."),
-    ("I", r"Special penalty .+? is .+"),
-    ("W", r"Supplied scale reference for \(.+? esb\) .+? image \('.+?'\)  not recognised!"),
-    ("W", r"Trying to continue by breaking rules"),
-    ("E", r"UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near .+"),
-    ("W", r"Unable to make outline entry for .+?, no link-id field specified"),
-    ("W", r'Unexpected key .+?=.+?\. Expected key \"rotate\"'),
-    ("W", r'Unexpected value rotate=.+?\. Expected values \"edge\", \"binding\", \"odd\", or \"even\"'),
-    ("W", r'Unknown picture location \".+?\"'),
-    ("E", r"baseline set to 0pt EEK"),
-    ("W", r"pages attribute of zfillsignature must be supplied at the moment"),
-    ("W", r"starting table cat:.+? .+"),
-    ("W", r"unrecognised rule style '.+?' near .+"),
-    ("W", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
-    ("W", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
-    ("W", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
+    ("E","U", r"Reached end of book without finding \\esbe\."),
+    ("W","RU", r"Unable to find label for .+? Re-run or correct typo at/near .+"),
+    ("W","RU", r"Unable to find reference for .+? Re-run or correct typo at/near .+"),
+    ("W","T", r"set@ht passed null value"),
+    ("W","T", r"dimension .+? does not exist"),
+    ("W","T", r"\*\* Probable typo: if.+? does not exist in side-specific switching"),
+    ("W","SY", r"unknown style type .+"),
+    ("E","SUYT", r"! ERROR! Improper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
+    ("E","EY", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
+    ("E","U", r"Cannot continue"),
+    ("E","US", r"Cannot re-use undefined variable .+"),
+    ("E","S", r"Invalid key found when parsing .+? OrnamentScaleRef : '.+?' \(given: .+?\)"),
+    ("W","U", r"No room for data in QRcode versions till .+"),
+    ("E","UE", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something has gone wrong\. \(or you should increase MaxPages or MaxPagesPerChunk \(\d+\) for this job\)"),
+    ("W","UP", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
+    ("E","UY", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
+    ("E","U", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
+    ("I","U", r"Table column overflow, reducing resolution"),
+    ("W","S", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
+    ("W","UP", r"Did not use all pictures in list\. Waiting for .+"),
+    ("W","E", r'Paratext stylesheet \".+?\" not found'),
+    ("W","UT", r"Abandoning ship with nothing on the page"),
+    ("E","UY", r"\*\*\* .+?text called from inside footnote?!?"),
+    ("W","S", r"Warning! periph is set nonpublishable \(hidden\) in general\. This may be a mistake!"),
+    ("E","T", r"INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!"),
+    ("W","S", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
+    ("W","RUP", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
+    ("E","P", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
+    ("E","T", r"Number of bits does not correspond to the computed value"),
+    ("I","ST", r"Image crop not supported"),
+    ("W","P", r"Expected rotate=.+? or similar in definition of picture .+"),
+    ("W","T", r"Eh? .+? called for .+? and empty parameter"),
+    ("W","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
+    ("W","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
+    ("E","S", r"Error in stylesheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
+    ("E","UY", r"polyglotcolumn may not be called with an empty argument"),
+    ("W","S", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
+    ("E","S", r"Invalid syntax parsing .+? \(given: .+?\)"),
+    ("I","", r"n\.b\. You can load optional plugins with \(some of\) .+? or .+?"),
+    ("I","", r"Setting drop-cap size to .+"),
+    ("W","S", r"! Cover sidebar '.+?' is currently '.+?\. It must be Fcf or similar"),
+    ("W","S", r'! Parent style \".+?\" referenced for borders by \".+?  does not exist!'),
+    ("W","S", r"! Unknown borderstyle '.+?\. Known styles: .+?"),
+    ("E","U", r'! zornament milestone must have a valid pattern=\"\.\.\.\" set'),
+    ("W","US", r"!! Unknown cutout position .+?, picture misplaced"),
+    ("E","T", r"!!! EEK\. Internal error detected\. .+? met during trial, somewhere near .+?"),
+    ("E","EY", r".+? is already a diglot column\. You can only define it as one once!"),
+    ("W","T", r"\*\*  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier"),
+    ("I","PU", r"\*\* Only .+? pictures were used out of .+? defined\. Piclist may have errors or perhaps contain references for other books\. Unused references: .+"),
+    ("W","PU", r"\*\*\* Figure .+? on page .+?, but previously seen on .+?\. Work-around is to move the anchor to a different verse or alter the size/placement\."),
+    ("W","P", r"\*\*\* Picture .+? wide in .+? space\.\s+Did you mean to use col, instead of span?"),
+    ("W","U", r"\*\*\* WARNING: Sidebar or colophon might not print on page \d+\. \(.+? high, and  page is .+?\)\."),
+    ("E","ET", r"\+\+\+RARE CONDITION MET\. Maybe doing wrong thing on page \d+, debug posn .+?\. Toggle with NoMergeReflow.+"),
+    ("W","T", r"\+\+\+Uh oh\. Didn't expect this\. Now what? Discards .+? > topskip .+"),
+    ("W","ES", r"Cannot define zero-size ornament .+? properly"),
+    ("I","", r"Column deltas for book: .+"),
+    ("E","S", r"Could not interpret position .+? for .+?:.+"),
+    ("E","SU", r"Could not parse Border .+"),
+    ("E","ST", r"Could not understand / interpret position .+? for .+?:.+"),
+    ("I","", r"Defining .+? as an additional polyglot column\."),
+    ("I","", r"Double underline  for .+"),
+    ("E","T", r"EEK! Still in trial! on page \d+, somewhere near .+?\. Expect synchronisation and text loss"),
+    ("W","U", r"End-milestone of class '.+?', id '.+?' partially matched one or"),
+    ("I","UP", r"Forcing page break"),
+    ("W","PE", r"MISSING IMAGE: .+? ->"),
+    ("E","U", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
+    ("E","PU", r"No space for text on page!"),
+    ("E","P", r"Not a PDF file, page=\.\.\. only supported on PDFs"),
+    ("W","SU", r"Ornamental border: unrecognised control char '.+?'"),
+    ("I","S", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
+    ("I","", r"Polyglot: layout across .+? pages"),
+    ("I","", r'Reading Paratext stylesheet \".+?\" \(.+?\)\.\.\.'),
+    ("I","", r"Rotating spine\s(anti clockwise|clockwise)"),
+    ("I","", r"Setting .+? drop-cap size to .+"),
+    ("I","", r"Setting up column-specific values for columns: .+"),
+    ("I","", r"SkipMissingFigtrue: Missing figure .+? ignored\."),
+    ("I","", r"Special penalty .+? is .+"),
+    ("W","S", r"Supplied scale reference for \(.+? esb\) .+? image \('.+?'\)  not recognised!"),
+    ("W","PU", r"Trying to continue by breaking rules"),
+    ("E","PU", r"UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near .+"),
+    ("W","U", r"Unable to make outline entry for .+?, no link-id field specified"),
+    ("W","P", r'Unexpected key .+?=.+?\. Expected key \"rotate\"'),
+    ("W","P", r'Unexpected value rotate=.+?\. Expected values \"edge\", \"binding\", \"odd\", or \"even\"'),
+    ("W","P", r'Unknown picture location \".+?\"'),
+    ("W","ET", r"baseline set to 0pt EEK"),
+    ("W","U", r"pages attribute of zfillsignature must be supplied at the moment"),
+    ("I","", r"starting table cat:.+? .+"),
+    ("W","US", r"unrecognised rule style '.+?' near .+"),
+    ("W","U", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
+    ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
+    ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.
 
@@ -117,7 +130,7 @@ messages = [
 # Would use RaiseItem if: \string\setCutoutSlop{#1}{\the\numexpr -\@accept@djmin\relax}{\@accept@djmax}
 
 # Compile all message patterns into a single regular expression
-message_regex = '|'.join(f'({pattern})' for _, pattern in messages)
+message_regex = '|'.join(f'({pattern})' for _,_, pattern in messages)
 
 # Function to summarize issues in a log file
 def summarize_log_file(log_file_path):
@@ -133,7 +146,7 @@ def summarizeTexLog(logText):
     messageSummary = []
 
     # Iterate through the messages and check for matches
-    for i, (category, pattern) in enumerate(messages, start=1):
+    for i, (category, response, pattern) in enumerate(messages, start=1):
         # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
         matches = re.finditer(pattern, logText)
         for match in matches:
