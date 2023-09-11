@@ -2216,7 +2216,7 @@
   \ifnum\diglotDbgJoinboxes=\TRACEcount\showbox255\fi
   \x@\let\x@\destb@x\csname excess\c@rrdstat\endcsname
   \ifx\destb@x\relax
-    \errmessage{! ERROR! Impropper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
+    \errmessage{! ERROR! Improper state; '\c@rrdstat' should be 'L' 'R' or some other defined column. Maybe there was output before columns were set up?}%
   \fi
   \ifnum\outputpenalty=-10000 %User-pagebreak
     \x@\xdef\csname saved\c@rrdstat penalty\endcsname{\outputpenalty}%

@@ -3,8 +3,6 @@ import os, re, datetime
 # I = Info/Ignore
 # W = Warning
 # E = Error
-# L --- too long to match (needs to be shortened to match within 80 chars)
-# x     The line below each "L" has a shorter version which should match.
 
 messages = [
     ("W", r"Reached end of book without finding \\esbe\."),
@@ -14,31 +12,25 @@ messages = [
     ("W", r"dimension .+? does not exist"),
     ("W", r"\*\* Probable typo: if.+? does not exist in side-specific switching"),
     ("W", r"unknown style type .+"),
-  # ("L", r"! ERROR! Impropper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
-    ("E", r"! ERROR! Impropper state; '.+?' should be 'L' 'R' or some other defined column\."),
-  # ("L", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
-    ("L", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment "),
+    ("E", r"! ERROR! Improper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
+    ("E", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
     ("E", r"Cannot continue"),
     ("W", r"Cannot re-use undefined variable .+"),
     ("E", r"Invalid key found when parsing .+? OrnamentScaleRef : '.+?' \(given: .+?\)"),
     ("W", r"No room for data in QRcode versions till .+"),
-  # ("L", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something has gone wrong\. \(or you should increase MaxPages or MaxPagesPerChunk \(\d+\) for this job\)"),
-    ("E", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something"),
+    ("E", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something has gone wrong\. \(or you should increase MaxPages or MaxPagesPerChunk \(\d+\) for this job\)"),
     ("W", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
-    ("L", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
-  # ("L", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
+    ("E", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
     ("E", r"zglot must be followed by a sensible argument\. '.+?' Hasn't been specified"),
     ("W", r"Table column overflow, reducing resolution"),
-  # ("L", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
-    ("W", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\."),
+    ("W", r"\*\* .+? specification of .+? \(at \d+:\d+\) leaves .+? for text\. That's probably not enough\."),
     ("W", r"Did not use all pictures in list\. Waiting for .+"),
     ("W", r'Paratext stylesheet \".+?\" not found'),
     ("W", r"Abandoning ship with nothing on the page"),
     ("E", r"\*\*\* .+? text called from inside footnote?!?"),
     ("W", r"Warning! periph is set nonpublishable \(hidden\) in general\. This may be a mistake!"),
     ("E", r"INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!"),
-  # ("L", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
-    ("W", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes"),
+    ("W", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
     ("W", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
     ("E", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
     ("E", r"Number of bits does not correspond to the computed value"),
@@ -47,8 +39,7 @@ messages = [
     ("W", r"Eh? .+? called for .+? and empty parameter"),
     ("W", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
     ("W", r'Thumb tab contents \".+?\" too wide for tab width'),
-  # ("L", r"Error in stylsheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
-    ("E", r"Error in stylsheet: Stylesheet changed category from '.+?' to '.+?\'\."),
+    ("E", r"Error in stylsheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
     ("W", r"polyglotcolumn may not be called with an empty argument"),
     ("E", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
     ("E", r"Invalid syntax parsing .+? \(given: .+?\)"),
@@ -61,17 +52,12 @@ messages = [
     ("W", r"!! Unknown cutout position .+?, picture misplaced"),
     ("E", r"!!! EEK\. Internal error detected\. .+? met during trial, somewhere near .+?"),
     ("E", r".+? is already a diglot column\. You can only define it as one once!"),
-  # ("L", r"\*\*  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier"),
-    ("W", r"\*\*  WARNING: something has changed the text width in the sidebar to be larger"),
-  # ("L", r"\*\* Only .+? pictures were used out of .+? defined\. Piclist may have errors or perhaps contain references for other books\. Unused references: .+"),
-    ("W", r"\*\* Only .+? pictures were used out of .+? defined\. Piclist may have errors"),
-  # ("L", r"\*\*\* Figure .+? on page .+?, but previously seen on .+?\. Work-around is to move the anchor to a different verse or alter the size/placement\."),
-    ("W", r"\*\*\* Figure .+? on page .+?, but previously seen on .+?\. Work-around is to"),
+    ("W", r"\*\*  WARNING: something has changed the text width in the sidebar to be larger than the value calculated earlier"),
+    ("W", r"\*\* Only .+? pictures were used out of .+? defined\. Piclist may have errors or perhaps contain references for other books\. Unused references: .+"),
+    ("W", r"\*\*\* Figure .+? on page .+?, but previously seen on .+?\. Work-around is to move the anchor to a different verse or alter the size/placement\."),
     ("E", r"\*\*\* Picture .+? wide in .+? space\.\s+Did you mean to use col, instead of span?"),
-  # ("L", r"\*\*\* WARNING: Sidebar or colophon might not print on page \d+\. \(.+? high, and  page is .+?\)\."),
-    ("W", r"\*\*\* WARNING: Sidebar or colophon might not print on page \d+\. \(.+? high,"),
-  # ("L", r"\+\+\+RARE CONDITION MET\. Maybe doing wrong thing on page \d+, debug posn .+?\. Toggle with NoMergeReflow\ifNoMergeReflow (false|true)"),
-    ("E", r"\+\+\+RARE CONDITION MET\. Maybe doing wrong thing on page \d+, debug posn .+?\."),
+    ("W", r"\*\*\* WARNING: Sidebar or colophon might not print on page \d+\. \(.+? high, and  page is .+?\)\."),
+    ("E", r"\+\+\+RARE CONDITION MET\. Maybe doing wrong thing on page \d+, debug posn .+?\. Toggle with NoMergeReflow.+"),
     ("W", r"\+\+\+Uh oh\. Didn't expect this\. Now what? Discards .+? > topskip .+"),
     ("E", r"Cannot define zero-size ornament .+? properly"),
     ("W", r"Column deltas for book: .+"),
@@ -80,18 +66,15 @@ messages = [
     ("E", r"Could not understand / interpret position .+? for .+?:.+"),
     ("W", r"Defining .+? as an additional polyglot column\."),
     ("E", r"Double underline  for .+"),
-  # ("L", r"EEK! Still in trial! on page \d+, somewhere near .+?\. Expect synchronisation and text loss"),
-    ("E", r"EEK! Still in trial! on page \d+, somewhere near .+?\. Expect synchronisation"),
+    ("E", r"EEK! Still in trial! on page \d+, somewhere near .+?\. Expect synchronisation and text loss"),
     ("W", r"End-milestone of class '.+?', id '.+?' partially matched one or"),
     ("W", r"Forcing page break"),
     ("E", r"MISSING IMAGE: .+? ->"),
-  # ("L", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
-    ("W", r"Malformed input near .+?: periph called while there was a pending chapter"),
+    ("W", r"Malformed input near .+?: periph called while there was a pending chapter number \(.+?\)"),
     ("E", r"No space for text on page!"),
     ("E", r"Not a PDF file, page=\.\.\. only supported on PDFs"),
     ("W", r"Ornamental border: unrecognised control char '.+?'"),
-  # ("L", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
-    ("W", r"Paragraph font for .+? including a verse number claims it is taller"),
+    ("W", r"Paragraph font for .+? including a verse number claims it is taller \(.+?\) than baseline \(.+?\)"),
     ("W", r"Polyglot: layout across .+? pages"),
     ("W", r'Reading Paratext stylesheet \".+?\" \(.+?\)\.\.\.'),
     ("W", r"Rotating spine\s(anti clockwise|clockwise)"),
@@ -104,8 +87,7 @@ messages = [
     ("E", r"UNPRINTABLE PAGE CONTENTS! Image too big? Somewhere near .+"),
     ("W", r"Unable to make outline entry for .+?, no link-id field specified"),
     ("W", r'Unexpected key .+?=.+?\. Expected key \"rotate\"'),
-  # ("L", r'Unexpected value rotate=.+?\. Expected values \"edge\", \"binding\", \"odd\", or \"even\"'),
-    ("W", r'Unexpected value rotate=.+?\. Expected values .+'),
+    ("W", r'Unexpected value rotate=.+?\. Expected values \"edge\", \"binding\", \"odd\", or \"even\"'),
     ("W", r'Unknown picture location \".+?\"'),
     ("E", r"baseline set to 0pt EEK"),
     ("W", r"pages attribute of zfillsignature must be supplied at the moment"),
@@ -136,30 +118,31 @@ messages = [
 
 # Compile all message patterns into a single regular expression
 message_regex = '|'.join(f'({pattern})' for _, pattern in messages)
-# print(message_regex)
 
 # Function to summarize issues in a log file
 def summarize_log_file(log_file_path):
-    # Create dictionaries to count occurrences of each category
-    category_counts = {"I": 0, "W": 0, "E": 0}
-
     # Read the log file
     with open(log_file_path, 'r', encoding='utf-8') as log_file:
         log_contents = log_file.read()
+    summarizeTexLog(log_contents)
+
+# Function to summarize issues in the log text
+def summarizeTexLog(logText):
+    # Create dictionaries to count occurrences of each category
+    category_counts = {"I": 0, "W": 0, "E": 0}
+    messageSummary = []
 
     # Iterate through the messages and check for matches
     for i, (category, pattern) in enumerate(messages, start=1):
-        # print(pattern)
-        matches = re.finditer(pattern, log_contents)
+        # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
+        matches = re.finditer(pattern, logText)
         for match in matches:
             category_counts[category] += 1
             # print(f"{i}: Category: {category}, Matched Text: {match.group(0)}")
             if category in ["W", "E"]:
-                print(f"{category}: {match.group(0)}")
-    if category_counts['W'] + category_counts['E'] > 0:
-        # Print the summary line at the end of the log file
-        summary_line = f"Summary: I:{category_counts['I']} W:{category_counts['W']} E:{category_counts['E']} | {log_file_path}\n"
-        print(summary_line)
+                # print(f"{category}: {match.group(0)}")
+                messageSummary.append(f"{category}: {match.group(0)}")
+    return category_counts, messageSummary
 
 # Function to search for and summarize recent *ptxp.log files
 def search_and_summarize_recent_logs(root_folder):
@@ -179,7 +162,7 @@ def search_and_summarize_recent_logs(root_folder):
                     # print(f"\n-- {log_file_path}")
                     summarize_log_file(log_file_path)
 
-# Main program
+# Main program (if run from commandline)
 if __name__ == "__main__":
     root_folder = r"C:\My Paratext 9 Projects"
     search_and_summarize_recent_logs(root_folder)
