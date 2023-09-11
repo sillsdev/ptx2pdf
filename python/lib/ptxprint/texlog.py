@@ -1,21 +1,18 @@
 import os, re, datetime
 
-# Categories:
-#  I = Info/Ignore
-#  W = Warning
-#  E = Error
+categories = {"I": "Info", "W": "Warning", "E": "Error"}
 
-# Responses (multiple values possible) Most likley problem first:
-#  R = Rerun and see if that fixes it.
-#  U = Fix usfm
-#  P = Fix piclist or relevant figure definition
-#  A = Fix Adjlist
-#  S = Fix stylesheet
-#  T = Contact programming team (TeX)
-#  Y = Contact programming team (python)
-#  E = Configuration environment (including ptxprint-mods.tex, file locations, etc)
-#  
-
+# Note: Multiple response values are possible - with the most likley problem first:
+responses = {
+    "R": "Rerun and see if that fixes it.",
+    "U": "Fix usfm",
+    "P": "Fix piclist or relevant figure definition",
+    "A": "Fix Adjlist",
+    "S": "Fix stylesheet",
+    "T": "Contact programming team (TeX)",
+    "Y": "Contact programming team (python)",
+    "E": "Configuration environment (including ptxprint-mods.tex, file locations, etc)"
+}
 
 messages = [
     ("E","U", r"Reached end of book without finding \\esbe\."),
@@ -151,10 +148,12 @@ def summarizeTexLog(logText):
         matches = re.finditer(pattern, logText)
         for match in matches:
             category_counts[category] += 1
-            # print(f"{i}: Category: {category}, Matched Text: {match.group(0)}")
             if category in ["W", "E"]:
-                # print(f"{category}: {match.group(0)}")
-                messageSummary.append(f"{category}: {match.group(0)}")
+                messageSummary.append(f"{categories[category]}: {match.group(0)}")
+                for i, r in enumerate(response, start=1):
+                    if i == 1:
+                        messageSummary.append(f"  To fix it, try:")
+                    messageSummary.append(f"  {i}. {responses[r]}")
     return category_counts, messageSummary
 
 # Function to search for and summarize recent *ptxp.log files
