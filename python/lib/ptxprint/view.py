@@ -1268,7 +1268,8 @@ class ViewModel:
 
     def getPicRe(self):
         r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
-                + ")(\d+)([a-z]*)"
+                + ")(\d+)([^.]*)"
+        # print(f"PicRe = {r}")
         return r
 
     def getDraftFilename(self, bk, ext=".piclist"):
@@ -1803,7 +1804,7 @@ class ViewModel:
             zf.write(fpath, arcname="{}/shared/fonts/{}".format(self.prjid, os.path.basename(fpath)))
 
         # create a fontconfig
-        zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
+        zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(None, archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         logger.debug(texfiles)
         logger.debug(self.tempFiles)

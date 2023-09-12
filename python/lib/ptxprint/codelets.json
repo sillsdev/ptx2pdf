@@ -562,6 +562,12 @@
       "Tweaks": [
         {
           "Type": "comment%",
+          "Label": "Reset callers (for \\f and \\x) at start of each book",
+          "Description": "Reset the footnote and cross-reference callers at the start of every book.",
+          "CodeSnippet": "\\setbookhook{start}{all}{\\resetautonum{f}\\resetautonum{x}}"
+        },
+        {
+          "Type": "comment%",
           "Label": "Nudge chapter number down at specific \\nb chapters",
           "Description": "The Burmese digit 6 rises rather high and crashes into the previous line when an \\nb (no-break para) is used after a \\c chapter. This snippet demonstrates how to lower the \\nb chapter number by a smidgen for the given references (in this example: JHN 16, 2CO 6, HEB 6).",
           "CodeSnippet": "\\expandafter\\def\\csname raise-chapter.JHN16.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.2CO6.0\\endcsname{-0.3}\n\\expandafter\\def\\csname raise-chapter.HEB6.0\\endcsname{-0.3}"
