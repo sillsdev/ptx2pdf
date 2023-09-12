@@ -24,20 +24,33 @@ fontconfig_template = """<?xml version="1.0"?>
 </fontconfig>
 """
 
+fontconfig_template_nofc = """<?xml version="1.0"?>
+<fontconfig>
+    {fontsdirs}
+    <cachedir prefix="xdg">fontconfig</cachedir>
+</fontconfig>
+"""
+
 def writefontsconf(extras, archivedir=None):
     inf = {}
+    notpytest=0 # Set to 0 to avoid font-related xfails on  pytest (we hope)
     dirs = []
     if sys.platform.startswith("win") or archivedir is not None:
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
         dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
     if archivedir is not None or not sys.platform.startswith("win"):
-        dirs.append("/usr/share/fonts")
+        if (notpytest):
+          dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
     dirs.append("../../../shared/fonts")
     if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
-        for a in (['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']):
+        if notpytest:
+          testlist=[['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]      
+        else:
+          testlist=[]
+        for a in testlist:
             fpath = os.path.join(fdir, *a)
             if os.path.exists(fpath):
                 dirs.insert(0, os.path.abspath(fpath))
@@ -53,7 +66,10 @@ def writefontsconf(extras, archivedir=None):
                 dirs.append(abse)
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
-    res = fontconfig_template.format(**inf)
+    if notpytest:
+      res = fontconfig_template.format(**inf)
+    else:
+      res = fontconfig_template_nofc.format(**inf)
     if archivedir is not None:
         return res
     else:

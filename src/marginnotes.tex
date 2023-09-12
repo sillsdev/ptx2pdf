@@ -30,7 +30,7 @@
 % use or other dealings in this Software without prior written  
 % authorization from SIL International.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+\newif\ifm@rginalnotesw@rn
 \plugin@startif{marginalnotes}
 
 \def\@marginnote#1#2#3#4#5#6#7#8{%
@@ -44,11 +44,11 @@
 \def\@m@rginnote#1#2#3#4#5{%
 % #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
-  \dimen0=#4 sp \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
+  \dimen0=#4 sp \advance\dimen0 72.27pt \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
   \ifBindingGutter\ifodd #3\else\advance\dimen1 \BindingGutter\fi\fi
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%
-  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1}%
+  \trace{M}{defining marginnote-#1@#2:pageno = #3, xpos=\the\dimen0, col=\c@l, based on \the\dimen0 >\the\dimen1 (smf=\SideMarginFactor x\the\MarginUnit, tw=\the\textwidth, bg=\the\BindingGutter)}%
 }
 
 \def\pl@cemnote#1#2#3#4#5{%
@@ -94,7 +94,9 @@
 % #1 = vbox, #2 = reference, #3 = marker #4 = side
   \edef\p@s{#4}%
   \ifnum\c@rrentcols=1\edef\t@mpa{page}\else\edef\t@mpa{col}\fi
-  \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else\edef\p@geno{\the\pageno}\fi
+  \ifcsname marginnote-#2@#3:\t@mpa no\endcsname\edef\p@geno{\csname marginnote-#2@#3:\t@mpa no\endcsname}\else
+    \ifm@rginalnotesw@rn\else\MSG{*** marginnotes: no marginal note for #2-#3; re-run for accurate note positions}\global\m@rginalnotesw@rntrue\fi
+    \edef\p@geno{\the\pageno}\fi
   \ifx\p@s\@uter\ifodd\p@geno\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\else\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\fi
   \else\ifx\p@s\@nner\ifodd\p@geno\ifRTL\let\s@de\r@ght\else\let\s@de\l@ft\fi\else\ifRTL\let\s@de\l@ft\else\let\s@de\r@ght\fi\fi
   \else\ifx\p@s\relax\let\s@de\l@ft\else\let\s@de\p@s\fi\fi\fi
