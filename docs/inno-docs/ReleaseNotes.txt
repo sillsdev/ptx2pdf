@@ -1,8 +1,20 @@
 PTXprint 2.3.44 Release Notes
-9 Sep 2023
+13 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.3.45 (13 Sep 2023)
+
+  * Correct figonpage counting and recording for sidebars
+  
+  * Improve TeX log info/warnings/error reporting and suggestions
+  
+  * Add codelet
+  
+  * Add missing writefontsconf param
+  
+  * Tweak use of getPicRe to work with Python 3.11
 
 Bug fixes and Improvements in 2.3.44 (7 Sep 2023)
 
