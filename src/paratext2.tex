@@ -48,6 +48,16 @@
 \def\MSG{\immediate\write16 } % shorthand to write a message to the terminal
 \def\TRACE#1{}%\let\TRACE=\MSG % default - consume messages
 
+% Version .999992 (? or 3) changed pdfsavepos page position (+cur_h_offset) to use pdftex's definition (+473628)
+\def\XeTeXvcheck#1.#2\E{\message{This is xetex "#1" "#2"}\ifnum #2 > 999991
+    \global\let\adjustpdfXsavepos\empty\else
+    \gdef\adjustpdfXsavepos{\advance\dimen0 1in}%
+    \gdef\adjustpdfYsavepos{\advance\dimen1 1in}%
+  \fi
+}
+\x@\x@\x@\XeTeXvcheck\x@\the\x@\XeTeXversion\XeTeXrevision\E
+
+
 % This lot has to be early
 \newif\ifinn@te\inn@tefalse
 \newif\ifm@rksonpage % Try to keep track of marks, so we can kill them in end-sections. 

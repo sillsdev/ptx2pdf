@@ -44,7 +44,7 @@
 \def\@m@rginnote#1#2#3#4#5{%
 % #1 = reference, #2 = marker, #3 = pageno, #4 = xpos, #5 = ypos
   \x@\xdef\csname marginnote-#1@#2:pageno\endcsname{#3}%
-  \dimen0=#4 sp \advance\dimen0 72.27pt \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
+  \dimen0=#4 sp \adjustpdfXsavepos \dimen1=\dimexpr 0.5\textwidth + \SideMarginFactor\MarginUnit\relax
   \ifBindingGutter\ifodd #3\else\advance\dimen1 \BindingGutter\fi\fi
   \ifdim\dimen0 > \dimen1 \ifRTL\edef\c@l{0}\else\edef\c@l{1}\fi\else\ifRTL\edef\c@l{1}\else\edef\c@l{0}\fi\fi
   \x@\xdef\csname marginnote-#1@#2:colno\endcsname{\c@l}%

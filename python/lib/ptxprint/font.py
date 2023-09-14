@@ -33,7 +33,7 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 
 def writefontsconf(extras, archivedir=None):
     inf = {}
-    notpytest=0 # Set to 0 to avoid font-related xfails on  pytest (we hope)
+    notpytest=1 # Set to 0 to avoid font-related xfails on  pytest (we hope)
     dirs = []
     if sys.platform.startswith("win") or archivedir is not None:
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
