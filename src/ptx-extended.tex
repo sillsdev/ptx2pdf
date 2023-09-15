@@ -89,6 +89,7 @@
 \setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
 \setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
 \setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
+\setsbp@ram{sbargrid}{\gr@dorig}
 \S@tCat{}
 \let\c@tegory\empty
 \def\fb@dfltpad{1}%Default
@@ -1137,6 +1138,7 @@
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
+\def\SidebarGridding #1{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%
