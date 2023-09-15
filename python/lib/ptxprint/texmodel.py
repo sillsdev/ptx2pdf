@@ -1358,7 +1358,7 @@ class TexModel:
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
                 # Note that this will only pick up the first para of glossary entries
-                ge = re.findall(r"\\\S+ \\k (.+)\\k\* (.+?)\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"\\\S+ \\k (.+)\\k\*(.+?)\r?\n", dat) # Finds all glossary entries in GLO book
                 if ge is not None:
                     for g in ge:
                         gdefn = re.sub(r"\\xt (.+)\\xt\*", r"\1", g[1])
@@ -1383,10 +1383,10 @@ class TexModel:
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
-                ge = re.findall(r"\\\S+ \\k (.+?)\\k\* .+?\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"\\\S+ \\k (.+?)\\k\*.+?\r?\n", dat) # Finds all glossary entries in GLO book
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\* .+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), flags=regex.M), ""))
+            self.localChanges.append((None, regex.compile(r"\\\S+ \\k {}\\k\*.+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), flags=regex.M), ""))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
@@ -1422,7 +1422,7 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe()[4:] + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []

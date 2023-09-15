@@ -9,6 +9,7 @@ from ptxprint.ptsettings import ParatextSettings
 from ptxprint.view import ViewModel, VersionStr, refKey
 from ptxprint.font import getfontcache
 from ptxprint.usfmerge import usfmerge2
+from ptxprint.texlog import summarizeTexLog
 from ptxprint.utils import _, universalopen, print_traceback, coltoonemax, nonScriptureBooks, saferelpath, runChanges, convert2mm
 from ptxprint.pdf.fixcol import fixpdffile, compress, outpdf
 from ptxprint.pdf.pdfsig import make_signatures, buildPagesTree
@@ -440,11 +441,20 @@ class RunJob:
                 elif sys.platform == "linux":
                     subprocess.call(('xdg-open', startname))
 
-            if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
-                fname = os.path.join(self.tmpdir, pdfname.replace(".pdf", ".log"))
-                if os.path.exists(fname):
-                    with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
-                        log = logfile.read() # unlike other places, we *do* want the entire log file
+            fname = os.path.join(self.tmpdir, os.path.basename(pdfname).replace(".pdf", ".log"))
+            if os.path.exists(fname):
+                with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
+                    log = logfile.read()
+                smry, msgList = summarizeTexLog(log)
+                if smry["E"] + smry["W"] > 0:
+                    summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
+                    msgs = "\n".join(msgList)
+                    print("{}\n{}".format(summaryLine, msgs))
+                    self.printer.set("l_statusLine", summaryLine)
+                    with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
+                        logfile.write(f"\n{summaryLine}\n{msgs}")
+            
+                if not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
                     badpgs = re.findall(r'(?i)SOMETHING BAD HAPPENED on page (\d+)\.', "".join(log))
                     if len(badpgs):
                         print(_("Layout problems were encountered on page(s): ") + ", ".join(badpgs))
@@ -747,6 +757,7 @@ class RunJob:
         os.putenv("hyph_size", "65521")     # always run with maximum prime hyphenated words size (xetex is still tiny ~200MB resident)
         os.putenv("stack_size", "32768")    # extra input stack space (up from 5000)
         os.putenv("pool_size", "12500000")  # Double conventional pool size for big jobs (Full Bible with xrefs)
+        os.putenv("max_print_line","1000")  # Prevent log lines from annoyingly wrapping at 80 chars
         ptxmacrospath = os.path.abspath(self.macrosdir)
         if not os.path.exists(ptxmacrospath):
             ptxmacrospath = os.path.abspath(os.path.join(self.scriptsdir, "..", "..", "src"))
@@ -996,11 +1007,12 @@ class RunJob:
         missingPics = [v['src'] for v in picinfos.values() if v['anchor'][:3] in books and 'dest file' not in v and 'src' in v]
         res = [os.path.join("tmpPics", v['dest file']) for v in picinfos.values() if 'dest file' in v]
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".piclist"
-        for k, v in list(picinfos.items()):
+        localPicInfos = picinfos.copy()
+        for k, v in list(localPicInfos.items()):
             m = v.get('media', '')
             key = v.get('anchor', '')[:3]
             if m and 'p' not in m:
-                del picinfos[k]
+                del localPicInfos[k]
                 continue
             if t := v.get('caption', ''):
                 v['caption'] = runChanges(info.changes, key+'CAP', t)
@@ -1010,7 +1022,7 @@ class RunJob:
                 v['captionR'] = runChanges(digtexmodel.changes, key+'CAP', t)
             if digtexmodel and (t := v.get('refR', '')):
                 v['refR'] = runChanges(digtexmodel.changes, key+'REF', t)
-        picinfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
+        localPicInfos.out(os.path.join(self.tmpdir, outfname), bks=books, skipkey="disabled", usedest=True, media='p', checks=self.printer.picChecksView)
         res.append(outfname)
         info["document/piclistfile"] = outfname
 

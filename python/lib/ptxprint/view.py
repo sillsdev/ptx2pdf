@@ -31,8 +31,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.3.42"
-GitVersionStr = "2.3.42"
+VersionStr = "2.3.45"
+GitVersionStr = "2.3.45"
 ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -1268,7 +1268,7 @@ class ViewModel:
 
     def getPicRe(self):
         r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
-                + ")(\d+)([a-z]*)"
+                + ")(\d+)([^.]*)"
         return r
 
     def getDraftFilename(self, bk, ext=".piclist"):
@@ -1803,7 +1803,7 @@ class ViewModel:
             zf.write(fpath, arcname="{}/shared/fonts/{}".format(self.prjid, os.path.basename(fpath)))
 
         # create a fontconfig
-        zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(archivedir=True))
+        zf.writestr("{}/fonts.conf".format(self.prjid), writefontsconf(None, archivedir=True))
         scriptlines = ["#!/bin/sh", "cd local/ptxprint/{}".format(self.configName())]
         logger.debug(texfiles)
         logger.debug(self.tempFiles)

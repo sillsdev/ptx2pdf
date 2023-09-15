@@ -786,7 +786,8 @@
 
 \def\ISBNfont{Andika}
 \def\ISBN#1{\leavevmode
-  \bgroup\font\belowISBN="\ISBNfont" at \ISBNfontdim
+  \font\belowISBN="\ISBNfont" at \ISBNfontdim % Outside group so that it's accessible for prices
+  \bgroup
   %\trace{m}
 ` \trace{m}{ISBN barcode for \attr@b, using \ISBNfont at \the\ISBNfontdim}%
   \belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.

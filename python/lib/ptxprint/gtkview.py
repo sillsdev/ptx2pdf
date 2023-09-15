@@ -153,7 +153,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
-r_book_module btn_chooseBibleModule lb_bibleModule btn_editModule
+r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
 btn_deleteConfig l_notes t_configNotes t_invisiblePassword
@@ -177,7 +177,7 @@ fr_Footer l_ftrcenter ecb_ftrcenter
 tb_Pictures lb_Pictures
 c_includeillustrations tb_settings lb_settings fr_inclPictures gr_IllustrationOptions c_cropborders
 c_useCustomFolder btn_selectFigureFolder lb_selectFigureFolder
-l_homePage lb_homePage l_createZipArchiveXtra btn_createZipArchiveXtra btn_deleteTempFiles btn_about
+l_homePage lb_homePage btn_createZipArchiveXtra btn_deleteTempFiles btn_about
 l_complexScript btn_scrsettings 
 rule_marginalVerses c_marginalverses l_marginVrsPosn fcb_marginVrsPosn l_columnShift s_columnShift
 fr_layoutSpecialBooks l_showChaptersIn c_show1chBookNum c_showNonScriptureChapters l_glossaryMarkupStyle fcb_glossaryMarkupStyle
@@ -1605,7 +1605,7 @@ class GtkViewModel(ViewModel):
 
     def updateSavedConfigList(self):
         self.configNoUpdate = True
-        currConf = self.get("ecb_savedConfig")
+        currConf = self.userconfig.get("projects", self.prjid, fallback=self.get("ecb_savedConfig"))
         self.cb_savedConfig.remove_all()
         savedConfigs = self.getConfigList(self.prjid)
         if len(savedConfigs):
@@ -3160,7 +3160,9 @@ class GtkViewModel(ViewModel):
         lockBtn = self.builder.get_object("btn_lockunlock")
         # lockBtn.set_label("Lock")
         lockBtn.set_sensitive(False)
-        self.updateProjectSettings(None, saveCurrConfig=True, configName=self.pendingConfig or "Default")
+        prjid = self.get("fcb_project")
+        cfgname = self.pendingConfig or self.userconfig.get('projects', prjid, fallback="Default")
+        self.updateProjectSettings(prjid, saveCurrConfig=True, configName=cfgname)
         self.updateSavedConfigList()
         for o in _olst:
             self.builder.get_object(o).set_sensitive(True)
@@ -3205,6 +3207,9 @@ class GtkViewModel(ViewModel):
             self.userconfig.set("init", "project", self.prjid)
             if getattr(self, 'configId', None) is not None:
                 self.userconfig.set("init", "config", self.configId)
+                if not self.userconfig.has_section("projects"):
+                    self.userconfig.add_section("projects")
+                self.userconfig.set('projects', self.prjid, self.configId)
         books = self.getBooks()
         if self.get("r_book") in ("single", "multiple") and (books is None or not len(books)):
             books = self.getAllBooks()

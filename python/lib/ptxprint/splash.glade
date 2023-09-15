@@ -31,9 +31,11 @@ THE SOFTWARE.
   <!-- interface-description USFM typesetting -->
   <!-- interface-copyright SIL International -->
   <object class="GtkWindow" id="w_splash">
+    <property name="width-request">200</property>
+    <property name="height-request">100</property>
     <property name="can-focus">False</property>
-    <property name="halign">start</property>
-    <property name="valign">start</property>
+    <property name="hexpand">True</property>
+    <property name="vexpand">True</property>
     <property name="title" translatable="yes">Welcome to PTXprint!</property>
     <property name="resizable">False</property>
     <property name="window-position">center</property>
@@ -41,68 +43,84 @@ THE SOFTWARE.
     <property name="decorated">False</property>
     <property name="gravity">center</property>
     <child>
-      <object class="GtkFrame">
+      <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
-        <property name="halign">center</property>
-        <property name="valign">center</property>
-        <property name="margin-start">6</property>
-        <property name="margin-end">6</property>
-        <property name="margin-bottom">6</property>
-        <property name="label-xalign">0</property>
+        <property name="hexpand">True</property>
+        <property name="vexpand">True</property>
+        <property name="orientation">vertical</property>
         <child>
-          <!-- n-columns=2 n-rows=1 -->
-          <object class="GtkGrid">
+          <object class="GtkFrame">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-            <property name="margin-start">20</property>
-            <property name="margin-end">20</property>
-            <property name="column-spacing">20</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="hexpand">True</property>
+            <property name="vexpand">True</property>
+            <property name="label-xalign">0</property>
             <child>
+              <!-- n-columns=2 n-rows=1 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-start">20</property>
+                <property name="margin-end">20</property>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
+                <property name="column-spacing">20</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">center</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                    <property name="label">PTXprint (2.3.45)
+
+Loading...</property>
+                    <attributes>
+                      <attribute name="weight" value="normal"/>
+                    </attributes>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="app-paintable">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="pixbuf">62859-open-book-icon(128).png</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="label">
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">center</property>
-                <property name="margin-top">6</property>
-                <property name="margin-bottom">6</property>
-                <property name="label">PTXprint (2.3.42)
-
-Loading...</property>
-                <attributes>
-                  <attribute name="weight" value="normal"/>
-                </attributes>
+                <property name="hexpand">True</property>
+                <property name="vexpand">True</property>
               </object>
-              <packing>
-                <property name="left-attach">1</property>
-                <property name="top-attach">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkImage">
-                <property name="visible">True</property>
-                <property name="app-paintable">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">start</property>
-                <property name="valign">start</property>
-                <property name="pixbuf">62859-open-book-icon(128).png</property>
-              </object>
-              <packing>
-                <property name="left-attach">0</property>
-                <property name="top-attach">0</property>
-              </packing>
             </child>
           </object>
-        </child>
-        <child type="label">
-          <object class="GtkLabel">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="halign">start</property>
-            <property name="valign">start</property>
-          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
         </child>
       </object>
     </child>

@@ -1,10 +1,9 @@
 # How to set up the development environment for PTXprint on Windows
 
-1. Download and install InnoSetup from here: https://jrsoftware.org/download.php/is.exe
+1. [Optional:] Download and install InnoSetup from here: https://jrsoftware.org/download.php/is.exe
 2. Download and install MSYS2 from here:     https://www.msys2.org/ 
-Link to exe: https://github.com/msys2/msys2-installer/releases/download/2021-11-30/msys2-x86_64-20211130.exe
 
-When prompted, say 'NO' to starting the MYSYS2 console from the installer. 
+Uncheck the option to start the MYSYS2 console from the installer. 
 Instead, manually open the **MSYS2 MinGW x64** console app and then proceed with following steps.
 
 3. To update the package database and base packages:

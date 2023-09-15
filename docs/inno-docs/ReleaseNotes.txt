@@ -1,9 +1,47 @@
-PTXprint 2.3.42 Release Notes
-7 Sep 2023
+PTXprint 2.3.45 Release Notes
+13 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.45 (13 Sep 2023)
+
+  * Correct figonpage counting and recording for sidebars
+  
+  * Improve TeX log info/warnings/error reporting and suggestions
+  
+  * Add codelet
+  
+  * Add missing writefontsconf param
+  
+  * Tweak use of getPicRe to work with Python 3.11
+
+Bug fixes and Improvements in 2.3.44 (7 Sep 2023)
+
+  * Fix font test
+
+Bug fixes and Improvements in 2.3.43 (7 Sep 2023)
+
+  * Save current config per project in user config
+  
+  * Only apply 'Adjust Center Header..' correction in parallel diglots
+  
+  * Anchor sidebar foreground cutout images to sidebar, not 1st paragraph
+  
+  * More resilience against buggy projects
+  
+  * End heading block at the start of zgetperiph, otherwise strange crashes happen
+  
+  * xfails: BellAndWhistles missing bits, minitests cropmark timestamp
+  
+  * Exclude woff files from fontconfig, given we can't process them
+  
+  * Add a prototype script to read and summarize log files
+  
+  * Tidy size of splash screen for Linux
+  
+  * Tweak Help tab for (potentially) larger number of users with PT9.4
+  
 Bug fixes and Improvements in 2.3.42 (7 Sep 2023)
 
   * First attempt at Left/right adjustment of sidebars / figures (#903)

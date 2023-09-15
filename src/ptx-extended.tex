@@ -282,18 +282,17 @@
   \@get@Hborder@style@params
   \@get@Vborder@style@params
   \getsbp@ram{posn}%
-  \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
-  \ifcsname fig\the\im@gecount p@ge\endcsname
-    \x@\let\x@\pgn@\csname fig\the\im@gecount p@ge\endcsname
+  \ifcsname fig\sb@rnum p@ge\endcsname
+    \x@\let\x@\pgn@\csname fig\sb@rnum p@ge\endcsname
   \else
     \let\pgn@\relax
   \fi
   \ifx\pgn@\relax
     \whichp@ge=\pageno
-    \trace{e}{Sidebar \the\im@gecount\space may not be aligned properly}%
+    \trace{e}{Sidebar \sb@rnum\space may not be aligned properly}%
   \else
     \whichp@ge=\pgn@
-    \trace{e}{Sidebar \the\im@gecount\space was on page \pgn@ last time. [\the\pageno]}%
+    \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
   \fi
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
@@ -444,6 +443,7 @@
 \newif\ifble@dthisbar
 \def\@@sbar#1{%
   \trace{e}{Starting side bar (#1/\sb@rmarker) from \m@rker, \the\lastdepth}%
+  \global\advance\im@gecount by 1 % A side bar is a strange sort of image, but there are similarities
   \ble@dthisbarfalse
   %\endlastp@rstyle{\ss@Sbar}% Apply spaceafter, etc. NO, because we might be triggered from a verse
   \ifsk@pping \egroup 
@@ -463,6 +463,7 @@
     \save@cutouts{esb}%
   \fi
   \mcpush{\ss@Sbar}{#1}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
+    \edef\sb@rnum{\the\im@gecount}%
     \edef\sb@rmarker{#1}%
     \let\m@rker\sb@rmarker
     \s@tsb@rwidth\inextendedtrue
@@ -662,8 +663,6 @@
    \getsbp@ram{posn}%
    \gdef\pic@lign{c}% How does the sidebar align within the box?
    \gdef\picV@lign{c}% How does the sidebar align vertically on the page (Page/Full only)
-   \edef\l@gstring{{\the\im@gecount}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
-   \x@\writefigp@gelog\x@{\l@gstring}%
    \global\let\t@st\false
    \end@llpoppedstyles{\ss@Sbar*}% May also close groups
    \trace{e}{Stack now \mcstack}%
@@ -685,7 +684,10 @@
    \fi
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
-   \global\let\c@t@gory=\c@tegory\egroup 
+   \global\let\c@t@gory=\c@tegory
+   \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
+   \x@\writefigp@gelog\x@{\l@gstring}%
+   \egroup 
   \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
      \global\tracingassigns=0
   % ^^^ END OF GROUP! ^^^
@@ -840,7 +842,9 @@
   \let\fstb@drtop=\b@drtop % Top border for the first chunk? 
   \let\lstb@drbot=\b@drbottom % Bottom border for the last chunk?
   \ifdim\ht\extb@x > 0.9\textheight
-    \message{*** WARNING: Sidebar or colophon might not print on page \folio. (\the\ht\extb@x\space high, and  page is \the\textheight).}%
+    \def\tmp{Fcf}\ifx\sb@rpos\tmp\else
+      \message{*** WARNING: Sidebar or colophon might not print on page \folio. (\the\ht\extb@x\space high, and  page is \the\textheight).}%
+    \fi
   \fi
   \def\lstch@nkdp{0pt}%
   \loop %Breakable box:
