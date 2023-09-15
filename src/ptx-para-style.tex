@@ -47,6 +47,11 @@
 %-cpar_testintro
 
 %+cpar_starttypes
+\def\chkintrobody{% What sort of paragraph is this?
+  \t@mpfalse\iftoplevelp@r\t@mptrue\fi\ift@plevel@utobox\t@mptrue\fi
+  \ift@mp\if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+}
+  
 % start title/intro/body, if not already in that mode, switching columns if needed
 \def\st@rtintro{\TRACE{st@rtintro}\if@ntro\else
   \t@mptrue
@@ -101,20 +106,41 @@
 % Headings are set into a box, so that they can be measured and adjusted for the grid
 %
 %+cpar_endheadings
+\newif\ift@plevel@utobox
 \newif\ifhe@dings
 \newdimen\headingtopspace
 \newbox\he@dingbox
-\def\endhe@dings{\ifhe@dings\TRACE{endhe@dings}%
+\def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
-  \egroup \cutoutcarryover
+  \egroup %\showbox\he@dingbox
+   \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
   \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
-  \ifdim\ht\he@dingbox>0pt \gridb@x\he@dingbox\fi\unvbox\he@dingnotes
+  \ift@plevel@utobox
+    \ifdim\dimexpr \ht\he@dingbox+ \dp\he@dingbox\relax>0pt 
+      \box\he@dingbox
+      \he@dingsfalse
+      \endlastp@rstyle{end\B@xtype}\penalty10000
+      \@sbe
+      %\showlists
+      \let\B@xtype\empty
+      \t@plevel@utoboxfalse
+      \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
+    \fi
+  \else
+    \ifdim\ht\he@dingbox>0pt 
+      \gridb@x\he@dingbox
+    \fi%
+    \unvbox\he@dingnotes
+  \fi
+  \unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
+  \trace{h}{-endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi (\mcstack)}%
  \fi
 }
+\let\zendheadings\endhe@dings
 \newif\iffirst@fterheading
 %-cpar_endheadings
 
@@ -483,21 +509,15 @@
 \def\@p@rstyle#1{%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
-  \mcpushunderms{P}{#1}%
-  \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
   \op@ninghooks{between-\m@rker}{#1}{\styst@k}% Run any between old par an current
   \traceifset{p@rstyle}%
   \gdef\m@rker{#1}% remember the new style name
-  \op@ninghooks{before}{\m@rker}{\styst@k}%
 %-cpar_parstyle_after
   %
   % now we check what kind of marker this is: intro? title? section? other?
   % and switch to the appropriate mode
   %
 %+cpar_parstyle_transition
-  \let\styst@k=\empty
-  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
-  \s@tstyst@k%
   \x@\t@stintro\m@rker\relax
   %If the marker is an (ultra-rare) type that occurs in introductions and normal text, then
   %set the intromarker flag based on what the current state (\if@ntro) is.
@@ -510,44 +530,82 @@
   \if@tablerow\if@ntro\@ntromarkertrue\fi\fi
   \global\he@dingstylefalse
   \getp@ram{type}{\m@rker}{\m@rker}%
+  \let\B@xtype\empty%
   \ifx\p@ram\t@tle
     \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
-    \ift@tle\else\ifhe@dings\endhe@dings\fi\fi
+    \ift@tle\else
+      \ifhe@dings\endhe@dings\fi
+      \iftoplevelp@r\t@stpublishability{cat:titlebox|esb}\ifn@npublishable\else
+        \def\B@xtype{title}%
+      \fi\fi
+    \fi
     \iftoplevelp@r\st@rttitle\fi
     \global\he@dingstyletrue 
   \else\ifx\p@ram\s@ction                                                       %(1)
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
     \global\he@dingstyletrue
   \else\ifx\p@ram\oth@r
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
     \if@ntromarker\else\global\he@dingstyletrue\fi
   \else
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \iftoplevelp@r \if@ntromarker\st@rtintro\else\st@rtbody\fi\fi
+    \chkintrobody
   \fi\fi\fi                                                                     %(2)
+  \iftoplevelp@r\ifhe@dingstyle\ifhe@dings\else
+      \ift@tle\else
+        \testm@rkerexists{cat:\m@rker box|esb}\iftemp
+          \t@stpublishability{cat:\m@rker box|esb}\ifn@npublishable\else
+            \let\B@xtype\m@rker
+          \fi
+        \else
+          \testm@rkerexists{cat:headingsbox|esb}\iftemp
+            \t@stpublishability{cat:headingsbox|esb}\ifn@npublishable\else
+              \def\B@xtype{headings}%
+            \fi
+          \fi
+        \fi
+      \fi
+  \fi\fi\fi
+  \ifx\B@xtype\empty\else
+    \t@plevel@utoboxtrue
+    \let\tmphb\m@rker
+    \testm@rkerexists{cat:\m@rker box|esb}%
+    \iftemp\let\B@xtype\m@rker
+      \trace{eh}{Style exists for \m@rker box}%
+    \fi
+    \trace{eh}{Starting \B@xtype box for \m@rker}%
+    \x@\@sb\x@\cat\B@xtype box\cat*
+    \let\m@rker\tmphb
+  \fi
+  \mcpushunderms{P}{#1}%
+  \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
+  \op@ninghooks{before}{\m@rker}{\styst@k}%
+  \let\styst@k=\empty
+  \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
+  \s@tstyst@k%
   \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
   \ifhe@dingstyle\trace{sa}{headingstyle true}%
     \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
     \else
-        % Headingtopspace gets removed at top of page, preserve for titles.
-        \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
-          \ift@tle\headingtopspace=0pt \else
-            \headingtopspace=\p@ram\verticalsp@ceunit
-            %\trace{e}{hts: \the\headingtopspace, b@xadj:\b@xadj}%
-            %\ifinextended 
-              %\advance\headingtopspace by-\b@xadj
-              %\vskip \b@xadj
-            %\fi
-        \fi\fi
-        \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
+      % Headingtopspace gets removed at top of page, preserve for titles.
+      \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
+        \ift@tle\headingtopspace=0pt \else
+          \headingtopspace=\p@ram\verticalsp@ceunit
+          %\trace{e}{hts: \the\headingtopspace, b@xadj:\b@xadj}%
+          %\ifinextended 
+            %\advance\headingtopspace by-\b@xadj
+            %\vskip \b@xadj
+          %\fi
+      \fi\fi
+      \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}{\styst@k}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
         \interlinepenalty=10000 % never break column/page between lines
         \XeTeXdashbreakstate=0 % mainly for ranges in \r
         \hyphenpenalty=10000 \exhyphenpenalty=10000 % don't hyphenate in headings
-		\trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
+        \trace{h}{marker = \m@rker, heading top space = \the\headingtopspace}%
     \fi
     \nobreak
   \else\trace{sa}{headingstyle false}%
@@ -559,7 +617,7 @@
   \ifx\p@ram\relax \else
     \ifhe@dings\nobreak\fi
     \ifnsp@cebefore\nsp@cebeforefalse\fi
-	\vskip\p@ram\verticalsp@ceunit
+    \vskip\p@ram\verticalsp@ceunit
   \fi
   \global\startparatrue
   \resetp@rstyle
@@ -969,7 +1027,7 @@
   \trace{C}{parlines: \the\thispar@lines =\the\p@rlinesgone?}%
   \ifnum \thispar@lines=\p@rlinesgone\else
     \ifp@rlengthimportant\let\tmp\MSG\else\let\tmp\message\fi
-    \tmp{*** Mismatch between calculated and reported lines on page \this@pgno. Cutouts may not have been calculated properly}%
+    \tmp{*** Mismatch between calculated (\the\thispar@lines) and reported (\the\p@rlinesgone) lines on page \this@pgno.  for Cutouts may not have been calculated properly}%
     \let\tmp\undefined
   \fi
   \ifx\pending@items\cstackempty\else
@@ -981,11 +1039,11 @@
       \ifnum\thing@after>500\MSG{*** Rubbish data got into parlocs file.  \this@thing\space\thing@ref\space ignored}%
       \else
         \ifnum\thing@after>\thispar@lines
-	  \MSG{*** \this@thing\space \thing@ref Is supposed to be delayed by \thing@after lines, but paragraph is \the\thispar@lines long}%
-	  \tmp@lines=\thing@after
-	  \advance\tmp@lines by -\thispar@lines
-	  \edef\thing@after{\the\tmp@lines}%
-	  \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
+          \MSG{*** \this@thing\space \thing@ref Is supposed to be delayed by \thing@after lines, but paragraph is \the\thispar@lines long}%
+          \tmp@lines=\thing@after
+          \advance\tmp@lines by -\thispar@lines
+          \edef\thing@after{\the\tmp@lines}%
+          \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
       %\this@y=#2\relax
       %\ifnum\thing@y=0% First time. Don't adjust anything
         \else
@@ -995,11 +1053,11 @@
             \tmp@lines=\thing@y
             \advance\tmp@lines by -\this@y
             \divide\tmp@lines by \baselineskip
-	    \advance\tmp@lines by \thing@after
-	    \MSG{\this@thing \thing@ref [ \thing@after=>\the\tmp@lines]}%
-	    \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
+            \advance\tmp@lines by \thing@after
+            \MSG{\this@thing \thing@ref [ \thing@after=>\the\tmp@lines]}%
+            \add@pending{\this@thing}{\thing@ref}{\the\this@y}{\thing@wd}{\thing@ht}{\thing@after}{\thing@side}%
           \fi
-	\fi
+        \fi
       \fi
     }%
     \let\d@=\parse@pending

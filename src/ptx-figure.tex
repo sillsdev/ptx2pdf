@@ -1243,7 +1243,7 @@
   \ifx\gr@phic\w@tsit
     \leavevmode\str@t\vadjust {\vbox to 0pt{\box#1\vss}}%
   \else
-    \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}}%
+    \ifhmode \vadjust{\vbox to 0pt{\box#1\vss}\penalty10021}%
     \else
       \ifimmediatefigure\else\pl@cecutoutfigvmode{#1}{-1}\fi%
     \fi

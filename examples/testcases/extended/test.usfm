@@ -1,7 +1,9 @@
 \id TST Test file
 \h small test file
+\mt1 Test case 
 \c 1
-\s This is a title
+\s This is a title\f + \ft Footnote from title\f*
+\sr 1:1-5
 \p
 \v 1 This is normal text. There are 4 hook positions: before, start, end,
 after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle bracket markers around \beginadd T
@@ -18,7 +20,7 @@ now inside a qt-s..qt-e block \nd*
 \cat inl\cat*
 \p This is an esb with 
 \p category "\showTheCategory"
-\p It is put inline\f + \ft hmm \f* 
+\p It is put inline\f + \ft Footnote from inline box \f* 
 \esbe
 
 \esb
@@ -44,10 +46,10 @@ veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
 \p  We're outside the esb (after esb testing3) so ought to be back to normal now
 \v 3 Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
-\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+\p Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? 
 \p
 \v 4
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
 \v 5  Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, 
@@ -117,6 +119,7 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esbe
 Note that the  box below was inserted with a mid-paragraph pl.
 \s \cat testpar\cat* Categorised paragraphs
+\sr\cat testpar\cat*  1:14-15
 \p
 \v 14 This is a paragraph of category "\showTheCategory" and is testing the appropriate
 formatting.
@@ -126,7 +129,8 @@ This is a p paragraph of category "\showTheCategory" and is testing the appropri
 formatting.
 \m The end. Back to '\showTheCategory'
 
-\s Poetic line-breaks
+\s1 Poetic line-breaks
+\sr 2:15b-19
 \p The following lines show the effect of altering the NonJustifiedFill parameter:
 \m\bd Normal (0.25)\bd*
 
@@ -145,7 +149,7 @@ formatting.
 \b
 
 \s Testing
-\p Can we really put a sidebar in a sidebar?
+\p Can we \testpoint really put a sidebar in a sidebar?
 \p
 \esb \cat inl\cat*
 \p This is the outer sidebar
@@ -156,6 +160,6 @@ And we're back to the outer one again.
 \p This is the next paragraph.
 \p This is the next paragraph.
 \p This is the next paragraph.
-\p This is the next paragraph.
+\pr This is the next paragraph.
 \esbe
 

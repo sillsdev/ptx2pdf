@@ -16,12 +16,15 @@
 \stylesheet{test.sty}
 \tracing{C}
 \tracing{e}
-\tracing{eb}
+%\tracing{eb}
+\tracing{eh}
 \tracing{A}
+\tracing{h}
 \tracing{m}
 \tracing{eb}
-\tracing{s}
-\tracing{sP}
+%\tracing{s}
+%\tracing{sa}
+%\tracing{sP}
 \tracing{g}
 \tracing{et}
 \tracing{h}
@@ -63,8 +66,11 @@
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 %\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}
-\nonstopmode
-\def\DebugBorderCat{top}
+%\nonstopmode
+%\scrollmode
+%\def\DebugBorderCat{top}
+\def\testpoint{\showboxbreadth=999  \showlists}
+\def\testpoint{}
 \ptxfile{cover.usfm}
 \ptxfile{test.usfm}
 \bye
