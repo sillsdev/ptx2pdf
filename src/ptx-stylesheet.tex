@@ -440,8 +440,8 @@
     \else
       \xdef\p@ssParamCached{\p@ssParamCached,\pp@name}%
     \fi
-    \trace{s}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
-    \trace{s}{\ph@name\space defined as '\p@ssHooks'}%
+    \trace{sC}{\pp@name\space defined (\p@ssParamCached) as '\p@ssParams'}%
+    \trace{sh}{\ph@name\space defined as '\p@ssHooks'}%
   \else
     \global\let\p@ssParams\g@tp@tmp
     \x@\let\x@\g@th@tmp\csname \ph@name\endcsname
