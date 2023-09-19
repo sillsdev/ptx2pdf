@@ -166,8 +166,9 @@ class PicChecks:
             crstr = self.cfgShared.get(src, "piccreditbox", fallback="")
             m = re.match(r"^([tcb]?[lcrio]?),(-?9?0?|None),(\w*)$", crstr)
             if m:
-                res = ["" if x.lower() == "none" else x for x in m.groups()]
-                if not res[1]:
+                #res = ["" if x.lower() == "none" else x for x in m.groups()]
+                res = ["" if x is None else x for x in m.groups()]
+                if not res[1] or res[1].lower() == "none":
                     res[1] = "0"
         return (text, res)
         

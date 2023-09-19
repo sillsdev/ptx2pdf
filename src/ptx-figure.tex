@@ -481,6 +481,7 @@
       \edef\cr@ditlist{x-credit:box=\cr@ditbox|fig,\cr@ditbox|x-credit,x-credit|fig,\cr@ditstyle}%
     \fi
   \fi
+  \trace{g}{cr@ditlist is \cr@ditlist}%
   % Determine if the credit (as a full line) is wider or taller, and whether it should be treated as a paragraph or a
   % small piece of text.
   \count255=\cr@ditrot % adjust to -180 to 180 range.
@@ -560,6 +561,7 @@
   \fi
   \edef\cr@ditHshift{\the\FigCreditOverEdgeH}%
   \edef\cr@ditVshift{\the\FigCreditOverEdgeV}%
+  %\trace{g}{cr@ditlist is \cr@ditlist}%
   \getp@ram{spacebefore}{\cr@ditlist}{\cr@ditlist}%
   \ifx\p@ram\relax\else
     \ifnum\cr@ditr@tn=90
@@ -576,7 +578,7 @@
       \edef\cr@ditHshift{\dimexpr \cr@ditHshift - \p@ram pt\relax}%
     \fi
   \fi
-  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0) \ab@vecredit,\b@lowcredit}%
+  \trace{g}{credit text is \the\wd0 x (\the\ht0 + \the\dp0) \ab@vecredit,\b@lowcredit // \cr@ditHshift, \cr@ditVshift}%
   \edef\ol@yboxwd{\the\dimexpr \wd\newpicb@x \relax}%
   \setbox0=\vbox to \ht\newpicb@x{\baselineskip=0pt \hsize=\ol@yboxwd\vskip -\cr@ditVshift\relax\ab@vecredit\hbox to \ol@yboxwd{\beginL\hskip -\cr@ditHshift\relax\pr@credit\box0\p@stcredit\hskip -\cr@ditHshift\relax\endL}\b@lowcredit\vskip -\cr@ditVshift}%
   \setbox\newpicb@x=\vbox to \ht\newpicb@x{\box\newpicb@x\vss\box0}%
