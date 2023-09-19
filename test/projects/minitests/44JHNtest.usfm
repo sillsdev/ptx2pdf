@@ -1,4 +1,4 @@
-\id MAT Test file
+\id JHN Test file
 \h WJ test file2
 \mt Second Testing WJ, BD and footnotes in WJ
 \c 1
@@ -9,3 +9,10 @@
 \p
 \v 3 And that was a p class \bd paragraph break, and this should be bold.\bd*
 \v 4 The verse number \wj ought\wj* to be normal, non-bold.
+\q1
+\v 5 This might be a poem
+\b 
+\q1
+\v 6 With slash-b's a going
+\b
+\q2 Wherever they might want to go
