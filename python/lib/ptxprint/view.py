@@ -1269,6 +1269,7 @@ class ViewModel:
     def getPicRe(self):
         r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
                 + ")(\d+)([^.]*)"
+        print(f"PicRe={r}")
         return r
 
     def getDraftFilename(self, bk, ext=".piclist"):
