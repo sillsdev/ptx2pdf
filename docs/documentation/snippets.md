@@ -76,7 +76,7 @@ Sometimes you just need a blank page after the final text. Change the 'Amen.' to
 the last word in Revelation is.
 
 ```perl
-at REV 22:21 'Amen.' >  '\1\n\\pb\n\\p \\bd ~\\bd*'
+at REV 22:21 '(Amen.)' >  '\1\n\\pb\n\\p \\bd ~\\bd*'
 ```
 
 ## Fancy book separators from Heading information
