@@ -216,7 +216,7 @@
       \vbox{\kern\dimen0\vskip-\headingtopspace\unvbox0}%
       \ifrotate\prevdepth=\baselineskip\fi
       \nobreak%\dimen0=\prevdepth\trace{h}{prevdepth=\the\dimen0}%
-      \ifdim\oldprevdepth<0pt \prevdepth=\oldprevdepth\fi
+      %\ifdim\oldprevdepth<-999pt \prevdepth=\oldprevdepth\fi % DON"T restore old prevdepth. For some reason this puts things off grid.
   \fi
 }
 
