@@ -1335,7 +1335,7 @@ class TexModel:
         return os.path.basename(fpath[:doti])
 
     def codeLower(self, fpath):
-        cl = re.match(self.printer.getPicRe()+"$", self.base(fpath))
+        cl = re.match(self.printer.getPicRe()+"$", self.base(fpath), re.I)
         if cl:
             return cl[0].lower()
         else:

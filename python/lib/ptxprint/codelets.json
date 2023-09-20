@@ -410,6 +410,12 @@
         },
         {
           "Type": "comment#",
+          "Label": "Place GLO cross-references in parentheses",
+          "Description": "Just for the GLO book, put (parentheses) around the \\xt cross-references\\xt*. (Mt 16.18, Ap 8.3, 9.31)",
+          "CodeSnippet": "at GLO '\\\\xt ' > '\\\\xt ('\nat GLO '\\\\xt\\*' > ')\\\\xt*'"
+        },
+        {
+          "Type": "comment#",
           "Label": "Suppress introductory material for *some* books",
           "Description": "In order to suppress the intro material (\\i- markers before \\c 1) in specific books (but keep it for others) replace BAK,XXA,XXE with whichever books you want the intro material stripped from.",
           "CodeSnippet": "at BAK,XXA,XXE '\\\\i[so]\\d?\\s.+\\r?\\n' > ''"

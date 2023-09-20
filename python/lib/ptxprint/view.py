@@ -687,7 +687,7 @@ class ViewModel:
             self.readCopyrights()
         if loc is not None and any(x not in 'paw' for x in loc):
             loc = None
-        m = re.match(self.getPicRe(), src)
+        m = re.match(self.getPicRe(), src, re.I)
         if m is not None and m.group(1).lower() in self.copyrightInfo['copyrights']:
             media = self.copyrightInfo['copyrights'][m.group(1).lower()]['media']
             limit = media['limit']
@@ -1267,7 +1267,7 @@ class ViewModel:
         pass
 
     def getPicRe(self):
-        r = r"(?i)_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
+        r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
                 + ")(\d+)([^.]*)"
         return r
 
