@@ -50,7 +50,7 @@ def writefontsconf(extras, archivedir=None):
         if hasattr(sys, '_MEIPASS'):
             logger.debug(f'{sys._MEIPASS=}')
         if notpytest:
-          testlist=[['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]      
+          testlist=[['fonts'], ['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]
         else:
           testlist=[]
         for a in testlist:
