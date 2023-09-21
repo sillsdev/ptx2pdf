@@ -37,8 +37,7 @@ class ParatextSettings:
                 self.calcbookspresent()
                 self.read_ldml()
                 break
-        else:
-            self.inferValues()
+        self.inferValues()
         logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
         path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
         if os.path.exists(path):
@@ -116,32 +115,36 @@ class ParatextSettings:
         return self.ldml.find(path)
 
     def inferValues(self):
-        path = os.path.join(self.basedir, self.prjid)
-        sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
-        for f in sfmfiles:
-            m = re.search(r"(\d{2})", f)
-            if not m:
-                continue
-            bk = allbooks[int(m.group(1))-1]
-            bki = f.lower().find(bk.lower())
-            if bki < 0:
-                continue
-            numi = m.start(1)
-            s = min(bki, numi)
-            e = max(bki+3, numi+2)
-            (pre, main, post) = f[:s], f[s:e], f[e:]
-            self.dict['FileNamePrePart'] = pre
-            self.dict['FileNamePostPart'] = post
-            main = main[:numi-s] + "41" + main[numi-s+2:]
-            main = main[:bki-s] + "MAT" + main[bki-s+3:]
-            self.dict['FileNameBookNameForm'] = main
-            break
+        if 'FileNameBookNameForm' not in self.dict:
+            path = os.path.join(self.basedir, self.prjid)
+            sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
+            for f in sfmfiles:
+                m = re.search(r"(\d{2})", f)
+                if not m:
+                    continue
+                bk = allbooks[int(m.group(1))-1]
+                bki = f.lower().find(bk.lower())
+                if bki < 0:
+                    continue
+                numi = m.start(1)
+                s = min(bki, numi)
+                e = max(bki+3, numi+2)
+                (pre, main, post) = f[:s], f[s:e], f[e:]
+                self.dict['FileNamePrePart'] = pre
+                self.dict['FileNamePostPart'] = post
+                main = main[:numi-s] + "41" + main[numi-s+2:]
+                main = main[:bki-s] + "MAT" + main[bki-s+3:]
+                self.dict['FileNameBookNameForm'] = main
+                break
 
         #self.dict['FullName'] = ""
         #self.dict['Copyright'] = ""
-        self.dict['DefaultFont'] = ""
-        self.dict['Encoding'] = 65001
-        self.calcbookspresent(inferred=True)
+        if 'DefaultFont' not in self.dict:
+            self.dict['DefaultFont'] = ""
+        if 'Encoding'not in self.dict:
+            self.dict['Encoding'] = 65001
+        if 'BooksPrsent' not in self.dict:
+            self.calcbookspresent(inferred=True)
 
     def calcbookspresent(self, inferred=False):
         self.bookmap = {}
