@@ -1,9 +1,33 @@
 PTXprint 2.3.45 Release Notes
-13 Sep 2023
+20 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.46 (20 Sep 2023)
+
+  * Make space after GLO entry \k* optional when filtering entries
+  
+  * Update test-suite to avoid xfails
+  
+  * Correct the correction of pdfsavepos
+  
+  * Start support for sidebar gridding options
+  
+  * Fix \b to do what it should (#909) 
+  
+  * Rationalise x-credit box settings (#896)
+  
+  * "None" is a valid setting for the x-credit box type (#897)
+  
+  * Add a codelet for (parentheses on xrefs in GLO)
+  
+  * Tweak regex flags for python 3.11 compatability
+  
+  * Fixed gridding issues caused by restoring prevdepth guard value
+  
+  * Update change rule in snippets (Amen!)
+  
 Bug fixes and Improvements in 2.3.45 (13 Sep 2023)
 
   * Correct figonpage counting and recording for sidebars

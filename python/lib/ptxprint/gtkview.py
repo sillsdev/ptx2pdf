@@ -3194,8 +3194,11 @@ class GtkViewModel(ViewModel):
             self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):
+        # print("Just got into updateProjectSettings")
+        # print(f"{prjid=} {saveCurrConfig=} {configName=} {readConfig=}")
         if prjid == self.prjid and configName == self.configId:
             return True
+        # print("Still in updateProjectSettings")
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
@@ -3218,7 +3221,9 @@ class GtkViewModel(ViewModel):
                     self.set("ecb_book", b)
                     # print("updateProjectSettings-s")
                     self.set("r_book", "single")
+                    print("About to break OUT!")
                     break
+        # print("Still in updateProjectSettings (after break)")
         # status = self.get("r_book") == "multiple"
         # self.builder.get_object("ecb_booklist").set_sensitive(status)
         for i in self.notebooks['Viewer']:
@@ -3229,6 +3234,7 @@ class GtkViewModel(ViewModel):
         self.setEntryBoxFont()
         self._setup_digits()
         self.updatePicList()
+        # print(">>>>>>>>>>About to update dialog Title")
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
@@ -3236,6 +3242,7 @@ class GtkViewModel(ViewModel):
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
         logger.debug(f"Changed project to {prjid} {configName=}")
+        # print(f"Changed project to {prjid} {configName=}")
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.settings_dir, self.prjid, 
@@ -3292,7 +3299,9 @@ class GtkViewModel(ViewModel):
             self.onFontChanged(None)
 
     def updateDialogTitle(self):
+        # print("in updateDialogTitle")
         titleStr = super(GtkViewModel, self).getDialogTitle()
+        # print("{titleStr=}")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def _locFile(self, file2edit, loc, fallback=False):
@@ -3408,7 +3417,7 @@ class GtkViewModel(ViewModel):
         self.onRefreshViewerTextClicked(None)
         
     def onEditModule(self, btn):
-        print(f"{self.moduleFile=} {self.builder.get_object('lb_bibleModule').get_label()=} ")
+        # print(f"{self.moduleFile=} {self.builder.get_object('lb_bibleModule').get_label()=} ")
         if self.moduleFile is not None:
         
             self._editProcFile(str(self.moduleFile), "prj")

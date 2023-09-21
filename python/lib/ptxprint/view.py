@@ -563,6 +563,7 @@ class ViewModel:
         copyfile(srcp, mergep)
 
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, forceConfig=False, readConfig=None):
+        # print(f"IN VIEW: Changing project to {prjid or self.get('fcb_project')} from {self.prjid}, {configName=} from {getcaller(1)}")
         logger.debug(f"Changing project to {prjid or self.get('fcb_project')} from {self.prjid}, {configName=} from {getcaller(1)}")
         currprj = self.prjid
         if currprj is None or currprj != prjid:
@@ -644,8 +645,10 @@ class ViewModel:
         return res
 
     def getDialogTitle(self):
+        # print(f"  > > > In view.py Start of getDialogTitle")
         prjid = self.get("fcb_project")
         if prjid is None:
+            # print(f"<< Returning from getDialogTitle because prjid is None")
             return _("PTXprint {} - Bible Layout for Everyone!").format(VersionStr)
         else:
             bks = self.getBooks(files=True)
@@ -663,6 +666,7 @@ class ViewModel:
             cfg = ":" + self.get("ecb_savedConfig", "")
             cfg = ":" + cfg if (not self.get("c_diglot") and self.get("c_doublecolumn", False)) else cfg
             prjcfg = "{}{}".format(prjid, cfg) 
+            # print(f"view.py - in getDialogTitle; {prjid=}, {cfg=}")
             if self.get("c_diglot"):
                 cfg2 = ":" + self.get("ecb_diglotSecConfig", "")
                 prjcfg2 = "{}{}".format(self.get("fcb_diglotSecProject", "!NoSecPrj!"), cfg2) 

@@ -46,6 +46,9 @@ def writefontsconf(extras, archivedir=None):
     dirs.append("../../../shared/fonts")
     if archivedir is None:
         fdir = os.path.join(os.path.dirname(__file__), '..')
+        logger.debug(f'{fdir=}')
+        if hasattr(sys, '_MEIPASS'):
+            logger.debug(f'{sys._MEIPASS=}')
         if notpytest:
           testlist=[['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]      
         else:

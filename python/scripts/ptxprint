@@ -100,6 +100,7 @@ logconffile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint
 if sys.platform == 'win32' and args.logfile == 'ptxprint.log':
     args.logfile = os.path.join(appdirs.user_config_dir("ptxprint", "SIL"), "ptxprint.log")
 if os.path.exists(logconffile):
+    import logging.config
     logging.config.fileConfig(logconffile)
     log = logging.getLogger('ptxprint')
 elif args.logging:
