@@ -850,6 +850,7 @@ class GtkViewModel(ViewModel):
             view.set_bottom_margin(24)  
             view.set_show_line_numbers(True if i > 1 else False)
             view.set_editable(False if i in [2,3,4] else True)
+            view.set_wrap_mode(Gtk.WrapMode.CHAR)
             view.pageid = "scroll_"+k
             view.connect("focus-out-event", self.onViewerLostFocus)
             view.connect("focus-in-event", self.onViewerFocus)
