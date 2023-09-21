@@ -9,11 +9,11 @@
 \LogFontstrue
 \stylesheet{usfm_sb.sty}
 \def\doLines{\doGridLines}
-%\stylesheet{ptx2pdf.sty}
+\stylesheet{ptx2pdf.sty}
 \stylesheet{default-custom.sty}
 \tracing{sc}
 \tracing{sC}
-\stylesheet{test.sty}
+%\stylesheet{test.sty}
 \tracing{C}
 \tracing{e}
 %\tracing{eb}
@@ -30,6 +30,9 @@
 \tracing{h}
 \tracing{V}
 \tracing{sko}
+\makeatletter
+\def\sb@rgrid{}
+\makeatother
 %\tracingmacros=1
 %\tracingassigns=1
 \tracingoutput=1
@@ -63,6 +66,7 @@
 \sethook{end}{add}{\endadd}
 \sethook{start}{cat:foo|cat}{}
 \sethook{end}{cat:foo|cat}{foo_hook>>}
+\BoxLikeBordertrue
 \csname ColorFontstrue\endcsname
 %\tracinggroups=1
 %\setcvhook{TST1.15}{\message{HERE}\global\tracingparagraphs=1}

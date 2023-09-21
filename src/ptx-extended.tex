@@ -104,7 +104,7 @@
 \def\remove@transpancy#1 #2 #3|#4\E{\@lphacalc{#4}{#1} \@lphacalc{#4}{#2} \@lphacalc{#4}{#3}}
 \def\@lphacalc#1#2{\strip@pt{\dimexpr #2\dimexpr #1 pt \relax + 1pt -\dimexpr #1 pt \relax\relax} }
 
-\addtoendhooks{\ifinextended\errmessage{Reached end of book without finding \\esbe.}\fi}
+\addtoendhookstr{\ifinextended\errmessage{Reached end of book without finding \string\esbe.}\fi}{esbe check}
 \def\f@intthing#1#2#3{%
   % 1 - alpha
   % 2 - colour (r g b)
@@ -464,6 +464,9 @@
   \fi
   \mcpush{\ss@Sbar}{#1}\trace{e}{ESB}\setbox\extb@x\vbox\bgroup\cancelcutouts
     \edef\sb@rnum{\the\im@gecount}%
+    \edef\sb@rfirstskip{0pt}% If the sidebar starts with a heading, how much skip did it have?
+    \let\thisp@rclass\empty % Signal to gridbox that there's nothing above this.
+    \let\lastp@rclass\empty % Signal to gridbox that there's nothing above this.
     \edef\sb@rmarker{#1}%
     \let\m@rker\sb@rmarker
     \s@tsb@rwidth\inextendedtrue
@@ -477,8 +480,10 @@
 \newdimen\sb@rchunkh@ight
 \newdimen\sb@rus@dheightl
 \newdimen\sb@rus@dheightr
+\let\sb@rgrid\relax
 \def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
   \c@th@@ks{}%Once per box is enough!
+  \getsbp@ram{sbargrid}\let\sb@rgrid\cp@ram
   \ifble@dthisbar
     \ble@dtrue
     \s@tsb@rwidth
@@ -660,6 +665,7 @@
 }
 
 \def\@@sbe{%The real meat of an esbe
+   \traceifset{esbe}%
    \getsbp@ram{posn}%
    \gdef\pic@lign{c}% How does the sidebar align within the box?
    \gdef\picV@lign{c}% How does the sidebar align vertically on the page (Page/Full only)
@@ -685,6 +691,8 @@
    \global\edef\sb@rchunkheight{\the\sb@rchunkh@ight}%
    \global\p@ppingtrue%suppress another end@llpoppedstyles
    \global\let\c@t@gory=\c@tegory
+   \global\let\@@sb@rfirstskip\sb@rfirstskip
+   \global\let\@@sb@rgrid\sb@rgrid
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
@@ -813,15 +821,21 @@
   \loop\ifdim\dimen4> \onel@neunit
     \advance\dimen4 by -\onel@neunit
   \repeat
-  \loop\ifdim\dimen4<0pt
+  \dimen9=-0.5pt %(Almost) no overlap between box contents and the border.
+  \trace{e}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip}%
+  \dimen9=-\@@sb@rfirstskip
+  \loop\ifdim\dimen4<\dimen9
     \advance\dimen4 by \onel@neunit
   \repeat
   \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip
     \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
-    \setbox\extb@x\vbox{%\dbghrule
-      \kern\b@xgridadj
-      \unvbox\extb@x}%
+    \ifx\@@sb@rgrid\gr@dnone
+    \else
+      \setbox\extb@x\vbox{%\dbghrule
+        \kern\b@xgridadj
+        \unvbox\extb@x}%
+    \fi
   \fi
   \ifearlybgimage
     %modify the esbbox to include the picture
@@ -937,8 +951,13 @@
       \dimen1=\dimexpr -\b@rderbox@depth\relax
       \advance\dimen1 by -\sp@ceafter
       \relax
+      \ifdoIntskip
+        \ifx\@@sb@rgrid\gr@dnone
+          \doIntskipfalse
+          \advance\dimen1 by \b@xgridadj
+      \fi\fi
       %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
-      \@LOOP\ifdim\dimen1 <0.1\onel@neunit
+      \@LOOP\ifdim\dimen1 <0.01\onel@neunit
         \advance\dimen1 by \onel@neunit
       \@REPEAT
       \ifsb@rfillpage
@@ -960,6 +979,11 @@
       \else
         \dimen1=-\sp@ceafter
       \fi
+      \ifdoIntskip
+        \ifx\@@sb@rgrid\gr@dnone
+          \doIntskipfalse
+          \advance\dimen1 by \b@xgridadj
+      \fi\fi
       \relax
       %\message{onel@neunit=\the\onel@neunit, dimen1=\the\dimen1}%
       \@LOOP\ifdim\dimen1 <0.1\onel@neunit
@@ -1074,7 +1098,10 @@
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
   \ifvoid\sid@barnotes\else
-    \vadjust{\unvbox\sid@barnotes}%
+    \ifinner%\unvbox\sid@barnotes
+    \else
+      \vadjust{\unvbox\sid@barnotes}%
+    \fi
   \fi
   \let\fb@lpadding\os@vedlpadding
   \let\fb@rpadding\os@vedrpadding
@@ -1091,6 +1118,7 @@
     \restore@cutouts{esb}%
     \makecutouts
   \fi
+  \traceifcheck{esbe}%
 }
 
 \lowercase{\edef\msl@sh{|}}
@@ -1142,7 +1170,7 @@
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
-\def\SidebarGridding #1{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
+\def\SidebarGridding #1\relax{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
 \def\GenC@tFig#1{%
  \getp@r@m{#1figname}{\c@tprefix\m@rker}\ifx\p@ram\relax
    \trace{e}{No figname yet for \c@tprefix\m@rker}%
@@ -1175,6 +1203,17 @@
     \hbox{\hskip\sb@leftshift\hbox to #3{\hskip\fig@lskip\box0\hskip\fig@rskip}\hskip\sb@rightshift}%
    \fi}
 
+\def\sb@rsavegriddims{% Called after gridding a heading
+  \ifx\lastp@rclass\empty
+    \ifx\sb@rgrid\gr@dorig
+      \edef\sb@rfirstskip{0pt}%
+      \trace{e}{sb@rfirstskip set as 0pt (sb@rgrid: orig)}%
+    \else
+      \edef\sb@rfirstskip{\the\dimen0}%
+      \trace{e}{Saving sb@rfirstskip as \sb@rfirstskip}%
+    \fi
+  \fi
+}
 \def\EndCategory{\gdef\c@tegory{}\global\let\c@tprefix\empty}
 
 \def\showTheCategory{\c@tegory\message{The category is \c@tegory}}
