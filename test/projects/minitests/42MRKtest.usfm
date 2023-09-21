@@ -2,6 +2,8 @@
 \h Side bar test
 \c 1 
 \s1 Side Bar test
+\p
+\leavevmode
 \esb\cat sidebar\cat*
 \s1 Side bar heading
 \p 
@@ -21,7 +23,6 @@ molestias eos doloribus. Ipsum amet dolorem consequatur est aliquam. Enim quia
 ut et aut molestiae quia et sit. Quis ducimus aut saepe aut deleniti ea illo
 sit.
 \esbe
-\p
 
 \v  1 The beginning of the gospel of Jesus Christ, the Son of God;
 \v  2 As it is written in the prophets, Behold, I send my messenger before thy face, which shall prepare thy way before thee.

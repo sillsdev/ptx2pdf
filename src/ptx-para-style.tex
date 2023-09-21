@@ -109,11 +109,17 @@
 \newif\ift@plevel@utobox
 \newif\ifhe@dings
 \newdimen\headingtopspace
+\newdimen\headingmidspace
 \newbox\he@dingbox
 \def\endhe@dings{\ifhe@dings\trace{h}{+endhe@dings \ift@plevel@utobox toplevelautobox \fi \ift@tle title \fi\iftoplevelp@r toplvlpar\fi}%
   \makecutouts \endgraf
+  \ifx\thisp@rclass\undefined
+    \global\let\tmppcl@ss\empty %pass out the heading group class
+  \else
+    \global\let\tmppcl@ss\thisp@rclass %pass out the heading group class
+  \fi
   \egroup %\showbox\he@dingbox
-   \cutoutcarryover
+  \cutoutcarryover
 %{\showboxbreadth=200 \showbox\he@dingbox}
   \baselineskip=\onel@neunit%\s@tbaseline{p}{p}%
   \trace{h}{ht=\the\ht\he@dingbox dp=\the\dp\he@dingbox}%
@@ -129,11 +135,17 @@
       \toplevelp@rtrue % Is this always correct? Alternative is re-check the mcstack.
     \fi
   \else
+    \ifinextended\trace{e}{sb@rgrid: \sb@rgrid, lpc:\lastp@rclass,tpc:\thisp@rclass}%
+      \ifx\sb@rgrid\gr@dnone
+        \unvbox\he@dingbox
+    \fi\fi % Disable gridding of headings box if no gridding here
     \ifdim\ht\he@dingbox>0pt 
       \gridb@x\he@dingbox
+      \ifinextended\sb@rsavegriddims\fi
     \fi%
     \unvbox\he@dingnotes
   \fi
+  \let\lastp@rclass\tmppcl@ss%
   \unvbox\he@dingnotes
   \global\he@dingsfalse
   \global\first@fterheadingtrue
@@ -191,7 +203,9 @@
 \def\gr@db@@x#1{%
   \ifdim\baselineskip < 0.5pt \unvbox#1
   \else
-      \ifhmode\endgraf\lastdepth=\prevdepth\fi % Not sure why, but sometiems we get here in hmode
+      \ifhmode\endgraf\lastdepth=\prevdepth
+        \trace{h}{gr@db@@x needed to end paragraph. Why?}%
+      \fi % Not sure why, but sometiems we get here in hmode
       \edef\oldprevdepth{\the\prevdepth}%
       \prevdepth=0pt
       % \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders{#1}\fi
@@ -327,7 +341,6 @@
 %
 %+cpar_parstyle_intro
 \newif\ifhe@dingstyle
-\newif\ifnsp@cebefore
 \newif\ifJustifyPars \JustifyParstrue
 \def\introAmbigious#1{\x@\def\csname intro@mbigious-#1\endcsname{t}}
 \def\settest@mb#1{\x@\let\x@\test@mb\csname intro@mbigious-#1\endcsname}
@@ -504,11 +517,15 @@
 }
 \catcode`\^=7
 \catcode`\_=11
-
+\def\thisp@rclass{}%
+\def\lastp@rclass{}% What was the last paragraph type? 
 \def\@p@rstyled@mp#1#2{\@p@rstyle{#1}}
 \def\@p@rstyle#1{%
  \endlastp@rstyle{#1}% This sets / unsets n@npublishable
  \ifn@npublishable\else
+  \ifx\thisp@rcl@ss\undefined\else
+    \let\lastp@rclass\thisp@rcl@ss
+  \fi
   \op@ninghooks{between-\m@rker}{#1}{\styst@k}% Run any between old par an current
   \traceifset{p@rstyle}%
   \gdef\m@rker{#1}% remember the new style name
@@ -535,26 +552,30 @@
     \mark{\t@tle}\ifdiglot\marks\csname m@rknum\c@rrdstat\endcsname{\t@tle}\fi% 
     \ift@tle\else
       \ifhe@dings\endhe@dings\fi
+        \let\thisp@rclass\t@tle
       \iftoplevelp@r\t@stpublishability{cat:titlebox|esb}\ifn@npublishable\else
-        \def\B@xtype{title}%
+        \let\B@xtype\t@tle
       \fi\fi
     \fi
     \iftoplevelp@r\st@rttitle\fi
     \global\he@dingstyletrue 
   \else\ifx\p@ram\s@ction                                                       %(1)
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \chkintrobody
+    \let\thisp@rclass\s@ction
+    \chkintrobody % Start intro / body text
     \global\he@dingstyletrue
   \else\ifx\p@ram\oth@r
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \chkintrobody
+    \let\thisp@rclass\oth@r
+    \chkintrobody % Start intro / body text
     \if@ntromarker\else\global\he@dingstyletrue\fi
   \else
     \ift@tle\ifhe@dings\endhe@dings\fi\fi
-    \chkintrobody
+    \chkintrobody % Start intro / body text
   \fi\fi\fi                                                                     %(2)
   \iftoplevelp@r\ifhe@dingstyle\ifhe@dings\else
       \ift@tle\else
+        \let\thisp@rclass\he@dings
         \testm@rkerexists{cat:\m@rker box|esb}\iftemp
           \t@stpublishability{cat:\m@rker box|esb}\ifn@npublishable\else
             \let\B@xtype\m@rker
@@ -586,19 +607,37 @@
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k%
   \trace{H}{Marker type: \p@ram, stack: \mcstack [\styst@k] \space toplevel: \iftoplevelp@r True\else False\fi}%
+  \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\global\headingmidspace=0pt \else
+    \global\headingmidspace=\p@ram\verticalsp@ceunit
+  \fi
+  \headingtopspace=\headingmidspace
   \ifhe@dingstyle\trace{sa}{headingstyle true}%
-    \ifhe@dings\nsp@cebeforetrue\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
+    \ifhe@dings\s@tbaseline{\m@rker}{\styst@k}%In a heading again, may be different so set a new baseline
     \else
       % Headingtopspace gets removed at top of page, preserve for titles.
-      \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
-        \ift@tle\headingtopspace=0pt \else
-          \headingtopspace=\p@ram\verticalsp@ceunit
-          %\trace{e}{hts: \the\headingtopspace, b@xadj:\b@xadj}%
-          %\ifinextended 
-            %\advance\headingtopspace by-\b@xadj
-            %\vskip \b@xadj
-          %\fi
-      \fi\fi
+%      \getp@ram{spacebefore}{\m@rker}{\styst@k}\ifx\p@ram\relax\headingtopspace=0pt \else
+%        \ift@tle\headingtopspace=0pt \else
+%          \headingtopspace=\p@ram\verticalsp@ceunit
+%          \ifinextended 
+%            \ifx\sb@rgrid\gr@dorig\else
+%              \ifx\lastp@rclass\empty %Top of side-bar
+%                \headingtopspace=0pt
+%            \fi\fi
+%            \trace{e}{hts: \the\headingtopspace, gridding:\sb@rgrid, '\lastp@rclass','\thisp@rclass'}%
+%          \fi
+%      \fi\fi
+      \ift@tle\headingtopspace=0pt \else
+        \ifinextended 
+          \ifx\lastp@rclass\empty %Top of side-bar: never any space
+            \ifx\sb@rgrid\gr@dorig\else
+              %\ifx\sb@rgrid\gr@dnone\else
+                \headingmidspace=0pt
+                \headingtopspace=0pt
+              %fi
+          \fi\fi
+          \trace{e}{hts: \the\headingtopspace, gridding:\sb@rgrid, lpc:'\lastp@rclass','\thisp@rclass'}%
+        \fi
+      \fi
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue
         \s@tbaseline{\m@rker}{\styst@k}% Obey baseline changes for headings
         \linepenalty=1000 % minimize line count
@@ -610,14 +649,13 @@
     \nobreak
   \else\trace{sa}{headingstyle false}%
     \ifhe@dings\endhe@dings\fi
+    \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
   \fi
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
-  \getp@ram{spacebefore}{\m@rker}{\styst@k}% output <spacebefore> for this style
-  \ifx\p@ram\relax \else
+  \ifx\headingmidspace=0pt\else
     \ifhe@dings\nobreak\fi
-    \ifnsp@cebefore\nsp@cebeforefalse\fi
-    \vskip\p@ram\verticalsp@ceunit
+    \vskip\headingmidspace
   \fi
   \global\startparatrue
   \resetp@rstyle
@@ -892,11 +930,13 @@
 %+cpar_finishparlocs
 \def\finishp@rlocs{%
   \immediate\closeout\p@rlocs
+  \trace{x}{Starting parlocs processing}%
   \catcode`\{=1 \catcode`\}=2 \m@kedigitsother \catcode`\@=11
   \immediate\openout\delayf@le="\j@bname.delayed"
   %\tracingassigns=1
   \input "\j@bname.parlocs"
   \immediate\closeout\delayf@le
+  \trace{x}{Finished parlocs processing}%
 }
 \newif\ifdelay@pen
 \let\delayf@le=\p@rlocs % we write the delay file while reading the finished parlocs, so we can re-use the write stream
