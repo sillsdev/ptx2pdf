@@ -1,10 +1,10 @@
 PTXprint 2.3.45 Release Notes
-20 Sep 2023
+25 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.46 (20 Sep 2023)
+Bug fixes and Improvements in 2.3.46 (25 Sep 2023)
 
   * Make space after GLO entry \k* optional when filtering entries
   
