@@ -63,8 +63,7 @@ omnis voluptas assumenda est, omnis dolor repellendus.
 \p \v 6 Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.
 
 \esb \cat foo\cat*
-\s3 Testing 5
-\p This ought to be  on the 2nd page
+\ip This ought to be  on the 2nd page, with a strange line-spacing, which \it SidebarGridding smart\it* will not try to grid.
 \p
 \esbe
 \esb \cat something\cat*
@@ -85,6 +84,7 @@ Culpa optio nihil a doloribus omnis quidem dolorem inventore. Dolorem quo et ame
 \v 12 Oh all right then, just one more:
 \p
 \esb\cat pictest\cat*
+\s Pictest
 \p This  esb of category "\showTheCategory" ought to
 contain a foreground picture (a rose) and background
 picture. (an artist's impression of Slithy Toves,
@@ -102,15 +102,14 @@ Tenetur deleniti rerum minima dolor. Rerum autem ipsa ipsum autem quo a. Aut ut 
 \esb\cat pc\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
-\pb
-\p Interesting
-
+\p An interesting fact was found when writing this text file:
 \esb\cat pr\cat*
+\s1 pr style
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning.
 \esbe
 
 \p
-\v 13  There needs to be a par break between p type sidebars, or the boxing ends up putting box in box
+\v 13  there needs to be a par break between p type sidebars, or the boxing ends up putting box in box, with some strange side-effects.
 \esb\cat top\cat*
 \p This  esb of category "\showTheCategory" is testing the appropriate positioning. 
 \esbe

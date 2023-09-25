@@ -653,7 +653,7 @@
     \s@tbaseline{\m@rker}{\styst@k}%
   \fi
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
-  \ifx\headingmidspace=0pt\else
+  \ifdim\headingmidspace=0pt \else
     \ifhe@dings\nobreak\fi
     \vskip\headingmidspace
   \fi
