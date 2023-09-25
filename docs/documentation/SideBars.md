@@ -1,5 +1,3 @@
-% A Work-in-progress, and aspirational document. I.e. this may change, and no features are at present guaranteed to be present!
-% 
 # Sidebars
 Sidebars (`\esb`) are boxes of text (or other USFM elements). They act as miniature pages, which may have a background colour, and which may be transparent (allowing a whole-page background image or decoration to show through). They may also have
 borders and their own watermark or background image, and a foreground image such as a logo that would further identify the type of information being presented (e.g. a scroll for historic notes, or a compass for geographical notes).
@@ -22,7 +20,9 @@ Opening the group both starts styling entries for `cat:people|esb` but also inte
 ## Specific Sidebar layout and formatting
 
 ### Position
-```\Position option```
+```
+\Position option
+```
 
 * Options: `t`, `tl`, `tr`, `ti`, `to`,  `b`, `bl`, `br`, `bi`, `bo`, `h`, `p`, `F`, `P`  or `B`
 
@@ -46,7 +46,7 @@ horizontally
 may be permitted to break across pages.
  
 ###Size 
-```\Scale  value(0-1)```
+`\Scale  value(0-1)`
 
 * Default: 1
 
@@ -130,7 +130,7 @@ the order they are put on the page.  Should a background image come below or abo
 a transparent background may display better above the colour layer, as the colour 
 layer will not then wash them out, but .JPGs are probably better below, as .JPG images do not have transparency.
 
-```\BgImageAlpha`` value(0-1)
+`\BgImageAlpha` value(0-1)
 
 Transparency or alpha value of the background image: 0 is transparent, 1 is
 solid. This is useful for e.g. turning black lines into a paler shade. Note that this 
@@ -241,6 +241,43 @@ Left, Right, Top and Bottom can all be controlled separately. For historic / con
 multiple values can be set at once, with  `\BorderHPadding` `\BorderVPadding` each setting two 
 measurements, and `\BorderPadding` setting all four.
 
+### On-grid or off grid
+`\SidebarGridding option`
+
+* Options: `normal`, `smart`, `none`, `orig`.
+
+* `orig` Attempts to preserve the original spacing, before this control was added. 
+* `none` disables all attempts to keep the text on-grid. Headings in the side-bar are spaced exactly according to their SpaceBefore and SpaceAfter controls, with no automatic grid correction.
+* `normal` treats the top of the sidebar like the top of the page (removing wasted space) and  (except for cutouts) adjusts the position of the final line of text so that it is on-grid.
+* `smart` puts the final line of text on-grid like `normal` if the sidebar is an integer number of baselines high, but does not otherwise.
+
+The considerations in selecting as follows:
+
+* (Long) sidebars that use the standard baseline should be expected to keep back-to-back registration, for clarity on thin paper. 
+* For short sidebars, this is less of an issue.
+* For sidebars using a non-standard baseline, this is a non-issue, and it may be preferred to select `none`.
+* For existing publications, any changes might cause problems, but for new publications, the original code resulted in excessive whitespace at the top of sidebars with a section title.
+
+#### Comparison with linespacing=1
+
+* `normal`
+![](imgs/20230926-120202.png)
+* `smart` is the same as normal
+* `none`:
+![](imgs/20230926-120432.png)
+*  `orig`:
+![](imgs/20230926-120540.png)
+
+#### Comparison with linespacing of 0.9
+*  `normal`: ![](imgs/20230926-122338.png)
+* `orig` will be like normal, except with the larger gap above the title.
+* `smart`:  ![](imgs/20230926-122507.png)
+* `none`: ![](imgs/20230926-143216.png)
+
+The above show that using `smart` reduces the space used on the page by a line in this case. `none` further affects the space used, by altering the internal layout within the sidebar, but it the issue of lost back-to-back registration means that it is probably unsuitable for longer sidebars.
+
+Note: all of the comparisons above used `\XeTeXuseglyphmetrics=1` and a `BorderPadding` of 1. Not making use of glyph-based metrics would have caused a noticable increase in the spacing.
+ 
 ### Other options
 `\Breakable option`   **!!!DO NOT USE!!!**
 

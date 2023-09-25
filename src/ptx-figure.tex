@@ -1049,19 +1049,19 @@
 \def\d@figurePar#1{%
   \trace{g}{\w@tsit is post-paragraph, \the\hsize/\the\p@cinswid \ifpicNarrow , narrow\fi}%
   \x@\let\x@\picb@@x\csname picb@x\g@tdstat\endcsname
-  \ifpicNarrow
-    \@lignpic{#1}%
     %\ifx\pic@lign\@lignLeft \global\setbox\picb@@x\vbox{\hbox to \colwidth{\box\picb@@x\hss}}\trace{g}{Pic aligned left}%
     %\else \global\setbox\picb@@x\vbox{\hbox to \colwidth{\hss\box\picb@@x}}\trace{g}{Pic aligned right}%
     %\fi
     %\showbox\picb@@x
-  \fi
   \earlyeotpskipfalse
   \setbox0\vbox{\unvcopy#1 \dimen0=\lastkern\ifdim\dimen0=1sp \global\earlyeotpskiptrue\fi}%
   \global\setbox\picb@@x\vbox{\box\picb@@x\penalty 10
       \gridp@ctrue% TRUE. Out of band like a floating image.
       \prevdepth=0pt
       \headingtopspace=0pt
+      \ifpicNarrow
+        \@lignpic{#1}%
+      \fi
       \gridb@x#1%
       \lastdepth=0pt
       %\kern 0pt

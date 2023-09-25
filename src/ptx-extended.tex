@@ -357,10 +357,10 @@
         \def\l@ftedge{\hfil}%
         \ifx\l@cspec@b\@lignLeft\def\l@ftedge{}\else\ifx\l@cspec@b\@lignRight\def\l@ftedge{\hfill}\fi\fi
         \ifx\tempa\@lignTop
-          \xdef\sb@rtopedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}%
+          \xdef\sb@rtopedge{\hbox to \hsize{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}}%
         \fi
         \ifx\tempa\@lignBot
-          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E}}%
+          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}}%
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
@@ -484,6 +484,7 @@
 \def\st@rtsb@r{%Gets run by \cat..\cat*, if one is used. 
   \c@th@@ks{}%Once per box is enough!
   \getsbp@ram{sbargrid}\let\sb@rgrid\cp@ram
+  \ifx\sb@rgrid\relax\let\sb@rgrid\gr@dorig\fi
   \ifble@dthisbar
     \ble@dtrue
     \s@tsb@rwidth
@@ -505,20 +506,20 @@
   \fi\fi
   %\egroup\setbox\extb@x\vbox\bgroup
   \sb@rtopedge%\ifhmode\endgraf\fi
-  \prevdepth=-1000pt
+  \ifvmode \prevdepth=-1000pt\fi
   \trace{e}{sidebar really starting \the\hsize, \the\textwidth, \the\sb@rwidth}%
 }
 \newif\ifdoIntskip % Skip should be applied in the text area, not 
 
 \def\@@sb@rbotedge#1{\bgroup
-  \setbox0\hbox{#1}\p@cheight=\ht0
+  \setbox0\hbox to \hsize{#1}\p@cheight=\ht0
   \loop 
     \advance\p@cheight by -\baselineskip 
   \ifdim\p@cheight>0pt \repeat
  % \advance\p@cheight by \baselineskip
   \vskip-\p@cheight
   \vskip 0pt
-  \unhbox0
+  \box0
   \egroup}
 
 
@@ -618,10 +619,10 @@
 \def\localsb@rpos{}
 \edef\sb@lastpen{0}
 \def\@sbe{%
-  \trace{e}{@sbe: \sb@rmarker|\localsb@rpos}%
+  \trace{e}{@sbe: \c@tprefix\sb@rmarker(\localsb@rpos,\sb@rgrid)}%
   \endlastp@rstyle{esbe}% Fire any triggers, etc.
   \xdef\sb@lastpen{\the\lastpenalty}%
-  \trace{e}{@sbe: ld:\lastdepth, lp:\sb@lastpen}%
+  \trace{e}{@sbe: ld:\the\lastdepth, lp:\sb@lastpen}%
   \let\m@rker\sb@rmarker
   \global\let\sb@rpos\localsb@rpos
   \ifhe@dings\endhe@dings\fi
@@ -650,6 +651,7 @@
     \edef\border@ref@w@dth{\the\dimexpr\hsize + \b@dr@left@pad + \b@dr@right@pad\relax}%
     \edef\box@ref@w@dth{\the\dimexpr \hsize + \fb@lpadding + \fb@rpadding\relax}%
   \fi
+  \trace{e}{reference text with: \text@ref@w@dth}%
   \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
   \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
   \edef\text@ref@rskip{0pt plus 1fil minus 1fil}%
@@ -663,7 +665,7 @@
   \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
   %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
 }
-
+\newif\ifsm@rtgrid %true if smart gridding means the box should be treated gridstyle none.
 \def\@@sbe{%The real meat of an esbe
    \traceifset{esbe}%
    \getsbp@ram{posn}%
@@ -671,7 +673,7 @@
    \gdef\picV@lign{c}% How does the sidebar align vertically on the page (Page/Full only)
    \global\let\t@st\false
    \end@llpoppedstyles{\ss@Sbar*}% May also close groups
-   \trace{e}{Stack now \mcstack}%
+   \trace{e}{(post-\c@tegory) Stack now \mcstack}%
    \kill@PossParamCache
    \ifhmode\par\fi
    \ifx\sb@rbotedge\empty\else
@@ -680,6 +682,7 @@
          \vskip-\prevdepth
        \fi
      \fi
+     \trace{e}{emitting botedge}%
      \sb@rbotedge\ifhmode\endgraf\fi
    \fi
    %Pass some values out of the group (which won't affect enclosing side-bars)
@@ -697,9 +700,19 @@
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
   \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
-     \global\tracingassigns=0
   % ^^^ END OF GROUP! ^^^
   %
+  \global\sm@rtgridfalse
+  \ifx\@@sb@rgrid\gr@dsmart
+    \bgroup\dimen1=\ht\extb@x\dimen0=\onel@neunit\m@d %\m@d makes dimen3 the offset
+      \ifdim\dimen3=0pt % Box is on grid
+      \else
+        \global\sm@rtgridtrue % It keeps the logic nicer if we delay the swap to gr@dnone
+      \fi
+      \global\let\@@sb@rgrid\gr@dnormal
+      \trace{e}{Smart gridding. Delta is \the\dimen3 -> \@@sb@rgrid}% 
+    \egroup
+  \fi
   \global\p@ppingfalse%
   \trace{e}{ESBE, chunking every \sb@rchunkheight}%
   \ch@ckr@tation
@@ -817,20 +830,40 @@
   \else
     \dimen4=-\b@dr@top@pad
   \fi
+  \t@mpfalse% Do we kill the first above-heading skip?
+  \ifsm@rtgrid
+    \t@mptrue 
+    \global\let\@@sb@rgrid\gr@dnone
+  \else
+    \ifdoIntskip\else 
+      \ifx\@@sb@rgrid\gr@dorig\else
+        \t@mptrue
+  \fi\fi\fi
+  \ift@mp
+    \setbox\extb@x\vbox{%\dbghrule
+      \kern-\@@sb@rfirstskip
+      \unvbox\extb@x}%
+    \xdef\@@sb@rfirstskip{0pt}%
+  \fi
+  \trace{eg}{Initial skip: \the\dimen4}
   \advance\dimen4 by -\ht\extb@x
   \loop\ifdim\dimen4> \onel@neunit
     \advance\dimen4 by -\onel@neunit
   \repeat
   \dimen9=-0.5pt %(Almost) no overlap between box contents and the border.
-  \trace{e}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip}%
-  \dimen9=-\@@sb@rfirstskip
+  \ifx\@@sb@rgrid\gr@dorig\else
+    \dimen9=-\@@sb@rfirstskip
+  \fi
   \loop\ifdim\dimen4<\dimen9
     \advance\dimen4 by \onel@neunit
   \repeat
+  \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }
+  \trace{eg}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip. doIntskip\ifdoIntskip true\else false\fi}%
   \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip
     \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
     \ifx\@@sb@rgrid\gr@dnone
+      \trace{e}{No intskip}%
     \else
       \setbox\extb@x\vbox{%\dbghrule
         \kern\b@xgridadj
@@ -932,7 +965,7 @@
     \ch@ckhasb@rder
     \prepb@rderbox\extchunkb@x 
     \ifx\picl@c\loc@Inl
-      \headingtopspace=0pt %-\oldlastdepth
+      \headingtopspace=0pt %-\oldlastdepth ?
     \else
       \headingtopspace=0pt
     \fi
@@ -963,6 +996,12 @@
       \ifsb@rfillpage
        \trace{e}{Killing kerns/skips as box is stretch-to-fit (\sb@rheightspec)}%
         \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
+      \fi
+      \ifdoIntskip\else
+        \ifx\@@sb@rgrid\gr@dnone\ifpicUsesIns\else
+          \trace{e}{Killing post-skips as gridding disabled (\@@sb@rgrid)}% 
+          \dimen1=0pt
+        \fi\fi
       \fi
       \trace{e}{Border Box \the\ht\b@rderbox +\the\dp\b@rderbox x \the\wd\b@rderbox (\b@rderbox@height x\b@rderbox@width) is offset \the\headingtopspace (v) and <\b@dr@left@pad|\b@dr@right@pad> (h). Final adjust\the\dimen1}%
       \trace{e}{Box adj (\c@tegory):\the\headingtopspace, spacing: \b@xintadj / \b@xextadj,  \ifdoIntskip 1st \else 2nd\fi}%
@@ -1069,7 +1108,7 @@
           \ifx\l@cspec@b\@lignLeft\picNarrowtrue\fi
           \ifx\l@cspec@b\@lignRight\picNarrowtrue\fi
           \lastdepth=0pt
-          \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern-1sp \kern 1sp}% Add a marker
+          \setbox\extchunkb@x\vbox{\unvbox\extchunkb@x\kern -1sp \kern 1sp}% Add a marker to tell it to grid
           \d@figurePar\extchunkb@x
         \fi
         \ifx\picl@c\loc@Page
@@ -1098,7 +1137,7 @@
   \let\c@tegory\oldc@tegory 
   \s@tc@tpr@fix
   \ifvoid\sid@barnotes\else
-    \ifinner%\unvbox\sid@barnotes
+    \ifinner%\unvbox\sid@barnotes % Inner boxes can't do vadjust, and if we unvbox here they'll be lost. Hopefully they can be unwrapped somewhere else.
     \else
       \vadjust{\unvbox\sid@barnotes}%
     \fi
