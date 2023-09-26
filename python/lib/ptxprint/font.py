@@ -163,7 +163,7 @@ class TTFontCache:
                     style = ""
                 name = re.sub(r"\\([-])", r"\1", name)
                 if "," in name:
-                    names = name.split(",")[0]      # only keep the first, since XeTeX only matches the first
+                    names = [name.split(",")[0]]      # only keep the first, since XeTeX only matches the first
                 else:
                     names = [name]
                 if "," in style:
