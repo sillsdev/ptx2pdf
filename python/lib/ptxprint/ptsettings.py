@@ -98,7 +98,7 @@ class ParatextSettings:
         self.bookStrs = {k: [k] * 3 for k in self.bookNames.keys()}
 
     def getLocalBook(self, s, level=0):
-        return self.bookStrs.get(s, [s]*(level+1))[level]
+        return self.bookStrs.get(s, [s]*(level+1))[level] or s
 
     def __getitem__(self, key):
         return self.dict[key]
@@ -114,8 +114,8 @@ class ParatextSettings:
             return None
         return self.ldml.find(path)
 
-    def inferValues(self):
-        if 'FileNameBookNameForm' not in self.dict:
+    def inferValues(self, forced=False):
+        if forced or 'FileNameBookNameForm' not in self.dict:
             path = os.path.join(self.basedir, self.prjid)
             sfmfiles = [x for x in os.listdir(path) if x.lower().endswith("sfm")]
             for f in sfmfiles:
@@ -151,7 +151,7 @@ class ParatextSettings:
         booksfound = set()
         bookspresent = [0] * len(allbooks)
         path = os.path.join(self.basedir, self.prjid)
-        if 'FileNameBookNameForm' in self.dict:
+        if not inferred and 'FileNameBookNameForm' in self.dict:
             fbkfm = self.dict['FileNameBookNameForm']
             bknamefmt = self.get('FileNamePrePart', "") + \
                         fbkfm.replace("MAT","{bkid}").replace("41","{bkcode}") + \
@@ -163,7 +163,8 @@ class ParatextSettings:
                     self.bookmap[k] = fname
                     booksfound.add(fname)
             if not len(booksfound) and not inferred:     # buggy Settings.xml that doesn't fit the directory tree
-                self.inferValues()
+                self.inferValues(forced=True)
+                self.calcbookspresent()
         else:
             for f in os.listdir(path):
                 if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):

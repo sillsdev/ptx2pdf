@@ -163,7 +163,7 @@ class TTFontCache:
                     style = ""
                 name = re.sub(r"\\([-])", r"\1", name)
                 if "," in name:
-                    names = name.split(",")
+                    names = name.split(",")[0]      # only keep the first, since XeTeX only matches the first
                 else:
                     names = [name]
                 if "," in style:
@@ -175,7 +175,7 @@ class TTFontCache:
             styles = self.stylefilter(styles)
             for n in names:
                 for s in styles:
-                    self.cache.setdefault(n, {})[s] = path
+                    self.cache.setdefault(n.strip(), {})[s.strip()] = path
         if not len(self.cache):
             print("FClist failed:", files)
         self.fccache = {k: v.copy() for k,v in self.cache.items()}
