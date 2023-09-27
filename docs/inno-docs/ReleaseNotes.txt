@@ -1,10 +1,10 @@
 PTXprint 2.3.45 Release Notes
-25 Sep 2023
+28 Sep 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.46 (25 Sep 2023)
+Bug fixes and Improvements in 2.3.46 (28 Sep 2023)
 
   * Make space after GLO entry \k* optional when filtering entries
   
@@ -25,6 +25,18 @@ Bug fixes and Improvements in 2.3.46 (25 Sep 2023)
   * Tweak regex flags for python 3.11 compatability
   
   * Fixed gridding issues caused by restoring prevdepth guard value
+  
+  * Only include fonts that XeTeX can see.
+  
+  * Fix duff filename structure in Settings.xml
+  
+  * Implement smart gridding option for sidebars (none, smart, normal)
+
+  * Fix long-standing bug with gridding of p (pc, pl, pr) sidebars.
+  
+  * Update documentation, add figures showing effect of gridding options.
+  
+  * Solve issue of unstable sidebar forground (cutout) image positioning
   
   * Update change rule in snippets (Amen!)
   
