@@ -1195,7 +1195,7 @@
      \setCutoutSlop{\dr@pthingid}{0}{0}%
      \ifimmediatefigure\else 
         \leavevmode %needed for keyterm-based figures, at least
-    \fi
+     \fi
      \tmpcount=0
   \fi
   %\advance\dimen1 by \baselineskip
@@ -1208,7 +1208,12 @@
   \ifx\t@str@ise\relax\else
     \advance\dimen1 by -\t@str@ise\baselineskip
   \fi
-  \setbox#1\vbox to 0pt{\kern\dimen1\kern\count255\baselineskip\vbox to 0pt{\vss\box#1}\vss}%
+  \ifimmediatefigure
+    \advance\dimen1 by \ht#1
+  \else
+    \advance\dimen1 by \count255\baselineskip
+  \fi
+  \setbox#1\vbox to 0pt{\kern\dimen1\vbox to 0pt{\vss\box#1}\vss}%
   \advance\tmpcount by \c@tskip
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
@@ -1226,7 +1231,7 @@
       \setbox#1\hbox to \hsize{\hss\box#1\hss}%
     \fi
   \fi
-  \ifimmediatefigure\pl@cecutoutfigvmode{#1}{-0.8}\prevdepth=-1000pt\leavevmode\fi
+  \ifimmediatefigure\pl@cecutoutfigvmode{#1}{0}\prevdepth=-1000pt\leavevmode\fi
   \delay@test{\dr@pthingid}%
   \ifx\t@std@lay\relax \MSG{** Cutout for picture \the\im@gecount, (\ifdiglot\dc@rref\else\c@rref\fi) re-run to generate \string\DelayedItem\space setting}%
   \else\MSG{* Cutout for picture \the\im@gecount\space at \ifdiglot\dc@rref\else\c@rref\fi, delay is \t@std@lay}\fi
@@ -1300,7 +1305,7 @@
 \newbox\picb@xR % (diglot, right-hand) delayed picture.
 \newbox\wholepagepic
 \newcount\p@ramnumber
-\newcount\notim@gecount \notim@gecount=0
+\newcount\notim@gecount \notim@gecount=0 % non-images are counted separately to images.
 \newdimen\p@cinswid
 \newdimen\p@cwidth
 \newdimen\p@cheight

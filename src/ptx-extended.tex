@@ -272,7 +272,7 @@
   %t,b,B take the text width
   %F* takes the whole paper.
   %F* and P* might need to fill the vertical dimension.
-  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \m@rker}%
+  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \c@tprefix\m@rker}%
   \sbar@rotatedfalse
   \ch@ckr@tation
   \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
@@ -309,9 +309,11 @@
     \x@\minip@rsepos\fgfigp@s\mid\sb@rpos\end% sets up temp[abcd] 
     \@@setsbp@cinswid% sets p@cinswid
     % Now apply scale..
+    \edef\sb@rrefwid{\the\dimen1}%
     \getsbp@ram{scale}\ifx\cp@ram\relax\else
       \dimen1=\cp@ram\dimen1
-      \trace{e}{scaled width to \cp@ram x\sb@rpos: \the\dimen1}%
+      \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
+      \edef\sb@rrefwid{\the\dimen1}%
     \fi
     \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
     \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
@@ -380,11 +382,15 @@
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
           \ifx\l@cspec@c\empty\gdef\c@tskip{0}\else\xdef\c@tskip{\l@cspec@c}\fi%
+          \let\oc@tskip\c@tskip
           \x@\xdef\x@\c@tskip{\strip@pt{\dimexpr \c@tskip pt + 1 pt \relax}}% floating pt addition
           \x@\c@tskipparse\c@tskip..\E
           \trace{e}{Adjusted c@tskip \c@tskip (\c@tskipfrac)}%
           \gdef\sb@rtopedge{%
             \dimen0=\ht\this@pic \advance\dimen0 by \dp\this@pic %
+            \trace{e}{D0=\the\dimen0}%
+            \advance\dimen0 by \oc@tskip\baselineskip% space for adjusting/alignment changes
+            \trace{e}{D0=\the\dimen0}%
             \count255=\dimen0
             \getsbp@ram{spacebeside}\ifx\cp@ram\relax\let\sp@cebeside=\DefaultSpaceBeside\else\let\sp@cebeside\cp@ram\fi
             \divide\count255 by \baselineskip
@@ -392,7 +398,9 @@
             \trace{e}{Cutout should be \the\count255 lines}%
             \def\thisw@tsitslop{{0}{0}}%
             \immediatefiguretrue
+            \kern 0.3\baselineskip
             \d@figureCut\this@pic\unvbox\voidb@x
+            \kern -0.3\baselineskip
             \immediatefigurefalse
           }%
         \fi
@@ -645,13 +653,14 @@
     \edef\inner@ref@w@dth{\the\wd\extb@x}%
     \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
     \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
-  \else
-    \edef\text@ref@w@dth{\the\hsize}%
-    \edef\inner@ref@w@dth{\the\hsize}%
-    \edef\border@ref@w@dth{\the\dimexpr\hsize + \b@dr@left@pad + \b@dr@right@pad\relax}%
-    \edef\box@ref@w@dth{\the\dimexpr \hsize + \fb@lpadding + \fb@rpadding\relax}%
+    \trace{e}{reference text width from extb@x: \text@ref@w@dth}%
+  \else% FIXME check if the below are correct.
+    \edef\text@ref@w@dth{\sb@rrefwid}%
+    \edef\inner@ref@w@dth{\sb@rrefwid}%
+    \edef\border@ref@w@dth{\the\dimexpr\sb@rrefwid + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \sb@rrefwid + \fb@lpadding + \fb@rpadding\relax}%
+    \trace{e}{reference text width from sb@rrefwid: \text@ref@w@dth}%
   \fi
-  \trace{e}{reference text with: \text@ref@w@dth}%
   \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
   \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
   \edef\text@ref@rskip{0pt plus 1fil minus 1fil}%
@@ -751,6 +760,7 @@
   \edef\frble@d{\ifdim \rble@d > \figbleed \figbleed\else\rble@d\fi}%
   \edef\ftble@d{\ifdim \tble@d > \figbleed \figbleed\else\tble@d\fi}%
   \edef\fbble@d{\ifdim \bble@d > \figbleed \figbleed\else\bble@d\fi}%
+  \def\sb@rrefwid{\the\wd\extb@x}%
   \set@ref@dims
   \getsbp@ramNoInh{outerh@ight}% must NOT be inherited.
   \ifx\cp@ram\relax
