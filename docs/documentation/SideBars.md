@@ -262,7 +262,7 @@ The considerations in selecting the best option are as follows:
 * `normal` or `orig` should be used if the paragraphs use the standard baseline but the sidebar often starts with rules, `\b` or `\zgap`   that would cause `smart` to ignore gridding.
 * For the automatic titlebox and headingsbox sidebars,  only `orig` and `none` obey the heading-style's `SpaceBefore` parameter, which may be a significant decision factor.
 
-#### Comparison with 
+#### Comparison of options with normal and shrunk linespace
 
 | Option | Result with linespacing of 1| Result with linespacing of 0.9|
 | -- | -- | -- |
@@ -270,10 +270,6 @@ The considerations in selecting the best option are as follows:
 | `normal`| ![](imgs/on_SidebarGridding-normal.png) |![](imgs/off_SidebarGridding-normal.png "SidebarGridding normal") |
 | `smart`| ![](imgs/on_SidebarGridding-smart.png) |![](imgs/off_SidebarGridding-smart.png "SidebarGridding smart") |
 | `none`| ![](imgs/on_SidebarGridding-none.png) |![](imgs/off_SidebarGridding-none.png "SidebarGridding none") |
-
-
-
-`orig` will be like normal, except with the larger gap above the title. 
 
 
 The above show that using `smart` reduces the space used on the page by a line in this case. `none` further affects the space used, by altering the internal layout within the sidebar, but it the issue of lost back-to-back registration means that it is probably unsuitable for longer sidebars.
