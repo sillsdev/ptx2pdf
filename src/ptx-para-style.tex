@@ -138,6 +138,7 @@
     \ifinextended\trace{e}{sb@rgrid: \sb@rgrid, lpc:\lastp@rclass,tpc:\thisp@rclass}%
       \ifx\sb@rgrid\gr@dnone
         \unvbox\he@dingbox
+        %\showboxbreadth=99\showlists
     \fi\fi % Disable gridding of headings box if no gridding here
     \ifdim\ht\he@dingbox>0pt 
       \gridb@x\he@dingbox
@@ -198,7 +199,8 @@
 % returns in \dimen0 how much to advance \dimen1 to be an integral multiple of \dimen0
 % \dimen1 ends up rounded down to an integral number of input \dimen0
 \def\m@d{\dimen3=\dimen1\divide\dimen1\dimen0\multiply\dimen1\dimen0\advance\dimen3 by -\dimen1\advance\dimen0 by -\dimen3}
-
+\newif\ifSidebarGriddingNoneKeepSpaceBefore
+\SidebarGriddingNoneKeepSpaceBeforefalse
 \newdimen\upwardsHackDiff \upwardsHackDiff=0pt
 \def\gr@db@@x#1{%
   \ifdim\baselineskip < 0.5pt \unvbox#1
@@ -598,6 +600,7 @@
     \fi
     \trace{eh}{Starting \B@xtype box for \m@rker}%
     \x@\@sb\x@\cat\B@xtype box\cat*
+    \SidebarGriddingNoneKeepSpaceBeforetrue
     \let\m@rker\tmphb
   \fi
   \mcpushunderms{P}{#1}%
@@ -630,12 +633,12 @@
         \ifinextended 
           \ifx\lastp@rclass\empty %Top of side-bar: never any space
             \ifx\sb@rgrid\gr@dorig\else
-              %\ifx\sb@rgrid\gr@dnone\else
+              \ifnum 1=\ifx\sb@rgrid\gr@dnone \ifSidebarGriddingNoneKeepSpaceBefore 0 \else 1 \fi\else 1\fi
                 \headingmidspace=0pt
                 \headingtopspace=0pt
-              %fi
+              \fi
           \fi\fi
-          \trace{e}{hts: \the\headingtopspace, gridding:\sb@rgrid, lpc:'\lastp@rclass','\thisp@rclass'}%
+          \trace{e}{hts: \the\headingtopspace, hms:\the\headingmidspace, gridding:\sb@rgrid, lpc:'\lastp@rclass' tpc:'\thisp@rclass'}%
         \fi
       \fi
       \setbox\he@dingbox=\vbox\bgroup\global\he@dingstrue

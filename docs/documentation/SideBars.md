@@ -246,38 +246,62 @@ measurements, and `\BorderPadding` setting all four.
 
 * Options: `normal`, `smart`, `none`, `orig`.
 
-* `orig` Attempts to preserve the original spacing, before this control was added. 
-* `none` disables all attempts to keep the text on-grid. Headings in the side-bar are spaced exactly according to their SpaceBefore and SpaceAfter controls, with no automatic grid correction.
-* `normal` treats the top of the sidebar like the top of the page (removing wasted space) and  (except for cutouts) adjusts the position of the final line of text so that it is on-grid.
-* `smart` puts the final line of text on-grid like `normal` if the sidebar is an integer number of baselines high, but does not otherwise.
+* `orig` Attempts to preserve the original spacing, before this control was added. The only option that (always) obeys a heading's `BeforeSpace` at the start of the sidebar. It is therefore usually better than `normal` or `smart` for boxed headings or titles.
+* `normal` treats the top of the sidebar like the top of the page (removing "wasted" space from SpaceBefore) and  (except for cutouts) adjusts the position of the final line of text so that it is on-grid.
+* `none` disables all attempts to keep the text on-grid. Headings in the side-bar are spaced exactly according to their SpaceBefore and SpaceAfter controls, with none of the normal automatic grid correction. The exception to this is that SpaceBefore is normally ignored at the top of the sidebar. Setting the global boolean `\SidebarGriddingNoneKeepSpaceBeforetrue` means that the SpaceBefore value is never discarded at the top of the sidebar. The boolean is locally set for in the code that automatically starts `titlebox` and `headingsbox` sidebars when they are enabled, meaning this option may be a good choice for those styles.
+* `smart` puts the final line of text on-grid like `normal` if the sidebar is an integer number of baselines high (i.e. the body paragraphs are all set with `LineSpacing 1`, but does not otherwise.
 
-The considerations in selecting as follows:
+The considerations in selecting the best option are as follows:
 
-* (Long) sidebars that use the standard baseline should be expected to keep back-to-back registration, for clarity on thin paper. 
-* For short sidebars, this is less of an issue.
-* For sidebars using a non-standard baseline, this is a non-issue, and it may be preferred to select `none`.
-* For existing publications, any changes might cause problems, but for new publications, the original code resulted in excessive whitespace at the top of sidebars with a section title.
+* For existing publications, any changes might cause problems - use `orig` in this case.
+* Sidebars in cutouts should probably use `none`.
+* (Long) sidebars that use the standard baseline should be expected to keep back-to-back registration, for clarity on thin paper. Use `normal` or `orig`
+* For sidebars that always use a non-standard baseline, registration is a non-issue, and it may be preferable to select `none`.
+* For very short sidebars, back-to-back registration is less of an issue.
+* For sidebar styles that occasionally contain paragraph styles with unusual baselines, but often tend towards being long, `smart`  is probably to be prefered.
+* `normal` or `orig` should be used if the paragraphs use the standard baseline but the sidebar often starts with rules, `\b` or `\zgap`   that would cause `smart` to ignore gridding.
+* For the automatic titlebox and headingsbox sidebars,  only `orig` and `none` obey the heading-style's `SpaceBefore` parameter, which may be a significant decision factor.
 
-#### Comparison with linespacing=1
+#### Comparison with 
 
-* `normal`
-![](imgs/20230926-120202.png)
-* `smart` is the same as normal
-* `none`:
-![](imgs/20230926-120432.png)
-*  `orig`:
-![](imgs/20230926-120540.png)
+| Option | Result with linespacing of 1| Result with linespacing of 0.9|
+| -- | -- | -- |
+| `orig`| ![](imgs/on_SidebarGridding-orig.png) |![](imgs/off_SidebarGridding-orig.png "SidebarGridding orig") |
+| `normal`| ![](imgs/on_SidebarGridding-normal.png) |![](imgs/off_SidebarGridding-normal.png "SidebarGridding normal") |
+| `smart`| ![](imgs/on_SidebarGridding-smart.png) |![](imgs/off_SidebarGridding-smart.png "SidebarGridding smart") |
+| `none`| ![](imgs/on_SidebarGridding-none.png) |![](imgs/off_SidebarGridding-none.png "SidebarGridding none") |
 
-#### Comparison with linespacing of 0.9
-*  `normal`: ![](imgs/20230926-122338.png)
-* `orig` will be like normal, except with the larger gap above the title.
-* `smart`:  ![](imgs/20230926-122507.png)
-* `none`: ![](imgs/20230926-143216.png)
+
+
+`orig` will be like normal, except with the larger gap above the title. 
+
 
 The above show that using `smart` reduces the space used on the page by a line in this case. `none` further affects the space used, by altering the internal layout within the sidebar, but it the issue of lost back-to-back registration means that it is probably unsuitable for longer sidebars.
 
 Note: all of the comparisons above used `\XeTeXuseglyphmetrics=1` and a `BorderPadding` of 1. Not making use of glyph-based metrics would have caused a noticable increase in the spacing.
- 
+
+#### Comparison of headingsbox 
+
+| Option | Result|
+| -- | -- |
+|  `normal`|  ![ ](./imgs/headingsbox-normal.jpg  "SidebarGridding normal") |
+|  `smart`|  ![ ](imgs/headingsbox-smart.jpg  "SidebarGridding smart") |
+|  `orig`: | ![ ](imgs/headingsbox-orig.jpg  "SidebarGridding orig") |
+|  `none` | ![ ](imgs/headingsbox-none.jpg  "SidebarGridding none") |
+
+The above were all created using `\s1` with `\SpaceBefore 4` and `\SpaceAfter 4`, and these sidebar settings:
+```
+\Marker cat:headingsbox|esb
+\TextProperties publishable
+\SidebarGridding normal
+\BorderWidth 4
+\BorderPadding 1
+\BoxPadding 0
+\BorderStyle ornaments
+\BorderRef  Han4
+\BorderFillColour .5 .5 .5
+\BgColor 0.50 0.50 0
+```
 ### Other options
 `\Breakable option`   **!!!DO NOT USE!!!**
 
