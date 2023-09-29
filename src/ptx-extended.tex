@@ -357,7 +357,23 @@
         \let\fgfigsp@c\empty
       \else% tempa!=s
         \def\l@ftedge{\hfil}%
-        \ifx\l@cspec@b\@lignLeft\def\l@ftedge{}\else\ifx\l@cspec@b\@lignRight\def\l@ftedge{\hfill}\fi\fi
+        \ifx\l@cspec@b\@lignLeft
+          \def\l@ftedge{}%
+          \def\fig@rskip{0pt plus 1fill}%
+          \ifx\tempa\loc@Cut
+            \def\fig@lskip{0pt plus 1fill}%
+            \p@chshift=-\the\dimexpr  \csname @@\scale@ref @ofs\endcsname\relax%
+          \fi
+        \else
+          \ifx\l@cspec@b\@lignRight
+            \def\l@ftedge{\hfill}
+            \def\fig@lskip{0pt plus 1fill}%
+            \ifx\tempa\loc@Cut
+              \def\fig@rskip{0pt plus 1fill}%
+              \p@chshift=-\the\dimexpr  \csname @@\scale@ref @ofsR\endcsname\relax%
+            \fi
+          \fi
+        \fi
         \ifx\tempa\@lignTop
           \xdef\sb@rtopedge{\hbox to \hsize{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}}%
         \fi
@@ -542,7 +558,7 @@
     \fi
     \p@rsef@gsc@le #1xx\E
   \else
-    \trace{e}{Figure will be scaled relative to #1}%
+    \trace{e}{Figure will be scaled relative to (deprecated usage) #1. Use \v@lpfx FigScaleTo}%
     \lowercase{\x@\edef\csname \v@lpfx @scale@ref\endcsname{#1}}%
     \p@rsef@gsc@le #2xx\E
   \fi
@@ -566,8 +582,13 @@
   \fi
   \trace{e}{Scale size: \scale@width x\scale@height}%
   \ifcsname @@\scale@ref @ofs\endcsname
+    \edef\fig@tmp{#1}\edef\fig@tmpb{fg}%
     \x@\edef\x@\fig@lskip{\the\dimexpr -\csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \lble@d\fi}%
-    \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
+    \ifx\fig@tmp\fig@tmpb
+      \x@\edef\x@\fig@rskip{\the\dimexpr -\csname @@\scale@ref @ofsR\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
+    \else 
+      \x@\edef\x@\fig@rskip{\the\dimexpr \csname @@\scale@ref @ofs\endcsname \relax plus 1 fil \ifble@d minus \rble@d\fi}%
+    \fi
     \trace{e}{Set skips for #1 (\scale@ref) image to <\fig@lskip|\fig@rskip>}%
   \else
     \ifcsname @@text@ofs\endcsname
@@ -648,18 +669,33 @@
 
 \def\figbleed{5pt}
 \def\set@ref@dims{%Set reference dimensions
+  \def\@@box@ofs{\fb@lpadding}%
+  \def\@@border@ofs{\b@dr@left@pad}%
+  \def\@@iborder@ofs{\the\dimexpr \b@dr@right@pad  \ifx\b@drleft\tr@e -\b@drwidth pt\fi\relax}%
+  \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
+  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
+  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
+  \def\@@box@ofsR{\fb@rpadding}%
+  \def\@@border@ofsR{\b@dr@right@pad}%
+  \def\@@iborder@ofsR{\the\dimexpr \b@dr@right@pad  \ifx\b@drright\tr@e -\b@drwidth pt\fi\relax}%
+  \def\@@outer@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi\relax}%
+  \def\@@colbleed@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi + \rble@d\relax}%
+  \def\@@bleed@ofsR{\the\dimexpr \ifdim \fb@rpadding < \b@dr@right@pad \b@dr@right@pad \else \fb@rpadding\fi + \frble@d\relax}%
   \ifdim\wd\extb@x>0pt 
     \edef\text@ref@w@dth{\the\wd\extb@x}%
     \edef\inner@ref@w@dth{\the\wd\extb@x}%
     \edef\border@ref@w@dth{\the\dimexpr\wd\extb@x + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\iborder@ref@w@dth{\the\dimexpr\border@ref@w@dth - \b@drwidth pt * \b@drhsides\relax}%
     \edef\box@ref@w@dth{\the\dimexpr \wd\extb@x + \fb@lpadding + \fb@rpadding\relax}%
     \trace{e}{reference text width from extb@x: \text@ref@w@dth}%
-  \else% FIXME check if the below are correct.
-    \edef\text@ref@w@dth{\sb@rrefwid}%
-    \edef\inner@ref@w@dth{\sb@rrefwid}%
-    \edef\border@ref@w@dth{\the\dimexpr\sb@rrefwid + \b@dr@left@pad + \b@dr@right@pad\relax}%
-    \edef\box@ref@w@dth{\the\dimexpr \sb@rrefwid + \fb@lpadding + \fb@rpadding\relax}%
-    \trace{e}{reference text width from sb@rrefwid: \text@ref@w@dth}%
+  \else%
+    \edef\outer@ref@w@dth{\sb@rrefwid}%
+    \edef\text@ref@w@dth{\the\dimexpr\sb@rrefwid - \@@outer@ofs - \@@outer@ofsR\relax}%
+    \edef\inner@ref@w@dth{\text@ref@w@dth}%
+    \edef\border@ref@w@dth{\the\dimexpr\text@ref@w@dth + \b@dr@left@pad + \b@dr@right@pad\relax}%
+    \edef\iborder@ref@w@dth{\the\dimexpr\border@ref@w@dth - \b@drwidth pt * \b@drhsides\relax}%
+    \edef\box@ref@w@dth{\the\dimexpr \text@ref@w@dth + \fb@lpadding + \fb@rpadding\relax}%
+    \trace{e}{reference text width from sb@rrefwid (\sb@rrefwid): \text@ref@w@dth}%
   \fi
   \edef\text@ref@h@ight{\the\dimexpr \ht\extb@x + \dp\extb@x\relax}%
   \edef\text@ref@lskip{0pt plus 1fil minus 1fil}%
@@ -667,11 +703,7 @@
   % Fall back to text lskip/rskip for inner
   \edef\outer@ref@w@dth{\the\dimexpr \p@cinswid\relax}%
   \def\@@text@ofs{0pt}%
-  \def\@@box@ofs{\fb@lpadding}%
-  \def\@@border@ofs{\b@dr@left@pad}%
-  \def\@@outer@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi\relax}%
-  \def\@@colbleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \lble@d\relax}%
-  \def\@@bleed@ofs{\the\dimexpr \ifdim \fb@lpadding < \b@dr@left@pad \b@dr@left@pad \else \fb@lpadding\fi + \flble@d\relax}%
+  \def\@@text@ofsR{0pt}%
   %\edef\bleed@ref@rskip{\the\dimexpr - \outer@ref@lskip - \lble@d\relax plus 1 fil}%
 }
 \newif\ifsm@rtgrid %true if smart gridding means the box should be treated gridstyle none.
@@ -769,12 +801,14 @@
     \edef\inner@ref@h@ight{\the\dimexpr \textheight - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \edef\box@ref@h@ight{\the\dimexpr \ht\extb@x+\dp\extb@x +\fb@tpadding + \fb@bpadding\relax}%
     \edef\border@ref@h@ight{\the\dimexpr\ht\extb@x + \b@dr@top@pad + \b@dr@bot@pad\relax}%
+    \edef\iborder@ref@h@ight{\the\dimexpr\ht\extb@x + \b@dr@top@pad + \b@dr@bot@pad -\b@drwidth pt * \b@drvsides\relax}%
     \sb@rfillpagefalse
   \else
     \sb@rfillpagetrue
     \edef\outer@ref@h@ight{\the\dimexpr \cp@ram \relax}%
     \edef\inner@ref@h@ight{\the\dimexpr \cp@ram - \b@dr@bot@edge - \b@dr@top@edge\relax}%
     \edef\border@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding +\b@drwidth pt * \b@drvsides \relax}%
+    \edef\iborder@ref@h@ight{\the\dimexpr\cp@ram + \border@tpadding + \border@tpadding\relax}%
     \edef\box@ref@h@ight{\the\dimexpr \cp@ram\relax}%
     \ifble@d
       \edef\colbleed@ref@h@ight{\the\dimexpr \cp@ram + \tble@d + \bble@d\relax}%

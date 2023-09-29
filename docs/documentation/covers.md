@@ -4,6 +4,7 @@
 
 You can (if you try!) mentally divide the wrap-around cover of most  
 books into four conceptual pieces:
+
 * A background colour or image that wraps around everything.
 * The front of the book
 * The back of the book
@@ -25,6 +26,7 @@ concentrates on the configuration files that it generates.
 
 ## General principles
 The cover-generating macro (\\m@kecover) arranges four sidebars to make the cover:
+
 1. The whole cover : `coverwhole`
 2. The back cover : `coverback`
 3. The spine : `coverspine`
@@ -107,10 +109,12 @@ the image should be scaled to. (Note that these are so-far untested on other
 sidebars). 
 
 The relevant options are:
+
 * bleed - overflow the page into the cropped area by at most `\figbleed`. (If there is no bleed, there is no figure bleed either).
 * colbleed - overflow the page into the cropped area as much as the colours do (normally, figures bleed less).
 * box - the coloured box
 * border - the outer edge of the border
+* iborder - the inner edge of the border
 * outer - the outermost of the coloured box or the border.
 * inner - The area that text could cover (vertically this extends to the inner edge of the border)
 * text - The area that text covers (vertically this extends to the height of the text, excluding stretch, and it is probably not useful for covers).

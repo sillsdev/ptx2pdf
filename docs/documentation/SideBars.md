@@ -1,39 +1,40 @@
 # Sidebars
-Sidebars (`\esb`) are boxes of text (or other USFM elements). They act as miniature pages, which may have a background colour, and which may be transparent (allowing a whole-page background image or decoration to show through). They may also have
+Sidebars (`\esb`) are boxes of text (or other USFM elements) which (in spite of their name) are not necessarily on the side. They *are* normally 'asides', i.e. not part of the scripture text, and were intitially designed for study notes and similar. 
+
+ As implemented in PTXprint, they act as miniature pages, which may have a background colour which may in turn be transparent (allowing a whole-page background image or decoration to show through). They may also have
 borders and their own watermark or background image, and a foreground image such as a logo that would further identify the type of information being presented (e.g. a scroll for historic notes, or a compass for geographical notes).
 
-Although the USFM standard is silent on this matter, PTXprint allows sidebars to nest. This means that any element that the typesetter might want to have a background image, border, etc. can be expressed through a suitable sidebar. E.g. a white background for an ISBN barcode is best provided by a sidebar.
+Although the USFM standard is silent on this matter, PTXprint allows sidebars to nest. This means that any element that the typesetter might want to highlight or decorate with a background image, border, etc. can be expressed through a suitable sidebar. E.g. a white background for an ISBN barcode is easily provided by a sidebar, and covers are themselves implemented as a series of (nested) sidebars. 
 
 
 ## Styling options for side bars
 The USFM standard suggests `\esb \cat people\cat* ....`   to be the opening of  a sidebar. The styling is thus associated with a sub-category of `\esb`. Paratext does not appear to have a format for indicating such styling in the stylesheet, and PTXprint thus had to invent one:  
-`\Marker cat:people|esb`  Most of this document discusses the styling optins for the sidebar. However, first the styling of paragraphs, etc. will be addressed:
-
+`\Marker cat:people|esb`  Most of this document discusses the multitude of styling options for controling the sidebar itself. However, first the styling of paragraphs, etc. will be addressed:
 
 ##Styling markers within sidebars
 A feature of sidebars is that it is **normal** for styling to be different inside them. E.g. font size may be smaller, the font face may be different, etc.
-the stylesheet format for items within the stylesheet is to prefix them with the category prefix of the enclosing sidebar. i.e. `\Marker cat:people|p`
+The stylesheet format for items within the stylesheet is to prefix them with the category prefix of the enclosing sidebar. i.e. `\Marker cat:people|p`
 
 ### Shorthand for formatting multiple paragraph/character styles.
 PTXprint also defines the 'sidebar formatting group' format:
  `\Category people`, which is ended by `\EndCategory`
-Opening the group both starts styling entries for `cat:people|esb` but also interprets any subsequent `\Marker p` type entries as though they were prefixed with the category prefix for that sidebar. 
+Opening the group both starts styling entries for `cat:people|esb`and also interprets any subsequent `\Marker p` type entries as though they were prefixed with the category prefix for that sidebar.  The user interface does not at present use this format, but it may be used in `ptxprint-mods.sty`.
 
 ## Automatic sidebars
-As well as sidebars specified in the input, PTXprint provides a number of automatic or implicit sidebars, which while they do not need to be begun and ended nevertheless exist and affect styling. These include the 4 main parts of covers (whole, front, spine and back) and the automatic sidebars for headings and titles. 
+As well as sidebars specified in the input, PTXprint provides a number of automatic or implicit sidebars, which while they do not need to be begun and ended nevertheless exist and affect styling. These include the 4 main parts of covers (whole, front, spine and back) and (if enabled) automatic sidebars for headings and titles. 
 
 To enable headings to be wrapped in a sidebar, the style `cat:headingsbox|esb` (or see further) must be set to `\TextMode publishable` (the default is `nonpublishable`). In the user interface this control is 'Hide/exclude contents of marker'.  Similarly `cat:titlebox|esb` controls title blocks such as those started `\mt1`.
 
 If it is desired to specify styling for e.g. a block that starts with an `\s2` differently to one that starts with `\s1`, this is also possible. If a style exists for `cat:s1box|esb`, then when `\s1` starts a headings block the styling (and publishability) of that are obeyed, and `cat:headingsbox|esb` is entirely ignored.
 
-**Note** that automatic/implicit heading sidebars only operate at the normal level of text, and apply to the entire heading block. If it is desired that headings in sidebars be boxed, or for only part of a block to be in a sidebar, they should be nested explicitly (e.g. via the ptxprint-changes file). 
+**Note** that automatic/implicit heading sidebars only operate at the normal level of text, and apply to the entire heading block. If it is desired that headings in sidebars be boxed, or for only part of a block to be in a sidebar, they should be nested explicitly (e.g. via a project's `changes.txt` file). 
 
 ## Specific Sidebar layout and formatting
 
-### Position
-```
-\Position option
-```
+### Position and size
+#### `\Position`
+
+`\Position` option
 
 * Options: `t`, `tl`, `tr`, `ti`, `to`,  `b`, `bl`, `br`, `bi`, `bo`, `h`, `p`, `F`, `P`  or `B`
 
@@ -47,7 +48,7 @@ The position for this class of side-bars.  Any image position may be specified. 
 that are shared with images are `t`, `b`, `c` for top, bottom, centre respectively. An additional 
 'vertical position' that can be specified is 'f', for 'fill'. This calculates the space needed 
 for borders and padding, and then tells TeX to expand the text contents to fill the page. This is 
-very useful for cover-pages, etc., where the TeX command `\vfill` can be used provide stretch.
+very useful for cover-pages, etc., where the TeX command `\vfill` can be used to provide stretch.
 
 E.g.: `\Postion Fcf` will stretch the box vertically to occupy the entire paper, whereas `Position Fcc` will 
 center the box on the page taking up as little space as possible.
@@ -56,14 +57,30 @@ Note that `h` and `p` sidebars, if they have  no background colour or images, an
 horizontally
 may be permitted to break across pages.
  
-###Size 
+#### `\Scale` 
 `\Scale  value(0-1)`
 
 * Default: 1
 
 Width of the box relative to the nominal size of the containing column or box (like the scale="..." `\fig` parameter).
 
+#### `\FirstLineIndent`
+
+* `\FirstLineIndent` value
+* Default: 0
+
+This measurement (directly equivalent to the paragraph parameter) allows in-line  sidebars (and images) to be shifted sideways. Negative values move the sidebar into the margin. In the image below, the automatic sidebars have a `\FirstLineIndent` of -0.125:
+ 
+![](imgs/20230929-170748.png)
+
+#### `\SpaceBeside`
+`\SpaceBeside 3pt`
+
+If the sidebar is in a cutout, this is the space between the edge of the sidebar and the surrounding text. See also the use below for foreground images. 
+
 ### Sidebar category logo
+####`\FgImage` 
+
 `\FgImage`   `picturename.jpg`
 
 * Default: no image
@@ -72,51 +89,95 @@ Name of a foreground image.  The foreground image will appear in the defined pla
 Note that JPEG has no transparency, use PDF images for line art / transparent images above a coloured background.
 
 
-\FgImagePos     option
+#### \FgImagePos
+`\FgImagePos`     option
 
 * Options for above/below text: `t`  or `tc` (top, centre) , `tl` (top, left), `tr` (top, right), `ti` (top inner), `to` (top outer)  or `b_` (bottom...)
 * Options for beside text: `sl` (side: left), `slt` (side: left, top), `slc` (side: left, centre) , `slb`  (side: left, bottom), `s_` (side: left/inner/outer, ...). 
 * Options for interacting with text: `cl` (cutout left), `cl2` (cutout left, starting 2 lines below top), `c_` (cutout, left/inner/outer ...).
-* Default: cl
+* **Default**: `cl`
 
 The (default) cutout position leaves the least white-space. the `t` and `b` series of options position the image in a horizontal bar of space that is as tall as the image, the `s` series position the image in a vertical space as wide as the image, reducing the width as if the cutout continued the whole height of the side-bar.
 
-
+#### `\FgImageScale` 
 `\FgImageScale`  value(0-1)
-Width of the image relatve to the size of the size of the containing box.
+
+Width of the image relatve to the size of the containing box.
 Default: 0.2
 
-### Background colour and image
-`\BgColour option` 
-`\BgColor option` 
+#### `\FgImageScaleto` 
 
-* Option: `F`, `T`, `value`(0-1) `value`(0-1) `value`(0.1)
-Disable (F) or reenable (T)  any background colour set earlier (or inherited). Alternatively 
-3 values (0-1) for red, green and blue may be specified.
+See `\BgImageScaleto`. While scaling the foreground image to outer elements is considered of limited usefulness, this setting *also* shifts a left/right aligned image to the relevant edge, enabling some horizontal positioning control of the foreground image. 
+
+**Note** that as the border (if present) is the last-placed layer, it will overwrite any images below it, as can be seen in this test file, where the rose is a foreground image (`FgImagePos cr`, `FgImageScaleTo border`):
+
+![](imgs/20230929-213735.png)
+
+#### `\SpaceBeside`
+`\SpaceBeside 3pt`
+
+If the foreground image is in a cutout, this measurement gives the 
+space between the image and the surrounding text. See also above for the situation of the sidebar being in a cutout.
+If the sidebar is in a cutout and contains a cutout, both values are affected. It is considered unlikely that such a situation would need different values for both.
+
+### Background colour and image
+#### `\BgColour` 
+`\BgColour` option 
+
+`\BgColor` option 
+
+* Option: `F`, `T`:  Disable (F) or reenable (T)  any background colour set earlier (or inherited). 
+* Option: `value`(0-1) `value`(0-1) `value`(0.1)Alternatively  3 values (0-1) for red, green and blue may be specified.
+* Option: `x7f7fff`  An alternative way of specifying the colour.
 
 With `\Alpha` below, this defines the colour of the \esb box.
-Note that by default an \esb box has no background colour, so not setting a value here is
-not the same as setting a value to white. 
+Note that by default an \esb box has no background colour (i.e.`F`), so not setting a value here is not the same as setting a value to white. 
 Setting this to white will overwrite any background image. (For Americans, \BgColor is an acceptable alias).
 
-`\Alpha` value(0-1)
+#### `\Alpha` value(0-1)
 
 * Incompatible with: Breakable.
 The transparency or alpha value of the background colour: 0 is transparent, 1 is solid. While tempting, purpose of alpha is not
 to obtain pastel colours, but to allow a background colour to be used in conjunction with a background image. Using `\Alpha`
-with `\Breakable` is a usage error, that produces ugly stripes where the chunks overlap due to descenders (the amount  of p or q).
+with `\Breakable` is a usage error, that produces ugly stripes where the chunks overlap due to descenders (the amount  of p or q below the line).
 
 
-`\BgImage`      
+#### `\BgImage` 
+
+`\BgImage` filename
+
 Background images are intended to form a water-mark or fancy border and are
-horizontally and vertically centred, there is no ```\BgImagePos``` command. 
+horizontally and vertically centred.  **There is no** ```\BgImagePos``` command. 
+#### `\BgImageScale`
 
-\BgImageScale  0.5
-\BgImageScale  0.9x0.9
-\BgImageScale  x0.7
+`\BgImageScale  0.5`
+
+`\BgImageScale  0.9x0.9`
+
+`\BgImageScale  x0.7`
+
 Background Images can be scaled relative to the width of the box (top format), to both 
 dimensions of the box, or only to the height (bottom format).
 
+#### `\BgImageScaleTo`
+`\BgImageScaleTo` option
+
+* Options: `text`,  `box`, `iborder`, `border`, `outer` (plus others)
+* Default: `text`
+This is discussed in detail in the 
+[covers documentation](covers.md). This determines what the background image is scaled to (or foreground image for the similarly treated `FgImageScaleTo`) . This removes tedious fiddling to try to get an image to e.g. scale to the same size as the background box, inner edge of the border, etc.
+
+Options relevant for normal sidebars (see [covers documentation](covers.md) for other options) :
+
+* `text` The rectangle occupied by /reserved for the text 
+* `box` The background colour
+* `iborder` Inner edge of the border
+* `border` Outer edge of the border
+* `outer` Whichever is futher out, the outer edge of the border or the background colour.
+
+**Note** At present this does not interact well with `s__` positioned foreground images.
+
+#### `\BgImageOversize`
 `\BgImageOversize` option
 
 * Options: ignore shrink distort crop
@@ -126,21 +187,12 @@ If the background image size is specified with a single dimension (height or
 width) and the unspecified dimension ends up being too large for a given
 sidebar then there are four possible behaviours:
 
- * Ignore the problem, allowing the image to appear outside the box [current behaviour]
- * Shrink the image without distorting the image's aspect ratio [planned]
- * Shrink the image in the over-sized dimension, distorting the aspect ratio [planned]
+ * Ignore the problem, allowing the image to appear outside the box [current default]
+ * Shrink the image without distorting the image's aspect ratio [working]
+ * Shrink the image in the over-sized dimension, distorting the aspect ratio [working]
  * Crop the edges of the image [may be possible eventually]
 
-`\BgImageLow`  option
-
-* Options: `t`, `f`
-* Default: `t`
-
-Only relevant where there is both a background image *and* a background colour, this defines 
-the order they are put on the page.  Should a background image come below or above the colour. Line art PDFs with
-a transparent background may display better above the colour layer, as the colour 
-layer will not then wash them out, but .JPGs are probably better below, as .JPG images do not have transparency.
-
+#### `\BgImageAlpha`
 `\BgImageAlpha` value(0-1)
 
 Transparency or alpha value of the background image: 0 is transparent, 1 is
@@ -149,13 +201,17 @@ will allow the background colour to show through, even if the image is above
 the background layer, so on a green background black will become a darker
 shade of green, not grey.
 
-`\BgImageColor` value(0-1) value(0-1) value(0-1) 
-`\BgImageColor` x7f7f7f
+#### `\BgImageColour`
 `\BgImageColour` value(0-1) value(0-1) value(0-1) 
+
 `\BgImageColour` x7f7fef
-Some (rare) PDF line-art images do not set the colour of their lines, relying
-instead on the 'default' colour, which is normally black. This control sets the
-default colour to something other than black, and thus such images can be
+
+`\BgImageColor` value(0-1) value(0-1) value(0-1) 
+
+`\BgImageColor` x7f7f7f
+
+
+Some (rare) PDF line-art images do not set the colour of their lines, relying instead on the 'default' colour, which is normally black. This control sets the default colour to something other than black, and thus such images can be
 recoloured with this option. If (as most PDF images do) the image defines its
 own colour, this option will have no visible effect at all. It is also possible
 that an image will *partly* contain colour information, but only starting part
@@ -163,10 +219,14 @@ way through the file, a situation that might produce unexpected results.
 Colours are either specified as 3 decimal numbers or as a hexadecimal number.
 In both cases the sequence is Red, Green, Blue.
 
-### Padding  the background
+#### `\BoxPadding` - padding  the background
+
 `\BoxLPadding` measurement
+
 `\BoxRPadding` measurement
+
 `\BoxTPadding` measurement
+
 `\BoxBPadding` measurement
 
 If a coloured background is used, this is how much that box should be larger than the enclosed text.
@@ -185,9 +245,21 @@ side-aligned text away from the page margin. If it is false, then the presence
 of absence of a small amount of box padding will not normally affect
 the positioning of text. (Though it may shift following text a line lower)
 
+### Other Background options
+`\BgImageLow`  option
+
+* Options: `t`, `f`
+* Default: `t`
+
+Only relevant where there is both a background image *and* a background colour, this defines 
+the order they are put on the page.  Should a background image come below or above the colour. Line art PDFs with
+a transparent background may display better above the colour layer, as the colour 
+layer will not then wash them out, but .JPGs are probably better below, as .JPG images do not have transparency.
+
+
 ### Border-related Parameters
 
-`\Border` options
+#### `\Border` options
 
  * Options: are one or more of these (separated by a space): None Top Bottom Left Right Inner Outer All
 
@@ -202,33 +274,47 @@ The option None clears all borders set until now. Thus:
 `\Border All None Left`
  is the same as "\Border None Left". "\Border Left" will retain any previously set or inherited values,
  while adding a Left-hand border.
+
+#### `\BorderWidth` 
 `\BorderWidth` measurement
-Default: 0.5
+* Default: 0.5
+
 Define the thickness of the border around the box, measured in pt.
 
-`\BorderColour` value(0-1) value(0-1) value(0.1)
-`\BorderColor` value(0-1) value(0-1) value(0.1)
-`\BorderColour` x00ff00
-`\BorderColor` x34ff12
- Default: 0 0 0 (Black)
-The 3 values (0-1) for red, green and blue components of the (optional) border-line around the box 
-Colours are either specified as 3 decimal numbers (0.0-1.0) or as a hexadecimal number.
-In both cases the sequence is Red, Green, Blue.
 
-
+#### `\BorderStyle` 
 `\BorderStyle` option
 
 * Options: `plain`|`double`
 * Options with plugin: `ornaments`
 * Default: `plain`
 
-Normal borders are of style `plain`. The style `double` is also available, which gives a border that has double-line. The `ornaments` 
-plugin provides for more complex ornaments.
+Normal borders are of style `plain`. The style `double` is also available, which gives a border that has double-line (and a filled region in between). The `ornaments` 
+[plugin](Ornaments.md) plugin provides for more complex ornaments.
 
+#### `\BorderColour`
+`\BorderColour` value(0-1) value(0-1) value(0.1)
+
+`\BorderColor` value(0-1) value(0-1) value(0.1)
+
+`\BorderColour` x00ff00
+
+`\BorderColor` x34ff12
+
+*  Default: 0 0 0 (Black)
+
+The 3 values (0-1) for red, green and blue components of the (optional) border-line around the box 
+Colours are either specified as 3 decimal numbers (0.0-1.0) or as a hexadecimal number.
+In both cases the sequence is Red, Green, Blue.
+
+#### `\BorderFillColour`
 `\BorderFillColour` and `\BorderFillColor`
-Certain border styles have a region or regions that can be filled, e.g. the space between the 2 lines of borderstyle `double`
+`\BorderFillColour None`
+
+Certain border styles have a region or regions that can be filled, e.g. the space between the 2 lines of borderstyle `double`, or some ornaments. A value of `none` will disable the fill (i.e leave that portion transparent). See above for other accepted values.
 
 `\BorderLineWidth` measurement
+
 Where relevant (e.g. the `double` and `ornaments` border styles), this
 determines the thickness of the lines that are used to draw the border.  Thus
 in `double` style, there will be two lines of width equal to the specified
@@ -236,11 +322,15 @@ amount with a gap or filled region (see `\BorderFillColour`), and the *total*
 width of the border will be `\BorderWidth`.
 
 
+#### `\BorderPadding`
 `\BorderTPadding` measurement
+
 `\BorderBPadding` measurement
+
 `\BorderLPadding` measurement
+
 `\BorderRPadding` measurement
-Default: 0
+* Default: 0
 
 This measurement (in points) specifies how much further out the (inside) edge of
 the border is from from the (outside) of the surrounded item (the nominal
