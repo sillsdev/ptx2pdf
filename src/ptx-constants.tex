@@ -108,8 +108,15 @@
 \def\St@lone{standalone}
 \def\gr@dorig{orig} % Grid the text inside and grid the box. (resulting in over-gridding)
 \def\gr@dnone{none} % No grid corrections
+\def\gr@dheading{heading} % No grid corrections, but keep headings' SpaceBefore at the top of the box
 \def\gr@dnormal{normal} % Do something a bit clever at the top of the box
-\def\gr@dsmart{smart} % Do something even cleverer, based on the box height
+\def\gr@dsmart{smart} % Do something even cleverer, 
+\x@\let\csname @gr@d@\gr@dorig\endcsname\tr@e
+\x@\let\csname @gr@d@\gr@dnormal\endcsname\tr@e
+\x@\let\csname @gr@d@\gr@dsmart\endcsname\tr@e
+\x@\let\csname @gr@d@\gr@dnone\endcsname\false
+\x@\let\csname @gr@d@\gr@dheading\endcsname\false
+
 \def\h@phen{-} % for matching
 {\catcode`+=11 
  \catcode`-=11

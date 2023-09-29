@@ -872,7 +872,7 @@
   \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip
     \trace{e}{hts: \the\headingtopspace, b@xintadj:\b@xintadj, b@xgridadj\b@xgridadj}%
-    \ifx\@@sb@rgrid\gr@dnone
+    \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
       \trace{e}{No intskip}%
     \else
       \setbox\extb@x\vbox{%\dbghrule
@@ -995,7 +995,7 @@
       \advance\dimen1 by -\sp@ceafter
       \relax
       \ifdoIntskip
-        \ifx\@@sb@rgrid\gr@dnone
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
           \doIntskipfalse
           \advance\dimen1 by \b@xgridadj
       \fi\fi
@@ -1008,7 +1008,8 @@
         \dimen1=0pt \def\b@xextadj{0pt}\def\b@xintadj{0pt}%
       \fi
       \ifdoIntskip\else
-        \ifx\@@sb@rgrid\gr@dnone\ifpicUsesIns\else
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
+          \ifpicUsesIns\else
           \trace{e}{Killing post-skips as gridding disabled (\@@sb@rgrid)}% 
           \dimen1=0pt
         \fi\fi
@@ -1029,7 +1030,7 @@
         \dimen1=-\sp@ceafter
       \fi
       \ifdoIntskip
-        \ifx\@@sb@rgrid\gr@dnone
+        \x@\ifx\csname @gr@d@\@@sb@rgrid\endcsname\false
           \doIntskipfalse
           \advance\dimen1 by \b@xgridadj
       \fi\fi
@@ -1149,7 +1150,7 @@
   \ifvoid\sid@barnotes\else
     \ifinner%\unvbox\sid@barnotes % Inner boxes can't do vadjust, and if we unvbox here they'll be lost. Hopefully they can be unwrapped somewhere else.
     \else
-      \vadjust{\unvbox\sid@barnotes}%
+      \ifhmode\vadjust\fi{\unvbox\sid@barnotes}%
     \fi
   \fi
   \let\fb@lpadding\os@vedlpadding
