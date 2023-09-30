@@ -59,8 +59,14 @@
 
 \def\mkp@cref#1#2{%format the reference for book,chapter.verse that piclist (and anything wanting to trigger piclist entries) should use
 #1#2-preverse}
- 
-\def\parsep@cline #1 #2 #3\endpicline{%
+\def\parsep@cline #1#2\endpicline{%
+  \def\t@st{#1}\ifx\t@st\h@sh
+    \trace{P}{Ignoring comment line #1#2}%
+  \else
+    \x@\@parsep@cline #1#2\endpicline 
+  \fi
+}
+\def\@parsep@cline #1 #2 #3\endpicline{%
   \uppercase{\def\piclstb@@kref{#1}}%
   \tempfalse
   \xdef\t@st{#2\TriggerP@rSep}%
@@ -110,7 +116,7 @@
       \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
       \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
       \catcode`.=12 \catcode`\%=5 \catcode`\/=12 %\catcode"201D=12 \catcode"201C=12 
-      \catcode`\&=12 
+      \catcode`\&=12 \catcode`\#=12
       \endlinechar=-1
       \read\p@clist to \p@cline
       \ifx\p@cline\P@R\readnextp@c\else
