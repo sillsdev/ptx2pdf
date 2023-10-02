@@ -247,7 +247,8 @@
       \fi
     \fi
     \ifp@ranotes\else
-      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\kern\p@ram\verticalsp@ceunit\penalty10000\fi\fi
+      \prevdepth=0pt % Ensure that we start with a baselineskip.
+      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
