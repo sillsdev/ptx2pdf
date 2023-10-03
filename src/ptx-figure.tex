@@ -320,6 +320,12 @@
     \fi
   \fi
   % new options
+  \ifx\l@cspec@a\loc@InlB
+    \InlBelowtrue
+    \let\l@cspec@a\loc@Inl
+  \else
+    \InlBelowfalse
+  \fi
   \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
     \global\let\picl@c\loc@Inl\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
@@ -1020,9 +1026,13 @@
   \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
   \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
 }
+\newif\ifInlBelow \InlBelowfalse
+\newif\ifAdjustInlBelow \AdjustInlBelowfalse
 \def\d@figureInl#1{%
-  \trace{g}{\w@tsit\space is inline, \the\hsize \ifhmode , in HMODE\fi \ifpicNarrow , narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
-  \penalty\pr@penalty % Allow the page to break
+  \let\curmode\empty
+  \ifhmode \edef\curmode{\curmode, in HMODE}\fi %Can't test for these inside a write
+  \ifvmode \edef\curmode{\curmode, in VMODE}\fi
+  \trace{g}{\w@tsit\space is inline, \the\hsize \curmode \ifpicNarrow, narrow\fi. Penalties: \pr@penalty,\p@stpenalty}%
   \ifpicNarrow
     \@lignpic{#1}%
   \fi
@@ -1031,7 +1041,8 @@
   \ifhmode \temptrue\fi
   \ifx\w@tsit\gr@phic \temptrue \fi
   \def\picc@ntents{%
-    \gridp@cfalse% Not true! It's not floating.
+    \penalty\pr@penalty % Allow the page to break
+    \gridp@cfalse% Not true! It's not a floating fig.
     \trace{g}{Before gridbox \the\ht#1+\the\dp#1}%
     %\lastdepth=0pt
     %\ifdim\lastdepth>0.2\onel@neunit\vskip\onel@neunit\fi%
@@ -1042,7 +1053,18 @@
     \fi
   \penalty\p@stpenalty}%
   \ifvmode \picc@ntents
-  \else\vadjust pre{\picc@ntents}\fi
+  \else 
+    \ifInlBelow
+      \iffalse %ifAdjustInlBelow % FIXME. This needs careful logic. Can only correct for descent if there's enough space to do so!
+        \strut
+        \vadjust {\kern-\dp\str@tbox\picc@ntents\kern\dp\str@tbox}%
+      \else
+        \vadjust {\picc@ntents}%
+      \fi
+    \else
+      \vadjust pre{\picc@ntents}%
+    \fi
+  \fi
 }
 
 \newif\ifearlyeotpskip

@@ -889,7 +889,7 @@
       \unvbox\extb@x}%
     \xdef\@@sb@rfirstskip{0pt}%
   \fi
-  \trace{eg}{Initial skip: \the\dimen4}
+  \trace{eg}{Initial skip: \the\dimen4}%
   \advance\dimen4 by -\ht\extb@x
   \loop\ifdim\dimen4> \onel@neunit
     \advance\dimen4 by -\onel@neunit
@@ -901,7 +901,7 @@
   \loop\ifdim\dimen4<\dimen9
     \advance\dimen4 by \onel@neunit
   \repeat
-  \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }
+  \trace{eg}{Adjusted skip:\the\dimen4 (\the\ht\extb@x+\the\dp\extb@x)/\the\onel@neunit }%
   \trace{eg}{sb@rgrid:\@@sb@rgrid. sb@rfirstskip was \@@sb@rfirstskip. doIntskip\ifdoIntskip true\else false\fi}%
   \edef\b@xgridadj{\the\dimen4}%
   \ifdoIntskip

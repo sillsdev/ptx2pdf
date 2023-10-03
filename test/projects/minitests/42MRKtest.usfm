@@ -8,7 +8,7 @@
 \s1 Side bar heading
 \p 
 This is a sidebar, it contains some text and exists to test out various
-features of the species, so that sidebars can be in the test-suite tool.
+features of the species, so that sidebars can be in the test-suite tool. This should be on-grid.
 
 \p
 Et minima qui commodi fuga soluta et. Qui quisquam id consequatur
@@ -17,16 +17,12 @@ sed minus eos vero dolores. Minima eaque odio quia ut laudantium labore dolor
 sed.Debitis aut qui quibusdam molestias omnis doloribus. Molestiae sit
 occaecati sint. Consequatur aliquam dicta et tenetur quasi est totam dolores.
 Vitae est molestiae id.Sit suscipit qui minima quis hic. Qui et facere ex quia
-natus fuga enim a. Provident voluptas id itaque modi. Odit dolor perferendis
-voluptates ut. Reprehenderit et corporis aut.Adipisci nihil quis quisquam
-molestias eos doloribus. Ipsum amet dolorem consequatur est aliquam. Enim quia
-ut et aut molestiae quia et sit. Quis ducimus aut saepe aut deleniti ea illo
-sit.
+natus fuga enim a. Provident voluptas id itaque modi. 
 \esbe
-
 \v  1 The beginning of the gospel of Jesus Christ, the Son of God;
 \v  2 As it is written in the prophets, Behold, I send my messenger before thy face, which shall prepare thy way before thee.
 \v  3 The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight.
+\p
 \v  4 John did baptize in the wilderness, and preach the baptism of repentance for the remission of sins.
 \v  5 And there went out unto him all the land of Judaea, and they of Jerusalem, and were all baptized of him in the river of Jordan, confessing
 their sins.
@@ -43,6 +39,7 @@ their sins.
 \v  16 Now as he walked by the sea of Galilee, he saw Simon and Andrew his brother casting a net into the sea: for they were fishers.
 \v  17 And Jesus said unto them, Come ye after me, and I will make you to become fishers of men.
 \v  18 And straightway they forsook their nets, and followed him.
+\p
 \v  19 And when he had gone a little farther thence, he saw James the son of Zebedee, and John his brother, who also were in the ship mending their
 nets.
 \v  20 And straightway he called them: and they left their father Zebedee in the ship with the hired servants, and went after him.
