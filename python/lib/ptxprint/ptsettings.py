@@ -162,7 +162,7 @@ class ParatextSettings:
                     bookspresent[v-1] = 1
                     self.bookmap[k] = fname
                     booksfound.add(fname)
-            if not len(booksfound) and not inferred:     # buggy Settings.xml that doesn't fit the directory tree
+            if not len(booksfound) and not forced:     # buggy Settings.xml that doesn't fit the directory tree
                 self.inferValues(forced=True)
                 self.calcbookspresent()
         else:
