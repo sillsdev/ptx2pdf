@@ -758,7 +758,7 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_totalPages">
     <property name="lower">100</property>
     <property name="upper">5000</property>
-    <property name="value">500</property>
+    <property name="value">100</property>
     <property name="step-increment">10</property>
     <property name="page-increment">100</property>
   </object>
@@ -844,13 +844,6 @@ THE SOFTWARE.
   </object>
   <object class="GtkAdjustment" id="a_zvarListadjustment2">
     <property name="upper">100</property>
-    <property name="step-increment">1</property>
-    <property name="page-increment">10</property>
-  </object>
-  <object class="GtkAdjustment" id="adjustment1a_totalPages">
-    <property name="lower">4</property>
-    <property name="upper">9999</property>
-    <property name="value">500</property>
     <property name="step-increment">1</property>
     <property name="page-increment">10</property>
   </object>
@@ -23136,9 +23129,9 @@ manually adjusted.</property>
                                         <property name="width-chars">6</property>
                                         <property name="text" translatable="yes">70</property>
                                         <property name="xalign">1</property>
-                                        <property name="adjustment">adjustment1a_totalPages</property>
+                                        <property name="adjustment">a_totalPages</property>
                                         <property name="climb-rate">5</property>
-                                        <property name="value">500</property>
+                                        <property name="value">100</property>
                                         <signal name="value-changed" handler="onCoverSettingsChanged" swapped="no"/>
                                       </object>
                                       <packing>
@@ -25819,6 +25812,12 @@ by deleting unneeded files.</property>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">10</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>
