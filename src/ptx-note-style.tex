@@ -171,6 +171,7 @@
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
+   \ifp@ranotes\else\endgraf\kern-\prevdepth\fi% Kill decenders at the end of the note
  \fi
  \egroup % end the insert (started in \m@kenote) 
  \ifx\@wrap\empty\else\egroup\let\@wrap\empty\fi%\@wrap would have started a box
@@ -179,7 +180,9 @@
  \ifsp@cebefore \global\let\n@xt=\ignorespaces % ignore following spaces if there was a preceding one
    \else \global\let\n@xt\relax \fi
  \aftern@te
- \endgroup\n@xt}
+ \endgroup
+ %\showboxbreadth=999\showlists
+ \n@xt}
 \newif\ifsp@cebefore
 \newif\ifskipn@testyle
 %-cnote_endnote
