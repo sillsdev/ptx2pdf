@@ -43,21 +43,27 @@
     \get@ttribute{unicode}%
     \ifx\attr@b\tr@e \temptrue \else\tempfalse\fi
     \get@ttribute{data}%
-    \iftemp 
-      \trace{m}{QRcode writing temp file QRtmp.tex}%
-      \immediate\openout\QRtmpfile="QRtmp.tex"\relax
-      \immediate\write\QRtmpfile{\string\XeTeXinputencoding "bytes"}%
-      \immediate\write\QRtmpfile{\string\QRdata"\attr@b"}%
-      \immediate\write\QRtmpfile{\string\endinput}%
-      \immediate\closeout\QRtmpfile
-      \input "QRtmp.tex"\relax
-    \else
-      \x@\QRdata\x@"\attr@b"\relax
-    \fi
-    \QRcode%
-    \trace{m}{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
-    \dimen0=0.5\QRinside
-    \setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
+    \bgroup 
+      \deactiv@tecustomch@rs
+      \catcode`\/=12
+      \iftemp 
+        \trace{m}{QRcode writing temp file QRtmp.tex}%
+        \immediate\openout\QRtmpfile="QRtmp.tex"\relax
+        \immediate\write\QRtmpfile{\string\XeTeXinputencoding "bytes"}%
+        \immediate\write\QRtmpfile{\string\QRdata"\attr@b"}%
+        \immediate\write\QRtmpfile{\string\endinput}%
+        \immediate\closeout\QRtmpfile
+        \input "QRtmp.tex"\relax%
+      \else
+        \x@\m@kenumb@r\attr@b=%
+        \trace{m}{QRcode rescanned as '\@@result'}%
+        \x@\QRdata"\@@result"\relax%
+      \fi
+      \QRcode%
+      \trace{m}{QR code is \the\wd\QRcodebox x\the\ht\QRcodebox, req \the\QRbounding/\the\QRinside}%
+      \dimen0=0.5\QRinside
+      \global\setbox\QRcodebox\hbox{\kern-\dimen0\box\QRcodebox\kern\dimen0}%
+    \egroup
     \getp@ram{color}{zqrcode}{\styst@k}%
     \get@ttribute{color}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
     \get@ttribute{colour}\ifx\attr@b\relax\else\let\p@ram\attr@b\fi
