@@ -26,8 +26,6 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
-# "! No room for data in QRcode versions": _("QR code generator: vmax value is too low. Try removing the vmax parameter, \n" +\
-                                           # "or increase value of vmax until error goes away."),
 
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
@@ -559,7 +557,7 @@ class RunJob:
             if smry["E"] > 0:
                 msgs = "\n".join(msgList)
                 finalLogLines.append(msgs)
-            else:
+            else: # Catch all else kind of message.
                 finalLogLines.append(_errmsghelp["Unknown"])
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
