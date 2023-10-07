@@ -1,9 +1,25 @@
 PTXprint 2.3.46 Release Notes
-28 Sep 2023
+7 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.47 (7 Oct 2023)
+
+  * Sidebar fixes: FgImageScaleTo calculations
+  
+  * Interpret lines starting # in piclist as comments
+  
+  * Make successive un-paragraphed notes obey their baselineskip (if no spacebefore)
+  
+  * Improve error reporting on status line, and after a crash
+  
+  * Fix infinite recursion if cannot infer sfm filename structure
+  
+  * Fix QR code bugs... (/ is now OK in both unicode and non-unicode data)
+  
+  * Fix missing QRcode.tex in the .spec file
+  
 Bug fixes and Improvements in 2.3.46 (28 Sep 2023)
 
   * Make space after GLO entry \k* optional when filtering entries

@@ -26,6 +26,8 @@ from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
+# "! No room for data in QRcode versions": _("QR code generator: vmax value is too low. Try removing the vmax parameter, \n" +\
+                                           # "or increase value of vmax until error goes away."),
 
 _errmsghelp = {
 "! Argument":                            _("Probably a TeX macro problem - contact support, or post a bug report"),
@@ -40,7 +42,8 @@ _errmsghelp = {
 "\\colorhex #1->\\count 1=#1":           _("Expecting a number for \Color definition, not a color name. (e.g. \Color xff7f7f)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
-                                           "Try running 'Basic Checks' in Paratext to validate markers."),
+                                           "Try running 'Basic Checks' in Paratext to validate markers.\n" +\
+                                           "It could also be related to an unrecognized setting in ptxprint_mods.tex"),
 "! Illegal unit of measure (pt inserted).":    _("One of the settings in the Stylesheet may be missing the units.\n" +\
                                            "To confirm that this is a stylesheet issue, temporarily turn off Stylesheets.\n" +\
                                            "Then, check any recent changes to the Stylesheets (on Advanced tab) and try again."),
@@ -70,11 +73,12 @@ _errmsghelp = {
 "! I can't find file `ptx-tracing.tex'.": _("Possibly a faulty installation."),
 "Runaway argument?":                     _("Unknown issue. Possibly related to Right-aligned tabbed leaders. " +\
                                            "Try turning off various settings on the Advanced Tab."),
-"Unknown":                               _("Oops! Something unexpected happened causing this error.\n" +\
-                                           "If you are unable to solve this issue yourself, use the 'Create Archive...' button\n" +\
-                                           "on the Help page to create a .zip file and send it to <ptxprint_support@sil.org>\n" +\
+"Unknown":                               _("Oops! Something unexpected happened causing this unhandled error.\n" +\
+                                           "Try using the 'Tidy Up' button on the Help tab and then try again.\n" +\
+                                           "If you are still unable to proceed, use the 'Create Archive...' button\n" +\
+                                           "on the Help tab to create a .zip file. Send it to your PTXprint support person\n" +\
                                            "for further assistance. Please include a description of the problem, and if\n" +\
-                                           "known, tell us which setting was changed since it last worked.")
+                                           "known, state which setting was changed since it last worked.")
 }
 
 _pdfmodes = {
@@ -446,11 +450,18 @@ class RunJob:
                 with open(fname, "r", encoding="utf-8", errors="ignore") as logfile:
                     log = logfile.read()
                 smry, msgList = summarizeTexLog(log)
+                if not self.noview and not self.args.print:
+                    sl = self.printer.builder.get_object("l_statusLine")
+                    sl.set_text("")
+                    sl.set_tooltip_text("")
                 if smry["E"] + smry["W"] > 0:
                     summaryLine = f"XeTeX Log Summary: Info: {smry['I']}   Warn: {smry['W']}   Error: {smry['E']}"
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
-                    self.printer.set("l_statusLine", summaryLine)
+                    if not self.noview and not self.args.print:
+                        sl.set_text(summaryLine)
+                        sl.set_tooltip_text(msgs)
+                        self.printer.set("l_statusLine", summaryLine)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -543,7 +554,13 @@ class RunJob:
                         foundmsg = True
                         break
         if not foundmsg:
-            finalLogLines.append(_errmsghelp["Unknown"])
+            # Try summarizing Log file:
+            smry, msgList = summarizeTexLog('\n'.join(finalLogLines))
+            if smry["E"] > 0:
+                msgs = "\n".join(msgList)
+                finalLogLines.append(msgs)
+            else:
+                finalLogLines.append(_errmsghelp["Unknown"])
         books = re.findall(r"\d\d(...){}.+?\....".format(self.prjid), "".join(finalLogLines))
         if len(books):
             book = " in {}".format(books[-1])

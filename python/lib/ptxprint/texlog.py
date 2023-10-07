@@ -7,6 +7,7 @@ responses = {
     "R": "Rerun and see if that fixes it.",
     "U": "Fix usfm",
     "P": "Fix piclist or relevant figure definition",
+    "Q": "In the QR code specification, try removing the vmax parameter,\n   or increase value of vmax until error goes away.",
     "A": "Fix Adjlist",
     "S": "Fix stylesheet",
     "T": "Contact programming team (TeX)",
@@ -27,7 +28,6 @@ messages = [
     ("E","U", r"Cannot continue"),
     ("E","US", r"Cannot re-use undefined variable .+"),
     ("E","S", r"Invalid key found when parsing .+? OrnamentScaleRef : '.+?' \(given: .+?\)"),
-    ("W","U", r"No room for data in QRcode versions till .+"),
     ("E","UE", r"Pagecount \(\d+\) has exceeded \\MaxPages \(\d+\)\. This probably means something has gone wrong\. \(or you should increase MaxPages or MaxPagesPerChunk \(\d+\) for this job\)"),
     ("W","UP", r'Unknown picture size \".+?\", expected \"col\", \"span\", \"width\", \"page\" or \"full\"'),
     ("E","UY", r"polyglotcolumn must be followed by a sensible argument\. '.+?' Hasn't been specified as a polyglot column \(with newPolyglotCol\), before any USFM files are read\."),
@@ -56,6 +56,7 @@ messages = [
     ("I","", r"n\.b\. You can load optional plugins with \(some of\) .+? or .+?"),
     ("I","", r"Setting drop-cap size to .+"),
     ("W","S", r"! Cover sidebar '.+?' is currently '.+?\. It must be Fcf or similar"),
+    ("E","Q", r'! No room for data in QRcode versions.+?'),
     ("W","S", r'! Parent style \".+?\" referenced for borders by \".+?  does not exist!'),
     ("W","S", r"! Unknown borderstyle '.+?\. Known styles: .+?"),
     ("E","U", r'! zornament milestone must have a valid pattern=\"\.\.\.\" set'),
@@ -154,7 +155,10 @@ def summarizeTexLog(logText):
                     if i == 1:
                         messageSummary.append(f"  To fix it, try:")
                     messageSummary.append(f"  {i}. {responses[r]}")
-    return category_counts, messageSummary
+    if __name__ == "__main__":
+        print(category_counts, '\n'.join(messageSummary))
+    else:
+        return category_counts, messageSummary
 
 # Function to search for and summarize recent *ptxp.log files
 def search_and_summarize_recent_logs(root_folder):

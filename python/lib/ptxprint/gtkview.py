@@ -453,7 +453,7 @@ _dlgtriggers = {
     "dlg_borders":          "onSBborderClicked"
 }
 
-def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@sil.org", **kw):
+def _doError(text, secondary="", title=None, copy2clip=False, show=True, who2email="ptxprint_support@<your.org's.address>", **kw):
     logger.error(text)
     if secondary:
         logger.error(secondary)
