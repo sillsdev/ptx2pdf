@@ -75,12 +75,16 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'SpaceBefore', 'SpaceAfter', 'CallerStyle', 'CallerRaise',
                 'NoteCallerStyle', 'NoteCallerRaise', 'NoteBlendInto', 'LineSpacing',
                 'StyleType', 'ColorName', 'XMLTag', 'TEStyleName', 'ztexFontFeatures', 'ztexFontGrSpace',
-                'FgImage', 'FgImagePos', 'FgImageScale', 'BgImage', 'BgImageScale', 'BgImageScaleTo', 'BgImagePos', 'BgImageLow',
+                'FgImage', 'FgImagePos', 'FgImageScale', 'FgImageScaleTo', 
+                'BgImage', 'BgImagePos', 'BgImageScale', 'BgImageScaleTo', 'BgImageLow',
                 'BgImageColour', 'BgImageColor', 'BgImageAlpha', 'BgImageOversize', 'BgColour', 'BgColor',
-                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderVPadding', 'BorderHPadding', 
+                'BorderWidth', 'BorderColour', 'BorderColor', 'BorderFillColour', 'BorderFillColor',
+                'BorderPadding', 'BorderVPadding', 'BorderHPadding', 
                 'BorderTPadding', 'BorderBPadding', 'BorderLPadding', 'BorderRPadding', 
-                'BoxTPadding', 'BoxBPadding', 'BoxLPadding', 'BoxRPadding', 
-                'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderRef', 'NonJustifiedFill')}
+                'BoxPadding', 'BoxTPadding', 'BoxBPadding', 'BoxLPadding', 'BoxRPadding', 
+                'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderStyleExtra', 'BorderRef', 'NonJustifiedFill',
+                'SidebarGridding','SpaceBeside',
+                'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef')}
 binarymkrs = {"bold", "italic", "smallcaps"}
 
 absolutes = {"baseline", "raise", "callerraise", "notecallerraise"}
