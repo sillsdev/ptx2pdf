@@ -158,9 +158,12 @@
 \x@\let\csname prj:schema\endcsname\pdfPRJ
 
 \def\PDFposfromattr{\ifActions\raise\the\baselineskip\hbox{\special{pdf:dest (\attr@b) [@thispage /XYZ @xpos @ypos 1.4]}}\fi}
-\SetSpeciallAttribs{link-id}{\PDFposfromattr\noexpand\makelabelfromattr}{}
+\SetSpeciallAttribs{link-id}{\noexpand\maybePDFp@sfromattr\noexpand\makelabelfromattr}{}
 \SetSpeciallAttribs{link-href}{\ifx\attr@b\empty\else\noexpand\trace{A}{Applying link-href:'\attr@b'}\noexpand\pdfURLorGOTO \attr@b:\noexpand\end\fi}{\ifx\attr@b\empty\else\special{pdf:eann}\fi}
 \SetSpeciallAttribs{outline-entry}{\noexpand\m@keoutlinefromattr{\attr@b}}{}
+\SetSpeciallAttribs{link-title}{\noexpand\maybem@keoutlinefromattr{\attr@b}}{}
+\def\maybem@keoutlinefromattr#1{\testt@ttrn@me{link-href}\if@ttrexists\else\m@keoutlinefromattr{#1}}
+\def\maybePDFp@sfromattr#1{\testt@ttrn@me{outline-entry}\if@ttrexists\else\PDFposfromattr{#1}\fi}
 
 \def\m@keoutlinefromattr#1{\get@ttribute{link-id}\ifx\attr@b\relax
     \message{Unable to make outline entry for #1, no link-id field specified}
@@ -326,6 +329,8 @@
     \trace{A}{attrib '#1' is '\attr@b'}%
   \fi
 }
+\newif\if@ttrexists
+\def\testt@ttrn@me#1{\ifcsname attr:#1\endcsname\@ttrexiststrue\else\@ttrexistsfalse\fi}%
 \def\get@ttribute#1{\x@\let\x@\attr@b\csname attr:#1\endcsname \trace{A}{attrib '#1' is '\attr@b'}%
   \x@\@checkzvar\x@{\x@\attr@b\x@}\attr@b ::::\E} %simple access function
 

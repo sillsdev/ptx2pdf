@@ -789,7 +789,7 @@
   \font\belowISBN="\ISBNfont" at \ISBNfontdim % Outside group so that it's accessible for prices
   \bgroup
   %\trace{m}
-` \trace{m}{ISBN barcode for \attr@b, using \ISBNfont at \the\ISBNfontdim}%
+  \trace{m}{ISBN barcode for \attr@b, using \ISBNfont at \the\ISBNfontdim}%
   \belowISBN\setbox0\hbox{ISBN #1}\dimen0=478em\divide\dimen0 \wd0 \multiply\dimen0\ISBNfontdim%scale calculation by 50.
   %I don't assme the above will work exactly, so measure with a space and typeset with a some glue.
   \edef\tmp{\the\dimexpr 0.02\dimen0\relax}%
@@ -802,10 +802,9 @@
   %\trace{m}{dimen0 is \the\dimen0. AboveISBNfont is \tmp}%
   \vbox{\lineskip=0.2ex \lineskiplimit=0pt \everypar={}%
    %\message{here we go....}%
-   \hbox{\hbox to 0.9em{\hss}%
-      \aboveISBN \hbox to 9.55em{\hskip 0pt minus 0.5ex ISBN\hskip 0.3em plus 1fil minus 0.25em #1\hskip 0pt minus 0.5ex}}%
+   \hbox{\hbox to 0.9em{\hss}% All measurements *outside* the top-boxe use main belowISBN font, the top-box uses scaled font.
+       \hbox to 9.55em{\aboveISBN \hskip 0pt minus 0.5ex ISBN\hskip 0.3em plus 1fil minus 0.25em #1\hskip 0pt minus 0.5ex}}%
    %\message{Drawing ISBN}%
-   \belowISBN
    \hbox{\expandafter\isbn#1--}
   }%
   \egroup
