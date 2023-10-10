@@ -1034,6 +1034,7 @@
 \def\pagebody{\vbox to\textheight{\boxmaxdepth\maxdepth \pagecontents}\box14}
 \def\makeheadline{{%
   \mcpush{P}{h}%
+  \let\c@tprefix\empty\let\c@tegory\empty\let\f@ntextend\empty\let\mspr@fix\empty
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
@@ -1065,6 +1066,7 @@
 \def\makefootbox{%
   \vbox{
     \mcpush{P}{h}%
+    \let\c@tprefix\empty\let\c@tegory\empty\let\f@ntextend\empty\let\mspr@fix\empty
     \s@tfont{zfooter}{zfooter+h}%
     \setbox8=\hbox{\the\footline}%
     \ifdim\ht8>0pt
