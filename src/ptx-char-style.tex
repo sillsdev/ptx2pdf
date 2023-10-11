@@ -220,6 +220,7 @@
     \getmcp@ram{raise}%
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
+    \ifAlwaysCheckAttributes\temptrue\fi % Linking attributes are possibly universally applicable.
     \getmcp@ramR{background}%
     \def\xtr@{}% Any extra code to run at the start of the group
     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
@@ -289,6 +290,7 @@
   \setbox#2\box\ulb@x
 }
 
+\newif\ifAlwaysCheckAttributes \AlwaysCheckAttributesfalse
 %+cchar_endcharstyle
 %\lccode`\|=`\\ % for printing backslash in error message
 %\lowercase{
@@ -317,6 +319,7 @@
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
      \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
+     \ifAlwaysCheckAttributes\temptrue\fi % Linking attributes are possibly universally applicable.
      \getmcp@ramR{underline}%
      \ifx\p@ram\tru@\temptrue\global\let\ulp@ram\p@ram
      \else
@@ -351,6 +354,9 @@
              \csname complex-\oldch@rstyle\endcsname
            \fi
          \fi
+       \fi
+       \ifx\attribsus@d\empty\else
+         \unset@ttribs% Clear any old attributes.
        \fi
        \ifx\char@raise\relax
          \unhbox0

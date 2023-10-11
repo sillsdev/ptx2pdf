@@ -11,5 +11,6 @@
 Behold a QR code\zqrcode|hello\*
 \v 2
 And another \zqrcode|pgpos="cr" background="1 1 0.5" colour="0 0 .5" vmax="2" unicode="T" size="1cm" data="This is in v 2 ăěâśěǎ"\*
-
+\v 3 
+And yet another \zqrcode|pgpos="H" background="1 1 0.5" colour="0 0 .5" vmax="2" unicode="T" size="1cm" data="http://localhost/țară.html$#%"\*
 

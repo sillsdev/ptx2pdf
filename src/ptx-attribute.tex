@@ -99,6 +99,7 @@
   \let\d@=\kill@ttrib
   \x@\cstackdown \attribsus@d,\E
   \xdef\attribsus@d{}%
+  \xdef\@ttributes{}%
   \relax\relax
   \trace{A}{attributes list reset}%
 }
@@ -106,7 +107,9 @@
   %\tracingassigns=1
   \edef\thiswh@tstyle{\ifmst@nestyle\thismil@stone\else\thisch@rstyle\fi}%
   \trace{A}{InitAttribs \thiswh@tstyle (\csname thisch@rstyle\endcsname,\csname thismil@stone\endcsname)}%
-  \unset@ttribs% Clear any old attributes.
+  \ifx\attribsus@d\empty\else
+    \unset@ttribs% Clear any old attributes.
+  \fi
   \let\attrkey\relax
   %\x@\let\x@\attrkey\csname defaultattrkey-\thisch@rstyle\endcsname
   \x@\let\x@\t@st\csname thiswh@tstyle\endcsname
@@ -138,7 +141,7 @@
 
 %\def\LinkBorderstyle{}
 
-\def\pdfURL#1{\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
+\def\pdfURL#1{\trace{A}{Appyling PDFurl}\special{pdf:bann<</Type/Annot/Subtype/Link/Border[0 0 1]\ifx\URLLinkBorderstyle\empty\else/BS<<\URLLinkBorderstyle>>\fi/H/I\ifx\GOTOLinkBorderCol\empty\else/C[\URLLinkBorderCol]\fi\ifActions/A<</S/URI/URI(#1)>>\fi>>}}
 
 \edef\h@shcatcode{\the\catcode`\#}
 \catcode`\#=12

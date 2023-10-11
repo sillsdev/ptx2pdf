@@ -41,7 +41,10 @@ said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci 
 \p \cat insb\cat* This is a categorized paragraph in a sidebar\f + \fr 1:3 \ft What about footnotes?\f*
 \p This is a normal paragraph in a sidebar
 \esbe
-\p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, nisi ut aliquid ex ea commodi
+
+
+\p \qt-s|The crowd\*Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam\qt-e\*, said the crowd. \bd Bold, \it Italic, \+bd Bold-Italic|link-href="https://localhost/"\+bd* Italic again.\it*, and back to normal.  Nisi ut aliquid ex ea commodi
+\p
 consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui \w dolorem\w* eum fugiat quo voluptas nulla pariatur?
 \p
 \s A test \w foo|demo\w* of word attributes
@@ -105,7 +108,7 @@ I want paragraph 2 as a right-justified paragraph
 \p I want paragraph 4 as a normal pargraph
 
 \p What happens if I put a slash in a \w word|lemma="attri\'bute" strongs="1234"\w* Surely not much?
-What about nested attributed words? \w \+pn like this word|type="underline"\+pn*|lemma="lemming" strongs="1234"\w*. It works..
+What about nested attributed words? \w \+pn like this|type="underline"\+pn* bit|lemma="lemming" strongs="1234"\w*. It works..
 
 \p
 \zifvarset|var="checkme" emptyok="F"\*
@@ -157,5 +160,13 @@ Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISB
 
 \p And barcodes with prices:
 \w | link-id="ISBNprice" outline-entry="ISBN with pricing" outline-level="1"\w* \zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499"\* 
+
+\s Vertical bar
+\p This is a | vertical bar.
+\p This is a \|\ escaped vertical bar.
+\p This is a \w  vertical|bar\w* in a slash-w
+\p This is a \w  vertical\| bar\w* in a slash-w when its escaped.
+
+ 
 \pb
 \zfillsignature|pages="8" pagenos="do"\*
