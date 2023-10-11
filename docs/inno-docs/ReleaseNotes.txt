@@ -1,9 +1,17 @@
 PTXprint 2.3.47 Release Notes
-7 Oct 2023
+12 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.48 (12 Oct 2023)
+
+  * Fix some ISBNbarcode glitches
+  
+  * Make sure header/footer are not using fontextend
+  
+  * Make link-title with no link-href generate a PDF bookmark
+  
 Bug fixes and Improvements in 2.3.47 (7 Oct 2023)
 
   * Sidebar fixes: FgImageScaleTo calculations
