@@ -1,7 +1,7 @@
 import sys, os, uuid, difflib
 from shutil import copyfile
 
-merge_extensions = set(["", ".adj", ".cfg", ".piclist", ".sfm", ".sty", ".tex", ".triggers", ".txt", ".java"])
+merge_extensions = set(["", ".adj", ".cfg", ".piclist", ".sfm", ".sty", ".tex", ".triggers", ".txt"])
 
 def merge(ui, repo, args, **kwargs):
     global fullNameMine
@@ -164,7 +164,7 @@ def merge3txt(a, b, parent, output, conflicts):
         outf.write("".join(res))
 
 
-if __name__ == '__main__':
+if False and __name__ == '__main__':
     class UI:
         def warn(self, str):
             print ("W: " + str)
