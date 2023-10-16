@@ -907,11 +907,16 @@ class GtkViewModel(ViewModel):
 
         logger.debug("Starting UI")
         try:
+            GLib.idle_add(self.first_method)
             Gtk.main()
         except Exception as e:
             s = traceback.format_exc()
             s += "\n{}: {}".format(type(e), str(e))
             self.doError(s, copy2clip=True)
+
+    def first_method(self):
+        """ This is called first thing after the UI is set up and all is active """
+        self.updateDialogTitle()
 
     def emission_hook(self, w, *a):
         if not self.logactive:
