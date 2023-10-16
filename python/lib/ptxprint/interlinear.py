@@ -4,6 +4,9 @@ from ptxprint import sfm
 from hashlib import md5
 from ptxprint.reference import Reference
 import re, os
+import logging
+
+logger = logging.getLogger(__name__)
 
 _refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
 
@@ -45,6 +48,8 @@ class Interlinear:
         vend = (0, 0)
         startl = None
         for e in doc.iterVerse(*curref):
+            if e is None:
+                continue
             if isinstance(e, sfm.Element):
                 if e.pos.line == vend[0] and e.pos.col == vend[1]:
                     e.adjust = 1    # Handle where there is no space after verse number in the text but PT presumes it is there
@@ -57,6 +62,8 @@ class Interlinear:
             if e.parent is not None and e.parent.name == "fig":
                 continue
             thisadj = adj - getattr(e.parent, 'adjust', 0)
+            if e.parent is not None:
+                logger.debug(f"{e.parent.name}: {e.parent.meta['StyleType']}")
             ispara = e.parent is None or e.parent.meta['StyleType'] != 'Character'
             thismrk = mrk[1:] if ispara else mrk
             lstart = sum(linelengths[startl:e.pos.line-1]) + e.pos.col-1 + startc

@@ -275,9 +275,9 @@ class Usfm:
     def make_zsetref(self, ref, book, parent, pos):
         res = sfm.Element('zsetref', pos, parent=parent, meta=self.sheets['zsetref'])
         if book is None:
-            res.append(sfm.Text('|bkid="{}" chapter="{}" verse="{}"'.format(ref.book, ref.chap, ref.verse)))
+            res.append(sfm.Text('|bkid="{}" chapter="{}" verse="{}"'.format(ref.book, ref.chap, ref.verse), parent=res))
         else:
-            res.append(sfm.Text('|book="{}" bkid="{}" chapter="{}" verse="{}"'.format(book, ref.book, ref.chap, ref.verse)))
+            res.append(sfm.Text('|book="{}" bkid="{}" chapter="{}" verse="{}"'.format(book, ref.book, ref.chap, ref.verse), parent=res))
         return res
 
     def subdoc(self, refranges, removes={}, strippara=False, keepchap=False, addzsetref=True):
@@ -310,7 +310,7 @@ class Usfm:
             e, rlist = r
             if isinstance(e, sfm.Text):
                 if pred(e, rlist):
-                    a.append(sfm.Text(e, e.pos, a or None))
+                    a.append(sfm.Text(e, e.pos, a))
                 return a
             if e is None or e.name in removes:
                 return a
@@ -862,6 +862,6 @@ class Module:
         return [zsetref] + res
 
     def new_element(self, e, name, content):
-        return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos)] \
+        return sfm.Element(name, e.pos, [], e.parent, content=[sfm.Text("\n", e.pos, e)] \
                                                         + content, meta=self.sheets[name])
 

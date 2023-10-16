@@ -146,7 +146,7 @@ class ParatextSettings:
         if 'BooksPrsent' not in self.dict:
             self.calcbookspresent(inferred=True)
 
-    def calcbookspresent(self, inferred=False):
+    def calcbookspresent(self, inferred=False, forced=False):
         self.bookmap = {}
         booksfound = set()
         bookspresent = [0] * len(allbooks)
@@ -164,7 +164,7 @@ class ParatextSettings:
                     booksfound.add(fname)
             if not len(booksfound) and not forced:     # buggy Settings.xml that doesn't fit the directory tree
                 self.inferValues(forced=True)
-                self.calcbookspresent()
+                self.calcbookspresent(forced=True)
         else:
             for f in os.listdir(path):
                 if not f.lower().endswith("sfm") or f in booksfound or f.lower().startswith("regexbackup"):
