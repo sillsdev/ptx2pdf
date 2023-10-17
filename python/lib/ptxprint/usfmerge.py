@@ -1130,7 +1130,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
         logger.debug(f"Reading {colkey}: {infile}")
         with open(infile, encoding="utf-8") as inf:
             doc = list(usfm.parser(inf, stylesheet=sheets[colkey], debug=False,
-                                   canonicalise_footnotes=False, tag_escapes=tag_escapes))
+                                   canonicalise_footnotes=False)) # , tag_escapes=tag_escapes))
             while len(doc) > 1:
                 if isinstance(doc[0], sfm.Text):
                     doc.pop(0)
