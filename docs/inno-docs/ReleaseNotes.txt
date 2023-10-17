@@ -1,9 +1,21 @@
 PTXprint 2.3.48 Release Notes
-12 Oct 2023
+17 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.49 (17 Oct 2023)
+
+  * Implement ifAlwaysCheckAttributes logic
+  
+  * Add ParatextMerge.py (to be updated in PT 9.4 installation)
+  
+  * Ensure dialog title is correct on startup
+  
+  * Fix interlinear problems
+  
+  * Remove unwanted tag escapes from usfmerge
+  
 Bug fixes and Improvements in 2.3.48 (12 Oct 2023)
 
   * Fix some ISBNbarcode glitches
