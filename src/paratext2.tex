@@ -1564,7 +1564,7 @@
     \colhtA=\ht\colA \incr{\colhtA}{\topleftins}\incr{\colhtA}{\bottomleftins}%
     \colhtB=\ht\colB \incr{\colhtB}{\toprightins}\incr{\colhtB}{\bottomrightins}%
     %\ifColNotes\advance\colhtB by \ht\coln@tebox\fi
-    \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB}%
+    \trace{o}{g@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, depths A=\the\dp\colA, B=\the\dp\colB}%
 }
 %-c_getcolhts
 
@@ -1572,7 +1572,7 @@
 \newif\ifswapcol
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
-    %\trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
+    % \trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
     \setbox9=\copy#1
     \setbox\colA=\vsplit#1 to \colhtA
@@ -1838,6 +1838,7 @@
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
+  \ifdim\baselineskip<\ht\pstr@t \advance\availht-\baselineskip \advance\availht\ht\pstr@t\fi
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \doColNotes{\availht}%
   \splittopskip=\topskip

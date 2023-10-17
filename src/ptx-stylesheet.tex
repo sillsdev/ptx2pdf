@@ -2117,6 +2117,8 @@
  \message{lineskiplimit=\the\lineskiplimit}%
  \lineskip=0pt
  \s@tbaseline{p}{p}%
+ \s@tfont{p}{p}%workaround for Lotus Elam Bold issue - ensure the \p font is loaded first
+ \mkstr@t\setbox\pstr@t=\copy\str@tbox
  \NoteCallerWidth=1.1ex %Something sane?
  \global\topskip=\ifdiglot 2\fi\baselineskip
  \global\splittopskip=0pt
