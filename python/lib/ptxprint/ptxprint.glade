@@ -26632,7 +26632,7 @@ and select the USX download option.</property>
                     <property name="halign">center</property>
                     <property name="valign">start</property>
                     <property name="relief">none</property>
-                    <property name="uri">https://open.bible/resources/</property>
+                    <property name="uri">https://open.bible/bibles/</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
