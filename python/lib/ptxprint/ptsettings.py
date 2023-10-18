@@ -121,12 +121,23 @@ class ParatextSettings:
             for f in sfmfiles:
                 m = re.search(r"(\d{2})", f)
                 if not m:
-                    continue
-                bk = allbooks[int(m.group(1))-1]
+                    ei = f.rindex(".")
+                    if ei > 0:
+                        for i in range(len(f)-ei-2):
+                            if f[i:i+3].upper() in allbooks:
+                                bk = f[i:i+3].upper()
+                                numi = i
+                                break
+                        else:
+                            continue
+                    else:
+                        continue
+                else:
+                    bk = allbooks[int(m.group(1))-1]
+                    numi = m.start(1)
                 bki = f.lower().find(bk.lower())
                 if bki < 0:
                     continue
-                numi = m.start(1)
                 s = min(bki, numi)
                 e = max(bki+3, numi+2)
                 (pre, main, post) = f[:s], f[s:e], f[e:]

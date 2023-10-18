@@ -916,7 +916,7 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
-        self.updateDialogTitle()
+        self.doConfigNameChange()
 
     def emission_hook(self, w, *a):
         if not self.logactive:
