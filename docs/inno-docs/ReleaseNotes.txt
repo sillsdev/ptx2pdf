@@ -1,9 +1,23 @@
 PTXprint 2.3.49 Release Notes
-17 Oct 2023
+18 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.50 (18 Oct 2023)
+
+  * Crowdin sync - updated localization
+  
+  * Add extra space to the calcavailht if baselinesip < ascent
+  
+  * Fix URL for Biblica's open.bible site (DBL bundle downloads)
+  
+  * avoid crash with catless sidebar
+  
+  * Fix -c not setting config lock sensitivity. 
+  
+  * Better booklist analysis.
+  
 Bug fixes and Improvements in 2.3.49 (17 Oct 2023)
 
   * Implement ifAlwaysCheckAttributes logic
