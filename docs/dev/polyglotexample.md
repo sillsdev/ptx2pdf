@@ -1,4 +1,4 @@
-# Sample instructions why polyglot is unsupported.
+# Sample instructions for use while polyglot is unsupported by the UI.
 
 ## Make empty USFM files. e.g. XXA
 You can do this either in Paratext or just write an empty file (note that if
@@ -36,7 +36,8 @@ $ usfmerge -m scores -o mergedJHN.usfm  \
 		-s ../../../shared/ptxprint/diglot-bt/ptxprint.sty \
 		../diglot/44JHNPROJ-diglot.SFM ../diglot/44JHNPROJbtEn-Default.SFM ../../../../ALTPRJ/local/ptxprint/diglot/44JHNALTPRJ-diglot.SFM 
 ```
-There are plenty of other options, see the output of `usfmerge -h`.
+The ptx2pdf.sty file is shipped with ptxprint's TeX macros. Hopefully you can find it.
+There are plenty of other merge options, see the output of `usfmerge -h`.
 Note that the order of merging determines which file is which. The order is L,R,A,B,C...
 
 ## Configuration changes
