@@ -31512,7 +31512,7 @@ of the chapter.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">shepherd, sheep, lamb, shoulder, carry</property>
                         <property name="wrap">True</property>
-                        <property name="max-width-chars">35</property>
+                        <property name="max-width-chars">25</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31526,7 +31526,7 @@ of the chapter.</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">MAT 12:15, LUK 22:7; ACT 8:3</property>
                         <property name="wrap">True</property>
-                        <property name="max-width-chars">35</property>
+                        <property name="max-width-chars">25</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31541,7 +31541,7 @@ of the chapter.</property>
                         <property name="valign">start</property>
                         <property name="label" translatable="yes">The shepherd carries a lamb.</property>
                         <property name="wrap">True</property>
-                        <property name="max-width-chars">35</property>
+                        <property name="max-width-chars">25</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
@@ -31554,7 +31554,7 @@ of the chapter.</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="label" translatable="yes">cn01234, David C Cook - NT</property>
-                        <property name="max-width-chars">35</property>
+                        <property name="max-width-chars">25</property>
                       </object>
                       <packing>
                         <property name="left-attach">1</property>
