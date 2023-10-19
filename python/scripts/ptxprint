@@ -329,7 +329,11 @@ else:
                 break
             else:
                 mainw.server = server
-        mainw.setup_ini()
+        if not mainw.setup_ini():
+            if mainw.splash is not None:
+                mainw.splash.terminate()
+            print("Failed to open project directory")
+            sys.exit(1)
         if args.nointernet:
             mainw.set('c_noInternet', True)
             mainw.noInt = True

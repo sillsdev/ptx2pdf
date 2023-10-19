@@ -738,7 +738,11 @@ class GtkViewModel(ViewModel):
         digprojects.clear()
         strngsfbprojects.clear()
         allprojects = []
-        for d in os.listdir(self.settings_dir):
+        try:
+            sdir = os.listdir(self.settings_dir)
+        except FileNotFoundError:
+            return False
+        for d in sdir:
             p = os.path.join(self.settings_dir, d)
             if not os.path.isdir(p):
                 continue
@@ -775,6 +779,7 @@ class GtkViewModel(ViewModel):
         self.updateFont2BaselineRatio()
         self.tabsHorizVert()
         logger.debug("Project list loaded")
+        return True
 
     def _setup_digits(self):
         digits = self.builder.get_object("ls_digits")

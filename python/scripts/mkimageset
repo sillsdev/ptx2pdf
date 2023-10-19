@@ -51,6 +51,8 @@ if args.harvest:
         if not len(v):
             continue
         data.setdefault(tid, {})['refs'] = [x.replace(".", ":") for x in most_popular(v)]
+        popularity = sum(v.values())
+        data[tid]['pop'] = popularity
         for r in v.keys():
             refs.setdefault(r, []).append(tid)
 

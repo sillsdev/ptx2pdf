@@ -13,7 +13,7 @@ from ptxprint.utils import _, extraDataDir
 from ptxprint.reference import RefList
 
 def unpackImageset(filename):
-    print(f"{filename=}")
+    # print(f"{filename=}")
     with zipfile.ZipFile(filename) as zf:
         with zf.open("illustrations.json") as zill:
             zdat = json.load(zill)
@@ -246,10 +246,13 @@ class ThumbnailDialog:
         self.set_images(imagesdir, sorted(imageids))
         self.disable_refresh()
 
-    def imgkey(self, imgid):
+    def imgkey(self, imgid, mode="ref"):
+        if mode == "pop":
+            pop = self.imagedata['images'].get(imgid, {}).get('pop', 0)
+        else:
+            pop = 0
         res = self.imgrefs[imgid].astag() if imgid in self.imgrefs else "zzzz"+imgid
-        logger.debug(f"{imgid}: {self.imgrefs.get(imgid, 'UNK')}={res}")
-        return res
+        return (pop, res)
 
     def set_images(self, fbase, imageids):
         # logger.debug(f"Setting up for images: {imageids}")
@@ -258,7 +261,8 @@ class ThumbnailDialog:
         for c in self.grid.get_children():
             c.hide()
             self.grid.remove(c)
-        images = sorted(imageids, key=lambda s:self.imgkey(s))
+        sortby = self.view.get('r_imgSort')
+        images = sorted(imageids, key=lambda s:self.imgkey(s, mode=sortby))
         logger.debug(f"Setting up grid for {images}")
         for i, imgid in enumerate(images):
             w, isLoaded, fpath = self.image_tiles[imgid]

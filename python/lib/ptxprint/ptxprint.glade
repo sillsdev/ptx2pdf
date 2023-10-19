@@ -31119,6 +31119,7 @@ of References:</property>
                       <object class="GtkEntry" id="t_artRefRange">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="activates-default">True</property>
                         <property name="placeholder-text" translatable="yes">e.g. LUK ACT HEB JAS</property>
                         <signal name="changed" handler="onImageRefRangeChanged" swapped="no"/>
                       </object>
@@ -31158,6 +31159,7 @@ of References:</property>
                         <property name="name">Image Selection Dialog: Search for an image by keyword</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="activates-default">True</property>
                         <property name="primary-icon-name">edit-find-symbolic</property>
                         <property name="primary-icon-activatable">False</property>
                         <property name="primary-icon-sensitive">False</property>
@@ -31212,6 +31214,7 @@ the canonical order of scripture.</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <property name="group">r_imgSort_pop</property>
+                        <signal name="clicked" handler="btnImageRefreshClicked" swapped="no"/>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -31233,6 +31236,7 @@ appear at the top of the list.</property>
                         <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <property name="group">r_imgSort_ref</property>
+                        <signal name="clicked" handler="btnImageRefreshClicked" swapped="no"/>
                         <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                       </object>
                       <packing>
@@ -31334,6 +31338,8 @@ appear at the top of the list.</property>
                         <property name="label" translatable="yes">Search + Update Images</property>
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="can-default">True</property>
+                        <property name="has-default">True</property>
                         <property name="receives-default">True</property>
                         <property name="margin-top">4</property>
                         <signal name="clicked" handler="btnImageRefreshClicked" swapped="no"/>
