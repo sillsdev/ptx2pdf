@@ -1701,6 +1701,34 @@ settings for a similar project.</property>
       </row>
     </data>
   </object>
+  <object class="GtkPopover" id="menu_language">
+    <property name="can-focus">False</property>
+    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
+    <child>
+      <object class="GtkTreeView">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="model">ls_interfaceLang</property>
+        <property name="headers-visible">False</property>
+        <property name="activate-on-single-click">True</property>
+        <signal name="row-activated" handler="onUILangSelected" swapped="no"/>
+        <child internal-child="selection">
+          <object class="GtkTreeSelection"/>
+        </child>
+        <child>
+          <object class="GtkTreeViewColumn">
+            <property name="title" translatable="yes">column</property>
+            <child>
+              <object class="GtkCellRendererText"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkListStore" id="ls_leaderStyle">
     <columns>
       <!-- column-name leaderStyle -->
@@ -2807,6 +2835,114 @@ settings for a similar project.</property>
         <col id="1">6</col>
       </row>
     </data>
+  </object>
+  <object class="GtkPopover" id="menu_mode">
+    <property name="can-focus">False</property>
+    <signal name="closed" handler="menu_inner_closed" swapped="no"/>
+    <child>
+      <object class="GtkTreeView">
+        <property name="visible">True</property>
+        <property name="can-focus">True</property>
+        <property name="model">ls_uiLevel</property>
+        <property name="headers-visible">False</property>
+        <property name="enable-search">False</property>
+        <property name="show-expanders">False</property>
+        <property name="activate-on-single-click">True</property>
+        <signal name="row-activated" handler="onUILevelSelected" swapped="no"/>
+        <child internal-child="selection">
+          <object class="GtkTreeSelection"/>
+        </child>
+        <child>
+          <object class="GtkTreeViewColumn">
+            <property name="title" translatable="yes">Levels</property>
+            <child>
+              <object class="GtkCellRendererText"/>
+              <attributes>
+                <attribute name="text">0</attribute>
+              </attributes>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopover" id="menu_main">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_reset">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="use-popover">False</property>
+            <signal name="clicked" handler="onResetPage" swapped="no"/>
+            <child>
+              <object class="GtkLabel" id="l_menu_reset">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Reset Page</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_level">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="popover">menu_mode</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_level">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">View Level</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_lang">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="direction">right</property>
+            <property name="popover">menu_language</property>
+            <child>
+              <object class="GtkLabel" id="l_menu_uilang">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">UI Language</property>
+                <property name="justify">center</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkListStore" id="ls_xRefExtListSource">
     <columns>
@@ -26000,6 +26136,27 @@ from XeTeX processing.</property>
             <property name="can-focus">False</property>
             <property name="valign">end</property>
             <child>
+              <object class="GtkMenuButton" id="btn_menu">
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="direction">up</property>
+                <property name="popover">menu_main</property>
+                <child>
+                  <object class="GtkImage">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="icon-name">open-menu-symbolic</property>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkComboBox" id="fcb_uiLevel">
                 <property name="name">Mini, Basic or Advanced View option</property>
                 <property name="width-request">100</property>
@@ -26026,7 +26183,7 @@ depending on the level set here.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -26053,7 +26210,7 @@ chosen language.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -26079,7 +26236,7 @@ Click to visit download page on the website.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -26101,7 +26258,7 @@ in your system's PDF viewer anyway).</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
             <child>
@@ -26130,7 +26287,7 @@ Shortcut: Ctrl-F</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">5</property>
               </packing>
             </child>
             <child>
@@ -26142,7 +26299,7 @@ Shortcut: Ctrl-F</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">6</property>
               </packing>
             </child>
             <child>
@@ -26215,7 +26372,7 @@ Shortcut: Ctrl-D</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">6</property>
+                <property name="position">7</property>
               </packing>
             </child>
             <child>
@@ -26246,7 +26403,7 @@ print a diglot with both texts.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">7</property>
+                <property name="position">8</property>
               </packing>
             </child>
             <child>
@@ -26275,7 +26432,7 @@ Shortcut: Ctrl-S</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">8</property>
+                <property name="position">9</property>
               </packing>
             </child>
             <child>
@@ -26304,7 +26461,7 @@ Shortcut: Ctrl-P</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">9</property>
+                <property name="position">10</property>
               </packing>
             </child>
             <child>
@@ -26331,7 +26488,7 @@ Shortcut: Ctrl-W</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">10</property>
+                <property name="position">11</property>
               </packing>
             </child>
           </object>

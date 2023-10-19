@@ -120,6 +120,7 @@ _progress = {
 }
 _ui_minimal = """
 bx_statusBar fcb_uiLevel t_find
+btn_menu_level btn_menu_lang l_menu_level l_menu_uilang
 fcb_filterXrefs fcb_interfaceLang c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -153,6 +154,7 @@ c_verseNumbers c_preventorphans c_hideEmptyVerses c_elipsizeMissingVerses
 
 # bx_fnOptions bx_xrOptions 
 _ui_basic = """
+btn_menu_reset l_menu_reset
 r_book_module btn_chooseBibleModule lb_bibleModule
 btn_DBLbundleDiglot1 btn_DBLbundleDiglot2 btn_locateDBLbundle t_DBLprojName 
 lb_DBLbundleFilename lb_DBLbundleNameDesc lb_DBLdownloads lb_openBible
@@ -196,6 +198,10 @@ bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
+""".split()
+
+_ui_experimental = """
+btn_menu
 """.split()
 
 # removed from list above: 
@@ -623,6 +629,7 @@ class GtkViewModel(ViewModel):
         self.lastUpdatetime = time.time()
         self.isDisplay = True
         self.searchWidget = []
+        self.uilevel = 0
         self.painted = set()
         self.locked = set()
         self.config_dir = None
@@ -652,6 +659,7 @@ class GtkViewModel(ViewModel):
         for i, r in enumerate(llang):
             if self.lang.startswith(r[1]):
                 ilang.set_active(i)
+                self.set("l_menu_uilang", _("UI Language\n({})").format(r[0]))
                 break
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
@@ -909,6 +917,7 @@ class GtkViewModel(ViewModel):
 
         if self.splash is not None:
             self.splash.terminate()
+            self.splash = None
 
         logger.debug("Starting UI")
         try:
@@ -1030,7 +1039,8 @@ class GtkViewModel(ViewModel):
             return
         if highlight:
             self.searchWidget.append(wid)
-            ui = int(self.get("fcb_uiLevel"))
+            ui = self.uilevel
+            # ui = int(self.get("fcb_uiLevel"))
             setLevel = 0
             for i in range(2, 5):
                 if i in _uiLevels and wid in _uiLevels[i]:
@@ -1040,7 +1050,8 @@ class GtkViewModel(ViewModel):
             else:
                 setLevel = 6
             if setLevel > 0:
-                self.set("fcb_uiLevel", str(setLevel))
+                self.uiChangeLevel(setLevel)
+                # self.set("fcb_uiLevel", str(setLevel))
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
@@ -1113,16 +1124,45 @@ class GtkViewModel(ViewModel):
                 self.set(k, v)
         self.colorTabs()
 
+    def menu_inner_closed(self, widget):
+        # print("Closing popover")
+        mw = self.builder.get_object("menu_main")
+        mw.popdown()
+
+    def onUILevelSelected(self, tv, path, col):
+        ui = int(tv.get_model()[path][1])
+        mw = self.builder.get_object("menu_mode")
+        mw.popdown()
+        self.uiChangeLevel(ui)
+
+    def onResetPage(self, widget):
+        pass
+
     def onUILevelChanged(self, btn):
-        pgId = self.builder.get_object("nbk_Main").get_current_page()
         ui = int(self.get("fcb_uiLevel"))
+        self.uiChangeLevel(ui)
+
+    def uiChangeLevel(self, ui):
+        if isinstance(ui, str):
+            ui = int(ui)
+        pgId = self.builder.get_object("nbk_Main").get_current_page()
         self.userconfig.set('init', 'userinterface', str(ui))
+        self.uilevel = ui
+        levels = self.builder.get_object("ls_uiLevel")
+        levelname = None
+        for r in levels:
+            if int(r[1]) == ui:
+                levelname = " ".join(r[0].split(" ")[:-1])
+                break
+        self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname is not None else _("View Level"))
                 
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
                 
             widgets = sum((v for k, v in _uiLevels.items() if ui >= k), [])
+            if self.args.experimental & 1 != 0:
+                widgets += _ui_experimental
         else:
             # Selectively turn things back on if their settings are enabled
             for k, v in _showActiveTabs.items():
@@ -1130,7 +1170,10 @@ class GtkViewModel(ViewModel):
                     for w in v:
                         self.toggleUIdetails(w, True)
                 
-            widgets = self.allControls
+            widgets = set(self.allControls)
+            if self.args.experimental & 1 == 0:
+                for k in _ui_experimental:
+                    widgets.discard(k)
 
         for w in sorted(widgets):
             if w not in _ui_keepHidden:
@@ -1159,7 +1202,8 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(state)
 
     def noInternetClicked(self, btn):
-        ui = int(self.get("fcb_uiLevel"))
+        ui = self.uilevel
+        # ui = int(self.get("fcb_uiLevel"))
         if btn is not None:
             val = self.get("c_noInternet") or (ui < 6)
         else:
@@ -1223,8 +1267,13 @@ class GtkViewModel(ViewModel):
         if wid == "l_statusLine":
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
-        if w is None and not wid.startswith("r_"):
-            if not skipmissing and not wid.startswith("_"):
+        if w is None:
+            if wid.startswith("_"):
+                m = getattr(self, wid[1:], None)
+                if m is not None and not isinstance(m, str):
+                    getattr(self, wid[1:])(value)
+                    return
+            elif not wid.startswith("r_") and not skipmissing:
                 print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
             return
@@ -1717,7 +1766,7 @@ class GtkViewModel(ViewModel):
             else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
             else _("Borders") if self.builder.get_object("fr_borders").get_visible() else ""
-        jn = "+" if ((tb and bd) or int(self.get("fcb_uiLevel")) >= 6) else ""
+        jn = "+" if ((tb and bd) or self.uilevel >= 6) else ""
         self.builder.get_object("lb_TabsBorders").set_markup(tc+jn+bc)
 
         ad = False
@@ -4312,10 +4361,12 @@ class GtkViewModel(ViewModel):
                                 break
                         else:
                             lsp.append([prj])
-                    ui = self.get("fcb_uiLevel")
+                    ui = self.uilevel
+                    # ui = self.get("fcb_uiLevel")
                     self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
-                    self.set("fcb_uiLevel", ui)
+                    self.uiChangedLevel(ui)
+                    # self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
@@ -4433,18 +4484,27 @@ class GtkViewModel(ViewModel):
             if wid is not None:
                 wid.set_sensitive(status)
 
+    def onUILangSelected(self, tv, path, col):
+        lang = tv.get_model()[path][1]
+        mw = self.builder.get_object("menu_language")
+        mw.popdown()
+        self.changeInterfaceLang(lang)
+
     def oninterfaceLangChanged(self, btn):
         if self.initialised:
             lang = self.get("fcb_interfaceLang")
-            try:
-                setup_i18n(lang)
-            except locale.Error:
-                self.doError(_("Unsupported Locale"),
-                             secondary=_("This locale is not supported on your system, you may need to install it"))
-                return
-            self.lang = lang
-            self.builder.get_object("ptxprint").destroy()
-            self.onDestroy(None)
+            self.changeInterfaceLang(lang)
+
+    def changeInterfaceLang(self, lang):
+        try:
+            setup_i18n(lang)
+        except locale.Error:
+            self.doError(_("Unsupported Locale"),
+                         secondary=_("This locale is not supported on your system, you may need to install it"))
+            return
+        self.lang = lang
+        self.builder.get_object("ptxprint").destroy()
+        self.onDestroy(None)
             
     def onRHruleClicked(self, btn):
         status = self.get("c_rhrule")

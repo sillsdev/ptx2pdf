@@ -36,7 +36,7 @@ _map = {
 
     "project/id":               ("_prjid", "meta", None),
     "project/bookscope":        ("r_book", "meta", None),
-    "project/uilevel":          ("fcb_uiLevel", "uiprefs", None),
+    "project/uilevel":          ("_uiChangeLevel", "uiprefs", None),
     "project/book":             ("ecb_book", "meta", None),
     "project/modulefile":       ("btn_chooseBibleModule", "meta", lambda w,v: v.replace("\\","/") if v is not None else ""),
     "project/booklist":         ("ecb_booklist", "meta", lambda w,v: v or ""),

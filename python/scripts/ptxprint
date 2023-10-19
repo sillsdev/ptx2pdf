@@ -81,6 +81,7 @@ parser.add_argument("-C","--capture",help="Capture interaction events to file. N
 parser.add_argument("-z","--extras",type=int,default=0,help="Special bit flags: 0-3 - verbosity of xdvipdfmx")
 parser.add_argument("-V","--pdfversion",type=int,default=14,help="PDF Version to read and write * 10 (default=14)")
 parser.add_argument("-I","--identify",action="store_true",help="add widget names to tooltips")
+parser.add_argument("-E","--experimental",type=int,default=0,help="Enable experimental bits: 0 = UI extensions")
 # parser.add_argument('-t','--test', action='store_true',help="Quick start for a lazy typist")
 
 if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
