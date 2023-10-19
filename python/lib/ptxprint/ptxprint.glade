@@ -3697,13 +3697,15 @@ the Notes field below.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Warning! This may overwrite existing settings.
-
-This button will open the Import Settings dialog
+                                    <property name="tooltip-text" translatable="yes">Click this to open the Import Settings dialog
 where you may select various options to import 
 settings from other PDFs, ZIP archives or from 
 a different project configuration into the current
-configuration.</property>
+configuration.
+
+Warning! This may overwrite some settings, so it
+is advisable to create a different Configuration
+first into which the settings can be imported.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
@@ -6175,7 +6177,7 @@ hyphenation list in Paratext.</property>
                                     </child>
                                     <child>
                                       <object class="GtkButton" id="btn_generateHyphenationList">
-                                        <property name="label" translatable="yes">Create List</property>
+                                        <property name="label" translatable="yes">Import List...</property>
                                         <property name="name">Create Hyphenation List</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
@@ -6281,6 +6283,7 @@ grow paragrahs when balancing pages.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
                                             <property name="image-position">right</property>
+                                            <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -6312,6 +6315,7 @@ the Interlinear option being set on the Advanced page.
 These two settings are mutually exclusive.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="active">True</property>
                                             <property name="draw-indicator">True</property>
                                             <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                           </object>
@@ -12965,6 +12969,9 @@ these can be set in the ptxprint-mods.tex file.</property>
                                   <item translatable="yes">Page Number</item>
                                   <item translatable="yes">Reference Range</item>
                                   <item translatable="yes">DRAFT</item>
+                                  <item id="&lt;Enter ID&gt;" translatable="yes">Time (HH:MM)</item>
+                                  <item translatable="yes">Date (YYYY-MM-DD)</item>
+                                  <item translatable="yes">Printed on YYYY-MM-DD</item>
                                 </items>
                                 <child internal-child="entry">
                                   <object class="GtkEntry">
@@ -18094,8 +18101,8 @@ the marker you need.</property>
                                     <property name="halign">start</property>
                                     <property name="hexpand">False</property>
                                     <property name="width-chars">20</property>
-                                    <property name="secondary-icon-stock">gtk-clear</property>
                                     <property name="primary-icon-name">edit-find-symbolic</property>
+                                    <property name="secondary-icon-name">edit-clear-symbolic</property>
                                     <property name="primary-icon-activatable">False</property>
                                     <property name="primary-icon-sensitive">False</property>
                                   </object>
@@ -26165,6 +26172,7 @@ Shortcut: Ctrl-Q</property>
                     <property name="valign">center</property>
                     <property name="margin-start">3</property>
                     <property name="margin-end">3</property>
+                    <property name="active">True</property>
                     <property name="draw-indicator">True</property>
                     <accelerator key="q" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                   </object>

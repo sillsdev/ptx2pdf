@@ -1000,6 +1000,7 @@ class GtkViewModel(ViewModel):
         popupHeight = min(300, min(7,len(choices))*30)
         self.popover.set_size_request(400, popupHeight)
         scr = Gtk.ScrolledWindow()
+        scr.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)        
         ls = Gtk.ListStore(str, str)
         if len(choices):
             for w, v in choices:

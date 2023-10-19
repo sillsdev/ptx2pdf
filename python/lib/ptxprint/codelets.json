@@ -368,7 +368,7 @@
           "Type": "comment#",
           "Label": "Insert book separator pages",
           "Description": "Insert book separator pages using heading information",
-          "CodeSnippet": "(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt) > '\\1\\2\\3\\4\\\\zgap|2in\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\*\\4\\\\pb\\4\\5'"
+          "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\*\\4\\\\pb\\4\\5'"
         }
       ],
       "Format": [
@@ -419,6 +419,26 @@
           "Label": "Suppress introductory material for *some* books",
           "Description": "In order to suppress the intro material (\\i- markers before \\c 1) in specific books (but keep it for others) replace BAK,XXA,XXE with whichever books you want the intro material stripped from.",
           "CodeSnippet": "at BAK,XXA,XXE '\\\\i[so]\\d?\\s.+\\r?\\n' > ''"
+        }
+      ],
+      "Punctuation": [
+        {
+          "Type": "comment#",
+          "Label": "Use narrow no-break space between single and double quote",
+          "Description": "Place a narrow no-break space (\\u202F) between single and double quotes.",
+          "CodeSnippet": "'’\\s?”' > '’\\u202F”'\n'“\\s?‘' > '“\\u202F‘'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "French punctuation rules",
+          "Description": "Insert Narrow No Break Space U+202F before certain punctuation.\nRemove U+202F between certain punctuation.\nRemove U+202F if colon follows a number.\nRemove spaces before English closing guillemets.\nInsert Narrow No Break Space U+202F after opening guillemets.\nRemove spaces after English opening guillemets.",
+          "CodeSnippet": "'\\s*([:;!?»›])' > '\\u202F\\1'\n'(?<=[;?!])\\u202F([;!?])'  > '\\1'\n'(\\d)\\u202F:'   >    '\\1:'\n'\\s+([”’])'     >    '\\1'\n'([«‹])\\s*'     >    '\\1\\u202F'\n'([“‘])\\s+'     >    '\\1'"
+        },
+        {
+          "Type": "comment#",
+          "Label": "Change spaces before final punctuation into no-break narrow space",
+          "Description": "To prevent sentence-final punctuation dropping onto the next line as an orphan, use a no-break narro space instead.",
+          "CodeSnippet": "'\\s([\\u0964\\u0965৿௿۔。·׃ฃ])'   >   '\\202f\\1'"
         }
       ],
       "Other": [

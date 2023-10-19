@@ -81,10 +81,6 @@ class ThumbnailDialog:
             self.view.onImageSetClicked(None)
 
         logger.debug("Starting to load images")
-        self.view.getBooks()
-        reflist = self.view.bookrefs
-        logger.debug(f"Start with bookrefs: {reflist}")
-        self.view.set('t_artRefRange', str(reflist))
         ltv = self.view.builder.get_object("ls_artists")
         for r in ltv:
             if r[0]:
@@ -98,6 +94,11 @@ class ThumbnailDialog:
                 return None
             else:
                 imgset = imagesets[0]
+        else:
+            self.view.getBooks()
+            reflist = self.view.bookrefs
+            logger.debug(f"Start with bookrefs: {reflist}")
+            self.view.set('t_artRefRange', str(reflist))
         self.set_imageset(imgset)
         response = self.dlg.run()
         self.dlg.hide()

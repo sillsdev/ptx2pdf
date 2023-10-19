@@ -912,9 +912,6 @@ class ViewModel:
         if v < 1.502:
             if not config.has_option("document", "includimg"):
                 self._configset(config, "document/includeimg", config.get("snippets", "imgcredits", fallback="false"))
-            colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
-                            .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
-            self._configset(config, "project/colophontext", colophontext)
         if v < 1.503:
             marginmms = config.getfloat("paper", "margins")
             self._configset(config, "paper/topmargin", f2s(config.getfloat("paper", "topmarginfactor", fallback=1.0) * marginmms))
@@ -965,9 +962,9 @@ class ViewModel:
                     f = "|".join(bits)
                     self._configset(config, "document/font{}".format(a), f)
             for a in ('fn', 'xr'):
-                self._configset(config, "notes/{}pos".format(a), "page")
                 self._configset(config, "notes/{}ruleposn".format(a), "1")
                 self._configset(config, "notes/{}ruleindent".format(a), "0")
+                self._configset(config, "notes/{}pos".format(a), "page")
                 self._configset(config, "notes/{}rulelength".format(a), "100")
                 self._configset(config, "notes/{}rulethick".format(a), "0.4")
         if v < 1.97:
@@ -1040,6 +1037,11 @@ class ViewModel:
             if "ornaments" in plg:
                 self._configset(config, "fancy/enableornaments", True)
                 self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
+
+        # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
+        colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
+                        .replace("zImageCopyrights", "zimagecopyrights").replace("zLicense", "zlicense")
+        self._configset(config, "project/colophontext", colophontext)
 
         self._configset(config, "config/version", ConfigVersion)
 

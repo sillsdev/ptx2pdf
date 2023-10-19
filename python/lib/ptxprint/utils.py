@@ -386,6 +386,7 @@ headermappings = {
     r"Book Alt (\h1)":           r"\bookalt",
     "Time (HH:MM)":              r"\hrsmins",
     "Date (YYYY-MM-DD)":         r"\isodate",
+    "Printed on YYYY-MM-DD":     r"Printed\ on\ \isodate",
     "-empty-":                   r"\empty"
 }
 
@@ -399,6 +400,7 @@ def localhdrmappings():
         _(r"Book Alt (\h1)"):           r"\bookalt",
         _("Time (HH:MM)"):              r"\hrsmins",
         _("Date (YYYY-MM-DD)"):         r"\isodate",
+        _("Printed on YYYY-MM-DD"):     r"Printed\ on\ \isodate",
         _("-empty-"):                   r"\empty"
     }
 
