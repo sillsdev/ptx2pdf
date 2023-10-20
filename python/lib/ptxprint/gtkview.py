@@ -1147,6 +1147,7 @@ class GtkViewModel(ViewModel):
             try:
                 ui = int(ui)
             except ValueError:
+                logger.warn(f"Unexpected ui value of {ui}")
                 ui = 6
         pgId = self.builder.get_object("nbk_Main").get_current_page()
         self.userconfig.set('init', 'userinterface', str(ui))

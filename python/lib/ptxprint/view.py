@@ -1582,7 +1582,8 @@ class ViewModel:
                 intfile = "{}_{}.xml".format(intpath, bk)
                 res[os.path.join(fpath, intpath, intfile)] = os.path.join(intpath, intfile)
         exclFigsFolder = self.get("c_exclusiveFiguresFolder")
-        self.picinfos.getFigureSources(exclusive=exclFigsFolder)
+        if self.picinfos is not None:
+            self.picinfos.getFigureSources(exclusive=exclFigsFolder)
         if self.get("c_useCustomFolder"):
             cfgchanges["btn_selectFigureFolder"] = (Path("${prjdir}/figures"), "customFigFolder")
             cfgchanges["c_useCustomFolder"] = (False, None)
