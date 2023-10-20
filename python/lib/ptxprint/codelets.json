@@ -446,7 +446,7 @@
           "Type": "comment#",
           "Label": "Combine \\toc2 and \\toc3 for Table of Contents",
           "Description": "Append the contents of \\toc3 to the end of \\toc2 giving Table of Contents lines like this:\nMatthew (Mat).......1\nMark (Mrk).........57\nLuke (Luk)........112\netc.\nNote that you may need to change the \\toc# numbers, or re-arrange the expression if the order doesn't match the rule.",
-          "CodeSnippet": "'(\\\\toc2 .*)\\n\\\\toc3 (.*)' > '\\1 (\\2)'"
+          "CodeSnippet": "'(\\\\toc2 .*?)(\\n.*?)\\\\toc3 (.*?)\\n' > '\\1 (\\3)\\2'"
         },
         {
           "Type": "comment#",
