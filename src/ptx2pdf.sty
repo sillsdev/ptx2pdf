@@ -660,12 +660,13 @@
 \Attributes id
 
 \Marker zISBNbarcode
-\Name zISBNbarcode - Milestones - Generate ISBN barcode
+\Name zISBNbarcode - Milestones - Generate ISBN barcode with optional pricecode
+\Description Attributes font and fontheight specifies the numbers below the barcode, to which everything is scaled. Valid height values: normal medium short, price is the text string for the price barcode, pricecode is the 5-digit EAN5 for the currency and price. Consult local standards or wikipedia.
 \OccursUnder *
 \StyleType Milestone
 \TextProperties vernacular publishable
-#Show a 13digit ISBN.  Valid height values: normal medium short
-\Attributes isbn height var
+#Show a 10 or 13digit ISBN as an EAN-13 barcode
+\Attributes isbn height? var? font? fontheight? price? pricecode?
 
 \Marker x-credit
 \Name x-credit - Auxiliary - Figure credit box styling

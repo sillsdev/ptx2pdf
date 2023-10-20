@@ -784,7 +784,7 @@
 \ISBNfontdim=10pt
 \newif\ifnoScaleAboveISBNtext\noScaleAboveISBNtextfalse
 
-\def\ISBNfont{Andika}
+\def\ISBNfont{Source Code Pro}
 \def\ISBN#1{\leavevmode
   \font\belowISBN="\ISBNfont" at \ISBNfontdim % Outside group so that it's accessible for prices
   \bgroup
@@ -817,6 +817,13 @@
   \bgroup
 \def\b@rheight{10ex}
   \get@ttribute{height}\ifx\attr@b\bc@short\def\b@rheight{5ex}\else\ifx\attr@b\bc@medium\def\b@rheight{7ex}\fi\fi
+  \get@ttribute{font}\ifx\attr@b\relax\else
+    \let\ISBNfont\attr@b
+  \fi
+  \get@ttribute{fontheight}\ifx\attr@b\relax\else
+    \m@kenumber{\attr@b}%
+    \ISBNfontdim=\@@result\relax
+  \fi
   \get@ttribute{isbn}%
   \ifx\attr@b\relax
     \get@ttribute{var}\ifx\attr@b\relax\else

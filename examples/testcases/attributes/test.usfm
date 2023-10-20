@@ -151,15 +151,16 @@ paragraphs.
 \s2 ISBN barcodes
 \p Barcodes come in four varieties:
 \jmp ISBN10:| link-id="ISBNs" outline-entry="10 Digit ISBN" outline-level="2"\jmp*
+(default font)
 \zISBNbarcode|isbn="0-201-541991" \*
 
 \p 
-13 digit barcodes: \zISBNbarcode|isbn="978-0123-456789"\*
+13 digit barcodes: (Caligraphic font, 8pt) \zISBNbarcode|isbn="978-0123-456789" font="MathJax_Caligraphic" fontheight="8pt"\* 
 \p 
 Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISBN" \jmp* which don't have the right number of digits: \zISBNbarcode|isbn="0-201-54199"\* 
 
-\p And barcodes with prices:
-\w | link-id="ISBNprice" outline-entry="ISBN with pricing" outline-level="1"\w* \zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499"\* 
+\p And barcodes with prices: (Andika)
+\w | link-id="ISBNprice" outline-entry="ISBN with pricing" outline-level="1"\w* \zISBNbarcode|isbn="020-1-541991" price="$14.99" pricecode="51499" font="Andika" \* 
 
 \s Vertical bar
 \p This is a | vertical bar.
