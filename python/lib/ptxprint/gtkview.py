@@ -1144,7 +1144,10 @@ class GtkViewModel(ViewModel):
 
     def uiChangeLevel(self, ui):
         if isinstance(ui, str):
-            ui = int(ui)
+            try:
+                ui = int(ui)
+            except ValueError:
+                ui = 6
         pgId = self.builder.get_object("nbk_Main").get_current_page()
         self.userconfig.set('init', 'userinterface', str(ui))
         self.uilevel = ui
@@ -4365,7 +4368,7 @@ class GtkViewModel(ViewModel):
                     # ui = self.get("fcb_uiLevel")
                     self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
-                    self.uiChangedLevel(ui)
+                    self.uiChangeLevel(ui)
                     # self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
