@@ -1248,17 +1248,47 @@
 \def\print@bleverse{}
 %+csty_addspecialhooks
 \newif\ifr@gurgitated % \k processing and maybe some other things end up with 'regurgitating' markers. This can mess up space detection.
+
+\newif\ifn@tcs
+\newif\ifgr@bbedspace
+\newif\ifgr@bbing
+\newtoks\gr@btoks
+\def\gr@bcodes{\obeyspaces\obeylines}
+\def\egr@bcodes{\catcode32=10 } 
+\long\def\gr@btomacro#1{%
+  \def\tmp{#1}\ifgr@bbing\else\gr@bcodes\gr@bbingtrue\fi
+  \ifx\tmp\@gr@bs\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
+    \ifx\tmp\@gr@bp\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
+      %\gt@addsp@ce % Add a space if we saw one earlier
+      \t@stifcs{#1}\ifn@tcs
+        \gt@addsp@ce
+        \expandafter\gr@btoks\expandafter{\the\gr@btoks#1}%
+        \let\@nxxt\gr@btomacro
+      \else% Some kind of cs
+        \endgr@b \let\@nxxt#1%
+      \fi
+    \fi
+  \fi\@nxxt}
+% This cryptic mess seems to determine if the argument ends up as a  single character when prefixed with \string. control sequences don't do that. #1 must be collected with obeyspaces active.
+\long\def\t@stifcs#1{\ifcat$\expandafter\n@ffin\string#1$\relax \n@tcstrue\else\n@tcsfalse\fi}
+
+\def\endgr@b{\message{grabbed:"\the\gr@btoks"}\egr@bcodes\endgr@@b}
+\def\endgr@@b{\gr@bbedspacefalse\x@\aftergr@b\x@{\the\gr@btoks}}
 \begingroup
 \obeylines%
+{\obeyspaces\gdef\@gr@bs{ }\gdef\@gr@bp{
+}\gdef\gt@addsp@ce{\ifgr@bbedspace\expandafter\gr@btoks\expandafter{\the\gr@btoks }\fi\gr@bbedspacefalse}%
+}%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\pb=\pagebreak %pb isn't a paragraph style, 
  \def\fp{\par\kern 1sp }
  \let\@H=\h%
- \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12
-        \obeylines\@h}% \h gets stored as the book name (for references)
- \def\@h ##1^^M{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \book / bookR
- \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \obeylines\@hh}% \h1 gets stored as the book name (for references)
- \def\@hh ##1^^M{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
+        %\tracingassigns=1
+        \let\aftergr@b\@h\gr@btomacro}% \h gets stored as the book name (for references)
+ \def\@h##1{\x@\gdef\csname book\g@tdstat\endcsname{##1}\trace{ss}{heading book\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
+ \def\h@h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12 \let\aftergr@b\@hh\gr@btomacro}% \h1 gets stored as the book name (for references)
+ \def\@hh ##1{\x@\gdef\csname b@ok1\g@tdstat\endcsname{##1}\trace{ss}{heading b@ok1\g@tdstat=##1}\egroup}% store book id in \b@ok1 / b@ok1R
  \def\bookalt{\csname b@ok1\g@tdstat\endcsname}%
  \x@\let\csname h1\endcsname=\h@h
  %
@@ -1269,9 +1299,11 @@
  \def\@cl ##1^^M{\x@\gdef\csname ch@plabel\g@tdstat\endcsname{##1}\egroup}%
  %
  \let\@ID=\id%
- \def\id{\bgroup\obeylines\unc@tcodespecials \m@kedigitsother
-   \catcode32=10 \@id}% \id gets stored and printed in the margin with cropmarks
- \def\@id ##1^^M{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
+ \def\id{\bgroup\obeylines%\unc@tcodespecials 
+   \m@kedigitsother
+   %\tracingassigns=1
+   \catcode32=10 \let\aftergr@b\@id\gr@btomacro}% \id gets stored, printed in the margin with cropmarks, and used in lots of places.
+ \def\@id##1{\gdef\c@rrID{##1}\uppercase{\@@id##1ZZZ\end}\egroup
         \gdef\b@okShort{}%Prevent roll-over of short-form book name
         \trace{oh}{hook for bookstart-all \ifcsname bookstart-all\endcsname exists\else missing\fi}%
         \csname bookstart-all\endcsname

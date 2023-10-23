@@ -1,5 +1,6 @@
-\id FRT Test file
-\h small test file
+\id FRT Test file 
+\h1 SMALL test file \h small test 
+file 
 \p
 \zrule |cat="hello"\*
 \mt Test of rules and such like

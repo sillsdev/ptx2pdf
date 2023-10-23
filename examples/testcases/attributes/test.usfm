@@ -169,5 +169,10 @@ Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISB
 \p This is a \w  vertical\| bar\w* in a slash-w when its escaped.
 
  
+\s More link testing.
+\p \jmp youtube| link-href="https://www.youtube.com/watch?v=gLu8UDpJ_b4&t=11s" \jmp*
+\p \jmp goggle http |link-href="http://google.com"\jmp*
+\p \jmp goggle https |link-href="https://google.com"\jmp*
+
 \pb
 \zfillsignature|pages="8" pagenos="do"\*
