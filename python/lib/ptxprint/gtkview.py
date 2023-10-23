@@ -3286,7 +3286,6 @@ class GtkViewModel(ViewModel):
                     self.set("ecb_book", b)
                     # print("updateProjectSettings-s")
                     self.set("r_book", "single")
-                    print("About to break OUT!")
                     break
         # print("Still in updateProjectSettings (after break)")
         # status = self.get("r_book") == "multiple"

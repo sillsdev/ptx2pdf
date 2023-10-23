@@ -1,9 +1,29 @@
-PTXprint 2.3.50 Release Notes
+PTXprint 2.3.51 Release Notes
 18 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.51 (20 Oct 2023)
+
+  * Update TechRef with language list
+  
+  * Reduce image info text width in image chooser, to stop glitchy resizing 
+  
+  * Add instructions on how to manually merge a polyglot file
+  
+  * Handle enter in image chooser. Prepare to recieve pop data in image sets
+  
+  * Various minor UI improvements (after day 1 of Dallas workshop)
+  
+  * Add experimental hamburger menu (param -E 1)
+  
+  * Add ToC merge codelet (from Jeff)
+  
+  * Make ui setting more robust, fallback to full view
+  
+  * Handle archives with no pictures
+  
 Bug fixes and Improvements in 2.3.50 (18 Oct 2023)
 
   * Crowdin sync - updated localization
