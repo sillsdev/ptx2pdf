@@ -55,8 +55,19 @@ ignored.
 
 The `StyleType` marker (1) makes reference to `\m@kestyle` and is the way that
 the PTX macros decide what kind of style this is: character, paragraph or note.
-Each style type is processed very differently. `\message` is a TeX primitive
-that outputs the contents to the console and log file but puts a space after
+Each style type is processed very differently. 
+
+It would be a disaster if someone tried to define paragraph styles like
+`\message` or `\relax`, so we check the validity of the target first with
+\ch@cktypecs. (csname version of
+ch@ck). Currently that divides the world into `undefined, `macro` and
+other. The latter represents TeX primitives which must not be redefined. 
+Clearly there are macros that should not be redefined either, and this checking
+should eventually only let stylesheets overwrite already-defined character
+and paragraph styles and milestones.
+
+`\message`` is a TeX primitive that outputs the contents to the console and
+log file but puts a space after
 rather than a newline. We clear any font associated with the marker and then
 call the type appropriate definition for the marker. In each case we create a
 defintion for the marker token that calls the appropriate style routine. In the

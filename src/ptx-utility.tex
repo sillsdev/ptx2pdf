@@ -89,3 +89,26 @@
 \def\stripqu@te#1{\x@\@stripqu@te #1""\E\relax}
 \def\@stripqu@te #1"#2"#3\E{\def\@@result{#2}\ifx\@@result\empty\def\@@result{#1}\fi}
 
+\def\ch@cktypecs#1{% Check type of named control sequence
+ \ifcsname \m@rker\endcsname
+   \x@\ch@cktype\x@{\csname \m@rker\endcsname}%
+ \else
+   \global\let\ch@ck@result\dt@undefined
+ \fi
+}
+\def\ch@cktype#1{% Check type of giVEN WOTsit
+  \bgroup\edef\tmp{\meaning#1}%
+  \ifx\tmp\dt@undefined \global\let\ch@ck@result\dt@macro
+  \else
+    \x@\x@\x@\ch@ktypeA\x@\tmp\dt@macro\ENDIT
+  \fi
+  \egroup \tracingassigns=0
+}
+\x@\def\x@\ch@ktypeA\x@#\x@1\dt@macro#2\ENDIT{%
+  \def\tmpB{#2}\ifx\tmpB\empty 
+    \global\let\ch@ck@result\oth@r% Some kind of primitive.
+  \else 
+    \global\let\ch@ck@result\dt@macro % Some kind of macro
+  \fi
+}
+

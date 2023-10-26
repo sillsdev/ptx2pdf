@@ -16,6 +16,7 @@ responses = {
 }
 
 messages = [
+    ("E","S", r"! Cannot redefine reserved marker .*"),
     ("E","U", r"Reached end of book without finding \\esbe\."),
     ("W","RU", r"Unable to find label for .+? Re-run or correct typo at/near .+"),
     ("W","RU", r"Unable to find reference for .+? Re-run or correct typo at/near .+"),

@@ -30,6 +30,23 @@
 
 % ptx-constants.tex
 % Mostly, 'user-interface' constants, like top={t} Other contstants go at the bottom.
+
+% Undefine some TeX definitions that will become paragraph styles, etc.
+\let\pm\undefined % No longer +- symbol
+\let\v\undefined % No longer v accent
+\let\pi\undefined % No longer greek  pi
+\let\phi\undefined % No longer  greek phi
+\let\psi\undefined % No longer  greek psi
+\let\lim\undefined % No longer limit
+\let\b\undefined % No longer alignmennt macro
+\let\d\undefined % No longer alignmennt macro
+\let\tr\undefined % No longer superscript
+\let\sp\undefined % No longer superscript
+\let\wr\undefined % No longer mathchar
+\let\it\undefined % No longer italic
+\let\sup\undefined % No longer mathop
+\let\rq\undefined % No longer right quote
+
 % Figure  and alignment definitions
 \def\size@COL{col}
 \def\size@SPAN{span}
@@ -161,3 +178,9 @@
 
 \def\usc@re{_}
 \def\periph@sep@print@name{insert} % Prefix for separate printing.
+
+% Comparisons with detokenized strings
+\edef\dt@macro{\detokenize{macro:}}
+\edef\dt@undefined{\detokenize{undefined}}
+
+
