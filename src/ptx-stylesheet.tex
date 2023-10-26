@@ -827,6 +827,9 @@
  \ch@cktypecs{\m@rker}%
  \ifx\ch@ck@result\oth@r\message{! Cannot redefine reserved marker \m@rker, it clashes with a TeX primitive}%
  \else 
+   \ifx\ch@ck@result\dt@marker\else
+    \ifx\ch@ck@result\dt@undefined\else
+      \MSG{* Warning: stylesheet redefines preexisting \ch@ck@result\space\m@rker}\fi\fi
    \x@\let\csname font<\m@rker>\endcsname=\relax 
    \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
    \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}

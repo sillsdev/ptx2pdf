@@ -91,7 +91,11 @@
 
 \def\ch@cktypecs#1{% Check type of named control sequence
  \ifcsname \m@rker\endcsname
-   \x@\ch@cktype\x@{\csname \m@rker\endcsname}%
+   \ifcsname stylet@pe-#1\endcsname
+     \global\let\ch@ck@result=\dt@marker % More detail from interrogating the stylet@pe
+   \else
+     \x@\ch@cktype\x@{\csname \m@rker\endcsname}%
+   \fi
  \else
    \global\let\ch@ck@result\dt@undefined
  \fi
