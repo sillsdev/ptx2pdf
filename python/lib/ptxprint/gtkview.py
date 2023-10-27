@@ -915,7 +915,6 @@ class GtkViewModel(ViewModel):
         lsfonts.clear()
         tvfonts.set_model(lsfonts)
         self.setupTeXOptions()
-        self.onUILevelChanged(None)
 
         if self.splash is not None:
             self.splash.terminate()
@@ -1052,7 +1051,7 @@ class GtkViewModel(ViewModel):
             else:
                 setLevel = 6
             if setLevel > 0:
-                self.uiChangeLevel(setLevel)
+                self.set_uiChangeLevel(setLevel)
                 # self.set("fcb_uiLevel", str(setLevel))
         parent = w.get_parent()
         while parent is not None:
@@ -1135,16 +1134,16 @@ class GtkViewModel(ViewModel):
         ui = int(tv.get_model()[path][1])
         mw = self.builder.get_object("menu_mode")
         mw.popdown()
-        self.uiChangeLevel(ui)
+        self.set_uiChangeLevel(ui)
 
     def onResetPage(self, widget):
         pass
 
     def onUILevelChanged(self, btn):
         ui = int(self.get("fcb_uiLevel"))
-        self.uiChangeLevel(ui)
+        self.set_uiChangeLevel(ui)
 
-    def uiChangeLevel(self, ui):
+    def set_uiChangeLevel(self, ui):
         if isinstance(ui, str):
             try:
                 ui = int(ui)
@@ -1199,6 +1198,10 @@ class GtkViewModel(ViewModel):
         self.checkUpdates()
         self.mw.resize(200, 200)
         self.builder.get_object("nbk_Main").set_current_page(pgId)
+        return True
+
+    def get_uiChangeLevel(self):
+        return self.uilevel
 
     def toggleUIdetails(self, w, state):
         # print(w)
@@ -1259,7 +1262,9 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
-                wid = wid[1:]
+                if hasattr(self, "get_"+wid[1:]):
+                    res = getattr(self, "get_"+wid[1:])()
+                    return res
             res = super().get(wid, default=default)
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
                 logger.debug("Can't get {} in the model. Returning {}".format(wid, res))
@@ -1277,10 +1282,11 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(wid)
         if w is None:
             if wid.startswith("+"):
-                m = getattr(self, wid[1:], None)
+                m = getattr(self, "set_"+wid[1:], None)
                 if m is not None and not isinstance(m, str):
-                    getattr(self, wid[1:])(value)
-                    wid = wid[1:]
+                    if not getattr(self, "set_"+wid[1:])(value):
+                        return
+                wid = wid[1:]
             elif wid.startswith("r_"):
                 bits = wid.split("_")[1:]
                 if len(bits) > 1:
@@ -4372,7 +4378,7 @@ class GtkViewModel(ViewModel):
                     # ui = self.get("fcb_uiLevel")
                     self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
-                    self.uiChangeLevel(ui)
+                    self.set_uiChangeLevel(ui)
                     # self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
