@@ -2875,10 +2875,10 @@ settings for a similar project.</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkMenuButton" id="btn_menu_reset">
-            <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
+            <property name="no-show-all">True</property>
             <property name="use-popover">False</property>
             <signal name="clicked" handler="onResetPage" swapped="no"/>
             <child>
@@ -2930,7 +2930,7 @@ settings for a similar project.</property>
               <object class="GtkLabel" id="l_menu_uilang">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">UI Language</property>
+                <property name="label" translatable="yes">Language</property>
                 <property name="justify">center</property>
               </object>
             </child>
@@ -26137,9 +26137,14 @@ from XeTeX processing.</property>
             <property name="valign">end</property>
             <child>
               <object class="GtkMenuButton" id="btn_menu">
+                <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="focus-on-click">False</property>
                 <property name="receives-default">True</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">3</property>
+                <property name="margin-top">3</property>
+                <property name="margin-bottom">3</property>
                 <property name="direction">up</property>
                 <property name="popover">menu_main</property>
                 <child>
@@ -26160,9 +26165,9 @@ from XeTeX processing.</property>
               <object class="GtkComboBox" id="fcb_uiLevel">
                 <property name="name">Mini, Basic or Advanced View option</property>
                 <property name="width-request">100</property>
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="can-default">True</property>
+                <property name="no-show-all">True</property>
                 <property name="tooltip-text" translatable="yes">Set the most appropriate
 user interface mode as needed.
 Settings will be hidden or shown
@@ -26189,8 +26194,8 @@ depending on the level set here.</property>
             <child>
               <object class="GtkComboBox" id="fcb_interfaceLang">
                 <property name="name">User interface language</property>
-                <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="no-show-all">True</property>
                 <property name="tooltip-text" translatable="yes">Several PTXprint interface languages are 
 available. On selecting a language, the
 program will close and re-open in the

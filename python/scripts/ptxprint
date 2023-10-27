@@ -288,6 +288,7 @@ if args.print or args.action is not None:
         if args.books is not None and len(args.books):
             mainw.bookNoUpdate = True
             mainw.set("ecb_booklist", args.books)
+            print(">>>>>>> changed to multiple in doit <<<<<<<<<<<<<")
             mainw.set("r_book", "multiple")
         elif args.module is not None and len(args.module):
             mainw.set("r_book", "module")

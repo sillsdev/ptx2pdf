@@ -118,10 +118,12 @@ _progress = {
     'fn' : _("Finishing..."),
     'pr' : _("Processing...")
 }
+# fcb_uiLevel fcb_interfaceLang
+
 _ui_minimal = """
-bx_statusBar fcb_uiLevel t_find
+btn_menu bx_statusBar t_find
 btn_menu_level btn_menu_lang l_menu_level l_menu_uilang
-fcb_filterXrefs fcb_interfaceLang c_quickRun
+fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
 l_chapfrom l_chapto t_chapfrom t_chapto 
@@ -218,7 +220,7 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter",
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", "fcb_uiLevel", "fcb_interfaceLang",
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -659,7 +661,7 @@ class GtkViewModel(ViewModel):
         for i, r in enumerate(llang):
             if self.lang.startswith(r[1]):
                 ilang.set_active(i)
-                self.set("l_menu_uilang", _("UI Language\n({})").format(r[0]))
+                self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
                 break
         for n in _notebooks:
             nbk = self.builder.get_object("nbk_"+n)
@@ -1513,14 +1515,19 @@ class GtkViewModel(ViewModel):
     def onBookListChanged(self, ecb_booklist): # called on "focus-out-event"
         if not self.initialised:
             return
+        # if self.loadingConfig:
+            # return
         if self.booklistKeypressed:
             self.booklistKeypressed = False
             return
         self.doBookListChange()
         
     def onBkLstKeyPressed(self, btn, *a):
+        # if self.loadingConfig:
+            # return
         self.booklistKeypressed = True
         if self.blInitValue != self.get('ecb_booklist'):
+            print(">>>>>>>>>>>>>onBkLstKeyPressed")
             self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
@@ -2993,8 +3000,9 @@ class GtkViewModel(ViewModel):
             booklist = sorted((b.get_label() for b in self.alltoggles if b.get_active()), \
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             self.set("ecb_booklist", " ".join(b for b in booklist))
-        if self.get("r_book") in ("single", "multiple"):
+        if not self.loadingConfig and self.get("r_book") in ("single", "multiple"):
             print("onChooseBooksClicked-m/s")
+            print(">>>>>>>>>>>>>onChooseBooksClicked")
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
         self.updateExamineBook()
@@ -4679,6 +4687,7 @@ class GtkViewModel(ViewModel):
             bkid = self.get("fcb_strongsNdxBookId") or "XXS"
             self.generateStrongs(bkid=bkid, cols=cols)
             bl = self.getBooks()
+            print(">>>>>>>>>>>onGenerateStrongsClicked")
             self.set("r_book", "multiple")
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
