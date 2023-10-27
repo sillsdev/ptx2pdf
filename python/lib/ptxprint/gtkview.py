@@ -3294,12 +3294,8 @@ class GtkViewModel(ViewModel):
             for b in allbooks:
                 if b in books.keys():
                     self.set("ecb_book", b)
-                    # print("updateProjectSettings-s")
                     self.set("r_book", "single")
                     break
-        # print("Still in updateProjectSettings (after break)")
-        # status = self.get("r_book") == "multiple"
-        # self.builder.get_object("ecb_booklist").set_sensitive(status)
         for i in self.notebooks['Viewer']:
             obj = self.builder.get_object("l_{1}".format(*i.split("_")))
             if obj is not None:
@@ -3308,7 +3304,6 @@ class GtkViewModel(ViewModel):
         self.setEntryBoxFont()
         self._setup_digits()
         self.updatePicList()
-        # print(">>>>>>>>>>About to update dialog Title")
         self.updateDialogTitle()
         self.styleEditor.editMarker()
         self.updateMarginGraphics()
@@ -3316,7 +3311,6 @@ class GtkViewModel(ViewModel):
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
         logger.debug(f"Changed project to {prjid} {configName=}")
-        # print(f"Changed project to {prjid} {configName=}")
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.settings_dir, self.prjid, 
@@ -4689,7 +4683,6 @@ class GtkViewModel(ViewModel):
             bkid = self.get("fcb_strongsNdxBookId") or "XXS"
             self.generateStrongs(bkid=bkid, cols=cols)
             bl = self.getBooks()
-            print(">>>>>>>>>>>onGenerateStrongsClicked")
             self.set("r_book", "multiple")
             if bkid not in bl:
                 bls = " ".join(bl)+ " " + bkid
