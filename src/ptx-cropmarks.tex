@@ -32,6 +32,7 @@
 
 %+c_makecropmarks
 \newif\ifBookOpenLeft\BookOpenLeftfalse % The friend of RTL. In monoglot these two typically go together, in diglot they may not. ifOpenLeft controls where binding gutter goes, etc.
+\newif\ifOuterGutter % Does the user want the 'binding gutter' on the other side of the page?
 \newif\ifCropMarks
 %\font\idf@nt=cmtt10 scaled 700 % font for the marginal job information
 \font\idf@nt="Source Code Pro" at 8pt
@@ -427,15 +428,11 @@
 }
 
 \def\shipwithcr@pmarks#1{% \shipout box #1, adding cropmarks if required
-  \def\g@tterside{L} % figure out if we're adding a binding gutter, and which side
-  %\ifBindingGutter
-    \ifDoubleSided
-      \ifodd\pageno\ifBookOpenLeft\def\g@tterside{R} \else\def\g@tterside{L}\fi
-      \else\ifBookOpenLeft\def\g@tterside{L} \else\def\g@tterside{R}\fi
-      \fi
-    \else\ifBookOpenLeft\def\g@tterside{R}\else\def\g@tterside{L}\fi
-    \fi
-  %\fi
+  % figure out if we're adding a binding gutter, and which side
+  \ifnum 1=\numexpr \ifDoubleSided \ifodd\pageno 1 \else -1 \fi\else 1 \fi 
+      \ifBookOpenLeft *-1 \fi \ifOuterGutter *-1 \fi\relax
+    \def\g@tterside{L} \else\def\g@tterside{R}%
+  \fi
   \ifx\doLines\empty\else
     \x@\ifvoid\csname gp@box\g@tterside\endcsname
       \ifrotate\XeTeXupwardsmode=0\fi
