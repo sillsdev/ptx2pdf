@@ -641,9 +641,9 @@ class PicInfo(dict):
                 v['disabled'] = True
 
     def updateView(self, view, bks=None, filtered=True):
-        if self.inthread:
+        # if self.inthread:
             #GObject.timeout_add_seconds(1, self.updateView, view, bks=bks, filtered=filtered)
-            print_traceback()
+            # print_traceback()
         view.load(self, bks=bks if filtered else None)
         
     def clearSrcPaths(self):

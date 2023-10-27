@@ -1258,6 +1258,8 @@ class GtkViewModel(ViewModel):
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
         if w is None:
+            if wid.startswith("+"):
+                wid = wid[1:]
             res = super().get(wid, default=default)
             if not skipmissing and not (wid.startswith("_") or wid.startswith("r_")):
                 logger.debug("Can't get {} in the model. Returning {}".format(wid, res))
@@ -1274,25 +1276,27 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("bx_statusMsgBar").set_visible(len(value))
         w = self.builder.get_object(wid)
         if w is None:
-            if wid.startswith("_"):
+            if wid.startswith("+"):
                 m = getattr(self, wid[1:], None)
                 if m is not None and not isinstance(m, str):
                     getattr(self, wid[1:])(value)
-                    return
-            elif not wid.startswith("r_") and not skipmissing:
+                    wid = wid[1:]
+            elif wid.startswith("r_"):
+                bits = wid.split("_")[1:]
+                if len(bits) > 1:
+                    if value:
+                        value = bits[1]
+                super().set("r_"+bits[0], value)
+                wid = "r_" + "_".join([bits[0], value])
+                w = self.builder.get_object(wid)
+                if w is not None:
+                    w.set_active(True)
+                return
+            elif wid.startswith("c_") or wid.startswith("s_") and TeXpert.hasopt(wid[2:]):
+                pass
+            elif not skipmissing:
                 print(_("Can't set {} in the model").format(wid))
             super(GtkViewModel, self).set(wid, value)
-            return
-        if wid.startswith("r_"):
-            bits = wid.split("_")[1:]
-            if len(bits) > 1:
-                if value:
-                    value = bits[1]
-            super().set("r_"+bits[0], value)
-            wid = "r_" + "_".join([bits[0], value])
-            w = self.builder.get_object(wid)
-            if w is not None:
-                w.set_active(True)
             return
         setWidgetVal(wid, w, value, useMarkup=useMarkup)
 
@@ -1527,7 +1531,6 @@ class GtkViewModel(ViewModel):
             # return
         self.booklistKeypressed = True
         if self.blInitValue != self.get('ecb_booklist'):
-            print(">>>>>>>>>>>>>onBkLstKeyPressed")
             self.set("r_book", "multiple")
 
     def onBkLstFocusOutEvent(self, btn, *a):
@@ -1694,6 +1697,7 @@ class GtkViewModel(ViewModel):
         self.configNoUpdate = False
 
     def updateDiglotConfigList(self):
+        currdigcfg = self.get("ecb_diglotSecConfig")
         self.ecb_diglotSecConfig.remove_all()
         digprj = self.get("fcb_diglotSecProject")
         if digprj is None:
@@ -1702,7 +1706,7 @@ class GtkViewModel(ViewModel):
         if len(diglotConfigs):
             for cfgName in sorted(diglotConfigs):
                 self.ecb_diglotSecConfig.append_text(cfgName)
-            self.set("ecb_diglotSecConfig", "Default")
+            self.set("ecb_diglotSecConfig", currdigcfg if currdigcfg in diglotConfigs else "Default")
 
     def updateimpProjectConfigList(self):
         self.ecb_impConfig.remove_all()
@@ -3001,8 +3005,6 @@ class GtkViewModel(ViewModel):
                                     key=lambda x:_allbkmap.get(x, len(_allbkmap)))
             self.set("ecb_booklist", " ".join(b for b in booklist))
         if not self.loadingConfig and self.get("r_book") in ("single", "multiple"):
-            print("onChooseBooksClicked-m/s")
-            print(">>>>>>>>>>>>>onChooseBooksClicked")
             self.set("r_book", "multiple" if len(booklist) else "single")
         self.updateDialogTitle()
         self.updateExamineBook()

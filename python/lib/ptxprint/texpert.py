@@ -28,7 +28,8 @@ texpertOptions = {
     "CalcChapSize":       ["calcchapsize", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")],
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
     # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
-    "hyphenpenalty":      ["hyphenpenalty", (50, 0, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
+    "pretolerance":       ["pretolerance", (100, -1, 10000, 10, 100), "{0}={1}", _("Hyphenation threshold"), _("Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate")],
+    "hyphenpenalty":      ["hyphenpenalty", (50, -9999, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
     "vertThumbtabVadj":   ["thumbvvadj", (-2., -10, 50, 1,5), "{0}={1}pt", _("Thumbtab rotated adjustment"), _("Shift thumbtab text")],
     "FigCaptionAdjust":   ["captionadj", (0., -10, 20, 1, 5), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
     "DefaultSpaceBeside": ["spbeside", (10., 0, 100, 1, 5), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
@@ -67,6 +68,10 @@ class TeXpert:
                 v = strtobool(config.get(self.section, opt[0], fallback=opt[1]))
             elif n.startswith("s_"):
                 v = asfloat(config.get(self.section, opt[0], fallback=opt[1]), opt[1])
+            else:
+                v = None
+            if v is not None:
+                view.set(n, v)
 
     @classmethod
     def generateTeX(self, view):
@@ -88,5 +93,7 @@ class TeXpert:
         for k, opt in texpertOptions.items():
             yield (k, opt, widgetName(opt))
 
-
+    @classmethod
+    def hasopt(self, n):
+        return n in texpertOptions
 
