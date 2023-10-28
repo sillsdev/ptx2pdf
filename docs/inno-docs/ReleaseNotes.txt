@@ -4,7 +4,13 @@ PTXprint 2.3.52 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.52 (28 Oct 2023)
+Bug fixes and Improvements in 2.3.53 (28 Oct 2023)
+
+  * Find missing hamburger icon and ensure View Level is set when loading config
+  
+  * Ensure Texhacks stays enabled after re-starting
+  
+Bug fixes and Improvements in 2.3.52 (27 Oct 2023)
 
   * Use hamburger menu to replace the old View Level and Language choosers
     (known issue outstanding: View Level resets to Basic on restart)
