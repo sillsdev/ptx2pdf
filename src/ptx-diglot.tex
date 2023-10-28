@@ -1333,8 +1333,10 @@
   \message{baseline set to 0pt EEK}%
   \global\baselineskip=12pt
  \fi%
- %Also need to switch hyphenation patterns
- \expandafter\ifx\csname language#1\endcsname\relax\else\uselanguage{\csname language#1\endcsname}\fi
+ %Also need to switch hyphenation patterns. if there's a lang@\csname languageX\endcsname (as defined by addlanguage) use that. If not, use \languageX as an int.
+ \ifcsname language#1\endcsname
+    \x@\let\tmplang\x@\csname language#1\endcsname\ifcsname lang@\tmplang\endcsname \x@\language \csname \lang@\tmplang\else \language\tmplang\fi
+ \fi
  \tmpcount=\the\pageno
  \advance\tmpcount by \MaxPagesPerChunk\relax 
  %\message{\the\pageno + \MaxPagesPerChunk = \the\tmpcount}%

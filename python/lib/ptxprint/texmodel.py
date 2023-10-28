@@ -949,6 +949,7 @@ class TexModel:
             logger.log(5, "Unparsing text to run local changes\n"+dat)
 
         if self.localChanges is not None:
+            logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
 
         with open(outfpath, "w", encoding="utf-8") as outf:
@@ -1286,7 +1287,7 @@ class TexModel:
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
         if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
            and self.dict["fancy/endofbookpdf"].lower().endswith('.pdf'):
-            self.localChanges.append((None, regex.compile(r"\Z", flags=regex.M), r"\n\z"))
+            self.localChanges.append((None, regex.compile(r"\Z", flags=regex.M), r"\n\\z"))
         
         # Insert a rule between end of Introduction and start of body text (didn't work earlier, but might work now)
         # self.localChanges.append((None, regex.compile(r"(\\c\s1\s?\r?\n)", flags=regex.S), r"\\par\\vskip\\baselineskip\\hskip-\\columnshift\\hrule\\vskip 2\\baselineskip\n\1"))
