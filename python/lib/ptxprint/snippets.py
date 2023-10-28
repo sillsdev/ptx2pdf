@@ -199,33 +199,17 @@ class FancyIntro(Snippet):
 
 class Diglot(Snippet):
     processTex = True
-    texCode = r"""
-\def\regularR{{"{diglot/fontregular}{diglot/docscript}"}}
-\def\boldR{{"{diglot/fontbold}"}}
-\def\italicR{{"{diglot/fontitalic}{diglot/docscript}"}}
-\def\bolditalicR{{"{diglot/fontbolditalic}{diglot/docscript}"}}
 
+    def generateTex(self, model, diglotSide=""):
+        baseCode = r"""
 \def\DiglotLeftFraction{{{document/diglotprifraction}}}
 \def\DiglotRightFraction{{{document/diglotsecfraction}}}
-
-%\addToLeftHooks{{\FontSizeUnit={paper/fontfactor}pt}}
-%\addToRightHooks{{\FontSizeUnit={diglot/fontfactor}pt}}
-\FontSizeUnitR={diglot/fontfactor}pt
-\def\LineSpacingFactorR{{{diglot/linespacingfactor}}}
-\def\AfterChapterSpaceFactorR{{{diglot/afterchapterspace}}}
-\def\AfterVerseSpaceFactorR{{{diglot/afterversespace}}}
 \addToLeftHooks{{\RTL{document/ifrtl}}}
 \addToRightHooks{{\RTL{diglot/ifrtl}}}
-%{diglot/iflinebreakon}\XeTeXlinebreaklocaleR "{diglot/linebreaklocale}"
 \diglotSwap{document/diglotswapside}
 {diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
-{diglot/ifletter}\newskip\intercharskipR \intercharskipR=0pt plus {diglot/letterstretch:.2f}em minus {diglot/lettershrink:.2f}em
-{diglot/ifletter}\def\letterspaceR{{\leavevmode\nobreak\hskip\intercharskipR}}
-{diglot/ifletter}\DefineActiveChar{{^^^^fdd1}}{{\letterspaceR}}
-{ifdiglotincludefootnotes_}\expandafter\def\csname f{R_}:properties\endcsname{{nonpublishable}}
-{notes/includefootnotes}\expandafter\def\csname f{L_}:properties\endcsname{{nonpublishable}}
-{notes/includexrefs}\expandafter\def\csname x{L_}:properties\endcsname{{nonpublishable}}
-{ifdiglotincludexrefs_}\expandafter\def\csname x{R_}:properties\endcsname{{nonpublishable}}
+{notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
+{notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \def\addInt{{
 \zglot|L\*{project/intfile}
 \zglot|R\*{diglot/intfile}
@@ -233,6 +217,24 @@ class Diglot(Snippet):
 \catcode `@=12
 
 """
+        persideCode = r"""
+\def\regular{s_}{{"{diglot[fontregular]}{diglot[docscript]}"}}
+\def\bold{s_}{{"{diglot[fontbold]}"}}
+\def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
+\def\bolditalic{s_}{{"{diglot[fontbolditalic]}{diglot[docscript]}"}}
+\FontSizeUnit{s_}={diglot[fontfactor]}pt
+\def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
+\def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
+\def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
+\newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
+\def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
+{ifdiglotincludefootnotes_}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
+{ifdiglotincludexrefs_}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+"""
+
+        res = baseCode.format(s_="L", **model.dict)
+        res += persideCode.format(diglot = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}, s_="R", **model.dict)
+        return res
 
 class FancyBorders(Snippet):
     takesDiglot = True
