@@ -124,6 +124,8 @@ _diglot = {
 "diglot/ifusemodsty_":       "project/ifusemodssty",
 "diglot/ifincludefootnotes_":"notes/includefootnotes",
 "diglot/ifincludexrefs_":    "notes/includexrefs",
+"diglot/ifhavehyphenate_":   "paragraph/ifhavehyphenate",
+"diglot/ifhyphenate_":       "paragraph/ifhyphenate",
 
 "diglot/intfile":           "project/intfile",
 # "diglot/colorfonts" :       "document/ifcolorfonts",
@@ -731,6 +733,7 @@ class RunJob:
         for k,v in _diglotprinter.items():
             info.printer.set(k, diginfo.printer.get(v))
         info["diglot/cfgrpath"] = saferelpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        info["diglot/prjid_"] = digprjid
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
         texfiles += res

@@ -1309,6 +1309,11 @@
 }%
 
 
+\def\setdiglotlang#1{
+ \ifcsname language#1\endcsname
+    \x@\language\csname language#1\endcsname
+ \fi
+}
 \def\@@switchstyles#1{%
   \ifcsname c@rrfontsize#1\endcsname
     \global\x@\let\x@\c@rrfontsize\csname c@rrfontsize#1\endcsname
@@ -1334,9 +1339,7 @@
   \global\baselineskip=12pt
  \fi%
  %Also need to switch hyphenation patterns. if there's a lang@\csname languageX\endcsname (as defined by addlanguage) use that. If not, use \languageX as an int.
- \ifcsname language#1\endcsname
-    \x@\let\tmplang\x@\csname language#1\endcsname\ifcsname lang@\tmplang\endcsname \x@\language \csname \lang@\tmplang\else \language\tmplang\fi
- \fi
+ \setdiglotlang{#1}%
  \tmpcount=\the\pageno
  \advance\tmpcount by \MaxPagesPerChunk\relax 
  %\message{\the\pageno + \MaxPagesPerChunk = \the\tmpcount}%

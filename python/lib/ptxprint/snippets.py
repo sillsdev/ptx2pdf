@@ -208,6 +208,7 @@ class Diglot(Snippet):
 {diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+\let\language{s_}=\langund
 \catcode `@=12
 
 """
@@ -227,6 +228,8 @@ class Diglot(Snippet):
 \def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+\newlanguage\language{s_} \language\language{s_}
+{diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
 """
 
         res = baseCode.format(s_="L", **model.dict)
