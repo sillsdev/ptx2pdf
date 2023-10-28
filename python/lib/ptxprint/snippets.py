@@ -202,22 +202,19 @@ class Diglot(Snippet):
 
     def generateTex(self, model, diglotSide=""):
         baseCode = r"""
-\def\DiglotLeftFraction{{{document/diglotprifraction}}}
-\def\DiglotRightFraction{{{document/diglotsecfraction}}}
-\addToLeftHooks{{\RTL{document/ifrtl}}}
-\addToRightHooks{{\RTL{diglot/ifrtl}}}
+\def\DiglotLFraction{{{document/diglotprifraction}}}
+\addToSideHooks{{{s_}}}{{\RTL{document/ifrtl}}}
 \diglotSwap{document/diglotswapside}
 {diglot/interlinear}\expandafter\def\csname complex-rb\endcsname{{\ruby{project/ruby}{{rb}}{{gloss}}}}
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
-\def\addInt{{
-\zglot|L\*{project/intfile}
-\zglot|R\*{diglot/intfile}
-\zglot|\*}}
 \catcode `@=12
 
 """
+            # DiglotRFraction needs refactoring when we have proper pages and fractions per glot
         persideCode = r"""
+\def\DiglotRFraction{{{document/diglotsecfraction}}}
+\addToSideHooks{{{s_}}}{{\RTL{diglot[ifrtl]}}}
 \def\regular{s_}{{"{diglot[fontregular]}{diglot[docscript]}"}}
 \def\bold{s_}{{"{diglot[fontbold]}"}}
 \def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
@@ -228,12 +225,16 @@ class Diglot(Snippet):
 \def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
 \newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
 \def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
-{ifdiglotincludefootnotes_}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
-{ifdiglotincludexrefs_}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+{diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
+{diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 """
 
         res = baseCode.format(s_="L", **model.dict)
         res += persideCode.format(diglot = {x[7:]: y for x,y in model.dict.items() if x.startswith("diglot/")}, s_="R", **model.dict)
+        res += "\n" + r"\def\addInt{" + "\n"
+        for a in (("L", "project/intfile"), ("R", "diglot/intfile")):
+            res += r"\zglot|{0}\*{1}".format(a[0], model.dict[a[1]]) + "\n"
+        res += r"\zglot|\*}" + "\n"
         return res
 
 class FancyBorders(Snippet):

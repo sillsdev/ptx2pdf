@@ -702,6 +702,12 @@ class TexModel:
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.printer.getvar(k)))
                     for k, e in (('toctitle', 'document/toctitle'),):
                         res.append(r"\defzvar{{{}}}{{{}}}".format(k, self.dict[e]))
+                elif l.startswith(r"%\diglot "):
+                    if self.dict.get("_isDiglot", False):
+                        l = l[9:]
+                        for a in ("R", ):
+                            digdict = {x[7:]: y for x, y in self.dict.items() if x.startswith("diglot/")}
+                            res.append(l.strip().format(diglot=digdict, s_=a, **self.dict))
                 else:
                     res.append(l.rstrip().format(**self.dict))
         return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")

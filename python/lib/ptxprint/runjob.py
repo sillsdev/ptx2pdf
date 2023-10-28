@@ -120,10 +120,10 @@ _diglotprinter = {
 }
 
 _diglot = {
-"ifusediglotcustomsty_":    "project/ifusecustomsty",
-"ifusediglotmodsty_":       "project/ifusemodssty",
-"ifdiglotincludefootnotes_":"notes/includefootnotes",
-"ifdiglotincludexrefs_":    "notes/includexrefs",
+"diglot/ifusecustomsty_":    "project/ifusecustomsty",
+"diglot/ifusemodsty_":       "project/ifusemodssty",
+"diglot/ifincludefootnotes_":"notes/includefootnotes",
+"diglot/ifincludexrefs_":    "notes/includexrefs",
 
 "diglot/intfile":           "project/intfile",
 # "diglot/colorfonts" :       "document/ifcolorfonts",
@@ -730,7 +730,7 @@ class RunJob:
             info[k]=diginfo[v]
         for k,v in _diglotprinter.items():
             info.printer.set(k, diginfo.printer.get(v))
-        info["document/diglotcfgrpath"] = saferelpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
+        info["diglot/cfgrpath"] = saferelpath(diginfo.printer.configPath(diginfo.printer.configName()), docdir).replace("\\","/")
         info["_isDiglot"] = True
         res = self.sharedjob(jobs, info, extra="-diglot", digtexmodel=diginfo)
         texfiles += res
