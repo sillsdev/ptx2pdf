@@ -4301,7 +4301,6 @@ class GtkViewModel(ViewModel):
         (pref, name) = label.split("_")
         ctrl = "s_"+name
         w = self.builder.get_object(ctrl)
-        print(f"{ctrl=}")
         if not w.get_sensitive():
             return
         if ctrl in self.initValues:

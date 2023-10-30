@@ -1,9 +1,19 @@
 PTXprint 2.3.53 Release Notes
-28 Oct 2023
+30 Oct 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.3.54 (30 Oct 2023)
+
+  * Fixed Project and Config Overrides (sub-widgets now also get deactivated)
+  
+  * Separate diglot snippet into L and R sections
+  
+  * Polyglot phase 1: diglot as polyglot code generation
+  
+  * Set up one language per glot allowing hyphenation per glot
+  
 Bug fixes and Improvements in 2.3.53 (28 Oct 2023)
 
   * Find missing hamburger icon and ensure View Level is set when loading config
