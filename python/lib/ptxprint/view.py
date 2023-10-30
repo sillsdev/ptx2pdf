@@ -144,9 +144,9 @@ class ViewModel:
             tzstr = "Z"
         else:
             tzstr = "{0:+03}'{1:02}'".format(tzhrs, tzmins)
-        self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr)
-        self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr)
-        self.set("_xmpdate", t.strftime("%Y-%m-%dT%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"))
+        self.set("_pdfdate", t.strftime("%Y%m%d%H%M%S")+tzstr, skipmissing=True)
+        self.set("_date", t.strftime("%Y-%m-%d %H:%M:%S ")+tzstr, skipmissing=True)
+        self.set("_xmpdate", t.strftime("%Y-%m-%dT%H:%M:%S")+tzstr.replace("'", ":").rstrip(":"), skipmissing=True)
 
     def doError(self, txt, secondary=None, **kw):
         print(txt)

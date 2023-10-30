@@ -71,7 +71,7 @@ class TeXpert:
             else:
                 v = None
             if v is not None:
-                view.set(n, v)
+                view.set(n, v, skipmissing = True)
 
     @classmethod
     def generateTeX(self, view):

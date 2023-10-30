@@ -2987,6 +2987,8 @@ class GtkViewModel(ViewModel):
             obj.set_halign(Gtk.Align.START)
             texopts.attach(obj, 1, i, 1, 1)
             self.builder.expose_object(wname, obj)
+            if wname in self.dict:
+                v = self.dict[wname]
             self.set(wname, v)
             self.allControls.append(wname)
             obj.show()
@@ -3276,11 +3278,8 @@ class GtkViewModel(ViewModel):
             self.set("lb_working_dir", '<a href="{}">{}</a>'.format(outdir, outdir))
             
     def updateProjectSettings(self, prjid, saveCurrConfig=False, configName=None, readConfig=None):
-        # print("Just got into updateProjectSettings")
-        # print(f"{prjid=} {saveCurrConfig=} {configName=} {readConfig=}")
         if prjid == self.prjid and configName == self.configId:
             return True
-        # print("Still in updateProjectSettings")
         self.picListView.clear()
         if self.picinfos is not None:
             self.picinfos.clear()
@@ -3318,6 +3317,7 @@ class GtkViewModel(ViewModel):
         self.onBodyHeightChanged(None)
         self.checkFontsMissing()
         logger.debug(f"Changed project to {prjid} {configName=}")
+        self.builder.get_object("nbk_Main").set_current_page(0)
 
     def enableTXLoption(self):
         txlpath = os.path.join(self.settings_dir, self.prjid, 
