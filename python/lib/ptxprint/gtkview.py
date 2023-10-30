@@ -203,8 +203,8 @@ c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 """.split()
 
 _ui_experimental = """
-btn_menu
 """.split()
+# btn_menu
 
 # removed from list above: 
 # r_pictureRes_High r_pictureRes_Low
@@ -1731,19 +1731,20 @@ class GtkViewModel(ViewModel):
         if clearvars:
             self.unpaintUnlock()
         super(GtkViewModel, self).loadConfig(config, clearvars=clearvars, **kw)
-        for k, v in _sensitivities.items():
-            if k.startswith("r_"):
-                continue
-            state = self.get(k)
-            for w in v:
-                # print(w)
-                self.builder.get_object(w).set_sensitive(state)
-        for k, v in _nonsensitivities.items():
-            if k.startswith("r_"):
-                continue
-            state = not self.get(k)
-            for w in v:
-                self.builder.get_object(w).set_sensitive(state)
+        if clearvars:
+            for k, v in _sensitivities.items():
+                if k.startswith("r_"):
+                    continue
+                state = self.get(k)
+                for w in v:
+                    # print(w)
+                    self.builder.get_object(w).set_sensitive(state)
+            for k, v in _nonsensitivities.items():
+                if k.startswith("r_"):
+                    continue
+                state = not self.get(k)
+                for w in v:
+                    self.builder.get_object(w).set_sensitive(state)
         self.colorTabs()
         self.updateMarginGraphics()
         self.onExtListSourceChanges(None)
@@ -4299,6 +4300,10 @@ class GtkViewModel(ViewModel):
         label = Gtk.Buildable.get_name(lb)
         (pref, name) = label.split("_")
         ctrl = "s_"+name
+        w = self.builder.get_object(ctrl)
+        print(f"{ctrl=}")
+        if not w.get_sensitive():
+            return
         if ctrl in self.initValues:
             self.set(ctrl, self.initValues[ctrl])
 
