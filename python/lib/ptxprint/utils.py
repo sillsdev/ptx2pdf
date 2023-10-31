@@ -254,7 +254,7 @@ def print_traceback(f=None):
     traceback.print_stack(f=f)
 
 def getPDFconfig(fname):
-    if fname.lower().endswith(".zip"):
+    if str(fname).lower().endswith(".zip"):
         with open(fname, "rb") as inf:
             dat = inf.read()
         return dat

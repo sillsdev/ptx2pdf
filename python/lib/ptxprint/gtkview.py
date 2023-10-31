@@ -3716,7 +3716,7 @@ class GtkViewModel(ViewModel):
         dialog.hide()
 
     def onResetCurrentConfigClicked(self, btn):
-        self.resetToInitValues()
+        self.resetToInitValues(updatebklist=False)
 
     def onSelectPDForZIPfileToImport(self, btn_importPDF):
         pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
