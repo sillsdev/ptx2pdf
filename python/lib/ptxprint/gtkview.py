@@ -118,7 +118,6 @@ _progress = {
     'fn' : _("Finishing..."),
     'pr' : _("Processing...")
 }
-# fcb_uiLevel fcb_interfaceLang
 
 _ui_minimal = """
 btn_menu bx_statusBar t_find
@@ -220,7 +219,7 @@ _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
-                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", "fcb_uiLevel", "fcb_interfaceLang",
+                  "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
 _uiLevels = {
@@ -656,11 +655,9 @@ class GtkViewModel(ViewModel):
         self.currCodeletVbox = None
         self.codeletVboxes = {}
         self.mruBookList = self.userconfig.get('init', 'mruBooks', fallback='').split('\n')
-        ilang = self.builder.get_object("fcb_interfaceLang")
         llang = self.builder.get_object("ls_interfaceLang")
         for i, r in enumerate(llang):
             if self.lang.startswith(r[1]):
-                ilang.set_active(i)
                 self.set("l_menu_uilang", _("Language\n({})").format(r[0]))
                 break
         for n in _notebooks:
@@ -669,7 +666,7 @@ class GtkViewModel(ViewModel):
         self.noInt = self.userconfig.getboolean('init', 'nointernet', fallback=None)
         if self.noInt is not None:
             self.set("c_noInternet", self.noInt)
-        for fcb in ("project", "uiLevel", "interfaceLang", "fontdigits", "script", "diglotPicListSources",
+        for fcb in ("project", "fontdigits", "script", "diglotPicListSources",
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
@@ -1041,7 +1038,6 @@ class GtkViewModel(ViewModel):
         if highlight:
             self.searchWidget.append(wid)
             ui = self.uilevel
-            # ui = int(self.get("fcb_uiLevel"))
             setLevel = 0
             for i in range(2, 5):
                 if i in _uiLevels and wid in _uiLevels[i]:
@@ -1052,7 +1048,6 @@ class GtkViewModel(ViewModel):
                 setLevel = 6
             if setLevel > 0:
                 self.set_uiChangeLevel(setLevel)
-                # self.set("fcb_uiLevel", str(setLevel))
         parent = w.get_parent()
         while parent is not None:
             name = Gtk.Buildable.get_name(parent)
@@ -1139,10 +1134,6 @@ class GtkViewModel(ViewModel):
     def onResetPage(self, widget):
         pass
 
-    def onUILevelChanged(self, btn):
-        ui = int(self.get("fcb_uiLevel"))
-        self.set_uiChangeLevel(ui)
-
     def set_uiChangeLevel(self, ui):
         if isinstance(ui, str):
             try:
@@ -1212,7 +1203,6 @@ class GtkViewModel(ViewModel):
 
     def noInternetClicked(self, btn):
         ui = self.uilevel
-        # ui = int(self.get("fcb_uiLevel"))
         if btn is not None:
             val = self.get("c_noInternet") or (ui < 6)
         else:
@@ -1987,7 +1977,7 @@ class GtkViewModel(ViewModel):
             status = False
             img = Gtk.Image.new_from_icon_name("changes-prevent-symbolic", Gtk.IconSize.LARGE_TOOLBAR)
             lockBtn.set_image(img)
-        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes", "fcb_uiLevel", 
+        for c in ["btn_saveConfig", "btn_deleteConfig", "t_configNotes",
                   "btn_Generate", "btn_plAdd", "btn_plDel"]:
             self.builder.get_object(c).set_sensitive(status)
         
@@ -3343,7 +3333,6 @@ class GtkViewModel(ViewModel):
             lockBtn.set_sensitive(False)
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
-        self.builder.get_object("fcb_uiLevel").set_sensitive(True)
         # lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
@@ -4381,11 +4370,9 @@ class GtkViewModel(ViewModel):
                         else:
                             lsp.append([prj])
                     ui = self.uilevel
-                    # ui = self.get("fcb_uiLevel")
                     self.resetToInitValues() # This needs to also reset the Peripheral tab Variables
                     self.set("fcb_project", prj)
                     self.set_uiChangeLevel(ui)
-                    # self.set("fcb_uiLevel", ui)
                 else:
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
@@ -4508,11 +4495,6 @@ class GtkViewModel(ViewModel):
         mw = self.builder.get_object("menu_language")
         mw.popdown()
         self.changeInterfaceLang(lang)
-
-    def oninterfaceLangChanged(self, btn):
-        if self.initialised:
-            lang = self.get("fcb_interfaceLang")
-            self.changeInterfaceLang(lang)
 
     def changeInterfaceLang(self, lang):
         try:

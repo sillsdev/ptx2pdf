@@ -26162,63 +26162,6 @@ from XeTeX processing.</property>
               </packing>
             </child>
             <child>
-              <object class="GtkComboBox" id="fcb_uiLevel">
-                <property name="name">Mini, Basic or Advanced View option</property>
-                <property name="width-request">100</property>
-                <property name="can-focus">False</property>
-                <property name="can-default">True</property>
-                <property name="no-show-all">True</property>
-                <property name="tooltip-text" translatable="yes">Set the most appropriate
-user interface mode as needed.
-Settings will be hidden or shown
-depending on the level set here.</property>
-                <property name="halign">start</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">3</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
-                <property name="model">ls_uiLevel</property>
-                <property name="wrap-width">1</property>
-                <property name="active">1</property>
-                <property name="entry-text-column">0</property>
-                <property name="id-column">1</property>
-                <property name="active-id">all</property>
-                <signal name="changed" handler="onUILevelChanged" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkComboBox" id="fcb_interfaceLang">
-                <property name="name">User interface language</property>
-                <property name="can-focus">False</property>
-                <property name="no-show-all">True</property>
-                <property name="tooltip-text" translatable="yes">Several PTXprint interface languages are 
-available. On selecting a language, the
-program will close and re-open in the
-chosen language.</property>
-                <property name="halign">start</property>
-                <property name="margin-start">3</property>
-                <property name="margin-end">3</property>
-                <property name="margin-top">3</property>
-                <property name="margin-bottom">3</property>
-                <property name="hexpand">False</property>
-                <property name="model">ls_interfaceLang</property>
-                <property name="active">3</property>
-                <property name="id-column">1</property>
-                <property name="active-id">1</property>
-                <signal name="changed" handler="oninterfaceLangChanged" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">2</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="btn_download_update">
                 <property name="name">Check for updates...</property>
                 <property name="can-focus">True</property>
@@ -26241,7 +26184,7 @@ Click to visit download page on the website.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">3</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -26263,7 +26206,7 @@ in your system's PDF viewer anyway).</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">4</property>
+                <property name="position">2</property>
               </packing>
             </child>
             <child>
@@ -26292,8 +26235,14 @@ Shortcut: Ctrl-F</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">5</property>
+                <property name="position">3</property>
               </packing>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
             </child>
             <child>
               <object class="GtkLabel">
