@@ -254,6 +254,10 @@ def print_traceback(f=None):
     traceback.print_stack(f=f)
 
 def getPDFconfig(fname):
+    if fname.lower().endswith(".zip"):
+        with open(fname, "rb") as inf:
+            dat = inf.read()
+        return dat
     trailer = PdfReader(fname)
     p = trailer.Root.PieceInfo
     if p is None:
