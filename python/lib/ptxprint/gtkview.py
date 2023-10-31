@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
-import time, locale, urllib.request, json, hashlib
+import datetime, time, locale, urllib.request, json, hashlib
 from ptxprint.utils import universalopen, refKey, chgsHeader, saferelpath
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -3056,6 +3056,8 @@ class GtkViewModel(ViewModel):
                         self.applyConfig(cfg, cfg, action=1, newprj=p)
                     elif self.get("r_copyConfig") == "overwrite":
                         self.applyConfig(cfg, cfg, action=0, newprj=p)
+                    with open(os.path.join(self.settings_dir, p, "unique.id"), "w") as outf:
+                        outf.write("ptxprint-{}".format(datetime.datetime.now().isoformat(" ")))
                 except FileNotFoundError as e:
                     self.doError(_("File not found"), str(e))
         dialog.hide()

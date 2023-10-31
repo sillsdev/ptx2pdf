@@ -4,6 +4,94 @@ PTXprint 2.3.56 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Version 2.4 release summary: (changes since last major version 2.3)
+
+Significant New features:
+  * Import feature (get settings from PDFs, ZIP Archives, or Proj+Config)
+  * Added code snippets and actions to various tabs in View+Edit
+  * Facility to download a sample image set and then Select Images to be used
+  * Add support for QR code generation (using \zqrcode)
+
+User Interface improvements:
+  * A simple splash screen while loading [ptxprint -q to disable]
+  * New hamburger menu to change View Level or Interface Language
+  * Ensure DBL buttons are visible even in Basic mode
+  * Ensure that color pickers don't hide behind dialogs
+  * Button to edit Module definition files within View/Editor tab
+  * Search now changes UI level for widgets not in the present view
+  * Changed the manual highlighting color (Ctrl+Click) to Yellow
+  * Added option for pagebreak before ALL chapters
+  * Added option for 'Only Odd Tabs'
+  * Added further options under Marks and Guides
+  * Added link to \h header style on Header+Footer tab
+  * Added Create Diff option (removed the hard-to-use button)
+  * Improved interaction when chapter number is changed
+  * Improved Cover tab UI with buttons for steps 1-3
+  * Improved wording of picture copyright credits statement
+  * Improved TeX log info/warnings/error reporting and suggestions
+  * Improved error message when USFM file hits a Syntax Error (#889)
+
+General enhancements:
+  * Add Lao script support as per Thai
+  * Add \marginversemarker{∙\kern 1pt} capability using \zmvm character style
+  * Add a prototype script to read and summarize log files
+  * Add punctuation processing to interlinear
+  * Implemented ^95 notation for character styles (no need to create styles like \p_95)
+  * Added extra diglot merging modes (without parameterisation of score mode) 
+  * Allow custom scoring for diglots & added script for comparing diglot merge results
+  * Allow monoglot GLO book(s) to use 2-column layout in a diglot
+  * Allow stylesheet-based control of credit position along edge 
+  * Auto-create BASIC FRTlocal.sfm when Front Matter is enabled, & disable colophon
+  * Ensure marginal verse hyphens also appear with consecutive verses
+  * Ensure that localChanges get run on INT book(s)
+  * Handle set_positions for B suffix (Left/Right/Both)
+  * Implement KeepFigure (allowing re-use of illustrations within the job)
+  * Implement \ifKeepAllFigures (global boolean to keep all pics)
+  * Implement \zsetref milestone (#894)
+  * Implement outline-entry attribute (#597) for jump links in PDF
+  * Implement smart gridding option for sidebars (none, smart, normal)
+  * Improve column sync behaviour and document \zcolsync\  * #851
+  * Improved: Verse ranges to include x:0
+  * Make modules more resilient to missing text
+  * Make space after GLO entry \k  * optional when filtering entries
+  * Make sure check for updates doesn't run too often
+  * Save current config per project in user config
+  * Speed up PDF cover creation when set to screen (don't reprocess covers)
+  * Support barcode price information
+  * When 'Screen' PDF output is set, ensure the cover is also output
+
+Technical improvements:
+  * Update to TeX Live 2023 (on Windows)
+  * Add --diffpages to limit size of output diff file
+  * Add -f fontpath to fonts.conf on run
+  * Add -V or --pdfversion as a command line option
+  * Can now parse config and prjid from .zip archive without -Z
+  * Add utility 'ptxunzippdf' to recover settings from PDF to specified folder 
+  * Added category flattening to parsing ptxprint-mods.sty for import
+  * Ensure INT books are added into archive
+  * Have base and diglot views share the same picinfos (major change)
+  * Make \zMarkVerseAgain for use in changes files (help identify scripture for text borders)
+  * Make barcode errors print a warning rather than fail silently
+  * Support various sidebar gridding options (not yet in the UI)
+  * Add core code for bursting inserts (work in progress)
+
+Issues Fixed:
+  * Copyright Label Glitch on Pictures (#852, #776)
+  * Make PDF binding depend of RTLBookBinding checkbox (MJ #856)
+  * Solve issue of footnotes wandering (#862)
+  * Allow modification of book end rule (#892)
+  * Optionally only let margin verse markers print when not paragraph-initial (#886)
+  * Eliminate SegFault due to issue with progress reporting (#888)
+  * p^95 markup seems to override char-style stretch (#839)
+  * Rationalise x-credit box settings (#896)
+  * Have an initial font selected (#901)
+  * Inner margin verses problem (#900)
+  * Adjustment to page num posn in non-Diglot back matter (#904)
+  * -f fontdir doesn't seem to work (#906)
+  * PTXprint won't let me specify a reasonable \b line-spacing value (#909)
+  * Truncated first page (#914)
+_______________________________________________________________
+
 Bug fixes and Improvements in 2.3.56 (31 Oct 2023)
 
   * Stay on Basic tab when changing Project or Configuration
