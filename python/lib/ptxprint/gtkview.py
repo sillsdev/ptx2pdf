@@ -3660,13 +3660,13 @@ class GtkViewModel(ViewModel):
                 setattr(self, attr, vals)
                 btn.set_tooltip_text("\n".join(str(s) for s in vals))
                 self.set("lb_"+ident, ", ".join(pdfre.sub(r"\1", str(s)) for s in vals))
-        else:
-            setattr(self, attr, None)
-            btn.set_tooltip_text("")
-            self.set("lb_"+ident, "")
-            if chkbx:
-                btn.set_sensitive(False)
-                self.set("c_"+ident, False)
+        # else: # Commented out as a result of #887
+            # setattr(self, attr, None)
+            # btn.set_tooltip_text("")
+            # self.set("lb_"+ident, "")
+            # if chkbx:
+                # btn.set_sensitive(False)
+                # self.set("c_"+ident, False)
                 
     def onImportSegmentClicked(self, w):
         name = Gtk.Buildable.get_name(w)[2:]

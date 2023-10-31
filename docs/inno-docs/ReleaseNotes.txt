@@ -4,11 +4,15 @@ PTXprint 2.3.55 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.3.55 (31 Oct 2023)
+Bug fixes and Improvements in 2.3.56 (31 Oct 2023)
 
   * Stay on Basic tab when changing Project or Configuration
   
   * Ensure TeXhacks values get loaded correctly on startup
+  
+  * Possible fix for reflow linespacing issue
+  
+  * File selector no longer clears PDF(s) if we click Cancel #887
   
 Bug fixes and Improvements in 2.3.54 (30 Oct 2023)
 
