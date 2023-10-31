@@ -90,7 +90,7 @@ class ViewModel:
         "import/project":        "updateimpProjectConfigList"
     }
     _nonresetcontrols = ["r_book", "r_book_multiple", "ecb_book", "ecb_booklist",
-                       "t_chapfrom", "t_chapto", "btn_chooseBibleModule"]
+                       "t_chapfrom", "t_chapto", "btn_chooseBibleModule", "+uiChangeLevel"]
 
     _picFields = {
         "Captions": ('caption', 'captionR', 'ref'),

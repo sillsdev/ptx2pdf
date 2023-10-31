@@ -1140,7 +1140,8 @@ class GtkViewModel(ViewModel):
                 ui = int(ui)
             except ValueError:
                 logger.warn(f"Unexpected ui value of {ui}")
-                ui = 6
+        if ui <= 0 or ui > 6:
+            ui = 4
         pgId = self.builder.get_object("nbk_Main").get_current_page()
         self.userconfig.set('init', 'userinterface', str(ui))
         self.uilevel = ui
@@ -1607,7 +1608,9 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.configPath(cfgname=cfg)
         sec = ""
         if cfg == 'Default':
+            ui = self.get_uiChangeLevel()
             self.resetToInitValues()
+            self.set_uiChangeLevel(ui)
             try:
                 rmtree(delCfgPath)
             except OSError:
