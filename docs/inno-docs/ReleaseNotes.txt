@@ -1,5 +1,5 @@
 PTXprint 2.4 Release Notes
-1 Nov 2023
+2 Nov 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
@@ -92,6 +92,14 @@ Issues Fixed:
   * Truncated first page (#914)
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.1 (2 Nov 2023)
+
+  * Ensure figures and local/figures are also in the srchlist for pictures
+  
+  * Allow ^ in parents. Stop p^95 occursunder type errors (#925)
+  
+  * Implement bookresetcallers and fix some characters / escapes (tilde, backslash, pipe)
+  
 Bug fixes and Improvements in 2.4 (1 Nov 2023)
 
   * Make sure that the View Level is preserved when a config is reset or deleted

@@ -6,6 +6,7 @@ logger = logging.getLogger(__name__)
 
 texpertOptions = {
 #    "versehyphen":        ["vhyphen", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")],
+    # "bookresetcallers":   ["bookresetcallers", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")],
     "notesEachBook":      ["neachbook", True, "", _("Endnotes at Each Book"), _("Output endnotes at the end of each book")],
     "FinalNotesDown":     ["fnotesdown", False, "", _("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page")],
     "MarkTriggerPoints":  ["mktrigpts", False, "", _("Mark Trigger Points"), _("Display trigger points in output")],

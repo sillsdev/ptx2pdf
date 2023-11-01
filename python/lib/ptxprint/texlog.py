@@ -23,6 +23,7 @@ messages = [
     ("W","T", r"set@ht passed null value"),
     ("W","T", r"dimension .+? does not exist"),
     ("W","T", r"\*\* Probable typo: if.+? does not exist in side-specific switching"),
+    ("W","SY", r"\\[a-z1-9]+ unknown style type"),
     ("W","SY", r"unknown style type .+"),
     ("E","SUYT", r"! ERROR! Improper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
     ("E","EY", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
