@@ -516,10 +516,12 @@ class PicInfo(dict):
                         srcset.add(s)
 
     def build_searchlist(self):
-        if self.model.get("c_useCustomFolder"):
+        if self.model.get("c_useCustomFolder") and self.model.get("c_exclusiveFiguresFolder"):
             self.srchlist = [self.model.customFigFolder]
         else:
             self.srchlist = []
+            if self.model.get("c_useCustomFolder"):
+                self.srchlist = [self.model.customFigFolder]
             chkpaths = []
             for d in ("local", ""):
                 if sys.platform.startswith("win"):
@@ -531,9 +533,9 @@ class PicInfo(dict):
                     for dp, _, fn in os.walk(p): 
                         if len(fn): 
                             self.srchlist.append(dp)
-        uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
-        if os.path.isdir(uddir):
-            self.srchlist.append(uddir)
+            uddir = os.path.join(appdirs.user_data_dir("ptxprint", "SIL"), "imagesets")
+            if os.path.isdir(uddir):
+                self.srchlist.append(uddir)
         self.extensions = []
         extdflt = {x:i for i, x in enumerate(["jpg", "jpeg", "png", "tif", "tiff", "bmp", "pdf"])}
         imgord = self.model.get("t_imageTypeOrder").lower()
