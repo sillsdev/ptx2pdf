@@ -1264,8 +1264,8 @@ class TexModel:
         if self.asBool("notes/xrverseonly"):
             self.localChanges.append((None, regex.compile(r"\\xo \d+[:.](\d+)"), r"\\xo \1"))
 
-        # Paratext marks no-break space as a tilde ~
-        self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+        # Paratext marks no-break space as a tilde ~, but the TeX handles it.
+        #self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Paratext marks forced line breaks as //
         # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  

@@ -2,9 +2,7 @@
 \h Side bar test
 \c 1 
 \s1 Side Bar test
-\p ~
-\leavevmode
-\esb\cat sidebar\cat*
+\p Before the esb \esb\cat sidebar\cat*
 \s1 Side bar heading
 \p 
 This is a sidebar, it contains some text and exists to test out various

@@ -1704,6 +1704,9 @@
 
 \newif\iftildenbsp
 \tildenbsptrue
+%\def\~{\char"7E}%
+\chardef\tilde "7E
+\let\~\tilde
 
 \def\prepusfm{%
  %\catcode`\$=12
@@ -1712,7 +1715,7 @@
  \iftildenbsp
   \catcode`\~=13 %Normal value
  \else
-  \catcode`\~=13 %printable
+  \catcode`\~=12 %printable
  \fi
  \catcode`\#=12
  \catcode`\{=12 \catcode`\}=12
@@ -1723,6 +1726,7 @@
  \activ@tecustomch@rs
  % The last comment on all matters
  \catcode`\%=12
+ \let\\=\bslash
  \m@kedigitsletters
  \inptxfiletrue  
 }
@@ -1838,6 +1842,7 @@
  \openpicpages "\j@bname.picpages"
  \ifcsname ifm@rginnotesopen\endcsname\openm@rginnotes "\j@bname.marginnotes"\fi
  \lastpagefalse
+ \the\st@rtptxhooks
  \prepusfm
  \edef\t@st{#1}%
  \ifx\t@st\empty\else %opening empty file causes problems with some paths. 

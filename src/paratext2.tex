@@ -69,7 +69,9 @@
 \def\addtoendhooks#1{\x@\global\x@\@ndhooks\x@{\the\@ndhooks#1}}
 \def\addtoendhookstr#1#2{\addtoendhooks{\trace{x}{Hook:#2 (}#1}\trace{x}{)}}
 \def\addtoendptxhooks#1{\x@\global\x@\@ndptxhooks\x@{\the\@ndptxhooks #1}}
+\def\addtostartptxhooks#1{\x@\global\x@\st@rtptxhooks\x@{\the\st@rtptxhooks #1}}
 \newtoks\@ndhooks
+\newtoks\st@rtptxhooks
 \newtoks\@ndptxhooks
 \let\s@ve@nd=\end
 \def\end{\ifsk@pping\egroup\fi\par\vfill\supereject  \the\@ndhooks \s@ve@nd}
@@ -1133,6 +1135,7 @@
     \global\count\bottomins=\count255
     \global\count\verybottomins=100%\count255
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
+    \let\\=\bslash
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   \fi\traceifcheck{doublecolumns}}
 %-c_doublecolumns
@@ -2396,6 +2399,7 @@
   \global\count\topins=\count255
   \global\count\bottomins=\count255
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
+  \let\\=\bslash
   \ifd@nesw@p\else
     \d@nesw@ptrue % signal to caller that this has been run
     \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
@@ -2520,7 +2524,9 @@
 \def\LRE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202A}
 \def\RLE{\xdef\currintercharstate{\XeTeXinterchartokenstate}\char"202B}
 \def\PDF{\char"202C\XeTeXinterchartokenstate=\currintercharstate}
-\def\|{\char"7C{}}
+\chardef\|"7C
+\chardef\bslash"5C%
+\chardef\tilde"7E%
 %endash defined in ptx-references.tex
 
 \let\pr@tect=\relax
