@@ -33,15 +33,8 @@ Nobis ipsam est veritatis enim nihil debitis. Qui delectus possimus eveniet arch
 Omnis laboriosam molestiae corrupti. Explicabo cumque quo eos. Quas quisquam et beatae perspiciatis inventore. Accusamus dolore repellendus vero autem eum est id corporis.
 
 \p
-\v 5
-Voluptate quo consectetur perferendis. Ex illum cum dolorem facilis itaque doloribus repudiandae voluptatem. Officiis unde dolores enim. Doloremque hic vel quis et quia et libero. Distinctio voluptatum ratione amet atque voluptas sunt quam voluptatem. Voluptatum nemo sunt soluta quia iure.
-This should generate a warning:
 
 \zplacenotes-f
-
-\p
-\v 6
-Nostrum eaque repellat assumenda nesciunt est non alias. Earum nemo laborum eos recusandae atque. Rerum aliquam dolor fuga impedit. Blanditiis ullam asperiores est enim ullam cupiditate. Fugiat id nam recusandae sequi illo enim occaecati.
 
 \is1 Outroduction
 \ip This is another intro paragraph\f + \ft An uninformative note\f*. I need to make it long enough so we can see how wide it is.

@@ -212,6 +212,8 @@
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
   \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}%
+  \fi
+  \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 0 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
@@ -264,7 +266,7 @@
 %	  \fi
     \fi
     \leavevmode % begin paragraph
-    \ifp@ranotes\else
+    \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 0 \fi 
       \pdfsavepos\beginL\x@\write\x@\p@rlocs\x@{\m@sg{n}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL
     \fi
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
