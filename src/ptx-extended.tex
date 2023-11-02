@@ -315,8 +315,8 @@
       \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
       \edef\sb@rrefwid{\the\dimen1}%
     \fi
-    \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-    \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+    \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+    \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
     \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
@@ -1254,6 +1254,7 @@
 \def\BoxBPadding #1\relax{\initc@t\setsbp@ram{boxbpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
+\def\BoxPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{boxinnerouter}{\t@st}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
 \def\SidebarGridding #1\relax{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
 \def\GenC@tFig#1{%

@@ -34,6 +34,7 @@
 % We keep a list of all the note classes in \n@tecl@sses, each prefixed with \\ and enclosed in braces.
 % Then we can define \\ on the fly, and execute the \n@tecl@sses list to apply it to all classes.
 \newtoks\n@tecl@sses
+\newcount\n@teid % Each note should have a unique number. 
 
 % for each Note marker defined in the stylesheet, we allocate a "note class"
 % with its own \insert number (see TeXbook!)

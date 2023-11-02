@@ -50,6 +50,7 @@
 \def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderlpadding}{#1}\setsbp@ram{borderrpadding}{#1}}
 \def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}}
 \def\BorderPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}\setsbp@ram{borderlpadding}{#1}\setsbp@ram{borderrpadding}{#1}}
+\def\BorderPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{borderinnerouter}{\t@st}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
