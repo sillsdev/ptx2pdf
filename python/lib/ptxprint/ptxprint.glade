@@ -3082,6 +3082,14 @@ settings for a similar project.</property>
       <placeholder/>
     </child>
   </object>
+  <object class="GtkFileFilter" id="pdfFiles">
+    <mime-types>
+      <mime-type>application/PDF</mime-type>
+    </mime-types>
+    <patterns>
+      <pattern>*.pdf</pattern>
+    </patterns>
+  </object>
   <object class="GtkTreeStore" id="ts_styles">
     <columns>
       <!-- column-name marker -->
@@ -25415,6 +25423,131 @@ are likely to have to re-do it all again.</property>
                             <property name="position">1</property>
                             <property name="tab-fill">False</property>
                           </packing>
+                        </child>
+                        <child>
+                          <object class="GtkFrame" id="fr_unpack">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="valign">start</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="label-xalign">0.019999999552965164</property>
+                            <child>
+                              <!-- n-columns=4 n-rows=2 -->
+                              <object class="GtkGrid" id="box_unpackSettings">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="margin-start">6</property>
+                                <property name="margin-end">6</property>
+                                <property name="margin-top">6</property>
+                                <property name="margin-bottom">6</property>
+                                <property name="row-spacing">6</property>
+                                <property name="column-spacing">6</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Select the PDF file which you need to
+unpack the settings from. Note that
+this will only work for PDF files that
+were produced earlier by PTXprint 
+with option to "Include Config 
+Settings Within PDF" enabled.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">PDF File:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFileChooserButton" id="btn_pdfZip2unpack">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="filter">pdfFiles</property>
+                                    <property name="title" translatable="yes">Select the PDF file to unpack</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">Select a folder, preferably an empty folder
+in a temporary location, where the settings
+from the PDF can be unpacked into.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Folder for Unpacked Settings:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkFileChooserButton" id="btn_unpack2folder">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="action">select-folder</property>
+                                    <property name="title" translatable="yes">Folder to Unpack Settings Into</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">1</property>
+                                    <property name="top-attach">1</property>
+                                    <property name="width">2</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_unpack">
+                                    <property name="label" translatable="yes">Unpack</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <signal name="clicked" handler="btnUnpackClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                            </child>
+                            <child type="label">
+                              <object class="GtkLabel">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="label" translatable="yes">Unpack Settings from PDF</property>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                          </packing>
+                        </child>
+                        <child type="tab">
+                          <object class="GtkLabel" id="l_techTools">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Tech Tools</property>
+                          </object>
+                          <packing>
+                            <property name="position">2</property>
+                            <property name="tab-fill">False</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child type="tab">
+                          <placeholder/>
                         </child>
                         <child>
                           <placeholder/>

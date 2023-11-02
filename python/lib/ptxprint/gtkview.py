@@ -44,7 +44,7 @@ from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
 # import zipfile
-from zipfile import ZipFile, ZIP_DEFLATED
+from zipfile import ZipFile, BadZipFile, ZIP_DEFLATED
 from ptxprint.reference import RefSeparators, Reference
 
 logger = logging.getLogger(__name__)
@@ -2985,6 +2985,19 @@ class GtkViewModel(ViewModel):
             self.set(wname, v)
             self.allControls.append(wname)
             obj.show()
+
+    def btnUnpackClicked(self, btn):
+        file2unpack = self.builder.get_object("btn_pdfZip2unpack")
+        unpack2fldr = self.builder.get_object("btn_unpack2folder")
+        try:
+            confstream = getPDFconfig(file2unpack.get_filename())
+            zipinf = BytesIO(confstream)
+            zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
+            zipdata.extractall(unpack2fldr.get_filename())
+            self.doStatus(_("PDF settings unpacked. That was easy, wasn't it!"))
+            self.openFolder(unpack2fldr.get_filename())
+        except BadZipFile as e:
+            self.doStatus(_("Sorry, that PDF doesn't seem to be a valid PTXprint file with config settings included in it."))
 
     def onChooseBooksClicked(self, btn):
         dialog = self.builder.get_object("dlg_multiBookSelector")
