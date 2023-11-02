@@ -204,19 +204,20 @@
 \FootNoteGlyphMetricsfalse
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
+  \global\advance\n@teid by 1 %
+  \edef\m@sg{\string\@noteid{\the\n@teid}{#1}}%
   \let\next\relax%
-  \global\advance\n@teid by 1
-  \edef\m@sg{\string\@noteid{\the\n@teid}{#1}}
   \def\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}\fi
-  \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
+  \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}%
+    \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
+  \fi
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
   \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth \space wide (page is \the\hsize)}%
-  \the\d@note\bgroup\pdfsavepos\beginL\x@\write\x@\p@rlocs\x@{\m@sg{n}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL\setbox9=\vbox\bgroup% insert note-f (or note-x)
+  \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
      \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
     \fi
@@ -263,6 +264,9 @@
 %	  \fi
     \fi
     \leavevmode % begin paragraph
+    \ifp@ranotes\else
+      \pdfsavepos\beginL\x@\write\x@\p@rlocs\x@{\m@sg{n}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL
+    \fi
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
