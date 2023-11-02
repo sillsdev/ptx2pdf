@@ -201,9 +201,19 @@
 \fi
 
 \def\resetautonum#1{\set@utonum{#1}\x@\xdef\csname \@utonum\endcsname{0}} % reset the current note counter (f)
-\def\resetSpecAutonum#1{\x@\xdef\csname autonum #1\endcsname{0}} % reset the exact note counter f / fL / R
+\def\resetSpecAutonum#1{\x@\xdef\csname autonum#1\endcsname{0}} % reset the exact note counter f / fL / R
 \def\resetAllAutonum#1{\def\col@do##1{\ifcsname autonum#1##1\endcsname\resetSpecAutonum{#1##1}\fi}%
    \x@\each@col\diglot@list\E} %reset all note counters.
+\def\carefulResetAutonum#1{%Reset note counters if they're not page-reset
+  \expandafter\ifx\csname page-caller #1\endcsname\relax 
+    \ifdiglot
+      \resetAllAutonum{#1}\else\resetSpecAutonum{#1}%
+    \fi
+  \fi
+}
+\newif\ifbookresetcallers 
+\bookresetcallerstrue
+\addtostartptxhooks{\ifbookresetcallers\let\\=\carefulResetAutonum\the\n@tecl@sses\fi}
 %-cnote_autonum
 
 %+cnote_declare
