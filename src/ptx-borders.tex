@@ -50,7 +50,7 @@
 \def\BorderHPadding #1\relax{\initc@t\setsbp@ram{borderlpadding}{#1}\setsbp@ram{borderrpadding}{#1}}
 \def\BorderVPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}}
 \def\BorderPadding #1\relax{\initc@t\setsbp@ram{bordertpadding}{#1}\setsbp@ram{borderbpadding}{#1}\setsbp@ram{borderlpadding}{#1}\setsbp@ram{borderrpadding}{#1}}
-\def\BorderPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{borderinnerouter}{\t@st}}
+\def\BorderPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{borderpadinnerouter}{\t@st}}
 \let\BorderColor=\BorderColour%for Americans
 \def\Border	#1\relax{\initc@t\x@\p@rseBorder#1 \relax \relax}
 \def\BorderFillColour #1\relax{\initc@t\x@\checkh@x #1\end\setsbp@ram{borderfillcolour}{\rgb@out}}
@@ -279,20 +279,24 @@
 
 \def\@get@Hborder@style@params{%Read the border-related parameters
   \traceifset{@get@Hborder@style@params}%
-  \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker}%
-  \getsbp@ram{borderlpadding}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
-  \getsbp@ram{borderrpadding}\ifx\cp@ram\relax\xdef\border@rpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
-  \getsbp@ram{boxlpadding}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
-  \getsbp@ram{boxrpadding}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
-    \trace{cov}{border@Xpadding: l \border@lpadding, r \border@rpadding. fb@Xpadding: l \fb@lpadding, r \fb@rpadding}%
+  \trace{eb}{Reading border horiz params for \c@tprefix\sb@rmarker (page \the\whichp@ge)}%
+  \t@mptrue
+  \getsbp@ram{borderpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
+  \getsbp@ram{\ift@mp borderlpadding\else borderrpadding\fi}\ifx\cp@ram\relax\xdef\border@lpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@lpadding{\cp@ram pt}\fi
+  \getsbp@ram{\ift@mp borderrpadding\else borderlpadding\fi}\ifx\cp@ram\relax\xdef\border@rpadding{\ifsb@rfillpage \the\dimexpr -\b@drwidth pt\relax\else 0pt\fi}\else\xdef\border@rpadding{\cp@ram pt}\fi
+  \t@mptrue
+  \getsbp@ram{boxpadinnerouter}\ifx\cp@ram\tr@e\ifodd\whichp@ge\else\t@mpfalse\fi\fi
+  \getsbp@ram{\ift@mp boxlpadding\else boxrpadding\fi}\xdef\fb@lpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
+  \getsbp@ram{\ift@mp boxrpadding\else boxlpadding\fi}\xdef\fb@rpadding{\the\dimexpr \ifx\cp@ram\relax \fb@dfltpad \else\cp@ram\fi pt \relax}%
+    \trace{eb}{border@Xpadding: l \border@lpadding, r \border@rpadding. fb@Xpadding: l \fb@lpadding, r \fb@rpadding}%
   \traceifcheck{@get@Hborder@style@params}%
 }
 \def\get@border@style@params{%Read the border-related parameters
   \trace{eb}{Reading border params for \c@tprefix\sb@rmarker}%
   \@get@Hborder@style@params
   %\tracingassigns=1
-  \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-  \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+  \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+  \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
   \@get@Vborder@style@params
   \getsbp@ram{borderlinewidth}\let\b@drlinewidth\cp@ram
   \getsbp@ram{borderfillcolour}\let\b@drfillcolour\cp@ram
@@ -302,7 +306,7 @@
   \getsbp@ram{properties}\let\b@drprop\cp@ram
   \trace{eb}{Params finished}%
 }
-\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign}
+\def\b@rderparameters{borderstyle,borderwidth,borderfillcolour,bordercolour,borderlinewidth,bordertop,borderbottom,borderoddleft,borderoddright,borderevenleft,borderevenright,borderlpadding,borderrpadding,bordertpadding,borderbpadding,boxlpadding,boxrpadding,boxtpadding,boxbpadding,raise,verticalalign,borderpadinnerouter,boxpadinnerouter}
 %raise and verticalalign are not used by borders, but is by zrules
 
 

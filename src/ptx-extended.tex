@@ -266,6 +266,20 @@
     \fi
   \fi
 }
+\def\getwh@chpage{
+  \ifcsname fig\sb@rnum p@ge\endcsname
+    \x@\let\x@\pgn@\csname fig\sb@rnum p@ge\endcsname
+  \else
+    \let\pgn@\relax
+  \fi
+  \ifx\pgn@\relax
+    \whichp@ge=\pageno
+    \trace{e}{Sidebar \sb@rnum\space may not be aligned properly}%
+  \else
+    \whichp@ge=\pgn@
+    \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
+  \fi
+}
 \def\s@tsb@rwidth{%Set default / specific width of esb box
   %h*,c*,p* take the current page width as their base
   %tX,bX take the column width 
@@ -279,21 +293,10 @@
   \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
   \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
   \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getwh@chpage % Necessary for accurate border measurements
   \@get@Hborder@style@params
   \@get@Vborder@style@params
   \getsbp@ram{posn}%
-  \ifcsname fig\sb@rnum p@ge\endcsname
-    \x@\let\x@\pgn@\csname fig\sb@rnum p@ge\endcsname
-  \else
-    \let\pgn@\relax
-  \fi
-  \ifx\pgn@\relax
-    \whichp@ge=\pageno
-    \trace{e}{Sidebar \sb@rnum\space may not be aligned properly}%
-  \else
-    \whichp@ge=\pgn@
-    \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
-  \fi
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
     \setsbp@ram{posn}{\sb@rpos}%
@@ -738,12 +741,15 @@
    \global\let\c@t@gory=\c@tegory
    \global\let\@@sb@rfirstskip\sb@rfirstskip
    \global\let\@@sb@rgrid\sb@rgrid
+   %\getwh@chpage % Needed?
+   \xdef\@@whichp@ge{\the\whichp@ge}%
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
   \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
   % ^^^ END OF GROUP! ^^^
   %
+  \whichp@ge=\@@whichp@ge
   \global\sm@rtgridfalse
   \ifx\@@sb@rgrid\gr@dsmart
     \bgroup\dimen1=\ht\extb@x\dimen0=\onel@neunit\m@d %\m@d makes dimen3 the offset
@@ -1254,7 +1260,7 @@
 \def\BoxBPadding #1\relax{\initc@t\setsbp@ram{boxbpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
-\def\BoxPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{boxinnerouter}{\t@st}}
+\def\BoxPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{boxpadinnerouter}{\t@st}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
 \def\SidebarGridding #1\relax{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
 \def\GenC@tFig#1{%
