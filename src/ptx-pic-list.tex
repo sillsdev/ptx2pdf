@@ -104,6 +104,7 @@
 }
 
 \newif\ifpicslurp \picslurptrue %If true, this uses some extra memory (remembering the entire piclist) for the benefit of the piclist no longer needing to be sorted. 
+\newif\ifPiclistLitPct % If true, then % is treated as a letter in the piclist. Else (historic) it is a comment character
 \newif\ifKeepAllFigures 
 \KeepAllFiguresfalse
 
@@ -115,8 +116,9 @@
     \begingroup
       \catcode`0=12 \catcode`1=12 \catcode`2=12 \catcode`3=12 \catcode`4=12
       \catcode`5=12 \catcode`6=12 \catcode`7=12 \catcode`8=12 \catcode`9=12
-      \catcode`.=12 \catcode`\%=5 \catcode`\/=12 %\catcode"201D=12 \catcode"201C=12 
+      \catcode`.=12  \catcode`\/=12 %\catcode"201D=12 \catcode"201C=12 
       \catcode`\&=12 \catcode`\#=12
+      \ifPiclistLitPct \catcode`\%=12 \else \catcode`\%=5 \fi
       \endlinechar=-1
       \read\p@clist to \p@cline
       \ifx\p@cline\P@R\readnextp@c\else

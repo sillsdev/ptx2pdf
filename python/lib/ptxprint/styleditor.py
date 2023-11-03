@@ -82,6 +82,7 @@ mkrexceptions = {k.lower().title(): k for k in ('BaseLine', 'TextType', 'TextPro
                 'BorderPadding', 'BorderVPadding', 'BorderHPadding', 
                 'BorderTPadding', 'BorderBPadding', 'BorderLPadding', 'BorderRPadding', 
                 'BoxPadding', 'BoxTPadding', 'BoxBPadding', 'BoxLPadding', 'BoxRPadding', 
+                'BorderPaddingInnerOuter','BoxPaddingInnerOuter',
                 'BoxVPadding', 'BoxHPadding', 'BorderStyle', 'BorderStyleExtra', 'BorderRef', 'NonJustifiedFill',
                 'SidebarGridding','SpaceBeside',
                 'BorderPatternLeft','BorderPatternRight', 'BorderPatternTop','BorderPatternBot','OrnamentScaleRef')}

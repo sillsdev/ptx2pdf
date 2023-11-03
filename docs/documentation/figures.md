@@ -468,6 +468,16 @@ A piclist file takes the same filename as the USFM file being processed by the
 ptx macros but with an added extension of `.piclist` and in the Piclist folder,
 specified to the macros. Ptxprint handles all this for the user.
 
+Historically, piclists have used the TeX style comments, which meant that
+percentage signs needed to be escaped `\%` to appear in the output. More
+recently, there have been two changes to this: lines starting with a hash sign
+(`#`) are now treated as comment lines. A hash sign is *not* treated as a
+comment sign otherwise.  If, when the piclist is read `\PiclistLitPcttrue` has
+been set, then percentage signs are treated as letters. If is not set (the 
+default for the macros, but PTXprint now sets it), then
+they retain their normal meaning in TeX, i.e. ignore the rest of the line.
+Escaping a percentage sign needlessly does not cause problems.
+
 There are two methods to read a piclist, in 'slurp' mode (`\picslurptrue`, the
 default) where the entire file is read at once or the traditional mode
 (`\picslurpfalse`) where the specification for only one picture is held in
