@@ -670,7 +670,8 @@ class GtkViewModel(ViewModel):
                     "textDirection", "glossaryMarkupStyle", "fontFaces", "featsLangs", "leaderStyle",
                     "picaccept", "pubusage", "pubaccept", "chklstFilter|0.75", "gridUnits", "gridOffset",
                     "fnHorizPosn", "xrHorizPosn", "snHorizPosn", "filterXrefs", "colXRside", "outputFormat", 
-                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId", "xRefExtListSource"):
+                    "stytcVpos", "strongsMajorLg", "strongswildcards", "strongsNdxBookId", "xRefExtListSource",
+                    "sbBorderStyle"):
             self.addCR("fcb_"+fcb, 0)
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
@@ -1140,6 +1141,7 @@ class GtkViewModel(ViewModel):
                 ui = int(ui)
             except ValueError:
                 logger.warn(f"Unexpected ui value of {ui}")
+                ui = 4
         if ui <= 0 or ui > 6:
             ui = 4
         pgId = self.builder.get_object("nbk_Main").get_current_page()
@@ -5494,3 +5496,13 @@ Thank you,
             self.thumbnails.set_imageset(imgset)
         except AttributeError:
             pass
+
+    def onSBborderThicknessChanged(self, btn):
+        thickness = float(self.get('s_sbBorderWidth'))
+        for w in ["oT", "oB", "iT", "iB", "sT", "sB"]:
+            self.builder.get_object(w).set_size_request(-1, thickness)
+        for w in ["oL", "oR", "iL", "iR", "sL", "sR"]:
+            self.builder.get_object(w).set_size_request(thickness, -1)
+        for w in ["oF", "mF"]:
+            self.builder.get_object(w).set_border_width(thickness)
+        
