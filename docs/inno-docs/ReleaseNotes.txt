@@ -1,7 +1,38 @@
 PTXprint 2.4.1 Release Notes
-2 Nov 2023
+4 Nov 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.4.2 (4 Nov 2023)
+
+  * Add missing changes for bookresetcallers (Reset fn+xr callers at each book)
+  
+  * Support for footnote sanity checking via parlocs
+  
+  * Paranotes are incompatible with write nodes, at least old-style paranotes
+  
+  * Newparnotes confirmed compatible with noteid code
+  
+  * Implement Box/BorderPaddingInnerOuter (note untested for RTL)
+  
+  * Treat percent sign as literal in piclist (#912)
+  
+  * Update/add minitest files and standard
+  
+  * Fixed error on resetting UI level
+  
+Bug fixes and Improvements in 2.4.1 (2 Nov 2023)
+
+  * Ensure figures and local/figures are also in the srchlist for pictures
+  
+  * Allow ^ in parents. Stop p^95 occursunder type errors (#925)
+  
+  * Implement bookresetcallers and fix some characters / escapes (tilde, backslash, pipe)
+  
+Bug fixes and Improvements in 2.4 (1 Nov 2023)
+
+  * Make sure that the View Level is preserved when a config is reset or deleted
 _______________________________________________________________
 
 Version 2.4 release summary: (changes since last major version 2.3)
@@ -92,18 +123,6 @@ Issues Fixed:
   * Truncated first page (#914)
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.4.1 (2 Nov 2023)
-
-  * Ensure figures and local/figures are also in the srchlist for pictures
-  
-  * Allow ^ in parents. Stop p^95 occursunder type errors (#925)
-  
-  * Implement bookresetcallers and fix some characters / escapes (tilde, backslash, pipe)
-  
-Bug fixes and Improvements in 2.4 (1 Nov 2023)
-
-  * Make sure that the View Level is preserved when a config is reset or deleted
-  
 Bug fixes and Improvements in 2.3.56 (31 Oct 2023)
 
   * Stay on Basic tab when changing Project or Configuration

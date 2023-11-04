@@ -1140,6 +1140,7 @@ class GtkViewModel(ViewModel):
                 ui = int(ui)
             except ValueError:
                 logger.warn(f"Unexpected ui value of {ui}")
+                ui = 4
         if ui <= 0 or ui > 6:
             ui = 4
         pgId = self.builder.get_object("nbk_Main").get_current_page()
