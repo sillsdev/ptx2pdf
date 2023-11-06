@@ -356,6 +356,8 @@ _nonsensitivities = {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
         "r_xrpos_centre" :    []},
+    "c_boxPadSymmetrical":     ["s_sbBoxPadL", "s_sbBoxPadR", "s_sbBoxPadB"],
+    "c_bdrPadSymmetrical":     ["s_sbBdrPadL", "s_sbBdrPadR", "s_sbBdrPadB"],
 }
 
 _object_classes = {
@@ -5497,12 +5499,57 @@ Thank you,
         except AttributeError:
             pass
 
-    def onSBborderThicknessChanged(self, btn):
+    def onSBborderSettingsChanged(self, btn):
+        for x in ['ox', 'dr']:
+            if self.get(f"c_b{x}PadSymmetrical"):
+                for w in "LRB":
+                    self.set(f"s_sbB{x}Pad{w}", self.get(f"s_sbB{x}PadT"))
+            oi = "o" if x == 'ox' else 'i'
+            for w in "TBLR":
+                v = float(self.get(f's_sbB{x}Pad{w}'))
+                setattr(self, oi+w, v if v >= 0 else 0)
+
+        self.builder.get_object("oT").set_visible(self.get('c_sbBorder_top'))
+        self.builder.get_object("oB").set_visible(self.get('c_sbBorder_bot'))
+        self.builder.get_object("oL").set_visible(self.get('c_sbBorder_lhs') or self.get('c_sbBorder_inn'))
+        self.builder.get_object("oR").set_visible(self.get('c_sbBorder_rhs') or self.get('c_sbBorder_out'))
         thickness = float(self.get('s_sbBorderWidth'))
-        for w in ["oT", "oB", "iT", "iB", "sT", "sB"]:
-            self.builder.get_object(w).set_size_request(-1, thickness)
-        for w in ["oL", "oR", "iL", "iR", "sL", "sR"]:
-            self.builder.get_object(w).set_size_request(thickness, -1)
-        for w in ["oF", "mF"]:
-            self.builder.get_object(w).set_border_width(thickness)
+        self.builder.get_object("oT").set_size_request(-1, thickness)
+        self.builder.get_object("oB").set_size_request(-1, thickness)
+        self.builder.get_object("oL").set_size_request(thickness, -1)
+        self.builder.get_object("oR").set_size_request(thickness, -1)
+
+        self.builder.get_object("l_box").set_property("margin-top", self.oT)
+        self.builder.get_object("l_box").set_property("margin-bottom", self.oB)
+        self.builder.get_object("l_box").set_property("margin-left", self.oL)
+        self.builder.get_object("l_box").set_property("margin-right", self.oR)
+
+        for w in "TLR":
+            self.builder.get_object(f"o{w}").set_property("margin-top", 0) # self.oT)
+            self.builder.get_object(f"i{w}").set_property("margin-top", self.iT)
+
+        for w in "BLR":
+            self.builder.get_object(f"o{w}").set_property("margin-bottom", 0) # self.oB)
+            self.builder.get_object(f"i{w}").set_property("margin-bottom", self.iB)
+        
+        self.builder.get_object("oL").set_property("margin-left", 0) # self.oL)
+        self.builder.get_object("oR").set_property("margin-right", 0) # self.oR)
+
+        self.builder.get_object("iL").set_property("margin-left", self.iL)
+        self.builder.get_object("iR").set_property("margin-right", self.iR)
+
+    def boxPaddingUniformClicked(self, btn):
+        status = self.sensiVisible("c_boxPadSymmetrical")
+        if status:
+            for w in "LRB":
+                self.set(f"s_sbBoxPad{w}", self.get("s_sbBoxPadT"))
+        self.onSBborderSettingsChanged(None)
+        
+    def bdrPaddingUniformClicked(self, btn):
+        status = self.sensiVisible("c_bdrPadSymmetrical")
+        if status:
+            for w in "LRB":
+                self.set(f"s_sbBdrPad{w}", self.get("s_sbBdrPadT"))
+        self.onSBborderSettingsChanged(None)
+        
         
