@@ -1289,7 +1289,7 @@
 }%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\pb=\pagebreak %pb isn't a paragraph style, 
- \def\fp{\par\kern 1sp }
+ \def\fp{\par\kern 1sp }% Magic value used in paratext2.tex
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1

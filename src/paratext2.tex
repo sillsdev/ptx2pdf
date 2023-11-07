@@ -472,13 +472,16 @@
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
-  \trace{n}{parains@rtn@tecl@ss \cl@ss}%
+  \dimen0=\prevdepth
+  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
       \footnoterule\global\f@rstnotefalse % output rule before first note
-    \else\kern\InterNoteSpace\fi
+    \else
+      \kern\InterNoteSpace
+    \fi
     %\ifnum\pagenumber=8\showbox\th@cl@ss\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
@@ -544,7 +547,7 @@
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
   \FootNoteRuleRightIndent}\hrule height 0pt depth 0pt width 0pt}% 
 
-\def\noterule#1#2#3#4{{\dimen1=#1\kern 0pt \vskip\dimen1 minus 0.5 \dimen1
+\def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1\kern 0pt \vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 % what's this for? \kern -\dimen1
   \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
   \vskip \dimen1 minus 0.5\dimen1\kern 0pt}\prevdepth=-1000pt}
@@ -647,12 +650,13 @@
 % #1 is vbox containing notes as individual paragraphs.
 %+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
-\newif\ifnewparnotes \newparnotesfalse
+\newif\ifnewparnotes \newparnotestrue
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\maken@tepara#1#2{%
   % set appropriate hsize width for diglot or not.
   \setn@tewidth{#2}%
+  \ifnewparnotes\dimen0=\prevdepth\ifdim\dimen0>0pt\kern-\dimen0\fi\fi % Prevdepth correction, because makevboxofhboxes won't (can't) obey it.
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
   \getp@ram{firstindent}{#2}{#2}\let\notef@rstindent=\p@ram
@@ -690,7 +694,9 @@
   \ifnewparnotes
     %\ifnum\interactionmode=1 \showbox 3\showlists\fi
     \penalty10000
+    \dimen1=\dp3
     \unvbox3
+    %\kern -\dimen1
   \else
     \noindent % starting making new paragraph
     \ifNoteTracing\tracingparagraphs=1\fi
@@ -700,9 +706,15 @@
   \unskip\unpenalty\unskip\unskip % remove internote skip info after last note
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
-  \linepenalty50
-  \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics}%
-  \par\leftskip=0pt \XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi}
+  \ifhmode
+    \linepenalty50
+    \par\leftskip=0pt \XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi
+    \dimen1=\prevdepth
+  \else
+    \global\prevdepth=\dimen1
+  \fi
+  \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics, pd=\the\dimen1}%
+}
 %-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
 %+c_makehboxofhboxes
@@ -714,7 +726,7 @@
 %     [[a][b][c]] --> [a \internotespace b \internotespace c \internotespace]
 \def\disc@rds#1{%
   %\showlists
-  \@LOOP\tmpcount=\lastnodetype\tempfalse\trace{fp}{#1:LNT:\the\tmpcount}\advance\tmpcount by -10 \ifnum\tmpcount>0 \ifcase\tmpcount % 10= math
+  \@LOOP\tmpcount=\lastnodetype\tempfalse\trace{fp}{#1:LNT:\the\tmpcount(\decod@lastnode{\the\tmpcount})}\advance\tmpcount by -10 \ifnum\tmpcount>0 \ifcase\tmpcount % 10= math
       \or\disc@rdskip\unskip\temptrue  %11=glue
       \or\disc@rdkern% 12=kern
       \or\disc@rdpenalty%13=penalty
@@ -739,6 +751,9 @@
   \setbox3=\vbox{}%
   \setbox1=\hbox{}%
   \dimen3=0pt
+  \dimen6=0pt
+  %\tracingassigns=1
+  %\tracingrestores=1
   \loop\tmpcount=\lastnodetype 
     \dimen0=0pt
     \let\disc@rdskip\disc@rdskip@mvbohb
@@ -748,20 +763,34 @@
     %\showboxdepth=4 \showlists
     %\ifnum\tmpcount=11 \dimen1=\lastskip\advance\dimen3 by \dimen1 \fi\unskip
     %\dimen0=\lastkern\unkern\unpenalty
-    \setbox2=\lastbox\dimen1=\lastskip\unskip 
-    \trace{fp}{Between boxes: skip(s) of \the\dimen3, kern of \the\dimen0, before curent box:\the\dimen1}%
-    \dimen3=\dimen1
-    \ifdim\dimen0=1sp % Special value
+    \setbox2=\lastbox
+    \tmpcount=\lastnodetype
+    \ifnum \tmpcount=11 
+      \dimen1=\lastskip\unskip 
+      \dimen6=\dimen3
+      \dimen3=\dimen1
+    \else
+      \dimen1=0pt
+    \fi
+    \trace{fp}{Between boxes: skip(s) of \the\dimen6, kern of \the\dimen0, before curent box:\the\dimen3, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount})}%
+    \ifdim\dimen0=1sp % Special value - footnote paragraph
       \getp@ram{firstindent}{fp}{fp}%
       \dimen4=5pt
       \ifx\p@ram\relax\else\dimen4=\p@ram \IndentUnit \fi
-      \trace{f}{firstlineindent is \the\dimen4, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
-      \setbox3=\vbox{\hbox{}%The empty hbox forces a baselineskip
+      \trace{f}{firstlineindent is \the\dimen4, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2, gap is \the\dimen3}%
+      \setbox3=\vbox{\ifdim\dimen3=0pt %\hbox{}%
+          \else\vskip \dimen3\fi% replace baselineskip
         \penalty\interfootnotelinepenalty
         \noindent\leavevmode\hbox{}\kern\dimen4\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\fi\unvbox3}%
     \fi
-    \ifhbox2\setbox1=\hbox{\box2\unhbox1}\repeat
-  \ifhbox1\setbox3=\vbox{\noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\fi\unvbox3}\fi%
+    \ifhbox2
+      \setbox1=\hbox{\box2\unhbox1}\repeat
+  \trace{fp}{After unboxing, dimen1=\the\dimen1, dimen2=\the\dimen2, dimen3=\the\dimen3, dimen6=\the\dimen6, \the\tmpcount}%
+  \ifhbox1\setbox3=\vbox{\ifnum \tmpcount=3 \else \vskip\dimexpr\baselineskip - \ht1\relax\fi%\hbox{}%
+    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\fi\unvbox3}%
+  \fi%
+  \tracingassigns=0
+  \tracingrestores=0
 } 
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}

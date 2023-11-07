@@ -52,15 +52,12 @@
 %%%%% Footnote tweaks
 % Footnote caller kerning - To adjust space around the
 % footnote caller use the following code Adjust the kern
-% amounts as necessary
-\let\OriginalGetCaller=\getcaller
-\def\getcaller#1#2{%
-  \kern0.2em\OriginalGetCaller{#1}{#2}\kern0.4em}
 
 % Inter Note Skip - Adjust the horizontal space between footnotes,
 % both paragraphed and non-paragraphed
 \catcode`\@=11
-  \intern@teskip=10pt
+  \internoteskip=1em plus 0em
+  \InterNoteSpace=0pt
 \catcode`\@=12
 
 % Inter-note Penalty - Control the amount of "tension" between
@@ -106,19 +103,6 @@
 % Trying to adjust this code doesn't seem to make any dif.
 % This is normally on by default.
 \catcode`\@=11
-\def\gridb@x#1{%
- \setbox0=\ifgridp@c\vbox{\box#1}\else\killd@scenders#1\fi%
- \dimen2=\ht0 \advance\dimen2 by \dp0
- \dimen0=\baselineskip \vskip\baselineskip
- \ifgridp@c\line{}\nobreak\fi % otherwise first \line in loop won't get any baselineskip
-                              % when doing a picture box, because it's not part of the
-                              % current page
- \loop \ifdim\dimen0<\dimen2
-   \advance\dimen0 by \baselineskip
-    \line{}\nobreak \repeat
- \setbox0=\vbox to 0pt{\kern-\ht0\unvbox0}
- \unvbox0 \nobreak
-}
 \catcode`\@=12
 
 
@@ -133,27 +117,5 @@
 
 %%%%% Special commands
 % These are extra commands that can be inserted in the text
-
-% Enable commands with digits in them to be processed
-\catcode`@=11
-\def\makedigitsother{\m@kedigitsother}
-\def\makedigitsletters{\m@kedigitsletters}
-\catcode `@=12
-
-% Special spaces
-\def\nbsp{ }    % Nonbreaking space (U+00A0)
-\def\zwsp{​}     % Zero width space (U+200B)
-\def\zwj{‍}      % Zero width joiner (U+200D)
-
-% Special line space commands (Warning, these do not always work)
-\newdimen\remblskip \remblskip=\baselineskip
-% Remove space
-\def\suckupline{\vskip -\baselineskip}          % Full line
-\def\suckuphalfline{\vskip -0.5\baselineskip}   % Half a line
-\def\suckupqline{\vskip -0.25\baselineskip}     % 1/4 of a line
-% Add space
-\def\skipline{\vskip\baselineskip}              % Full line
-\def\skiphalfline{\vskip 0.5\baselineskip}      % Half a line
-\def\skipqline{\vskip 0.25\baselineskip}        % 1/4 of a line
 
 
