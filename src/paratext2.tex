@@ -653,7 +653,8 @@
 %+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
 \newif\ifnewparnotes \newparnotesfalse
-\newif\ifparnoteskillprevdepth \parnoteskillprevdepthtrue % Kill the depth between note styles 
+\newif\ifparnoteskillprevdepth \parnoteskillprevdepthtrue % Kill the depth between note styles
+\newif\ifparnoteskilldepth \parnoteskilldepthfalse % Kill the depth of paragraphed note styles 
 \newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
 \newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
  
@@ -695,7 +696,7 @@
      \leftskip=\noteRag
   \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
-  \ifFootNoteGlyphMetrics \XeTeXuseglyphmetrics=3 \fi 
+  \XeTeXuseglyphmetrics=3 
   \ifnewparnotes
     \makevboxofhboxes
   \fi
@@ -721,7 +722,11 @@
   \else
     \global\prevdepth=\dimen1
   \fi
-  \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics, pd=\the\dimen1}%
+  \ifparnoteskilldepth
+    \kern-\dimen1
+    \global\prevdepth=0pt
+  \fi
+  \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics, pd=\the\dimen1 \ifparnoteskilldepth (killed)\fi}%
 }
 %-c_makenotepara
 % make box0 = an hbox contining all the contents of this class
