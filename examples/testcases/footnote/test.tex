@@ -33,8 +33,13 @@
 \def\notebreak{\endgraf\kern 1sp}
 \tracing{s}
 \tracing{j}
+\parnotesmidtopskiptrue
+\parnotesruletopskipfalse
+\parnoteskillprevdepthfalse
 \global\AboveNoteSpace=5pt
 \def\BelowFootNoteRuleSpace{5.2pt}
+\XeTeXuseglyphmetrics=3
+%\FootNoteGlyphMetricstrue
 \newparnotestrue
 \ptxfile{test.usfm}
 \ParagraphedNotes{f}

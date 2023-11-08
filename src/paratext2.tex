@@ -305,7 +305,7 @@
       \x@\ifvoid \csname endn@te-#1\endcsname\else
         %\x@\showbox\csname endn@te-#1\endcsname
         \vbox{}%Sacrificial box for makehboxofhboxes to consume
-        \x@\unvbox\csname endn@te-#1\endcsname%\makevboxofhboxes%
+        \x@\unvbox\csname endn@te-#1\endcsname%
         %\showbox0
         %\setbox0=\hbox{\unhbox0 \removehboxes}%
       \fi
@@ -652,17 +652,17 @@
 % #1 is vbox containing notes as individual paragraphs.
 %+c_makenotepara
 \newif\ifNoteTracing \NoteTracingfalse
-\newif\ifnewparnotes \newparnotestrue
-\newif\ifp@rnoteskillprevdepth \p@rnoteskillprevdepthtrue % Kill the depth between note styles 
-\newif\ifp@rnotesrulestopskip \p@rnotesrulestopskipfalse % Add topskip after the rule
-\newif\ifp@rnotesmidtopskip \p@rnotesmidtopskiptrue % add topskip between note styles
+\newif\ifnewparnotes \newparnotesfalse
+\newif\ifparnoteskillprevdepth \parnoteskillprevdepthtrue % Kill the depth between note styles 
+\newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
+\newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
  
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\maken@tepara#1#2{%
   % set appropriate hsize width for diglot or not.
   \setn@tewidth{#2}%
-  \ifnewparnotes\ifp@rnoteskillprevdepth
+  \ifnewparnotes\ifparnoteskillprevdepth
     \dimen0=\prevdepth\ifdim\dimen0>0pt\kern-\dimen0\fi
   \fi\fi % Prevdepth correction, because makevboxofhboxes won't (can't) obey it.
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
@@ -751,7 +751,7 @@
   \setbox0=\lastbox\disc@rds{Rhb}%
   \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
 %
-\def\disc@rdskip@mvbohb{\dimen1=\lastskip\advance\dimen3 by \dimen1}% What does mkvboxofhboxes need discards to do with a skip
+\let\disc@rdskip@mvbohb\empty % What does mkvboxofhboxes need discards to do with a skip
 \def\disc@rdkern@mvbohb{\dimen0=\lastkern\ifdim\dimen0=1sp \unkern\temptrue\fi}%
 \def\disc@rdpenalty@active{\unpenalty\temptrue}
 % Rather than make a single hbox, make
@@ -759,8 +759,6 @@
   \traceifset{vboxofhboxes}%
   \setbox3=\vbox{}%
   \setbox1=\hbox{}%
-  \dimen3=0pt
-  \dimen6=0pt
   %\tracingassigns=1
   %\tracingrestores=1
   \loop\tmpcount=\lastnodetype 
@@ -770,37 +768,32 @@
     \let\disc@rdpenalty\disc@rdpenalty@active
     \disc@rds{mvb}%
     %\showboxdepth=4 \showlists
-    %\ifnum\tmpcount=11 \dimen1=\lastskip\advance\dimen3 by \dimen1 \fi\unskip
-    %\dimen0=\lastkern\unkern\unpenalty
     \setbox2=\lastbox
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
     \fi
     \tmpcount=\lastnodetype
-    \ifnum \tmpcount=11 
-      \dimen1=\lastskip\unskip 
-      \dimen6=\dimen3
-      \dimen3=\dimen1
-    \else
-      \dimen1=0pt
-    \fi
-    \trace{fp}{Between boxes: skip(s) of \the\dimen6, kern of \the\dimen0, before curent box:\the\dimen3, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount})}%
+    \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount})}%
     \ifdim\dimen0=1sp % Special value - footnote paragraph
       \getp@ram{firstindent}{fp}{fp}%
-      \dimen4=3pt
-      \ifx\p@ram\relax\else\dimen4=\p@ram \IndentUnit \fi
-      \trace{f}{firstlineindent is \the\dimen4, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2, gap is \the\dimen3}%
-      \setbox3=\vbox{\ifdim\dimen3=0pt %\hbox{}%
-          \else\vskip \dimen3\fi% replace baselineskip
+      \dimen0=3pt
+      \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
+      \trace{f}{firstlineindent is \the\dimen0, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
+      \setbox3=\vbox{\vskip\dimexpr\baselineskip - \ht1\relax %reimpose topskip
         \penalty\interfootnotelinepenalty
-        \noindent\leavevmode\hbox{}\kern\dimen4\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\fi\unvbox3}%
+        \noindent\leavevmode\hbox{}\kern\dimen0\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
+        %\nonstopmode\showbox3
     \fi
     \ifhbox2
       \setbox1=\hbox{\box2 \unhbox1}%\nonstopmode\showbox1
       \repeat
-  \trace{fp}{After unboxing, dimen1=\the\dimen1, dimen2=\the\dimen2, dimen3=\the\dimen3, dimen6=\the\dimen6, \the\tmpcount}%
-  \ifhbox1\setbox3=\vbox{\ifnum 1=\ifnum \tmpcount=3 \ifp@rnotesrulestopskip 1 \else 0\fi\else \ifp@rnotesmidtopskip 1 \else 0\fi\fi \vskip\dimexpr\baselineskip - \ht1\relax\fi%\hbox{}%
-    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen5=\prevdepth\ifdim\dimen5=0pt\else\kern-\dimen5\fi\fi\unvbox3}%
+  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1}%
+  \ifhbox1\setbox3=\vbox{\ifnum 1=\ifnum \tmpcount=3 \ifparnotesruletopskip 1 \else 0\fi\else \ifparnotesmidtopskip 1 \else 0\fi\fi 
+      \trace{fp}{imposing midtopskip \the\baselineskip-\the\ht1 }%
+      \vskip\dimexpr\baselineskip - \ht1\relax
+    \fi%
+    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
+    %\nonstopmode\showbox3
   \fi%
   %\showbox3
   \tracingassigns=0
