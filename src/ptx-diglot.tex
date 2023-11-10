@@ -1883,7 +1883,7 @@
     \relax
   \fi
 }
-
+\def\DEBUGnotes{0} % Page to show the footnote box on.
 \def\diglot@fill@sep@note@box#1{%
   \edef\s@vedbaseline{\the\baselineskip}\edef\s@vedlineskiplimit{\the\lineskiplimit}\let\s@veddstat=\c@rrdstat
   \setc@rdstat{#1}%
@@ -1904,6 +1904,7 @@
       %\fi
     %\fi
   \fi
+  \ifnum\DEBUGnotes=\the\pageno \showbox\csname #1box\endcsname \fi
   \setc@rdstat{\s@veddstat}\baselineskip=\s@vedbaseline\relax
   \lineskiplimit=\s@vedlineskiplimit\relax
 }

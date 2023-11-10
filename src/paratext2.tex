@@ -700,8 +700,6 @@
   \XeTeXuseglyphmetrics=3 
   \ifnewparnotes
     \makevboxofhboxes
-  \fi
-  \ifnewparnotes
     %\ifnum\interactionmode=1 \showbox 3\showlists\fi
     \penalty10000
     \dimen1=\dp3
@@ -717,7 +715,7 @@
   % set penalty which allows breaking between notes unless this would cause
   % an extra line to be created.
   \ifhmode
-    \par\leftskip=0pt \XeTeXuseglyphmetrics=\@seglyphmetrics\ifNoteTracing\tracingparagraphs=0\fi
+    \par\leftskip=0pt \ifNoteTracing\tracingparagraphs=0\fi
     \dimen1=\prevdepth
   \else
     \global\prevdepth=\dimen1
@@ -726,6 +724,7 @@
     \kern-\dimen1
     \global\prevdepth=0pt
   \fi
+  \XeTeXuseglyphmetrics=\@seglyphmetrics
   \trace{f}{Note #2 baselineskip=\the\baselineskip, useglyphmetrics=\the\XeTeXuseglyphmetrics, pd=\the\dimen1 \ifparnoteskilldepth (killed)\fi}%
 }
 %-c_makenotepara
@@ -793,7 +792,16 @@
       \setbox1=\hbox{\box2 \unhbox1}%\nonstopmode\showbox1
       \repeat
   \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1}%
-  \ifhbox1\setbox3=\vbox{\ifnum 1=\ifnum \tmpcount=3 \ifparnotesruletopskip 1 \else 0\fi\else \ifparnotesmidtopskip 1 \else 0\fi\fi 
+  \ifhbox1\setbox3=\vbox{\ifnum 1=
+      \ifnum \tmpcount=3 \ifparnotesruletopskip 1 \else 0\fi
+      \else
+        \ifnum\tmpcount=-1
+          \iff@rstnote \ifparnotesruletopskip 1 \else 0 \fi
+          \else
+            \ifparnotesmidtopskip 1 \else 0\fi
+          \fi
+        \fi
+      \fi
       \trace{fp}{imposing midtopskip \the\baselineskip-\the\ht1 }%
       \vskip\dimexpr\baselineskip - \ht1\relax
     \fi%
@@ -1459,6 +1467,7 @@
       \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%
     \fi
     %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
+    \ifnum\DEBUGnotes=\the\pageno \showbox0 \fi
   \fi}
 %-c_reduceavailht_para
 
