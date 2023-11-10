@@ -1039,10 +1039,10 @@
     \global\vsize=\b@ckupvsize
     \global\output={\backingup}%
     \bgroup \dimen0=\the\prevdepth
-      \dimen1=\the\dp\galley
+      \dimen1=\dp\galley
       \trace{o}{ctb: pd=\the\dimen0, gd=\the\dp\galley}%
       \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-      \ifdimen0=1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
+      \ifdim\dimen0=1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
     \egroup
   \fi
 }
