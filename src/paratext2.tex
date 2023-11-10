@@ -654,7 +654,7 @@
 \newif\ifNoteTracing \NoteTracingfalse
 \newif\ifnewparnotes \newparnotesfalse
 \newif\ifparnoteskillprevdepth \parnoteskillprevdepthtrue % Kill the depth between note styles
-\newif\ifparnoteskilldepth \parnoteskilldepthfalse % Kill the depth of paragraphed note styles 
+\newif\ifparnoteskilldepth \parnoteskilldepthfalse % Kill the depth of (the last row of) paragraphed note styles 
 \newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
 \newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
  
@@ -792,22 +792,18 @@
       \setbox1=\hbox{\box2 \unhbox1}%\nonstopmode\showbox1
       \repeat
   \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1}%
+  \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
   \ifhbox1\setbox3=\vbox{\ifnum 1=
-      \ifnum \tmpcount=3 \ifparnotesruletopskip 1 \else 0\fi
+        \iftemp \ifparnotesruletopskip 1 \else 0 \fi
       \else
-        \ifnum\tmpcount=-1
-          \iff@rstnote \ifparnotesruletopskip 1 \else 0 \fi
-          \else
-            \ifparnotesmidtopskip 1 \else 0\fi
-          \fi
-        \fi
+        \ifparnotesmidtopskip 1 \else 0 \fi
       \fi
-      \trace{fp}{imposing midtopskip \the\baselineskip-\the\ht1 }%
+      \relax\trace{fp}{imposing midtopskip \the\baselineskip-\the\ht1 }%
       \vskip\dimexpr\baselineskip - \ht1\relax
     \fi%
-    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
+    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
-  \fi%
+  }\fi%
   %\showbox3
   \tracingassigns=0
   \tracingrestores=0
@@ -1092,7 +1088,7 @@
       \dimen1=\dp\galley
       \trace{o}{ctb: pd=\the\dimen0, gd=\the\dp\galley}%
       \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-      \ifdim\dimen0=1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
+      \ifdim\dimen0=-1000pt \kern -\dimen1\fi % Fix needed in some circumstances.
     \egroup
   \fi
 }
