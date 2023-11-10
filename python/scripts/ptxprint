@@ -46,7 +46,7 @@ class StreamLogger:     # thanks to shellcat_zero https://stackoverflow.com/ques
         self.level = level
     def write(self, buf):
         for line in buf.rstrip().splitlines():
-            self.logger.log(self.level, line.rstrip())
+            self.logger.log(self.level, line.rstrip(), stacklevel=2)
     def flush(self):
         pass
 

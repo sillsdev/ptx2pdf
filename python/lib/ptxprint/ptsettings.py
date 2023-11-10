@@ -154,8 +154,8 @@ class ParatextSettings:
             self.dict['DefaultFont'] = ""
         if 'Encoding'not in self.dict:
             self.dict['Encoding'] = 65001
-        if 'BooksPrsent' not in self.dict:
-            self.calcbookspresent(inferred=True)
+        if 'BooksPresent' not in self.dict:
+            self.calcbookspresent(inferred=forced)
 
     def calcbookspresent(self, inferred=False, forced=False):
         self.bookmap = {}
