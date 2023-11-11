@@ -110,8 +110,9 @@
 \def\b@lance{BALANCE}
 \lowercase{
  \def\startn@testyle~#1 {% get the caller code as a space-delimited parameter
-  \trace{n}{startn@testyle #1}%
+  \trace{n}{startn@testyle \newn@testyle #1}%
   \t@stpublishability{\newn@testyle}\ifn@npublishable
+    \trace{n}{Not publishable \newn@testyle\c@rrdstat}%
     \begingroup
     \let\aftern@te\relax
     %\ifhe@dings\bgroup\fi
