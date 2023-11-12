@@ -28762,6 +28762,151 @@ padding.</property>
                 <property name="halign">center</property>
                 <property name="valign">center</property>
                 <child>
+                  <object class="GtkSeparator" id="oT1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">0</property>
+                    <property name="width">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="oB1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">7</property>
+                    <property name="width">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="oL1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                    <property name="height">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="oR1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">7</property>
+                    <property name="top-attach">0</property>
+                    <property name="height">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkFrame">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.3499999997764826</property>
+                    <property name="margin-right">10</property>
+                    <property name="margin-start">13</property>
+                    <property name="margin-top">20</property>
+                    <property name="margin-bottom">9</property>
+                    <property name="label-xalign">0</property>
+                    <property name="shadow-type">etched-out</property>
+                    <child>
+                      <object class="GtkLabel" id="l_box3">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">This preview actively illustrates the box and border
+padding with respect to the text. As you change the
+various settings above, you should be able to see
+how the border settings affect the final outcome.</property>
+                        <property name="justify">fill</property>
+                        <property name="xalign">0.5</property>
+                        <property name="yalign">0.5</property>
+                      </object>
+                    </child>
+                    <child type="label_item">
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">3</property>
+                    <property name="top-attach">3</property>
+                    <property name="width">2</property>
+                    <property name="height">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEventBox">
+                    <property name="width-request">100</property>
+                    <property name="height-request">50</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="margin-end">36</property>
+                    <property name="margin-top">14</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
+                        <property name="label" translatable="yes">label</property>
+                      </object>
+                    </child>
+                    <style>
+                      <class name="highlighted"/>
+                    </style>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                    <property name="width">7</property>
+                    <property name="height">7</property>
+                  </packing>
+                </child>
+              </object>
+            </child>
+            <child type="label_item">
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkFrame">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="halign">center</property>
+            <property name="valign">center</property>
+            <property name="margin-bottom">6</property>
+            <property name="label-xalign">0</property>
+            <property name="shadow-type">in</property>
+            <child>
+              <!-- n-columns=8 n-rows=8 -->
+              <object class="GtkGrid">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <child>
                   <object class="GtkSeparator" id="oT">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -28917,22 +29062,46 @@ padding.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkEventBox">
+                  <object class="GtkEventBox" id="e_box">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="opacity">0.34999999999999998</property>
+                    <property name="hexpand">True</property>
+                    <property name="vexpand">True</property>
                     <child>
                       <object class="GtkLabel" id="l_box">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">This preview actively illustrates the box and
-border padding with respect to the text.</property>
+                        <property name="hexpand">False</property>
+                        <property name="vexpand">False</property>
+                        <property name="justify">fill</property>
                         <attributes>
                           <attribute name="foreground" value="#000000000000"/>
                           <attribute name="background" value="#8c8cededa3a3"/>
                         </attributes>
                       </object>
                     </child>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">0</property>
+                    <property name="width">8</property>
+                    <property name="height">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="l_box1">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
+                    <property name="label" translatable="yes">This preview actively illustrates the box and border
+padding with respect to the text. As you change the
+various settings above, you should be able to see
+how the border settings affect the final outcome.</property>
+                    <property name="justify">fill</property>
+                    <property name="xalign">0.5</property>
+                    <property name="yalign">0.5</property>
                   </object>
                   <packing>
                     <property name="left-attach">3</property>

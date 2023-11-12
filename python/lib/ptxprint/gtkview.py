@@ -5499,7 +5499,7 @@ Thank you,
         except AttributeError:
             pass
 
-    def onSBborderSettingsChanged(self, btn):
+    def OLDonSBborderSettingsChangedOLD(self, btn):
         for x in ['ox', 'dr']:
             if self.get(f"c_b{x}PadSymmetrical"):
                 for w in "LRB":
@@ -5507,7 +5507,7 @@ Thank you,
             oi = "o" if x == 'ox' else 'i'
             for w in "TBLR":
                 v = float(self.get(f's_sbB{x}Pad{w}'))
-                setattr(self, oi+w, v if v >= 0 else 0)
+                setattr(self, oi+w, v) # if v >= 0 else 0)
 
         self.builder.get_object("oT").set_visible(self.get('c_sbBorder_top'))
         self.builder.get_object("oB").set_visible(self.get('c_sbBorder_bot'))
@@ -5519,10 +5519,57 @@ Thank you,
         self.builder.get_object("oL").set_size_request(thickness, -1)
         self.builder.get_object("oR").set_size_request(thickness, -1)
 
-        self.builder.get_object("l_box").set_property("margin-top", self.oT)
-        self.builder.get_object("l_box").set_property("margin-bottom", self.oB)
-        self.builder.get_object("l_box").set_property("margin-left", self.oL)
-        self.builder.get_object("l_box").set_property("margin-right", self.oR)
+        self.builder.get_object("e_box").set_property("height-request", self.iL + (self.oT / 2))
+        self.builder.get_object("e_box").set_property("width-request", self.iT + (self.oL / 2))
+        # self.builder.get_object("e_box").set_property("margin-left", self.oL - thickness)
+        # self.builder.get_object("e_box").set_property("margin-right", self.oR - thickness)
+        # self.builder.get_object("e_box").set_property("margin-top", self.oT - thickness)
+        # self.builder.get_object("e_box").set_property("margin-bottom", self.oB - thickness)
+        # self.builder.get_object("e_box").set_property("margin-left", self.oL - thickness)
+        # self.builder.get_object("e_box").set_property("margin-right", self.oR - thickness)
+
+        for w in "TLR":
+            self.builder.get_object(f"o{w}").set_property("margin-top", 0) # self.oT)
+            self.builder.get_object(f"i{w}").set_property("margin-top", self.iT)
+
+        for w in "BLR":
+            self.builder.get_object(f"o{w}").set_property("margin-bottom", 0) # self.oB)
+            self.builder.get_object(f"i{w}").set_property("margin-bottom", self.iB)
+        
+        self.builder.get_object("oL").set_property("margin-left", 0) # self.oL)
+        self.builder.get_object("oR").set_property("margin-right", 0) # self.oR)
+
+        self.builder.get_object("iL").set_property("margin-left", self.iL)
+        self.builder.get_object("iR").set_property("margin-right", self.iR)
+
+    def onSBborderSettingsChanged(self, btn):
+        for x in ['ox', 'dr']:
+            if self.get(f"c_b{x}PadSymmetrical"):
+                for w in "LRB":
+                    self.set(f"s_sbB{x}Pad{w}", self.get(f"s_sbB{x}PadT"))
+            oi = "o" if x == 'ox' else 'i'
+            for w in "TBLR":
+                v = float(self.get(f's_sbB{x}Pad{w}'))
+                setattr(self, oi+w, v) # if v >= 0 else 0)
+
+        self.builder.get_object("oT").set_visible(self.get('c_sbBorder_top'))
+        self.builder.get_object("oB").set_visible(self.get('c_sbBorder_bot'))
+        self.builder.get_object("oL").set_visible(self.get('c_sbBorder_lhs') or self.get('c_sbBorder_inn'))
+        self.builder.get_object("oR").set_visible(self.get('c_sbBorder_rhs') or self.get('c_sbBorder_out'))
+        thickness = float(self.get('s_sbBorderWidth'))
+        self.builder.get_object("oT").set_size_request(-1, thickness)
+        self.builder.get_object("oB").set_size_request(-1, thickness)
+        self.builder.get_object("oL").set_size_request(thickness, -1)
+        self.builder.get_object("oR").set_size_request(thickness, -1)
+
+        self.builder.get_object("e_box").set_property("height-request", self.iL + (self.oT / 2))
+        self.builder.get_object("e_box").set_property("width-request", self.iT + (self.oL / 2))
+        # self.builder.get_object("e_box").set_property("margin-left", self.oL - thickness)
+        # self.builder.get_object("e_box").set_property("margin-right", self.oR - thickness)
+        # self.builder.get_object("e_box").set_property("margin-top", self.oT - thickness)
+        # self.builder.get_object("e_box").set_property("margin-bottom", self.oB - thickness)
+        # self.builder.get_object("e_box").set_property("margin-left", self.oL - thickness)
+        # self.builder.get_object("e_box").set_property("margin-right", self.oR - thickness)
 
         for w in "TLR":
             self.builder.get_object(f"o{w}").set_property("margin-top", 0) # self.oT)
