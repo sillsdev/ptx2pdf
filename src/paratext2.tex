@@ -1170,8 +1170,10 @@
       \loop\ifdim\dimen0>\textheight \advance\dimen0-\textheight\repeat
       \box\partial
       \ifdim\dimen0>\PageFullFactor\textheight \vfill\eject
-      \else \holdinginserts=0 \global\output={\savepartialpage}\eject \holdinginserts=1
+      \else \holdinginserts=0 \global\output={\savepartialpage}\eject %Might there be a small risk that there's extra inserts, etc. on the page? Or is this wasted code?
+        \holdinginserts=1
       \fi
+      \vfill\eject% This should do nothing if the page is already empty
     \fi
     % reset parameters for 2-column formatting
     \global\hsize=\colwidth\trace{o}{doublecolumn vsize doubles}%
@@ -2447,7 +2449,7 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial}%
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi}%
   \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}}%
   \global\output={\onecol}%
   \global\holdinginserts=1

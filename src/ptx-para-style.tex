@@ -85,10 +85,17 @@
     \ifnum\BodyColumns=\c@rrentcols
       \count255=\lastpenalty
       \vskip\baselineskip
-      \penalty\count255
     \else
       \tob@dytrue\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
-      \penalty10000
+      \count255=10000
+    \fi
+    \ifPBOnBody\vfill\eject
+    \else
+      \penalty\count255
+    \fi
+  \else
+    \ifPBOnBody
+      %\ifdiglot \if R\c@rrdstat\relax \penalty10000 \fi\fi
     \fi
   \fi
   \tob@dyfalse
