@@ -1,9 +1,39 @@
 PTXprint 2.4.2 Release Notes
-4 Nov 2023
+14 Nov 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.3 (14 Nov 2023)
+
+  * Correct logic so noteid change applied to non-paragraphed notes
+  
+  * Make new-style paragraphed notes mimic old-style paragraphed notes
+  
+  * Make newparnotes unwrap first box (behave properly with endnotes)
+  
+  * Clean up some unnecessary dimen usage
+  
+  * Yet another parnotes option; un-break newparnotesfalse
+  
+  * Less deltas for newparnotes
+  
+  * Improve book filenames handling
+  
+  * Fix typos around clearthenbackup
+  
+  * Repair broken clearthenbackup bug
+  
+  * Make UI footnote/xref control work on diglots
+  
+  * Cope with mt1 on line after an id
+  
+  * Ensure that pagebreak-before-all-chapters doesn't crash regex
+  
+  * Fix regex bugs
+  
+  * Refactor changes to include error messages
+  
 Bug fixes and Improvements in 2.4.2 (4 Nov 2023)
 
   * Add missing changes for bookresetcallers (Reset fn+xr callers at each book)
