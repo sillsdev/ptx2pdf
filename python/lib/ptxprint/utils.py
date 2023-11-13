@@ -479,24 +479,27 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat):
-    def wrap(t):
+    def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(5, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
             return res
         return proc
     for c in changes:
         if bk is not None:
             logger.debug("at {} Change: {}".format(bk, c))
-        if c[0] is None:
-            dat = c[1].sub(wrap(c[2]), dat)
-        elif isinstance(c[0], str):
-            if c[0] == bk:
-                dat = c[1].sub(wrap(c[2]), dat)
-        else:
-            def simple(s):
-                return c[1].sub(wrap(c[2]), s)
-            dat = c[0](simple, bk, dat)
+        try:
+            if c[0] is None:
+                dat = c[1].sub(wrap(c[2], c[3]), dat)
+            elif isinstance(c[0], str):
+                if c[0] == bk:
+                    dat = c[1].sub(wrap(c[2], c[3]), dat)
+            else:
+                def simple(s):
+                    return c[1].sub(wrap(c[2], c[3]), s)
+                dat = c[0](simple, bk, dat)
+        except TypeError as e:
+            raise TypeError(str(e) + "\n at "+c[3])
     return dat
 
 _htmlentities = {
