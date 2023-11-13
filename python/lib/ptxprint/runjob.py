@@ -570,8 +570,8 @@ class RunJob:
         if len(refs):
             finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\box", "\hbox", "\vbox", "\else", "\book", "\par",
-                     "\edef", "\gdef", "\dimen" "\hsize", "\relax"]
+        texmrkrs = [r"\fi", r"\if", r"\ifx", r"\box", r"\hbox", r"\vbox", r"\else", r"\book", r"\par",
+                     r"\edef", r"\gdef", r"\dimen", r"\hsize", r"\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
