@@ -1266,7 +1266,8 @@
 \long\def\gr@btomacro#1{%
   \def\tmp{#1}\ifgr@bbing\else\gr@bcodes\gr@bbingtrue\fi
   \ifx\tmp\@gr@bs\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
-    \ifx\tmp\@gr@bp\gr@bbedspacetrue\let\@nxxt=\gr@btomacro\else
+    \ifx\tmp\@gr@bp\gr@bbedspacetrue\m@kedigitsletters% Reset numbers to letters at the line break.
+      \let\@nxxt=\gr@btomacro\else
       %\gt@addsp@ce % Add a space if we saw one earlier
       \t@stifcs{#1}\ifn@tcs
         \gt@addsp@ce
