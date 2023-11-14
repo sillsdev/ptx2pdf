@@ -161,6 +161,7 @@ class XDViReader:
     def font(self, opcode, parm, data):
         if parm is not None:
             data = [parm]
+        self.currfont = data[0]
         return (data[0],)
 
     def xxx(self, opcode, parm, data):
@@ -205,7 +206,7 @@ class XDViReader:
         font.slant = self.readval(4) if flags & 0x2000 else 0
         font.embolden = self.readval(4) if flags & 0x4000 else 0
         self.fonts[k]=font
-        return (k,)
+        return (k, font)
         # self.out('xfontdef[{}] "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
         #          ident, font_name, points, flags, color, variations, ext, slant, embolden))
 
@@ -223,9 +224,8 @@ class XDViReader:
 
 
 class XDViWriter:
-    def __init__(self, fname, context=None):
+    def __init__(self, fname):
         self.fname = fname
-        self.context = context
         self.outf = open(fname, "wb")
 
     def outbytes(self, b):
@@ -236,7 +236,8 @@ class XDViWriter:
             if uint:
                 d = pack(">"+packings[1][1]+packings[1][0], val // 256, val & 255)
             else:
-                d = pack(">"+packings[0][1]+packings[1][0], -(-val // 256) if val < 0 else val // 256, (-val & 255) if val < 0 else (val & 255))
+                d = pack(">"+packings[0][1]+packings[1][0], -(-val // 256) if val < 0 else val // 256, 
+                                                            (-val & 255) if val < 0 else (val & 255))
         else:
             d = pack(">"+packings[1 if uint else 0][size-1], val)
         self.outf.write(d)
@@ -249,6 +250,16 @@ class XDViWriter:
         self.outopcode(opcode)
         for x, d in zip(opc[1], data):
             self.outval((x if x > 0 else -x), d, uint=x>0)
+
+    def finish(self):
+        l = self.outf.tell() % 4
+        if l == 0:
+            extra = 4
+        else:
+            extra = 8 - l
+        self.outbytes(b"\xDF"*extra)
+        self.outf.close()
+        
 
     def setchar(self, opcode, char):
         if char < 129:
@@ -284,8 +295,7 @@ class XDViWriter:
         self.outop(opcode, [i, n, d, m, len(x)])
         self.outbytes(x)
 
-    def xfontdef(self, opcode, k):
-        font = self.context.fonts[k]
+    def xfontdef(self, opcode, k, font):
         flags = 0
         flags |= 0x200 if font.color != 0xFFFFFFFF else 0
         flags |= 0x800 if len(font.variations) else 0
@@ -341,9 +351,10 @@ def main():
     if len(sys.argv) < 3:
         print ("xdv.py infile outfile\nDoes full copy to an identical file")
     reader = XDViReader(sys.argv[1])
-    writer = XDViWriter(sys.argv[2], context=reader)
+    writer = XDViWriter(sys.argv[2])
     filt = XDViFilter(reader, writer)
     filt.process()
+    writer.finish()
 
 if __name__ == "__main__":
     main()
