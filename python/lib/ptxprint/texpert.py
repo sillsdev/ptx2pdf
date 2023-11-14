@@ -65,14 +65,17 @@ class TeXpert:
             if not config.has_option(self.section, opt[0]):
                 continue
             n = widgetName(opt)
+            default = opt[1]
+            if isinstance(default, (tuple, list)):
+                default = default[0]
             if n.startswith("c_"):
-                v = strtobool(config.get(self.section, opt[0], fallback=opt[1]))
+                v = strtobool(config.get(self.section, opt[0], fallback=default))
             elif n.startswith("s_"):
-                v = asfloat(config.get(self.section, opt[0], fallback=opt[1]), opt[1])
+                v = asfloat(config.get(self.section, opt[0], fallback=default), default)
             else:
                 v = None
             if v is not None:
-                view.set(n, v, skipmissing = True)
+                view.set(n, v, skipmissing=True)
 
     @classmethod
     def generateTeX(self, view):

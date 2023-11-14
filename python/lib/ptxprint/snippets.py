@@ -233,9 +233,9 @@ class Diglot(Snippet):
 \makeatletter
 \should@xist{{f{s_}}}
 \should@xist{{x{s_}}}
-\makeatother
 \newlanguage\language{s_} \language\language{s_}
 {diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
+\makeatother
 """
 
         res = baseCode.format(s_="L", **model.dict)

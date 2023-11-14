@@ -269,6 +269,7 @@
 \def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
+\catcode`\@=11
 {paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
 {paragraph/ifomithyphen}\defaulthyphenchar=8203
 {paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
