@@ -1,6 +1,12 @@
+#!/usr/bin/env python3
+
 # Parses xdv
 
-from struct import unpack
+from struct import unpack, pack
+
+class Font:
+    def __init__(self, fname):
+        self.name = fname
 
 opcodes = [("setchar", [], i) for i in range(128)]
 opcodes += [
@@ -9,10 +15,10 @@ opcodes += [
     ("parmop", [3], "setcode"),
     ("parmop", [-4], "setcode"),
     ("multiparm", [-4]*2, "setrule"),
-    ("parmop", [1], "setcode"),
-    ("parmop", [2], "setcode"),
-    ("parmop", [3], "setcode"),
-    ("parmop", [-4], "setcode"),
+    ("parmop", [1], "putcode"),
+    ("parmop", [2], "putcode"),
+    ("parmop", [3], "putcode"),
+    ("parmop", [-4], "putcode"),
     ("multiparm", [-4]*2, "setrule"),
     ("simple", [], "nop"),
     ("bop", [4]*11, "bop"),
@@ -64,8 +70,8 @@ opcodes += [
     ("pre", [1, 4, 4, 4, 1], None),
     ("multiparm", [4]*6 + [2,2], "post"),
     ("multiparm", [4, 1], "postpost"),
-    ("unknown", [], None),   # code 250
-    ("xpic", [1, 4, 4, 4, 4, 4, 4, 2, 2], None),
+    ("simple", [], "reflect"),   # code 250     BEGIN_REFLECT
+    ("simple", [], "unreflect"),
     ("xfontdef", [4, 4, 2], None),
     ("xglyphs", [], 1),
     ("xglyphs", [], 0),
@@ -73,7 +79,7 @@ opcodes += [
 
 packings = ("bhxi", "BHxI")
 
-class XDVi:
+class XDViReader:
     def __init__(self, fname, diffable=False):
         self.fonts = {}
         self.fname = fname
@@ -97,7 +103,7 @@ class XDVi:
         op = self.readval(1, uint=True)
         opc = opcodes[op]
         data = [self.readval((x if x>0 else -x), uint=x>0) for x in opc[1]]
-        return (opc, data)
+        return (op, opc, data)
 
     def readbytes(self, num):
         return self.file.read(num)
@@ -120,12 +126,13 @@ class XDVi:
         if self.file is None:
             selfopen = True
             self.__enter__()
-        for (opc, data) in self:
-            getattr(self, opc[0])(op, lastparm, data)
+        for (op, opc, data) in self:
+            res = getattr(self, opc[0])(op, opc[2], data)
+            yield (op, res)
             if opc[2] == "postpost":
                 break
         if selfopen:
-            self.__exit__()
+            self.__exit__(None, None, None)
             self.file = None
 
     def out(self, txt):
@@ -133,45 +140,51 @@ class XDVi:
         pass
 
     def setchar(self, opcode, parm, data):
-        # self.out("setchar({})".format(opcode))
-        pass
+        if len(data):
+            return (data[0],)
+        else:
+            return (opcode,)
 
     def multiparm(self, opcode, parm, data):
-        # self.out("{}({}) {}".format(parm, opcode, data))
-        pass
+        return (parm, data)
 
     def parmop(self, opcode, parm, data):
-        # self.out("{}({}) [{}]".format(parm, opcode, data[0]))
-        pass
+        return (parm, data[0])
 
     def simple(self, opcode, parm, data):
-        # self.out("{}".format(parm))
-        pass
+        return (parm,)
 
     def bop(self, opcode, parm, data):
         self.pageno = data[0]
-        # self.out("{}({}) [{}]".format(parm, opcode, data[0]))
+        return data
 
     def font(self, opcode, parm, data):
         if parm is not None:
             data = [parm]
-        # self.out("font [{:04x}]".format(self.fonts[data[0]][0]))
+        return (data[0],)
 
     def xxx(self, opcode, parm, data):
         txt = self.readbytes(data[0])
-        # self.out('special({}) "{}"'.format(opcode, txt.decode("utf-8")))
+        return (txt.decode("utf-8"),)
 
     def fontdef(self, opcode, parm, data):
         (k, c, s, d, a, l) = data
         n = self.readbytes(a+l).decode("utf-8")
+        font = Font(n)
+        font.size = mag * s / 1000. / d
+        font.checksum = c
+        self.fonts[k] = font
+        return (k, c, s, d, a, l, n)
 
     def pre(self, opcode, parm, data):
         (i, n, d, m, k) = data
         x = self.readbytes(k)
+        self.mag = m
+        self.denom = d
         # self.out("pre num={}, den={}, mag={} {}".format(n, d, m, x))
         # the k to c mapping may vary across 'identical' files
         # self.out("fontdef({}) checksum={:04x} sf={:f} name=\"{}\"".format(opcode, c, s / 1000. / d, n))
-        self.fonts[k] = (c, n)
+        return (i, n, d, m, x) 
 
     def xfontdef(self, opcode, parm, data):
         (k, points, flags) = data
@@ -179,17 +192,20 @@ class XDVi:
         font_name = self.readbytes(plen).decode("utf-8")
         if self.diffable:
             font_name = os.path.basename(font_name)
-        ident = self.readval(4)
-        color = self.readval(4) if flags & 0x200 else 0xFFFFFFFF
+        font = Font(font_name)
+        font.points = points
+        font.ident = self.readval(4)
+        font.color = self.readval(4) if flags & 0x200 else 0xFFFFFFFF
         if flags & 0x800:       # variations
             nvars = self.readval(2)
-            variations = [self.readval(4) for i in range(nvars)]
+            font.variations = [self.readval(4) for i in range(nvars)]
         else:
-            variations = []
-        ext = self.readval(4) if flags & 0x1000 else 0
-        slant = self.readval(4) if flags & 0x2000 else 0
-        embolden = self.readval(4) if flags & 0x4000 else 0
-        self.fonts[k]=(ident, font_name)
+            font.variations = []
+        font.ext = self.readval(4) if flags & 0x1000 else 0
+        font.slant = self.readval(4) if flags & 0x2000 else 0
+        font.embolden = self.readval(4) if flags & 0x4000 else 0
+        self.fonts[k]=font
+        return (k,)
         # self.out('xfontdef[{}] "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
         #          ident, font_name, points, flags, color, variations, ext, slant, embolden))
 
@@ -201,14 +217,134 @@ class XDVi:
         else:
             pos = [(self.readval(4), 0) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
+        return (parm, width, pos, glyphs)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
 
-    def xpic(self, opcode, parm, data):
-        box = data.pop(0)
-        length = data.pop()
-        pageno = data.pop()
-        matrix = data[:]
-        # path = self.readbytes(length).decode("utf-8")
-        # self.out('xpic "{}"@{} pageno={}, box={}'.format(path, matrix, pageno, box))
+
+class XDViWriter:
+    def __init__(self, fname, context=None):
+        self.fname = fname
+        self.context = context
+        self.outf = open(fname, "wb")
+
+    def outbytes(self, b):
+        self.outf.write(b)
+
+    def outval(self, size, val, uint=False):
+        if size == 3:
+            if uint:
+                d = pack(">"+packings[1][1]+packings[1][0], val // 256, val & 255)
+            else:
+                d = pack(">"+packings[0][1]+packings[1][0], -(-val // 256) if val < 0 else val // 256, (-val & 255) if val < 0 else (val & 255))
+        else:
+            d = pack(">"+packings[1 if uint else 0][size-1], val)
+        self.outf.write(d)
+
+    def outopcode(self, opcode):
+        self.outval(1, opcode, uint=True)
+
+    def outop(self, opcode, data):
+        opc = opcodes[opcode]
+        self.outopcode(opcode)
+        for x, d in zip(opc[1], data):
+            self.outval((x if x > 0 else -x), d, uint=x>0)
+
+    def setchar(self, opcode, char):
+        if char < 129:
+            self.outop(char, [])
+        else:
+            self.outop(opcode, [char])
+
+    def multiparm(self, opcode, parm, *data):
+        self.outop(opcode, data[0])
+
+    def parmop(self, opcode, parm, val):
+        self.outop(opcode, [val])
+
+    def simple(self, opcode, parm):
+        self.outop(opcode, [])
+
+    def bop(self, opcode, pageno, *data):
+        self.outop(opcode, [pageno] + list(data))
+
+    def font(self, opcode, fontnum):
+        self.outop(opcode, [fontnum])
+
+    def xxx(self, opcode, txt):
+        data = txt.encode("utf-8")
+        self.outop(opcode, [len(data)])
+        self.outbytes(data)
+
+    def fontdef(self, opcode, k, c, s, d, a, l, n):
+        self.outop(opcode, [k, c, s, d, a, l])
+        self.outbytes(n)
+
+    def pre(self, opcode, i, n, d, m, x):
+        self.outop(opcode, [i, n, d, m, len(x)])
+        self.outbytes(x)
+
+    def xfontdef(self, opcode, k):
+        font = self.context.fonts[k]
+        flags = 0
+        flags |= 0x200 if font.color != 0xFFFFFFFF else 0
+        flags |= 0x800 if len(font.variations) else 0
+        flags |= 0x1000 if font.ext else 0
+        flags |= 0x2000 if font.slant else 0
+        flags |= 0x4000 if font.embolden else 0
+        self.outop(opcode, [k, font.points, flags])
+        name = font.name.encode("utf-8")
+        self.outval(1, len(name), uint=True)
+        self.outbytes(name)
+        self.outval(4, font.ident)
+        if flags & 0x200:
+            self.outval(4, font.color)
+        if flags & 0x800:
+            self.outval(2, len(font.variations))
+            for v in self.variations:
+                self.outval(4, v)
+        if flags & 0x1000:
+            self.outval(4, font.ext)
+        if flags & 0x2000:
+            self.outval(4, font.slant)
+        if flags & 0x4000:
+            self.outval(4, font.embolden)
+
+    def xglyphs(self, opcode, parm, width, pos, glyphs):
+        self.outopcode(opcode)
+        self.outval(4, width)
+        slen = len(glyphs)
+        self.outval(2, slen, uint=True)
+        for p in pos:
+            self.outval(4, p[0])
+            if parm:
+                self.outval(4, p[1])
+        for g in glyphs:
+            self.outval(2, g)
+
+
+class XDViFilter:
+    def __init__(self, rdr, wrtr):
+        self.rdr = rdr
+        self.wrtr = wrtr
+
+    def process(self):
+        for (opcode, data) in self.rdr.parse():
+            opc = opcodes[opcode]
+            if hasattr(self, opc[0]):
+                data = getattr(self, opc[0])(opcode, data)
+            getattr(self.wrtr, opc[0])(opcode, *data)
+
+def main():
+    import sys
+
+    if len(sys.argv) < 3:
+        print ("xdv.py infile outfile\nDoes full copy to an identical file")
+    reader = XDViReader(sys.argv[1])
+    writer = XDViWriter(sys.argv[2], context=reader)
+    filt = XDViFilter(reader, writer)
+    filt.process()
+
+if __name__ == "__main__":
+    main()
 
