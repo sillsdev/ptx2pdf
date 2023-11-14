@@ -95,7 +95,11 @@
     \fi
   \else
     \ifPBOnBody
-      %\ifdiglot \if R\c@rrdstat\relax \penalty10000 \fi\fi
+      \ifdiglot 
+        \trace{d}{Page Break on starting body - \c@rrdstat}%
+        \@diglot@pagebreak
+        %\if L\c@rrdstat\relax \@writep@ge\fi
+      \fi
     \fi
   \fi
   \tob@dyfalse

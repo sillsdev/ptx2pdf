@@ -2748,7 +2748,7 @@
 \def\diglot@run@trials{% for X as L, R, (eventually others)
   %expects: collected input in partialX, excessX empty
   %Process: cycle through chunks  
-  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist)}%
+  \traceNum{d}{diglot@run@trials (\digl@tc@ntentlist) sp=\the\savedpenalty}%
   \let\tri@llist\diglot@list%
   %Before running trials, empty(eventually store?) old galleys
   \empty@partials
@@ -2796,7 +2796,14 @@
   \fi
   \relax\relax
 }
-
+\def\@diglot@pagebreak{%
+  %\emitpartial
+  %\setdiglotN@rmal % Left=left (normal) or not?
+  %\pickn@xtpartial
+  \@add@n@xtpartial
+  \@writep@ge
+  %\check@and@update
+}
 \def\after@after@a@trial{%
   \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount pf:\ifpagefull true\else false\fi}%
   % Check if the run failed (or didn't even run), and update page if that's 
