@@ -47,7 +47,7 @@ if sys.platform in ("win32", "cygwin"):
               + [('{}\\{}.dll'.format(mingwb, x), '.') for x in
                     (anyver('libpoppler-', mingwb), 'libpoppler-glib-8', 'libpoppler-cpp-0', 'libcurl-4',
                      'libnspr4', 'nss3', 'nssutil3', 'libplc4', 'smime3', 'libidn2-0', 'libnghttp2-14', 
-                     'libpsl-5', 'libssh2-1', 'libplds4', 'libunistring-2') if x is not None] 
+                     'libpsl-5', 'libssh2-1', 'libplds4', anyver('libunistring-', mingwb)) if x is not None] 
 #             + [(x,'.') for x in glob('C:\\msys64\\mingw64\\bin\\*.dll')]
 else:
     binaries = []
