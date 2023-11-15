@@ -21,6 +21,7 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 ;PrivilegesRequiredOverridesAllowed=dialog
+DistDir=dist\ptxprint{param:distsubdir|}
 LicenseFile=docs\inno-docs\MIT License.txt
 InfoBeforeFile=docs\inno-docs\ReleaseNotes.txt
 InfoAfterFile=docs\inno-docs\AboutPTXprint.txt
@@ -46,28 +47,28 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Type: filesandordirs; Name: "{app}\xetex"
 
 [Files]
-Source: "dist\ptxprint\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{DistDir}\PTXprint.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{DistDir}\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "python\scripts\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
+Source: "{DistDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
 ; These are the (14) languages that PTXprint's UI is available in:
-Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\hi\*"; DestDir: "{app}\share\locale\hi\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\hu\*"; DestDir: "{app}\share\locale\hu\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\id\*"; DestDir: "{app}\share\locale\id\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\ko\*"; DestDir: "{app}\share\locale\ko\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\my\*"; DestDir: "{app}\share\locale\my\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\pt\*"; DestDir: "{app}\share\locale\pt\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
-Source: "dist\ptxprint\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\es\*"; DestDir: "{app}\share\locale\es\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\fr\*"; DestDir: "{app}\share\locale\fr\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\hi\*"; DestDir: "{app}\share\locale\hi\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\hu\*"; DestDir: "{app}\share\locale\hu\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\id\*"; DestDir: "{app}\share\locale\id\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\ko\*"; DestDir: "{app}\share\locale\ko\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\my\*"; DestDir: "{app}\share\locale\my\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\pt\*"; DestDir: "{app}\share\locale\pt\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\ro\*"; DestDir: "{app}\share\locale\ro\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\ru\*"; DestDir: "{app}\share\locale\ru\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\th\*"; DestDir: "{app}\share\locale\th\"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "{DistDir}\share\locale\zh_CN\*"; DestDir: "{app}\share\locale\zh_CN\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "xetex\*"; DestDir: "{app}\xetex\"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "cache"
 #include "AdwaitaIcons.txt"
-Source: "dist\ptxprint\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
+Source: "{DistDir}\share\icons\Adwaita\index.theme"; DestDir: "{app}\share\icons\Adwaita"
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
