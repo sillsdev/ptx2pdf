@@ -47,9 +47,10 @@ Type: filesandordirs; Name: "{app}\xetex"
 
 [Files]
 Source: dist\ptxprint\PTXprint.exe; DestDir: "{app}"; Flags: ignoreversion
-; Source: "dist\ptxprint{%DISTSUBDIR|}\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}\ptxprint"; Flags: external ignoreversion
+;Source: "dist\ptxprint{%DISTSUBDIR|}\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: external ignoreversion
+Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
 ;Source: "python\scripts\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale"
+Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
 ; These are the (14) languages that PTXprint's UI is available in:
 Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "dist\ptxprint\share\locale\en\*"; DestDir: "{app}\share\locale\en\"; Flags: ignoreversion recursesubdirs createallsubdirs

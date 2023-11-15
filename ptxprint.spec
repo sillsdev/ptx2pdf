@@ -108,6 +108,7 @@ exe1 = EXE(pyz1,
           onefile = False,
           upx_exclude = ['tcl'],
           runtime_tmpdir = None,
+		  contents_directory = '.',
           windowed=True,
           console = False,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
@@ -135,6 +136,7 @@ exe2 = EXE(pyz2,
           onefile = False,
           upx_exclude = ['tcl'],
           runtime_tmpdir = None,
+		  contents_directory = '.',
           windowed=True,
           console = False)
 
