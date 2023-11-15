@@ -48,10 +48,10 @@
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
     \edef\@@firstref{\ifx\@book\empty\else
-      \ifOmitBookRef\else\@book\ \fi
-      \ifOmitChapterNumberRH\else\@chapter\fi
+      \ifOmitBookRef\else\@book\fi
+      \ifOmitChapterNumberRH\else\ \@chapter\fi
       \ifVerseRefs
-        \ifOmitChapterNumberRH\else\cvs@p\fi
+        \ifOmitChapterNumberRH\ \else\cvs@p\fi
         \@verse
       \fi
     \fi}%
@@ -69,7 +69,7 @@
    \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\ \else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
@@ -80,10 +80,10 @@
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
-  \ifOmitBookRef\else\@book\ \fi
+  \ifOmitBookRef\else\@book\fi
   \ifVerseRefs
    \ifOmitChapterNumberRH\else
-    \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
+    \ifx\@chapter\empty\else\ \@chapter\cvs@p\fi\@verse
     \ifx\@book\@@book
      \ifx\@chapter\@@chapter
       \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
@@ -91,13 +91,13 @@
       \ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
      \fi
     \else
-     \ranges@p\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+     \ranges@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\cvs@p\@@verse\fi
     \fi
    \fi
   \else
    \ifOmitChapterNumberRH\else
     \ifx\@chapter\empty\else
-     \@chapter
+     \ \@chapter
      \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
       \setbox0=\hbox{\tracinglostchars=0
       \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%

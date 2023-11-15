@@ -619,9 +619,9 @@ class TexModel:
                         if not self.asBool('document/ifshow1chbooknum') and \
                            self.asBool('document/ifshowchapternums', '%') and \
                            f in oneChbooks:
-                            res.append(r"\OmitChapterNumbertrue")
+                            res.append(r"\OneChapBooktrue")
                             res.extend(self._doptxfile(fname, dname, "\\ptxfile{{{}}}", beforelast))
-                            res.append(r"\OmitChapterNumberfalse")
+                            res.append(r"\OneChapBookfalse")
                         elif self.dict['document/diffcolayout'] and \
                                     f in self.dict['document/diffcolayoutbooks']:
                             cols = self.dict['paper/columns']
@@ -713,7 +713,7 @@ class TexModel:
                             res.append(l.strip().format(diglot=digdict, s_=a, **self.dict))
                 else:
                     res.append(l.rstrip().format(**self.dict))
-        return "\n".join(res).replace("\\OmitChapterNumberfalse\n\\OmitChapterNumbertrue\n","")
+        return "\n".join(res).replace("\\OneChapBookfalse\n\\OneChapBooktrue\n","")
 
     def _doperiph(self, k):
         if self.frontperiphs is None:

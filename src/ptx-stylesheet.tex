@@ -868,7 +868,7 @@
 % Allow "hooking" custom TeX code at the beginning or ending of specific styles.
 % e.g. `\sethook{start}{s1}{-}` put a hyphen at the start of every section heading
 \def\sethook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname #1-#2\endcsname{#3}}
-\def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
+\def\setbookhook#1#2#3{\def\t@mp{#3}\ifx\empty\t@mp\forgethook@xists{book#1}{#2}\else\rememberhook@xists{book#1}{#2}\fi \x@\gdef\csname book#1-#2\endcsname{#3}}
 \def\setbetweenhook#1#2#3{\sethook{between-#1}{#2}{#3}}
 %-csty_sethook
 
@@ -915,6 +915,8 @@
 
 \def\MakeChapterLabel#1#2{#1\ #2}
 \gdef\reference{}%
+
+\newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 
 \newif\ifrotateVerse \rotateVersefalse
 \def\@ddcvhooks{
@@ -1746,12 +1748,25 @@
 % Read the files associated with this book: usfm, adjustment list, picture list
 %+csty_ptxfile_intro
 \def\ptxst@rtp@ge{1}
+
+\def\startOneChapBook{%
+  \global\let\@@@ifOmitChapterNumber=\ifOmitChapterNumber
+  \global\let\@@@ifOmitChapterNumberRH=\ifOmitChapterNumberRH
+  \OmitChapterNumbertrue
+  \OmitChapterNumberRHtrue
+}
+\def\endOneChapBook{%
+  \global\let\ifOmitChapterNumber=\@@@ifOmitChapterNumber
+  \global\let\ifOmitChapterNumberRH=\@@@ifOmitChapterNumberRH
+}
+
 \def\preptxfile{
  \outputpenalty=0
  \saveLRspecificOrig%This becomes a \relax after first use. Always call it.
  \kill@PossParamCache
  \global\intr@donefalse
  \xdef\ptxst@rtp@ge{\the\pageno}%
+ \ifOneChapBook\startOneChapBook\fi
  \ifdiglot
     \trace{d}{New ptxfile}%
     \gdef\c@rrdstat{L}%
@@ -1871,6 +1886,7 @@
  \d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \singlecolumn
+ \ifOneChapBook\endOneChapBook\fi
  \trace{oh}{hook for bookend-\id@@@ \ifcsname bookend-\id@@@\endcsname exists \x@\meaning\csname bookend-\id@@@\endcsname\else missing\fi}%
  \ifx\book\relax\else\csname bookend-\id@@@\endcsname\relax\fi
  \trace{oh}{hook for bookend-all \ifcsname bookend-all\endcsname exists \x@\meaning\csname bookend-all\endcsname\else missing\fi}%
