@@ -429,11 +429,21 @@ class PTXPxdviFilter(XDViFilter):
     def xglyphs(self, parm, width, pos, glyphs):
         if not len(self.currdias) and not self.currcolour:
             return (parm, width, pos, glyphs)
+        colours = []
         for i, g in enumerate(glyphs):
             for v in self.currdias.values():
-                if v[0] != self.currfont:
+                if v.font != self.currfont:
                     continue
-                if g in v[2]:
+                if g in v.gids:
+                    colours.append(v.colour)
+                    break
+            else:
+                colours.append(0)
+        gorder = sort(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, colours[i], i))
+        if colours[gorder[-1]] == self.currcolour:
+            return (parm, width, pos, glyphs)
+        for grange in groupby(gorder, key=lambda x:colours[x]):
+            # colour groupings
                     
         
 

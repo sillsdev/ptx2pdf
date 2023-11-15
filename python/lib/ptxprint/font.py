@@ -846,9 +846,9 @@ class TTFont:
         res = gids[:]
         b = self.ttfont.getBestCmap()
         if b is not None and len(unis):
-            res.extend([b.cmap[u] for u in unis]
+            res.extend([b.cmap[u] for u in unis])
         if len(gnames):
-            res.extend([self.ttfont.getGlyphID(n) for n in gnames)
+            res.extend([self.ttfont.getGlyphID(n) for n in gnames])
         return res
 
 
