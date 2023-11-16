@@ -321,7 +321,7 @@ There are two sorts of paragraphed footnotes, old-style and new-style. As they p
 * `\fp` behaviour: with new style notes, this starts produces a new paragraph, indented by the note-style's *first line indent*.  In old style notes, this causes a medium-long, possibly very long space.
 * Footnote  validation. Old style paragraphed notes are incompatible with the technique used to write `\@noteid` entries into the `.parlocs` file, which are then used to verify that a footnote caller and footnote text are on the correct page. 
 * Control over various spaces (the defaults provide the closest results to old-style paragraph notes):
-    - `\ifparnoteskillprevdepth` (true) Kern away (kill) the glyph/font depth of earlier footnotes is removed, via TeX's internal `\prevdepth` value
+    - `\ifparnoteskillprevdepth` (true) Kern away (kill) the glyph/font depth of earlier footnotes, via TeX's internal `\prevdepth` value
     -  `\fparnoteskilldepth` (false) Kern away (kill) the glyph/font depth of each footnote as it is added. If true this positions the bottom note's baseline on the margin.
     - `\ifparnotesruletopskip` (false) If true, the footnote rule is positioned relative to the hypothetical baseline above the topmost footnote, rather than relative to the glyph/font height.
     - `\ifparnotesmidtopskip` (true) If true, then the hypothetical baseline above the topmost entry in a given style is used as the basis for the vertical `\InterNoteSpace`, rather than the glyph/font height
