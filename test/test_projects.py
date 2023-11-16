@@ -22,7 +22,7 @@ def quote(path):
     else:
         return path
     
-if sys.platform == "win32":
+if False and sys.platform == "win32":
     import winreg
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
