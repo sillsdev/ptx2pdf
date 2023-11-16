@@ -31,16 +31,15 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 </fontconfig>
 """
 
-def writefontsconf(extras, archivedir=None):
+def writefontsconf(extras, archivedir=None, testsuite=None):
     inf = {}
-    notpytest=1 # Set to 0 to avoid font-related xfails on  pytest (we hope)
     dirs = []
     if sys.platform.startswith("win") or archivedir is not None:
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
         dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
     if archivedir is not None or not sys.platform.startswith("win"):
-        if (notpytest):
+        if (not testsuite):
           dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
     dirs.append("../../../shared/fonts")
@@ -49,10 +48,10 @@ def writefontsconf(extras, archivedir=None):
         logger.debug(f'{fdir=}')
         if hasattr(sys, '_MEIPASS'):
             logger.debug(f'{sys._MEIPASS=}')
-        if notpytest:
-          testlist=[['fonts'], ['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]
-        else:
+        if testsuite:
           testlist=[]
+        else:
+          testlist=[['fonts'], ['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]
         for a in testlist:
             fpath = os.path.join(fdir, *a)
             if os.path.exists(fpath):
@@ -69,10 +68,10 @@ def writefontsconf(extras, archivedir=None):
                 dirs.append(abse)
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
-    if notpytest:
-      res = fontconfig_template.format(**inf)
-    else:
+    if testsuite:
       res = fontconfig_template_nofc.format(**inf)
+    else:
+      res = fontconfig_template.format(**inf)
     if archivedir is not None:
         return res
     else:

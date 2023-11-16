@@ -71,7 +71,8 @@ parser.add_argument('--logfile',default='ptxprint.log',help='Set logging file [p
 parser.add_argument('--timeout',default=1200,type=int,help='xetex runtime timeout')
 parser.add_argument('-T','--testing',action='store_true',help="Run in testing, output xdv")
 parser.add_argument('-f','--fontpath',action='append',help="Directory of fonts to include (repeatable)")
-parser.add_argument('--nofontcache',action="store_true",help="Don't use system fonts")
+parser.add_argument('--nofontcache',action="store_true",help="Don't update list of system fonts")
+parser.add_argument('--testsuite',action="store_true",help="Only use fonts from project and testsuite")
 parser.add_argument('-A','--action',help="Run view method instead of print")
 parser.add_argument('-F','--difffile',help='Create difference PDF against PDF file'),
 parser.add_argument('--diffpages',type=int,default=0,help="Maximum number of pages to insert in diff file")
@@ -128,7 +129,7 @@ if log is not None and getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'
 from ptxprint.utils import _, setup_i18n, get_ptsettings, pt_bindir, putenv
 from ptxprint.font import initFontCache, cachepath, writefontsconf
 
-fontconfig_path = writefontsconf(args.fontpath)
+fontconfig_path = writefontsconf(args.fontpath,testsuite=args.testsuite)
 putenv("FONTCONFIG_FILE", fontconfig_path)
 if not args.print and not args.action:
     from ptxprint.gtkview import GtkViewModel, getPTDir, reset_gtk_direction
