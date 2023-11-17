@@ -326,25 +326,25 @@
           "Type": "comment#",
           "Label": "Insert line break within Intro Outline",
           "Description": "Within the \\io1 line, break the line between 'some' and 'words'.",
-          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\LINESEP words'"
+          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\\\LINESEP words'"
         },
         {
           "Type": "comment#",
           "Label": "Insert a rule before \\c 1 starts",
           "Description": "Insert a rule after the intro (for all books)",
-          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
           "Label": "Insert a shorter rule before any chapter starts",
           "Description": "Insert a shorter and thinner rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|width=\".3\" thick=\".5pt\"\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|width=\".3\" thick=\".5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
           "Label": "Insert an ornamental rule before any chapter starts",
           "Description": "Insert an ornamental rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -362,7 +362,7 @@
           "Type": "comment#",
           "Label": "Insert book separator pages",
           "Description": "Insert book separator pages using heading information",
-          "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\*\\4\\\\pb\\4\\5'"
+          "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\\\*\\4\\\\pb\\4\\5'"
         }
       ],
       "Format": [
@@ -376,7 +376,7 @@
           "Type": "comment#",
           "Label": "Allow linebreaks after in-word hyphens",
           "Description": "This will insert a zero-width space after in-word hyphens allowing the line to break there if needed.",
-          "CodeSnippet": "'(?<=\\s[^\\]*\\D)-(?=\\D)' > '-\\u200B'"
+          "CodeSnippet": "'(?<=\\s[^\\\\]*\\D)-(?=\\D)' > '-\\u200B'"
         },
         {
           "Type": "comment#",
@@ -432,7 +432,7 @@
           "Type": "comment#",
           "Label": "Change spaces before final punctuation into no-break narrow space",
           "Description": "To prevent sentence-final punctuation dropping onto the next line as an orphan, use a no-break narro space instead.",
-          "CodeSnippet": "'\\s([\\u0964\\u0965৿௿۔。·׃ฃ])'   >   '\\202f\\1'"
+          "CodeSnippet": "'\\s([\\u0964\\u0965৿௿۔。·׃ฃ])'   >   '\\u202F\\1'"
         }
       ],
       "Other": [
