@@ -9,7 +9,6 @@
 AppId={{8C357785-AE61-4E0E-80BE-C537715D914B}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
-;AppVerName={#MyAppName} {#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
@@ -40,16 +39,13 @@ Name: "russian";    MessagesFile: "compiler:Languages\Russian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-;libcrypto-1_1-x64.dll,librsvg-2-2.dll,
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}\xetex"
 
 [Files]
 Source: dist\ptxprint\PTXprint.exe; DestDir: "{app}"; Flags: ignoreversion
-;Source: "dist\ptxprint{%DISTSUBDIR|}\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: external ignoreversion
 Source: "dist\ptxprint\ptxprint\gspawn-win64-helper.exe"; DestDir: "{app}"; Flags: ignoreversion
-;Source: "python\scripts\diglotMerge.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "dist\ptxprint\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: "icons,locale,gspawn-win64-helper.exe"
 ; These are the (14) languages that PTXprint's UI is available in:
 Source: "dist\ptxprint\share\locale\ar\*"; DestDir: "{app}\share\locale\ar\"; Flags: ignoreversion recursesubdirs createallsubdirs

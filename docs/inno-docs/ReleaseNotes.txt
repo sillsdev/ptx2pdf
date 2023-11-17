@@ -1,8 +1,26 @@
 PTXprint 2.4.3 Release Notes
-14 Nov 2023
+17 Nov 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.4.4 (17 Nov 2023)
+
+  * Fix @ issues with hyphenation and default texpert hacks values
+
+  * Implement @diglot@pagebreak (correct paragraph break behaviour for diglots)
+
+  * Document new paragraphed notes controls
+
+  * create xdv filter, seems to do unity transfer atm
+
+  * Improve logic on ommitting chapter numbers
+
+  * Ammend standard test results with running header fix
+
+  * Get new pyintaller and innosetup to work again ;;; _internal
+
+  * Get pytest to work on MSYS2 (remove option to run on Win)
 
 Bug fixes and Improvements in 2.4.3 (14 Nov 2023)
 
