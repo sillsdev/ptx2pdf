@@ -6,7 +6,7 @@ from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
 from collections import namedtuple
-from filelock import FileLock
+# from filelock import FileLock
 
 def w2u(path, endwithslash=True):
     """Windows to Unix filepath converter"""
