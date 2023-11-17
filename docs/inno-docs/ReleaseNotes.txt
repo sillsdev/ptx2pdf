@@ -21,6 +21,14 @@ Bug fixes and Improvements in 2.4.4 (17 Nov 2023)
   * Get new pyintaller and innosetup to work again ;;; _internal
 
   * Get pytest to work on MSYS2 (remove option to run on Win)
+  
+  * refactor xdv stuff
+  
+  * Update Crowdin localization
+  
+  * Document and illustrate most of the new footnote options
+  
+  * Tidy up code snippets for changes, getting \ correct
 
 Bug fixes and Improvements in 2.4.3 (14 Nov 2023)
 
