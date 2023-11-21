@@ -76,6 +76,7 @@
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
+ \tracingassigns=1
  \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi\fi
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
@@ -95,20 +96,30 @@
     \fi
    \fi
   \else
-   \ifOmitChapterNumberRH\else
-    \ifx\@chapter\empty\else
-     \ \@chapter
-     \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
-      \setbox0=\hbox{\tracinglostchars=0
-      \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
-      \advance\c@untA by 1
-      \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
-      \@@chapter
-     \fi\fi
+   \ifx\@book\@@book
+    \ifOmitChapterNumberRH\else
+     \ifx\@chapter\empty\else
+      \ \@chapter
+      \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
+       \setbox0=\hbox{\tracinglostchars=0
+       \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
+       \advance\c@untA by 1
+       \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+       \@@chapter
+      \fi\fi
+     \fi
+    \fi
+   \else
+    \ifOmitChapterNumberRH
+      \ranges@p \@@book
+    \else
+      \ \@chapter \ranges@p \@@book \ \@@chapter
     \fi
    \fi
   \fi
- \fi}
+ \fi
+ \tracingassigns=0
+}
 \newcount\c@untA \newcount\c@untB
 
 %
@@ -163,7 +174,7 @@
 \headline={\hbox to \textwidth{%
  \mcpush{P}{h}%
  \s@tfont{h}{h}%
- \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
+ \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark -> \p@gebotmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
  \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
