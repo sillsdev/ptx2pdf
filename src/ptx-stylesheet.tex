@@ -680,10 +680,10 @@
         \trace{sa}{Exact font features #2}%
         \ifx\f@atureset\cstackempty\else
           \trace{sa}{Deleting prior features \f@atureset}%
-          \tracingassigns=1
+          %\tracingassigns=1
           \def\d@##1\E{\x@\let\csname ##1\endcsname\undefined}%
           \x@\cstackdown \f@atureset,\E
-          \tracingassigns=0
+          %\tracingassigns=0
           \let\d@\addf@ature
           \let\f@atureset\cstackempty
         \fi

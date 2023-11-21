@@ -99,9 +99,11 @@ class PTXPxdviFilter(XDViFilter):
         gorder = sort(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, -colours[i], i))
         if colours[gorder[-1]] == self.currcolour:
             return (parm, width, pos, glyphs)
-        for grange in groupby(gorder, key=lambda x:colours[x]):
-            # colour groupings
-                    
+        res = []
+        for col, grange in groupby(gorder, key=lambda x:colours[x]):
+            if len(res):
+                self.setColour(col)
+            
         
 
 

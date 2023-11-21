@@ -1686,7 +1686,7 @@
     %\advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \dimen0=\colhtB \advance\dimen0 by -\colhtA
     \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
-    \ifdim\dimen0>5\baselineskip
+    \ifdim\dimen0 > 5 \baselineskip
       \shortavail=\colhtA \advance\shortavail\colhtB
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \trace{o}{Rebalance trying from average difference \the\shortavail\space of
@@ -1709,7 +1709,7 @@
     \ifunbalanced\shortavail=\availht\else\rebalancetrue\fi
     \ifColNotes\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax\fi\fi % pass back whether there are end col notes
     \advance\shortavail \baselineskip % anticipate gap reduction at start of rebalance loop
-    \dimen9=\BalanceThreshold\baselineskip \advance\dimen9 0.5\baselineskip
+    \dimen9=\BalanceThreshold\baselineskip \advance\dimen9 0.5 \baselineskip
 %-c_balanced_intro
 %+c_balanced_loop
     \loopcount=0
@@ -1735,7 +1735,7 @@
             \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
             \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
             \ifdim\dimen0<\b@lbestdiff \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail \fi
-            \ifdim\dimen0<0.5\baselineskip \rebalancefalse\fi
+            \ifdim\dimen0<0.5 \baselineskip \rebalancefalse\fi
           \else\rebalancefalse\fi \else\rebalancefalse\fi
         \fi
 		% give up if target size less than 2 lines (should not happen)
