@@ -1899,10 +1899,19 @@
  \ifd@nesw@p\else\singlecolumn \fi% must come after bookend-final, as that might include 2col content (as long as .
  \bookendpagebreak
  \global\output={\onecol}
- \ifendbooknoeject\else\trace{o}{end of book eject with \the\ht\partial \space used}\ifdim\ht\partial>0pt \noindent\eject\fi
- \iflastptxfile\closepiclist\fi
- \closeadjlist
- \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse\fi
+ \trace{o}{end of book eject with \the\ht\partial \space used}
+ \ifendbooknoeject\iflastptxfile
+    \iflastbooknoeject\else
+      \trace{o}{forcing pagebreak as this is the last file}%
+      \noindent\eject
+    \fi
+ \fi\fi
+ \ifendbooknoeject\else
+  \ifdim\ht\partial>0pt \noindent\eject\fi
+  \iflastptxfile\closepiclist\fi
+  \closeadjlist
+   \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
+ \fi
 }
 %-csty_ptxfile_end
 \newread\t@stread

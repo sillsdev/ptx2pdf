@@ -34,6 +34,7 @@ texpertOptions = {
     # "AttrMilestoneMatchesUnattr": ["attrmsmatchunattr", False, "", _("Apply Underlying Attributes to Milestones"), _("Should styling specified for a milestone without an attribute be applied to a milestones with an attribute? If true, then styling specified for an e.g. \qt-s\* is also applied to \qt-s|Pilate\*.")],
     "CalcChapSize":       ["calcchapsize", True, "", _("Auto Calc Optimum Chapter Size"), _("Attempt to automatically calculate drop chapter number size")],
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
+    "lastbooknoeject":          ["lastnoeject", False, "", _("Suppress pagebreak after bookend-final"), _("Revert to old behaviour of not ensuring that the whole of the last book is output before back-matter PDFs")],
     # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
     "pretolerance":       ["pretolerance", (100, -1, 10000, 10, 100), "{0}={1}", _("Hyphenation threshold"), _("Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate")],
     "hyphenpenalty":      ["hyphenpenalty", (50, -9999, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],

@@ -74,7 +74,7 @@
 \newtoks\st@rtptxhooks
 \newtoks\@ndptxhooks
 \let\s@ve@nd=\end
-\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject  \the\@ndhooks \s@ve@nd}
+\def\end{\ifsk@pping\egroup\fi\par\vfill\supereject\ifvoid\partial\else\box\partial\eject\fi \the\@ndhooks \s@ve@nd}
 
 %: `\addtoinithooks` is for stuff we do during one-time-setup before the first PTX file
 \def\addtoinithooks#1{\x@\global\x@\@nithooks\x@{\the\@nithooks #1}}
@@ -2529,6 +2529,7 @@
 \newcount\totalp@ges % Page count for this entire job, (excluding cover)
 \totalp@ges=0
 \newif\ifendbooknoeject \endbooknoejectfalse
+\newif\iflastbooknoeject \lastbooknoejectfalse
 \def\pagebreak{\leavevmode\message{pagebreak}\ifhmode\par\fi
   \ifsk@pping \egroup \fi%
   \ifhe@dings\endhe@dings\fi%
