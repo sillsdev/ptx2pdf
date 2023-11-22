@@ -1685,8 +1685,8 @@
     %\ifColNotes\advance\shortavail by -\ht\coln@tebox\fi
     %\advance\shortavail by \colhtA \advance\shortavail by -\ht\colA
     \dimen0=\colhtB \advance\dimen0 by -\colhtA
-    \ifdim\dimen0<0pt \dimen0=-\dimen0\fi
-    \ifdim\dimen0 > 5 \baselineskip
+    \ifdim\dimen0<0pt \dimen0=-\dimen0\fi\relax
+    \ifdim\dimen0>5\baselineskip
       \shortavail=\colhtA \advance\shortavail\colhtB
       \divide\shortavail 2% \advance\shortavail by -0.5\ht\colA \advance\shortavail by -0.5\ht\colB
       \trace{o}{Rebalance trying from average difference \the\shortavail\space of
