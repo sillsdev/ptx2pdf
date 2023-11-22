@@ -12,24 +12,24 @@
 \esbe
 \EndTrigger
 
-\AddTrigger MRK1.15-preverse
+\AddTrigger MRK1.10-preverse
 \esb\cat inline2\cat*
 \s1 Sidebar \csname c@tegory\endcsname
-\p This sidebar is inserted before v15 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip
+\p This sidebar is inserted before v10 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip
 \esbe
 \EndTrigger
 
-\AddTrigger MRK1.20-preverse
+\AddTrigger MRK1.12-preverse
 \esb\cat inline3\cat*
 \s1 Sidebar \csname c@tegory\endcsname
-\p This sidebar is inserted before v20 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip
+\p This sidebar is inserted before v12 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip
 \esbe
 \EndTrigger
 
-\AddTrigger MRK1.22-preverse
+\AddTrigger MRK1.23-preverse
 \esb\cat inline4\cat*
 \s1 Sidebar \csname c@tegory\endcsname
-\p This sidebar is inserted before v22 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip, with a border.
+\p This sidebar is inserted before v23 (mid paragraph), gridding "\csname sb@rgrid\endcsname", baseline \the\baselineskip, with a border.
 \esbe
 \EndTrigger
 
