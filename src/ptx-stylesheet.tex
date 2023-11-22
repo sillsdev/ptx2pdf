@@ -1283,7 +1283,7 @@
 % This cryptic mess seems to determine if the argument ends up as a  single character when prefixed with \string. control sequences don't do that. #1 must be collected with obeyspaces active.
 \long\def\t@stifcs#1{\ifcat$\expandafter\n@ffin\string#1$\relax \n@tcstrue\else\n@tcsfalse\fi}
 
-\def\endgr@b{\message{grabbed:"\the\gr@btoks"}\egr@bcodes\endgr@@b}
+\def\endgr@b{\trace{H}{grabbed:"\the\gr@btoks"}\egr@bcodes\endgr@@b}
 \def\endgr@@b{\gr@bbedspacefalse\x@\aftergr@b\x@{\the\gr@btoks}}
 \begingroup
 \obeylines%
