@@ -1588,7 +1588,7 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi}%
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi, d@nesw@p\ifd@nesw@p true\else false\fi endbooknoeject\ifendbooknoeject true\else false\fi}%
   \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}}%
   \global\output={\onecol}%
   \global\holdinginserts=1
@@ -1600,12 +1600,16 @@
   \ifd@nesw@p\else
     \d@nesw@ptrue % signal to caller that this has been run
     \iftob@dy\else\ifdim\ht\partial>\baselineskip% \vbox{\unvbox\partial}%
-      \ifx\p@gefirstmark\t@tle\else
+      %\ifx\p@gefirstmark\t@tle\else
         \iflastptxfile
           \lastbookendrule
         \else
-          \ifendbooknoeject\bookendrule\fi
-      \fi\fi
+          \ifendbooknoeject
+            \trace{o}{bookendrule}%
+            \bookendrule
+          \fi
+      %\fi
+      \fi
     \fi\fi
   \fi
   %\ifnum\pageno>10\tracingmacros=1\tracingassigns=1\fi
