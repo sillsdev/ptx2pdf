@@ -60,7 +60,7 @@ opcodes += [
     ("font", [3], None),
     ("font", [4], None),
     ("xxx", [1], None),
-    ("xxx", [2], None),
+    ("xxx", [2], None),     # code 240
     ("xxx", [3], None),
     ("xxx", [4], None),
     ("fontdef", [1, 4, 4, 4, 1, 1], None),
@@ -284,6 +284,14 @@ class XDViWriter:
 
     def xxx(self, opcode, txt):
         data = txt.encode("utf-8")
+        if len(data) < 0x100:
+            opcode = 239
+        elif len(data) < 0x10000:
+            opcode = 240
+        elif len(data) < 0x1000000:
+            opcode = 241
+        else:
+            opcode = 242
         self.outop(opcode, [len(data)])
         self.outbytes(data)
 
@@ -320,8 +328,8 @@ class XDViWriter:
         if flags & 0x4000:
             self.outval(4, font.embolden)
 
-    def xglyphs(self, opcode, parm, width, pos, glyphs):
-        self.outopcode(opcode)
+    def xglyphs(self, parm, width, pos, glyphs):
+        self.outopcode(253 if parm else 254)
         self.outval(4, width)
         slen = len(glyphs)
         self.outval(2, slen, uint=True)
@@ -342,7 +350,7 @@ class XDViFilter:
         for (opcode, data) in self.rdr.parse():
             opc = opcodes[opcode]
             if hasattr(self, opc[0]):
-                data = getattr(self, opc[0])(opcode, data)
+                data = getattr(self, opc[0])(opcode, *data)
                 if data is None:            # allow filter to stop output for this op
                     continue
             getattr(self.wrtr, opc[0])(opcode, *data)

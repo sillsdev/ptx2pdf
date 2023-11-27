@@ -30,15 +30,19 @@ class PTXPxdviFilter(XDViFilter):
         self.alldias = {}
         self.currdias = {}
         self.currfont = -1
-        self.currcolour = 0
+        self.currcolour = [0]
 
     def font(self, opcode, fontnum)
         self.currfont = fontnum
         return [fontnum]
 
     def getfont(self, k):
-        # Get a ptxprint.font.TTFont for the given font id
-        pass
+        f = self.fonts[k]
+        res = getattr(f, 'ttfont', None):
+        if res is None:
+            res = TTFont(None, style=None, filename=f.name)
+            f.ttfont = res
+        return res
 
     def xxx(self, opcode, txt):
         txt = txt.strip()
@@ -83,8 +87,24 @@ class PTXPxdviFilter(XDViFilter):
                 del self.currdias[did]
             return None
 
-    def xglyphs(self, parm, width, pos, glyphs):
-        if not len(self.currdias) and not self.currcolour:
+    def _setColour(self, col):
+        if col == self.currcolour:
+            return
+        txts = []
+        if self.currcolour != [0]:
+            txts.append("color pop")
+        if col != 0:
+            if len(col) == 3:
+                txts.append("rgb {0} {1} {2}".format(*col)
+            elif len(col) == 4:
+                txts.append("cmyk {0} {1} {2} {3}".format(*col)
+        for t in txts:
+            self.wrtr.xxx(0, t)
+        self.currcolour = col
+        
+
+    def xglyphs(self, opcode, parm, width, pos, glyphs):
+        if not len(self.currdias) and self.currcolour == [0]:
             return (parm, width, pos, glyphs)
         colours = []
         for i, g in enumerate(glyphs):
@@ -95,14 +115,19 @@ class PTXPxdviFilter(XDViFilter):
                     colours.append(v.colour)
                     break
             else:
-                colours.append(0)
+                colours.append([0])
         gorder = sort(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, -colours[i], i))
         if colours[gorder[-1]] == self.currcolour:
             return (parm, width, pos, glyphs)
         res = []
-        for col, grange in groupby(gorder, key=lambda x:colours[x]):
-            if len(res):
-                self.setColour(col)
+        groups = list(groupby(gorder, key=lambda x:colours[x]))
+        for i, (col, grange) in enumerate(groups):
+            self._setColour(col)
+            poso = [pos[j] for j in grange]
+            glypho = [glyphs[j] for j in grange]
+            self.wrtr(opcode, parm, width if i == len(groups) - 1 else 0, poso, glypho)
+        return None
+            
             
         
 
