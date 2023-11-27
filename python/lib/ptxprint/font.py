@@ -7,6 +7,7 @@ from threading import Thread
 import logging
 
 logger = logging.getLogger(__name__)
+debug = os.getenv("PTXPRINTBADFONTS", default=False)
 
 fontconfig_template = """<?xml version="1.0"?>
 <fontconfig>
@@ -1204,7 +1205,7 @@ class FontRef:
 
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
-        res = "{}{} {}".format("", fb, self._getstyle())
+        res = "{}{} {}".format(self.name if not debug else "", fb, self._getstyle())
         return res + (" "+size if size is not None else "")
 
     
