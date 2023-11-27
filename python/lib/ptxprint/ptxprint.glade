@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.38.2 
+<!-- Generated with glade 3.40.0 
 
 The MIT License (MIT)
 
@@ -25083,13 +25083,13 @@ text in the PDF which is a good practice
 for final print and long-term archiving.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
-                                <property name="margin-start">12</property>
+                                <property name="margin-start">55</property>
                                 <property name="draw-indicator">True</property>
                               </object>
                               <packing>
-                                <property name="left-attach">3</property>
+                                <property name="left-attach">5</property>
                                 <property name="top-attach">2</property>
-                                <property name="width">2</property>
+                                <property name="width">3</property>
                               </packing>
                             </child>
                             <child>
@@ -25215,13 +25215,25 @@ Note that the cover is always extracted.</property>
                               </packing>
                             </child>
                             <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
-                            </child>
-                            <child>
-                              <placeholder/>
+                              <object class="GtkCheckButton" id="c_extraxdvproc">
+                                <property name="label" translatable="yes">Extra XDV Processing</property>
+                                <property name="name">Extra XDV processing (before creating final PDF)</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Enable processing of the intermediate xdv
+file for such things as coloured diacritics.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">12</property>
+                                <property name="margin-start">12</property>
+                                <property name="draw-indicator">True</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">3</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
                             <child>
                               <placeholder/>

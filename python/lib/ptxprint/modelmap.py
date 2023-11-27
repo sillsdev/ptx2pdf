@@ -309,6 +309,7 @@ _map = {
     "finishing/foldcutmargin":  ("s_foldCutMargin", "finish", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", "finish", None),
     "finishing/extractinserts": ("c_extractInserts", "finish", None),
+    "finishing/extraxdvproc":   ("c_extraxdvproc", "finish", None),
     "finishing/spotcolor":      ("col_spotColor", "finish", None),
     "finishing/spottolerance":  ("s_spotColorTolerance", "finish", None),
     # The next line is redundant (I think) - check and remove
