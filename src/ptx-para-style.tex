@@ -680,6 +680,7 @@
 \def\preservesettings{\let\epch@rstyle\newch@rstyle}
 \def\restoresettings{\let\newch@rstyle\epch@rstyle}
 \def\ch@pterc@tnum{}
+
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
@@ -781,6 +782,7 @@
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
      \dr@ppednumberfalse
+     \trace{hv}{Setting new chapter spacefactor (ep1)}%
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi\fi
@@ -804,7 +806,8 @@
    \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
    \tmpn@xtparstart
    \op@ninghooks{start}{\m@rker}{\styst@k}%handle <start> hook
-   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
+   \ifdr@ppednumber \trace{hv}{Setting new chapter spacefactor (ep2)}%
+     \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
    \startparafalse\first@fterheadingfalse
   }% end everypar
@@ -823,7 +826,6 @@
 \dr@ppedotherfalse
 \newif\ifIndentAtChapter
 \newif\ifIndentAfterHeading \IndentAfterHeadingtrue
-\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \newif\ifOmitVerses \OmitVersesfalse
 \newif\ifDropActions \DropActionsfalse
 \def\n@wchaptersf{998}

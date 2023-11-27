@@ -917,6 +917,8 @@
 \gdef\reference{}%
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
+\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
+\newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
 
 \newif\ifrotateVerse \rotateVersefalse
 \def\@ddcvhooks{
@@ -955,7 +957,7 @@
   % to insert chapter:verse in footnotes.
   \gdef\reference{\ch@pter:\v@rse}%
   \ifhangingverse
-    \trace{hv}{Hanging verse \reference}%
+    \trace{hv}{End of hanging verse \reference }%
     \hangingversefalse
   \fi
   \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
@@ -977,7 +979,8 @@
   % and the user has requested omission of the first verse number in a chapter
   \c@ncelfirstversefalse
   \dimen0=\lastkern
-  \ifnum\spacefactor=\n@wchaptersf \kern0sp % override \hangversenumber here
+  {\count1=\spacefactor\trace{hv}{spacefactor:\the\count1 NoHV1:\ifNoHangVerseNumberOne true\else \false\fi}}%
+  \ifnum\spacefactor=\n@wchaptersf \ifNoHangVerseNumberOne \kern0sp \hangingversefalse\fi\relax % override \hangversenumber here
    \ifOmitVerseNumberOne \ifdr@ppednumber\c@ncelfirstversetrue % v1
                          \else\ifhangingverse\c@ncelfirstversetrue\fi\fi % hanging on cutout 2nd par
   \fi\fi
@@ -1036,6 +1039,8 @@
        \trace{c}{Chapter label in use: \ch@pl@bel \ch@pter}%
        \dop@rstyle{cl}\MakeChapterLabel{\ch@pl@bel}{\ch@pter}%
        \pdfb@@kmark \pdfch@ptermark
+       \trace{hv}{Setting new chapter spacefactor (chapterlabel)}%
+       \spacefactor=\n@wchaptersf % prevent hanging verse number here
      \fi
    \fi}
  %
@@ -1156,7 +1161,7 @@
 \newif\ifc@ncelfirstverse
 \catcode`\~=12 \lccode`\~=32 \lowercase{\gdef\cstyle#1#2{\ch@rstylepls{#1}~#2\ch@rstylepls{#1}*}}
 
-\def\simpleprintv@rse{\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit}
+\def\simpleprintv@rse{\trace{v}{simpleprintv@rse}\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit}
 \newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
 \newif\ifadorningrange
 
@@ -1176,7 +1181,7 @@
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
     \else {\s@tsideskips{v} \h@ngprintv@rse{0}}\box0\kern\AfterVerseSpaceFactor\FontSizeUnit\fi
 }
-\def\hangprintverse{\llap\defaultprintverse}
+\def\hangprintverse{\trace{hv}{hangprintverse  \v@rse}\llap\defaultprintverse}
 \def\adornv#1{\AdornVerseNumber{#1}}
 \def\ssf{\SuperscriptFactor}
 \def\h@ngprintv@rse#1{%
@@ -1188,7 +1193,7 @@
                                  \vbox{\hbox to \wd1{\hskip\leftskip\cstyle{v}{\adornv{\v@rsefrom}}\hskip\rightskip}%
                                        %\kern\dimen0
                                         \box1}}}}%
-    \trace{v}{hangprintverse height=\the\ht#1, width=\the\wd#1}}
+    \trace{v}{h@ngprintverse height=\the\ht#1, width=\the\wd#1}}
 \let\defaultprintverse=\simpleprintv@rse
 \let\printverse=\defaultprintverse                                               %(1)
 \def\@ne{1}
