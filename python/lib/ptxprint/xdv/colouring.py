@@ -2,7 +2,7 @@
 
 from collections import namedtuple
 from ptxprint.font import TTFont
-from ptxprint.xdv.xdv import XDViFilter
+from ptxprint.xdv.xdv import XDViReader, XDViWriter, XDViFilter
 from itertools import groupby
 
 class DiaSet:
@@ -32,13 +32,13 @@ class PTXPxdviFilter(XDViFilter):
         self.currfont = -1
         self.currcolour = [0]
 
-    def font(self, opcode, fontnum)
+    def font(self, opcode, fontnum):
         self.currfont = fontnum
         return [fontnum]
 
     def getfont(self, k):
-        f = self.fonts[k]
-        res = getattr(f, 'ttfont', None):
+        f = self.rdr.fonts[k]
+        res = getattr(f, 'ttfont', None)
         if res is None:
             res = TTFont(None, style=None, filename=f.name)
             f.ttfont = res
@@ -51,10 +51,10 @@ class PTXPxdviFilter(XDViFilter):
         bits = txt.split(" ")
         if bits[0].lower() == "ptxp:diadeclare":
             if bits[2] == "rgb":
-                dia = DiaSet(" ".join(bits[1:5]))
+                diaset = DiaSet(bits[2:6])
                 start = 6
-            if bits[2] == "cmyk":
-                dia = DiaSet(" ".join(bits[1:6]))
+            elif bits[2] == "cmyk":
+                diaset = DiaSet(bits[2:7])
                 start = 7
             for i in range(start, len(bits)):
                 if bits[i].lower().startswith("u+"):
@@ -62,7 +62,7 @@ class PTXPxdviFilter(XDViFilter):
                     continue
                 try:
                     gid = int(bits[i])
-                except ValueError, TypeError:
+                except (ValueError, TypeError):
                     gid = None
                 if gid is not None:
                     diaset.addgid(gid)
@@ -93,11 +93,8 @@ class PTXPxdviFilter(XDViFilter):
         txts = []
         if self.currcolour != [0]:
             txts.append("color pop")
-        if col != 0:
-            if len(col) == 3:
-                txts.append("rgb {0} {1} {2}".format(*col)
-            elif len(col) == 4:
-                txts.append("cmyk {0} {1} {2} {3}".format(*col)
+        if col != [0]:
+            txts.append("color push " + " ".join(col))
         for t in txts:
             self.wrtr.xxx(0, t)
         self.currcolour = col
@@ -116,19 +113,29 @@ class PTXPxdviFilter(XDViFilter):
                     break
             else:
                 colours.append([0])
-        gorder = sort(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, -colours[i], i))
-        if colours[gorder[-1]] == self.currcolour:
+        gorder = sorted(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, colours[i], i))
+        if colours[gorder[0]] == self.currcolour:
             return (parm, width, pos, glyphs)
         res = []
-        groups = list(groupby(gorder, key=lambda x:colours[x]))
+        groups = [(a[0], list(a[1])) for a in groupby(gorder, key=lambda x:colours[x])]
         for i, (col, grange) in enumerate(groups):
+            ids = list(grange)
             self._setColour(col)
             poso = [pos[j] for j in grange]
             glypho = [glyphs[j] for j in grange]
-            self.wrtr(opcode, parm, width if i == len(groups) - 1 else 0, poso, glypho)
+            self.wrtr.xglyphs(opcode, parm, width if i == len(groups) - 1 else 0, poso, glypho)
         return None
-            
-            
-        
 
+def main():
+    import sys
 
+    if len(sys.argv) < 3:
+        print ("xdv.py infile outfile\nDoes full copy to an identical file")
+    reader = XDViReader(sys.argv[1])
+    writer = XDViWriter(sys.argv[2])
+    filt = PTXPxdviFilter(reader, writer)
+    filt.process()
+    writer.finish()
+
+if __name__ == "__main__":
+    main()

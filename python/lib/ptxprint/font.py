@@ -832,22 +832,26 @@ class TTFont:
         if self.ttfont is None:
             self.ttfont = ttLib.TTFont(self.filename)
 
-    def testcmap(self, chars):
+    def _getcmap(self):
         self.loadttfont()
         try:
             cmap = self.ttfont['cmap']
         except KeyError:
             return []
-        b=cmap.getBestCmap()
+        b = cmap.getBestCmap()
+        return b
+
+    def testcmap(self, chars):
+        b = self._getcmap()
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
 
     def getgids(self, unis, gnames, gids):
-        res = gids[:]
-        b = self.ttfont.getBestCmap()
+        res = set(gids)
+        b = self._getcmap()
         if b is not None and len(unis):
-            res.extend([b.cmap[u] for u in unis])
+            res.update([b[u] for u in unis])
         if len(gnames):
-            res.extend([self.ttfont.getGlyphID(n) for n in gnames])
+            res.update([self.ttfont.getGlyphID(n) for n in gnames])
         return res
 
 
@@ -1200,7 +1204,7 @@ class FontRef:
 
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
-        res = "{}{} {}".format(self.name, fb, self._getstyle())
+        res = "{}{} {}".format("", fb, self._getstyle())
         return res + (" "+size if size is not None else "")
 
     

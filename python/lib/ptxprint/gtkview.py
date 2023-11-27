@@ -2537,12 +2537,13 @@ class GtkViewModel(ViewModel):
         fontr = self.get("bl_fontR", skipmissing=True)
         if fontr is None:
             return
-        fallbacks = ['Empties', 'Sans']
+        fallbacks = ['Droid Sans']
         if self.diglotView is not None:
             digfontr = self.diglotView.get("bl_fontR")
             fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
+        logger.debug(f"{pangostr=}, {p}")
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
                   "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", "scroll_Settings", "scroll_SettingsOld", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \

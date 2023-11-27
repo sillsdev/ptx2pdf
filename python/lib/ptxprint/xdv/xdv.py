@@ -227,6 +227,7 @@ class XDViWriter:
     def __init__(self, fname):
         self.fname = fname
         self.outf = open(fname, "wb")
+        self.lastbop = 0xFFFFFFFF
 
     def outbytes(self, b):
         self.outf.write(b)
@@ -268,6 +269,11 @@ class XDViWriter:
             self.outop(opcode, [char])
 
     def multiparm(self, opcode, parm, *data):
+        if parm == "post":
+            self.postpos = self.outf.tell()
+            data[0][0] = self.lastbop
+        if parm == "postpost":
+            data[0][0] = self.postpos
         self.outop(opcode, data[0])
 
     def parmop(self, opcode, parm, val):
@@ -277,7 +283,10 @@ class XDViWriter:
         self.outop(opcode, [])
 
     def bop(self, opcode, pageno, *data):
-        self.outop(opcode, [pageno] + list(data))
+        res = list(data)
+        res[-1] = self.lastbop
+        self.lastbop = self.outf.tell()
+        self.outop(opcode, [pageno] + res)
 
     def font(self, opcode, fontnum):
         self.outop(opcode, [fontnum])
@@ -328,7 +337,7 @@ class XDViWriter:
         if flags & 0x4000:
             self.outval(4, font.embolden)
 
-    def xglyphs(self, parm, width, pos, glyphs):
+    def xglyphs(self, opcode, parm, width, pos, glyphs):
         self.outopcode(253 if parm else 254)
         self.outval(4, width)
         slen = len(glyphs)
