@@ -21,6 +21,7 @@ from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
+from ptxprint.xdv.colouring import procxdv
 import numpy as np
 from datetime import datetime
 import logging
@@ -847,6 +848,16 @@ class RunJob:
         unlockme()
         return self.res
 
+    def getxdvname(self, texfname, info):
+        if info["finishing/extraxdvproc"]:
+            res = texfname.replace(".tex", "_proc.xdv")
+        else:
+            res = texfname.replace(".tex", ".xdv")
+        return res
+
+    def processxdv(self, inxdv, outxdv, info):
+        procxdv(inxdv, outxdv)
+
     def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
@@ -925,12 +936,14 @@ class RunJob:
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile, info)
+            if info["finishing/extraxdvproc"]:
+                self.processxdv(outfname.replace(".tex", ".xdv"), self.getxdvname(outfname, info), info)
             cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
             #cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
             with open(outfname.replace(".tex", ".xdvi_log"), "w") as outf:
-                runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, stdout=outf, stderr=outf)
+                runner = call(cmd + [self.getxdvname(outfname, info)], cwd=self.tmpdir, stdout=outf, stderr=outf)
             logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")

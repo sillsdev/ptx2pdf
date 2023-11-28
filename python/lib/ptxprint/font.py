@@ -850,9 +850,16 @@ class TTFont:
         res = set(gids)
         b = self._getcmap()
         if b is not None and len(unis):
-            res.update([b[u] for u in unis])
+            uninames = [b.get(u, None) for u in unis]
+            gnames = gnames | set(uninames)
         if len(gnames):
-            res.update([self.ttfont.getGlyphID(n) for n in gnames])
+            for n in gnames:
+                try:
+                    i = self.ttfont.getGlyphID(n)
+                except KeyError:
+                    continue
+                res.add(i)
+        res.discard(None)
         return res
 
 

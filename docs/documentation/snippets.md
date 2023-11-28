@@ -496,6 +496,35 @@ page. The second line puts the normal colophon including code after any included
 \sethook{final}{afterincludes}{\layoutstylebreak\singlecolumn\zcolophon}
 ```
 
+
+## Coloured diacritics
+
+PTXprint includes code to process the generated xdv file between its creation by
+TeX and its being converted into PDF. This allows us to support other
+`\specials`. One such set of specials allows for the colouring of particular
+glyphs in a font. This can be used to colour diacritics, for example.
+
+First, PTXprint needs to be told to turn on the extra xdv processing. Since this
+slows the printing chain, it is worth only enabling it when needed. This is done
+by enabling extra xdv processing on the finishing page. The following snippet
+shows how diacritic colouring might be enabled in verse paragraphs:
+
+```
+\special{ptxp:diadeclare 1 rgb 0.66 0 0 _dot1l _dot1l.small _dot1u _dot1u.small
+_dot1u_smallTah _dot1u_smallV _dot1u_smallV.kf _dot2l _dot2l.small _dot2u
+_dot2u.small _dot2vl _dot2vl.small _dot2vu _dot2vu.small _dot3l _dot3l.small
+_dot3u _dot3u.small _dot3uD _dot3uD.small _dot4l _dot4l.small _dot4u
+_dot4u.small}
+\special{ptxp:diadeclare 2 rgb 0 0.66 0 U+0610 U+0611 U+0612 U_0613 U+0614
+U+0615 U+061B U+061C U+061F U+064B U+064C U+064D U+064E U+064F U+0650 U+0651
+U+0652 U+0653 U+0654 U+0655 U+0656 U+0657 U+0658 U+0659 U+065A U+065B U+065E
+U+065F U+06E0 U+06E1 U+06EA U+06ED absHamzaAbove absHamzaAbove.arabic
+_hehHook.small _hamza.arabic _smallTah}
+\sethook{start}{p}{\special{ptxp:diastart 1}\special{ptxp:diastart 2}}
+\sethook{end}{p}{\special{ptxp:diaend 1}\special{ptxp:diaend 2}}
+```
+
+
 # Python scripts
 The scripts in this section are to demonstrate the kinds of things that are
 possible by calling an external script file (.py) and may be enabled by 

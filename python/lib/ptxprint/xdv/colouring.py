@@ -4,6 +4,9 @@ from collections import namedtuple
 from ptxprint.font import TTFont
 from ptxprint.xdv.xdv import XDViReader, XDViWriter, XDViFilter
 from itertools import groupby
+import logging
+
+logger = logging.getLogger(__name__)
 
 class DiaSet:
     def __init__(self, colour):
@@ -78,6 +81,7 @@ class PTXPxdviFilter(XDViFilter):
                 if font is None or diaset is None:
                     return None
                 gids = font.getgids(diaset.unicodes, diaset.gnames, diaset.gids)
+                logger.debug(f"diastart(f{did}): f{gids=}")
                 self.alldias.setdefault(self.currfont, {})[did] = DiaInstance(self.currfont, diaset.colour, gids)
             self.currdias[did] = self.alldias[self.currfont][did]
             return None
@@ -126,16 +130,19 @@ class PTXPxdviFilter(XDViFilter):
             self.wrtr.xglyphs(opcode, parm, width if i == len(groups) - 1 else 0, poso, glypho)
         return None
 
+def procxdv(inxdv, outxdv):
+    reader = XDViReader(inxdv)
+    writer = XDViWriter(outxdv)
+    filt = PTXPxdviFilter(reader, writer)
+    filt.process()
+    writer.finish()
+
 def main():
     import sys
 
     if len(sys.argv) < 3:
         print ("xdv.py infile outfile\nDoes full copy to an identical file")
-    reader = XDViReader(sys.argv[1])
-    writer = XDViWriter(sys.argv[2])
-    filt = PTXPxdviFilter(reader, writer)
-    filt.process()
-    writer.finish()
+    proc(sys.argv[1], sys.argv[2])
 
 if __name__ == "__main__":
     main()
