@@ -15,6 +15,7 @@ texpertOptions = {
     "IndentAtChapter":    ["chapindent", False, "", _("Allow Indent Para with Cutouts"), _("Allow indented paragraphs at chapter start with cutouts")],
     "IndentAfterHeading": ["afterheadindent", True, "", _("Allow Indent Para After Heading"), _("Allow indented paragraphs following a heading")],
     "NoHangVerseNumberOne": ["nohangvone", True, "", _("Don't hang verse one beside a chapter"), _("Hanging verses into a chapter number can result in clases, depending on the after-chapter space.")],
+    "HangVA":             ["hangva", False, "", _("Alternate verse numbers also hang"), _("If there is an alternative verse and the current verse is hanging, does the alternate hang?")],
     "DropActions":        ["noactions", False, "", _("No PDF Bookmarks"), _("Don’t output PDF bookmarks")],
     "Actions":            ["actions", True, "", _("Allow Active Links in PDF"), _("Make links active inside PDF")],
     "refbookmarks":       ["refbkmks", False, "", _("Use Book Codes in PDF Bookmarks"), _("Use book codes instead of book names in bookmarks")],

@@ -919,18 +919,21 @@
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \newif\ifNoHangVerseNumberOne\NoHangVerseNumberOnetrue
+\newif\ifHangVA\HangVAfalse
 
 \newif\ifrotateVerse \rotateVersefalse
 \def\@ddcvhooks{
  % called after \c and \v have been processed in stylesheet at beginning of typesetting file
  \let\@V=\v% remember \v defn for (A) below
  % Define a macro to read an actual space delimited verse number, and then check if the next token is \vp
- \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\futurelet\mayb@vp\@V@}%
+ \def\@v@ ##1 {\gdef\v@rse{##1}\trace{V}{\c@rrdstat\ch@pter:\v@rse}\ifdiglot\x@\global\x@\let\csname @v@rse\g@tdstat\endcsname\v@rse\fi\global\let\print@bleverse\v@rse\let\altern@teverse\empty\futurelet\mayb@vp\@V@}%
  % If the next token IS vp, then call relevant code to interpret before dropping 
  \def\@V@{%
   \let\nxt\@@V@@
+  \ifhangingverse\ifHangVA\ifx\mayb@vp\va\let\nxt\@@VA@@\fi\fi\fi
   \ifx\mayb@vp\vp\let\nxt\@@VP@@\fi\nxt}%
- \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\@@V@@}
+ \def\@@VP@@\vp ##1\vp*{\xdef\print@bleverse{##1}\futurelet\mayb@vp\@V@}
+ \def\@@VA@@\va ##1\va*{\xdef\altern@teverse{##1}\futurelet\mayb@vp\@V@}
  \def\@@V@@{%
   \the\prev@rsehooks
   \spl@tprintableverse
@@ -956,11 +959,12 @@
   % remember current chapter:verse, not currently used. Could potentially be used
   % to insert chapter:verse in footnotes.
   \gdef\reference{\ch@pter:\v@rse}%
+  \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
   \ifhangingverse
     \trace{hv}{End of hanging verse \reference }%
     \hangingversefalse
+    \ignorespaces
   \fi
-  \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
  }
  \let\C@T\cat %Preserve \cat definition from stylesheet in case that's ever useful, and then restore it to correct version
  \let\cat\c@t
@@ -1160,8 +1164,13 @@
 \newif\ifOmitChapterNumber
 \newif\ifc@ncelfirstverse
 \catcode`\~=12 \lccode`\~=32 \lowercase{\gdef\cstyle#1#2{\ch@rstylepls{#1}~#2\ch@rstylepls{#1}*}}
+\let\altern@teverse\empty
 
-\def\simpleprintv@rse{\trace{v}{simpleprintv@rse}\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit}
+\def\simpleprintv@rse{\trace{v}{simpleprintv@rse}\cstyle{v}{\plainv@rse}\kern\AfterVerseSpaceFactor\FontSizeUnit
+  \ifx\altern@teverse\empty\else
+    \cstyle{va}{\altern@teverse}\NBSP%
+  \fi
+}
 \newif\ifSeparateVerseAdornments \SeparateVerseAdornmentstrue
 \newif\ifadorningrange
 
@@ -1181,7 +1190,7 @@
 \def\hangprintv@rse{\ifx\v@rsefrom\v@rseto\relax\defaultprintverse
     \else {\s@tsideskips{v} \h@ngprintv@rse{0}}\box0\kern\AfterVerseSpaceFactor\FontSizeUnit\fi
 }
-\def\hangprintverse{\trace{hv}{hangprintverse  \v@rse}\llap\defaultprintverse}
+\def\hangprintverse{\trace{hv}{hangprintverse  \v@rse}\llap{\defaultprintverse}}
 \def\adornv#1{\AdornVerseNumber{#1}}
 \def\ssf{\SuperscriptFactor}
 \def\h@ngprintv@rse#1{%
