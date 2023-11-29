@@ -38,15 +38,15 @@ usage: PTXprint.exe [-h] [-c CONFIG] [-M MODULE] [-p PARATEXT] [-d DIRECTORY]
                     [-P] [-b BOOKS] [-Z ZIP] [-R RUNS] [-q] [-L LANG]
                     [-n PORT] [-m MACROS] [-N] [-l LOGGING]
                     [--logfile LOGFILE] [--timeout TIMEOUT] [-T] [-f FONTPATH]
-                    [--nofontcache] [-A ACTION] [-F DIFFFILE]
+                    [--nofontcache] [--testsuite] [-A ACTION] [-F DIFFFILE]
                     [--diffpages DIFFPAGES] [-D DEFINE] [--debug] [-C CAPTURE]
-                    [-z EXTRAS] [-V PDFVERSION] [-I]
+                    [-z EXTRAS] [-V PDFVERSION] [-I] [-E EXPERIMENTAL]
                     [pid]
 
 positional arguments:
   pid                   Project id or full path to a ptxprint.cfg file
 
-optional arguments:
+options:
   -h, --help            show this help message and exit
   -c CONFIG, --config CONFIG
                         Configuration path to load
@@ -74,7 +74,8 @@ optional arguments:
   -T, --testing         Run in testing, output xdv
   -f FONTPATH, --fontpath FONTPATH
                         Directory of fonts to include (repeatable)
-  --nofontcache         Don't use system fonts
+  --nofontcache         Don't update list of system fonts
+  --testsuite           Only use fonts from project and testsuite
   -A ACTION, --action ACTION
                         Run view method instead of print
   -F DIFFFILE, --difffile DIFFFILE
@@ -91,4 +92,5 @@ optional arguments:
   -V PDFVERSION, --pdfversion PDFVERSION
                         PDF Version to read and write * 10 (default=14)
   -I, --identify        add widget names to tooltips
-
+  -E EXPERIMENTAL, --experimental EXPERIMENTAL
+                        Enable experimental bits: 0 = UI extensions

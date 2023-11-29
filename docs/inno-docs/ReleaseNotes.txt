@@ -1,8 +1,38 @@
 PTXprint 2.4.4 Release Notes
-17 Nov 2023
+30 Nov 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.4.5 (30 Nov 2023)
+
+  * Fix rangeref with verses off and different books
+  
+  * Avoid lost last partial-page of SFM input
+  
+  * Add space to ensure multiply vs prefix
+  
+  * Hopefully solve #915 potential insert loss
+  
+  * Fix big balancing
+  
+  * Unmerge note and output routines from paratex2.tex
+  
+  * Fix reference tests after changes to b64codes
+  
+  * Output bookendrule even when the first thing on the page is a title
+  
+  * Get diacritic colouring working (alpha)
+  
+  * Move bad fonts not switching in UI to environment variable
+  
+  * Control hanging verse at dropcap
+  
+  * Add Extra XDV Processing checkbox in UI and modelmap
+  
+  * Implement ifHangVA
+  
+  * Stitch in xdv processing
 
 Bug fixes and Improvements in 2.4.4 (17 Nov 2023)
 
