@@ -1299,6 +1299,9 @@
 
 \def\endgr@b{\trace{H}{grabbed:"\the\gr@btoks"}\egr@bcodes\endgr@@b}
 \def\endgr@@b{\gr@bbedspacefalse\x@\aftergr@b\x@{\the\gr@btoks}}
+\def\@fp{\futurelet\n@xt\@@fp}
+\def\@@fp@s*{}
+\def\@@fp{\ifx\n@xt\@@st@risk\let\n@xt\@@fp@s\else\let\n@xt\relax\par\kern 1sp \fi\n@xt}
 \begingroup
 \obeylines%
 {\obeyspaces\gdef\@gr@bs{ }\gdef\@gr@bp{
@@ -1306,7 +1309,7 @@
 }%
 \gdef\@ddspecialhooks{% there are a few special USFM markers that we give "magic" properties
  \let\pb=\pagebreak %pb isn't a paragraph style, 
- \def\fp{\par\kern 1sp }% Magic value used in paratext2.tex
+ \let\fp\@fp
  \let\@H=\h%
  \def\h{\bgroup\deactiv@tecustomch@rs\catcode`\/=12\relax%
         %\tracingassigns=1
