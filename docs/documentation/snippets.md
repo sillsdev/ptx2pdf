@@ -509,20 +509,55 @@ slows the printing chain, it is worth only enabling it when needed. This is done
 by enabling extra xdv processing on the finishing page. The following snippet
 shows how diacritic colouring might be enabled in verse paragraphs:
 
+```tex
+\input ptx-arab-colouring.tex
+\def\dialist{PATone PAVowel PAAllah}
+\def\diastart{\special{ptxp:diastart \dialist}}
+\def\diastop{\special{ptxp:diastop \dialist}}
+\catcode`\@=11
+\sethook{before}{p}{\marks\m@rknumc@l{\diastart}\diastart}
+\sethook{after}{p}{\marks\m@rknumc@l{\diastop}\diastop}
 ```
-\special{ptxp:diadeclare 1 rgb 0.66 0 0 _dot1l _dot1l.small _dot1u _dot1u.small
-_dot1u_smallTah _dot1u_smallV _dot1u_smallV.kf _dot2l _dot2l.small _dot2u
-_dot2u.small _dot2vl _dot2vl.small _dot2vu _dot2vu.small _dot3l _dot3l.small
-_dot3u _dot3u.small _dot3uD _dot3uD.small _dot4l _dot4l.small _dot4u
-_dot4u.small}
-\special{ptxp:diadeclare 2 rgb 0 0.66 0 U+0610 U+0611 U+0612 U_0613 U+0614
-U+0615 U+061B U+061C U+061F U+064B U+064C U+064D U+064E U+064F U+0650 U+0651
-U+0652 U+0653 U+0654 U+0655 U+0656 U+0657 U+0658 U+0659 U+065A U+065B U+065E
-U+065F U+06E0 U+06E1 U+06EA U+06ED absHamzaAbove absHamzaAbove.arabic
-_hehHook.small _hamza.arabic _smallTah}
-\sethook{start}{p}{\special{ptxp:diastart 1}\special{ptxp:diastart 2}}
-\sethook{end}{p}{\special{ptxp:diaend 1}\special{ptxp:diaend 2}}
-```
+
+There are a number of diacritic lists declared in ptx-arab-colouring.tex and we
+will use some of them. We list them by defining a macro with a list of them.
+Then we create macros with the specials we will need later. We hook into the
+styling system by inserting the special before the paragraph starts. We also
+need to place the special in a mark so that it will be inserted at the start of
+each column. This is important since XeTeX outputs columns in a left to right
+order, even if the text is right to left, thus outputting column 2 before column
+1. And of course, we need to clean up at the end of the paragraph.
+
+### Implementation
+
+The real work of colouring the diacritics is done in a special xdv processor.
+XeTeX produces a DVI file with an extension of .xdv. This is an intermediate
+format between XeTeX and PDF. All the glyphs and their positions and special
+instructions are in this file. When the extra xdv processing is enabled,
+PTXprint processes this file to use the ptxp:dia type specials to insert
+colouring specials around the glyphs to be coloured, which, in turn, when the
+xdv is converted to PDF end up with coloured glyphs.
+
+There are 4 specials that the process interprets:
+
+**ptxp:dialist** has a first parameter of a diacritic list id (e.g. PATone).
+Then follows a list of glyphs, these can be glyph names as found in the font,
+numeric glyph ids (not sure why anyone would use these) or `U+` followed by a
+USV in hex and even a range of USVs by `U+` usv `-` usv, which includes the
+inclusive range of unicode codepoints. Notice that the list is turned into the
+actual glyph ids when we know what font we are using. The diacritic lists are
+designe for sharing between jobs.
+
+**ptxp:diacolour** this has the same first parameter as ptxp:dialist. Then
+follows the parameters for a `colour` special, which can be `rgb` and 3 floats
+between 0 and 1. inclusive for red, green and blue. Or `cmyk` and 4 floats for cyan,
+yellow, magenta and black. This allows a particular dialist to be coloured
+differently in different jobs.
+
+**ptxp:diastart** is followed by a list of diacritic list ids and enables them
+until they are disabled.
+
+**ptxp:diastop** is followed by a list of diacritic list ids to be disabled.
 
 
 # Python scripts
