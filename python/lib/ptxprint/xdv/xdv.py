@@ -289,6 +289,18 @@ class XDViWriter:
         self.outop(opcode, [pageno] + res)
 
     def font(self, opcode, fontnum):
+        if fontnum < 64:
+            opcode = fontnum + 171
+            self.outop(opcode, [])
+            return
+        elif fontnum < 0x100:
+            opcode = 235
+        elif fontnum < 0x10000:
+            opcode = 236
+        elif fontnum < 0x1000000:
+            opcode = 237
+        else:
+            opcode = 238
         self.outop(opcode, [fontnum])
 
     def xxx(self, opcode, txt):

@@ -9,11 +9,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 class DiaSet:
-    def __init__(self, colour):
-        self.colour = colour
+    def __init__(self):
+        self.colour = [0]
         self.gids = set()
         self.unicodes = set()
         self.gnames = set()
+
+    def set_colour(self, colour):
+        self.colour = colour
 
     def adduni(self, uni):
         self.unicodes.add(uni)
@@ -31,15 +34,11 @@ class PTXPxdviFilter(XDViFilter):
         super().__init__(rdr, wrtr)
         self.diasets = {}
         self.alldias = {}
-        self.currdias = {}
+        self.currdias = set()
         self.currfont = -1
         self.currcolour = [0]
 
-    def font(self, opcode, fontnum):
-        self.currfont = fontnum
-        return [fontnum]
-
-    def getfont(self, k):
+    def _getfont(self, k):
         f = self.rdr.fonts[k]
         res = getattr(f, 'ttfont', None)
         if res is None:
@@ -47,49 +46,74 @@ class PTXPxdviFilter(XDViFilter):
             f.ttfont = res
         return res
 
+    def _ensurediaset(self, did):
+        if did not in self.diasets:
+            self.diasets[did] = DiaSet()
+        return self.diasets[did]
+
     def xxx(self, opcode, txt):
         txt = txt.strip()
         if not txt.lower().startswith("ptxp:"):
             return [txt]
         bits = txt.split(" ")
-        if bits[0].lower() == "ptxp:diadeclare":
+        cmd = bits[0].lower()
+        if cmd == "ptxp:diacolour":
+            ds = self._ensurediaset(bits[1])
             if bits[2] == "rgb":
-                diaset = DiaSet(bits[2:6])
-                start = 6
+                diaset = ds.set_colour(bits[2:6])
             elif bits[2] == "cmyk":
-                diaset = DiaSet(bits[2:7])
-                start = 7
-            for i in range(start, len(bits)):
+                diaset = ds.set_colour(bits[2:7])
+            return None
+        elif cmd == "ptxp:diaglyphs":
+            ds = self._ensurediaset(bits[1])
+            for i in range(2, len(bits)):
                 if bits[i].lower().startswith("u+"):
-                    diaset.adduni(int(bits[i][2:], 16))
+                    if "-" in bits[i]:
+                        (start, end) = bits[i][2:].split("-")
+                    else:
+                        start = bits[i][2:]
+                        end = start
+                    try:
+                        us = int(start, 16)
+                        ue = int(end, 16) + 1
+                    except ValueError:
+                        continue
+                    for i in range(us, ue):
+                        ds.adduni(i)
                     continue
                 try:
                     gid = int(bits[i])
                 except (ValueError, TypeError):
                     gid = None
                 if gid is not None:
-                    diaset.addgid(gid)
+                    ds.addgid(gid)
                     continue
-                diaset.addgname(bits[i].lstrip("/"))
-            self.diasets[bits[1]] = diaset
+                ds.addgname(bits[i].lstrip("/"))
             return None
         elif bits[0].lower() == "ptxp:diastart":
-            did = 1 if len(bits) < 2 else bits[1]
-            if self.currfont not in self.alldias or did not in self.alldias[self.currfont]:
-                diaset = self.diasets.get(did, None)
-                font = self.getfont(self.currfont)
-                if font is None or diaset is None:
-                    return None
-                gids = font.getgids(diaset.unicodes, diaset.gnames, diaset.gids)
-                logger.debug(f"diastart(f{did}): f{gids=}")
-                self.alldias.setdefault(self.currfont, {})[did] = DiaInstance(self.currfont, diaset.colour, gids)
-            self.currdias[did] = self.alldias[self.currfont][did]
+            logger.debug(f"{bits}")
+            self.currdias.update(bits[1:])
+            self.font(None, self.currfont)      # trigger glyph analysis
             return None
         elif bits[0].lower() == "ptxp:diastop":
-            did = 1 if len(bits) < 2 else bits[1]
-            if did in self.currdias:
-                del self.currdias[did]
+            logger.debug(f"{bits}")
+            for did in bits[1:]:
+                self.currdias.discard(did)
             return None
+
+    def font(self, opcode, fontnum):
+        self.currfont = fontnum
+        font = self._getfont(self.currfont)
+        if font is None:
+            return [fontnum]
+        for did in self.currdias:
+            if self.currfont not in self.alldias or did not in self.alldias[self.currfont]:
+                diaset = self.diasets.get(did, None)
+                if diaset is None:
+                    continue
+                gids = font.getgids(diaset.unicodes, diaset.gnames, diaset.gids)
+                self.alldias.setdefault(self.currfont, {})[did] = DiaInstance(self.currfont, diaset.colour, gids)
+        return [fontnum]
 
     def _setColour(self, col):
         if col == self.currcolour:
@@ -102,15 +126,15 @@ class PTXPxdviFilter(XDViFilter):
         for t in txts:
             self.wrtr.xxx(0, t)
         self.currcolour = col
-        
 
     def xglyphs(self, opcode, parm, width, pos, glyphs):
         if not len(self.currdias) and self.currcolour == [0]:
             return (parm, width, pos, glyphs)
         colours = []
         for i, g in enumerate(glyphs):
-            for v in self.currdias.values():
-                if v.font != self.currfont:
+            for k in self.currdias:
+                v = self.alldias.get(self.currfont, {}).get(k, None)
+                if v is None or v.font != self.currfont:
                     continue
                 if g in v.gids:
                     colours.append(v.colour)
@@ -118,7 +142,8 @@ class PTXPxdviFilter(XDViFilter):
             else:
                 colours.append([0])
         gorder = sorted(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, colours[i], i))
-        if colours[gorder[0]] == self.currcolour:
+        logger.debug(f"xglyphs {self.currfont} for {self.currdias} is {[colours[g] for g in gorder]}")
+        if not any(colours[g] != self.currcolour for g in gorder):
             return (parm, width, pos, glyphs)
         res = []
         groups = [(a[0], list(a[1])) for a in groupby(gorder, key=lambda x:colours[x])]

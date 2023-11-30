@@ -847,6 +847,7 @@ class TTFont:
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
 
     def getgids(self, unis, gnames, gids):
+        logger.debug(f"Font({self.filename}) gids {unis=} {gnames=} {gids=}")
         res = set(gids)
         b = self._getcmap()
         if b is not None and len(unis):
@@ -856,7 +857,7 @@ class TTFont:
             for n in gnames:
                 try:
                     i = self.ttfont.getGlyphID(n)
-                except KeyError:
+                except (KeyError, TypeError):
                     continue
                 res.add(i)
         res.discard(None)

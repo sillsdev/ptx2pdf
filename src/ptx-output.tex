@@ -771,19 +771,25 @@
 
 %+c_splitcols
 \newif\ifswapcol
+\newm@rknum{c@l}
+\def\c@lp@gebotmark{}
 \def\spl@tcols#1{
     % even if \vsplit to 0pt, TeX will always pull one line from the input box over
     % \trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
     \setbox9=\copy#1
+    %\edef\c@ltopmark{\topmarks\m@rknumc@l}%
+    \edef\c@ltopmark{\c@lp@gebotmark}%
     \setbox\colA=\vsplit#1 to \colhtA
-    \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\unvbox\colA}\fi
+    \ifnum\badness>999999\setbox#1=\box9\setbox\colA\box\voidb@x\else\setbox\colA=\vbox{\c@ltopmark\unvbox\colA}\fi
+    \edef\c@ltopmark{\splitbotmarks\m@rknumc@l}%
     \setbox9=\copy#1
     \ifdim\colhtB<0pt \setbox#1=\box9\setbox\colB\box\voidb@x\else
       \setbox\colB=\vsplit#1 to \colhtB
-      \ifnum\badness>999999\setbox#1=\box9\setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else\setbox\colB=\vbox{\unvbox\colB}\fi
+      \ifnum\badness>999999\setbox#1=\box9\setbox\colB\vbox to 0pt{\hbox to \hsize{}}\else\setbox\colB=\vbox{\c@ltopmark\unvbox\colB}\fi
     \fi
     \xdef\p@gebotmark{\splitbotmark}%
+    %\xdef\c@lp@gebotmark{\splitbotmarks\m@rknumc@l}%
     % swap boxes if either, colA is empty and colB full, or colB is empty and colA is over full.
     \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
@@ -888,6 +894,7 @@
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
     \s@tcolhts{\shortavail}\spl@tcols\s@vedpage\g@tcolhts
+    \xdef\c@lp@gebotmark{\splitbotmarks\m@rknumc@l}%
     \setbox\colA=\vbox{\unvbox\colA\unskip}%
     \setbox\colB=\vbox{\unvbox\colB\unskip}%
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax

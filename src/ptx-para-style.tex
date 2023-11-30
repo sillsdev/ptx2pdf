@@ -613,7 +613,6 @@
   \fi
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
-  \op@ninghooks{before}{\m@rker}{\styst@k}%
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k%
@@ -663,6 +662,7 @@
     \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
   \fi
+ \op@ninghooks{before}{\m@rker}{\styst@k}%
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
   \ifdim\headingmidspace=0pt \else
     \ifhe@dings\nobreak\fi
