@@ -581,6 +581,7 @@ class TexModel:
         if self.dict['cover/makecoverpage'] != "%":
             self.plugins.add('cover')
         self.dict['plugins_'] = ",".join(sorted(self.plugins))
+        isscripture = False
         with universalopen(os.path.join(pycodedir(), template)) as inf:
             for l in inf.readlines():
                 if l.startswith(r"%\ptxfile"):
@@ -593,6 +594,9 @@ class TexModel:
                             dname = digtexmodel.dict['project/books'][i]
                         elif extra != "":
                             fname = re.sub(r"^([^.]*).(.*)$", r"\1"+extra+r".\2", fname)
+                        if isscripture == (f in nonScriptureBooks):
+                            isscripture = not isscripture
+                            res.append(r"\scripturebook{}".format("true" if isscripture else "false"))
                         if self.dict.get('project/sectintros'):
                             insertnames = self._getinsertname(f)
                             if len(insertnames):

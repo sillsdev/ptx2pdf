@@ -37,8 +37,11 @@ class PTXPxdviFilter(XDViFilter):
         self.currdias = set()
         self.currfont = -1
         self.currcolour = [0]
+        self.pauses = []
 
     def _getfont(self, k):
+        if k not in self.rdr.fonts:
+            return None
         f = self.rdr.fonts[k]
         res = getattr(f, 'ttfont', None)
         if res is None:
@@ -90,15 +93,27 @@ class PTXPxdviFilter(XDViFilter):
                     continue
                 ds.addgname(bits[i].lstrip("/"))
             return None
-        elif bits[0].lower() == "ptxp:diastart":
+        elif cmd == "ptxp:diastart":
             logger.debug(f"{bits}")
             self.currdias.update(bits[1:])
             self.font(None, self.currfont)      # trigger glyph analysis
             return None
-        elif bits[0].lower() == "ptxp:diastop":
+        elif cmd == "ptxp:diastop":
             logger.debug(f"{bits}")
             for did in bits[1:]:
                 self.currdias.discard(did)
+            return None
+        elif cmd == "ptxp:pause":
+            paused = list(self.currdias)
+            self.paused.append(paused)
+            self.currdias.clear
+            return None
+        elif cmd == "ptxp:unpause":
+            try:
+                paused = self.paused.pop()
+            except IndexError:
+                return None
+            self.currdias.update(paused)
             return None
 
     def font(self, opcode, fontnum):
