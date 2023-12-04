@@ -673,14 +673,29 @@
 \newif\ifparnoteskilldepth \parnoteskilldepthfalse % Kill the depth of (the last row of) paragraphed note styles 
 \newif\ifparnotesruletopskip \parnotesruletopskipfalse % Add topskip after the rule
 \newif\ifparnotesmidtopskip \parnotesmidtopskiptrue % add topskip between note styles
- 
+
+\newif\iflastn@te % Is this the last note style that will appear on the page?
+\newcount\lastnoteinterlinepenalty % interline penalties when processing the last footnote on the page(allow long note breaking).
+\newcount\lastnoteparpenalty % the penalty associated with a manual par-break in the last note.
+\lastnoteinterlinepenalty=10000
+\lastnoteparpenalty=100
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
+\def\setl@stnoteclass#1{%define \l@stnoteclass to be the noteclass of the last content-containing note
+  \x@\ifdim\x@\ht\csname note-#1\endcsname >0pt
+    \edef\l@stnoteclass{#1}%
+  \fi
+}
+
 \def\maken@tepara#1#2{%
   % set appropriate hsize width for diglot or not.
   \setn@tewidth{#2}%
+  \edef\tmp{#2}\ifx\tmp\l@stnoteclass\lastn@tetrue
+  \else
+    \lastn@tefalse
+  \fi
   \ifnewparnotes\ifparnoteskillprevdepth
-    \dimen0=\prevdepth\ifdim\dimen0>0pt\kern-\dimen0\fi
+    \dimen0=\prevdepth\ifdim\dimen0>0pt \kern-\dimen0 \prevdepth=0pt \fi
   \fi\fi % Prevdepth correction, because makevboxofhboxes won't (can't) obey it.
   \hsize=\n@tewidth%\advance\hsize by -\columnshift % width is full page size
   \let\par=\endgraf\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
@@ -800,14 +815,28 @@
       \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
       \trace{f}{firstlineindent is \the\dimen0, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
       \setbox3=\vbox{\vskip\dimexpr\baselineskip - \ht1\relax %reimpose topskip
-        \penalty\interfootnotelinepenalty
+        \iflastn@te
+          \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
+          \interlinepenalty=\lastnoteinterlinepenalty
+        \else 
+          \penalty\interfootnotelinepenalty
+        \fi
         \noindent\leavevmode\hbox{}\kern\dimen0\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
         %\nonstopmode\showbox3
+      \xdef\lastn@tewid{\the\hsize}%
+    \else
+      \iflastn@te
+        \ifdim\lastn@tewid=0pt
+          \ifhbox2\xdef\lastn@tewid{\the\wd2}\fi %Remember the width of the last note. If the last line's width is < lastn@tewid, then there might be a case to break it.
+        \fi
+        \interlinepenalty=\interfootnotelinepenalty % set penalty to break lines
+        \lastn@tefalse
+      \fi
     \fi
     \ifhbox2
       \setbox1=\hbox{\box2 \unhbox1}%\nonstopmode\showbox1
       \repeat
-  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1}%
+  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid}%
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
   \ifhbox1\setbox3=\vbox{\ifnum 1=
         \iftemp \ifparnotesruletopskip 1 \else 0 \fi

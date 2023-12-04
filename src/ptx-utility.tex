@@ -116,3 +116,9 @@
   \fi
 }
 
+\def\decod@lastnode#1{\ifnum #1<0 none\else \ifcase #1
+    char%0
+\or hlist\or vlist\or rule\or ins\or mark%5
+\or adjust\or lig\or disc\or whatsit\or math%10
+\or glue\or  kern\or penalty\or unset\or mathmode%15
+\else UNK\fi\fi}

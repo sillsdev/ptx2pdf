@@ -1046,7 +1046,7 @@
   %\advance\availht \dp\pstr@t
   %\advance\availht by \dp255 % split includes depth so give it space for that
   \ifdim\bestavailht>0pt \ifdim\bestavailht<\availht \availht=\bestavailht\fi\fi
-  \ifdim\baselineskip<\ht\pstr@t \advance\availht-\baselineskip \advance\availht\ht\pstr@t\fi
+  \ifdim\baselineskip<\ht\pstr@t \advance\availht-\baselineskip \advance\availht\ht\pstr@t\fi % Adjust to one \p baseline
   \trace{o}{new availht=\the\availht, best availht=\the\bestavailht, texttrialheight=\the\t@xttrialheight, topins=\the\ht\topins, bottomins=\the\ht\bottomins, baselineskip=\the\baselineskip}%
   \doColNotes{\availht}%
   \splittopskip=\topskip
@@ -1250,20 +1250,25 @@
 
 %+c_makenotebox
 % Make a box of all the notes
-\def\m@kenotebox{
+\def\m@kenotebox{%
   \global\setbox2=\vbox{
-  \f@rstnotetrue
-  \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
-  \iff@rstnote % no notes actually occurred!
-    \trace{i}{No notes}%
-    \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
-    \vfil
-  \else
-    %Removed because depth is descended not true box depth
-    \setbox0=\lastbox
-    \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%
-    \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
-  \fi}}%\iff@rstnote\else\showbox2\fi}
+    \edef\lastn@tewid{0pt}%
+    \let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
+    \f@rstnotetrue
+    \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
+    \iff@rstnote % no notes actually occurred!
+      \trace{i}{No notes}%
+      \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
+      \vfil
+    \else
+      %Remove depth because depth is descender not true box depth
+      \setbox0=\lastbox
+      \ifdimen\wd0<\lastn@tewid
+        \penalty\lastnoteinterlinepenalty
+      \fi
+      \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%
+      \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
+    \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
 
 \def\pr@pinserts{
