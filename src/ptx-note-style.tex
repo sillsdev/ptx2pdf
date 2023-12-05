@@ -475,6 +475,7 @@
 % insert a note class in which each note is on its own line
 \def\separateins@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
+  \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\lastn@tefalse\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
   \trace{n}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
@@ -485,7 +486,14 @@
     %\fi
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi
-    \hbox{\vbox{\ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss}}\fi}% output notes
+    \hbox{\vbox{\ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
+      \iflastn@te
+        \unpenalty\dimen0=\lastkern\unkern
+        %{\count255=\lastnodetype \message{lnt:\the\count255 \decod@lastnode{\count255}}}%
+        \setbox0\lastbox\penalty\lastnoteinterlinepenalty \box0\kern\dimen0
+        \xdef\l@stnotebls{\the\baselineskip}%
+      \fi
+    }}\fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
@@ -563,12 +571,12 @@
 \f@rstnotetrue
 \def\footnoterule{\noterule{\AboveNoteSpace}{\BelowFootNoteRuleSpace}{\n@tewidth}{%
   \FootNoteRuleLeftIndent \vrule height \FootNoteRuleThickness width \FootNoteRuleWidth\n@tewidth
-  \FootNoteRuleRightIndent}\hrule height 0pt depth 0pt width 0pt}% 
+  \FootNoteRuleRightIndent}\penalty10000\hrule height 0pt depth 0pt width 0pt}% 
 
-\def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1\kern 0pt \vskip\dimen1 minus 0.5 \dimen1
+\def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1\kern 0pt \penalty10000 \vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 % what's this for? \kern -\dimen1
-  \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0
-  \vskip \dimen1 minus 0.5\dimen1\kern 0pt}\prevdepth=-1000pt}
+  \setbox0=\hbox to #3{#4}\dimen0=0.5\ht0\kern-\dimen0\box0\kern-\dimen0\penalty10000
+  \vskip \dimen1 minus 0.5\dimen1\penalty10000\kern 0pt}\prevdepth=-1000pt}
 
 
 \def\EndNoteRuleWidth{0.5}
@@ -683,7 +691,7 @@
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\setl@stnoteclass#1{%define \l@stnoteclass to be the noteclass of the last content-containing note
   \x@\ifdim\x@\ht\csname note-#1\endcsname >0pt
-    \edef\l@stnoteclass{#1}%
+    \xdef\l@stnoteclass{#1}%
   \fi
 }
 
@@ -788,6 +796,7 @@
 %
 \let\disc@rdskip@mvbohb\empty % What does mkvboxofhboxes need discards to do with a skip
 \def\disc@rdkern@mvbohb{\dimen0=\lastkern\ifdim\dimen0=1sp \unkern\temptrue\fi}%
+\def\disc@rdkern@active{\unkern\temptrue}%
 \def\disc@rdpenalty@active{\unpenalty\temptrue}
 % Rather than make a single hbox, make
 \def\makevboxofhboxes{%
@@ -804,6 +813,13 @@
     \disc@rds{mvb}%
     %\showboxdepth=4 \showlists
     \setbox2=\lastbox
+    \ifvbox2 % Found when there's a carried-over note. Such things should merge seamlessly. Probably has a de-depth kern at the the end, and who knows what line-end /par end kerns
+      %\showbox2
+      \unvbox2
+      {\let\disc@rdkern\disc@rdkern@active\disc@rds{mvb2}}%
+      \setbox2=\lastbox
+      \setbox2\hbox{\unhbox2\let\disc@rdkern\disc@rdkern@active\disc@rds{mvb3}}%
+    \fi
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
     \fi
@@ -818,6 +834,7 @@
         \iflastn@te
           \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
           \interlinepenalty=\lastnoteinterlinepenalty
+          \xdef\l@stnotebls{\the\baselineskip}%
         \else 
           \penalty\interfootnotelinepenalty
         \fi
@@ -826,6 +843,7 @@
       \xdef\lastn@tewid{\the\hsize}%
     \else
       \iflastn@te
+        \xdef\l@stnotebls{\the\baselineskip}%
         \ifdim\lastn@tewid=0pt
           \ifhbox2\xdef\lastn@tewid{\the\wd2}\fi %Remember the width of the last note. If the last line's width is < lastn@tewid, then there might be a case to break it.
         \fi
@@ -846,9 +864,11 @@
       \relax\trace{fp}{imposing midtopskip \the\baselineskip-\the\ht1 }%
       \vskip\dimexpr\baselineskip - \ht1\relax
     \fi%
+    %\ifvbox2 \unvbox2\fi
     \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
   }\fi%
+  %\ifnum\pageno=3 \showbox 2\fi
   %\showbox3
   \tracingassigns=0
   \tracingrestores=0

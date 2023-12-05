@@ -774,7 +774,7 @@
 \newm@rknum{c@l}
 \def\c@lp@gebotmark{}
 \def\spl@tcols#1{
-    % even if \vsplit to 0pt, TeX will always pull one line from the input box over
+    % even if \vsplit to 0pt, TeX will always pull one line from the input box over, unless there's an initial penalty
     % \trace{o}{split params maxdepth=\the\splitmaxdepth, topskip=\the\splittopskip, colhtA=\the\colhtA, colhtB=\the\colhtB}
     \splittopskip=\topskip
     \setbox9=\copy#1
@@ -794,6 +794,7 @@
     \ifdim\ht\colA=0pt\ifdim\ht\colB=0pt\else\ifswapcol\ifdim\colhtA<\ht\colB\else
       \trace{o}{splitcols swapping B->A}\setbox\colA=\box\colB\fi\fi\fi\fi
     \ifdim\ht\colA>\colhtA \ifdim\ht\colB<1pt \ifdim\ht\colA<\colhtB \setbox\colB=\box\colA\fi\fi\fi
+    \trace{o}{splitcols A:\the\ht\colA, B:\the\ht\colB, \the\ht#1}%
 }
 %-c_splitcols
 
@@ -803,15 +804,114 @@
 \newif\ifhascolnotes
 \newdimen\b@lbestavail
 \newdimen\b@lbestdiff
+\newdimen\t@vailht
+\newdimen\sh@vedim
+\newtoks\sh@venotes
 \def\BalanceThreshold{0.95}
 
+\def\applysh@ven@tes{%A previously determined shave to the notesbox has been selected. Apply it.
+  \advance\availht \ht\n@tesbox
+  \advance\availht -\sh@vedim
+  \setbox0=\vsplit\n@tesbox to \sh@vedim
+  \global\setbox\n@tesoverrun\box\n@tesbox
+  \x@\global\x@\let\x@\n@tesoverrunins\csname note-\l@stnoteclass\endcsname
+  \ifx\n@tesoverrunins\relax
+    \errmessage{Could not identify '\l@stnoteclass' footnote insert}
+  \fi
+  \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
+  \global\setbox\n@tesbox\vbox{\unvbox0}%
+  \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
+}
+\def\findsh@venotes{%Find the possible shaved lengths of the notes box
+  \ifdim\l@stnotebls=0pt \else
+    \trace{fp}{Finding shaved note lengths}%
+    \sh@vedim=\ht\n@tesbox % use sh@vedim as a temp. variable.
+    \vbadness=10000
+    \vfuzz=\maxdimen
+    \setbox0=\copy\n@tesbox
+    \dimen0=0pt
+    \@LOOP\ifdim 0.5\sh@vedim>\l@stnotebls
+      \advance\sh@vedim by -\l@stnotebls
+      %\showbox\n@tesbox
+      \setbox1=\vsplit0 to \sh@vedim
+      %\ifnum\badness<1000000 %Don't continue if the box is overfull 
+        \ifvoid0
+          \setbox1=\vbox{\unvbox1}%
+          \trace{fp}{nothing shaved from notebox, \the\sh@vedim / \the\ht0/\the\ht1}%
+          \sh@vedim=0pt 
+        \else % Something trimmed off
+          \setbox1=\vbox{\unvbox1}%
+          \setbox0=\vbox{\unvbox0}%
+          %\showbox0 \showbox1
+          \trace{fp}{notebox can be shaved from \the\ht\n@tesbox to \the\sh@vedim / \the\ht0/\the\ht1}%
+          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\x@{\the\sh@vedim}}%
+          \setbox0=\box1
+          %\sh@vedim=\the\ht0
+        \fi
+      %\fi
+      \trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
+    \@REPEAT
+  \fi
+  \sh@vedim=0pt
+} 
+\def\bal@shavedn@tes{%
+  \sh@vedim=0pt
+  \let\\=\@bal@shavedn@tes\the\sh@venotes 
+  \ifdim\sh@vedim=0pt\else
+    \applysh@ven@tes
+  \fi
+}
+
+\def\@bal@shavedn@tes#1{%
+  \ifdim\sh@vedim=0pt 
+    \trace{fp}{Trying shave of #1}%
+    \setbox0=\copy\s@vedpage
+    \t@vailht=\availht
+    \advance\t@vailht \ht\n@tesbox
+    \advance\t@vailht -#1
+    \s@tcolhts{\t@vailht}%
+    \spl@tcols0
+    \ifvoid0 
+      \trace{fp}{successful shave}%
+      \global\fitonpagetrue
+      \pre@bal@loop
+      \iffitonpage
+        \@balanced@loop
+      \fi
+      \iffitonpage \sh@vedim=#1 \fi
+    \else
+      \global\fitonpagefalse
+      \trace{fp}{shave no good: overshot by \the\ht0}%
+    \fi
+  \fi
+}
+
 \def\balanced{
+  \traceifset{balanced}
   \vfuzz=\PaperHeight
   \setbox0=\copy\s@vedpage
   \s@tcolhts{\availht}
   \spl@tcols0                                               %(1)
   % and check if it all fit; if not, we'll have to back up and try again
-  \ifvoid0 \global\fitonpagetrue \else \global\fitonpagefalse \fi
+  \ifvoid0 \global\fitonpagetrue
+    \pre@bal@loop
+    \iffitonpage
+      \@balanced@loop
+    \else
+      \@balanced@nofit
+    \fi
+  \else
+    %Try splitting notes.
+    \global\fitonpagefalse 
+    \bal@shavedn@tes
+    \iffitonpage\else
+      \@balanced@nofit
+    \fi
+  \fi
+  \traceifcheck{balanced}
+}
+\def\pre@bal@loop{%
+  %\traceifset{pre@balanced@loop}
   \rebalancefalse
   \trace{o}{first \the\availht . col=\the\ht\colA, \the\colhtA . second col=\the\ht\colB, \the\colhtB . rem=\the\ht0}%
   \ifdim\ht\colA<.5\baselineskip \ifdim\ht\colB<.5\baselineskip% \message{I can't break this page!}    %(2)
@@ -819,7 +919,10 @@
     \else\setbox\colA=\box0\setbox\s@vedpage=\box\voidb@x \trace{o}{Everything to colA}% dump it all in colA and bail
   \fi\fi\fi
   \hascolnotesfalse
-  \iffitonpage
+  %\traceifcheck{pre@balanced@loop}
+}
+\def\@balanced@loop{%
+  %\traceifset{balanced@loop}
     \colbfulltrue
     \g@tcolhts
     %\shortavail=\colhtB \advance\shortavail by -\ht\colB                        %(3)
@@ -902,12 +1005,14 @@
     \fi\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
-  \else
+  %\traceifcheck{balanced@loop}
+}
+
+\def\@balanced@nofit{%
     \ifColNotes\ifrebalance
       \trace{o}{balanced: ColNotes A=\the\colhtA, \the\ht\colA, B=\the\colhtB, \the\ht\colB }
       \fitonpagetrue\setbox\s@vedpage=\box\voidb@x
     \fi\fi % come from colnotes
-  \fi
 }
 %-c_balanced_loop
 
@@ -985,7 +1090,7 @@
   %\let\\=\cle@rn@tecl@ss \the\n@tecl@sses
 }
 
-\def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout 
+\def\s@tpage{%Save post-shipout state / reset other stuff that needs to happen after shipout. Diglots have an equivalent.
   \trace{i}{s@tpage: Saving inserts}%
   \s@veinserts{chunk}%
   \s@veallnotes{1}%
@@ -1002,6 +1107,7 @@
 %+c_calcavailht
 \xdef\p@gebotmark{}% No guarantee this will be universally set
 \newbox\coln@tebox\newbox\n@tesbox
+\newbox\n@tesoverrun
 \def\XrefNotes{}
 \def\NoXrefNotes{\gdef\XrefNotes{}%
  \advance\colwidth by 0.5\XrefNotesWidth
@@ -1030,7 +1136,13 @@
   \trace{i}{availht after textborderadj = \the\availht, pre=\pretextb@rderskip, post=\posttextb@rderskip}%
   \f@rstnotetrue
   \ifColNotes\onlyst@dynotestrue\else\onlyst@dynotesfalse\fi
-  \m@kenotebox\advance\availht by -\ht2\global\setbox\n@tesbox\box2
+  \global\def\l@stnotebls{0pt}%
+  \m@kenotebox
+  \global\sh@venotes{}%
+  \advance\availht by -\ht2\global\setbox\n@tesbox\box2
+  \ifnum 1=\ifnum \lastnoteinterlinepenalty < 10000 1 \else \ifnum \lastnoteparpenalty<10000 1 \else 0\fi\fi
+    \findsh@venotes
+  \fi
   \onlyst@dynotesfalse
   \trace{i}{Notes: ht=\the\ht\n@tesbox, dp=\the\dp\n@tesbox}%
   %\let\\=\reduceavailht\the\n@tecl@sses % reduce it by the space needed for each note class
@@ -1253,7 +1365,7 @@
 \def\m@kenotebox{%
   \global\setbox2=\vbox{
     \edef\lastn@tewid{0pt}%
-    \let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
+    \global\let\l@stnoteclass\empty\let\\=\setl@stnoteclass \the\n@tecl@sses % identify the last note
     \f@rstnotetrue
     \let\\=\ins@rtn@tecl@ss \the\n@tecl@sses % output all note classes
     \iff@rstnote % no notes actually occurred!
@@ -1263,7 +1375,7 @@
     \else
       %Remove depth because depth is descender not true box depth
       \setbox0=\lastbox
-      \ifdimen\wd0<\lastn@tewid
+      \ifdim\wd0<\lastn@tewid
         \penalty\lastnoteinterlinepenalty
       \fi
       \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%
