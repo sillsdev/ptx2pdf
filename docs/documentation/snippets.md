@@ -511,7 +511,7 @@ shows how diacritic colouring might be enabled in verse paragraphs:
 
 ```tex
 \input ptx-arab-colouring.tex
-\def\dialist{PATone PAVowel PAAllah}
+\def\dialist{PATone PAVowel}
 \def\diastart{\special{ptxp:diastart \dialist}}
 \def\diastop{\special{ptxp:diastop \dialist}}
 \catcode`\@=11
@@ -528,6 +528,24 @@ each column. This is important since XeTeX outputs columns in a left to right
 order, even if the text is right to left, thus outputting column 2 before column
 1. And of course, we need to clean up at the end of the paragraph.
 
+Alternatively you may want to colour the whole file (if scripture) as in:
+
+```tex
+\input ptx-arab-colouring.tex
+\def\dialist{PATone PAVowel PAHonorific}
+\def\diastart{\special{ptxp:diastart \dialist}}
+\def\diastop{\special{ptxp:diastop \dialist}}
+\addtostartptxhooks{\ifscripturebook\diastart\fi}
+\addtoendptxhooks{\ifscripturebook\diastop\fi}
+\sethook{start}{nd}{\special{ptxp:diapause}}
+\sethook{end}{nd}{\special{ptxp:diaunpause}}
+```
+
+Every file we check to see if it is scripture and if so turn on diacritic
+colouring and off at the end of the file. Also, we want to colour the name of
+deity and pause the diacritic colouring for that word. No need for column marks
+here.
+
 ### Implementation
 
 The real work of colouring the diacritics is done in a special xdv processor.
@@ -538,7 +556,7 @@ PTXprint processes this file to use the ptxp:dia type specials to insert
 colouring specials around the glyphs to be coloured, which, in turn, when the
 xdv is converted to PDF end up with coloured glyphs.
 
-There are 4 specials that the process interprets:
+There are 6 specials that the process interprets:
 
 **ptxp:dialist** has a first parameter of a diacritic list id (e.g. PATone).
 Then follows a list of glyphs, these can be glyph names as found in the font,
@@ -546,7 +564,10 @@ numeric glyph ids (not sure why anyone would use these) or `U+` followed by a
 USV in hex and even a range of USVs by `U+` usv `-` usv, which includes the
 inclusive range of unicode codepoints. Notice that the list is turned into the
 actual glyph ids when we know what font we are using. The diacritic lists are
-designe for sharing between jobs.
+designed for sharing between jobs. The glyph names used in such lists are very
+font family specific and may require the input of the font designer of the font.
+Fonts can ligate diacritics with bases, which makes it impossible to colour just
+the diacritic. So not all fonts and sequences may work well.
 
 **ptxp:diacolour** this has the same first parameter as ptxp:dialist. Then
 follows the parameters for a `colour` special, which can be `rgb` and 3 floats
@@ -558,6 +579,13 @@ differently in different jobs.
 until they are disabled.
 
 **ptxp:diastop** is followed by a list of diacritic list ids to be disabled.
+
+**ptxp:diapause** turns off all diacritic colouring but remembers the settings
+ready to turn them back on again. This means that if there is no diacritic
+colouring active, then nothing gets turned on and off.
+
+**ptxp:diaunpause** turn back on the diacritic colouring for the corresponding
+balanced ptxp:diapause. These pair using a stack.
 
 
 # Python scripts

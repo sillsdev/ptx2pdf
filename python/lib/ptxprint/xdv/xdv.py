@@ -172,7 +172,7 @@ class XDViReader:
         (k, c, s, d, a, l) = data
         n = self.readbytes(a+l).decode("utf-8")
         font = Font(n)
-        font.size = mag * s / 1000. / d
+        font.size = self.mag * s / 1000. / d if d != 0 else 0
         font.checksum = c
         self.fonts[k] = font
         return (k, c, s, d, a, l, n)
@@ -211,14 +211,16 @@ class XDViReader:
         #          ident, font_name, points, flags, color, variations, ext, slant, embolden))
 
     def xglyphs(self, opcode, parm, data):
+        if parm == 0:
+            tlen = self.readval(2)
+            txt = self.readbytes(2*tlen).decode("utf-16be")
+        else:
+            txt = b""
         width = self.readval(4)
         slen = self.readval(2, uint=True)
-        if parm:
-            pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
-        else:
-            pos = [(self.readval(4), 0) for i in range(slen)]
+        pos = [(self.readval(4), self.readval(4)) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
-        return (parm, width, pos, glyphs)
+        return (parm, width, pos, glyphs, txt)
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
 
@@ -318,7 +320,7 @@ class XDViWriter:
 
     def fontdef(self, opcode, k, c, s, d, a, l, n):
         self.outop(opcode, [k, c, s, d, a, l])
-        self.outbytes(n)
+        self.outbytes(n.encode("utf-8"))
 
     def pre(self, opcode, i, n, d, m, x):
         self.outop(opcode, [i, n, d, m, len(x)])
@@ -349,15 +351,19 @@ class XDViWriter:
         if flags & 0x4000:
             self.outval(4, font.embolden)
 
-    def xglyphs(self, opcode, parm, width, pos, glyphs):
+    def xglyphs(self, opcode, parm, width, pos, glyphs, txt):
         self.outopcode(253 if parm else 254)
+        if parm == 0:
+            txtb = txt.encode("utf-16be")
+            tlen = len(txtb)
+            self.outval(2, tlen // 2)
+            self.outbytes(txtb)
         self.outval(4, width)
         slen = len(glyphs)
         self.outval(2, slen, uint=True)
         for p in pos:
             self.outval(4, p[0])
-            if parm:
-                self.outval(4, p[1])
+            self.outval(4, p[1])
         for g in glyphs:
             self.outval(2, g)
 

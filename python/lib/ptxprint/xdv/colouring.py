@@ -142,9 +142,9 @@ class PTXPxdviFilter(XDViFilter):
             self.wrtr.xxx(0, t)
         self.currcolour = col
 
-    def xglyphs(self, opcode, parm, width, pos, glyphs):
+    def xglyphs(self, opcode, parm, width, pos, glyphs, txt):
         if not len(self.currdias) and self.currcolour == [0]:
-            return (parm, width, pos, glyphs)
+            return (parm, width, pos, glyphs, txt)
         colours = []
         for i, g in enumerate(glyphs):
             for k in self.currdias:
@@ -159,7 +159,7 @@ class PTXPxdviFilter(XDViFilter):
         gorder = sorted(range(len(glyphs)), key=lambda i:(colours[i] == self.currcolour, colours[i], i))
         logger.debug(f"xglyphs {self.currfont} for {self.currdias} is {[colours[g] for g in gorder]}")
         if not any(colours[g] != self.currcolour for g in gorder):
-            return (parm, width, pos, glyphs)
+            return (parm, width, pos, glyphs, txt)
         res = []
         groups = [(a[0], list(a[1])) for a in groupby(gorder, key=lambda x:colours[x])]
         for i, (col, grange) in enumerate(groups):
@@ -167,7 +167,10 @@ class PTXPxdviFilter(XDViFilter):
             self._setColour(col)
             poso = [pos[j] for j in grange]
             glypho = [glyphs[j] for j in grange]
-            self.wrtr.xglyphs(opcode, parm, width if i == len(groups) - 1 else 0, poso, glypho)
+            if i == len(groups) - 1:
+                self.wrtr.xglyphs(opcode, parm, width, poso, glypho, txt)
+            else:
+                self.wrtr.xglyphs(opcode, 1, 0, poso, glypho, "")
         return None
 
 def procxdv(inxdv, outxdv):

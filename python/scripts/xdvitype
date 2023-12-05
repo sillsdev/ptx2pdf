@@ -242,7 +242,7 @@ class XDviType:
     def xglyphs(self, opcode, parm, data):
         if parm == 0:
             tlen = self.readval(2)
-            txt = self.readbytes(2*tlen)
+            txt = self.readbytes(2*tlen).decode("utf-16be")
         else:
             txt = ""
         width = self.readval(4)
