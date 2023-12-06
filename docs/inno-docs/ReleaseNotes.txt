@@ -1,9 +1,23 @@
 PTXprint 2.4.5 Release Notes
-30 Nov 2023
+6 Dec 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.6 (6 Dec 2023)
+
+  * Make \fp* a noop (related to #813)
+  
+  * Refactor to get diacritic colouring working
+  
+  * Add docs for diacritic colouring in snippets.md
+  
+  * Diacritic colouring refinements to allow whole book colouring.
+  
+  * Point Style links to new USFM docs site
+  
+  * Fix zfiga bug of extra backslash showing up
+  
 Bug fixes and Improvements in 2.4.5 (30 Nov 2023)
 
   * Fix rangeref with verses off and different books
