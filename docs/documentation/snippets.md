@@ -525,14 +525,15 @@ Then we create macros with the specials we will need later. We hook into the
 styling system by inserting the special before the paragraph starts. We also
 need to place the special in a mark so that it will be inserted at the start of
 each column. This is important since XeTeX outputs columns in a left to right
-order, even if the text is right to left, thus outputting column 2 before column
-1. And of course, we need to clean up at the end of the paragraph.
+order, even if the text is right to left, thus outputting column 2 before column 1.
+And of course, we need to clean up at the end of the paragraph.
 
 Alternatively you may want to colour the whole file (if scripture) as in:
 
 ```tex
 \input ptx-arab-colouring.tex
 \def\dialist{PATone PAVowel PAHonorific}
+%\special{ptxp:diacolour PAVowel 0.9 0 0}
 \def\diastart{\special{ptxp:diastart \dialist}}
 \def\diastop{\special{ptxp:diastop \dialist}}
 \addtostartptxhooks{\ifscripturebook\diastart\fi}
