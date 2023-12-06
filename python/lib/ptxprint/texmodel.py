@@ -1198,7 +1198,7 @@ class TexModel:
                 if a is None:
                     return ""
                 ref = re.sub(r"^\S+\s+", r"", a)
-                return r"\\zfiga|{}\\*".format(ref)
+                return r"\zfiga|{}\*".format(ref)
             logger.debug(self.printer.picinfos)
             self.localChanges.append(makeChange(r'\\fig.*?src="([^"]+?)".*?\\fig\*', figtozfiga, flags=regex.M))
             self.localChanges.append(makeChange(r'\\fig(?: .*?)?\|(.*?)\|.*?\\fig\*', figtozfiga, flags=regex.M))
