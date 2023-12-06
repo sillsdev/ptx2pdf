@@ -38,7 +38,8 @@ def create_download_info(filename):
         json.dump(download_info, file, indent=2)
 
 def process_recent_files():
-    download_folder = r'C:\Users\Mark\Downloads'
+    # "C:\Users\mark-\Downloads\python3-ptxprint_2.4.5-0~202311291235~ubuntu22.04.1_all.deb"
+    download_folder = r'C:\Users\mark-\Downloads'
     file_pattern = 'python3-ptxprint_*.deb'
     deb_files = glob(os.path.join(download_folder, file_pattern))
     deb_files.sort(key=os.path.getmtime, reverse=True)

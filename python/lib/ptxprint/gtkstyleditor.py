@@ -106,6 +106,35 @@ categorymapping = {
     'DEPRECATED':                               (_('Obsolete & Deprecated'), None)
 }
 
+usfmDocsPath = {
+# 1st 2 lines are fallback links
+'markers/char': 'add addpn allchars bd bdit bk dc em fdc fk fl fm fp fqa fq fr ft fv fw ior iqt it k lik litl liv nd no ord pn png pro qac qs qt rb sc sig sls sup tc tcr th thr tl wa w wg wh wj xdc xk xnt xo xop xot xq xta xt',
+'markers/para': 'b cd cl cls d h ib id ide ie iex ili im imi imq imt imte io iot ip ipi ipq ipr iq is lf lh li lim m mi mr ms mt mte nb p pb pc ph pi pm pmc pmo pmr po pr qa q qc qd qm qr r rem s sd sp sr sts toca toc tr usfm',
+'char/breaks': 'pb',
+'char/features': 'add addpn bk dc k nd ord pn png pro qt rb sig sls tl wa w wg wh wj',
+'char/format': 'bd bdit em it no sc sup',
+'char/introductions': 'ior iqt',
+'char/lists': 'lik litl liv',
+'char/poetry': 'qac qs',
+'char/tables': 'tc tcr th thr',
+'markers/cv': 'ca c cp va v vp',
+'markers/fig': 'fig',
+'markers/ms': 'qt ts',
+'markers/note': 'ef f fe f x',
+'markers/periph': 'periph',
+'markers/sbar': 'esb',
+'note/crossref': 'ex x',
+'note/footnote': 'ef f fe',
+'para/identification': 'books h id ide rem sts toca toc usfm',
+'para/introductions': 'ib ie iex ili im imi imq imt imte io iot ip ipi ipq ipr iq is',
+'para/lists': 'lf lh li lim',
+'para/paragraphs': 'b cls m mi nb p pc ph pi pm pmc pmo pmr po pr',
+'para/poetry': 'b qa q qc qd qm qr',
+'para/tables': 'tr',
+'para/titles-sections': 'cd cl d mr ms mt mte r s sd sp sr',
+}
+mkr2path = {w:k for k,v in usfmDocsPath.items() for w in v.split()}
+
 widgetsignals = {
     "s": "value-changed",
     "c": "toggled",
@@ -143,7 +172,6 @@ def triefit(k, base, start):
             break
     else:
         base[k] = {}
-
 
 
 class StyleEditorView(StyleEditor):
@@ -444,27 +472,26 @@ class StyleEditorView(StyleEditor):
         # self.builder.get_object("ptxprint").resize(200, 200)
 
         if not self.model.get("c_noInternet"):
-            site = 'https://ubsicap.github.io/usfm'
-            tl = self.get("fcb_interfaceLang") # target language for Google Translate
+            # site = 'https://ubsicap.github.io/usfm'
+            site = 'https://docs.usfm.bible/usfm-usx-docs/latest/'
+            # tl = self.get("fcb_interfaceLang") # target language for Google Translate
+            # lang = tv.get_model()[path][1]
+            tl = self.model.lang
             ggltrans = "" 
             self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
             if not self.model.get("c_useEngLinks") and \
                    tl in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
                 ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
-            if urlcat is None:
-                self.builder.get_object("l_url_usfm").set_uri('{}{}/search.html?q=%5C{}&check_keywords=yes&area=default'.format(ggltrans, site, urlmkr.split('-')[0]))
-            elif "+" in urlmkr or "|" in urlmkr:
+                
+            m = self.marker.strip("123456789")
+            path = mkr2path.get(m, None)
+
+            if "+" in urlmkr or "|" in urlmkr or path is None:
                 self.builder.get_object("l_url_usfm").set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
                 self.builder.get_object("l_url_usfm").set_label(_('Complex style'))
             else:
-                usfmkeys = tuple(usfmpgname.keys())
-                pgname = 'index'
-                if urlmkr.split('-')[0] not in fxceptions and urlmkr.startswith(usfmkeys):
-                    for i in range(len(urlmkr), 0, -1):
-                        if urlmkr[:i] in usfmkeys:
-                            pgname = usfmpgname.get(urlmkr[:i])
-                            continue
-                self.builder.get_object("l_url_usfm").set_uri('{}{}/{}/{}.html#{}'.format(ggltrans, site, urlcat, pgname, urlmkr))
+                self.builder.get_object("l_url_usfm").set_uri(f'{ggltrans}{site}{path}/{m}.html')
+
         self.isLoading = oldisLoading
         # Sensitize font size, line spacing, etc. for \paragraphs
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
