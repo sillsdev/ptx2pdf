@@ -21310,6 +21310,7 @@ or you simply prefer to read the original page in English.</property>
                                     <property name="draw-indicator">True</property>
                                     <signal name="clicked" handler="onEnglishClicked" swapped="no"/>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
+                                    <signal name="toggled" handler="onEnglishClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>

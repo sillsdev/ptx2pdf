@@ -472,10 +472,7 @@ class StyleEditorView(StyleEditor):
         # self.builder.get_object("ptxprint").resize(200, 200)
 
         if not self.model.get("c_noInternet"):
-            # site = 'https://ubsicap.github.io/usfm'
             site = 'https://docs.usfm.bible/usfm-usx-docs/latest/'
-            # tl = self.get("fcb_interfaceLang") # target language for Google Translate
-            # lang = tv.get_model()[path][1]
             tl = self.model.lang
             ggltrans = "" 
             self.builder.get_object("l_url_usfm").set_label(_('More Info...'))

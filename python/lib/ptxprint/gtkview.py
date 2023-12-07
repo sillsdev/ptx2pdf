@@ -544,13 +544,14 @@ def getsign(b, v, a):
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
-        logger.debug("Starting init in gtkview")
+        # logger.debug("Starting init in gtkview")
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
 
     def setup_ini(self):
+        # logger.debug("Starting setup_ini in gtkview")
         if sys.platform.startswith("win"):
             # import ctypes
             from ctypes import windll
@@ -630,7 +631,8 @@ class GtkViewModel(ViewModel):
         self.lastUpdatetime = time.time()
         self.isDisplay = True
         self.searchWidget = []
-        self.uilevel = 0
+        self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
+        logger.debug(f"Loaded UI level from user config: {self.uilevel}")
         self.painted = set()
         self.locked = set()
         self.config_dir = None
@@ -890,6 +892,7 @@ class GtkViewModel(ViewModel):
 
         self.mw.resize(830, 594)
         self.mw.show_all()
+        self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.logfile = open(self.args.capture, "w")
@@ -968,7 +971,6 @@ class GtkViewModel(ViewModel):
             self.doFind(None)
 
     def doFind(self, txt):
-        # if txt is None:   # keep track of recent finds
         for wid in self.searchWidget:
             self.highlightwidget(wid, highlight=False)
         self.searchWidget = []
@@ -1121,7 +1123,6 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def menu_inner_closed(self, widget):
-        # print("Closing popover")
         mw = self.builder.get_object("menu_main")
         mw.popdown()
 
@@ -1153,7 +1154,7 @@ class GtkViewModel(ViewModel):
                 levelname = " ".join(r[0].split(" ")[:-1])
                 break
         self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname is not None else _("View Level"))
-                
+
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
@@ -1193,11 +1194,10 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
 
-    def get_uiChangeLevel(self):
+    def get_uiChangeLevel(self):  # Is this method supposed to be doing something more?
         return self.uilevel
 
     def toggleUIdetails(self, w, state):
-        # print(w)
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
@@ -1227,6 +1227,20 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not newval and adv)
         for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
             self.builder.get_object(w).set_visible(not newval)
+        self.i18nizeURIs()
+
+    def i18nizeURIs(self):
+        ggltrans = "" 
+        self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
+        if not self.get("c_useEngLinks") and \
+               self.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
+            ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(self.lang)
+        for u in "homePage community pdfViewer techFAQ reportBugs".split(): # lb_DBLdownloads lb_openBible ?as well?
+            w = self.builder.get_object("lb_" + u)
+            site = w.get_uri()
+            if site.startswith("https://translate.google.com/translate"):
+                site = site.split("u=")[1]
+            w.set_uri(f'{ggltrans}{site}')
 
     def addCR(self, name, index):
         if "|" in name:
@@ -1245,10 +1259,11 @@ class GtkViewModel(ViewModel):
 
     def parse_fontname(self, font):
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
-        if m:
-            return [m.group(1), int(m.group(2))]
-        else:
-            return [font, 0]
+        return [m.group(1), int(m.group(2))] if m else [font, 0]
+        # if m:
+            # return [m.group(1), int(m.group(2))]
+        # else:
+            # return [font, 0]
 
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
@@ -1609,7 +1624,7 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.configPath(cfgname=cfg)
         sec = ""
         if cfg == 'Default':
-            ui = self.get_uiChangeLevel()
+            ui = self.get_uiChangeLevel() # Why not just use: ui = self.uilevel  ???
             self.resetToInitValues()
             self.set_uiChangeLevel(ui)
             try:
@@ -3370,9 +3385,7 @@ class GtkViewModel(ViewModel):
             self.onFontChanged(None)
 
     def updateDialogTitle(self):
-        # print("in updateDialogTitle")
         titleStr = super(GtkViewModel, self).getDialogTitle()
-        # print("{titleStr=}")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def _locFile(self, file2edit, loc, fallback=False):
@@ -3999,9 +4012,8 @@ class GtkViewModel(ViewModel):
             os.startfile(fldrpath)
 
     def finished(self):
-        # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
-        # enable/disable the Permission Letter button
+        # TO DO: enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -4511,6 +4523,8 @@ class GtkViewModel(ViewModel):
         self.lang = lang
         self.builder.get_object("ptxprint").destroy()
         self.onDestroy(None)
+        print("Calling i18nize from changeInterfaceLang")
+        self.i18nizeURIs()
             
     def onRHruleClicked(self, btn):
         status = self.get("c_rhrule")
@@ -4886,8 +4900,8 @@ class GtkViewModel(ViewModel):
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
         wid.set_visible(False)
-        if time.time() - self.lastUpdatetime < 1800: # i.e. checked less than 30 mins ago
-            logger.debug("Check for updates didn't run as it hasn't been 30 mins since startup or last check")
+        if time.time() - self.lastUpdatetime < 600: # i.e. checked less than 10 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 10 mins since startup or last check")
             return
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
@@ -4970,6 +4984,7 @@ class GtkViewModel(ViewModel):
     def onEnglishClicked(self, btn):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
+        self.i18nizeURIs()
         
     def onvarEdit(self, tv, path, text): #cr, path, text, tv):
         model = tv.get_model()
@@ -5035,10 +5050,8 @@ class GtkViewModel(ViewModel):
 
     def grab_notify_event(self, widget, event, data=None):
         pass
-        # print("Got it!")
-        # widget.get_style_context().add_class("inactivewidget")
 
-    def onCatListAdd(self, btn): # Copied from 'onzvarAdd'
+    def onCatListAdd(self, btn):
         def responseToDialog(entry, dialog, response):
             dialog.response(response)
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
