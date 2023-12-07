@@ -810,17 +810,18 @@
 \def\BalanceThreshold{0.95}
 
 \def\applysh@ven@tes{%A previously determined shave to the notesbox has been selected. Apply it.
-  \advance\availht \ht\n@tesbox
-  \advance\availht -\sh@vedim
-  \setbox0=\vsplit\n@tesbox to \sh@vedim
-  \global\setbox\n@tesoverrun\box\n@tesbox
   \x@\global\x@\let\x@\n@tesoverrunins\csname note-\l@stnoteclass\endcsname
   \ifx\n@tesoverrunins\relax
-    \errmessage{Could not identify '\l@stnoteclass' footnote insert}
+    \message{!!! Internal error: Could not identify '\l@stnoteclass' footnote insert}%
+  \else 
+    \advance\availht \ht\n@tesbox
+    \advance\availht -\sh@vedim
+    \setbox0=\vsplit\n@tesbox to \sh@vedim
+    \global\setbox\n@tesoverrun\box\n@tesbox
+    \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
+    \global\setbox\n@tesbox\vbox{\unvbox0}%
+    \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
   \fi
-  \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
-  \global\setbox\n@tesbox\vbox{\unvbox0}%
-  \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
 }
 \def\findsh@venotes{%Find the possible shaved lengths of the notes box
   \ifdim\l@stnotebls=0pt \else
@@ -849,7 +850,7 @@
           %\sh@vedim=\the\ht0
         \fi
       %\fi
-      \trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
+      %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
     \@REPEAT
   \fi
   \sh@vedim=0pt

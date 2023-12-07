@@ -711,6 +711,7 @@
   \everypar={%
     \ifRTL\beginR\fi % respect directionality
     \ifx\notef@rstindent\relax\else\kern\notef@rstindent\IndentUnit \fi}% don't do body text formatting
+  \showbox#1
   \ifkeepn@tes\unvcopy\else\unvbox\fi #1 % open up the vbox of notes to get at the list of individual note boxes
   %\ifnum\interactionmode=1 \showlists\fi
   \ifnewparnotes\else
@@ -799,20 +800,26 @@
 \def\disc@rdkern@active{\unkern\temptrue}%
 \def\disc@rdpenalty@active{\unpenalty\temptrue}
 % Rather than make a single hbox, make
-\def\makevboxofhboxes{%
-  \traceifset{vboxofhboxes}%
-  \setbox3=\vbox{}%
-  \setbox1=\hbox{}%
-  %\tracingassigns=1
-  %\tracingrestores=1
-  \loop\tmpcount=\lastnodetype 
+\def\disc@rdmvbohb{%
     \dimen0=0pt
     \let\disc@rdskip\disc@rdskip@mvbohb
     \let\disc@rdkern\disc@rdkern@mvbohb
     \let\disc@rdpenalty\disc@rdpenalty@active
     \disc@rds{mvb}%
-    %\showboxdepth=4 \showlists
+}
+\def\makevboxofhboxes{%
+  \traceifset{vboxofhboxes}%
+  \setbox3=\vbox{}%
+  \setbox5=\box\voidb@x
+  \setbox1=\hbox{}%
+  %\tracingassigns=1
+  %\tracingrestores=1
+  %\showlists
+  \disc@rdmvbohb % trash any trailing glue/penalties, etc.
+  \loop
     \setbox2=\lastbox
+    \disc@rdmvbohb
+    %\showboxdepth=4 \showlists
     \ifvbox2 % Found when there's a carried-over note. Such things should merge seamlessly. Probably has a de-depth kern at the the end, and who knows what line-end /par end kerns
       %\showbox2
       \unvbox2
@@ -822,33 +829,45 @@
     \fi
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
+      \showbox2
     \fi
     \tmpcount=\lastnodetype
-    \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount})}%
+    \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount}) lastn@te\iflastn@te true\else false\fi}%
     \ifdim\dimen0=1sp % Special value - footnote paragraph
       \getp@ram{firstindent}{fp}{fp}%
       \dimen0=3pt
       \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
       \trace{f}{firstlineindent is \the\dimen0, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
-      \setbox3=\vbox{\vskip\dimexpr\baselineskip - \ht1\relax %reimpose topskip
+      \iflastn@te
+        \xdef\l@stnotebls{\the\baselineskip}%
+        \xdef\lastn@tewid{\the\hsize}%
+        \setbox5\box\voidb@x
+      \fi
+      \setbox3=\vbox{%
         \iflastn@te
           \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
-          \interlinepenalty=\lastnoteinterlinepenalty
-          \xdef\l@stnotebls{\the\baselineskip}%
+          \interlinepenalty=\lastnoteinterlinepenalty \widowpenalty=1 \clubpenalty=1
         \else 
-          \penalty\interfootnotelinepenalty
+          \interlinepenalty=\interfootnotelinepenalty
+          \penalty12345
         \fi
+        \setbox1\hbox{\box2 \unhbox1}%
+        \setbox2\hbox{}%
+        \vskip\dimexpr\baselineskip - \ht1\relax %reimpose topskip
         \noindent\leavevmode\hbox{}\kern\dimen0\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
-        %\nonstopmode\showbox3
-      \xdef\lastn@tewid{\the\hsize}%
+        %\nonstopmode
+        %\showbox3
     \else
       \iflastn@te
         \xdef\l@stnotebls{\the\baselineskip}%
         \ifdim\lastn@tewid=0pt
-          \ifhbox2\xdef\lastn@tewid{\the\wd2}\fi %Remember the width of the last note. If the last line's width is < lastn@tewid, then there might be a case to break it.
+          \ifhbox2\xdef\lastn@tewid{\the\wd2}%
+            \setbox5\box2\setbox2\hbox{}%
+            \trace{fp}{Saved last footnotebox}%
+          \fi %Remember the width of the last note. If the last line's width is < lastn@tewid, then there might be a case to break it.
         \fi
         \interlinepenalty=\interfootnotelinepenalty % set penalty to break lines
-        \lastn@tefalse
+        \ifnum\tmpcount=1\else\lastn@tefalse\fi
       \fi
     \fi
     \ifhbox2
@@ -868,8 +887,25 @@
     \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
   }\fi%
+  %\showbox5
+  \lastn@tefalse 
+  \ifvoid5\else
+    \trace{fp}{Reinstating final line}%
+    \setbox3\vbox{\interlinepenalty\lastnoteinterlinepenalty\widowpenalty0 \clubpenalty 0
+       \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
+       \trace{fp}{skip of \the\dimen1 before last line}%
+       \disc@rdmvbohb
+       \trace{fp}{kern of \the\dimen0 before last line}%
+       \ifdim \dimen0=0pt % A normal skip = normal paragraph
+         \penalty\interfootnotelinepenalty
+         \vskip\dimen1
+       \else % interline kern means a lastnotepar
+         \penalty\lastnoteparpenalty
+       \fi
+       \unhbox 1{\removehboxes}\unhbox5}%
+  \fi
   %\ifnum\pageno=3 \showbox 2\fi
-  %\showbox3
+  \showbox3
   \tracingassigns=0
   \tracingrestores=0
   \traceifcheck{vboxofhboxes}%
