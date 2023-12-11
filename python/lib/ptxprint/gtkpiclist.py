@@ -103,11 +103,13 @@ class PicList:
 
     def clear(self):
         self.coremodel.clear()
+        self.clearPreview()
 
     def load(self, picinfo, bks=None):
         self.picinfo = picinfo
         #self.view.set_model(None)
         self.coremodel.clear()
+        self.clearPreview()
         self.bookfilters = bks
         if picinfo is not None:
             for k, v in sorted(picinfo.items(), key=lambda x:refKey(x[1]['anchor'])):
@@ -428,7 +430,6 @@ class PicList:
         cr.set_source_pixbuf(pixbuf, 0, 0)
         cr.paint()
         return False
-
     
     def onRadioChanged(self):
         self.item_changed(None, "src")
@@ -464,6 +465,7 @@ class PicList:
         self.row_select(self.selection)
 
     def del_row(self):
+        self.clearPreview()
         model, paths = self.selection.get_selected_rows()
         inds = [model.convert_path_to_child_path(i) for i in paths]
         for i in reversed(sorted(inds)):
@@ -481,6 +483,11 @@ class PicList:
         if ind is not None:  # otherwise we have an empty list
             self.select_row(ind.get_indices()[0])
 
+    def clearPreview(self):
+        pic = self.builder.get_object("img_picPreview")
+        pic.clear()
+        tooltip = ""
+        
     def set_src(self, src):
         wid = _form_structure.get('src', 'src')
         w = self.builder.get_object(wid)

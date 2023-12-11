@@ -1260,10 +1260,6 @@ class GtkViewModel(ViewModel):
     def parse_fontname(self, font):
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
         return [m.group(1), int(m.group(2))] if m else [font, 0]
-        # if m:
-            # return [m.group(1), int(m.group(2))]
-        # else:
-            # return [font, 0]
 
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
