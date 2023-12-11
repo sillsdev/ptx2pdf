@@ -1,9 +1,19 @@
 PTXprint 2.4.6 Release Notes
-6 Dec 2023
+11 Dec 2023
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
+
+  * Improve snippet on diacritic colouring
+  
+  * Get correct UI level to show at startup
+  
+  * Internationalize URIs on Help tab via Google Translate
+  
+  * Remove preview when deleting pictures, and swapping configs
+  
 Bug fixes and Improvements in 2.4.6 (6 Dec 2023)
 
   * Make \fp* a noop (related to #813)
