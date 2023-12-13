@@ -218,7 +218,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
@@ -628,7 +628,8 @@ class GtkViewModel(ViewModel):
             # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
 
-        self.lastUpdatetime = time.time()
+        self.startedtime = time.time()
+        self.lastUpdatetime = time.time() - 3600
         self.isDisplay = True
         self.searchWidget = []
         self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
@@ -4895,9 +4896,11 @@ class GtkViewModel(ViewModel):
 
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
-        wid.set_visible(False)
-        if time.time() - self.lastUpdatetime < 600: # i.e. checked less than 10 mins ago
-            logger.debug("Check for updates didn't run as it hasn't been 10 mins since startup or last check")
+        if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
+            return
+        elif time.time() - self.lastUpdatetime < 3600: # i.e. checked less than an hour ago
+            logger.debug("Check for updates didn't run as it hasn't been an hour since the last check")
             return
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
@@ -4924,6 +4927,7 @@ class GtkViewModel(ViewModel):
         currv = [int(x) for x in VersionStr.split('.')]
         logger.debug(f"{newv=}, {currv=}")
         if newv <= currv:
+            wid.set_visible(False)
             return
         def enabledownload():
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
