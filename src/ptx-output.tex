@@ -814,10 +814,9 @@
   \ifx\n@tesoverrunins\relax
     \message{!!! Internal error: Could not identify '\l@stnoteclass' footnote insert}%
   \else 
-    \advance\availht \ht\n@tesbox
-    \advance\availht -\sh@vedim
-    \setbox0=\vsplit\n@tesbox to \sh@vedim
-    \global\setbox\n@tesoverrun\box\n@tesbox
+    \advance\availht \sh@vedim
+    \setbox0=\vsplit\n@tesbox to \dimexpr \ht\n@tesbox - \sh@vedim\relax
+    \global\setbox\n@tesoverrun\vbox{\unvbox\n@tesbox\unkern\unskip}%
     \x@\addtonextshipout{\x@\insert\n@tesoverrunins{\box\n@tesoverrun}}%
     \global\setbox\n@tesbox\vbox{\unvbox0}%
     \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
@@ -845,7 +844,8 @@
           \setbox0=\vbox{\unvbox0}%
           %\showbox0 \showbox1
           \trace{fp}{notebox can be shaved from \the\ht\n@tesbox to \the\sh@vedim / \the\ht0/\the\ht1}%
-          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\x@{\the\sh@vedim}}%
+          {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
+          \global\x@\x@\x@\sh@venotes\x@\x@\x@{\x@\the\x@\sh@venotes\x@\\\x@{\the\dimen0}}}%
           \setbox0=\box1
           %\sh@vedim=\the\ht0
         \fi
@@ -868,8 +868,8 @@
     \trace{fp}{Trying shave of #1}%
     \setbox0=\copy\s@vedpage
     \t@vailht=\availht
-    \advance\t@vailht \ht\n@tesbox
-    \advance\t@vailht -#1
+    %\advance\t@vailht \ht\n@tesbox
+    \advance\t@vailht #1
     \s@tcolhts{\t@vailht}%
     \spl@tcols0
     \ifvoid0 

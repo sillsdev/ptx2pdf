@@ -685,8 +685,12 @@
 \newif\iflastn@te % Is this the last note style that will appear on the page?
 \newcount\lastnoteinterlinepenalty % interline penalties when processing the last footnote on the page(allow long note breaking).
 \newcount\lastnoteparpenalty % the penalty associated with a manual par-break in the last note.
+\newcount\lastnotewidowpenalty % the penalty associated with a widow(last line) in the last note.
+\newcount\lastnoteclubpenalty % the penalty associated with a club/orphan (last line) in the last note.
 \lastnoteinterlinepenalty=10000
 \lastnoteparpenalty=100
+\lastnoteclubpenalty=10000
+\lastnotewidowpenalty=10000
 \newskip\internoteskip \internoteskip=15pt plus 12pt minus 7pt
 \newskip\noteRag\noteRag=0pt plus 36pt
 \def\setl@stnoteclass#1{%define \l@stnoteclass to be the noteclass of the last content-containing note
@@ -829,7 +833,7 @@
     \fi
     \ifhbox2
       \setbox2\hbox{\unhbox2}%
-      \showbox2
+      %\showboxu%2
     \fi
     \tmpcount=\lastnodetype
     \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount}) lastn@te\iflastn@te true\else false\fi}%
@@ -846,15 +850,20 @@
       \setbox3=\vbox{%
         \iflastn@te
           \penalty\lastnoteparpenalty % a paragraph in the last note is a very reasonable place to break if notes are going to break.
-          \interlinepenalty=\lastnoteinterlinepenalty \widowpenalty=1 \clubpenalty=1
+          \interlinepenalty=\lastnoteinterlinepenalty \widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty
         \else 
           \interlinepenalty=\interfootnotelinepenalty
           \penalty12345
         \fi
-        \setbox1\hbox{\box2 \unhbox1}%
+        \showbox2
+        \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
+        \noindent\leavevmode\hbox{}\kern\dimen0\unhbox2 \unhbox1{\removehboxes}\endgraf
+        \ifdim\ht3>0pt \dimen0=\prevdepth
+          \ifdim\dimen0=0pt \else\kern-\dimen0\fi\fi
+        \unvbox3}%
+        %\setbox1\hbox{\box2
+          %\unhbox1}%
         \setbox2\hbox{}%
-        \vskip\dimexpr\baselineskip - \ht1\relax %reimpose topskip
-        \noindent\leavevmode\hbox{}\kern\dimen0\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3}%
         %\nonstopmode
         %\showbox3
     \else
@@ -890,7 +899,7 @@
   %\showbox5
   \lastn@tefalse 
   \ifvoid5\else
-    \trace{fp}{Reinstating final line}%
+    \trace{fp}{Reinstating final line/note}%
     \setbox3\vbox{\interlinepenalty\lastnoteinterlinepenalty\widowpenalty0 \clubpenalty 0
        \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
        \trace{fp}{skip of \the\dimen1 before last line}%
