@@ -822,6 +822,10 @@
     \trace{fp}{Shaving footnote to \the\sh@vedim (excess to next page)}%
   \fi
 }
+\def\NoteShaveStay{1} % How many lines of *total notes* must stay on the main page before shaving is considered?
+\def\NoteShaveMin{1} % How many lines of notes are the minimum to considere moving onto the next page? 
+\def\NoteShaveShortest{1} % How long should be note be before it is considered for breaking? (Approximate only, as it is width-based)
+
 \def\findsh@venotes{%Find the possible shaved lengths of the notes box
   \ifdim\l@stnotebls=0pt \else
     \trace{fp}{Finding shaved note lengths}%
@@ -829,19 +833,28 @@
     \vbadness=10000
     \vfuzz=\maxdimen
     \setbox0=\copy\n@tesbox
-    \dimen0=0pt
-    \@LOOP\ifdim 0.5\sh@vedim>\l@stnotebls
-      \advance\sh@vedim by -\l@stnotebls
+    \dimen0=\dimexpr  \l@stnotebls * \NoteShaveMin \relax 
+    \dimen1=\dimexpr \l@stnotebls * \NoteShaveStay + \BelowFootNoteRuleSpace  \relax
+    \advance\sh@vedim -\dimen0 % Don't even bother trying to shave less than the minumum shave amount
+    \trace{fp}{Initial note length \the\ht\n@tesbox, first shave: \the\sh@vedim, stay: \the\dimen1 (\l@stnotebls*\NoteShaveStay+ \BelowFootNoteRuleSpace)}%
+    \@LOOP\ifdim \sh@vedim>\dimen1 
       %\showbox\n@tesbox
       \setbox1=\vsplit0 to \sh@vedim
       %\ifnum\badness<1000000 %Don't continue if the box is overfull 
+        \setbox1=\vbox{\unvbox1}%
+        \ifvoid0\else
+          \setbox0=\vbox{\unvbox0}%
+          \ifdim\ht0<\dimen0
+            \trace{fp}{\the\ht0 < \the\dimen0 : Treating as nothing shaved.}%
+            \setbox0\box\voidb@x
+          \else
+            \advance\dimen0-\ht0
+          \fi
+        \fi
         \ifvoid0
-          \setbox1=\vbox{\unvbox1}%
-          \trace{fp}{nothing shaved from notebox, \the\sh@vedim / \the\ht0/\the\ht1}%
+          \trace{fp}{nothing shaved from notebox, \the\sh@vedim / - /\the\ht1}%
           \sh@vedim=0pt 
         \else % Something trimmed off
-          \setbox1=\vbox{\unvbox1}%
-          \setbox0=\vbox{\unvbox0}%
           %\showbox0 \showbox1
           \trace{fp}{notebox can be shaved from \the\ht\n@tesbox to \the\sh@vedim / \the\ht0/\the\ht1}%
           {\dimen0=\dimexpr \ht\n@tesbox - \sh@vedim \relax
@@ -850,6 +863,7 @@
           %\sh@vedim=\the\ht0
         \fi
       %\fi
+      \advance\sh@vedim by -\l@stnotebls
       %\trace{fp}{Repeat? \the\sh@vedim, \the\ht0}%
     \@REPEAT
   \fi
@@ -1374,12 +1388,12 @@
       \ifnoteseen\MSG{Page \the\pageno\space is being printed without any footnotes/xrefs, etc. But at least one was seen earlier. Maybe it's ended up on the previous page or moved to the next one, or maybe it's vanished. Human checking is needed.}\fi
       \vfil
     \else
-      %Remove depth because depth is descender not true box depth
       \setbox0=\lastbox
-      \ifdim\wd0<\lastn@tewid
-        \penalty\lastnoteinterlinepenalty
+      \ifdim\wd0<\lastn@tewid % The note has been onto 2 or more lines
+        \penalty\numexpr \lastnoteinterlinepenalty + \lastnotewidowpenalty\relax
       \fi
       \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%
+      %Remove depth because depth is descender not true box depth
       \lastd@pth=\dp0 \dp0=0pt \prevdepth=-1000pt \box0 \kern\lastd@pth
     \fi}}%\iff@rstnote\else\showbox2\fi}
 %-c_makenotebox
