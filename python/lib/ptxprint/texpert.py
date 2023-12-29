@@ -44,7 +44,14 @@ texpertOptions = {
     "FigCaptionAdjust":   ["captionadj", (0., -10, 20, 1, 5), "\\def{0}{{{1}pt}}", _("Space between picture & caption"), _("Increase/Reduce the gap between figures and their captions")],
     "DefaultSpaceBeside": ["spbeside", (10., 0, 100, 1, 5), "\\def{0}{{{1}pt}}", _("Default space beside picture"), _("Picture horizontal margin*2")],
     "OptionalBreakPenalty": ["optbkpen", (300, 0, 10000, 10, 100), "\\def{0}{{{1}}}", _("Optional break penalty"), _("Penalty for the optional break")],
-    "badspacepenalty":    ["badsppen", (100, -10000, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")]
+    "badspacepenalty":    ["badsppen", (100, -10000, 10000, 10, 100), "{0}={1}", _("Bad space penalty"), _("A bad but not impossible place to breal")],
+    "lastnoteinterlinepenalty":  ["lastnoteinterlinep", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: interlinepenalty"), _("Penalty for breaking between lines of the last footnote.")],
+    "lastnotewidowpenalty":  ["lastnotewidowp", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: widowpenalty"), _("Extra penalty for breaking at the last line of the last footnote.")],
+    "lastnoteclubpenalty":  ["lastnoteclubp", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: clubpenalty"), _("Extra penalty for breaking at the first line of the last footnote.")],
+    "lastnoteparpenalty":  ["lastnoteparp", (100, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: penalty at par"), _("Penalty for breaking at an explicit footnote-paragraph in the last footnote.")],
+    "NoteShaveShortest":  ["nshaveshort", (2, 0, 100, 1, 1), "\def{0}{1}", _("Split notes: Shortest note to shave"), _("If footnotes might be shaved, how many lines must it be?")],
+    "NoteShaveMin":  ["nshavemin", (1, 0, 100, 1, 1), "\def{0}{1}", _("Split notes: min lines to move."), _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")],
+    "NoteShaveStay":  ["nshavestay", (1, 0, 100, 1, 1), "\def{0}{1}", _("Split notes: note lines to stay"), _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")]
 }
 
 def widgetName(opt):
