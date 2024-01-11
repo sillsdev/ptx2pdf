@@ -164,9 +164,9 @@ Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISB
 
 \s Vertical bar
 \p This is a | vertical bar.
-\p This is a \|\ escaped vertical bar.
-\p This is a \w  vertical|bar\w* in a slash-w
-\p This is a \w  vertical\| bar\w* in a slash-w when its escaped.
+\p This is a \| escaped vertical bar.
+\p This is a \w  vertical | bar\w* in a slash-w
+\p This is a \w  vertical \| bar\w* in a slash-w when its escaped\f + \ft A vertical \| bar in a note\ft*\f*.
 
  
 \s More link testing.
