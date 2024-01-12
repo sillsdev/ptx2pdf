@@ -838,12 +838,18 @@
     \get@ttribute{price}%
     \ifx\attr@b\relax
       \edef\@price{}%
+      \get@ttribute{pricevar}\ifx\attr@b\else
+        \ifcsname ms:zvar=\attr@b\endcsname
+          \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
+          \let\@price\tmp
+        \fi
+      \fi
     \else
       \edef\@price{\attr@b}%
     \fi
     \get@ttribute{pricecode}%
     \ifx\attr@b\relax
-      \get@ttribute{pricevar}\ifx\attr@b\else
+      \get@ttribute{pricecodevar}\ifx\attr@b\else
         \ifcsname ms:zvar=\attr@b\endcsname
           \x@\let\x@\tmp\csname ms:zvar=\attr@b\endcsname
           \let\attr@b\tmp
