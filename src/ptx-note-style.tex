@@ -183,6 +183,7 @@
    \else \global\let\n@xt\relax \fi
  \aftern@te
  \endgroup
+ \beginL\x@\write\x@\p@rlocs\x@{\n@tesize}\endL
  %\showboxbreadth=999\showlists
  \n@xt}
 \newif\ifsp@cebefore
@@ -443,6 +444,7 @@
 
 %+c_foot
 % called at end of note
+\def\n@tesize{}
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \par
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
@@ -454,7 +456,13 @@
   \fi
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
-  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable}\ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi\egroup
+  \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
+    \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd8\string}\string{\the\ht9\string}}%
+  \else
+    \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
+  \fi
+  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize}%
+  \ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi\egroup
   %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
   }
 \newbox\f@@tstrut

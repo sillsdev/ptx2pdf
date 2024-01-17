@@ -799,7 +799,7 @@
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
   \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
-  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
+  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}{\the\availht}}%
   \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
   \holdXobjectsfalse

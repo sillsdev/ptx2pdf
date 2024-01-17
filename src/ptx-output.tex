@@ -756,7 +756,7 @@
     \fi
     \ifdim\colhtA<0pt \colhtA=0pt \fi
     \ifdim\colhtB<0pt \colhtB=0pt \fi
-    \trace{o}{s@tcolhts: colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
+    \trace{o}{s@tcolhts(\the #1): colhtA=\the\colhtA, colhtB=\the\colhtB, toprightins=(\the\skip\toprightins, \the\ht\toprightins), bottomrightins=(\the\skip\bottomrightins, \the\ht\bottomrightins), colnotebox=\the\ht\coln@tebox}%
 }
 %-c_setcolhts
 
@@ -951,9 +951,10 @@
       \trace{o}{Rebalance trying from average difference \the\shortavail\space of
                 \the\colhtA =\the\ht\colA, \the\colhtB =\the\ht\colB, colnotes=\the\ht\coln@tebox}%
       \loop\setbox0=\copy\s@vedpage
-        \dimen0=\availht\advance\dimen0-\shortavail
-        \s@tcolhts{\dimen0}
+        %\dimen0=\availht\advance\dimen0-\shortavail
+        \s@tcolhts{\shortavail}
         \spl@tcols0
+        \g@tcolhts
         \trace{o}{Rebalance average loop(\the\shortavail): \the\ht\colA=\the\colhtA,
                   \the\ht\colB=\the\colhtB\space remainder \the\ht0}%
         \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
@@ -995,7 +996,7 @@
             \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
             \ifdim\dimen0<\b@lbestdiff \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail \fi
             \ifdim\dimen0<0.5 \baselineskip \rebalancefalse\fi
-          \else\rebalancefalse\fi \else\rebalancefalse\fi
+          \else\shortavail=\b@lbestavail \rebalancefalse\fi \else\shortavail=\b@lbestavil \rebalancefalse\fi
         \fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
@@ -1007,7 +1008,8 @@
         \ifnum\loopcount>20 
           \ifrem@inder\ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi\fi
           \shortavail=\b@lbestavail
-          \rebalancefalse\MSG{Rebalancing loop count bail}\fi
+          \rebalancefalse\MSG{Rebalancing loop count bail}%
+        \fi
         \ifrebalance\repeat
     \fi
     %\advance\shortavail by \ifdim\dp\colA>\dp\colB \dp\colA\else\dp\colB\fi     %(9)
@@ -1165,7 +1167,7 @@
   \trace{i}{after inserts: \the\availht}%
   % Round to lines accurate to 1/8pt in lineskip. 1/10pt causes overflow on longer pages. Support two column legal.
   \bmg@p=\availht
-  \dimen0=8\baselineskip
+  \dimen0=8 \baselineskip
   \ifdim\dimen0>0.5pt
       \trace{i}{dimen0=\the\dimen0, availht=\the\availht,  lastdepth=\the\lastdepth}%
       \multiply\availht by 8 \divide\availht by\dimen0 \multiply\availht by\dimen0 \advance\availht 1023sp\divide\availht by 8
@@ -1685,7 +1687,7 @@
       \setbox15=\copy14
       \def\pagecontents{\vfil\hbox{\hbox to \columnshift{}\vbox{\unvbox0}}%
          \ifdim\ht14>0pt \ifnoinkinmargin\vfil\box14\fi\fi}
-      \plainoutput\trace{plainoutput for fin@lverybottom}%
+      \plainoutput\trace{o}{plainoutput for fin@lverybottom}%
       \s@tpage
       \ifdim\ht\verybottomins>0pt \temptrue\else\tempfalse\fi\iftemp\setbox14=\copy15\repeat
   \fi

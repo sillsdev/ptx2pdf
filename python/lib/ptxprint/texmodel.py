@@ -1473,7 +1473,7 @@ class TexModel:
                             else:
                                 pages = [x[0] for x in pgs['']]
                             plurals = pluralstr(plstr, pages)
-                            artinfo = cinfo["copyrights"].get(art, {'copyright': {'en': art}, 'sensitive': {'en': art}})
+                            artinfo = cinfo["copyrights"].get(art.lower(), {'copyright': {'en': art}, 'sensitive': {'en': art}})
                             if artinfo is not None and (art in cinfo['copyrights'] or len(art) > 5):
                                 artstr = artinfo["copyright"].get(lang, artinfo["copyright"]["en"])
                                 if sensitive and "sensitive" in artinfo:
@@ -1481,8 +1481,8 @@ class TexModel:
                                 cpystr = multstr(cpytemplate, lang, len(pages), plurals, artstr.replace("_", "\u00A0"))
                                 crdts.append("\\{} {}".format(mkr, cpystr))
                             else:
-                                crdts.append(_("\\rem Warning: No copyright statement found for: {} on pages {}")\
-                                                .format(art.upper(), pluralstr))
+                                crdts.append(_("\\message{{Warning: No copyright statement found for: {} on pages {}}}")\
+                                                .format(art, plurals))
                             hasOut = True
                 if len(msngPgs):
                     plurals = pluralstr(plstr, msngPgs)
@@ -1528,7 +1528,7 @@ class TexModel:
                 crdts.append("}")
         if len(crdts):
             crdts.append("\\let\\zimagecopyrights=\\zimagecopyrightsen")
-        return "\n".join(crdts)
+        return "\n".join(crdts) + ("\n" if len(crdts) else "")
 
     def createXrefTriggers(self, bk, prjdir, triggers):
         if self.xrefs is None:

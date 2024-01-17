@@ -270,7 +270,7 @@ class PicInfo(dict):
                     for s in tgts.get(a, []):
                         if newBase(s.get('src', '')) == newBase(v.get('src', '')):
                             if v.get('caption', '') != '':
-                                s['caption'+captionpre] = v.get('caption', '')
+                                s['caption'+captionpre] = v['caption']
                             if v.get('ref', '') != '':
                                 s['ref'+captionpre] = v['ref']
                             break
