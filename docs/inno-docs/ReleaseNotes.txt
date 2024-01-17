@@ -1,10 +1,36 @@
 PTXprint 2.4.7 Release Notes
-11 Dec 2023
+18 Jan 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
+Bug fixes and Improvements in 2.4.8 (18 Jan 2024)
+
+  * Download updates button is now smarter
+  
+  * Shaving values are now deltas
+  
+  * Fix joint of carried over and new notes
+  
+  * Solve issue of breaking in overflowed notes
+  
+  * Fix typos in texpert.py
+  
+  * Merge branch 'notebreaking'
+  
+  * Update good test results (centrecolumns still a mess)
+  
+  * Start documenting milestones
+  
+  * Mode documentation
+  
+  * Fix chapter label dropping chapter marker/number
+  
+  * Fix bad image copyrights output to .tex (#929)
+  
+  * Add warning message help for bad copyright statement in tex.log
+  
+  Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
 
   * Improve snippet on diacritic colouring
   
