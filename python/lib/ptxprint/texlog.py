@@ -45,6 +45,7 @@ messages = [
     ("W","S", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
     ("W","RUP", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
     ("E","P", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
+    ("W","P", r"Warning: No copyright statement found for: .+? on pages .+? "),
     ("E","T", r"Number of bits does not correspond to the computed value"),
     ("I","ST", r"Image crop not supported"),
     ("W","P", r"Expected rotate=.+? or similar in definition of picture .+"),
