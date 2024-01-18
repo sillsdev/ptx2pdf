@@ -235,7 +235,8 @@
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
-  \vbox to 0pt{\hsize=\textwidth\kern-\topm@rgin
+  \vbox to 0pt{\t@gstartfull{Pagination}{h}{/Attached [/Top /Left] /Subtype /Header}%
+   \hsize=\textwidth\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
     \ht0=0.7\fontdimen6\csname font<\f@ntstyle>\endcsname \dp0=0pt \box0
@@ -247,16 +248,17 @@
         \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
-    \fi\fi}\vss}\nointerlineskip
+    \fi\fi}\vss\t@gend}\nointerlineskip
    \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newif\ifrhr@le
 \def\makefootline{{%HISTORIC, unused by ptx2pdf macros
   %\nomsg@tfontname{h}%
-  \vbox to 0pt{\dimen0=\textwidth\advance\dimen0 by -\columnshift
+  \vbox to 0pt{\t@gstartfull{Pagination}{h}{/Attached [/Bottom /Left] /Subtype /Footer}%
+    \dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss}%
+     \hbox to \textwidth{\the\footline}\vss\t@gend}%
 }}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue

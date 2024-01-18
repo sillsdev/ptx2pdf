@@ -659,6 +659,7 @@
     \hsize=\colwidth
   \fi
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
+  \t@gempty{Anchor}{fig}%
   \rotimagefalse
   \figh@scaptionfalse
   \def\pr@penalty{10}\def\p@stpenalty{10}%
@@ -923,6 +924,7 @@
     \fi
     %Align image left/right or centre
     \trace{g}{Object aligned into hbox \the\p@cinswid}%
+    \t@gstartfull{Figure}{fig}{/Width (\the\wd\newpicb@x) /Height (\the\ht\newpicb@x) /Pgpos (\csname figparam-pgpos\endcsname) /Size (\size@ption) /Loc (\loc@ption)}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
@@ -936,6 +938,7 @@
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
+    \t@gend
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig

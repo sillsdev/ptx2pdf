@@ -36,6 +36,7 @@ class Interlinear:
                         self.lexicon.setdefault(currlex, {})[currsense] = e.text or ""
 
     def makeref(self, s):
+        # use Reference here and do it properly
         m = _refre.match(s)
         if m:
             return (int(m[2]), m[3])
@@ -104,7 +105,7 @@ class Interlinear:
                 elif event == "end":
                     if e.tag == "string":
                         curref = self.makeref(e.text)
-                        m = re.match(r"(\d+)-(\d+)", curref[1])
+                        m = re.match(r"(\d+)[-,](\d+)", curref[1])
                         if m:
                             vrange = list(range(int(m.group(1)), int(m.group(2))+1))
                         else:

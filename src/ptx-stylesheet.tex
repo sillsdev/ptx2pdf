@@ -1385,7 +1385,7 @@
      \x@\global\x@\let\csname @v@rse##1\endcsname\v@rse}\x@\each@col\diglot@list\E\col@do{}%
   \fi}
 \def\ptx@fig #1\fig*{\egroup\ifIncludeFigures\tfmptrue\else\tfmpfalse\fi\IncludeFigurestrue
-    \trace{g}{In ptx@fig #1}\d@figure{#1}\m@kedigitsletters
+    \trace{g}{In ptx@fig #1}\t@gempty{Anchor}{fig}\d@figure{#1}\m@kedigitsletters
     \iftfmp\else\IncludeFiguresfalse\fi}                           %(1)
 %-csty_addspecialhooks
 

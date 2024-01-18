@@ -1444,6 +1444,14 @@
     \special{\t@gt@mp}%
   \fi
 }
+\def\t@gempty#1#2{\t@gemptyfull{#1}{#2}{}}
+\def\t@gemptyfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@t@mp{pdf:code /#1 << /Type /#2 /MCID \the\tagCount\space #3 >> DP}%
+    \special{\t@t@mp}%
+  \fi
+}
 \def\t@gend{\iftaggedPDF\special{pdf:code EMC}\fi}
 
 \endinput
