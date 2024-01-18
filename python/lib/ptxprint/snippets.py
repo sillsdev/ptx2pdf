@@ -260,6 +260,7 @@ class FancyBorders(Snippet):
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
 {fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+{fancy/endofbook}\addtoendptxhooks{{\z}}
 
 """
         if texmodel.dict.get("_isDiglot", False):
