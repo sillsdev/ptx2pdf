@@ -152,6 +152,7 @@
         %\showboxbreadth=99\showlists
     \fi\fi % Disable gridding of headings box if no gridding here
     \ifdim\ht\he@dingbox>0pt 
+      \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend}%
       \gridb@x\he@dingbox
       \ifinextended\sb@rsavegriddims\fi
     \fi%
@@ -362,7 +363,7 @@
 \def\endit@P{%Called by whileitp@ps, to end a paragraph style
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
-   \beginL\pdfsavepos
+   \beginL\pdfsavepos\t@gend
    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
@@ -393,7 +394,7 @@
 
 \def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
    \getp@ram{type}{#2}{#2}%
-   \beginL\pdfsavepos
+   \beginL\pdfsavepos\t@gstartfull{P}{#2}{/lspace (#1)}%
    \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
@@ -927,11 +928,11 @@
   \everypar{}%
   \setbox#1\vbox{%
     %\hsize=\wd#1%
-    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
-    \pdfsavepos
-    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}{\the\availht}}%
+    \t@gstartfull{Div}{col}{/ht (\the\ht#2 ) /dp (\the\dp#2 ) /wd (\the\wd#2 ) /avail (\the\availht )}%
+    \pdfsavepos\x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
     \unvbox#1%
-    \pdfsavepos
+    \pdfsavepos\t@gend
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
     %\MSG{\dc@ref@rgs (\the\hsize) ->}%
     }%
@@ -1030,17 +1031,17 @@
 
 \newif\ifp@rlengthimportant
 
-\def\@@colstart#1#2#3#4#5{%
+\def\@@colstart#1#2#3#4#5#6{%
   \trace{C}{@colstart: \the\p@rlinesgone.}
-  \edef\prev@col@x{#4}%
-  \edef\prev@col@y{#5}%
-  \prev@y=#5\relax
+  \edef\prev@col@x{#5}%
+  \edef\prev@col@y{#6}%
+  \prev@y=#6\relax
   \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
   \let\prev@col@ht\tot@col@ht
   \edef\prev@col@wd{#3}%
   \p@rlengthimportantfalse
 }
-\@@colstart{0pt}{0pt}{0pt}{0}{0}
+\@@colstart{0pt}{0pt}{0pt}{0pt}{0}{0}
 \def\@@colstop#1#2{%
   \edef\this@col@x{#1}%
   \edef\this@col@y{#2}%
@@ -1431,7 +1432,18 @@
  \parfillskip=0pt plus 1fil
  %\emergencystretch=11in
  \parindent=0pt }
-
 %-cpar_resetparstyle
+
+\newif\iftaggedPDF \taggedPDFfalse
+\newcount\tagCount
+\def\t@gstart#1#2{\t@gstartfull{#1}{#2}{}}
+\def\t@gstartfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@gt@mp{pdf:code /#1 << /Type /#2 /MCID \the\tagCount\space #3 >> BDC}%
+    \special{\t@gt@mp}%
+  \fi
+}
+\def\t@gend{\iftaggedPDF\special{pdf:code EMC}\fi}
 
 \endinput

@@ -343,6 +343,7 @@
   % currently we do not allow footnotes to break to the next page, so this may not be necessary
 %  \splittopskip\ht\f@@tstrut % top baseline for broken footnotes
 %  \splitmaxdepth\dp\f@@tstrut
+  \t@gstart{Note}{\n@tetype}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}{#2}%
   %\ifnum\interactionmode=1\showlists\fi
@@ -462,7 +463,9 @@
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
   \fi
   \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize}%
-  \ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi\egroup
+  \ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi
+  \t@gend
+  \egroup
   %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
   }
 \newbox\f@@tstrut

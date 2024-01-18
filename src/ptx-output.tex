@@ -116,7 +116,7 @@
   \if\splitbotmark\relax\else\xdef\p@gebotmark{\splitbotmark}\fi
   \setbox\colA\vbox{\unvbox\colA\ifColNotes\vfil\box\coln@tebox\fi}%
   \ifvoid255 \fitonpagetrue\else\fitonpagefalse\fi
-  \decr{\availht}{\colA}
+  \und@rfill=\availht \decr{\und@rfill}{\colA}
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents
   \iffitonpage
@@ -127,7 +127,7 @@
       \trace{o}{exit reheightcolnotes, colA=\the\ht\colA, xr@fbox=\the\ht\xr@fbox}%
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
-    \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
+    \advance\und@rfill -\dimen3 % from c@lcboxheights
     \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%

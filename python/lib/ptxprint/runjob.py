@@ -941,7 +941,8 @@ class RunJob:
             cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
-            #cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
+            if self.args.extras & 7:
+                cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
             with open(outfname.replace(".tex", ".xdvi_log"), "w") as outf:
                 runner = call(cmd + [self.getxdvname(outfname, info)], cwd=self.tmpdir, stdout=outf, stderr=outf)
             logger.debug(f"Running: {cmd} for {outfname}")

@@ -217,6 +217,7 @@
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
+    \t@gstart{Span}{\newch@rstyle}%
     \getmcp@ram{raise}%
     \tempfalse % do we box the text?
     \ifx\p@ram\relax\else \temptrue\fi
@@ -372,6 +373,7 @@
      \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
+    \t@gend
     \trace{sa}{ending charstyle \newch@rstyle}%
     \mcpop
     \trace{sa}{end char style, stack now: \mcstack (\styst@kfirst)}%
