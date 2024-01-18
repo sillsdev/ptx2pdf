@@ -447,6 +447,7 @@
 % called at end of note
 \def\n@tesize{}
 \def\@foot{\ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
+  \t@gend
   \par
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
@@ -464,7 +465,6 @@
   \fi
   \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize}%
   \ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi
-  \t@gend
   \egroup
   %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
   }
