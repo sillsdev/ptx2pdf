@@ -4,6 +4,20 @@ PTXprint 2.4.8 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.9 (19 Jan 2024)
+
+  * Added t@gging (and stop footnotes blowing up)
+  
+  * Add tags for figures
+  
+  * Temporary fix verse lists in interlinear
+  
+  * Add end of book hook when end of book decoration is included (#938)
+  
+  * Fix typo in ptx-output.tex
+  
+  * Allow custom .py scripts to run with __main__ check
+
 Bug fixes and Improvements in 2.4.8 (18 Jan 2024)
 
   * Download updates button is now smarter
