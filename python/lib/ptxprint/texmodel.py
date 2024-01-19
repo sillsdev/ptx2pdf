@@ -824,6 +824,7 @@ class TexModel:
                     if script.lower().endswith(".py") or re.match(r"^#!.*?(?<=[ /!])python", l):
                         scriptf.seek(0)
                         gs = globals().copy()
+                        gs["__name__"] = "__main__"
                         sys._argv = sys.argv
                         sys.argv = [script, infpath, outfpath]
                         # "Remember that at the module level, globals and locals are the same dictionary.

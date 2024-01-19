@@ -998,14 +998,14 @@
             \trace{o}{Testing column difference of \the\dimen0 \space against threshold of \BalanceThreshold x\the\baselineskip}%
             \ifdim\dimen0<\b@lbestdiff \b@lbestdiff=\dimen0 \b@lbestavail=\shortavail \fi
             \ifdim\dimen0<0.5 \baselineskip \rebalancefalse\fi
-          \else\shortavail=\b@lbestavail \rebalancefalse\fi \else\shortavail=\b@lbestavil \rebalancefalse\fi
+          \else\shortavail=\b@lbestavail \rebalancefalse\fi \else\shortavail=\b@lbestavail \rebalancefalse\fi
         \fi
 		% give up if target size less than 2 lines (should not happen)
         \ifdim\shortavail<\baselineskip \MSG{Rebalancing bailed for short block \the\shortavail}%   %(8)
           \ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi
           \ifdim\b@lbestdiff<\baselineskip \fitonpagefalse \shortavail=\availht
           \else
-            \shortavail=\b@lbestavail\rebalancefalse
+            \shortavail=\b@lbestavail \rebalancefalse
         \fi\fi
         \ifnum\loopcount>20 
           \ifrem@inder\ifdim\b@lbestdiff>\dimen9 \fitonpagefalse\fi\fi
