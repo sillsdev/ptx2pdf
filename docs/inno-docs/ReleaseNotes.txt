@@ -1,9 +1,15 @@
 PTXprint 2.4.9 Release Notes
-18 Jan 2024
+20 Jan 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.10 (20 Jan 2024)
+
+  * Make Quick Run option 'sticky' - keep with user config settings
+  
+  * Undo change related to t@gging (colstart param missing / fixes extra } error)
+ 
 Bug fixes and Improvements in 2.4.9 (19 Jan 2024)
 
   * Added t@gging (and stop footnotes blowing up)
