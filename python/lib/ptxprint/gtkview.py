@@ -633,6 +633,7 @@ class GtkViewModel(ViewModel):
         self.isDisplay = True
         self.searchWidget = []
         self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
+        self.set("c_quickRun", self.userconfig.getboolean('init', 'quickrun', fallback=False))
         logger.debug(f"Loaded UI level from user config: {self.uilevel}")
         self.painted = set()
         self.locked = set()
@@ -1580,8 +1581,9 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
+        self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
         self.noInt = self.get("c_noInternet")
-        self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
+        self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
         self.writeConfig(force=force)
