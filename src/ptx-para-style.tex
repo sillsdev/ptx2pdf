@@ -928,9 +928,9 @@
   \everypar{}%
   \setbox#1\vbox{%
     %\hsize=\wd#1%
-    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}{\the\availht}}%
-    \t@gstartfull{Div}{col}{/ht (\the\ht#2 ) /dp (\the\dp#2 ) /wd (\the\wd#2 ) /avail (\the\availht )}%
-    \pdfsavepos\x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
+    \pdfsavepos
+    \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
     \unvbox#1%
     \pdfsavepos\t@gend
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
@@ -1031,17 +1031,17 @@
 
 \newif\ifp@rlengthimportant
 
-\def\@@colstart#1#2#3#4#5#6{%
+\def\@@colstart#1#2#3#4#5{%
   \trace{C}{@colstart: \the\p@rlinesgone.}
-  \edef\prev@col@x{#5}%
-  \edef\prev@col@y{#6}%
-  \prev@y=#6\relax
+  \edef\prev@col@x{#4}%
+  \edef\prev@col@y{#5}%
+  \prev@y=#5\relax
   \edef\tot@col@ht{\the\dimexpr #1 + #2\relax}%
   \let\prev@col@ht\tot@col@ht
   \edef\prev@col@wd{#3}%
   \p@rlengthimportantfalse
 }
-\@@colstart{0pt}{0pt}{0pt}{0pt}{0}{0}
+\@@colstart{0pt}{0pt}{0pt}{0}{0}
 \def\@@colstop#1#2{%
   \edef\this@col@x{#1}%
   \edef\this@col@y{#2}%
