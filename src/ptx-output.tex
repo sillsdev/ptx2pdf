@@ -961,7 +961,7 @@
                   \the\ht\colB=\the\colhtB\space remainder \the\ht0}%
         \ifdim\ht0>0pt \temptrue\else\tempfalse\fi
         \ifdim\shortavail<\baselineskip\tempfalse\fi
-        \iftemp\advance\shortavail -\baselineskip\repeat
+        \iftemp\advance\shortavail \baselineskip\repeat
       \trace{o}{Rebalance starting with \the\colhtA=\the\ht\colA, \the\colhtB=\the\ht\colB}%
     \fi
     \g@tcolhts                                                                  %(4)
