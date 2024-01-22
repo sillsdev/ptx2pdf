@@ -38,6 +38,7 @@ from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
+from ptxprint.hyphen import generateHyphenationFile
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
@@ -105,7 +106,7 @@ _cjkLangs = {
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Devanagari", 
-    "Ethiopic", "Extended-Arabic", "Fullwidth", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Hebrew", "Javanese", "Kannada", 
+    "Ethiopic", "Extended-Arabic", "Fullwidth", "FixHyphens-Non", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Hebrew", "Javanese", "Kannada", 
     "Kayah-Li", "Khmer", "Khudawadi", "Lao", "Lepcha", "Limbu", "Malayalam", "Masaram-Gondi", "Meetei-Mayek", "Modi", "Mongolian", 
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
     "Osmanya", "Pahawh-Hmong", "Rumi", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
@@ -3974,7 +3975,9 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_addSyllableBasedHyphens").set_sensitive(sylbrk)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.generateHyphenationFile(inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            m1, m2 = generateHyphenationFile(self, self.prjid, prjdir, inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
+            self.doError(m1, secondary=m2)
         dialog.hide()
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):

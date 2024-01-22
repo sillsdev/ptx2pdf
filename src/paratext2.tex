@@ -290,7 +290,6 @@
 \def\ZWSP{\penalty0\intercharspace\relax} % ZERO WIDTH SPACE is a possible break
 \def\WJ{\leavevmode\nobreak} % WORD JOINER
 \def\ZWNBSP{\WJ} % ZERO WIDTH NO-BREAK SPACE
-\def\NBHYPH{\leavevmode\hbox{-}} % NON-BREAKING HYPHEN
 \def\NQUAD{\BADBREAK\relax\space} % subvert Unicode En-Quad as BAD BREAKING SPACE
 \def\MQUAD{\BADBREAK\hskip 1em plus .2em minus .2em}
 \def\MSPACE{\hskip 1em} % Fixed width
@@ -300,7 +299,7 @@
 \def\SIXPEREMSPACE{\hskip .1666em}
 \def\THINSPACE{\hskip .2em plus .1em minus .1em}
 \def\HAIRSPACE{\hskip 0.042em\nobreak\intercharspace} % 1/24 em
-\def\HYPHEN{\-}
+\def\HYPHEN{\char"2010\discretionary{}{}{}}% Contrastive hyphen with hyphen break
 \def\LINESEP{\break}
 \def\GOODBREAK{\penalty-\OptionalBreakPenalty}
 \def\BADBREAK{\penalty\the\badspacepenalty}
@@ -366,7 +365,6 @@
   %\def\ZWSP{^^^^200b}%
   \def\WJ{^^^^2060}%
   \def\ZWNBSP{^^^^feff}%
-  \def\NBHYPH{^^^^2011}%
   \def\NQUAD{^^^^2000}%
   \def\MQUAD{^^^^2001}%
   \def\NSPACE{^^^^2002}%
@@ -390,7 +388,6 @@
 \catcode"200B=\active \def^^^^200b{\pr@tect\ZWSP}
 \catcode"2060=\active \def^^^^2060{\pr@tect\WJ}
 \catcode"FEFF=\active \def^^^^feff{\pr@tect\ZWNBSP}
-\catcode"2011=\active \def^^^^2011{\pr@tect\NBHYPH}
 \catcode"2000=\active \def^^^^2000{\pr@tect\NQUAD}
 \catcode"2001=\active \def^^^^2001{\pr@tect\MQUAD}
 \catcode"2002=\active \def^^^^2002{\pr@tect\NSPACE}
