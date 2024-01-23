@@ -38,7 +38,7 @@ from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
-from ptxprint.hyphen import generateHyphenationFile
+from ptxprint.hyphen import Hyphenation
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 from threading import Thread
@@ -3976,8 +3976,8 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             prjdir = os.path.join(self.settings_dir, self.prjid)
-            m1, m2 = generateHyphenationFile(self, self.prjid, prjdir, inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
-            self.doError(m1, secondary=m2)
+            self.hyphenation = fromPTXFile(self, self.prjid, prjdir, inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
+            self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):

@@ -15,6 +15,7 @@ from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
+from ptxprint.hyphen import Hyphenation
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -127,6 +128,7 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.digSuffix = None
+        self.hyphenation = None
 
         # private to this implementation
         self.dict = {}
@@ -619,6 +621,7 @@ class ViewModel:
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.picinfos = None
             self.loadPics(mustLoad=False, force=True)
+            self.hyphenation = None
             pts = self._getPtSettings()
             if pts is not None:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
@@ -1196,6 +1199,13 @@ class ViewModel:
         else:
             self.styleEditor.setval('x', 'NoteBlendInto', None)
 
+    def loadHyphenation(self):
+        if self.hyphenation:
+            return
+        if self.get("c_hyphenate"):
+            self.hyphenation = Hyphenation.fromTeXFile(self.prjid, os.path.join(self.settings_dir, self.prjid))
+        else:
+            self.hyphenation = None
 
     def editFile_delayed(self, *a):
         pass

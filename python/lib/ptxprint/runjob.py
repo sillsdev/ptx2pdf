@@ -328,6 +328,7 @@ class RunJob:
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
             return
+        self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
@@ -375,6 +376,7 @@ class RunJob:
             joblist = [[j] for j in jobs]
 
         if self.printer.diglotView is not None:
+            self.printer.diglotView.loadHyphenation()
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
