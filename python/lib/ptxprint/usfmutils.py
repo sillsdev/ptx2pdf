@@ -3,7 +3,7 @@ from ptxprint import sfm
 from ptxprint.reference import RefList, RefRange, Reference, BookNames
 import re, os, traceback, warnings
 from collections import namedtuple
-from itertools import groupby
+from itertools import groupby, accumulate
 from functools import reduce
 from copy import deepcopy
 import regex, time, logging
@@ -261,6 +261,37 @@ class Usfm:
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
+    def hyphenate(self, hyph, nbhyphens):
+        hyph.calcChars()
+        splitre = re.compile(r"([^{}]+)".format("".join(sorted(hyph.chars))))
+        if nbhyphens:
+            hyphenchar = "\u2011"
+        elif hyph.has2010:
+            hyphenchar = "\u2010"
+        else:
+            hyphenchar = "-"
+        def isincluded(e):
+           return "nonvernacular" not in getattr(e, "meta", {}).get('TextProperties', "").lower()
+        def proc(e):
+            if isinstance(e, sfm.Element):
+                for c in e:
+                    proc(c)
+            elif isincluded(e):
+                bits = splitre.split(str(e))
+                for i in range(0, len(bits), 2):
+                    s = bits[i].replace("-", hyphenchar)
+                    if s.lower() in hyph:
+                        h = hyph.get(s.lower())
+                        if s.lower() != s:
+                            hbits = h.split("-")
+                            hpos = list(accumulate([len(x) for x in hbits]))
+                            r = [s[x:y] for x, y in zip([0] + hpos, hpos + [len(h)])]
+                            bits[i] = "\u00AD".join(r)
+                        else:
+                            bits[i] = h.replace("-", "\u00AD")
+                e.data = "".join(bits)
+        proc(self.doc[0])
+        
     def getmarkers(self):
         ''' Return a set of all markers in the doc '''
         res = set()

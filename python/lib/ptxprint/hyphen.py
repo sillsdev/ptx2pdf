@@ -111,12 +111,16 @@ class Hyphenation:
         self.wordlist = words or {}
         self.has2010 = False
         self.has2011 = False
+        self.chars = None
 
     def __len__(self):
         return len(self.wordlist)
 
     def __contains__(self, s):
         return s in self.wordlist
+
+    def get(self, k, default=None):
+        return self.wordlist.get(k, default)
 
     def analyse(self):
         self.has2010 = any("\u2010" in x for x in self.wordlist.keys())
@@ -129,3 +133,9 @@ class Hyphenation:
         with open(outfname, "w", encoding="utf-8") as outf:
             outf.write(outlist)
 
+    def calcChars(self):
+        if self.chars is not None:
+            return
+        self.chars = set()
+        for k in self.wordlist.keys():
+            self.chars.update(k)

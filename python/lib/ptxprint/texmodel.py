@@ -837,6 +837,17 @@ class TexModel:
                 checkoutput(cmd) # dont't pass cmd as list when shell=True
         return outfpath
 
+    def _getText(self, data, doc, bk, logmsg=""):
+        if doc is not None:
+            data = str(doc)
+            logger.log(5, logmsg+data)
+        return (data, None)
+
+    def _getDoc(self, data, doc, bk):
+        if data is not None:
+            doc = self._makeUSFM(data.splitlines(True), bk)
+        return (None if doc else data, doc)
+        
     def convertBook(self, bk, chaprange, outdir, prjdir, isbk=True):
         try:
             isCanon = int(bookcodes.get(bk, 100)) < 89
@@ -885,8 +896,8 @@ class TexModel:
         codepage = self.ptsettings.get('Encoding', 65001)
         with universalopen(infpath, cp=codepage) as inf:
             dat = inf.read()
-
         doc = None
+
         if chaprange is None and self.dict["project/bookscope"] == "single":
             chaprange = RefList((RefRange(Reference(bk, int(float(self.dict["document/chapfrom"])), 0),
                                  Reference(bk, int(float(self.dict["document/chapto"])), 200)), ))
@@ -897,14 +908,14 @@ class TexModel:
                 (chaprange[0].last.chap >= int(chaps[bk]) or chaprange[0].last.chap == 0)):
             doc = None
         else:
-            doc = self._makeUSFM(dat.splitlines(True), bk)
+            (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
                 doc = doc.getsubbook(chaprange)
 
         if self.interlinear is not None:
-            if doc is None:
-                doc = self._makeUSFM(dat.splitlines(True), bk)
+            (dat, doc) = self._getText(dat, doc, bk)
             linelengths = [len(x) for x in dat.splitlines(True)]
+            (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
                 doc.calc_PToffsets()
                 self.interlinear.convertBk(bk, doc, linelengths)
@@ -915,57 +926,57 @@ class TexModel:
                                     show=not printer.get("c_quickRun"))
                     self.interlinear.fails = []
         elif bk.lower().startswith("xx"):
-            if doc is None:
-                doc = self._makeUSFM(dat.splitlines(True), bk)
+            (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
                 doc.doc = self.flattenModule(infpath, outfpath, usfm=doc)
 
         if self.changes is not None and len(self.changes):
-            if doc is not None:
-                dat = str(doc)
-                logger.log(5, "Unparsing text to run user changes\n"+dat)
-                doc = None
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run user changes\n")
             dat = runChanges(self.changes, bk, dat)
             #self.analyzeImageCopyrights(dat)
 
-        if self.dict['project/canonicalise'] \
-                    or not self.asBool("document/bookintro") \
-                    or not self.asBool("document/introoutline")\
-                    or self.asBool("document/hidemptyverses"):
-            if doc is None:
-                doc = self._makeUSFM(dat.splitlines(True), bk)
+        if self.dict['project/canonicalise']:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+
+        if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("stripIntro")
             if doc is not None:
-                if not self.asBool("document/bookintro") or not self.asBool("document/introoutline"):
-                    logger.debug("stripIntro")
-                    doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
-                if self.asBool("document/hidemptyverses"):
-                    logger.debug("stripEmptyChVs")
-                    doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
+                doc.stripIntro(not self.asBool("document/bookintro"), not self.asBool("document/introoutline"))
+
+        if self.asBool("document/hidemptyverses"):
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("stripEmptyChVs")
+            if doc is not None:
+                doc.stripEmptyChVs(ellipsis=self.asBool("document/elipsizemptyvs"))
 
         if self.dict['fancy/endayah'] == "":
-            if doc is None:
-                doc = self._makeUSFM(dat.splitlines(True), bk)
+            (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("versesToEnd")
-            doc.versesToEnd()
+            if doc is not None:
+                doc.versesToEnd()
 
         if self.dict["strongsndx/showintext"] and self.dict["notes/xrlistsource"].startswith("strongs") \
                     and self.dict["notes/ifxrexternalist"] and isCanon:
-            if doc is None:
-                doc = self._makeUSFM(dat.splitlines(True), bk)
+            (dat, doc) = self._getDoc(dat, doc, bk)
             logger.debug("Add strongs numbers to text")
             try:
                 doc.addStrongs(printer.getStrongs(), self.dict["strongsndx/showall"])
             except SyntaxError as e:
                 self.printer.doError("Processing Strongs", secondary=str(e))
 
-        if doc is not None and getattr(doc, 'doc', None) is not None:
-            dat = str(doc)
-            logger.log(5, "Unparsing text to run local changes\n"+dat)
+        if self.asBool("paragraph/ifhyphenate") and self.asBool("document/ifletter") and printer.hyphenation:
+            (dat, doc) = self._getDoc(dat, doc, bk)
+            logger.debug("Insert hyphens manually")
+            if doc is not None:
+                doc.hyphenate(printer.hyphenation, self.dict["paragraph/ifnbhyphens"])
 
         if self.localChanges is not None:
+            (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to run local changes\n")
             logger.log(5,self.localChanges)
             dat = runChanges(self.localChanges, bk, dat)
 
+        (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
         if self.dict['project/when2processscript'] == "after":
