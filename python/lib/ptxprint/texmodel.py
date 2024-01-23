@@ -1273,7 +1273,12 @@ class TexModel:
         # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  
 
         # Convert hyphens from minus to hyphen
-        self.localChanges.append(makeChange(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", r"\u2011", flags=regex.M))
+        if self.asBool("paragraph/ifnbhyphens"):
+            self.localChanges.append(makeChange(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", r"\u2011", flags=regex.M))
+        # elif:
+            # Is hyphenation turned on AND are there \u2010 in the hyphenation file?
+            # self.localChanges.append(makeChange(r"(?<!\\(?:f|x|ef|fe)\s)((?<=\s)-|-(?=\s))", r"\u2010", flags=regex.M))
+            
 
         # Wrap Hebrew and Greek words in appropriate markup to avoid tofu
         if self.asBool("project/autotaghebgrk"):

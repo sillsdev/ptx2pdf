@@ -6281,7 +6281,7 @@ to ensure that they are displayed properly.</property>
                                 <property name="margin-bottom">6</property>
                                 <property name="left-padding">12</property>
                                 <child>
-                                  <!-- n-columns=2 n-rows=2 -->
+                                  <!-- n-columns=2 n-rows=3 -->
                                   <object class="GtkGrid">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -6353,6 +6353,34 @@ is checked, then "hyphens" will be invisible.</property>
                                         <property name="left-attach">1</property>
                                         <property name="top-attach">1</property>
                                       </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_nonBreakingHyphens">
+                                        <property name="label" translatable="yes">Make Hyphens Non-Breaking</property>
+                                        <property name="name">Make Hyphens Non-Breaking</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Enable this option to ensure that word-medial hyphens
+within the text never break across two lines.
+
+By default word-
+medial may break
+across two lines.
+
+If enabled, word-medial will
+always stay on the same line.</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">2</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <placeholder/>
                                     </child>
                                   </object>
                                 </child>
