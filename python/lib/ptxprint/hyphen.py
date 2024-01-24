@@ -1,5 +1,5 @@
-import re, os
-from ptxprint.utils import universalopen, runChanges
+import re, os, regex
+from ptxprint.utils import universalopen, runChanges, _
 
 class Hyphenation:
 
