@@ -1,10 +1,10 @@
 # zlabel
 ## Summary
-Remember the page number for this place
+Remember the page number for/reference this place
 ## Examples
 
 ```
-\ef + \cat people\cat* \fk Herod\ft `\zlabel|HerodANote\*Herod Antipas should not be confused with.... (see note for \zref|label="HerodGnote"\*) on page \zpage|label="HerodGnote"\*) \ef*
+\ef + \cat people\cat* \fk Herod\ft `\zlabel|HerodAnote\*Herod Antipas should not be confused with.... (see note for \zref|label="HerodGnote"\*) on page \zpage|label="HerodGnote"\*) \ef*
 
 ```
 ## Description
