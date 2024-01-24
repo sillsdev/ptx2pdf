@@ -266,6 +266,7 @@
 \newif\iffiglocleft \figloclefttrue
 \newif\ifpicUsesIns \picUsesInstrue
 \newif\ifpicNarrow \picNarrowfalse
+\newif\ifpicTall \picTallfalse
 \newif\ifrotimage
 \newif\ift@mp %because just one temp isn't enough
 
@@ -325,6 +326,11 @@
     \let\l@cspec@a\loc@Inl
   \else
     \InlBelowfalse
+  \fi
+  \ifx\l@cspec@a\loc@InText
+    \trace{g}{Experimental intext \w@tsit}%
+    \global\let\picl@c\loc@InText\xdef\pic@lign{c}\global\picUsesInsfalse\p@cinswid=\hsize
+    \picNarrowtrue
   \fi
   \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
@@ -729,6 +735,7 @@
   \gdef\picl@c{}% location code for in-line (non-insert) pictures
   % By default, set the insert width to full span
   \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
+  \picTallfalse
   \ifx\size@ption\size@COL \p@cwidth=\hsize
   \else\ifx\size@ption\size@SPAN
     \else\ifx\size@ption\size@WIDTH
@@ -743,7 +750,13 @@
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
           \p@cinswid=\PaperWidth
         \else
-           \errmessage{Unknown picture size "\size@ption", expected "col", "span", "width", "page" or "full"}\fi\fi\fi\fi\fi
+          \ifx\size@ption\size@FONT \p@cwidth=1em
+            \p@cinswid=1em \picTalltrue
+          \else
+            \ifx\size@ption\size@LINE \p@cwidth=\baselineskip
+              \p@cinswid=\baselineskip \picTalltrue
+            \else
+             \errmessage{Unknown picture size "\size@ption", expected "col", "span", "width", "page", "full", "font" or "line"}\fi\fi\fi\fi\fi\fi\fi
   \let\p@cins=\relax
 %-cfig_dofigure_1
   % --------- Parse the location option -----------
@@ -862,7 +875,7 @@
     \let\picp@ge\empty
     \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     %what are we scaling on the image? Width or height?
-    \ifrotimage
+    \ifnum \ifrotimage 1\else 0\fi = \ifpicTall 0 \else 1 \fi
       %If there's rotation, fit the image height to width instead of the normal way:
       \def\picdim@n{height}\def\picaltdim@n{width}%
     \else
@@ -891,10 +904,12 @@
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
     \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
-    \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
-      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
-      \x@\writefigp@gelog\x@{\l@gstring}%
-      \box\newpicb@x\hss}%
+    \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
+    \ifpicTall %Tall boxes don't get centred.
+      \setbox\newpicb@x=\hbox{\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x}%
+    \else
+      \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
+    \fi
 %-cfig_dofigure_3
     % FIXME: Something like this?
 %+cfig_dofigure_4
@@ -923,6 +938,10 @@
         \add@credit%
     \fi
     %Align image left/right or centre
+    \ifx\picl@c\loc@InText % InTextBoxes get their natural width + spacebeside 
+      \p@cinswid=\wd\newpicb@x
+      \advance\p@cinswid\sp@cebeside
+    \fi
     \trace{g}{Object aligned into hbox \the\p@cinswid}%
     \t@gstartfull{Figure}{fig}{/Width (\the\wd\newpicb@x) /Height (\the\ht\newpicb@x) /Pgpos (\csname figparam-pgpos\endcsname) /Size (\size@ption) /Loc (\loc@ption)}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
@@ -998,6 +1017,9 @@
     \dimen2=\count255\baselineskip %space reserved...
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
+    \ifx\picl@c\loc@InText
+      \d@figureInText 0%
+    \fi
     \ifx\picl@c\loc@Inl
       \headingtopspace=0pt
       \d@figureInl 0%
@@ -1031,6 +1053,11 @@
 }
 \newif\ifInlBelow \InlBelowfalse
 \newif\ifAdjustInlBelow \AdjustInlBelowfalse
+\def\d@figureInText#1{%
+  %\showbox #1
+  %\vrule height 10pt depth 0pt width 10pt
+  \leavevmode\hbox{\box #1}%
+}
 \def\d@figureInl#1{%
   \let\curmode\empty
   \ifhmode \edef\curmode{\curmode, in HMODE}\fi %Can't test for these inside a write

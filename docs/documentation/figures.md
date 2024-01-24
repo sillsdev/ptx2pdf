@@ -95,10 +95,11 @@ t    | 'Top'                  | Above everything except the header line.        
 b    | 'Bottom'               | Below all verse text (and footnotes in diglot).                 | across both columns 
 tl   | 'Top-Left'    [^1]      | At the top of the left-hand [^2] column                          | width of column 
 bl   | 'Bottoom-Left'    [^1]  | At the bottom of the left-hand [^2] column                          | width of column 
------|------------------------|       ***Experimental Additions***                              |----------------------------
+-----|------------------------|       ***PTXprint additions***                              |----------------------------
 h    | 'Here'                 | Where defined / before the verse in piclist[^3], centred       | width of column
 hc   | 'Here',centred         | Where defined / before the verse in piclist[^3], centred       | width of column
 hl   | 'Here',Left            | Where defined / before the verse in piclist[^3], left-aligned  | same width as image
+H | 'cHaracterHere' |  In the exact location, as if a character. | (same as image??)
 p    | 'Post-paragraph'       | After this paragraph[^4],[^7], centred                              | width of column
 pc   | 'Post-paragraph', centred  | After this paragraph[^4], centred                            | width of column
 pl   | 'Post-paragraph, Left' | After this paragraph[^4], left-aligned                           | same width as image
@@ -240,19 +241,23 @@ images in cutouts.
   from a piclist. Possibly also for some kind of decorative 'end of section'
   mark.
 - hl / hr Handy for a sponsor's or publisher's logo, perhaps?
+- H Perhaps a small logo.  Use with large sizes or with a caption is discouraged, as it could easily overwrite text above or distort the grid) 
 
 ### size Attribute
 
 Valid values for this attribute are:
-- full: the entire size of the paper, a page reserved for images.
-- page: the normal printed area of the page, on a page reserved for images.
-- col: the width of the current column (only valid for 2 column text or diglot).
-- span: the width of the normal printed area of the page.
-- width: the full width of the paper 
+
+- `full`: the entire size of the paper, a page reserved for images.
+- `page`: the normal printed area of the page, on a page reserved for images.
+- `col`: the width of the current column (only valid for 2 column text or diglot).
+- `span`: the width of the normal printed area of the page.
+- `width`: the full width of the paper 
+- `font`: the current font height (added for position H)
+- `line`: the current line height (added for position H)
 
 The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
-1.0 being the unity scaling. For example in a piclist:
+1.0 being the unity scaling.  The separate `scale` attribute is to be preferred in USMF3 files. For example in a piclist:
 
 ```
 RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witnesses |Ruth 4:10|rotated 3|
