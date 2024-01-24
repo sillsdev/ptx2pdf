@@ -30,7 +30,7 @@ class Hyphenation:
                 # Also need to strip out words with punctuation chars (eg. Burmese \u104C .. \u104F)
                 if strict and not l.startswith("*"):
                     continue
-                l.lstrip("*")
+                l = l.lstrip("*")
                 if "-" in l:
                     if regex.search(r'[^\p{L}\p{M}\-]', l):
                         z += 1

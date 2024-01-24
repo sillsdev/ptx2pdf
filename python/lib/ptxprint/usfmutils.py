@@ -263,7 +263,7 @@ class Usfm:
 
     def hyphenate(self, hyph, nbhyphens):
         hyph.calcChars()
-        splitre = re.compile(r"([^{}]+)".format("".join(sorted(hyph.chars))))
+        splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(hyph.chars))))
         if nbhyphens:
             hyphenchar = "\u2011"
         elif hyph.has2010:
@@ -285,9 +285,11 @@ class Usfm:
                         if s.lower() != s:
                             hbits = h.split("-")
                             hpos = list(accumulate([len(x) for x in hbits]))
-                            r = [s[x:y] for x, y in zip([0] + hpos, hpos + [len(h)])]
+                            r = [s[x:y] for x, y in zip([0] + hpos, hpos)]
                             bits[i] = "\u00AD".join(r)
+                            logger.log(6,f"hyphenating {s} at {hpos} giving {'-'.join(r)}")
                         else:
+                            logger.log(6,f"hyphenating {s} giving {h}")
                             bits[i] = h.replace("-", "\u00AD")
                 e.data = "".join(bits)
         proc(self.doc[0])
