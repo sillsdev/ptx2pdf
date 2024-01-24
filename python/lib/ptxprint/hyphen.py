@@ -54,9 +54,9 @@ class Hyphenation:
             if inbooks: # cut the list down to only include words that are actually in the text
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
                 c = len(hyphenatedWords)
-            if c >= listlimit:
+            if c >= cls.listlimit:
                 hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
-                hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
+                hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:cls.listlimit]
                 m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
             elif addsyls and len(scriptregs):
                 moreWords = []
@@ -74,7 +74,7 @@ class Hyphenation:
                     if len(a) == len(w):
                         continue
                     moreWords.append(re.sub("[\u00AD\u200B]", "-", a))
-                    if len(moreWords) + c >= listlimit:
+                    if len(moreWords) + c >= cls.listlimit:
                         break
                 moreWords.sort(key=len, reverse=True)
                 hyphenatedWords.extend(moreWords)
