@@ -328,7 +328,7 @@
     \InlBelowfalse
   \fi
   \ifx\l@cspec@a\loc@InText
-    \trace{g}{Experimental intext \w@tsit}%
+    \trace{g}{Experimental intext \w@tsit in \m@rker, \the\dimexpr 1em\relax, \the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
     \global\let\picl@c\loc@InText\xdef\pic@lign{c}\global\picUsesInsfalse\p@cinswid=\hsize
     \picNarrowtrue
   \fi
@@ -750,8 +750,8 @@
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
           \p@cinswid=\PaperWidth
         \else
-          \ifx\size@ption\size@FONT \p@cwidth=1em
-            \p@cinswid=1em \picTalltrue
+          \ifx\size@ption\size@FONT \p@cwidth=\c@rrfontsize\FontSizeUnit
+            \p@cinswid=\p@cwidth \picTalltrue
           \else
             \ifx\size@ption\size@LINE \p@cwidth=\baselineskip
               \p@cinswid=\baselineskip \picTalltrue

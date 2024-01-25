@@ -1,3 +1,4 @@
+TST 1.0=2 |loc="H" src="image.jpg" alt="Figs are tasty"  ref="1:3" size="font" scale=".9" x-spacebeside="1pt" 
 TST 1.3 This is a rose, not a fig (cl) |loc="cl" src="image.jpg" alt="Figs are tasty"  ref="1:3" size="col*0.25" x-spacebeside="15pt" x-edgeadjust="0.2"
 TST 1.5 This is a rose, not a fig (h) |loc="h" src="image.jpg" alt="Figs are tasty"  ref="1:5" size="col*0.25" x-credit="© IM" x-spacebefore="2" x-spaceafter="2"
 TST 1.8 This is a rose, not a fig [cr-2] |loc="cr-2" src="image.jpg" alt="Figs are tasty"  ref="1:8" size="col*0.28" 
