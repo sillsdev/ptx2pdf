@@ -241,7 +241,7 @@ class Usfm:
                         self.tocs.extend([""] * (ind - len(self.tocs) + 1))
                     self.tocs[ind-1] = e[0].strip()
 
-    def getwords(self, init=None, constrain=None):
+    def getwords(self, init=None, constrain=None, lowercase=False):
         ''' Counts words found in the document. If constrain then is a set or
             list that contains words to count, ignoring all others. Returns
             a dict of words: counts. '''
@@ -253,6 +253,8 @@ class Usfm:
             if s is None:
                 return a
             for w in wre.split(str(s))[1::2]:
+                if lowercase:
+                    w = w.lower()
                 if constrain is None or w in constrain:
                     a[w] = a.get(w, 0) + 1
             return a

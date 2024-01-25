@@ -32,7 +32,7 @@ class Hyphenation:
                     continue
                 l = l.lstrip("*")
                 if "-" in l:
-                    if regex.search(r'[^\p{L}\p{M}\-]', l):
+                    if regex.search('[^\\p{L}\\p{M}\\-\u2010\u2011]', l):
                         # print(f"Skipped: {l}")
                         z += 1
                     else:
@@ -52,11 +52,8 @@ class Hyphenation:
                 u = view.get_usfm(bk)
                 if u is None:
                     continue
-                u.getwords(init=acc)
+                u.getwords(init=acc, lowercase=True)
             if inbooks: # cut the list down to only include words that are actually in the text
-                # Need to lowercase the acc dict so that it matches hyphenated words (all lowercase)
-                for key in list(acc.keys()):
-                    acc[key.lower()] = acc.pop(key)
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
                 c = len(hyphenatedWords)
                 
@@ -73,7 +70,7 @@ class Hyphenation:
                     if w in hyphwords:
                         incnthyphwords += 1
                         continue
-                    if regex.search(r'[^\p{L}\p{M}\-]', w):
+                    if regex.search('[^\\p{L}\\p{M}\\-\u2010\u2011]', w):
                         z += 1
                         continue
                     a = runChanges(scriptregs, None, w)

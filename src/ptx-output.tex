@@ -128,7 +128,7 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \def\pagecontents{%                                                     %(3)
@@ -446,7 +446,7 @@
   \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-  \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+  %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
@@ -1022,6 +1022,8 @@
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
       \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern\unskip}
     \fi\fi
+    \ifdim\ht\colA<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[A]: [\the\pageno] short \the\ht\colA\space \the\availht}\fi
+    \ifdim\ht\colB<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[B]: [\the\pageno] short \the\ht\colB\space \the\availht}\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
   %\traceifcheck{balanced@loop}
@@ -1294,7 +1296,7 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     %\setbox255=\box\voidb@x
     %\advance\dimen3\lastd@pth
@@ -1463,7 +1465,7 @@
       \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-    \trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
