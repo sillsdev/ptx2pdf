@@ -1,9 +1,20 @@
 PTXprint 2.4.11 Release Notes
-23 Jan 2024
+25 Jan 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.12 (25 Jan 2024)
+
+  * Allow letter-spaced text to be hyphenated
+  
+  * Style tab's More Info... now also link to github-docs-help-zfoo.md pages
+       For internal milestones etc. zbl, zlabel, zpage, zpmkr, zrule, etc.
+  
+  * Implement 'H' figure position (cHaracter-like HERE)
+       To go with 'H', there are 2 new sizes, 'font' and 'line', 
+       related to the font size and \baselineskip.
+  
 Bug fixes and Improvements in 2.4.11 (23 Jan 2024)
 
   * Fix feedback loop in balanced esp. for pages with a big gap

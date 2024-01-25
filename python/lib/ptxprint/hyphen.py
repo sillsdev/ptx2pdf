@@ -33,13 +33,13 @@ class Hyphenation:
                 l = l.lstrip("*")
                 if "-" in l:
                     if regex.search(r'[^\p{L}\p{M}\-]', l):
-                        print(f"Skipped: {l}")
+                        # print(f"Skipped: {l}")
                         z += 1
                     else:
                         if l[0] != "-" and len(l) > 5:
                             hyphenatedWords.append(l)
                 elif len(l) > 9:
-                    print(f"No hyphen data for long word: {l}")
+                    # print(f"No hyphen data for long word: {l}")
                     nohyphendata.append(l)
         snippet = view.getScriptSnippet()
         scriptregs = snippet.regexes(view)
@@ -99,7 +99,7 @@ class Hyphenation:
         else:
             self.m1 = _("Hyphenation List was NOT Generated")
             self.m2 = _("No valid words were found in Paratext's Hyphenation List")
-        print("Long words (len>9) with no hyhphenation points: ", len(nohyphendata))
+        # print("Long words (len>9) with no hyhphenation points: ", len(nohyphendata))
         return self
 
     @classmethod
