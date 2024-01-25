@@ -666,6 +666,11 @@
       "Tracing": [
         {
           "Type": "insert",
+          "Label": "B - Balancing",
+          "Description": "\\tracing{B}\n(alerts you of any unfilled or unbalanced pages which will be listed as a Warning status message)",
+          "CodeSnippet": "\\tracing{B}"
+        },        {
+          "Type": "insert",
           "Label": "f - footnotes",
           "Description": "\\tracing{f}",
           "CodeSnippet": "\\tracing{f}"

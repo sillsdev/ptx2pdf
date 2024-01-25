@@ -148,7 +148,7 @@ def summarizeTexLog(logText):
 
     # Iterate through the messages and check for matches
     for i, (category, response, pattern) in enumerate(messages, start=1):
-        # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
+        print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
         matches = re.finditer(pattern, logText)
         for match in matches:
             category_counts[category] += 1
@@ -158,6 +158,15 @@ def summarizeTexLog(logText):
                     if i == 1:
                         messageSummary.append(f"  To fix it, try:")
                     messageSummary.append(f"  {i}. {responses[r]}")
+
+    # Look for Unbalanced or Unfilled pages (only show up if \tracing{b} is enabled in ptxprint-mods.tex)
+    uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
+    if len(uf_matches):
+        # Extract unique page numbers and sort them in ascending order
+        unique_page_numbers = sorted(set(match[1] for match in uf_matches), key=int)
+        category_counts["W"] += 1
+        messageSummary.append(f"Warning! {len(unique_page_numbers)} Underfilled pages: {','.join(unique_page_numbers[:7])}...")
+
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
     else:

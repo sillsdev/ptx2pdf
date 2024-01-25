@@ -33,6 +33,10 @@
 %+c_onecol
 \global\output={\onecol}
 \global\holdinginserts=1
+\def\underf@ll#1#2#3{%
+  \ifdim#1<\dimexpr #2 - \baselineskip\relax
+    \trace{B}{Underfill[#3]: [\the\pageno] \the #1 \the #2}\fi
+}
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)
   \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
@@ -129,6 +133,7 @@
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
     %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    %\underf@ll{\ht\colA}{\availht}{A}%
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
     \def\pagecontents{%                                                     %(3)
@@ -447,6 +452,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
   %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+  %\underf@ll{\ht\colA}{\availht}{A}%
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
@@ -1022,8 +1028,8 @@
     \ifColNotes\advance\colhtB\ht\coln@tebox\ifdim\ht\coln@tebox>0pt \hascolnotestrue\relax
       \setbox\colB=\vbox{\unvbox\colB \vfil\unvbox\coln@tebox\unkern\unskip}
     \fi\fi
-    \ifdim\ht\colA<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[A]: [\the\pageno] short \the\ht\colA\space \the\availht}\fi
-    \ifdim\ht\colB<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[B]: [\the\pageno] short \the\ht\colB\space \the\availht}\fi
+    %\ifdim\ht\colA<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[A]: [\the\pageno] short \the\ht\colA\space \the\availht}\fi
+    %\ifdim\ht\colB<\dimexpr\availht - \baselineskip\relax\trace{B}{Balance[B]: [\the\pageno] short \the\ht\colB\space \the\availht}\fi
     \trace{o}{A = \the\colhtA=\the\ht\colA , B = \the\colhtB=\the\ht\colB , (from \the\shortavail) remaining = \the\ht\s@vedpage, hascolnotes\ifhascolnotes true\else false\fi}%
     \colhtA=\ht\colA \colhtB=\ht\colB
   %\traceifcheck{balanced@loop}
@@ -1297,6 +1303,8 @@
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
     %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    \underf@ll{\ht\colA}{\availht}{A}%
+    \underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     %\setbox255=\box\voidb@x
     %\advance\dimen3\lastd@pth
@@ -1466,6 +1474,8 @@
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
     %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
+    \underf@ll{\ht\colA}{\availht}{A}%
+    \underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
     \setbox\colA=\vbox to \dimen3{\unvbox\colA} \setbox\colB=\vbox to \dimen3{\unvbox\colB}%
     \advance\dimen4 by \lastd@pth
