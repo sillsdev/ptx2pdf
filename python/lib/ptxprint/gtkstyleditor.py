@@ -472,7 +472,6 @@ class StyleEditorView(StyleEditor):
         # self.builder.get_object("ptxprint").resize(200, 200)
 
         if not self.model.get("c_noInternet"):
-            site = 'https://docs.usfm.bible/usfm-usx-docs/latest/'
             tl = self.model.lang
             ggltrans = "" 
             self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
@@ -482,11 +481,14 @@ class StyleEditorView(StyleEditor):
                 
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
-
-            if "+" in urlmkr or "|" in urlmkr or path is None:
+            if m.startswith("z"):
+                site = 'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/'
+                self.builder.get_object("l_url_usfm").set_uri(f'{ggltrans}{site}{m}.md')
+            elif "+" in urlmkr or "|" in urlmkr or path is None:
                 self.builder.get_object("l_url_usfm").set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
                 self.builder.get_object("l_url_usfm").set_label(_('Complex style'))
             else:
+                site = 'https://docs.usfm.bible/usfm-usx-docs/latest/'
                 self.builder.get_object("l_url_usfm").set_uri(f'{ggltrans}{site}{path}/{m}.html')
 
         self.isLoading = oldisLoading

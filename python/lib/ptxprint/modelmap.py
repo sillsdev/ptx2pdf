@@ -150,6 +150,7 @@ _map = {
     "paragraph/ifhyphenate":    ("c_hyphenate", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifnbhyphens":    ("c_nonBreakingHyphens", "body", None),
+    "paragraph/ifhyphapproved": ("c_hyphenApprovedWords", "body", None),
     "paragraph/ifhyphlimitbks": ("c_hyphenLimitBooks", "body", None),
     "paragraph/ifsylhyphens":   ("c_addSyllableBasedHyphens", "body", None),
     "paragraph/ifnothyphenate": ("c_hyphenate", "body", lambda w,v: "%" if v else ""),

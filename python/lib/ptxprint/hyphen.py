@@ -33,11 +33,13 @@ class Hyphenation:
                 l = l.lstrip("*")
                 if "-" in l:
                     if regex.search(r'[^\p{L}\p{M}\-]', l):
+                        print(f"Skipped: {l}")
                         z += 1
                     else:
                         if l[0] != "-" and len(l) > 5:
                             hyphenatedWords.append(l)
                 elif len(l) > 9:
+                    print(f"No hyphen data for long word: {l}")
                     nohyphendata.append(l)
         snippet = view.getScriptSnippet()
         scriptregs = snippet.regexes(view)
@@ -52,8 +54,12 @@ class Hyphenation:
                     continue
                 u.getwords(init=acc)
             if inbooks: # cut the list down to only include words that are actually in the text
+                # Need to lowercase the acc dict so that it matches hyphenated words (all lowercase)
+                for key in list(acc.keys()):
+                    acc[key.lower()] = acc.pop(key)
                 hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
                 c = len(hyphenatedWords)
+                
             if c >= cls.listlimit:
                 hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
                 hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:cls.listlimit]
@@ -93,6 +99,7 @@ class Hyphenation:
         else:
             self.m1 = _("Hyphenation List was NOT Generated")
             self.m2 = _("No valid words were found in Paratext's Hyphenation List")
+        print("Long words (len>9) with no hyhphenation points: ", len(nohyphendata))
         return self
 
     @classmethod

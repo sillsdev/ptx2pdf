@@ -6364,7 +6364,7 @@ is checked, then "hyphens" will be invisible.</property>
                                         <property name="tooltip-text" translatable="yes">Enable this option to ensure that word-medial hyphens
 within the text never break across two lines.
 
-By default word-
+By default, word-
 medial may break
 across two lines.
 
@@ -18396,7 +18396,7 @@ use in the current set of books.</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">True</property>
                                         <property name="relief">none</property>
-                                        <property name="uri">https://ubsicap.github.io/usfm/index.html</property>
+                                        <property name="uri">https://docs.usfm.bible/usfm-usx-docs/latest/index.html</property>
                                       </object>
                                       <packing>
                                         <property name="left-attach">0</property>
@@ -28270,7 +28270,7 @@ contained within the sidebar.</property>
                 <property name="halign">start</property>
                 <property name="left-padding">12</property>
                 <child>
-                  <!-- n-columns=1 n-rows=4 -->
+                  <!-- n-columns=1 n-rows=5 -->
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
@@ -28297,7 +28297,7 @@ contained within the sidebar.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">1</property>
+                        <property name="top-attach">2</property>
                       </packing>
                     </child>
                     <child>
@@ -28324,7 +28324,7 @@ ation is possible.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">3</property>
+                        <property name="top-attach">4</property>
                       </packing>
                     </child>
                     <child>
@@ -28335,7 +28335,7 @@ ation is possible.</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
-                        <property name="top-attach">2</property>
+                        <property name="top-attach">3</property>
                       </packing>
                     </child>
                     <child>
@@ -28357,6 +28357,34 @@ Note that if there are too many words in the Paratext
 hyphenation file, PTXprint will automatically prioritize
 the list created for XeTeX based on frequency.</property>
                         <property name="halign">start</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="left-attach">0</property>
+                        <property name="top-attach">1</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkCheckButton" id="c_hyphenApprovedWords">
+                        <property name="label" translatable="yes">Only Use Approved Hyphenation Words</property>
+                        <property name="name">Only use words where hyphenation points have been approved in Paratext</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">The Paratext WordList tool guesses hyphenation points
+based on syllable structure and patterns in the language.
+
+However, it expects the user to (i) check and, if appropriate,
+(ii) approve the suggested hyphenation points (by clicking
+the check mark making it appear green).
+
+Normally only the approved hyphenated words will be used
+when creating the hyphenation list for PTXprint/TeX to use.
+
+However, if you wish to include ALL words (regardless of
+their approval status) then disable this option.</property>
+                        <property name="halign">start</property>
+                        <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                       </object>
                       <packing>

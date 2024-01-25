@@ -3979,6 +3979,7 @@ class GtkViewModel(ViewModel):
             self.hyphenation = Hyphenation.fromPTXFile(self, self.prjid, prjdir,
                                             inbooks=self.get("c_hyphenLimitBooks"),
                                             addsyls=self.get("c_addSyllableBasedHyphens"),
+                                            strict=self.get("c_hyphenApprovedWords"),
                                             hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010")
             self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
