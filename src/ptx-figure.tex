@@ -329,7 +329,7 @@
   \fi
   \ifx\l@cspec@a\loc@InText
     \trace{g}{Experimental intext \w@tsit in \m@rker, \the\dimexpr 1em\relax, \the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
-    \global\let\picl@c\loc@InText\xdef\pic@lign{c}\global\picUsesInsfalse\p@cinswid=\hsize
+    \global\let\picl@c\loc@InText\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
     \picNarrowtrue
   \fi
   \ifx\l@cspec@a\loc@Inl
@@ -1047,7 +1047,7 @@
 \def\@lignpic#1{%Align pic (or whatever) according to pic@lign
   \def\l@ftedge{\hss}\def\r@ghtedge{\hss}%
   \ifx\pic@lign\@lignLeft\def\l@ftedge{\kern\p@chshift}\fi
-  \ifx\pic@lign\@lignRight\def\r@ghtedge{}\fi
+  \ifx\pic@lign\@lignRight\def\r@ghtedge{\kern\p@chshift}\fi
   \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
   \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
 }
