@@ -279,7 +279,8 @@ class Usfm:
                 for c in e:
                     proc(c)
             elif isincluded(e):
-                bits = splitre.split(str(e))
+                t = str(e).replace("-", hyphenchar)
+                bits = splitre.split(t)
                 for i in range(0, len(bits), 2):
                     s = bits[i].replace("-", hyphenchar)
                     if s.lower() in hyph:

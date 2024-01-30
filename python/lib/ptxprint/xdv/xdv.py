@@ -224,7 +224,7 @@ class XDViReader:
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
 
-class XDViPositionedReader(XDviReader):
+class XDViPositionedReader(XDViReader):
     """ Keeps track of where we are. Positions are in pt """
     def __init__(self, fname, diffable=False):
         super().__init__(fname, diffable=diffable)
