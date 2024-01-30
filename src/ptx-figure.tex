@@ -943,7 +943,7 @@
       \advance\p@cinswid\sp@cebeside
     \fi
     \trace{g}{Object aligned into hbox \the\p@cinswid}%
-    \t@gstartfull{Figure}{fig}{/Width (\the\wd\newpicb@x) /Height (\the\ht\newpicb@x) /Pgpos (\csname figparam-pgpos\endcsname) /Size (\size@ption) /Loc (\loc@ption)}%
+    \t@gstartfull{Figure}{fig}{width="\the\wd\newpicb@x" height="\the\ht\newpicb@x" pgpos="\csname figparam-pgpos\endcsname" size="\size@ption" loc="\loc@ption"}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
@@ -957,7 +957,7 @@
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
-    \t@gend
+    \t@gend{Figure}%
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig

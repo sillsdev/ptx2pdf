@@ -258,6 +258,7 @@ class XDviType:
                 glyphs = [ttf.ttfont.getGlyphName(g) for g in glyphs]
         res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
         self.out('xglyphs[{}@{}]: "{}" {}'.format(width, slen, txt, res))
+        self.h += width
 
     def xpic(self, opcode, parm, data):
         box = data.pop(0)

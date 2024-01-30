@@ -152,7 +152,7 @@
         %\showboxbreadth=99\showlists
     \fi\fi % Disable gridding of headings box if no gridding here
     \ifdim\ht\he@dingbox>0pt 
-      \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend}%
+      \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend{H}}%
       \gridb@x\he@dingbox
       \ifinextended\sb@rsavegriddims\fi
     \fi%
@@ -363,7 +363,7 @@
 \def\endit@P{%Called by whileitp@ps, to end a paragraph style
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
-   \beginL\pdfsavepos\t@gend
+   \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
@@ -394,7 +394,7 @@
 
 \def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
    \getp@ram{type}{#2}{#2}%
-   \beginL\pdfsavepos\t@gstartfull{P}{#2}{/lspace (#1)}%
+   \beginL\pdfsavepos\t@gstartfull{P}{#2}{lspace="#1" id="\adjc@rref[\the\curr@djpar]"}%
    \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
@@ -921,7 +921,7 @@
   \immediate\openout\p@rlocs="\j@bname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
-\def\locs@startstop#1#2{%
+\def\locs@startstop#1#2#3{%
   %\showboxdepth=99
   %\showboxbreadth=99
   \let\old@ep=\everypar
@@ -931,8 +931,10 @@
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\dc@ref@rgs{avail="\the\availht" width="\the\wd#2"}%
+    \t@gstartfull{Column}{#3}{\dc@ref@rgs}%
     \unvbox#1%
-    \pdfsavepos\t@gend
+    \pdfsavepos\t@gend{Column}%
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
     %\MSG{\dc@ref@rgs (\the\hsize) ->}%
     }%
@@ -1440,7 +1442,7 @@
 \def\t@gstartfull#1#2#3{%
   \iftaggedPDF
     \global\advance\tagCount by 1
-    \edef\t@gt@mp{pdf:code /#1 << /Type /#2 /MCID \the\tagCount\space #3 >> BDC}%
+    \edef\t@gt@mp{ptxp:tagstart #1 #2 \the\tagCount\space #3}%
     \special{\t@gt@mp}%
   \fi
 }
@@ -1448,10 +1450,11 @@
 \def\t@gemptyfull#1#2#3{%
   \iftaggedPDF
     \global\advance\tagCount by 1
-    \edef\t@t@mp{pdf:code /#1 << /Type /#2 /MCID \the\tagCount\space #3 >> DP}%
+    \edef\t@t@mp{ptxp:tag #1 #2 \the\tagCount\space #3}%
     \special{\t@t@mp}%
   \fi
 }
-\def\t@gend{\iftaggedPDF\special{pdf:code EMC}\fi}
+\def\t@gend#1{\t@gendfull{#1}{}}
+\def\t@gendfull#1#2{\iftaggedPDF\special{ptxp:tagend #1 #2}\fi}
 
 \endinput

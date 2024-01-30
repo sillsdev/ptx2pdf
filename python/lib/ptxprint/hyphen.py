@@ -83,7 +83,7 @@ class Hyphenation:
                 hyphenatedWords.extend(moreWords)
                 m2b = _("\n{} additional words were added using syllable-based rules.").format(len(moreWords)) + \
                         _("\nResulting in a total of {} words in the hyphenation list.").format(len(hyphenatedWords))
-        self = cls({x.replace("-", ""): x for x in hyphenatedWords})
+        self = cls({x.lower().replace("-", ""): x for x in hyphenatedWords})
         self.analyse()
         self.outTeX(outfname)
         if len(hyphenatedWords) > 1:
@@ -105,7 +105,7 @@ class Hyphenation:
         if os.path.exists(infname):
             with universalopen(infname) as inf:
                 hyphenatedWords = [l.strip() for l in inf.readlines() if len(l) and l[0] not in "\\{}"]
-            self = cls({x.replace("-", ""): x for x in hyphenatedWords})
+            self = cls({x.lower().replace("-", ""): x for x in hyphenatedWords})
             self.analyse()
         else:
             self = cls()

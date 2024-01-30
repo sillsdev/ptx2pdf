@@ -150,7 +150,7 @@
       \iflastpage\setbox\colA\vbox{\unvbox\colA}\fi
       \lastd@pth=\dp\colA
       \ifColNotes\ifdim\dp\xr@fbox>\lastd@pth \lastd@pth=\dp\xr@fbox\fi\fi
-      \locs@startstop{\colA}{1}%
+      \locs@startstop{\colA}{1}{A}%
       \trace{o}{colwidth=\the\wd\colA}%
       %\trace{o}{onecoltrial: dimen=\the\dimen3, lastd@pth=\the\lastd@pth}%
       \ifColNotes\ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi\fi
@@ -240,7 +240,7 @@
   \s@tfont{h}{h}%
   %\nomsg@tfontname{h}%
   %\trace{h}{makeheadline: textwidth \the\textwidth}%
-  \vbox to 0pt{\t@gstartfull{Pagination}{h}{/Attached [/Top /Left] /Subtype /Header}%
+  \vbox to 0pt{\t@gstartfull{Pagination}{h}{type="Header"}%
    \hsize=\textwidth\kern-\topm@rgin
    \vbox{\kern\HeaderPosition\MarginUnit
     \setbox0=\vbox{\hbox to \textwidth{\the\headline}}%
@@ -253,17 +253,17 @@
         \trace{h}{hrule width=\the\dimen1 \space from \the\textwidth, rshift=\the\wd1, cols=\the\BodyColumns}%
         \hbox{\lshiftc@lumn{\ifnum\BodyColumns=2 \ifRTL 1\else 0\fi\else\the\pageno\fi}\vrule width \dimen1 height \RuleThickness}%
       \endgroup
-    \fi\fi}\vss\t@gend}\nointerlineskip
+    \fi\fi}\vss\t@gend{Pagination}}\nointerlineskip
    \mcpop\trace{h}{Stack now: \mcstack}%
 }}
 \newif\ifrhr@le
 \def\makefootline{{%HISTORIC, unused by ptx2pdf macros
   %\nomsg@tfontname{h}%
-  \vbox to 0pt{\t@gstartfull{Pagination}{h}{/Attached [/Bottom /Left] /Subtype /Footer}%
+  \vbox to 0pt{\t@gstartfull{Pagination}{h}{type="Footer"}%
     \dimen0=\textwidth\advance\dimen0 by -\columnshift
     \kern\bottomm@rgin
     \kern-\FooterPosition\MarginUnit
-     \hbox to \textwidth{\the\footline}\vss\t@gend}%
+     \hbox to \textwidth{\the\footline}\vss\t@gend{Pagination}}%
 }}
 \newdimen\RHruleposition \RHruleposition=\maxdimen
 \newif\ifnoinkinmargin \noinkinmargintrue
@@ -456,7 +456,7 @@
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
-    \locs@startstop{\colA}{1}%
+    \locs@startstop{\colA}{\colA}{A}%
     \global\setbox\partial=\vbox{%
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
         \box\partial}} \fi
@@ -1309,7 +1309,7 @@
     %\setbox255=\box\voidb@x
     %\advance\dimen3\lastd@pth
     % strip off full page height from c@lcboxheights and grab the depth
-    \locs@startstop{\colA}{\colA}\locs@startstop{\colB}{\colB}%
+    \locs@startstop{\colA}{\colA}{A}\locs@startstop{\colB}{\colB}{B}%
     \trace{o}{\the\ht\colA+\the\dp\colA//\the\ht\colB+\the\dp\colB}%
     \dimen8=\dp\colA \dimen9=\dp\colB
     \ifdim\ht\colA>0pt
@@ -1453,8 +1453,8 @@
     \c@lcboxheights
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
-    \locs@startstop{\colA}{1}%
-    \locs@startstop{\colB}{2}%
+    \locs@startstop{\colA}{1}{A}%
+    \locs@startstop{\colB}{2}{B}%
     \ifdim\ht\colB<1pt \setbox\colB\vbox to 0pt{\hbox to \hsize{}}\fi
     %\ht\colA=\the\availht \ht\colB=\the\availht                             %(1)
     \lastd@pth=\dp\colA\ifdim\dp\colB<\lastd@pth \lastd@pth=\dp\colB\fi

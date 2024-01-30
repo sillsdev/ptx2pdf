@@ -224,6 +224,68 @@ class XDViReader:
         # res = ["{}@({},{})".format(glyphs[i], *pos[i]) for i in range(slen)]
         # self.out("xglyphs: {}".format(res))
 
+class XDViPositionedReader(XDviReader):
+    """ Keeps track of where we are. Positions are in pt """
+    def __init__(self, fname, diffable=False):
+        super().__init__(fname, diffable=diffable)
+        self.stack = []
+        self.dviratio = 1.
+        self.h = 0
+        self.v = 0
+        self.w = 0
+        self.x = 0
+        self.y = 0
+        self.z = 0
+
+    def topt(self, value):
+        return value * self.dviratio
+
+    def pre(self, opcode, parm, data):
+        (i, n, d, m, x) = super()(opcode, parm, data)
+        self.dviratio = m * n / d / 1000. / 10000 / 25.4 * 72.27      # map to pt not .0001mm
+        return (i, n, d, m, x)
+
+    def parmop(self, opcode, parm, data):
+        if parm in "wxyz":
+            setattr(self, parm, self.topt(data[0]))
+        acc = None
+        if parm in "wx" or parm == "right":
+            acc = 'h'
+        elif parm in "yz" or parm == "down":
+            acc = 'v'
+        if acc is not None:
+            setattr(self, acc, getattr(self, acc) + self.topt(data[0]))
+        return super()(opcode, parm, data)
+
+    def simple(self, opcode, parm, data):
+        if parm in "wx":
+            self.h += self.topt(getattr(self, parm))
+        elif parm in "yz":
+            self.v += self.topt(getattr(self, parm))
+        return super()(opcode, parm, data)
+
+    def push(self, opcode, parm, data):
+        self.stack.append([getattr(self, x) for x in "hvwxyz"])
+        return super()(opcode, parm, data)
+
+    def pop(self, opcode, parm, data):
+        vs = self.stack.pop(-1)
+        desc = []
+        for i,x in enumerate("hvwxyz"):
+            setattr(self, x, vs[i])
+        return super()(opcode, parm, data)
+
+    def bop(self, opcode, parm, data):
+        for a in "hvwxyz":
+            setattr(self, a, 0)
+        return super()(opcode, parm, data)
+
+    def xglyphs(self, opcode, parm, data):
+        (parm, width, pos, glyphs, txt) = super()(opcode, parm, data)
+        self.h += self.topt(width)
+        return (parm, width, pos, glyphs, txt)
+
+
 
 class XDViWriter:
     def __init__(self, fname):
