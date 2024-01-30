@@ -293,6 +293,8 @@ class Usfm:
                         else:
                             logger.log(6,f"hyphenating {s} giving {h}")
                             bits[i] = h.replace("-", "\u00AD")
+                    else:
+                        bits[i] = s
                 e.data = "".join(bits)
         proc(self.doc[0])
         
