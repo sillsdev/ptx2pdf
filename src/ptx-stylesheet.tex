@@ -914,7 +914,7 @@
 }%
 
 \def\MakeChapterLabel#1#2{#1\ #2}
-\gdef\reference{}%
+\def\reference{\ch@pter\ChapterVerseSeparator\v@rse}%
 
 \newif\ifOneChapBook \OneChapBookfalse % Is this book a single chapter book, or other book where chapter numbers should be suppressed?
 \newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
@@ -958,10 +958,9 @@
   \the\v@rsehooks
   % remember current chapter:verse, not currently used. Could potentially be used
   % to insert chapter:verse in footnotes.
-  \gdef\reference{\ch@pter:\v@rse}%
   \nobreak\hskip0.5sp\relax% let \x detect that there's "space" (or maybe drop-chapter) here
   \ifhangingverse
-    \trace{hv}{End of hanging verse \reference }%
+    \trace{hv}{End of hanging verse \ch@pter:\v@rse }%
     \hangingversefalse
     \ignorespaces
   \fi

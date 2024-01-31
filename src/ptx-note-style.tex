@@ -273,7 +273,7 @@
   \fi
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
-  \trace{f}{Footnote (\n@tetype) [\reference] will be \the\n@tewidth \space wide (page is \the\hsize)}%
+  \trace{f}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
   \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
       \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
@@ -318,7 +318,7 @@
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
 %        \vskip\dimen1
-%		\trace{f}{\reference : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
+%		\trace{f}{\ch@pter:\v@rse : Footnote vskip=\the\dimen1, baselineskip=\the\baselineskip, strut height=\the\dimen0, prevdepth=\prevdepth}%
 %        \prevdepth=-1000pt
 %	  \fi
     \fi
