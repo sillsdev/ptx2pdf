@@ -25838,7 +25838,7 @@ ptxprint_support@&lt;your.org's.address&gt;</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>
-                                    <property name="uri">https://community.scripture.software.sil.org/c/ptxprint/27</property>
+                                    <property name="uri">https://support.bible/PTXprint</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>

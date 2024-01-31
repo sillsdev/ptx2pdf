@@ -7,7 +7,7 @@ PTXprint is an easy-to-use program which harnesses the power of extended macros 
 PTXprint is available for both Linux and Windows from the main home page: https://software.sil.org/ptxprint/download
 It is 64-bit software and will NOT run on 32-bit versions of Windows. It is recommended to be used with Paratext 8 (or later), but can also work even if Paratext is NOT installed. It is not part of the Paratext updates ecosystem, so does not get automatically updated. Please check the PTXprint home page regularly for updated versions.
 
-There is a Scripture Software Community page dedicated to PTXprint (https://community.scripture.software.sil.org/c/ptxprint/27) where you can get assistance from other PTXprint users.
+There is a category dedicated to PTXprint issues on (https://support.bible/PTXprint) where you can get assistance from other PTXprint users.
 
 Please use "New Issue" button in the GitHub Issue Tracking System (https://github.com/sillsdev/ptx2pdf/issues) to report any bugs, or document suggestions for improvement. 
 

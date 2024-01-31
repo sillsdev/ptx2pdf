@@ -1,8 +1,30 @@
 PTXprint 2.4.12 Release Notes
-25 Jan 2024
+1 Feb 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.4.13 (1 Feb 2024)
+
+  * Make "font" figure size scale to the right fontsize
+  
+  * Provide status message with list of unfilled pages -- active with tracing{B}
+  
+  * Fix broken x-edgeadjust in figures, improve figure documentation
+  
+  * Don't let codelet buttons area expand when expanding parent window
+  
+  * Add more telemetry for page breaking
+  
+  * Fix hard hyphens in hyphenation
+  
+  * Another tweak to get hyphenation working just right
+  
+  * Define \reference to (a) be user-changable and (b) default to using ChapterVerseSeparator
+  
+  * Improve status line messages esp for underfilled pages
+  
+  * Check for (downloadable) updates more consistently
 
 Bug fixes and Improvements in 2.4.12 (25 Jan 2024)
 
