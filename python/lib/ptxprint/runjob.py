@@ -462,9 +462,14 @@ class RunJob:
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
                     if not self.noview and not self.args.print:
-                        sl.set_text(summaryLine)
-                        sl.set_tooltip_text(msgs)
-                        self.printer.set("l_statusLine", summaryLine)
+                        if len(msgList) == 1 and "underfilled" in msgs:
+                            sl.set_text(msgs)
+                            sl.set_tooltip_text("")
+                            self.printer.set("l_statusLine", msgs)
+                        else:
+                            sl.set_text(summaryLine)
+                            sl.set_tooltip_text(msgs)
+                            self.printer.set("l_statusLine", summaryLine)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -498,7 +503,7 @@ class RunJob:
                     secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
-        if len(self.rerunReasons):
+        if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished()
         self.busy = False

@@ -1471,9 +1471,11 @@ class GtkViewModel(ViewModel):
             if not exists:
                 os.remove(pdfname)
         self.onSaveConfig(None)
+        self.checkUpdates()
 
         self._incrementProgress(val=0.)
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
+        self.builder.get_object("t_find").set_text("")
         try:
             self.callback(self)
         except Exception as e:

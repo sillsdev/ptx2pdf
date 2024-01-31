@@ -43,7 +43,8 @@ messages = [
     ("W","S", r"Warning! periph is set nonpublishable \(hidden\) in general\. This may be a mistake!"),
     ("E","T", r"INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!"),
     ("W","S", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
-    ("W","RUP", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
+    # Quieten this noisy message as it always shows up!
+    ("I","R", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
     ("E","P", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
     ("W","P", r"Warning: No copyright statement found for: .+? on pages .+? "),
     ("E","T", r"Number of bits does not correspond to the computed value"),
@@ -148,10 +149,10 @@ def summarizeTexLog(logText):
 
     # Iterate through the messages and check for matches
     for i, (category, response, pattern) in enumerate(messages, start=1):
-        print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
         matches = re.finditer(pattern, logText)
         for match in matches:
             category_counts[category] += 1
+            # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
             if category in ["W", "E"]:
                 messageSummary.append(f"{categories[category]}: {match.group(0)}")
                 for i, r in enumerate(response, start=1):
@@ -165,7 +166,7 @@ def summarizeTexLog(logText):
         # Extract unique page numbers and sort them in ascending order
         unique_page_numbers = sorted(set(match[1] for match in uf_matches), key=int)
         category_counts["W"] += 1
-        messageSummary.append(f"Warning! {len(unique_page_numbers)} Underfilled pages: {','.join(unique_page_numbers[:7])}...")
+        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {','.join(unique_page_numbers[:7])}...")
 
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
