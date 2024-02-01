@@ -1646,6 +1646,7 @@
 
 \newif\iflastptxfile
 \newif\iflastpage
+\newif\ifendbook
 \newif\ifscripturebook
 \newdimen\origb@selineskip %Save the initial baselineskip here
 \newif\ifinperiph
@@ -1853,6 +1854,7 @@
  \initp@rastyles
  \initn@testyles
  \ifendbooknoeject\else\p@geonetrue\fi
+ \endbookfalse
 }
 %-csty_ptxfile_intro
 %+csty_ptxfile_start
@@ -1874,7 +1876,7 @@
  \multitriglists "\the\TrigListPath#1"
  \openpicpages "\j@bname.picpages"
  \ifcsname ifm@rginnotesopen\endcsname\openm@rginnotes "\j@bname.marginnotes"\fi
- \lastpagefalse
+ \lastpagefalse\endbookfalse
  \the\st@rtptxhooks
  \prepusfm
  \edef\t@st{#1}%
@@ -1899,7 +1901,7 @@
  \ifhe@dings\endhe@dings\fi
  \endt@ble
  \ifdiglot\enddigl@t\fi
- \iflastptxfile \global\lastpagetrue\fi
+ \iflastptxfile \global\lastpagetrue\fi\endbooktrue
  \d@nesw@pfalse % Set true by \singlecolumn, when it draws the bookend rule
  \ifnum \ifnotesEachBook 1\else\iflastptxfile 1\else 0\fi\fi =1 \ifEndNotesEarly \ifEndNotesSingleCol \singlecolumn\fi\zplaceallnotes\fi\fi
  \singlecolumn
@@ -1924,7 +1926,9 @@
     \fi
  \fi\fi
  \ifendbooknoeject\else
-  \ifdim\ht\partial>0pt \noindent\eject\fi
+  \ifdim\ht\partial>0pt
+    % If box255 is empty then partial box keeps its contents but has ht=0 !
+    {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi
   \iflastptxfile\closepiclist\fi
   \closeadjlist
    \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse

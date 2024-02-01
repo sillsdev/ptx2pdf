@@ -35,8 +35,9 @@
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
   \ifdim#1<\dimexpr #2 - \baselineskip\relax
-    \trace{B}{Underfill[#3]: [\the\pageno] \the #1 \the #2}\fi
+    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}\fi
 }
+\newif\ifinendbook
 \def\onecol{%
   \global\setbox\galley=\copy255                                        %(1)
   \trace{b}{BALANCE pagebuild: cols=1: textheight=\the\textheight\space with ht=\the\ht255 \space and partial=\the\ht\partial}%
@@ -81,7 +82,7 @@
     \lastd@pth=0pt \vskip\skip\bottomins \hbox{\lshiftc@lumn{\the\pageno}\box\bottomins} \fi % ouput bottom spanning pictures
   \trace{b}{BALANCE pageouttxt: border=\csname b@dr@bot@pad\endcsname notes=\the\ht\n@tesbox , \the\dp\n@tesbox. Lastdepth=\the\lastd@pth \space Leaving \the\ht255, \the\dp255, temp\iftemp true\else false\fi}%
   \trace{b}{notes=\the\ht\n@tesbox + \the\dp\n@tesbox}%
-  \ifdim\ht\n@tesbox > 0pt \ifFinalNotesDown\iftemp\else\vfil\kern-\lastd@pth\temptrue\fi\fi
+  \ifdim\ht\n@tesbox > 0pt \ifnum \ifinendbook\ifFinalNotesDown\iftemp 0\else 1\fi\else 0\fi\else 1\fi =1\relax\trace{o}{notes fill \ifnoinkinmargin not\space \fi into margin}\vfil \ifnoinkinmargin\kern-\lastd@pth\fi\relax \temptrue\fi
     \tmpwrite{notes}%
     \unvbox\n@tesbox %\kern-\lastd@pth\lastd@pth=\dp2\unvbox2
   \fi
@@ -124,6 +125,8 @@
 %-c_onecoltrial_intro
 %+c_onecoltrial_pagecontents
   \iffitonpage
+    \inendbookfalse
+    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \dimen3=\ht\colA \advance\dimen3\lastd@pth
     \if\XrefNotes\relax\else
       \trace{o}{enter reheightcolnotes, colA=\the\ht\colA, for colnotes \the\ht13}%
@@ -132,7 +135,6 @@
       \ifdim\ht\xr@fbox>\dimen3 \dimen3=\ht\xr@fbox\fi
     \fi
     \advance\und@rfill -\dimen3 % from c@lcboxheights
-    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     %\underf@ll{\ht\colA}{\availht}{A}%
     \trace{i}{1 SUCCEEDED, shipping page hIns=\the\holdinginserts}%
     \trace{o}{onecoltrial width=\the\wd\colA, hsize=\the\hsize, height=\the\ht\colA, partial=\the\ht\partial, verybottomins=\the\ht\verybottomins*\the\wd\verybottomins, botmark=\splitbotmark}%
@@ -171,6 +173,7 @@
         \hbox to \ExtraRMargin{}}%
       \p@geendcontent
       \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
+      \inendbookfalse
     }%
 %-c_onecoltrial_pagecontents
 %+c_onecoltrial_pagefit
@@ -455,12 +458,13 @@
   \fi
   % and check if it all fit; if not, we'll have to back up and try again
   \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-  %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
   %\underf@ll{\ht\colA}{\availht}{A}%
   \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
     \locs@startstop{\colA}{\colA}{A}%
+    \inendbookfalse
+    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \global\setbox\partial=\vbox{%
       \ifvoid\partial\else \vbox{\hbox to \dimen1{%
         \box\partial}} \fi
@@ -536,6 +540,7 @@
     \fi
     \fin@lverybottom
     \global\holdinginserts=1
+    \inendbookfalse
   \else % the contents of the "galley" didn't fit into the actual page,
         % so reduce \vsize and try again with an earlier break
     \trace{i}{2c REDUCING VSIZE hIns=\the\holdinginserts\space ip=\the\insertpenalties}%
@@ -642,7 +647,9 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt
     \global\advance\availht by -\dimen1
-    \iff@rstnote\global\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote\global\advance\availht by -\AboveNoteSpace 
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
+      \f@rstnotefalse
     \else \global\advance\availht by -\InterNoteSpace\fi
     \trace{n}{reduced by=\the\dimen1}%
   \fi\egroup}
@@ -658,6 +665,7 @@
     \global\advance\availht by -\dp\th@cl@ss
     \iff@rstnote\advance\availht by -\AboveNoteSpace
       \global\advance\availht by -\BelowFootNoteSpace
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
       \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
      \global\advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
     \else
@@ -674,7 +682,9 @@
   \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
   \ifdim\dimen1>0pt 
     \advance\availht by -\dimen1
-    \iff@rstnote\advance\availht by -\AboveNoteSpace \f@rstnotefalse
+    \iff@rstnote\advance\availht by -\AboveNoteSpace
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
+      \f@rstnotefalse
       \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
     \else \advance\availht by -\InterNoteSpace\fi
   \fi}
@@ -1283,6 +1293,8 @@
   \rem@inderfalse\balanced
   \ifdim\availht<\baselineskip \fitonpagefalse \fi
   \iffitonpage
+    \inendbookfalse
+    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \c@lcboxheights
     \setbox\colA=\vbox{\unvbox\colA\unskip}\setbox\colB=\vbox{\unvbox\colB\unskip}%
     \s@veallnotes{1}%
@@ -1306,7 +1318,6 @@
       \ifvoid1 \ht\colB=\dimen3\if\XrefNotes\relax\else\ht\xr@fbox=\dimen3\fi\else \dimen3=\ht\colB\fi
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \underf@ll{\ht\colA}{\availht}{A}%
     \underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
@@ -1368,6 +1379,7 @@
     \fi
     \trace{o}{spdd: s@ved=\the\ht\s@vedpage+\the\dp\s@vedpage, op=\the\outputpenalty \the\output}%
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
+    \inendbookfalse
   \else
     \trace{o}{sppd: Not fit on page\space ip=\the\insertpenalties}%
     \trace{i}{sppd: emptyinserts hIns=\the\holdinginserts, \the\ht\partial, vs:\the\vsize}%
@@ -1454,6 +1466,8 @@
 %-c_twocoltrial_intro
 %+c_twocoltrial
   \iffitonpage
+    \inendbookfalse
+    \ifendbook\ifvoid255 \inendbooktrue\fi\fi
     \c@lcboxheights
     \setbox1=\vbox{\unvcopy\colA\unskip}%
     \setbox2=\vbox{\unvcopy\colB\unskip}%
@@ -1477,7 +1491,6 @@
       \ifvoid1 \ht\colB=\dimen3\else \dimen3=\ht\colB\fi
     \fi
     \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
-    %\trace{B}{Underfill page \the\pageno=\the\und@rfill}%
     \underf@ll{\ht\colA}{\availht}{A}%
     \underf@ll{\ht\colB}{\availht}{B}%
     \ifdim\dimen3>\availht \dimen3=\availht\fi
@@ -1516,6 +1529,7 @@
     \ifrerunsavepartialpaged
       \global\output={\savepartialpagedbounce}\global\rerunsavepartialpagedfalse\unvbox\s@vedpage
     \else\global\output={\twocols}\unvbox\s@vedpage\fi
+    \inendbookfalse
     %\ifnum\interactionmode=1
       %\showlists
     %\fi
@@ -1551,7 +1565,7 @@
  \ifdim\columnshift>0pt \count255=#1 \ifnum
     \ifx\colshiftmode\l@ft 1
     \else\ifodd\count255 \ifRTL\ifx\colshiftmode\@uter 1\else 0\fi\else \ifx\colshiftmode\@nner 1\else 0\fi\fi
-      \else\ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else\ifx\colshiftmode\@uter 1\else 0\fi\fi\fi
+         \else           \ifRTL\ifx\colshiftmode\@nner 1\else 0\fi\else \ifx\colshiftmode\@uter 1\else 0\fi\fi\fi
   \fi =1 \trace{M}{lshifting}\hbox to \columnshift{}\else\trace{M}{Not lshifting}\fi\fi
   \trace{M}{for \colshiftmode \ifx\colshiftmode\@nner ==\else !=\fi \@nner \space at #1 is \ifodd\count255 odd\else even\fi}%
 }
@@ -1724,7 +1738,7 @@
 \newif\ifd@nesw@p % set to false to allow singlecolumn to draw a book-end rule 
 \def\singlecolumn{%
   %\tracingmacros=0\tracingassigns=0
-  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \iflastpage LASTPAGE\fi}%\tracingmacros=1
+  \trace{o}{singlecolumn hIns=\the\holdinginserts, cols=\the\c@rrentcols, partial=\the\ht\partial \space \iflastpage LASTPAGE\fi}%\tracingmacros=1
   \ifnum\c@rrentcols>1
     %\temptrue
     \layoutstylebreak % save any partially-full page into \partial
@@ -1748,7 +1762,7 @@
     \eject
     \global\holdinginserts=1
   \fi\fi
-  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi, d@nesw@p\ifd@nesw@p true\else false\fi endbooknoeject\ifendbooknoeject true\else false\fi}%
+  \trace{o}{resetting resetvsize for singlecolumn. Partial ht=\the\ht\partial, b@dy\ifb@dy true\else false\fi, tob@dy\iftob@dy true\else false\fi, d@nesw@p\ifd@nesw@p true\else false\fi \space endbooknoeject\ifendbooknoeject true\else false\fi}%
   \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}}%
   \global\output={\onecol}%
   \global\holdinginserts=1

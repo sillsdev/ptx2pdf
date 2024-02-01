@@ -1256,7 +1256,7 @@ class TexModel:
         # self.localChanges.append((None, regex.compile(r"\\fp ", flags=regex.M), r" --- ")) 
         
         if self.asBool("notes/keepbookwithrefs"): # keep Booknames and ch:vs nums together within \xt and \xo
-            self.localChanges.append(makeChange(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?)\s(\d+[:.]\d+(-\d+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)"))))
+            self.localChanges.append(makeChange(r"(\d?[^\s\d\-\\,;]{3,}[^\\\s]*?)\s(\d+[:.]\d+(-\d+)?)", r"\1\u2000\2", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\|]+)"))))
             self.localChanges.append(makeChange(r"(\s.) ", r"\1\u2000", context=self.make_contextsfn(None, regex.compile(r"(\\[xf]t\s[^\\]+)")))) # Ensure no floating single chars in note text
         
         # keep \xo & \fr refs with whatever follows (i.e the bookname or footnote) so it doesn't break at end of line
