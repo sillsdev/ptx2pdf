@@ -817,7 +817,7 @@
 %there are footnotes/floats coming.
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   \global\let\mspr@fix\opS@ve@msprefix
-  \global\let\c@tprefix\opS@ve@catprefix
+  \let\c@tprefix\opS@ve@catprefix % NOT global, as catprefix needs to stay grouped
   }
 %-c_plainoutput
 
