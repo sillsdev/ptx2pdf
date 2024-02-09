@@ -809,7 +809,7 @@ class TexModel:
     def runConversion(self, infpath, outdir):
         outfpath = infpath
         script = self.dict['project/selectscript']
-        if self.dict['project/processscript'] and script:
+        if self.dict['project/processscript'] and script and os.path.exists(script):
             outfpath = os.path.join(outdir, os.path.basename(infpath))
             doti = outfpath.rfind(".")
             if doti > 0:
@@ -881,7 +881,7 @@ class TexModel:
                 return None
         else:
             infpath = os.path.join(prjdir, fname)
-        if self.dict['project/when2processscript'] == "before":
+        if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "before":
             infpath = self.runConversion(infpath, outdir)
         outfname = os.path.basename(infpath)
         outindex = self.usedfiles.setdefault(outfname, 0)
@@ -979,7 +979,7 @@ class TexModel:
         (dat, doc) = self._getText(dat, doc, bk, logmsg="Unparsing doc to output\n")
         with open(outfpath, "w", encoding="utf-8") as outf:
             outf.write(dat)
-        if self.dict['project/when2processscript'] == "after":
+        if self.dict['project/processscript'] and self.dict['project/when2processscript'] == "after":
             bn = os.path.basename(self.runConversion(outfpath, outdir))
         else:
             bn = os.path.basename(outfpath)
