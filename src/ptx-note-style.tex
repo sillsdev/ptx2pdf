@@ -72,6 +72,17 @@
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
+\def\FootnoteMulT{2000} % Twocolumn text
+\def\FootnoteMulS{1000} % Sg column text
+\def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
+
+%+c_setnotecount
+% iterate over note classes, set \count for each class  
+\def\s@tn@tec@unt#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \global\count\th@cl@ss=\count255 
+  \global\skip\th@cl@ss=0pt}
+%-c_setnotecount
 
 %+cnote_initnotes
 % set default insert parameters for a note class (updated if we switch to double-column)
@@ -83,7 +94,7 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
+  \x@\count\csname note-#1\endcsname=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulD \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
@@ -259,9 +270,6 @@
 \newif\ifFootNoteGlyphMetrics %Relationship between the margin and the last footnote: does the note use the descender or the actual bottom of the glyph. If the former, then the bottom of notes have a common baseline. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text. 
 \FootNoteGlyphMetricsfalse
   
-\def\n@t@group@para{%
-    \trace{n}{Notewid(\n@tetype): \the\n@tewidth, lnw=\lastn@tewid, lbw=\l@stboxwid}%
-  \x@\insert\csname note-\n@tetype\endcsname{\unvbox\n@tetmp}}
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \global\advance\n@teid by 1 %
@@ -528,8 +536,8 @@
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
   \dimen0=\prevdepth
-  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
+  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote%\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
@@ -835,7 +843,7 @@
 \def\disc@rdpenalty@active{\unpenalty\temptrue}
 \def\disc@rdskip@rhh{\skip0=\lastskip\unskip\setbox\n@tetmp\vbox{\vskip\the\skip0\unvbox\n@tetmp}}
 \def\disc@rdpenalty@rhh{\count255=\lastpenalty\unpenalty\setbox\n@tetmp\vbox{\penalty\the\count255\unvbox\n@tetmp}\temptrue}
-\def\disc@rdkern@rhh{\dimen0=\lastkern\unkern\setbox\n@tetmp\vbox{\vskip\the\dimen0\unvbox\n@tetmp}\temptrue}
+\def\disc@rdkern@rhh{\dimen0=\lastkern\unkern\setbox\n@tetmp\vbox{\kern\dimen0\unvbox\n@tetmp}\temptrue}
 
 \def\reheighthboxes#1{%
   \traceifset{reheighthboxes}%
@@ -855,11 +863,16 @@
       \divide \dimen0 by \n@tewidth \multiply \dimen0 by 256 
     \fi
   \fi
+  \count255=\dimen0
+  %\showbox#1
   \edef\reheightfactor{\strip@pt{\dimen0}}%
-  \trace{n}{Note-width to baselineskip ratio is \reheightfactor}%
+  \trace{n}{Before adjustment, \the\ht#1. Note-width to baselineskip ratio is \reheightfactor / \the\count255}%
   \unvbox#1
   \disc@rds{rhh}%
   \reheighthb@xes
+  \trace{n}{After adjustment box is \the\ht\n@tetmp}%
+  %\showbox\n@tetmp
+  \unvbox\n@tetmp
 }
 \def\reheighthb@xes{%
   \setbox2=\lastbox
@@ -867,7 +880,7 @@
     \let\n@xt\relax
   \else
     \ifhbox2
-      \setbox1=\hbox{\unhbox2}%remove stretch
+      \setbox1=\hbox{\unhcopy2}%remove stretch
       % calculate proportionate height
       \ht2=\reheightfactor\wd1
     \fi

@@ -295,8 +295,7 @@
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
 \gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break (double col)}\global\output={\savepartialpagedbounce}\par\eject\eject}
-\def\FootnoteMulT{200}
-\def\FootnoteMulS{100}
+
 
 \def\doublecolumns{
   \traceifset{doublecolumns}%
@@ -339,25 +338,17 @@
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \global\count\verybottomins=\count255
-    \count255=\FootnoteMulT
+    \ifdiglot 
+      \count255=\FootnoteMulD
+    \else
+      \count255=\FootnoteMulT
+    \fi
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \let\\=\bslash
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   \fi\traceifcheck{doublecolumns}}
 %-c_doublecolumns
 
-%+c_setnotecount
-% iterate over note classes, set \count for each class  
-\def\s@tn@tec@unt#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \checkp@ranotes{#1}%
-  % notes made into paragraphs (e.g. \x) are counted as 0 height for now,
-  % later we will backup making page size smaller until things fit
-  % Diglot prefers to get things closer 1st time round...
-  %\global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else 0\fi %\count255 \fi
-  \global\count\th@cl@ss=\ifdiglot 100\else \count255\fi
-  \global\skip\th@cl@ss=0pt} %\AboveNoteSpace }
-%-c_setnotecount
 
 %+c_resetvsize
 \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
@@ -1769,6 +1760,12 @@
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
+  \global\count\verybottomins=\count255
+  \ifdiglot 
+    \count255=\FootnoteMulD
+  \else
+    \count255=\FootnoteMulS
+  \fi
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
   \let\\=\bslash
   \ifd@nesw@p\else
