@@ -72,15 +72,20 @@
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
-\def\FootnoteMulT{2000} % Twocolumn text
-\def\FootnoteMulS{1000} % Sg column text
+\def\FootnoteMulC{0} % Centrecolumn text
+\def\FootnoteMulT{100} % Twocolumn text
+\def\FootnoteMulS{100} % Sg column text
 \def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
 
 %+c_setnotecount
 % iterate over note classes, set \count for each class  
 \def\s@tn@tec@unt#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \global\count\th@cl@ss=\count255 
+  \ifcsname studynotes-#1\endcsname
+    \global\count\th@cl@ss=\FootnoteMulC % Don't take space for centre column notes.
+  \else
+    \global\count\th@cl@ss=\count255 
+  \fi
   \global\skip\th@cl@ss=0pt}
 %-c_setnotecount
 
@@ -463,12 +468,12 @@
 %+c_foot
 % called at end of note
 \def\n@tesize{}
-\def\l@stboxwid{eh?}
+%\def\l@stboxwid{eh?}
 \def\@foot{%This ends the group that starts with the footnote class.
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
-  \setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
+  %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
@@ -483,12 +488,17 @@
   \else
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
   \fi
-  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize}%
+  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize st@dynotes\ifst@dynotes true\else false\fi}%
+      %\showbox9
   \ifn@npublishablec@t\global\n@npublishablec@tfalse\else
-    \ifp@ranotes
-      \reheighthboxes9
-    \else
+    \ifst@dynotes
       \unvbox9 % Simple normal-height boxes.
+    \else
+      \ifp@ranotes
+        \reheighthboxes9
+      \else
+        \unvbox9 % Simple normal-height boxes.
+      \fi
     \fi
   \fi
  \egroup
