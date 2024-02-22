@@ -72,8 +72,8 @@
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
-\def\FootnoteMulC{0} % Centrecolumn text
-\def\FootnoteMulT{100} % Twocolumn text
+\def\FootnoteMulC{1} % Centrecolumn text
+\def\FootnoteMulT{200} % Twocolumn text
 \def\FootnoteMulS{100} % Sg column text
 \def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
 
@@ -81,12 +81,15 @@
 % iterate over note classes, set \count for each class  
 \def\s@tn@tec@unt#1{%
   \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \ifcsname studynotes-#1\endcsname
+  \edef\tmp{#1}%
+  \ifx \tmp\XrefNotes 
     \global\count\th@cl@ss=\FootnoteMulC % Don't take space for centre column notes.
   \else
     \global\count\th@cl@ss=\count255 
   \fi
-  \global\skip\th@cl@ss=0pt}
+  \global\skip\th@cl@ss=0pt
+  \trace{n}{Note #1: Count: \the\count\th@cl@ss}%
+}
 %-c_setnotecount
 
 %+cnote_initnotes
@@ -99,7 +102,7 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulD \fi\fi 
+  \x@\count\csname note-#1\endcsname=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulS \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
@@ -280,7 +283,7 @@
   \global\advance\n@teid by 1 %
   \edef\m@sg{\string\@noteid{\the\n@teid}{#1}}%
   \let\next\relax%
-  \def\n@tetype{#1\g@tndstat}%
+  \edef\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
@@ -481,6 +484,7 @@
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
     %\vskip \dimen0
   \fi
+  \xdef\n@tebls{\the\baselineskip}%
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
@@ -488,14 +492,14 @@
   \else
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
   \fi
-  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize st@dynotes\ifst@dynotes true\else false\fi}%
+  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize, p@ranotes\ifp@ranotes true \else false\fi, st@dynotes\ifst@dynotes true\else false\fi, \ifx\XrefNotes\n@tetype xrefnote\else normal\fi}%
       %\showbox9
   \ifn@npublishablec@t\global\n@npublishablec@tfalse\else
-    \ifst@dynotes
+    \ifx\n@tetype\XrefNotes\relax
       \unvbox9 % Simple normal-height boxes.
     \else
       \ifp@ranotes
-        \reheighthboxes9
+        \reheighthboxes{9}{\n@tebls}%
       \else
         \unvbox9 % Simple normal-height boxes.
       \fi
@@ -669,13 +673,19 @@
 \newif\ifColNotes \ColNotesfalse
 \def\checkp@ranotes#1{%
   \edef\tmp{#1}%
-  \ifnum\ifColNotes\ifx\tmp\XrefNotes 0\else 1\fi\else 1\fi =1
+  \ifnum\ifColNotes\ifx\tmp\XrefNotes 0\else 1\fi\else 1\fi =1 %Normal...
     \st@dynotesfalse
     \x@\ifx\csname paranotes-#1\endcsname\relax
       \x@\ifx\csname studynotes-#1\endcsname\relax\else\st@dynotestrue\fi
       \p@ranotesfalse
     \else\p@ranotestrue\fi
-  \else\p@ranotestrue\fi}
+  \else
+    \ifx\csname paranotes-#1\endcsname\relax
+      \p@ranotesfalse%ColNotes but not non-par notes
+    \else
+      \p@ranotestrue% ColNotes and par notes.
+    \fi
+  \fi}
 %-c_paragraphedNotes
 
 % Notewidth for diglots depends on settings and column. 
@@ -855,28 +865,30 @@
 \def\disc@rdpenalty@rhh{\count255=\lastpenalty\unpenalty\setbox\n@tetmp\vbox{\penalty\the\count255\unvbox\n@tetmp}\temptrue}
 \def\disc@rdkern@rhh{\dimen0=\lastkern\unkern\setbox\n@tetmp\vbox{\kern\dimen0\unvbox\n@tetmp}\temptrue}
 
-\def\reheighthboxes#1{%
+\def\reheighthboxes#1#2{%
   \traceifset{reheighthboxes}%
+  \trace{n}{reheighthboxes. bls=#2 (\the\baselineskip) }%
   \setbox\n@tetmp\vbox{}
   \let\disc@rdskip\disc@rdskip@rhh
   \let\disc@rdkern\disc@rdkern@rhh
   \let\disc@rdpenalty\disc@rdpenalty@rhh
-  \ifdim\baselineskip<16pt
-    \dimen0=\baselineskip \multiply \dimen0 by 1024 % assumes baselineskip < 32pt
+  \baselineskip=#2\relax
+  \ifdim#2<16pt
+    \dimen0=#2\multiply \dimen0 by 1024 % assumes baselineskip < 32pt
     \divide \dimen0 by \n@tewidth \multiply \dimen0 by 64 
   \else
-    \ifdim\baselineskip<32pt
-      \dimen0=\baselineskip \multiply \dimen0 by 512 % assumes baselineskip < 32pt
+    \ifdim#2<32pt
+      \dimen0=#2\multiply \dimen0 by 512 % assumes baselineskip < 32pt
       \divide \dimen0 by \n@tewidth \multiply \dimen0 by 128 
     \else
-      \dimen0=\baselineskip \multiply \dimen0 by 256 % assumes baselineskip < 64pt
+      \dimen0=#2\multiply \dimen0 by 256 % assumes baselineskip < 64pt
       \divide \dimen0 by \n@tewidth \multiply \dimen0 by 256 
     \fi
   \fi
   \count255=\dimen0
   %\showbox#1
   \edef\reheightfactor{\strip@pt{\dimen0}}%
-  \trace{n}{Before adjustment, \the\ht#1. Note-width to baselineskip ratio is \reheightfactor / \the\count255}%
+  \trace{n}{Before adjustment, \the\ht#1. Note-width to baselineskip ratio (\the\baselineskip/\the\n@tewidth) is \reheightfactor  (\c@rref)}%
   \unvbox#1
   \disc@rds{rhh}%
   \reheighthb@xes
@@ -892,6 +904,7 @@
     \ifhbox2
       \setbox1=\hbox{\unhcopy2}%remove stretch
       % calculate proportionate height
+      \trace{n}{hbox width: \the\wd1}%
       \ht2=\reheightfactor\wd1
     \fi
     \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}
