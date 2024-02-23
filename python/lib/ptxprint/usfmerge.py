@@ -102,13 +102,22 @@ _textype_map = {
     "VerseText": ChunkType.BODY
 }
 _marker_modes = {
-    'id': ChunkType.TITLE,
-    'ide': ChunkType.TITLE,
+    'id': ChunkType.HEADER,
+    'ide': ChunkType.HEADER,
     'h': ChunkType.HEADER,
+    'h1': ChunkType.HEADER,
+    'h2': ChunkType.HEADER,
+    'h3': ChunkType.HEADER,
     'toc1': ChunkType.HEADER,
     'toc2': ChunkType.HEADER,
     'toc3': ChunkType.HEADER,
+    'toca1': ChunkType.HEADER,
+    'toca2': ChunkType.HEADER,
+    'toca3': ChunkType.HEADER,
     'zthumbtab': ChunkType.HEADER,
+    'rem': ChunkType.HEADER,
+    'sts': ChunkType.HEADER,
+    'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
     'cl': ChunkType.CHAPTER,
     'nb': ChunkType.NB
