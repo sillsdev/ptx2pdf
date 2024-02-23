@@ -72,6 +72,25 @@
 }
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
+\def\FootnoteMulC{1} % Centrecolumn text
+\def\FootnoteMulT{200} % Twocolumn text
+\def\FootnoteMulS{100} % Sg column text
+\def\FootnoteMulD{500} % Diglot column text - deliberately read excess text for diglots
+
+%+c_setnotecount
+% iterate over note classes, set \count for each class  
+\def\s@tn@tec@unt#1{%
+  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
+  \edef\tmp{#1}%
+  \ifx \tmp\XrefNotes 
+    \global\count\th@cl@ss=\FootnoteMulC % Don't take space for centre column notes.
+  \else
+    \global\count\th@cl@ss=\count255 
+  \fi
+  \global\skip\th@cl@ss=0pt
+  \trace{n}{Note #1: Count: \the\count\th@cl@ss}%
+}
+%-c_setnotecount
 
 %+cnote_initnotes
 % set default insert parameters for a note class (updated if we switch to double-column)
@@ -83,7 +102,7 @@
   \else\s@tn@tep@r@ms{#1}\fi
 }
 \def\s@tn@tep@r@ms#1{%
-  \x@\count\csname note-#1\endcsname=\ifdiglot 100 \else \ifp@ranotes 100 \else 100 \fi\fi 
+  \x@\count\csname note-#1\endcsname=\ifdiglot \FootnoteMulD \else \ifp@ranotes \FootnoteMulT \else \FootnoteMulS \fi\fi 
   \x@\skip\csname note-#1\endcsname=\AboveNoteSpace %Skip before footntoes
   \x@\dimen\csname note-#1\endcsname=\maxdimen %Max note skip
 }
@@ -223,6 +242,7 @@
 % footnote macros based on plain.tex \footnote, \vfootnote
 \newbox\he@dingnotes
 \newbox\t@blenotes
+\newbox\n@tetmp % temporary note box.
 %:
 % #1 ~ class to store the note in. E.g. f, x. The results of `\NoteBlendInto`.
 % #2 ~ class to use for styling (what the source had in it)
@@ -257,20 +277,21 @@
 \newtoks\d@note
 \newif\ifFootNoteGlyphMetrics %Relationship between the margin and the last footnote: does the note use the descender or the actual bottom of the glyph. If the former, then the bottom of notes have a common baseline. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text. 
 \FootNoteGlyphMetricsfalse
+  
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \global\advance\n@teid by 1 %
   \edef\m@sg{\string\@noteid{\the\n@teid}{#1}}%
   \let\next\relax%
-  \def\n@tetype{#1\g@tndstat}%
+  \edef\n@tetype{#1\g@tndstat}%
   \TRACE{vm@kenote \n@tetype}%
   \x@\let\x@\th@sins\csname note-no-insert-\n@tetype\endcsname
   \checkp@ranotes{#1}% check whether this note class is to be paragraphed 
-  \ifp@ranotes\n@tewidth=\maxdimen \else\setn@tewidth{#1}%
-  \fi
+  \setn@tewidth{#1}%
   \ifnum 1=\ifp@ranotes\ifnewparnotes 1 \else 0 \fi\else 1 \fi 
     \beginL\pdfsavepos\x@\write\x@\p@rlocs\x@{\m@sg{c}{\the\pageno}{\the\pdflastxpos}{\the\pdflastypos}}\endL%
   \fi
+  %\ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
   \trace{f}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
@@ -280,7 +301,11 @@
     \else
       \XeTeXuseglyphmetrics=0 % so that notes sit on the baseline based font descender not contents
     \fi
-    \hsize=\n@tewidth
+    \ifp@ranotes
+      \hsize=\maxdimen
+    \else
+      \hsize=\n@tewidth
+    \fi
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
     \floatingpenalty\@MM % make sure note does not float away from caller to another page
@@ -347,7 +372,7 @@
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}{#2}%
   %\ifnum\interactionmode=1\showlists\fi
-  \futurelet\next\fo@t}% use plain.tex footnote processor
+  \futurelet\next\fo@t}% use plain.tex footnote processor, see plain.tex 1166. It ensures that @foot after the following group.
 %-c_vmakenote
 
 %+c_endnotes
@@ -446,9 +471,12 @@
 %+c_foot
 % called at end of note
 \def\n@tesize{}
-\def\@foot{\ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
+%\def\l@stboxwid{eh?}
+\def\@foot{%This ends the group that starts with the footnote class.
+  \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
+  %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
@@ -456,6 +484,7 @@
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
     %\vskip \dimen0
   \fi
+  \xdef\n@tebls{\the\baselineskip}%
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
@@ -463,11 +492,22 @@
   \else
     \xdef\n@tesize{\string\@notebox\string{\n@tetype\string}\string{\the\wd9\string}\string{\the\ht9\string}}%
   \fi
-  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize}%
-  \ifn@npublishablec@t\global\n@npublishablec@tfalse\else\unvbox9\fi
-  \egroup
-  %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
-  }
+  \mcpop\trace{i}{note \n@tetype, height=\the\ht9, \ifn@npublishablec@t non\fi publishable \n@tesize, p@ranotes\ifp@ranotes true \else false\fi, st@dynotes\ifst@dynotes true\else false\fi, \ifx\XrefNotes\n@tetype xrefnote\else normal\fi}%
+      %\showbox9
+  \ifn@npublishablec@t\global\n@npublishablec@tfalse\else
+    \ifx\n@tetype\XrefNotes\relax
+      \unvbox9 % Simple normal-height boxes.
+    \else
+      \ifp@ranotes
+        \reheighthboxes{9}{\n@tebls}%
+      \else
+        \unvbox9 % Simple normal-height boxes.
+      \fi
+    \fi
+  \fi
+ \egroup
+ %\ifnum\interactionmode=1\showboxbreadth=1000 \showlists\fi
+}
 \newbox\f@@tstrut
 \def\n@teglue{2em plus 1em minus .5em\relax} % glue to be used between paragraphed notes
 %-c_foot
@@ -510,8 +550,8 @@
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
   \dimen0=\prevdepth
-  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0}%
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
+  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote%\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
@@ -633,13 +673,19 @@
 \newif\ifColNotes \ColNotesfalse
 \def\checkp@ranotes#1{%
   \edef\tmp{#1}%
-  \ifnum\ifColNotes\ifx\tmp\XrefNotes 0\else 1\fi\else 1\fi =1
+  \ifnum\ifColNotes\ifx\tmp\XrefNotes 0\else 1\fi\else 1\fi =1 %Normal...
     \st@dynotesfalse
     \x@\ifx\csname paranotes-#1\endcsname\relax
       \x@\ifx\csname studynotes-#1\endcsname\relax\else\st@dynotestrue\fi
       \p@ranotesfalse
     \else\p@ranotestrue\fi
-  \else\p@ranotestrue\fi}
+  \else
+    \ifx\csname paranotes-#1\endcsname\relax
+      \p@ranotesfalse%ColNotes but not non-par notes
+    \else
+      \p@ranotestrue% ColNotes and par notes.
+    \fi
+  \fi}
 %-c_paragraphedNotes
 
 % Notewidth for diglots depends on settings and column. 
@@ -815,6 +861,58 @@
 \def\disc@rdkern@mvbohb{\dimen0=\lastkern\ifdim\dimen0=1sp \unkern\temptrue\fi}%
 \def\disc@rdkern@active{\unkern\temptrue}%
 \def\disc@rdpenalty@active{\unpenalty\temptrue}
+\def\disc@rdskip@rhh{\skip0=\lastskip\unskip\setbox\n@tetmp\vbox{\vskip\the\skip0\unvbox\n@tetmp}}
+\def\disc@rdpenalty@rhh{\count255=\lastpenalty\unpenalty\setbox\n@tetmp\vbox{\penalty\the\count255\unvbox\n@tetmp}\temptrue}
+\def\disc@rdkern@rhh{\dimen0=\lastkern\unkern\setbox\n@tetmp\vbox{\kern\dimen0\unvbox\n@tetmp}\temptrue}
+
+\def\reheighthboxes#1#2{%
+  \traceifset{reheighthboxes}%
+  \trace{n}{reheighthboxes. bls=#2 (\the\baselineskip) }%
+  \setbox\n@tetmp\vbox{}
+  \let\disc@rdskip\disc@rdskip@rhh
+  \let\disc@rdkern\disc@rdkern@rhh
+  \let\disc@rdpenalty\disc@rdpenalty@rhh
+  \baselineskip=#2\relax
+  \ifdim#2<16pt
+    \dimen0=#2\multiply \dimen0 by 1024 % assumes baselineskip < 32pt
+    \divide \dimen0 by \n@tewidth \multiply \dimen0 by 64 
+  \else
+    \ifdim#2<32pt
+      \dimen0=#2\multiply \dimen0 by 512 % assumes baselineskip < 32pt
+      \divide \dimen0 by \n@tewidth \multiply \dimen0 by 128 
+    \else
+      \dimen0=#2\multiply \dimen0 by 256 % assumes baselineskip < 64pt
+      \divide \dimen0 by \n@tewidth \multiply \dimen0 by 256 
+    \fi
+  \fi
+  \count255=\dimen0
+  %\showbox#1
+  \edef\reheightfactor{\strip@pt{\dimen0}}%
+  \trace{n}{Before adjustment, \the\ht#1. Note-width to baselineskip ratio (\the\baselineskip/\the\n@tewidth) is \reheightfactor  (\c@rref)}%
+  \unvbox#1
+  \disc@rds{rhh}%
+  \reheighthb@xes
+  \trace{n}{After adjustment box is \the\ht\n@tetmp}%
+  %\showbox\n@tetmp
+  \unvbox\n@tetmp
+}
+\def\reheighthb@xes{%
+  \setbox2=\lastbox
+  \ifvoid2 
+    \let\n@xt\relax
+  \else
+    \ifhbox2
+      \setbox1=\hbox{\unhcopy2}%remove stretch
+      % calculate proportionate height
+      \trace{n}{hbox width: \the\wd1}%
+      \ht2=\reheightfactor\wd1
+    \fi
+    \setbox\n@tetmp\vbox{\box2\unvbox\n@tetmp}
+    \disc@rds{rhh@}%
+    \let\n@xt\reheighthb@xes
+  \fi
+  \n@xt
+}
 % Rather than make a single hbox, make
 \def\disc@rdmvbohb{%
     \dimen0=0pt
@@ -871,7 +969,7 @@
       \trace{f}{firstlineindent is \the\dimen0, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
       \iflastn@te
         \xdef\l@stnotebls{\the\baselineskip}%
-        \xdef\lastn@tewid{\the\hsize}%
+        \xdef\lastn@tewid{\the\hsize}%Force no join
         \setbox5\box\voidb@x
       \fi
       \setbox3=\vbox{%

@@ -202,19 +202,26 @@
     \trace{b}{BALANCE 1col go round vsize=\the\vsize\space ip=\the\insertpenalties}%ip counts the whole/partial inserts held over
     \res@tpage
     \global\let\whichtrial=\onecoltrial
-    \ifnum\insertpenalties>0
-      \global\output={\clearthenbackup}%
-      \xdef\b@ckupvsize{\the\vsize}%
-      \global\vsize=0pt
-      \penalty-10000
-      %\showlists
-    \else
-      \global\output={\backingup}%
-      \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
-    \fi
+    \gdef\b@foreb@ckup{\unvbox\galley}%
+    \d@backingup
   \fi
   \traceifcheck{onecoltrial}%
 }
+
+\def\d@backingup{%
+  \ifnum\insertpenalties>0
+    \trace{o}{d@backingup}%
+    \global\output={\clearthenbackup}%
+    \xdef\b@ckupvsize{\the\vsize}%
+    \global\vsize=0pt%
+    \penalty-10000\relax
+  \else
+    \global\output={\backingup}%
+    \b@foreb@ckup\relax
+    \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+  \fi
+}
+  %\showlists
 %-c_onecoltrial_fail
 
 \def\clearthenbackup{%Clear any held-over inserts.
@@ -295,8 +302,7 @@
 %+c_doublecolumns
 \def\PageFullFactor{0.9}
 \gdef\layoutstylebreak@doublecolumn{\trace{o}{LAYOUTSTYLE break (double col)}\global\output={\savepartialpagedbounce}\par\eject\eject}
-\def\FootnoteMulT{200}
-\def\FootnoteMulS{100}
+
 
 \def\doublecolumns{
   \traceifset{doublecolumns}%
@@ -339,25 +345,17 @@
     \global\count\topins=\count255
     \global\count\bottomins=\count255
     \global\count\verybottomins=\count255
-    \count255=\FootnoteMulT
+    \ifdiglot 
+      \count255=\FootnoteMulD
+    \else
+      \count255=\FootnoteMulT
+    \fi
     \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
     \let\\=\bslash
     \global\holdinginserts=1 % don't pull out inserts yet, we are still adjusting page
   \fi\traceifcheck{doublecolumns}}
 %-c_doublecolumns
 
-%+c_setnotecount
-% iterate over note classes, set \count for each class  
-\def\s@tn@tec@unt#1{%
-  \x@\let\x@\th@cl@ss\csname note-#1\endcsname
-  \checkp@ranotes{#1}%
-  % notes made into paragraphs (e.g. \x) are counted as 0 height for now,
-  % later we will backup making page size smaller until things fit
-  % Diglot prefers to get things closer 1st time round...
-  %\global\count\th@cl@ss=\ifp@ranotes \ifdiglot 500\else 0\fi \else 0\fi %\count255 \fi
-  \global\count\th@cl@ss=\ifdiglot 100\else \count255\fi
-  \global\skip\th@cl@ss=0pt} %\AboveNoteSpace }
-%-c_setnotecount
 
 %+c_resetvsize
 \def\resetvsize{\global\vsize=\textheight\trace{o}{resetvsize vsize=\the\vsize}} 
@@ -548,9 +546,10 @@
     %\global\advance\vsize by -\baselineskip
     \global\let\whichtrial=\onecoltrial
     \global\output={\backingup}%
-    \global\rerunsavepartialpagedtrue
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
-    \unvbox\s@vedpage \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+    \def\b@foreb@ckup{\global\rerunsavepartialpagedtrue
+      \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
+      \unvbox\s@vedpage}%
+    \d@backingup
   \fi
   \global\t@xttrialheight=0pt
 }%
@@ -1458,7 +1457,7 @@
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
-  \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi}
+  \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties}
   \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
   \else\ifdim\vsize<\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
@@ -1541,9 +1540,8 @@
     \trace{i}{2coltrial: emptyinserts hIns=\the\holdinginserts, vsz:\the\vsize}%
     \res@tpage
     \global\let\whichtrial=\twocoltrial                                     %(+)
-    \global\output={\backingup}%
-    \ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi%No marks on the page, and it didn't fit, so add a blank mark
-    \unvbox\galley \penalty\ifnum\galleypenalty=10000 0 \else \galleypenalty \fi
+    \gdef\b@foreb@ckup{\ifm@rksonpage\else\gdef\p@gefirstmark{}\trace{H}{No marks found. Setting empty mark}\fi\unvbox\galley}%No marks on the page, and it didn't fit, so add a blank mark
+    \d@backingup
   \fi
   \traceifcheck{twocoltrial}}
 \newif\iffitonpage
@@ -1769,6 +1767,12 @@
   \count255=1000
   \global\count\topins=\count255
   \global\count\bottomins=\count255
+  \global\count\verybottomins=\count255
+  \ifdiglot 
+    \count255=\FootnoteMulD
+  \else
+    \count255=\FootnoteMulS
+  \fi
   \let\\=\s@tn@tec@unt \the\n@tecl@sses % reset \count for each note class
   \let\\=\bslash
   \ifd@nesw@p\else
