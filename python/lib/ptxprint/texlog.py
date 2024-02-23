@@ -110,6 +110,7 @@ messages = [
     ("W","US", r"unrecognised rule style '.+?' near .+"),
     ("W","U", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
     ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
+    ("W","A", r'\*\* WARNING: adjustlist entries should not contain space.+'),
     ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.

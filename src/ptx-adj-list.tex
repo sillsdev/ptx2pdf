@@ -39,8 +39,10 @@
 %
 % The reference of the adjustment to be applied is stored in \@djref, and the actual adjustment in \@djustment.
 %
+\def\warnspace #1 #2\E{\edef\tmp{\zap@space #2 \empty}\ifx\tmp\empty\let\tmp\@djustment\fi}
 \def\parse@djline #1 #2 #3[#4]#5\end{%
  \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}\gdef\@djustment{#3}%
+  \warnspace #3 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
  \global\@djparindex=0#4 \ifnum\@djparindex=0 \global\@djparindex=1 \fi}
 \newcount\@djparindex
 
