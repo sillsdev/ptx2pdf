@@ -23,28 +23,30 @@ class ChunkType(Enum):
     DEFSCORE = 0        # Value for default scores
     CHAPTER = 1
     HEADING = 2
-    TITLE = 3
-    INTRO = 4
-    BODY = 5
-    ID = 6
-    TABLE = 7
-    VERSE = 8 
-    PARVERSE = 9
-    MIDVERSEPAR = 10
-    PREVERSEPAR = 11
-    NOVERSEPAR = 12
-    NPARA = 13
-    NB = 14
-    NBCHAPTER = 15
-    CHAPTERPAR = 16
-    CHAPTERHEAD = 17
-    PREVERSEHEAD = 18
-    USERSYNC = 19
-    PARUSERSYNC =20 # User
+    HEADER = 3
+    TITLE = 4
+    INTRO = 5
+    BODY = 6
+    ID = 7
+    TABLE = 8
+    VERSE = 9 
+    PARVERSE = 10
+    MIDVERSEPAR = 11
+    PREVERSEPAR = 12
+    NOVERSEPAR = 13
+    NPARA = 14
+    NB = 15
+    NBCHAPTER = 16
+    CHAPTERPAR = 17
+    CHAPTERHEAD = 18
+    PREVERSEHEAD = 19
+    USERSYNC = 20
+    PARUSERSYNC =21 # User
 
 _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the config file.
     ChunkType.CHAPTER :"A normal chapter number",
     ChunkType.HEADING :"A heading (e.g. s1)",
+    ChunkType.HEADER: "Book info markers (e.g. h, toc1)",
     ChunkType.TITLE :"A title (e.g. mt1)",
     ChunkType.INTRO :"An introduction paragraph (e.g. ip)",
     ChunkType.BODY :"A generic paragraph (normally turned into something else)",
@@ -67,6 +69,7 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
 _chunkClass_map = {
 ChunkType.DEFSCORE:'',
 ChunkType.CHAPTER:'CHAPTER',
+ChunkType.HEADER:'HEADER',
 ChunkType.HEADING:'HEADING',
 ChunkType.TITLE:'TITLE',
 ChunkType.INTRO:'INTRO',
@@ -99,12 +102,22 @@ _textype_map = {
     "VerseText": ChunkType.BODY
 }
 _marker_modes = {
-    'id': ChunkType.TITLE,
-    'ide': ChunkType.TITLE,
-    'h': ChunkType.TITLE,
-    'toc1': ChunkType.TITLE,
-    'toc2': ChunkType.TITLE,
-    'toc3': ChunkType.TITLE,
+    'id': ChunkType.HEADER,
+    'ide': ChunkType.HEADER,
+    'h': ChunkType.HEADER,
+    'h1': ChunkType.HEADER,
+    'h2': ChunkType.HEADER,
+    'h3': ChunkType.HEADER,
+    'toc1': ChunkType.HEADER,
+    'toc2': ChunkType.HEADER,
+    'toc3': ChunkType.HEADER,
+    'toca1': ChunkType.HEADER,
+    'toca2': ChunkType.HEADER,
+    'toca3': ChunkType.HEADER,
+    'zthumbtab': ChunkType.HEADER,
+    'rem': ChunkType.HEADER,
+    'sts': ChunkType.HEADER,
+    'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
     'cl': ChunkType.CHAPTER,
     'nb': ChunkType.NB
@@ -112,6 +125,8 @@ _marker_modes = {
 
 _canonical_order={
     ChunkType.ID:0,
+    ChunkType.HEADER:0,
+    ChunkType.TITLE:0,
     ChunkType.CHAPTER:0,
     ChunkType.NBCHAPTER:0,
     ChunkType.CHAPTERHEAD:1,
@@ -384,7 +399,7 @@ class Collector:
                 newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
                 ok= (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
                 if c.name not in nestedparas and ((newmode != self.mode and not ok)\
-                                          or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE)):
+                                          or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
                     newchunk = True
                 logger.log(7, f"Para:{c.name} {newmode} {self.chap}:{self.verse} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if issync(c):
