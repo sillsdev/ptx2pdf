@@ -370,7 +370,7 @@
           "Type": "comment#",
           "Label": "Add 3-letter book codes to headers (temporarily)",
           "Description": "When typesetting in another script it is useful to temporarily add readable headers using the 3-letter book code. To make these generated \\h1 codes to appear in the header, use the 'Book Alt (\\h1)' option on the Header+Footer tab.",
-          "CodeSnippet": "(\\\\id (...).*\\n) > '\\1\\\\h1 \\2\\r\\n'"
+          "CodeSnippet": "'(\\\\id (...).*\\n)' > '\\1\\\\h1 \\2\\n'"
         },
         {
           "Type": "comment#",
