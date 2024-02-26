@@ -1834,7 +1834,13 @@
       \let\col@do=\reset@n@xt
       \x@\each@col\diglot@list\E% 
     \global\deadcycles=0 %That counts as an action too.
-    \global\pagefullfalse
+    \tempfalse
+    \let\col@do\check@pen
+    \x@\each@col\diglot@list\E% 
+    \iftemp
+      \trace{d}{Not resetting pagefull}%
+      \global\pagefulltrue
+    \else \global\pagefullfalse\fi
   \else
     %\message{-}%
   \fi%
@@ -2389,6 +2395,12 @@
     \temptrue
   \fi
 }
+\def\check@pen#1{%Is the relevant boxpenalty a pagebreak?
+  \x@\ifnum\csname #1boxpenalty\endcsname=-10000
+    \trace{d}{#1boxpenalty is \the\csname #1boxpenalty\endcsname}%
+    \temptrue
+  \fi
+}
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
   \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
@@ -2662,11 +2674,10 @@
   \fi
   \ifnum\csname \c@rrdstat boxpenalty\endcsname<-9999
     \trace{d}{side \c@rrdstat\space wants a pagebreak}%
-    \pagefulltrue
+    \global\pagefulltrue
     \x@\gdef\csname saved\c@rrdstat penalty\endcsname{0}%Saved penalty is used now.
-    \global\csname \c@rrdstat boxpenalty\endcsname=-9999 %
+    \global\csname \c@rrdstat boxpenalty\endcsname=-10000 %
   \fi
-    
   \edef\n@xtarg{#2}%
   \let\afterch@ckcontents\ch@ckcontents
   \ifx\n@xtarg\empty
@@ -2729,7 +2740,7 @@
       \ifx\tri@llist\empty\else
         \ifnum\triall@@pcount>10
           \message{Forcing page break}%
-          \pagefulltrue
+          \global\pagefulltrue
         \fi
       \fi
     \fi
@@ -2799,7 +2810,7 @@
   %\check@and@update
 }
 \def\after@after@a@trial{%
-  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount pf:\ifpagefull true\else false\fi}%
+  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount, pf:\ifpagefull true\else false\fi}%
   % Check if the run failed (or didn't even run), and update page if that's 
   % appropriate.
   \iftrialfailed
@@ -2828,7 +2839,7 @@
   \ifx\tri@llist\empty
     \advance\triall@@pcount by 1\relax
     \check@and@update %May trigger a refilling of \tri@llist
-    \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist}%
+    \trace{D}{after check@and@update, tri@llist: \tri@llist, refl@wlist:\refl@wlist, pagefull\ifpagefull true\else false\fi}%
     \ifx\refl@wlist\empty\else
       \trace{d}{Reflowing aborted trials: \refl@wlist}%
       \let\col@do=\reflow@trial
