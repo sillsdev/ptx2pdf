@@ -1458,9 +1458,15 @@
   \trace{o}{balance from twocoltrial height \the\ht\s@vedpage, availht=\the\availht, markrange=\firstmark ,\botmark, rerunsavepartialpaged\ifrerunsavepartialpaged true\else false\fi}%
   \ifdim\ht\partial>\baselineskip \swapcolfalse\else\swapcoltrue\fi
   \rem@indertrue\balanced
-  \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties}
-  \iffitonpage\ifvoid\s@vedpage\else\fitonpagefalse\fi
-  \else\ifdim\vsize<\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
+  \trace{o}{twocoltrial: return from balanced with fitonpage\iffitonpage true\else false\fi, ip=\the\insertpenalties, vsz=\the\vsize}
+  \iffitonpage
+    \ifvoid\s@vedpage\else
+      \ifdim\vsize>0pt \fitonpagefalse
+        \trace{o}{s@vedpage non-void, but no space}%
+        %\showbox\s@vedpage
+      \fi
+    \fi
+  \else\ifdim\vsize <\baselineskip \fitonpagetrue\fi % no fit so dump the page we have now and try again with a new one.
   \fi
   \trace{o}{twocoltrial: recalculate fitonpage\iffitonpage true\else false\fi}%
 %-c_twocoltrial_intro
