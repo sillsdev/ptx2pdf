@@ -6,7 +6,45 @@ _______________________________________________________________
 
 Bug fixes and Improvements in 2.4.14 (28 Feb 2024)
 
-  * 
+  * Fix moving notes up and down at the end of books
+  
+  * Fix tests, remove Times New Roman
+  
+  * Add some test .sty files
+  
+  * Solve bug with catprefix escaping groups
+  
+  * Silently ignore python processing if not present
+  
+  * Start working on fractional heights
+  
+  * Solve a backing-up issue
+  
+  * Fix accidental centrecolum breakage
+  
+  * Fix long-standing bug where centre column refs were stealing space from main text.
+  
+  * Update templates, Fix CenterColXrefs
+  
+  * Merge branch 'notes - changes to footnote measurements
+  
+  * Check AdjustList for odd input, warn if there's a space
+  
+  * Add UI controls for note multipliers
+  
+  * Fix alignment of book headers
+  
+  * Add all Book headers as HEADER in merge
+  
+  * Fix codelet to insert book code as \h1
+  
+  * Add resilience in usfm parser
+  
+  * Fix diglot pagebreaking on 2nd page
+  
+  * Make verse ranges valid link-targets
+  
+  * Fix problem with \|
   
 Bug fixes and Improvements in 2.4.13 (1 Feb 2024)
 
