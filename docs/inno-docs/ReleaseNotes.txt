@@ -1,9 +1,13 @@
 PTXprint 2.4.13 Release Notes
-1 Feb 2024
+28 Feb 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.14 (28 Feb 2024)
+
+  * 
+  
 Bug fixes and Improvements in 2.4.13 (1 Feb 2024)
 
   * Make "font" figure size scale to the right fontsize

@@ -636,7 +636,7 @@ class RefList(list):
             if lastref.first < t <= lastref.last:
                 t = n
             if t > u:
-                print("{} inside {}".format(r, lastref))
+                # print("{} inside {}".format(r, lastref))
                 continue
             if t == n and lastref.last.book is not None:
                 count += len(r) + 1
