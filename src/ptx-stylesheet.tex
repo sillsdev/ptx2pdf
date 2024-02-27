@@ -911,6 +911,7 @@
 \catcode`-=12
 \def\pdfv@rsemark{%TODO: Not every verse.
   \special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom) [@thispage /XYZ @xpos @ypos null]}%
+  \ifx\v@rsefrom\v@rseto\else\special{pdf:dest (\id@@@\c@rrdstat.\ch@pter:\v@rsefrom-\v@rseto) [@thispage /XYZ @xpos @ypos null]}\fi%
 }%
 
 \def\MakeChapterLabel#1#2{#1\ #2}

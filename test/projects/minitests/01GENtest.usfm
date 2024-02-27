@@ -21,6 +21,7 @@ In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui a
 \zpostendnoterule
 \p
 The first end-note\x + \xt But not the last\x* was placed above here.
-\v 3 This is verse three.
+\v 3 This is verse three. with a link to \xt verse 4|GEN 1:4\xt* and one to \xt vv4-5|GEN 1:4-5\xt*
+\v 4-5 This is a target for the link
 
 

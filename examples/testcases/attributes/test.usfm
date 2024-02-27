@@ -174,5 +174,6 @@ Broken \jmp barcodes |link-id="broken" link-href="#ISBNs" link-title="broken ISB
 \p \jmp goggle http |link-href="http://google.com"\jmp*
 \p \jmp goggle https |link-href="https://google.com"\jmp*
 
+\p \k Testing\k* This seems to work just like \xt normal|TST 1:1\xt*.
 \pb
 \zfillsignature|pages="8" pagenos="do"\*
