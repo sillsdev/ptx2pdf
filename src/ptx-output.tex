@@ -34,8 +34,9 @@
 \global\output={\onecol}
 \global\holdinginserts=1
 \def\underf@ll#1#2#3{%
-  \ifdim#1<\dimexpr #2 - \baselineskip\relax
-    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}\fi
+  \ifdim#1<\dimexpr #2 - \baselineskip\relax\ifinendbook\else
+    \immediate\write-1{Underfill[#3]: [\the\pageno] \the #1 \the #2}%
+  \fi\fi
 }
 \newif\ifinendbook
 \def\onecol{%
