@@ -303,6 +303,7 @@ class Collector:
         else:
             if c.name == "cl":
                 mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
+                logger.log(8, f'cl found for {self.chap}')
             elif c.name == "id":
                 mode = ChunkType.ID
             elif c.name == "nb":
@@ -313,7 +314,6 @@ class Collector:
                 mode = ChunkType.USERSYNC
                 if (self.waspar):
                   mode = ChunkType.PARUSERSYNC
-      
             elif c.name in nestedparas:
                 mode = ChunkType.NPARA
             elif c.name == "v":
@@ -455,18 +455,35 @@ class Collector:
                 if c in root:
                     root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
             if ischap(c):
+                logger.log(8, f" chapter {c}")
                 self.verse = 0
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
                     self.chap = int(vc)
                 except (ValueError, TypeError):
                     self.chap = 0
-                if currChunk is not None:
+                newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
+                if currChunk is None:
+                    currChunk=makeChunk(newc)
+                else:
                     currChunk.chap = self.chap
                     currChunk.verse = self.verse
-                newc = sfm.Element(c.name, pos=c.pos, parent=c.parent, args=c.args, meta=c.meta)
-                currChunk[-1] = newc
-            currChunk = self.collect(c, primary=primary,depth=1+depth) or currChunk
+                    currChunk[-1] = newc
+                logger.log(8, f" newchapter {newc}")
+            #logger.log(7,f'collecting {c.name}')
+            t = self.collect(c, primary=primary,depth=1+depth)
+            #logger.log(7,f'collected {c.name}')
+            if t is not None:
+                logger.log(7,t)
+                currChunk=t
+            else:
+                if currChunk is None:
+                    logger.log(7,f'Empty currChunk:{c} at {c.pos}, {self.currChunk[0].name}')
+                    # Chapters need special treatment because it's a new node without prior connectoins to existing sub-
+                    if self.currChunk[0].name == "c": 
+                        self.currChunk.append(c)
+                        if c in root:
+                            root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
         logger.log(9-depth,"}" * depth)
         return currChunk
 

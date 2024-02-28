@@ -192,7 +192,7 @@
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
-   \ifp@ranotes\else\endgraf\kern-\prevdepth\fi% Kill decenders at the end of the note
+   \ifp@ranotes\else\ifhmode\endgraf\fi\ifvmode \dimen0=\prevdepth\kern-\dimen0 \fi\fi% Kill decenders at the end of the note
  \fi
  \egroup % end the insert (started in \m@kenote) 
  \ifx\@wrap\empty\else\egroup\let\@wrap\empty\fi%\@wrap would have started a box
