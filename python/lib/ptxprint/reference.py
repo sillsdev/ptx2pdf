@@ -374,9 +374,7 @@ class RefRange:
         return hash((self.first, self.last))
 
     def __contains__(self, r):
-        if isinstance(r, RefRange):
-            return self.first <= r.first and r.last <= self.last
-        return self.first <= r <= self.last
+        return self.first <= r.last and r.first <= self.last
 
     def __len__(self):
         return self.last.asint() - self.first.asint()
