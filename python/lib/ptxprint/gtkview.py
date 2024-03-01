@@ -855,6 +855,10 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
 
         logger.debug("Creating source views")
+        lm = GtkSource.LanguageManager()
+        langpath = os.path.join(os.path.dirname(__file__), "syntax")
+        logger.debug(f"Setting syntax files path to {langpath}")
+        lm.set_search_path([langpath])
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
@@ -875,7 +879,11 @@ class GtkViewModel(ViewModel):
                 # Set up signals to pick up any edits in the TextView window
                 for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
                              "backspace", "cut-clipboard", "paste-clipboard"]:
-                    view.connect(evnt, self.onViewEdited) 
+                    view.connect(evnt, self.onViewEdited)
+            if k == "AdjList":
+                l = lm.get_language("adjlist")
+                logger.debug(f"Loaded language adjlist {l}")
+                self.buf[i].set_language(l)
 
         logger.debug("Setting project")
         if self.pendingPid is not None:

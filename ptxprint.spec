@@ -74,6 +74,7 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                              'nibotpurple.png', 'nibotred.png', 'nibotvrule.png')]
                       + [('python/lib/ptxprint/sfm/*.bz2', 'ptxprint/sfm')]
                       + [('python/lib/ptxprint/images/*.jpg', 'ptxprint/images')]
+                      + [('python/lib/ptxprint/syntax/*.*', 'ptxprint/syntax')]
                       + [('fonts/' + f, 'fonts/' + f) for f in ('empties.ttf', 'SourceCodePro-Regular.ttf')]
                       + [('src/mappings/*.tec', 'ptx2pdf/mappings')]
                       + [('docs/documentation/OrnamentsCatalogue.pdf', 'ptx2pdf/contrib/ornaments')]
