@@ -89,7 +89,7 @@
 %
 %+ccut_carryover
 \def\cutoutcarryover{%
-  \trace{C}{cutoutcarryover}%
+  \trace{C}{cutoutcarryover \the\@numcuts}%
   \ifnum\@numcuts>0
     \count@=\@numcuts \@numcuts=0
     \@index=0
@@ -137,7 +137,6 @@
     \ifnum\@parshapelines>500 \MSG{*** Impossible number of lines in cutout:\the\count@}\@parshapelines=500\fi
   \repeat
   \advance\@parshapelines by 1
-  \trace{C}{Cutouts: \the\@numcuts, \the\@parshapelines\space lines}%
   \def\@shape{}%                                                                %(1)
   \@line=0
   \loop \ifnum\@line<\@parshapelines \advance\@line by 1
@@ -154,6 +153,7 @@
     \edef\@shape{\@shape\space\the\@indent\space\the\@hsize}%
   \repeat
   \parshape=\number\@parshapelines \@shape
+  \trace{C}{Cutouts: \the\@numcuts, \the\parshape(\@shape), \the\@parshapelines\space lines}%
 }
 %-ccut_makecutouts
 %+ccut_cutthisline

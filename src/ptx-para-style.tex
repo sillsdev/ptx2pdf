@@ -374,7 +374,7 @@
      %\lastdepth=0pt
      \ifinner\trace{sa}{Inner mode at end of paragraph style \m@rker}\fi
    \fi
-   \trace{C}{enditP: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items}%
+   {\count255=\prevgraf \trace{C}{endit@P: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items, pgrf:\the\count255}}%
    \ifnum\pagetracing>0\tracingparagraphs=0\fi
    \ifnum 0\ifdr@ppednumber 1\else\ifnum\dropped@ther@lines>0 1\fi\ifx\pending@items\cstackempty\else1\fi\fi>0 % the preceding par had a dropped number or other cutout;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
@@ -681,11 +681,11 @@
 \def\preservesettings{\let\epch@rstyle\newch@rstyle}
 \def\restoresettings{\let\newch@rstyle\epch@rstyle}
 \def\ch@pterc@tnum{}
-
+\newtoks\Flag
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
-   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname'}%
+   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -756,12 +756,13 @@
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
+     \trace{C}{leftmargin? '\p@ram', \styst@kfirst, \styst@k}%
      \ifx\p@ram\relax % simple case - no left indent
        \ifx\ch@pterc@tnum\empty
          \trace{C}{New cutout needed}%
          \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}% No pre-existing cutout
        \else
-         \trace{C}{Modifying existing cutout }%
+         \trace{C}{Modifying existing cutout \ch@pterc@tnum}%
          \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
        \fi
      \else % probably \q or something like that;
@@ -769,14 +770,16 @@
        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
        \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
        % now \dimen0 is the real indent of the 1st line
-       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
-       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd}%
+       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
+       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
          \ifx\ch@pterc@tnum\empty
-           \trace{C}{New cutout needed}%
+           \trace{C}{New cutout needed (\ch@pterc@tnum)}%
            \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
          \else
+           \trace{C}{modifying (\ch@pterc@tnum)}%
            \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+           \Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
        \else % the indent is already big enough, so just use it as is
        \fi
@@ -787,6 +790,7 @@
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi\fi
+   \the\Flag
    \run@pending
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
@@ -1337,6 +1341,7 @@
  \fi
  \XeTeXuseglyphmetrics=\@seglyphmetrics
  \ch@pterwd=\wd\ch@pterbox
+ \trace{sP}{box width=\the\ch@pterwd}%
  \dp\ch@pterbox=0pt
 }
 %-cpar_makechapterbox

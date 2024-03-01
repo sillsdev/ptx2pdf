@@ -117,8 +117,8 @@
 \def\LRspecificVarDef{ch@pterc@tnum} % \def based variables that need to carry over from one par to the next
 
 %Because some people may have adjust-lists using the old broken numbering, we make 2 versions of this.
-\def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts} 
-\def\LRspecificCountBroken{@numcuts}
+\def\LRspecificCountFixed{curr@djpar,p@rnum,@numcuts,dropped@ther@lines} 
+\def\LRspecificCountBroken{@numcuts,dropped@ther@lines}
 \let\LRspecificCount\LRspecificCountFixed
 
 
@@ -160,13 +160,16 @@
    \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\sfx\endcsname)}%
   \fi
 }
+\def\sp@cificSideIf#1{\x@\ifx\csname IF#1\sfx\endcsname\tr@e\csname #1true\endcsname\else\csname #1false\endcsname\fi
+  \trace{S}{SpS: IF#1\sfx\space (\csname IF#1\sfx\endcsname) selected}%
+}
 
 \def\sp@cificSideCount#1{\x@\ifnum\csname #1\sfx\endcsname=\m@ncount
    \ifcsname #1\@rig\endcsname\x@\let\csname#1\x@\endcsname\csname #1\@rig\endcsname
      \trace{S}{SpS: #1 returned to original}\else\trace{S}{SpS: #1 unmodified}%
     \fi
   \else
-   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected}%
+   \x@\let\csname#1\x@\endcsname\csname #1\sfx\endcsname\trace{S}{SpS: #1\sfx\space selected (\the\csname #1\endcsname)}%
   \fi
 }
 
@@ -186,7 +189,6 @@
 % Savr the current if value 
 \def\s@veSpecificSideIf#1{\ifcsname if#1\endcsname \x@\csname if#1\endcsname \x@\let\csname IF#1\sfx\endcsname\tr@e\else \x@\let\csname IF#1\sfx\endcsname\false\fi\else\message{*** Probable typo: if#1 does not exist in side-specific switching}\fi}
 % set the if value based on the saved logic
-\def\sp@cificSideIf#1{\x@\ifx\csname #1\sfx\endcsname\tr@e\csname #1true\endcsname\else\csname #1false\endcsname\fi}
 % If the item exists, save its current value. 
 \def\s@veSpecificSideDef#1{\ifcsname #1\endcsname \x@\let\csname #1\sfx\x@\endcsname\csname #1\endcsname\fi}
 \def\s@veSpecificSideDim#1{\ifcsname #1\endcsname\ifcsname #1\sfx\endcsname  \x@\global\csname #1\sfx\endcsname=\csname #1\endcsname\else\errmessage{dimension #1 does not exist}\fi\else\errmessage{dimension #1\sfx does not exist}\fi}
@@ -1008,6 +1010,12 @@
     \message{!!! EEK. Internal error detected. #1 met during trial, somewhere near \c@rref}%
   \fi
   \traceNum{D}{Initial savepenalty \the\savedpenalty}%
+  \IfTr@ce{C}{{%
+    \x@\let\x@\tmp\csname ch@pter\g@tdstat waiting\endcsname
+    \x@\let\x@\tmpL\csname ch@pterwaiting\endcsname\ifx\tmpL\relax\let\tmpL\space\fi
+    \x@\let\x@\tmpR\csname ch@pterRwaiting\endcsname\ifx\tmpR\relax\let\tmpR\space\fi
+    \tr@ceout{pr@sideswitch \c@rrdstat: \ifx\tmp\relax\else cw:\tmp\fi(\tmpL/\tmpR), ccn:\ch@pterc@tnum, nc:\the\@numcuts}%
+  }}%
   \ifx\c@rrdstat\empty
     \trace{d}{\c@rrdstat is empty, somehow, making it L for sanity}%
     \gdef\c@rrdstat{L}%
