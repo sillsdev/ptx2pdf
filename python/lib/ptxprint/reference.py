@@ -742,6 +742,16 @@ def tests():
             raise TestException("{} simplified to {} instead of {}".format(s, res, base))
         print("{} -> {}".format(s, res))
 
+    def o(a, b, res):
+        x = RefList.fromStr(a)[0]
+        y = RefList.fromStr(b)[0]
+        if res and not y < x or not res and not x < y:
+            raise TestException(f"{x} should be < {y}")
+        if res and x < y or not res and y < x:
+            raise TestException(f"{y} should not be < {x}")
+        if (x in y) != res:
+            raise TestException(f"{x} in {y} should be {res}")
+
     t("GEN 1:1", "021", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
     t("JHN 3", "VG0", r("JHN", 3, 0))
@@ -755,6 +765,8 @@ def tests():
     testlist("ROM 1; MAT 3:4-11; ROM 1:3-2:7", "MAT 3:4-11; ROM 1-2:7")
     t("GEN 1:1-3; 3:2-11; LUK 4:5", "021-023062-06BUY5", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
     t("JUD 1,2,4", "aU1aU2aU4", r("JUD", 1, 1), r("JUD", 1, 2), r("JUD", 1, 4))
+    o("GEN 1:1", "EXO 2:3", False)
+    o("EXO 2:4", "EXO 2", True)
 
 
 if __name__ == "__main__":
