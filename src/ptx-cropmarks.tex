@@ -727,7 +727,11 @@
       \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\advance\dimen2 -2\XrefNotesMargin\fi
     \else\dimen2=0pt \fi
     \divide\dimen2 by 2
-    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter
+    \ifdiglot
+      \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \if R\g@tterside  * -1\fi\fi \ifdiglotSwap *-1\fi\relax
+        \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
+      \MSG{side \the\pageno, gs:\g@tterside, t:\tmp}%
+      \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
     \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt \advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
@@ -749,7 +753,9 @@
       \advance\dimen2\columnshift
     \fi
     \def\th@sgprule{Major}
-    \ifdiglot\dimen4=\csname column\if L\g@tterside R\else L\fi width\endcsname\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
+    \ifdiglot
+      \dimen4=\csname column\btmp width\endcsname
+    \else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
