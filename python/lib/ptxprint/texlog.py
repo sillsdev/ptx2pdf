@@ -167,7 +167,7 @@ def summarizeTexLog(logText):
         # Extract unique page numbers and sort them in ascending order
         unique_page_numbers = sorted(set(match[1] for match in uf_matches), key=int)
         category_counts["W"] += 1
-        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {','.join(unique_page_numbers[:7])}...")
+        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {','.join(unique_page_numbers)}")
 
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))

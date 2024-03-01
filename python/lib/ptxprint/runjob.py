@@ -463,9 +463,14 @@ class RunJob:
                     print("{}\n{}".format(summaryLine, msgs))
                     if not self.noview and not self.args.print:
                         if len(msgList) == 1 and "underfilled" in msgs:
+                            if "," not in msgs:
+                                msgs = re.sub(_("pages"), _("page"), msgs)
                             sl.set_text(msgs)
-                            sl.set_tooltip_text("")
-                            self.printer.set("l_statusLine", msgs)
+                            sl.set_tooltip_text(msgs)
+                            chkmsg = _("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789")+" ..." if len(msgs) > 30 else msgs
+                            if "," not in chkmsg:
+                                chkmsg = re.sub(_("pages"), _("page"), chkmsg)
+                            self.printer.set("l_statusLine", chkmsg)
                         else:
                             sl.set_text(summaryLine)
                             sl.set_tooltip_text(msgs)
