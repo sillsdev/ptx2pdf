@@ -4254,7 +4254,7 @@ or select from the list of preset values.</property>
                                           <object class="GtkEntry">
                                             <property name="can-focus">True</property>
                                             <property name="width-chars">20</property>
-                                            <property name="overwrite-mode">True</property>
+                                            <property name="caps-lock-warning">False</property>
                                           </object>
                                         </child>
                                       </object>
@@ -7903,7 +7903,9 @@ numerals). For example, "Chapter" or "Psalm".
 If you want the chapter number to appear centered
 and above the Section Header WITHOUT any preceding
 text, then just put the code \ZWNBSP in here. This will
-insert a Zero Width Non-Break Space.</property>
+insert a Zero Width Non-Break Space.
+
+Keywords: \c drop cap chapter number</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                   </object>
