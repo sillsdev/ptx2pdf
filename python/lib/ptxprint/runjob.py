@@ -712,8 +712,10 @@ class RunJob:
                 if "-" in mode:
                     (mode, sync) = mode.split("-")
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
+                # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
+                debugmerge = logger.getEffectiveLevel() <= 5 
                 #try:
-                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync)
+                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync, debug=debugmerge)
                 #except SyntaxError as e:
                 #    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
                 #except Exception as e:
