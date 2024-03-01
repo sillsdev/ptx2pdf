@@ -681,7 +681,7 @@
 \def\preservesettings{\let\epch@rstyle\newch@rstyle}
 \def\restoresettings{\let\newch@rstyle\epch@rstyle}
 \def\ch@pterc@tnum{}
-\newtoks\Flag
+%\newtoks\Flag
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
@@ -779,7 +779,7 @@
          \else
            \trace{C}{modifying (\ch@pterc@tnum)}%
            \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
-           \Flag{\MSG{FLAG!}M\Flag{}}%
+           %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
        \else % the indent is already big enough, so just use it as is
        \fi
@@ -790,7 +790,7 @@
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi\fi
-   \the\Flag
+   %\the\Flag
    \run@pending
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
