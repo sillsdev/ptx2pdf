@@ -165,14 +165,35 @@ def summarizeTexLog(logText):
     uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
     if len(uf_matches):
         # Extract unique page numbers and sort them in ascending order
-        unique_page_numbers = sorted(set(match[1] for match in uf_matches), key=int)
+        unique_page_numbers = sorted(set(int(match[1]) for match in uf_matches), key=int)
         category_counts["W"] += 1
-        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {','.join(unique_page_numbers)}")
+        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {shorten_ranges(unique_page_numbers)}")
 
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
     else:
         return category_counts, messageSummary
+
+def shorten_ranges(numbers):
+    ranges = []
+    current_range = [numbers[0]]
+
+    for i in range(1, len(numbers)):
+        if numbers[i] - numbers[i-1] == 1:
+            current_range.append(numbers[i])
+        else:
+            if len(current_range) > 1:
+                ranges.append(f"{current_range[0]}-{current_range[-1]}")
+            else:
+                ranges.append(str(current_range[0]))
+            current_range = [numbers[i]]
+
+    if len(current_range) > 1:
+        ranges.append(f"{current_range[0]}-{current_range[-1]}")
+    else:
+        ranges.append(str(current_range[0]))
+
+    return ", ".join(ranges)
 
 # Function to search for and summarize recent *ptxp.log files
 def search_and_summarize_recent_logs(root_folder):
