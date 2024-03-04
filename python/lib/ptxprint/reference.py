@@ -745,12 +745,19 @@ def tests():
     def o(a, b, res):
         x = RefList.fromStr(a)[0]
         y = RefList.fromStr(b)[0]
-        if res and not y < x or not res and not x < y:
+        if (isinstance(res,tuple)):
+          restup=res
+          restupd=f"x<y {restup[0]}, y<x {restup[1]}, x in y {restup[2]}"
+        else:
+          restup=(res,res,res)
+          restupd=res
+        if restup[0] and not y < x or not res and not x < y:
             raise TestException(f"{x} should be < {y}")
-        if res and x < y or not res and y < x:
+        if restup[1] and x < y or not res and y < x:
             raise TestException(f"{y} should not be < {x}")
-        if (x in y) != res:
+        if (x in y) != restup[2]:
             raise TestException(f"{x} in {y} should be {res}")
+        print("{} <-> {} ({})".format(a, b,restupd))
 
     t("GEN 1:1", "021", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
@@ -767,6 +774,11 @@ def tests():
     t("JUD 1,2,4", "aU1aU2aU4", r("JUD", 1, 1), r("JUD", 1, 2), r("JUD", 1, 4))
     o("GEN 1:1", "EXO 2:3", False)
     o("EXO 2:4", "EXO 2", True)
+    o("EXO 2:4-5", "EXO 2", True)
+    o("EXO 2:4-5", "EXO 3", False)
+    o("EXO 2:1-2", "EXO 2:1-5", (False,True,True))
+    o("EXO 2:1-2", "EXO 2:2-7", (False,False,True))
+    o("EXO 2:1-2", "EXO 2:3-6", False)
 
 
 if __name__ == "__main__":
