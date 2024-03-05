@@ -751,13 +751,16 @@ def tests():
         else:
           restup=(res,res,res)
           restupd=res
-        if restup[0] and not y < x or not res and not x < y:
-            raise TestException(f"{x} should be < {y}")
-        if restup[1] and x < y or not res and y < x:
-            raise TestException(f"{y} should not be < {x}")
+        a=(y<x)
+        b=(x<y)
+        #print(f"y<x :{a} x<y:{b}")
+        if restup[0] != b:
+            raise TestException(f"{x} should be < {y} [expect: {restupd}]")
+        if restup[1] != a:
+            raise TestException(f"{y} should not be < {x} [expect: {restupd}]")
         if (x in y) != restup[2]:
             raise TestException(f"{x} in {y} should be {res}")
-        print("{} <-> {} ({})".format(a, b,restupd))
+        print("{} <-> {} ({})".format(x, y,restupd))
 
     t("GEN 1:1", "021", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
@@ -772,14 +775,16 @@ def tests():
     testlist("ROM 1; MAT 3:4-11; ROM 1:3-2:7", "MAT 3:4-11; ROM 1-2:7")
     t("GEN 1:1-3; 3:2-11; LUK 4:5", "021-023062-06BUY5", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
     t("JUD 1,2,4", "aU1aU2aU4", r("JUD", 1, 1), r("JUD", 1, 2), r("JUD", 1, 4))
-    o("GEN 1:1", "EXO 2:3", False)
-    o("EXO 2:4", "EXO 2", True)
-    o("EXO 2:4-5", "EXO 2", True)
-    o("EXO 2:4-5", "EXO 3", False)
-    o("EXO 2:1-2", "EXO 2:1-5", (False,True,True))
-    o("EXO 2:1-2", "EXO 2:2-7", (False,False,True))
-    o("EXO 2:1-2", "EXO 2:3-6", False)
-
+    o("GEN 1:1", "EXO 2:3", (True,False,False))
+    o("EXO 2:4", "EXO 2", (False,True,True))
+    o("EXO 2:4-5", "EXO 2", (False,True,True))
+    o("EXO 2:4-5", "EXO 3", (True,False,False))
+    o("EXO 2:1-2", "EXO 2:1-5", (False,False,True))
+    o("EXO 2:1-2", "EXO 2:2-7", (True,False,True))
+    o("EXO 2:1-2", "EXO 2:3-6", (True,False,False))
+    o("GEN 2:1-2", "EXO 2:3-6", (True,False,False))
+    o("DEU 2:1-2", "EXO 2:3-6", (False,True,False))
+    o("EXO 2:2-3", "EXO 2:1-5", (False,False,True))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
