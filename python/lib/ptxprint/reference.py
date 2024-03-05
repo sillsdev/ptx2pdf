@@ -69,7 +69,12 @@ class RefSeparators(dict):
         res.update(kw)
         return res
 
-class Reference:
+def Reference(book, chap, verse, subverse=None, mark=None):
+    if verse == 0:
+        return RefRange(_Reference(book, chap, 0), _Reference(book, chap, 200))
+    return RefRange(_Reference(book, chap, verse, subverse, mark))
+
+class _Reference:
 
     vrs = None
 
@@ -125,7 +130,7 @@ class Reference:
         return "Reference({mark}{book} {chap}:{verse}{subverse})".format(**d)
 
     def __eq__(self, o):
-        if not isinstance(o, Reference):
+        if not isinstance(o, _Reference):
             return False
         return all(getattr(self, a) == getattr(o, a) for a in ("book", "chap", "verse", "subverse"))
 
@@ -145,21 +150,22 @@ class Reference:
     def __lt__(self, o):
         if o is None:
             return False
-        elif not isinstance(o, Reference):
+        elif not isinstance(o, _Reference):
             return not o < self or o == self
-        if self.book != o.book:
-            return books.get(self.book, 200) < books.get(o.book, 200)
-        elif self.chap != o.chap:
-            return self.chap < o.chap
-        elif self.verse != o.verse:
-            return self.verse < o.verse
-        elif self.subverse != o.subverse:
-            if self.subverse is None:
+        r = self.last
+        if r.book != o.book:
+            return books.get(r.book, 200) < books.get(o.book, 200)
+        elif r.chap != o.chap:
+            return r.chap < o.chap
+        elif r.verse != o.verse:
+            return r.verse < o.verse
+        elif r.subverse != o.subverse:
+            if r.subverse is None:
                 return True
             elif o.subverse is None:
                 return False
             else:
-                return self.subverse < o.subverse
+                return r.subverse < o.subverse
         return False
 
     def __gt__(self, o):
@@ -185,7 +191,7 @@ class Reference:
 
     @property
     def last(self):
-        return Reference(self.book, self.chap, 200) if self.verse == 0 else self
+        return self
 
     def copy(self):
         res = self.__class__(self.book, self.chap, self.verse, self.subverse, self.mark)
@@ -336,11 +342,22 @@ class Reference:
 
 class RefRange:
     ''' Inclusive range of verses with first and last '''
-    def __init__(self, first, last):
+    def __init__(self, first, last=None):
+        if isinstance(first, RefRange):
+            first = first.first
+            if last is None:
+                last = first.last
         self.first = first
-        self.last = last
+        if isinstance(last, RefRange):
+            last = last.last
+        self.last = last if last is not None else first
 
     def str(self, context=None, level=0, lastref=None, this=None, addsep=RefSeparators()):
+        if self.first == self.last or self.first.book == self.last.book \
+                    and self.first.chap == self.last.chap \
+                    and self.first.verse == 0 \
+                    and self.last.verse == 200:
+            return self.first.str(context, level, lastref, this, addsep=addsep)
         lastsep = RefSeparators(books="", chaps="", verses="", cv=addsep['cv'])
         res = "{}{}{}".format(self.first.str(context, level, lastref, this, addsep=addsep, allowzero=self.first.chap==self.last.chap),
                               addsep['range'],
@@ -380,16 +397,26 @@ class RefRange:
         return self.last.asint() - self.first.asint()
 
     def astag(self):
+        if self.first == self.last or self.first.book == self.last.book \
+                and self.first.chap == self.last.chap \
+                and self.first.verse == 0 \
+                and self.last.verse == 200:
+            return self.first.astag()
         return "{}-{}".format(self.first.astag(), self.last.astag())
+
+    def asint(self):
+        return self.first.asint()
 
     @classmethod
     def fromtag(cls, s, remainder=False):
-        first, s = Reference.fromtag(s, remainder=True)
+        first, s = _Reference.fromtag(s, remainder=True)
         if len(s) and s[0] == "-":
-            last, s = Reference.fromtag(s[1:], remainder=True)
+            last, s = _Reference.fromtag(s[1:], remainder=True)
             res = cls(first, last)
+        elif first.verse == 0:
+            res = cls(first, _Reference(first.book, first.chap, 200))
         else:
-            res = first
+            res = cls(first)
         if remainder:
             return (res, s)
         return res
@@ -490,7 +517,7 @@ class RefList(list):
         rebook = re.compile(r"^(\d?[^0-9\-:.]+)")
         recv = re.compile(r"^(\d+)[:.](\d+|end)([a-z]?)")
         rec = re.compile(r"(\d+)([a-z]?)")
-        curr = Reference(None, 0, -1) if starting is None else starting
+        curr = _Reference(None, 0, -1) if starting is None else starting
         currmark = None
         nextmark = None
         start = None
@@ -607,12 +634,16 @@ class RefList(list):
         curr.mark = currmark
         if curr.verse < 0:
             curr.verse = 0
+        if curr.verse == 0:
+            curr.verse = 200
         if start is not None:
-            if curr.verse == 0:
-                curr.verse = 200
             curr = RefRange(start, curr)
+        elif curr.verse == 200:
+            curr = RefRange(_Reference(curr.book, curr.chap, 0), curr)
+        else:
+            curr = RefRange(curr)
         self.append(curr)
-        res = Reference(curr.first.book, 0, -1)
+        res = _Reference(curr.first.book, 0, -1)
         currmark = nextmark
         return (res, currmark)
 
@@ -686,7 +717,7 @@ class RefList(list):
 
 class RefJSONEncoder(json.JSONEncoder):
     def default(self, obj):
-        if isinstance(obj, (Reference, RefRange, RefList)):
+        if isinstance(obj, (_Reference, RefRange, RefList)):
             return str(obj)
         elif isinstance(obj, set):
             return sorted(obj)
@@ -715,7 +746,7 @@ def tests():
         if tag != t:
             raise TestException("{} != {} in {}".format(tag, t, s))
         refint = res[0].first.asint()
-        intref = Reference.fromint(refint)
+        intref = _Reference.fromint(refint)
         temp = res[0].first.copy()
         temp.subverse = None
         if intref != temp:
@@ -776,8 +807,8 @@ def tests():
     t("GEN 1:1-3; 3:2-11; LUK 4:5", "021-023062-06BUY5", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
     t("JUD 1,2,4", "aU1aU2aU4", r("JUD", 1, 1), r("JUD", 1, 2), r("JUD", 1, 4))
     o("GEN 1:1", "EXO 2:3", (True,False,False))
-    o("EXO 2:4", "EXO 2", (False,True,True))
-    o("EXO 2:4-5", "EXO 2", (False,True,True))
+    o("EXO 2:4", "EXO 2", (False,False,True))
+    o("EXO 2:4-5", "EXO 2", (False,False,True))
     o("EXO 2:4-5", "EXO 3", (True,False,False))
     o("EXO 2:1-2", "EXO 2:1-5", (False,False,True))
     o("EXO 2:1-2", "EXO 2:2-7", (True,False,True))
@@ -789,7 +820,7 @@ def tests():
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         if len(sys.argv) == 2 and 2 < len(sys.argv[1]) < 5:
-            res = Reference.fromtag(sys.argv[1])
+            res = _Reference.fromtag(sys.argv[1])
         else:
             res = RefList.fromStr(" ".join(sys.argv[1:]), marks=("\u203A", "+"))
         tag = res.astag()

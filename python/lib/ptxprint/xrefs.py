@@ -1,6 +1,6 @@
 
 from ptxprint.utils import cachedData, pycodedir, regex_localiser
-from ptxprint.reference import RefList, RefRange, Reference, RefSeparators, BaseBooks
+from ptxprint.reference import RefList, RefRange, RefSeparators, BaseBooks
 from ptxprint.unicode.ducet import get_sortkey, SHIFTTRIM, tailored, get_ces
 from ptxprint.usfmutils import Usfm
 from ptxprint import sfm
@@ -182,7 +182,7 @@ class XMLXrefs(BaseXrefs):
     def simplify(self, groups):
         results = []
         for g in groups:
-            if isinstance(g[2][0], (Reference, RefRange)):
+            if isinstance(g[2][0], RefRange):
                 # demote top level ref under implicit refgroup
                 self._updatedat(results, [(None, None, [g])], None)
             else:
