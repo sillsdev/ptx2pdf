@@ -6,7 +6,7 @@
 
   <styles>
     <style id="comment" _name="Comment" map-to="def:comment"/>
-    <style id="shrink" _name="Shrinkable" map-to="def:preprocessor"/>
+    <style id="shrink" _name="Shrinkable" map-to="def:complex"/>
     <style id="error" name="Bad" map-to="def:error"/>
     <style id="default" name="Default"/>
   </styles>
@@ -15,9 +15,9 @@
     <context id="adjlist">
       <include>
         <context id="adj" style-ref="default">
-          <match>^[A-Z0-9]{3}\s+\d+\.\d+\s+((\+?\-\s*\d+(\s*\[\d+\])?)|\+?\s*\d+(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <match>^[A-Z0-9]{3}[LR]?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*\d+(\s*\[\d+\])?)|\+?\s*\d+(\s*\[\d+\])?)?\s*(%.*)?$</match>
           <include>
-            <context id="shrinkable" style-ref="shrink" sub-pattern="2"/>
+            <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
           </include>
         </context>
         <context id="comment" style-ref="comment" end-at-line-end="true">

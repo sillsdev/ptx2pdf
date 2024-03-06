@@ -1,9 +1,29 @@
 PTXprint 2.4.14 Release Notes
-28 Feb 2024
+5 Mar 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.15 (5 Mar 2024)
+
+  * Don't report unbalanced last pages, and show page ranges in report
+  
+  * Fixed \cl in diglots
+  
+  * Minor UI tweaks - Page Size edits were in overwrite mode, enable search for drop cap
+  
+  * Add Adjlist syntax highlighting
+  
+  * Call usfmerge2() with debug flag controlled by log level (Writes test files to check that nothing got added/lost in merging)
+  
+  * Fix diglot cutout continuation problem(?)
+  
+  * Fix RefRange.__contains__
+  
+  * Add additional tests for references
+  
+  * Fix diglot vertical grid line position (#941)
+  
 Bug fixes and Improvements in 2.4.14 (28 Feb 2024)
 
   * Fix moving notes up and down at the end of books

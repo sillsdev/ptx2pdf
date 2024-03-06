@@ -2203,7 +2203,7 @@ class GtkViewModel(ViewModel):
                         else:
                             t = getsign(*sv)
                             if t != "":
-                                vals.append("{}[{}]".format(t, sk))
+                                vals.append("{}1[{}]".format(t, sk))
                     if s == "0" and not len(vals):
                         continue
                     # if r[1] != 0: # This was preventing Intro matter vals from appearing
@@ -2211,7 +2211,7 @@ class GtkViewModel(ViewModel):
                     if p > 0:
                         outs += "[{}]".format(p)
                     if len(vals):
-                        outs += "% " + " ".join(vals)
+                        outs += "% " + " %".join(vals)
                     outf.write(outs+"\n")
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
