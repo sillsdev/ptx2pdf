@@ -1,3 +1,9 @@
+ptxprint (2.4.15-1ubuntu1) bionic; urgency=medium
+
+  * Bumped release to 2.4.15
+
+ -- Martin Hosken <martin_hosken@sil.org>  Wed, 06 Mar 2024 16:53:18 +1300
+
 ptxprint (2.4.14-1ubuntu1) bionic; urgency=medium
 
   * Bumped release to 2.4.14
