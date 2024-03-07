@@ -771,6 +771,9 @@
 %+c_pageborders
 \def\PageBorder{}
 \newbox\b@rder
+\def\NewPageBorder#1{\global\setbox\b@rder\box\voidb@x % Remove old border
+  \gdef\PageBorder{#1}% Set the new filename
+}
 \def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
   \ifvoid\b@rder % set up the \b@rder box the first time it's needed
     \global\setbox\b@rder=\hbox{\mapimagefile{\XeTeXpdffile}{\PageBorder}{}\relax}%

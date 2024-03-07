@@ -1321,7 +1321,27 @@
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}{c}\printchapter}%
+ \getp@ram{rightmargin}{c}{c}%
+ \let\ch@pterrmargin\p@ram
+ \ifx\ch@pterrmargin\relax\else\ifdim 0pt=\ch@pterrmargin\IndentUnit \let\ch@pterrmargin\relax\fi\fi
+ \getp@ram{leftmargin}{c}{c}%
+ \let\ch@pterlmargin\p@ram
+ \ifx\ch@pterlmargin\relax\else\ifdim 0pt=\ch@pterlmargin\IndentUnit \let\ch@pterlmargin\relax\fi\fi
+ \getp@ram{justification}{c}{c}%
+ \setbox\ch@pterbox=\hbox{%
+    \ifx\p@ram\r@ght
+      \s@tfont{c}{c}\printchapter
+    \else
+      \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
+      \s@tfont{c}{c}\printchapter
+    \fi
+ }%
+ \ifx\p@ram\r@ght
+   \ifx\ch@pterrmargin\relax\let\ch@pterrmargin\ch@pterlmargin\fi
+   \ifx\ch@pterrmargin\relax\def\ch@pterrmargin{0}\fi
+   \trace{sP}{chapterbox right-aligned}%
+   \setbox\ch@pterbox=\hbox to \ch@pterrmargin\IndentUnit{\hss\unhbox\ch@pterbox}%
+ \fi
  \ifrotate
   \dimen0=1.0\ht\ch@pterbox
   \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor\FontSizeUnit
