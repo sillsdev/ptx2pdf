@@ -1241,17 +1241,34 @@ class GtkViewModel(ViewModel):
         self.i18nizeURIs()
 
     def i18nizeURIs(self):
-        ggltrans = "" 
         self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
-        if not self.get("c_useEngLinks") and \
-               self.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
-            ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(self.lang)
+        tl = self.lang if not self.get("c_useEngLinks") and \
+           self.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
         for u in "homePage community pdfViewer techFAQ reportBugs".split(): # lb_DBLdownloads lb_openBible ?as well?
             w = self.builder.get_object("lb_" + u)
+            if "translate.goog" in w.get_uri():
+                continue
             site = w.get_uri()
-            if site.startswith("https://translate.google.com/translate"):
-                site = site.split("u=")[1]
-            w.set_uri(f'{ggltrans}{site}')
+            partA, partB = self.splitURL(site)
+            partA = re.sub(r"\.", r"-", partA)
+            
+            if len(tl) and "/tree/" not in site:
+                site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
+            w.set_uri(f'{site}')
+            
+    def splitURL(self, url):
+        # Find the index of the first '/' after the initial '//'
+        index = url.find('/', url.find('//') + 2)
+
+        if index != -1:
+            partA = url[:index]
+            partB = url[index + 1:].rstrip('/')
+        else:
+            partA = url
+            partB = ''
+        # print(f"1: {url=}\n{partA=} / {partB=}")
+
+        return partA, partB
 
     def addCR(self, name, index):
         if "|" in name:

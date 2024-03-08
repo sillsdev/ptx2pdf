@@ -473,29 +473,45 @@ class StyleEditorView(StyleEditor):
 
         if not self.model.get("c_noInternet"):
             tl = self.model.lang
-            ggltrans = "" 
-            self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
-            if not self.model.get("c_useEngLinks") and \
-                   tl in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th']:
-                ggltrans = r"https://translate.google.com/translate?sl=en&tl={}&u=".format(tl)
-                
+            w = self.builder.get_object("l_url_usfm")
+            w.set_label(_('More Info...'))
+            tl = self.model.lang if not self.model.get("c_useEngLinks") and \
+                 self.model.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
             if m.startswith("z"):
-                site = 'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/'
-                self.builder.get_object("l_url_usfm").set_uri(f'{ggltrans}{site}{m}.md')
+                site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
             elif "+" in urlmkr or "|" in urlmkr or path is None:
-                self.builder.get_object("l_url_usfm").set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
-                self.builder.get_object("l_url_usfm").set_label(_('Complex style'))
+                w.set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
+                w.set_label(_('Complex style'))
             else:
-                site = 'https://docs.usfm.bible/usfm-usx-docs/latest/'
-                self.builder.get_object("l_url_usfm").set_uri(f'{ggltrans}{site}{path}/{m}.html')
+                site = f'https://docs.usfm.bible/usfm-usx-docs/latest/{path}/{m}.html'
 
+            partA, partB = self.splitURL(site)
+            partA = re.sub(r"\.", r"-", partA)
+            
+            if len(tl) and "/blob/" not in site:
+                site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
+            w.set_uri(f'{site}')
+            
         self.isLoading = oldisLoading
         # Sensitize font size, line spacing, etc. for \paragraphs
         for w in ["s_styFontSize", "s_styLineSpacing", "c_styAbsoluteLineSpacing"]:
             widget = self.builder.get_object(w)
             widget.set_sensitive(self.marker != "p")
+
+    def splitURL(self, url):
+        # Find the index of the first '/' after the initial '//'
+        index = url.find('/', url.find('//') + 2)
+
+        if index != -1:
+            partA = url[:index]
+            partB = url[index + 1:].rstrip('/')
+        else:
+            partA = url
+            partB = ''
+
+        return partA, partB
 
     def setFontLabel(self, fref, fsize):
         bfontsize = float(self.model.get("s_fontsize"))
