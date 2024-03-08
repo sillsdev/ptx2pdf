@@ -4,6 +4,15 @@ PTXprint 2.4.15 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.16 ()
+
+  * Add control for position of "drop-cap" chapter numbers. **This may break existing layouts** if the default
+alignment or left/right indent factors have been changed from their defaults (Alignment centre and indents zero).
+Previously such changes were ignored, but now they have meaning.  Alignment=Right -- Use right indent (or left
+if right indent is zero)_indent to set position of right-hand edge of number (left-hand edge in right-to-left publications).
+Other alignment setings -- Left indent controls where the chapter number starts.
+
+
 Bug fixes and Improvements in 2.4.15 (5 Mar 2024)
 
   * Don't report unbalanced last pages, and show page ranges in report
