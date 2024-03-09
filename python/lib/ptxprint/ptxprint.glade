@@ -2941,6 +2941,39 @@ settings for a similar project.</property>
             <property name="position">2</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkMenuButton" id="btn_menu_feedback">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="focus-on-click">False</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
+You could help us make PTXprint better!
+
+The developers of PTXprint would love to know how 
+this tool is being used. What is your favorite feature? 
+Are there any annoyances you have? Tell us what you 
+like, and don't like. Tell us what you dream for in the 
+future.
+
+Click this button to fill in the Google form
+or type this in a browser: http://tiny.cc/ptxprintfeedback</property>
+            <property name="use-popover">False</property>
+            <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
+            <child>
+              <object class="GtkLabel" id="l_menu_feedback">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Give Feedback</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
@@ -25539,7 +25572,7 @@ are likely to have to re-do it all again.</property>
                             <property name="can-focus">False</property>
                             <property name="left-padding">12</property>
                             <child>
-                              <!-- n-columns=7 n-rows=11 -->
+                              <!-- n-columns=7 n-rows=12 -->
                               <object class="GtkGrid">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
@@ -25623,7 +25656,7 @@ for best results.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">7</property>
+                                    <property name="top-attach">8</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -25642,7 +25675,7 @@ for best results.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">7</property>
+                                    <property name="top-attach">8</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -25662,7 +25695,7 @@ an issue using this link.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">9</property>
+                                    <property name="top-attach">10</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -25681,7 +25714,7 @@ an issue using this link.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">9</property>
+                                    <property name="top-attach">10</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -25754,7 +25787,7 @@ file or the Changes.txt file as appropriate.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
-                                    <property name="top-attach">8</property>
+                                    <property name="top-attach">9</property>
                                     <property name="width">3</property>
                                   </packing>
                                 </child>
@@ -25773,7 +25806,7 @@ file or the Changes.txt file as appropriate.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">8</property>
+                                    <property name="top-attach">9</property>
                                     <property name="width">4</property>
                                   </packing>
                                 </child>
@@ -25826,7 +25859,7 @@ ptxprint_support@&lt;your.org's.address&gt;</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">3</property>
-                                    <property name="top-attach">10</property>
+                                    <property name="top-attach">11</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25885,7 +25918,7 @@ interact with other PTXprint users and the developers.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">6</property>
-                                    <property name="top-attach">10</property>
+                                    <property name="top-attach">11</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25909,7 +25942,7 @@ by deleting unneeded files.</property>
                                   </object>
                                   <packing>
                                     <property name="left-attach">5</property>
-                                    <property name="top-attach">10</property>
+                                    <property name="top-attach">11</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -25998,6 +26031,47 @@ by deleting unneeded files.</property>
                                     <property name="left-attach">4</property>
                                     <property name="top-attach">10</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="l_giveFeedback">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">PTXprint does not have an auto-updating
+feature, so you are encouraged to check
+for new updates at the Home Page.
+Please ensure you are using the latest
+version before reporting an issue.</property>
+                                    <property name="halign">end</property>
+                                    <property name="label" translatable="yes">Give Feedback:</property>
+                                    <property name="justify">right</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">0</property>
+                                    <property name="top-attach">7</property>
+                                    <property name="width">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_giveFeeback">
+                                    <property name="label" translatable="yes">Tell us what you think about PTXprint</property>
+                                    <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="valign">end</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">http://tiny.cc/ptxprintfeedback</property>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">3</property>
+                                    <property name="top-attach">7</property>
+                                    <property name="width">4</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>

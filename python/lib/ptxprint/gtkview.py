@@ -122,7 +122,7 @@ _progress = {
 
 _ui_minimal = """
 btn_menu bx_statusBar t_find
-btn_menu_level btn_menu_lang l_menu_level l_menu_uilang
+btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang l_menu_feedback 
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -4427,6 +4427,13 @@ class GtkViewModel(ViewModel):
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
 
+    def onGiveFeedbackClicked(self, btn):
+        try:
+            urlfile = urllib.request.urlopen(r"http://tiny.cc/ptxprintfeedback")
+        except urllib.error.URLError:
+            self.doError("Could not access Feedback Form", secondary="Check that you are online before trying again.")
+            return
+                    
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")
         response = dialog.run()
