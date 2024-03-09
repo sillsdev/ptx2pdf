@@ -2942,31 +2942,23 @@ settings for a similar project.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkMenuButton" id="btn_menu_feedback">
+          <object class="GtkButton" id="btn_menu_feedback">
+            <property name="label" translatable="yes">Give Feedback</property>
+            <property name="name">Link to PTXprint Feedback Form (Google Form)</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
-            <property name="focus-on-click">False</property>
             <property name="receives-default">True</property>
             <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
 You could help us make PTXprint better!
 
 The developers of PTXprint would love to know how 
 this tool is being used. What is your favorite feature? 
-Are there any annoyances you have? Tell us what you 
-like, and don't like. Tell us what you dream for in the 
-future.
+Are there any annoyances? Tell us what you like, or 
+don't like. Tell us what you dream for in the future.
 
-Click this button to fill in the Google form
-or type this in a browser: http://tiny.cc/ptxprintfeedback</property>
-            <property name="use-popover">False</property>
+Click this button to fill in the Google form or type
+this in a browser: http://tiny.cc/ptxprintfeedback</property>
             <signal name="clicked" handler="onGiveFeedbackClicked" swapped="no"/>
-            <child>
-              <object class="GtkLabel" id="l_menu_feedback">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">Give Feedback</property>
-              </object>
-            </child>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -26036,11 +26028,13 @@ by deleting unneeded files.</property>
                                   <object class="GtkLabel" id="l_giveFeedback">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">PTXprint does not have an auto-updating
-feature, so you are encouraged to check
-for new updates at the Home Page.
-Please ensure you are using the latest
-version before reporting an issue.</property>
+                                    <property name="tooltip-text" translatable="yes">Psst! Can we have 5 minutes of your time?
+You could help us make PTXprint better!
+
+The developers of PTXprint would love to know how 
+this tool is being used. What is your favorite feature? 
+Are there any annoyances? Tell us what you like, or 
+don't like. Tell us what you dream for in the future.</property>
                                     <property name="halign">end</property>
                                     <property name="label" translatable="yes">Give Feedback:</property>
                                     <property name="justify">right</property>
@@ -26059,6 +26053,8 @@ version before reporting an issue.</property>
                                     <property name="can-focus">True</property>
                                     <property name="focus-on-click">False</property>
                                     <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click this link to fill in the Google form or type
+this in a browser: http://tiny.cc/ptxprintfeedback</property>
                                     <property name="halign">start</property>
                                     <property name="valign">end</property>
                                     <property name="relief">none</property>

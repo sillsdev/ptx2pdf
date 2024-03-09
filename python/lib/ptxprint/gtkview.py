@@ -41,6 +41,7 @@ from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
+import webbrowser
 from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
@@ -122,7 +123,7 @@ _progress = {
 
 _ui_minimal = """
 btn_menu bx_statusBar t_find
-btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang l_menu_feedback 
+btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -204,7 +205,6 @@ c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
 
 _ui_experimental = """
 """.split()
-# btn_menu
 
 # removed from list above: 
 # r_pictureRes_High r_pictureRes_Low
@@ -1224,7 +1224,7 @@ class GtkViewModel(ViewModel):
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
                    "l_homePage",  "l_community", "l_pdfViewer",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_pdfViewer", "lb_reportBugs", 
-                  "btn_about"]:
+                  "l_giveFeedback", "lb_giveFeeback", "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -4427,13 +4427,6 @@ class GtkViewModel(ViewModel):
                     self.doError("Faulty DBL Bundle", "Please check that you have selected a valid DBL bundle (ZIP) file. "
                                                       "Or contact the DBL bundle provider.")
 
-    def onGiveFeedbackClicked(self, btn):
-        try:
-            urlfile = urllib.request.urlopen(r"http://tiny.cc/ptxprintfeedback")
-        except urllib.error.URLError:
-            self.doError("Could not access Feedback Form", secondary="Check that you are online before trying again.")
-            return
-                    
     def onImageSetClicked(self, btn):
         dialog = self.builder.get_object("dlg_getImageSet")
         response = dialog.run()
@@ -4993,6 +4986,9 @@ class GtkViewModel(ViewModel):
     def onUpdateButtonClicked(self, btn):
         self.openURL("https://software.sil.org/ptxprint/download")
 
+    def onGiveFeedbackClicked(self, btn):
+        self.openURL(r"http://tiny.cc/ptxprintfeedback")
+                    
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
 
