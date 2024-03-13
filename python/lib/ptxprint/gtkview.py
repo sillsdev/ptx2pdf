@@ -2226,10 +2226,10 @@ class GtkViewModel(ViewModel):
                     # if r[1] != 0: # This was preventing Intro matter vals from appearing
                     outs = "{} {}.{} {}".format(bk+r[3], r[1], str(r[2]) + r[5], s)
                     if p > 0:
-                        outs += "[{}]".format(p)
+                        outs += "1[{}]".format(p)
                     if len(vals):
                         outs += "% " + " %".join(vals)
-                    outf.write(outs+"\n")
+                    outf.write(outs.replace("+01[", "+0[")+"\n")
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
