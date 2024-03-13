@@ -53,7 +53,7 @@ _chunkDesc_map= {# prefix with (!) if not a valid break-point to list in the con
     ChunkType.ID :"(!)The \\id line",
     ChunkType.TABLE :"A table",
     ChunkType.VERSE :"A verse chunk, inside a paragraph",
-    ChunkType.PARVERSE :"A verse chunk, just after starting a paragraph",
+    ChunkType.PARVERSE :"A verse chunk, first thing after starting a paragraph",
     ChunkType.MIDVERSEPAR :"A paragraph which is mid-paragraph",
     ChunkType.PREVERSEPAR :"A paragrpah where the next content is a verse number",
     ChunkType.NOVERSEPAR :"A paragraph which is not in verse-text, e.g inside a side-bar, or book/chapter introduction",
@@ -950,9 +950,13 @@ modes = {
     "scores" : alignScores
 }
 
-def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
-    global _chunkDesc_map
+def WriteSyncPoints(mergeconfigfile,variety,confname,scores,synchronise):
+    global _chunkDesc_map,settings
     config={}#configparser.ConfigParser()
+    flaga={}
+    for k in MergeF:
+      flaga[k.name]=k in settings
+    config['FLAGS']=flaga
     config['DEFAULT']={k:(scores[k] if k in scores else  0) for k in ChunkType if k != ChunkType.DEFSCORE}
     config['L']={'WEIGHT':51}
     config['R']={'WEIGHT':51}
@@ -963,14 +967,30 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
     logger.debug(f"Writing default configuration to {mergeconfigfile}")
     with open(mergeconfigfile,'w') as configfile:
         configfile.write("# Custom merge configuration file.\n")
-        configfile.write("# This was written because no merge.cfg file could be found. As generated it contains all potential break-points the program expects.\n")
-        configfile.write("# Items in the [DEFAULT] section define the global defaults, which apply if there are no overriding values in a given section.\n")
-        configfile.write("# Valid sections include [L] and [R] (primary and secondary), [configuration], and [variety] for custom-variety.\n")
-        configfile.write("# Sections [L] and [R] are ignored if the file is in the root paratext directory.\n")
-        configfile.write("# The scores (from all columns) are added and a sum of 100 or more at a given point causes splitting and synchronisation.\n")
-        configfile.write("# Any value not listed is assumed to be 0.\n")
-        configfile.write("# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value. Other values are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.\n")
-        configfile.write("# Chapter and verse numbers are remembered, other break-points increment a paragraph counter.\n")
+        configfile.write(f"# This was written because no merge-{synchronise}.cfg file could be found.\n")
+        configfile.write(f"# As generated it contains all potential break-points the program expects,\n")
+        configfile.write(f"# with settings appropriate for the '{synchronise}' merge. Customisation of\n")
+        configfile.write(f"# this file can entirely change the behaviour of merge strategy '{synchronise}'\n")
+        configfile.write("""#(delete file to reverse any customisation)
+#
+# YOU HAVE BEEN WARNED! 
+# 
+# Items in the [FLAGS] section (if specified) are global values, affecting the
+# entire merge process, and override the defaults, including such matters as
+# whether verses are synchronisation points or not.
+#
+# Items in the [DEFAULT] section define the global defaults, which apply if
+# there are no overriding values in a given section.  Valid sections include
+# [L] and [R] (primary and secondary), [configuration], and [variety] for
+# custom-variety.
+# Sections [L] and [R] are ignored if the file is in the root paratext
+# directory.  The scores (from all columns) are added and a sum of 100 or more
+# at a given point causes splitting and synchronisation.
+# Any value not listed is assumed to be 0.
+# Values -2<=x<=2 are treated as multiplyers of the WEIGHT value.  Other values
+# are treated as absolute values. Non-integer values (e.g. 0.5) are allowed.
+# Chapter and verse numbers are remembered, other break-points increment a
+# paragraph counter.\n""")
         #configfile.write("# The number at the end of the comment indicates the group a given break-point falls into,\n")
         #configfile.write("# i.e. to which other positions it will be compared\n")
         for section in config:
@@ -983,6 +1003,8 @@ def WriteSyncPoints(mergeconfigfile,variety,confname,scores):
                         #cannon=_canonical_order[k] if k in _canonical_order else 9
                         #configfile.write(f"#{comment} ({cannon})\n{k.name} = {v}\n")
                         configfile.write(f"#{comment}\n{k.name} = {v}\n")
+                elif section=="FLAGS":
+                    configfile.write(f"# {k} = {v}\n")
                 else:
                     configfile.write(f"{k} = {v}\n")
         #config.write(configfile)
@@ -994,6 +1016,15 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
     logger.debug(f"Reading config file {mergeconfigfile} for ({column if column is not None else ''}, {variety}, {confname})")
     config=configparser.ConfigParser()
     config.read(mergeconfigfile)
+    if config.has_section("FLAGS"):
+      for key in MergeF:
+        if config.has_option("FLAGS",key.name):
+          tf=config.getboolean("FLAGS",key.name)
+          logger.debug(f"Flag {key} is set to {tf}")
+          if tf:
+            settings = settings | key
+          else:
+            settings = settings & (~key)
     if not config.has_section('zzzDEFAULT'):
         config['zzzDEFAULT']={} # make it possible to access the DEFAULT values.
     if column is None:
@@ -1006,6 +1037,7 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             keys=[column,confname,"zzzDEFAULT"]
         else:
             keys=[variety+"-"+column,variety,column,confname,"zzzDEFAULT"]
+    logger.debug(f"Keys: {keys}")
     for key in keys:
         if config.has_section(key):
             weight=config.getfloat(key,"WEIGHT",fallback=fallbackweight)
@@ -1022,9 +1054,10 @@ def ReadSyncPoints(mergeconfigfile,column,variety,confname,fallbackweight=51.0):
             return(scores)
         else:
             logger.debug(f"No section {key}")
-                
-    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting to normal.")
-    return(SyncPoints['normal'])
+    if synchronise in  SyncPoints:
+        synchronise="normal"
+    logger.debug(f"Did not find expected custom merge section(s) ' {keys} '. Resorting {synchronise}.")
+    return(SyncPoints[{synchronise}])
     
 def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], stylesheetsb=[], fsecondary=False, mode="doc", debug=False, scorearr={}, synchronise="normal", protect={}, configarr=None):
     global debugPrint, debstr,settings
@@ -1120,7 +1153,7 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 priptpath=os.path.dirname(os.path.dirname(os.path.dirname(prifilepath)))
                 priconfpath=os.path.join(priptpath,"shared","ptxprint",priconfname)
         for colkey,infile in zip(keyarr,infilearr):
-            if (syncarr[colkey].startswith("custom")):
+                #if (syncarr[colkey].startswith("custom")):
                 # determine the config name; and  determine the custom merge control file.
                 # Look for merge config file in : (1) same dir as file, (2) {Project}/shared/ptxprint/{config}, (3) {Project}
                 if (syncarr[colkey]=="custom"):
@@ -1128,17 +1161,17 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                     varfile=None
                 else:
                     variety=syncarr[colkey][7:]
-                    varfile="merge-"+variety+".cfg"
+                    varfile="merge-"+synchronise+variety+".cfg"
                 (filepath,filename)=os.path.split(os.path.abspath(infile))
                 confname=os.path.basename(filepath)
                 ptpath=os.path.dirname(os.path.dirname(os.path.dirname(filepath)))
                 confpath=os.path.join(ptpath,"shared","ptxprint",confname)
                 searchlist=[]
-                cfile="merge.cfg"
+                cfile="merge-"+synchronise+".cfg"
                 if (varfile is not None):
                     if (colkey!='L' and prifilepath != filepath):
                         searchlist.extend(((os.path.join(prifilepath,varfile),1),(os.path.join(priconfpath,varfile),1)))
-                    searchlist.extend((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0))
+                    searchlist.extend(((os.path.join(filepath,varfile),1),(os.path.join(confpath,varfile),1),(os.path.join(ptpath,varfile),0)))
                     
                 searchlist.extend(((os.path.join(prifilepath,cfile),1),(os.path.join(priconfpath,cfile),1),(os.path.join(priptpath,cfile),0)))
                 if (colkey!='L' and prifilepath != filepath):
@@ -1146,17 +1179,18 @@ def usfmerge2(infilearr, keyarr, outfile, stylesheets=[],stylesheetsa=[], styles
                 done=0
                 for searchpair in searchlist:
                     (confpath,useLR)=searchpair
-                    logger.debug(f"Checking if config file {confpath} exists")
+                    logger.debug(f"Checking if {colkey} config file {confpath} exists")
                     if (os.path.exists(confpath)):
                         scorearr[colkey]=ReadSyncPoints(confpath,(colkey if useLR else None),variety,confname)
+                        logger.debug(f"found {confpath}!")
                         done=1
                         break
                 if (not done):
                     logger.debug(f"Did not find expected custom merge file. Resorting to normal.")
                     if os.path.exists(priconfpath):
-                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints['normal'])
+                        WriteSyncPoints(os.path.join(priconfpath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
                     else:
-                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints['normal'])
+                        WriteSyncPoints(os.path.join(prifilepath,cfile),variety,confname,SyncPoints[synchronise],synchronise)
 
     for colkey,infile in zip(keyarr,infilearr):
         logger.debug(f"Reading {colkey}: {infile}")
