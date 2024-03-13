@@ -60,6 +60,7 @@ parser.add_argument('-d','--directory',help="Directory to store temporary files 
 parser.add_argument('-P','--print',action='store_true',help="Hits print")
 parser.add_argument('-b','--books',help='Reference list to print (as in Choose Books)')
 parser.add_argument('-Z','--zip',help='Unzip into project directory and delete at end')
+parser.add_argument('-g','--polyglot',action='append',help='Additional polyglot project to include (repeatable)')
 parser.add_argument('-R','--runs',type=int,default=0,help="limit xetex runs")
 parser.add_argument('-q','--quiet',action='store_true',help='No splash screen. Limit output')
 parser.add_argument('-L','--lang',help='Set UI language code')
@@ -255,6 +256,25 @@ if args.fontpath is not None:
     for p in args.fontpath:
         if os.path.exists(p):
             cachepath(p, nofclist=args.nofontcache)
+
+polyglotextras=None
+polyglotID="ABCDEFGHIJ"
+
+if args.polyglot is not None:
+    for p in args.polyglot:
+        if p.lower().endswith(".cfg"):
+          if os.path.exists(p):
+              pgconf=configparser(interpolation=None)
+              pgconf.read(p,encoding="utf-8")
+              k=None
+              if polyglotextras is None:
+                 k=0
+              else:
+                 k=len(polyglotextras)
+              polyglotextras[polyglotID[k]]=(p,pgconf)
+    else:
+      print(f"Sorry '{p}' doesn't look like a .cfg file")
+              
 
 if args.zip:
     # Unzip to args.paratext+args.pid
