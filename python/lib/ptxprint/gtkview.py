@@ -1451,6 +1451,7 @@ class GtkViewModel(ViewModel):
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
+        self.set("_printcount", int(self.get("_printcount", 0)), skipmissing=True)
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"))

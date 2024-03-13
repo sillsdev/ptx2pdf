@@ -33,6 +33,7 @@ _map = {
     "config/autosave":          ("c_autoSave", "uiprefs", None),
     "config/displayfontsize":   ("s_viewEditFontSize", "uiprefs", None),
     "config/texperthacks":      ("c_showTeXpertHacks", "uiprefs", None),
+    "config/printcount":        ("_printcount", "meta", None),
 
     "project/id":               ("_prjid", "meta", None),
     "project/bookscope":        ("r_book", "meta", None),
