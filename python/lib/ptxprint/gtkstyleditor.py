@@ -479,20 +479,21 @@ class StyleEditorView(StyleEditor):
                  self.model.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
             m = self.marker.strip("123456789")
             path = mkr2path.get(m, None)
-            if m.startswith("z"):
-                site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
-            elif "+" in urlmkr or "|" in urlmkr or path is None:
+            if "+" in urlmkr or "|" in urlmkr or path is None:
                 w.set_uri('No further information\nis available for this\ncomplex marker: {}'.format(urlmkr))
-                w.set_label(_('Complex style'))
             else:
-                site = f'https://docs.usfm.bible/usfm-usx-docs/latest/{path}/{m}.html'
+                if m.startswith("z"):
+                    site = f'https://github.com/sillsdev/ptx2pdf/blob/master/docs/help/{m}.md'
+                    w.set_label(_('Complex style'))
+                else:
+                    site = f'https://docs.usfm.bible/usfm-usx-docs/latest/{path}/{m}.html'
 
-            partA, partB = self.splitURL(site)
-            partA = re.sub(r"\.", r"-", partA)
-            
-            if len(tl) and "/blob/" not in site:
-                site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
-            w.set_uri(f'{site}')
+                partA, partB = self.splitURL(site)
+                partA = re.sub(r"\.", r"-", partA)
+                
+                if len(tl) and "/blob/" not in site:
+                    site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
+                w.set_uri(f'{site}')
             
         self.isLoading = oldisLoading
         # Sensitize font size, line spacing, etc. for \paragraphs
