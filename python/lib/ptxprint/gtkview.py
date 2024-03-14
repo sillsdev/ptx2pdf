@@ -39,6 +39,7 @@ from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
 from ptxprint.hyphen import Hyphenation
+from ptxprint.accelerate import onTextEditKeypress
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
 import webbrowser
@@ -877,9 +878,10 @@ class GtkViewModel(ViewModel):
             view.connect("focus-in-event", self.onViewerFocus)
             if not i in [2,3,4]: # Ignore the uneditable views
                 # Set up signals to pick up any edits in the TextView window
-                for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
+                for evnt in ["key-release-event", "delete-from-cursor", 
                              "backspace", "cut-clipboard", "paste-clipboard"]:
                     view.connect(evnt, self.onViewEdited)
+            view.connect("key-press-event", onTextEditKeypress, tuple([i]+list(self.fileViews[i])))
             if k == "AdjList":
                 l = lm.get_language("adjlist")
                 logger.debug(f"Loaded language adjlist {l}")

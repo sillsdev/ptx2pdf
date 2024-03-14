@@ -4507,6 +4507,7 @@ spacing grows/shrinks according to
 the size of the font; or the font size
 changes when the spacing changes.</property>
                                         <property name="halign">start</property>
+                                        <property name="active">True</property>
                                         <property name="draw-indicator">True</property>
                                         <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                       </object>
