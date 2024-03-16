@@ -975,7 +975,7 @@ other Paratext projects in order to avoid
 having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
-    <property name="icon-name">view-grid-symbolic</property>
+    <property name="icon-name">emblem-shared-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_unlocked">
