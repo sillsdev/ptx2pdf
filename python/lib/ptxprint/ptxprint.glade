@@ -855,7 +855,7 @@ THE SOFTWARE.
     <property name="gravity">center</property>
     <property name="program-name">PTXprint - Bible Layout For Everyone</property>
     <property name="version">Version 2.4.16</property>
-    <property name="copyright">© 2020-2023, SIL International</property>
+    <property name="copyright">© 2020-2024, SIL International</property>
     <property name="comments" translatable="yes">PTXprint is built with Python &amp; PyGTK3, using Glade for
 the user-interface. The PDFs are produced by enhanced 
 XeTeX macros (ptx2pdf) with a long and reliable history.</property>
@@ -901,14 +901,14 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">system-run-symbolic</property>
+    <property name="icon-name">go-bottom-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_diglot">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">system-run-symbolic</property>
+    <property name="icon-name">view-dual-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_grid">
@@ -926,14 +926,14 @@ can be set.</property>
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">system-run-symbolic</property>
+    <property name="icon-name">format-justify-fill-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_adjust_top">
     <property name="visible">True</property>
     <property name="sensitive">False</property>
     <property name="can-focus">False</property>
-    <property name="icon-name">system-run-symbolic</property>
+    <property name="icon-name">go-top-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_downloa">
@@ -975,7 +975,7 @@ other Paratext projects in order to avoid
 having to manually re-create all the same
 settings for a similar project.</property>
     <property name="halign">end</property>
-    <property name="icon-name">emblem-shared-symbolic</property>
+    <property name="icon-name">preferences-system-sharing-symbolic</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_unlocked">
@@ -3872,9 +3872,6 @@ first into which the settings can be imported.</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="image">icon_downloa</property>
                                     <signal name="clicked" handler="onImportClicked" swapped="no"/>
-                                    <style>
-                                      <class name="attention"/>
-                                    </style>
                                   </object>
                                   <packing>
                                     <property name="left-attach">2</property>
@@ -26422,13 +26419,13 @@ tab under 'Compare PDFs').
 If any differences are found, it should open the 
 "Diff" PDF in the default PDF viewer.
 
-Shortcut: Ctrl-D</property>
+Shortcut: Ctrl-R</property>
                     <property name="halign">start</property>
                     <property name="valign">center</property>
                     <property name="margin-start">3</property>
                     <property name="margin-end">3</property>
                     <property name="draw-indicator">True</property>
-                    <accelerator key="d" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                    <accelerator key="r" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>

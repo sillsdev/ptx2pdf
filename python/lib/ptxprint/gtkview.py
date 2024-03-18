@@ -132,7 +132,7 @@ l_chapfrom l_chapto t_chapfrom t_chapto
 r_book_multiple btn_chooseBooks ecb_booklist 
 fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_lockunlock t_password
 tb_Layout lb_Layout
-fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
+fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
 tb_Font lb_Font
 fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch 
