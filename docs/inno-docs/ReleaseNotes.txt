@@ -1,9 +1,23 @@
 PTXprint 2.4.16 Release Notes
-8 Mar 2024
+18 Mar 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.17 (18 Mar 2024)
+
+  * Fix broken test cases and solve an error-loop
+  
+  * Minor tweak to AdjList generation (easier to edit)
+  
+  * Fix gloss-rb link bug
+  
+  * Make custom merge config files work
+  
+  * Add printcount to config files
+  
+  * Added shortcuts keys for editor (^d=duplicate, ^l=del Line, ^i=shrink, ^1-9=grow/shrink)
+  
 Bug fixes and Improvements in 2.4.16 (8 Mar 2024)
 
   * Added 'Give Feedback' button and link to Google user survey form

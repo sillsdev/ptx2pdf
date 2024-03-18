@@ -39,7 +39,6 @@ def justPlusOne(buffer, *a): # ^1
     processLine(buffer, r"\+0", "+1")
 
 def shrinkLine(buffer, *a): # ^i
-    # processLine(buffer, r"\+.*?(-\d+\[)", r"\1")
     processLine(buffer, r"\+.*?(-\d)", r"-1")
 
 def removeUntilNum(buffer, *a): # ^1 ^2 ... ^8 ^9
