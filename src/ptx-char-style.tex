@@ -426,7 +426,11 @@
 %
 \let\SpaceStretchFactor=\empty %default, do-nothing value
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
-
+\def\t@@stid#1id:#2|#3\relax{\edef\tmp{#2}\ifx\tmp\tmpa\t@mptrue\fi}%
+\def\t@stid#1#2{% See if #2 contains id:#1
+  \edef\tmpa{#1}\t@mpfalse
+  \x@\t@@stid #2id:|\relax
+}
 \def\g@tfontname#1#2{%
  \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1[#2](\c@rrdstat)[\styst@k]}%
  \x@\stystacksplit#2+\E% Cut split the stylestack between head and body 
@@ -443,10 +447,16 @@
    %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
      %\else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  %\mctop
+ \trace{F}{id: `\id@@@`. after fontsize: p@ssp@rams \p@ssParams}%
  \let\d@=\d@@
+ \let\idpfx\empty
+ \ifx\id@@@\empty\else
+   \x@\t@stid\x@{\id@@@}{\p@ssParams}%
+   \ift@mp\edef\idpfx{id:\id@@@|}\fi
+ \fi
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
  \x@\stystacksplit#2+\E% redo the split because it's not preserved.
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
+ \edef\f@ntstyle{\idpfx\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
  \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
 }
 
