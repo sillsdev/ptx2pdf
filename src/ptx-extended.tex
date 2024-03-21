@@ -1283,16 +1283,16 @@
  \fi
 }
 \def\sb@ins@rtpic#1|#2|#3|#4|#5\E{%
-  \trace{e}{Figure #1|#2|#3|#4|#5}% #4, #5 are 
+  \trace{e}{Figure #1|#2|#3|#4|#5}% #1 is filename (without quotes). #4, #5 are l/r skips.
   \dimen0=#3\relax
   \def\@fig@lskip{#4}\def\@fig@rskip{#5}%
-  \openin\t@stread=#1 
+  \openin\t@stread="#1"\relax 
    \ifeof\t@stread 
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd #1 #2}%
+    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%

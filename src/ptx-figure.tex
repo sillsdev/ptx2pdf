@@ -634,10 +634,10 @@
 \newif\ifSkipMissingFig \SkipMissingFigfalse
 \newif\iffigf@und
 
-\def\ins@rtpic#1#2#3#4#5#6#7{%
+\def\ins@rtpic#1#2#3#4#5#6#7{%Figure name #1 already has quotes.
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread=#1
+ \openin\t@stread=#1\relax
    \ifeof\t@stread
      \message{MISSING IMAGE: #1 -> \tmpfile}%
      \global\figf@undfalse

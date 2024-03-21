@@ -8,6 +8,7 @@ test.pdf:test.tex $(DIR)/*.tex
 	
 testpages.pdf:testpages.tex
 	xetex testpages.tex
+	cp testpages.pdf "test pages.pdf"
 
 test.pdf: test.tex usfmTex-ext.tex usfmTex-settings.tex test.usfm $(DIR)/*.tex *.sty test.usfm test.usfm.piclist testpages.pdf
 
