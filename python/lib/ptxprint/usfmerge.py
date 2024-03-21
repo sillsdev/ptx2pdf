@@ -377,27 +377,29 @@ class Collector:
                 # turn \id into a paragraph level and main children as siblings
                 elements = root[0][1:]
                 idel = sfm.Element(root[0].name, args=root[0].args[:], content=root[0][0], meta=root[0].meta)
+                root = root[0][1:]
                 currChunk = self.makeChunk(idel)
                 currChunk.append(idel)
+        i = 0
         for c in elements:
+            i += 1
             if not isinstance(c, sfm.Element): 
-                if (isinstance(c,sfm.Text) and len(c)>3):
+                if isinstance(c, sfm.Text) and len(c) > 3:
                     self.waspar=False
-                if(currChunk): # It's a text node, make sure it's attached to the right place.
+                if currChunk: # It's a text node, make sure it's attached to the right place.
                     currChunk.append(c)
-                    try:
-                      root.remove(c)
-                    except (ValueError):
-                      pass
+                    i -= 1
+                    root.pop(i)
                 continue
             if c.name == "fig":
                 if self.fsecondary == primary:
-                    root.remove(c)
+                    i -= 1
+                    root.pop(i)
                     continue
             newchunk = False
             if ispara(c):
                 newmode = _marker_modes.get(c.name, _textype_map.get(str(c.meta.get('TextType')), self.mode))
-                ok= (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
+                ok = (newmode==ChunkType.HEADING and self.mode in (ChunkType.CHAPTERHEAD, ChunkType.PREVERSEHEAD))
                 if c.name not in nestedparas and ((newmode != self.mode and not ok)\
                                           or self.mode not in (ChunkType.HEADING, ChunkType.CHAPTERHEAD, ChunkType.TITLE, ChunkType.HEADER)):
                     newchunk = True
@@ -412,12 +414,12 @@ class Collector:
                 logger.log(8, f" {self.chap}:{self.verse}:{self.syncp} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
                 M=re.search(r"\|v(\d+)(\D*)$",self.syncp)
                 if (M is not None):
-                  Mv=M.group(1)
-                  Ms=M.group(2)
+                  Mv = M.group(1)
+                  Ms = M.group(2)
                   logger.log(7,f"RE: {M}, Match: '{Mv}.{Ms}'")
                   if Mv and len(Mv)>0:
-                    self.verse=int(Mv)
-                    self.end=int(Mv)
+                    self.verse = int(Mv)
+                    self.end = int(Mv)
             if isverse(c):
                 vc = re.sub(r"[^0-9\-]", "", c.args[0])
                 try:
@@ -439,7 +441,7 @@ class Collector:
                     self.currChunk.label(self.chap, self.verse, self.end, 0,'')
                 logger.log(8, f" {self.chap}:{self.verse} {c.name} {newchunk} context: {self.oldmode}, {self.mode  if isinstance(c, sfm.Element) else '-'}")
             if newchunk:
-                self.oldmode=self.mode
+                self.oldmode = self.mode
                 currChunk = self.makeChunk(c)
                 if MergeF.ChunkOnVerses in settings:
                     if isverse(c):
@@ -453,7 +455,8 @@ class Collector:
             if currChunk is not None:
                 currChunk.append(c)
                 if c in root:
-                    root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
+                    i -= 1
+                    root.pop(i)
             if ischap(c):
                 logger.log(8, f" chapter {c}")
                 self.verse = 0
@@ -471,19 +474,19 @@ class Collector:
                     currChunk[-1] = newc
                 logger.log(8, f" newchapter {newc}")
             #logger.log(7,f'collecting {c.name}')
-            t = self.collect(c, primary=primary,depth=1+depth)
+            t = self.collect(c, primary=primary, depth=1+depth)
             #logger.log(7,f'collected {c.name}')
             if t is not None:
-                logger.log(7,t)
+                logger.log(7, t)
                 currChunk=t
-            else:
-                if currChunk is None:
-                    logger.log(7,f'Empty currChunk:{c} at {c.pos}, {self.currChunk[0].name}')
-                    # Chapters need special treatment because it's a new node without prior connectoins to existing sub-
-                    if self.currChunk[0].name == "c": 
-                        self.currChunk.append(c)
-                        if c in root:
-                            root.remove(c)      # now separate thing in a chunk, it can't be in the content of something
+            elif currChunk is None:
+                logger.log(7, f'Empty currChunk:{c} at {c.pos}, {self.currChunk[0].name}')
+                # Chapters need special treatment because it's a new node without prior connections to existing sub-
+                if self.currChunk[0].name == "c": 
+                    self.currChunk.append(c)
+                    if c in root:
+                        i -= 1
+                        root.pop(i)
         logger.log(9-depth,"}" * depth)
         return currChunk
 
@@ -494,6 +497,12 @@ class Collector:
         ni = None
         #for i in range(0, 10):
             #print(i,self.acc[i].ident if isinstance(self.acc[i],Chunk) else '-' ,self.acc[i].type,self.acc[i])
+        logger.log(7, "Chunks before reordering")
+        for i in range(0, len(self.acc)):
+            if isinstance(self.acc[i],Chunk):
+              logger.log(7, f"r: {i}, {self.acc[i].ident}//{self.acc[i].position}, {self.acc[i].type=}, {self.acc[i]=}")
+            else:
+              logger.log(7, f"r: {i}, '-//-', {self.acc[i].type=}, {self.acc[i]=}")
         for i in range(1, len(self.acc)):
             if self.acc[i].type == ChunkType.TITLE and self.acc[i-1].type == ChunkType.TITLE:
                 if bi is None:
