@@ -480,11 +480,14 @@ class Collector:
                 logger.log(7, t)
                 currChunk=t
             elif currChunk is None:
-                logger.log(7, f'Empty currChunk:{c} at {c.pos}, {self.currChunk[0].name}')
-                # Chapters need special treatment because it's a new node without prior connections to existing sub-
-                if self.currChunk[0].name == "c": 
+                logger.log(7, f'Empty currChunk:{c} at {c.pos}, {c.name}/{root.name} {self.currChunk[0].name}')
+                # Chapters need special treatment because it's a new node without prior connections to existing sub-nodes
+                if root.name == "c": 
+                    logger.log(7, f'Root node is c. Applying special handling')
                     self.currChunk.append(c)
+                    #currChunk=self.currChunk[0]
                     if c in root:
+                        # FIXME: Not convinced if this is needed now.
                         i -= 1
                         root.pop(i)
         logger.log(9-depth,"}" * depth)
