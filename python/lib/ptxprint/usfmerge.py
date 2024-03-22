@@ -15,6 +15,7 @@ class MergeF(Flag):
     HeadWithText=4  # Is a heading considered part of the text, or a separate chunk?
     SwapChapterHead=8
     HeadWithChapter=16  # Is a heading considered part of the chapter, or is it (initially) a separate chunk?
+    CLwithChapter=32 # IS cl treated as part of a chapter or is it a heading?
 
 settings= MergeF.NoSplitNB | MergeF.HeadWithChapter 
 logger = logging.getLogger(__name__)
@@ -119,7 +120,7 @@ _marker_modes = {
     'sts': ChunkType.HEADER,
     'usfm': ChunkType.HEADER,
     'v': ChunkType.VERSE,
-    'cl': ChunkType.CHAPTER,
+    'cl': ChunkType.CHAPTERHEAD, # this gets overwritten.
     'nb': ChunkType.NB
 }
 
@@ -198,7 +199,7 @@ class Chunk(list):
 _headingidx=5
 _validatedhpi=False # Has the heading(position)idx above been validated?
 
-nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp', 'cl' ))
+nestedparas = set(('io2', 'io3', 'io4', 'toc2', 'toc3', 'ili2', 'cp')) 
 
 SyncPoints = {
     "chapter":{ChunkType.VERSE:0,ChunkType.PREVERSEPAR:0,ChunkType.PREVERSEHEAD:0,ChunkType.NOVERSEPAR:0,ChunkType.MIDVERSEPAR:0,ChunkType.HEADING:0,ChunkType.CHAPTER:1,ChunkType.CHAPTERHEAD:0,ChunkType.CHAPTERPAR:0,ChunkType.NBCHAPTER:1,ChunkType.USERSYNC:1,ChunkType.PARUSERSYNC:1}, # Just split at chapters
@@ -207,6 +208,7 @@ SyncPoints = {
     "custom":{} # No default
 }
 
+globalcl = False # Has a cl been met?
 def ispara(c):
     return 'paragraph' == str(c.meta.get('StyleType', 'none')).lower()
     
@@ -302,8 +304,16 @@ class Collector:
             self.waschap = False
         else:
             if c.name == "cl":
-                mode = ChunkType.TITLE if self.chap == 0 else ChunkType.HEADING
-                logger.log(8, f'cl found for {self.chap}')
+                if self.chap == 0: 
+                  mode = ChunkType.TITLE 
+                  logger.debug('cl found at chapter 0')
+                  globalcl = True
+                else:
+                  if self.waschap:
+                      mode = ChunkType.CHAPTERHEAD if not MergeF.CLwithChapter in settings else ChunkType.CHAPTER
+                  else:
+                    mode = ChunkType.HEADING
+                logger.log(8, f'cl found for {self.chap} mode:{mode}')
             elif c.name == "id":
                 mode = ChunkType.ID
             elif c.name == "nb":
@@ -858,6 +868,10 @@ def alignScores(*columns):
     oldconfl=None
     conflicts=[]
     for i in range (0,len(positions)-1):
+        if globalcl:
+          chlist=('CHAPTERHEAD','CHAPTER')
+        else:
+          chlist=('CHAPTERHEAD')
         if(positions[i][_headingidx] in ('HEADING','PREVERSEHEAD')):
             if (merged[positions[i+1]]>99):
                 a=0
@@ -868,9 +882,9 @@ def alignScores(*columns):
                 if MergeF.HeadWithText in settings:
                     merged[positions[i+1]]=0
                     logger.debug(f"Not splitting between positions {positions[i]} and {positions[i+1]} (score={merged[positions[i+1]]})")
-        elif(positions[i][_headingidx]=='CHAPTERHEAD'):
+        elif(positions[i][_headingidx] in chlist):
             a=1
-            while(positions[i+a][_headingidx]=='CHAPTERHEAD'):
+            while(positions[i+a][_headingidx] in chlist):
                 a+=1
             if MergeF.HeadWithText in settings:
                 logger.debug(f"Not splitting head from text between positions {positions[i]} and {positions[i+a]}")

@@ -304,7 +304,7 @@
       \def\d@##1\E{\trace{sko}{appending '##1' onto (\p@ssParams)}\edef\@lso{##1}\let\d@c\d@
         \let\@ut=\empty
         \let\d@=\cs@ppend\x@\cstackdown\p@ssParams,\E
-        \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams, spp:\simplep@ssParams}%
+        \trace{sko}{:\@ut (\@@ut) pp:\p@ssParams}%
         \let\d@\d@c\xdef\@@ut{\ifx\@@ut\empty\else\@@ut,\fi\@ut}}%
       \x@\cstackdown \@in,\E 
       \ifx\c@tprefix\empty\else %prefix catetgories
@@ -331,7 +331,6 @@
   \else
      \edef\p@ssParams{#1}%
   \fi
-  \let\simplep@ssParams\p@ssParams
   \edef\tmp{#1}% #1 is the main marker
   \edef\this@stystak{#2}%#2 is the stystack to be used for *this* call (normally \styst@k, but not *ALWAYS*). The stystack supplied should always include the present marker.
   \ifx\tmp\this@stystak
