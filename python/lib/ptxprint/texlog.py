@@ -51,8 +51,8 @@ messages = [
     ("I","ST", r"Image crop not supported"),
     ("W","P", r"Expected rotate=.+? or similar in definition of picture .+"),
     ("W","T", r"Eh? .+? called for .+? and empty parameter"),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
     ("E","S", r"Error in stylesheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
     ("E","UY", r"polyglotcolumn may not be called with an empty argument"),
     ("W","S", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
@@ -147,19 +147,25 @@ def summarizeTexLog(logText):
     # Create dictionaries to count occurrences of each category
     category_counts = {"I": 0, "W": 0, "E": 0}
     messageSummary = []
+    allmsgs = set()
 
     # Iterate through the messages and check for matches
-    for i, (category, response, pattern) in enumerate(messages, start=1):
+    for category, response, pattern in messages:
         matches = re.finditer(pattern, logText)
-        for match in matches:
-            category_counts[category] += 1
+        for i, match in enumerate(matches):
+            category_counts[category[0]] += 1
             # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
-            if category in ["W", "E"]:
-                messageSummary.append(f"{categories[category]}: {match.group(0)}")
-                for i, r in enumerate(response, start=1):
-                    if i == 1:
-                        messageSummary.append(f"  To fix it, try:")
-                    messageSummary.append(f"  {i}. {responses[r]}")
+            if category[0] in ["W", "E"]:
+                msg = f"{categories[category[0]]}: {match.group(0)}"
+                if msg in allmsgs:
+                    continue
+                allmsgs.add(msg)
+                messageSummary.append(msg)
+                if i < 1 or len(category) < 2 or 'S' not in category:
+                    for j, r in enumerate(response, start=1):
+                        if j == 1:
+                            messageSummary.append(f"  To fix it, try:")
+                        messageSummary.append(f"  {j}. {responses[r]}")
 
     # Look for Unbalanced or Unfilled pages (only show up if \tracing{b} is enabled in ptxprint-mods.tex)
     uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)

@@ -260,7 +260,13 @@
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
-      \ifdim \c@rrentcolwidth=-1sp\relax \c@rrentcolwidth=\wd\c@rrentcolbox
+      \ifdim \c@rrentcolwidth=-1sp\relax
+        \c@rrentcolwidth=\wd\c@rrentcolbox
+        \edef\tc@ll{tc\the\@col}%
+        \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+        \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
       \else
         \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
       \fi
