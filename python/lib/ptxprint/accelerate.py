@@ -50,31 +50,95 @@ def duplicateLine(buffer, *a): # ^d
     line_text = buffer.get_text(line_start_iter, line_end_iter, True)
     buffer.insert(line_end_iter, line_text)
 
+def shrinkText(buffer, *a): # ^d
+    print("Hit Ctrl-minus")
+    # Question for MH: How can we get & set this value of this control?
+    # Do we need to pass in the model?
+    # set("s_viewEditFontSize", get("s_viewEditFontSize") - 1)
+    
+def growText(buffer, *a): # ^d
+    print("Hit Ctrl-plus")
+    # set("s_viewEditFontSize", get("s_viewEditFontSize") + 1)
+
+def moveLines(buffer, *a):
+    # Check if text is selected
+    selected_text = ""
+    if buffer.get_has_selection():
+        start_iter, end_iter = buffer.get_selection_bounds()
+        buffer.cut_clipboard(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD), True)
+        cursor_iter = buffer.get_iter_at_mark(buffer.get_insert())
+    else:
+        line_start_iter, line_end_iter = getCurrentLineIters(buffer)
+        selected_text = buffer.get_text(line_start_iter, line_end_iter, True)
+        buffer.delete(line_start_iter, line_end_iter)
+        cursor_iter = buffer.get_iter_at_mark(buffer.get_insert())
+        while not cursor_iter.starts_line():
+            cursor_iter.backward_char()
+        
+    if a[0][0]:  # down = True; up = False
+        cursor_iter.forward_line()
+    else:
+        cursor_iter.backward_line()
+    
+    buffer.place_cursor(cursor_iter)
+    if selected_text == "":
+        buffer.paste_clipboard(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD), None, True)
+    else:
+        buffer.insert(cursor_iter, selected_text)
+    # Question for MH: Why does the cursor end up 2 lines further on after doing a Down operation?
+    
+    # This bit doesn't work at all yet
+    # Restore the selection
+    if buffer.get_has_selection():
+        start_iter = buffer.get_iter_at_mark(buffer.get_selection_bound())
+        end_iter = buffer.get_iter_at_mark(buffer.get_insert())
+        buffer.select_range(start_iter, end_iter)
+        
 # Each dict within the list represents a different tab on the View+Edit page
-# Common shortcuts: 
-#    Ctrl-d = Duplicate Line
-#    Ctrl-l = Delete Line
 bindings = [
-    {Gdk.KEY_d: (duplicateLine, ),
-     Gdk.KEY_l: (removeLine, )},
-    {Gdk.KEY_1: (justPlusOne, ),
-     Gdk.KEY_2: (removeUntilNum, 2),
-     Gdk.KEY_3: (removeUntilNum, 3),
-     Gdk.KEY_4: (removeUntilNum, 4),
-     Gdk.KEY_5: (removeUntilNum, 5),
-     Gdk.KEY_6: (removeUntilNum, 6),
-     Gdk.KEY_7: (removeUntilNum, 7),
-     Gdk.KEY_8: (removeUntilNum, 8),
-     Gdk.KEY_9: (removeUntilNum, 9),
-     Gdk.KEY_i: (shrinkLine, ),
-     Gdk.KEY_d: (duplicateLine, ),
-     Gdk.KEY_l: (removeLine, )},
-    {},
-    {},
-    {},
-    {Gdk.KEY_d: (duplicateLine, ),
-     Gdk.KEY_l: (removeLine, )},
-    {Gdk.KEY_d: (duplicateLine, ),
-     Gdk.KEY_l: (removeLine, )},
+    # Front Matter
+    {Gdk.KEY_d:     (duplicateLine, ),
+     Gdk.KEY_Up:    (moveLines, False),
+     Gdk.KEY_Down:  (moveLines, True),
+     Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_l:     (removeLine, )},
+    # AdjList
+    {Gdk.KEY_1:     (justPlusOne, ),
+     Gdk.KEY_2:     (removeUntilNum, 2),
+     Gdk.KEY_3:     (removeUntilNum, 3),
+     Gdk.KEY_4:     (removeUntilNum, 4),
+     Gdk.KEY_5:     (removeUntilNum, 5),
+     Gdk.KEY_6:     (removeUntilNum, 6),
+     Gdk.KEY_7:     (removeUntilNum, 7),
+     Gdk.KEY_8:     (removeUntilNum, 8),
+     Gdk.KEY_9:     (removeUntilNum, 9),
+     Gdk.KEY_grave: (shrinkLine, ),
+     Gdk.KEY_i:     (shrinkLine, ),
+     Gdk.KEY_d:     (duplicateLine, ),
+     Gdk.KEY_l:     (removeLine, )},
+    # Final SFM
+    {Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, )},
+    # tex file
+    {Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, )},
+    # tex log
+    {Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, )},
+    # General Editing tab(1)
+    {Gdk.KEY_d:     (duplicateLine, ),
+     Gdk.KEY_Up:    (moveLines, False),
+     Gdk.KEY_Down:  (moveLines, True),
+     Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_l:     (removeLine, )},
+    # General Editing tab(2)
+    {Gdk.KEY_d:     (duplicateLine, ),
+     Gdk.KEY_Up:    (moveLines, False),
+     Gdk.KEY_Down:  (moveLines, True),
+     Gdk.KEY_minus: (shrinkText, ),
+     Gdk.KEY_equal: (growText, ),
+     Gdk.KEY_l:     (removeLine, )},
     ]
 
