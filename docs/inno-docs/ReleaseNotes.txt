@@ -4,7 +4,7 @@ PTXprint 2.4.17 Release Notes
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.4.18 (25 Mar 2024)
+Bug fixes and Improvements in 2.4.18 (26 Mar 2024)
 
   * Make id:GEN|p style font definitions work properly
   
@@ -20,7 +20,24 @@ Bug fixes and Improvements in 2.4.18 (25 Mar 2024)
   
   * Improve handling of cl in diglots
   
-  * Add a few more shortcuts to the editor
+  * Dedup errors and warnings and limit remedies sometimes
+  
+  * Fix toc col width issue when > 999 pages in publication
+  
+  * Update shortcuts in the editor window:
+       Ctrl-minus  =  Shrink - size of text
+       Ctrl-equals =  Grow   + size of text
+       Ctrl-s      =  Save file
+       Ctrl-d      =  Duplicate current line
+       Ctrl-l      =  deLete current Line
+       Ctrl-0      =  Comment out/in the current line (uses \rem, #, %)
+       Ctrl-,      =  Comment out/in the current line (uses \rem, %)
+       Ctrl-Up     =  Move the current line/selection UP by one line
+       Ctrl-Down   =  Move the current line/selection DOWN by one line
+       
+    In AdjList window:
+       Ctrl-grave  =  Activate first shrink option in current paragraph
+       Ctrl-1...9  =  Activate Nth grow option in current paragraph
   
 Bug fixes and Improvements in 2.4.17 (18 Mar 2024)
 
