@@ -156,7 +156,7 @@
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
     \resetp@rstyle                                                              %(1)
     \m@kenote{\n@tebase}{\newn@testyle}{%
-        \everypar={}\cancelcutouts % begin a note insertion in the given style
+        \everypar={\ifRTL\beginR\fi}\cancelcutouts % begin a note insertion in the given style
         \getp@ram{callerstyle}{\newn@testyle}{\newn@testyle}% see if a caller style was defined
         \ifx\p@ram\relax\edef\c@llerstyle{v}\else\edef\c@llerstyle{\p@ram}\fi % if not, treat it like "v"
         \ifx\them@rk\empty \trace{n}{note caller is EMPTY}\setbox0=\box\voidb@x \else
@@ -913,7 +913,7 @@
   \fi
   \n@xt
 }
-% Rather than make a single hbox, make
+% Discards for makevboxofhboxes
 \def\disc@rdmvbohb{%
     \dimen0=0pt
     \let\disc@rdskip\disc@rdskip@mvbohb
@@ -921,6 +921,8 @@
     \let\disc@rdpenalty\disc@rdpenalty@active
     \disc@rds{mvb}%
 }
+
+% Rather than make a single hbox, make vbox of hboxes
 
 \def\makevboxofhboxes{%
   \traceifset{vboxofhboxes}%
@@ -939,7 +941,7 @@
     %\showboxdepth=4 \showlists
     \ifvbox2 % Found when there's a carried-over note. Such things should merge seamlessly. Probably has a de-depth kern at the the end, and who knows what line-end /par end kerns
       %\showbox2
-      \setbox0\vbox{%
+      \setbox0\vbox{\ifRTL\beginR\fi%
         \ifvoid0 \else \message{* Unexpected situation in paragraphing footnotes. Please report}%
           \unvbox0
         \fi
