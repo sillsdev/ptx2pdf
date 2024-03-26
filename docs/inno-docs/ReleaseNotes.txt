@@ -1,9 +1,27 @@
 PTXprint 2.4.17 Release Notes
-18 Mar 2024
+25 Mar 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.18 (25 Mar 2024)
+
+  * Make id:GEN|p style font definitions work properly
+  
+  * Fix undefined item in sidebar figure placement
+  
+  * Cope with spaces in sidebar figure names (Note: affects pics in covers)
+  
+  * Maybe fix odd interlinear alignment
+  
+  * Fix usfmerge remove problems
+  
+  * Solve diglot error with character styles in chapter-level heading paragraphs
+  
+  * Improve handling of cl in diglots
+  
+  * Add a few more shortcuts to the editor
+  
 Bug fixes and Improvements in 2.4.17 (18 Mar 2024)
 
   * Fix broken test cases and solve an error-loop

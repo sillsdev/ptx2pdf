@@ -881,7 +881,7 @@ class GtkViewModel(ViewModel):
                 for evnt in ["key-release-event", "delete-from-cursor", 
                              "backspace", "cut-clipboard", "paste-clipboard"]:
                     view.connect(evnt, self.onViewEdited)
-            view.connect("key-press-event", onTextEditKeypress, tuple([i]+list(self.fileViews[i])))
+            view.connect("key-press-event", onTextEditKeypress, tuple([i]+list(self.fileViews[i])+[self]))
             if k == "AdjList":
                 l = lm.get_language("adjlist")
                 logger.debug(f"Loaded language adjlist {l}")

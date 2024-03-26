@@ -4,14 +4,14 @@ from gi.repository import Gtk, Gdk
 import re
 
 def onTextEditKeypress(widget, event, bufView):
-    i, buffer, view = bufView
+    i, buffer, view, model = bufView
     
     state = event.state
     keyval = event.keyval
     if state == Gdk.ModifierType.CONTROL_MASK:
         if i < len(bindings) and keyval in bindings[i]:
             info = bindings[i][keyval]
-            info[0](buffer, info[1:])
+            info[0](buffer, view, model, info[1:])
 
 def getCurrentLineIters(buffer):
     insert_iter = buffer.get_iter_at_mark(buffer.get_insert())
@@ -31,41 +31,50 @@ def processLine(buffer, reg, replace):
     buffer.delete(line_start_iter, line_end_iter)
     buffer.insert(line_start_iter, new_line_text)
 
-def removeLine(buffer, *a): # ^l
+def removeLine(buffer, view, model, *a): # ^l
     line_start_iter, line_end_iter = getCurrentLineIters(buffer)
     buffer.delete(line_start_iter, line_end_iter)
 
-def justPlusOne(buffer, *a): # ^1
+def commentOut(buffer, view, model, *a): # ^/
+    cmt = a[0][0]
+    line_start_iter, line_end_iter = getCurrentLineIters(buffer)
+    line_text = buffer.get_text(line_start_iter, line_end_iter, True)
+    if line_text.startswith(cmt):
+        new_line_text = line_text[len(cmt):].lstrip()
+    else:
+        new_line_text = cmt + " " + line_text
+    buffer.delete(line_start_iter, line_end_iter)
+    buffer.insert(line_start_iter, new_line_text)
+
+def justPlusOne(buffer, view, model, *a): # ^1
     processLine(buffer, r"\+0", "+1")
 
-def shrinkLine(buffer, *a): # ^i
+def shrinkLine(buffer, view, model, *a): # ^i
     processLine(buffer, r"\+.*?(-\d)", r"-1")
 
-def removeUntilNum(buffer, *a): # ^1 ^2 ... ^8 ^9
+def removeUntilNum(buffer, view, model, *a): # ^1 ^2 ... ^8 ^9
     num = str(a[0][0])
     processLine(buffer, r"\+.*([+-]+\d+\[{})".format(num), r"\1")
 
-def duplicateLine(buffer, *a): # ^d
+def duplicateLine(buffer, view, model, *a): # ^d
     line_start_iter, line_end_iter = getCurrentLineIters(buffer)
     line_text = buffer.get_text(line_start_iter, line_end_iter, True)
     buffer.insert(line_end_iter, line_text)
 
-def shrinkText(buffer, *a): # ^d
-    print("Hit Ctrl-minus")
-    # Question for MH: How can we get & set this value of this control?
-    # Do we need to pass in the model?
-    # set("s_viewEditFontSize", get("s_viewEditFontSize") - 1)
-    
-def growText(buffer, *a): # ^d
-    print("Hit Ctrl-plus")
-    # set("s_viewEditFontSize", get("s_viewEditFontSize") + 1)
+def shrinkText(buffer, view, model, *a): # ^minus
+    model.set("s_viewEditFontSize", str(float(model.get("s_viewEditFontSize")) - 1))
+    model.setEntryBoxFont()
 
-def moveLines(buffer, *a):
-    # Check if text is selected
-    selected_text = ""
+    
+def growText(buffer, view, model, *a): # ^plus (actually ^equal as shift isn't held)
+    model.set("s_viewEditFontSize", str(float(model.get("s_viewEditFontSize")) + 1))
+    model.setEntryBoxFont()
+
+def moveLines(buffer, view, model, *a): # ^Up or ^Down
     if buffer.get_has_selection():
         start_iter, end_iter = buffer.get_selection_bounds()
-        buffer.cut_clipboard(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD), True)
+        selected_text = buffer.get_text(start_iter, end_iter, True)
+        buffer.delete(start_iter, end_iter)
         cursor_iter = buffer.get_iter_at_mark(buffer.get_insert())
     else:
         line_start_iter, line_end_iter = getCurrentLineIters(buffer)
@@ -75,36 +84,42 @@ def moveLines(buffer, *a):
         while not cursor_iter.starts_line():
             cursor_iter.backward_char()
         
-    if a[0][0]:  # down = True; up = False
+    if a[0][0]:  # True when Down, False when Up
         cursor_iter.forward_line()
     else:
         cursor_iter.backward_line()
     
-    buffer.place_cursor(cursor_iter)
-    if selected_text == "":
-        buffer.paste_clipboard(Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD), None, True)
-    else:
-        buffer.insert(cursor_iter, selected_text)
-    # Question for MH: Why does the cursor end up 2 lines further on after doing a Down operation?
+    buffer.insert(cursor_iter, selected_text)
+
+    if a[0][0]:  # True when Down, False when Up
+        cursor_iter.backward_line()
+        cursor_iter.backward_line()
     
-    # This bit doesn't work at all yet
-    # Restore the selection
-    if buffer.get_has_selection():
-        start_iter = buffer.get_iter_at_mark(buffer.get_selection_bound())
-        end_iter = buffer.get_iter_at_mark(buffer.get_insert())
-        buffer.select_range(start_iter, end_iter)
-        
+    buffer.place_cursor(cursor_iter)
+
+def count_selected_lines(buffer):
+    start_iter, end_iter = buffer.get_selection_bounds()
+    selected_text = buffer.get_text(start_iter, end_iter, include_hidden_chars=False)
+    num_lines = selected_text.count('\n')
+    if selected_text and selected_text[-1] != '\n':
+        num_lines += 1
+    return num_lines
+
 # Each dict within the list represents a different tab on the View+Edit page
 bindings = [
     # Front Matter
-    {Gdk.KEY_d:     (duplicateLine, ),
+    {Gdk.KEY_0:     (commentOut, r"\rem"),
+     Gdk.KEY_comma: (commentOut, r"\rem"),
+     Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
      Gdk.KEY_l:     (removeLine, )},
     # AdjList
-    {Gdk.KEY_1:     (justPlusOne, ),
+    {Gdk.KEY_0:     (commentOut, r"%"),
+     Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_1:     (justPlusOne, ),
      Gdk.KEY_2:     (removeUntilNum, 2),
      Gdk.KEY_3:     (removeUntilNum, 3),
      Gdk.KEY_4:     (removeUntilNum, 4),
@@ -123,18 +138,22 @@ bindings = [
     # tex file
     {Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, )},
-    # tex log
+    # log file
     {Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, )},
     # General Editing tab(1)
-    {Gdk.KEY_d:     (duplicateLine, ),
+    {Gdk.KEY_0:     (commentOut, r"#"),
+     Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
      Gdk.KEY_equal: (growText, ),
      Gdk.KEY_l:     (removeLine, )},
     # General Editing tab(2)
-    {Gdk.KEY_d:     (duplicateLine, ),
+    {Gdk.KEY_0:     (commentOut, r"#"),
+     Gdk.KEY_comma: (commentOut, r"%"),
+     Gdk.KEY_d:     (duplicateLine, ),
      Gdk.KEY_Up:    (moveLines, False),
      Gdk.KEY_Down:  (moveLines, True),
      Gdk.KEY_minus: (shrinkText, ),
