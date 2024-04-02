@@ -77,7 +77,7 @@
         \edef\sp@cebeside{\p@ram pt}%
       \fi
     \else
-      \let\sp@cebeside\attr@b
+      \m@kenumber{\attr@b}\let\sp@cebeside\@@result
     \fi
     \get@ttribute{pgpos}%
     \dimen0=\QRbounding
