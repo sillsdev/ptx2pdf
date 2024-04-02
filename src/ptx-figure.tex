@@ -1266,7 +1266,7 @@
     \advance\dimen1 by \count255\baselineskip
   \fi
   \setbox#1\vbox to 0pt{\kern\dimen1\vbox to 0pt{\vss\box#1}\vss}%
-  \advance\tmpcount by \c@tskip
+  \advance\tmpcount by \c@tskip\relax
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
     \edef\thing@side{L}%

@@ -83,6 +83,7 @@
     \dimen0=\QRbounding
     %\advance\dimen0 -\QRinside
     \ifx\attr@b\relax \box\QRcodebox\else
+      \m@kenumberns{\attr@b}\edef\attr@b{\@@result}%
       \ifx\attr@b\loc@InText\box\QRcodebox
       \else
         \ifcsname ins-\attr@b\endcsname
