@@ -1,9 +1,23 @@
 PTXprint 2.4.18 Release Notes
-25 Mar 2024
+5 Apr 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.19 (5 Apr 2024)
+
+  * Fix RTL in footnote paragraphs
+  
+  * Add keyboard shortcuts to Technical Reference Manual
+  
+  * Ensure QR spacebeside attr is a number
+  
+  * Fix QRcode with numerical pgpos
+  
+  * Create default settings for scripture refs when unpacking DBL bundles
+  
+  * Try to obey PT settings for chapterverse and range separators
+  
 Bug fixes and Improvements in 2.4.18 (26 Mar 2024)
 
   * Make id:GEN|p style font definitions work properly
