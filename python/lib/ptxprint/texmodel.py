@@ -309,6 +309,10 @@ class TexModel:
             self.dict['project/plugins'] = ''
         else:
             self.plugins = set()
+        chvssep = self.dict['header/chvseparator']
+        self.dict['chvssep_'] = self.ptsettings.get('ChapterVerseSeparator', chvssep) if chvssep == ':' else chvssep
+        rsep = self.ptsettings.get('RangeIndicator', '-')
+        self.dict['rangesep_'] = "\u2013" if rsep == "-" else rsep
 
     def updatefields(self, a):
         modelmap.get = lambda k: self[k]
