@@ -151,7 +151,9 @@ class Element(list):
         endmarker = self.meta.get('Endmarker', '')
         body = ''.join(map(str, self))
         sep = ''
-        if len(self) > 0:
+        if self.name == "c":
+            marker += "\n"
+        elif len(self) > 0:
             if not body.startswith(('\r\n', '\n')):
                 sep = ' '
         elif self.meta.get('StyleType') == 'Character':
