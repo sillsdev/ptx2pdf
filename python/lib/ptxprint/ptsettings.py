@@ -38,7 +38,8 @@ class ParatextSettings:
                 self.read_ldml()
                 break
         self.inferValues()
-        logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
+        if 'FileNamePrePart' in self.dict:
+            logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
         path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
         if os.path.exists(path):
             self.read_bookNames(path)
