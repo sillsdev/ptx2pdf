@@ -80,6 +80,15 @@ class PicChecks:
         for a in ((None, self.sharedfname, self.cfgShared), (configid, self.pubfname, self.cfgProject)):
             p = os.path.join(basep, a[0]) if a[0] else basep
             os.makedirs(p, exist_ok=True)
+            for s in a[2].sections():
+                hasdata = False
+                for n,o in a[2].items(section=s):
+                    if a[2].has_option("DEFAULT", n) and o == a[2].get("DEFAULT", n):
+                        a[2].remove_option(s, n)
+                    else:
+                        hasdata = True
+                if not hasdata:
+                    a[2].remove_section(s)
             with open(os.path.join(p, a[1]), "w", encoding="utf-8") as outf:
                 a[2].write(outf)
 

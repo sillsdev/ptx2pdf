@@ -729,7 +729,7 @@ class TexModel:
                 frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
                 self.frontperiphs = {}
                 if not os.path.exists(frtfile):
-                    return ""
+                    continue
                 with open(frtfile, encoding="utf-8") as inf:
                     mode = 0        # default
                     currperiphs = []

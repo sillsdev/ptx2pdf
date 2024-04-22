@@ -3579,11 +3579,11 @@ class GtkViewModel(ViewModel):
         self.onRefreshViewerTextClicked(None)
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty", "prj")
+        self._editProcFile("custom.sty", "prj", intro="# This file is currently empty\n")
         self.onRefreshViewerTextClicked(None)
 
     def onEditModsSty(self, btn):
-        self.editFile("ptxprint-mods.sty", "cfg")
+        self._editProcFile("ptxprint-mods.sty", "cfg", intro="# This file is currently empty\n")
         self.onRefreshViewerTextClicked(None)
 
     def onExtraFileClicked(self, btn):

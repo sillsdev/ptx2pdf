@@ -20478,8 +20478,8 @@ which are all specified below.</property>
                                         </child>
                                         <child>
                                           <object class="GtkCheckButton" id="c_usePrintDraftChanges">
-                                            <property name="label" translatable="yes">Apply Changes.txt (and PrintDraftChanges.txt)</property>
-                                            <property name="name">Enable Changes.txt to be applied</property>
+                                            <property name="label" translatable="yes">Apply Modifications to USFM Text (changes.txt)</property>
+                                            <property name="name">Enable changes.txt to be applied</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
                                             <property name="receives-default">False</property>
