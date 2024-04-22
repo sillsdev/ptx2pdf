@@ -1,8 +1,25 @@
 PTXprint 2.4.19 Release Notes
-5 Apr 2024
+22 Apr 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Bug fixes and Improvements in 2.4.20 (22 Apr 2024)
+
+  * Add another example for range of verses to print non-contiguous in same chapter
+  
+  * Add Rohg script
+
+  * Simplify wording on Advanced tab for changes.txt (to make it easier to find!)
+  
+  * Solve issue on View+Edit tab when a file is not found.
+  
+  * Make sure periphs from the INT book are included even if FRT book is missing.
+  
+  * Do not save default values when picInfo.txt and picCheck.txt are written
+    (reduces the filesizes of these files significantly)
+
+  * Protect from logger crash on poor pt settings
 
 Bug fixes and Improvements in 2.4.19 (5 Apr 2024)
 
