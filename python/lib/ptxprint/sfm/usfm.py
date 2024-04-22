@@ -304,7 +304,7 @@ class parser(sfm.parser):
                  stylesheet=default_stylesheet,
                  default_meta=_default_meta,
                  canonicalise_footnotes=True,
-                 tag_escapes=r"[|\\+%!@#$^&()=-_`/]",
+                 tag_escapes=r"[|\\%!@#$^&()=-_`/]",
                  debug=False,
                  *args, **kwds):
         if not canonicalise_footnotes:
