@@ -1403,16 +1403,17 @@ class TexModel:
                 if os.path.exists(fpath):
                     with universalopen(fpath) as inf:
                         sfmtxt = inf.read()
-                    glossentries += re.findall(r"\\w .*?\|?([^\|]+?)\\w\*", sfmtxt)
+                    glossentries += re.findall(r"\\\+?w .*?\|?([^\|]+?)\\\+?w\*", sfmtxt)
         fname = printer.getBookFilename("GLO", prjdir)
         infname = os.path.join(prjdir, fname)
         if os.path.exists(infname):
             with universalopen(infname, rewrite=True) as inf:
                 dat = inf.read()
-                ge = re.findall(r"\\\S+ \\k (.+?)\\k\*.+?\r?\n", dat) # Finds all glossary entries in GLO book
+                ge = re.findall(r"\\k ([^\\]+?)\\k\*", dat) # Finds all glossary entries in GLO book
+        # Note for future debugging... the re.findall above works on the input, the localChanges rule below works after any changes.txt things have taken effect. Allow for random spaces.
         for delGloEntry in [x for x in ge if x not in list(set(glossentries))]:
             logger.debug(f"Building regex for {delGloEntry=}")
-            self.localChanges.append(makeChange(r"\\\S+ \\k {}\\k\*.+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), "", flags=regex.M))
+            self.localChanges.append(makeChange(r"^(?:\\\S+)?(?:\\v +\d+ |\s+)+[^\\]*[\s~]*\\k\s+{}\\k\*.+?(?: ?(?=\\c )|\r?\n)".format(delGloEntry), "", flags=regex.M))
 
     def analyzeImageCopyrights(self):
         if self.dict['project/iffrontmatter'] == "":
