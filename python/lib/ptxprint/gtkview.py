@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
-import datetime, time, locale, urllib.request, urllib.error, json, hashlib
+import datetime, time, locale, urllib.request, json, hashlib
 from ptxprint.utils import universalopen, refKey, chgsHeader, saferelpath
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -116,12 +116,12 @@ _cjkLangs = {
     "Hrkt" : "ja",  # "Japanese (Hiragana+Katakana)",
     "Jamo" : "ja",  # "Jamo (subset of Hangul)",
     "Jpan" : "ja",  # "Japanese (Han+Hiragana+Katakana)"
-    "Kore" : "ko",   # "Korean (Hangul+Han)",
+    "Kore" : "ko"   # "Korean (Hangul+Han)",
 
   # "Hanb" : "zh",  # "Han with Bopomofo",
   # "Khmr" : "km",  # "Khmer",
   # "Mymr" : "my",  # "Myanmar (Burmese)",    
-  # "Thai" : "th",   # "Thai"
+  # "Thai" : "th"   # "Thai"
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Devanagari", 
@@ -1827,7 +1827,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
-           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else "",  # or self.get("c_colophon") 
+           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else ""  # or self.get("c_colophon") 
         self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
@@ -4347,7 +4347,7 @@ class GtkViewModel(ViewModel):
     def onPlDelClicked(self, btn):
         self.picListView.del_row()
 
-    def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event",
+    def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE
         a = self.get('t_plAnchor')
         a = a[:4].upper() + re.sub(r'(\d+):(\d+)', r'\1.\2', a[4:])
@@ -4461,7 +4461,7 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         if response == Gtk.ResponseType.OK:
             if self.get("c_downloadImages"):
-                imgset = "ccsampleimages.zip", # this will eventually be a variable, or even a list of img sets to download.
+                imgset = "ccsampleimages.zip" # this will eventually be a variable, or even a list of img sets to download.
                 try:
                     urlfile = urllib.request.urlopen(r"https://software.sil.org/downloads/r/ptxprint/{}".format(imgset))
                     tzdir = extraDataDir("imagesets", "../zips", create=True)
@@ -4743,7 +4743,7 @@ class GtkViewModel(ViewModel):
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
 
     def updateColxrefSetting(self, btn):
-        xrc = self.get("r_xrpos") == "centre", # i.e. Column Cross-References
+        xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
         if self.get("c_useXrefList"):
             self.builder.get_object("ex_xrListSettings").set_expanded(True)
