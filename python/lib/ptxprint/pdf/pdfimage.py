@@ -68,7 +68,7 @@ def cmyk_vecto_rgb(img):
     out[...,2] = (1. - img[...,2]) * k
     return out
 
-def rgb_vecto_cmyk(img, black=0.):
+def rgb_vecto_cmyk(img, black=0., maxsat=0.):
     out = np.zeros((img.shape[0], img.shape[1], 4))
     #omk = max(img[...,0], img[...,1], img[...,2])
     omk = np.maximum(img[...,0], img[...,1])
@@ -76,6 +76,12 @@ def rgb_vecto_cmyk(img, black=0.):
     c = (omk - img[...,0]) / (omk + .001)
     m = (omk - img[...,1]) / (omk + .001)
     y = (omk - img[...,2]) / (omk + .001)
+    if maxsat > 1.:     # we don't want fixer to go negative
+        fixer = (maxsat - omk) / (c + m + y) 
+        np.clip(fixer, 0, 1., out=fixer)
+        c = c * fixer
+        m = m * fixer
+        y = y * fixer
     cond = omk > black
     out[cond,0] = c[cond]
     out[cond,1] = m[cond]
@@ -216,9 +222,9 @@ class PDFImage:
             self.colorspace = spotcspace
         return True
 
-    def rgb_cmyk(self):
+    def rgb_cmyk(self, maxsat=0.):
         img = np.asarray(self.img) / 255.
-        res = rgb_vecto_cmyk(img, black=0.01)
+        res = rgb_vecto_cmyk(img, black=0.01, maxsat=maxsat)
         self.img = Image.frombytes(data=(res * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         self.cs = self.colorspace = PdfName("DeviceCMYK")
 
@@ -242,6 +248,24 @@ class PDFImage:
             self.img = Image.frombytes(data=((np.maximum(img[...,2], img[...,3])) * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="L")
             self.cs = self.colorspace = PdfName("DeviceGray")
             return True
+
+    def cmyk_maxsat(self, maxsat):
+        img = np.asarray(self.img) / 255
+        c = img[...,0]
+        m = img[...,1]
+        y = img[...,2]
+        k = img[...,3]
+        fixer = (maxsat - k) / (c + m + y)
+        np.clip(fixer, 0, 1., out=fixer)
+        c = c * fixer
+        m = m * fixer
+        y = y * fixer
+        out = np.zeros((img.shape[0], img.shape[1], 4))
+        out[...,0] = c
+        out[...,1] = m
+        out[...,2] = y
+        out[...,3] = k
+        self.img = Image.frombytes(data=(out * 255).astype(np.uint8).tobytes(), size=(self.width, self.height), mode="CMYK")
         return False
         
 if __name__ == "__main__":
