@@ -13828,18 +13828,23 @@ settings will remain unchanged.</property>
                                     <property name="focus-on-click">False</property>
                                     <property name="receives-default">True</property>
                                     <property name="tooltip-text" translatable="yes">If you are publishing (i.e. more than 50 copies) any
-material with illustrations from David C Cook, or
-Scripture Press, you are required to obtain prior
-permission. Click this button to generate the text
-to be sent to ScripturePicturePermissions_intl@sil.org
-requesting permission.</property>
+material with illustrations that require prior permission
+to be obtained before publishing, then click this button
+to automatically fill in the form requesting permission.
+
+Note that any missing information will need to be
+filled in on the Peripherals tab before the form can
+be submitted.
+
+After filling in any remaining details, you will need to
+submit the Google form and wait for a response.</property>
                                     <property name="halign">center</property>
                                     <property name="valign">end</property>
                                     <property name="margin-left">6</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
-                                    <signal name="clicked" handler="onRequestPicturePermission" swapped="no"/>
+                                    <signal name="clicked" handler="onFillPicturePermissionForm" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>

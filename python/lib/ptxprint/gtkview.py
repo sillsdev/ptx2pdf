@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 gi.require_version('Gdk', '3.0')
 gi.require_version('Poppler', '0.18')
 from shutil import rmtree
-import datetime, time, locale, urllib.request, json, hashlib
+import datetime, time, locale, urllib.request, urllib.error, json, hashlib
 from ptxprint.utils import universalopen, refKey, chgsHeader, saferelpath
 from gi.repository import Gdk, Gtk, Pango, GObject, GLib, GdkPixbuf
 
@@ -116,12 +116,12 @@ _cjkLangs = {
     "Hrkt" : "ja",  # "Japanese (Hiragana+Katakana)",
     "Jamo" : "ja",  # "Jamo (subset of Hangul)",
     "Jpan" : "ja",  # "Japanese (Han+Hiragana+Katakana)"
-    "Kore" : "ko"   # "Korean (Hangul+Han)"
+    "Kore" : "ko",   # "Korean (Hangul+Han)",
 
   # "Hanb" : "zh",  # "Han with Bopomofo",
   # "Khmr" : "km",  # "Khmer",
-  # "Mymr" : "my",  # "Myanmar (Burmese)"    
-  # "Thai" : "th"   # "Thai"
+  # "Mymr" : "my",  # "Myanmar (Burmese)",    
+  # "Thai" : "th",   # "Thai"
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Devanagari", 
@@ -1827,7 +1827,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Font").set_markup("<span{}>".format(fs)+_("Fonts")+"</span>"+"+"+_("Scripts"))
 
         pi = " color='"+col+"'" if (self.get("c_inclFrontMatter") or self.get("c_autoToC") or \
-           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else ""  # or self.get("c_colophon") 
+           self.get("c_frontmatter") or self.get("c_inclBackMatter")) else "",  # or self.get("c_colophon") 
         self.builder.get_object("lb_Peripherals").set_markup("<span{}>".format(pi)+_("Peripherals")+"</span>")
 
         ic = " color='"+col+"'" if self.get("c_includeillustrations") else ""
@@ -4347,7 +4347,7 @@ class GtkViewModel(ViewModel):
     def onPlDelClicked(self, btn):
         self.picListView.del_row()
 
-    def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event"
+    def onAnchorRefChanged(self, t_plAnchor, foo): # called on "focus-out-event",
         # Ensure that the anchor ref only uses . (and not :) as the ch.vs separator and that _bk_ is upperCASE
         a = self.get('t_plAnchor')
         a = a[:4].upper() + re.sub(r'(\d+):(\d+)', r'\1.\2', a[4:])
@@ -4461,7 +4461,7 @@ class GtkViewModel(ViewModel):
         dialog.hide()
         if response == Gtk.ResponseType.OK:
             if self.get("c_downloadImages"):
-                imgset = "ccsampleimages.zip" # this will eventually be a variable, or even a list of img sets to download.
+                imgset = "ccsampleimages.zip", # this will eventually be a variable, or even a list of img sets to download.
                 try:
                     urlfile = urllib.request.urlopen(r"https://software.sil.org/downloads/r/ptxprint/{}".format(imgset))
                     tzdir = extraDataDir("imagesets", "../zips", create=True)
@@ -4743,7 +4743,7 @@ class GtkViewModel(ViewModel):
                 self.set("r_xrpos", "centre") if self.get("c_useXrefList") else self.set("r_xrpos", "normal")
 
     def updateColxrefSetting(self, btn):
-        xrc = self.get("r_xrpos") == "centre" # i.e. Column Cross-References
+        xrc = self.get("r_xrpos") == "centre", # i.e. Column Cross-References
         self.builder.get_object("fr_colXrefs").set_sensitive(xrc)
         if self.get("c_useXrefList"):
             self.builder.get_object("ex_xrListSettings").set_expanded(True)
@@ -5006,10 +5006,7 @@ class GtkViewModel(ViewModel):
         if self.noInt is None or self.noInt:
             self.deniedInternet()
             return
-        if sys.platform == "win32":
-            os.system("start \"\" {}".format(url))
-        elif sys.platform == "linux":
-            os.system("xdg-open \"\" {}".format(url))
+        webbrowser.open(url)
 
     def onUpdateButtonClicked(self, btn):
         self.openURL("https://software.sil.org/ptxprint/download")
@@ -5401,7 +5398,10 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()
 
-    def onRequestPicturePermission(self, btn):
+    def onFillPicturePermissionForm(self, btn):
+        _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScGc_jhYmu2KrVzlX8oL0-Iw32-0UY6kzD6j_wm5j-VD6RsAw/viewform?usp=pp_url'
+        entries = []
+        pics = []
         metadata = {"country":       "<Country>", 
                     "langiso":       "<Ethnologue code>", 
                     "languagename":  "<Language>", 
@@ -5412,17 +5412,26 @@ class GtkViewModel(ViewModel):
                     "requester":     "<Requester's Name>", 
                     "pubentity":     "<Publishing Entity>"}
 
-        pics = []
+        entryIDs = {"1518194895": "requester",       #Your+Name(As+Known+By+Paratext+Mark+Penny)
+                    "1044245222": "pubentity",       #Organization(SIL+SAG)
+                    "1280052018": "country",         #Country+Name(India)
+                    "1836240032": "languagename",    #Language+Name(Adilabad+Gondi)
+                    "117154869" : "langiso",         #Language+Identifier(WSG)
+                    "1765920399": "registryid",      #Project+Registry+ID(5qd8Wcnav7WcDgsgT)
+                    "1928747119": "pubtype",         #Scope+of+Publication(Portion|NT|Bible)
+                    "1711096593": "maintitle",       #Vernacular+Publication+Title(Mark+is+testing+the+pre-filled+form)
+                    "670351452" : "englishtitle",    #English+Publication+Title(Good+news+for+Modern+Typesetters)
+                    "1279725472": "copiesprinted"}   #Number+of+Copies(51)
+
         if self.artpgs is not None:
             for artist in self.artpgs.keys():
-                if artist == "co":
-                    for series in self.artpgs[artist].keys():
-                        for a,v in self.artpgs[artist][series]:
-                            pics += [v]
+                # if artist == "co":
+                for series in self.artpgs[artist].keys():
+                    for a,v in self.artpgs[artist][series]:
+                        pics += [v]
         picount = len(pics)
         if picount == 0:
-            _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
+            _errText = _("No illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
             self.doError("Request Permission Error", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
@@ -5438,44 +5447,36 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             _errText = _("Please fill in any missing <Values> on") + "\n" + \
                        _("the Peripherals tab before proceeding.")
-            self.doError("Missing details for request letter", secondary=_errText, \
+            self.doError("Missing details for permission request form", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
-        picturelist = ", ".join(pics)
-        if self.get('c_sensitive'):
-            sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
-            "(© DCC) in the copyright statement and for the credit text on each illustration.\n"
+        
+        validRegKey = False
+        if self.ptsettings is not None:
+            regKey = self.ptsettings.get('ParatextRegistryId', "")
+            if len(regKey):
+                validRegKey = True
+        if validRegKey:
+            entries.append(f"&entry.1337767606=Yes")
+            entries.append(f"&entry.1765920399=https://registry.paratext.org/projects/{regKey}")
         else:
-            sensitive = ""
-        _permissionRequest = """
-TO: International Publishing Services Coordinator
-7500 West Camp Wisdom Road
-Dallas, TX 75236 USA\n
-I am writing to request permission to use the following David C Cook illustrations in a publication.\n
-1. The name of the country, language, Ethnologue code:
-\t{}, {}, {}\n
-2. The title of the book in the vernacular:
-\t{}\n
-3. The title of the book in English:
-\t{}\n
-4. The kind of book:
-\t{}\n
-5. The number of books to be printed:
-\t{} copies\n
-6. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
-\t{} illustrations:\n{}\n{}
-Thank you,
-{}
-{}
-""".format(self.getvar("country", ""), self.getvar("languagename",  ""), \
-           self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
-           self.getvar("englishtitle", ""), self.getvar("pubtype", ""), \
-           self.getvar("copiesprinted", ""), picount, picturelist, sensitive, \
-           self.getvar("requester", ""), self.getvar("pubentity", ""))
-        self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
-                      title="PTXprint", copy2clip=True, show=True, \
-                      who2email="scripturepicturepermissions_intl@sil.org")
+            entries.append(f"&entry.1337767606=No")
 
+        for k, v in entryIDs.items():
+            entries.append(f"&entry.{k}={self.getvar(v, '')}")
+
+        sensitive = "Yes" if self.get('c_sensitive') else "No"
+        entries.append(f"&entry.912917069={sensitive}")
+        entries.append(f"&entry.1060720564=Scripture,+including+Study+Bible")   #Publication+Type()
+        entries.append(f"&entry.667305653={',+'.join(pics)}")
+        entries.append(f"&entry.933375377=print")
+        entries.append(f"&entry.882233224=No")                                  #Reprint(Yes/No)
+        # entries.append(f"&entry.437213008" : "",           #Questions+or+Comments
+        # entries.append(f"&entry.1059397738": "",           #Sign(get them to fill it in manually!)
+        url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
+        logger.debug(f"Opening Pre-populated Permission Request Form: {url}")
+        self.openURL(url)
+            
     def onOverridePageCountClicked(self, btn):
         override = self.sensiVisible('c_overridePageCount')
         if not override:
