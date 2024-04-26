@@ -71,7 +71,7 @@
 \setsbp@ram{bgfigpos}{pc}%Horizontally centred
 \setsbp@ram{hascol}{F}%No default colour.
 \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
-\setsbp@ram{borderwidth}{0.5}% in pt
+%\setsbp@ram{borderwidth}{0.5}% in pt
 \setsbp@ram{posn}{b}
 \setsbp@ram{fgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigspec}{}%Normally no picture.
@@ -80,15 +80,16 @@
 %\setsbp@ram{borderfillcolour}{NONE} % For double. (Should match fill@none)
 \def\m@rker{textborder}
 \setsbp@ram{properties}{nonpublishable}
-\setsbp@ram{borderlinewidth}{0.05}
-\setsbp@ram{borderwidth}{8}
-\setsbp@ram{borderrpadding}{2}
-\setsbp@ram{borderlpadding}{2}
-\setsbp@ram{bordertpadding}{2}
-\setsbp@ram{borderbpadding}{2}
-\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
-\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
-\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
+% These should all be inherited from stdborders, normally.
+%\setsbp@ram{borderlinewidth}{0.05}
+%\setsbp@ram{borderwidth}{8}
+%\setsbp@ram{borderrpadding}{2}
+%\setsbp@ram{borderlpadding}{2}
+%\setsbp@ram{bordertpadding}{2}
+%\setsbp@ram{borderbpadding}{2}
+%\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
+%\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
+%\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
 \setsbp@ram{sbargrid}{\gr@dorig}
 \S@tCat{}
 \let\c@tegory\empty
@@ -282,6 +283,7 @@
     \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
   \fi
 }
+\def\defaultBorderWidth{0}
 \def\s@tsb@rwidth{%Set default / specific width of esb box
   %h*,c*,p* take the current page width as their base
   %tX,bX take the column width 
@@ -294,7 +296,7 @@
   \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
   \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
   \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+  \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
   \getwh@chpage % Necessary for accurate border measurements
   \@get@Hborder@style@params
   \@get@Vborder@style@params
@@ -322,7 +324,7 @@
     \fi
     \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
     \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-    \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+    \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
       \prepb@rderdims

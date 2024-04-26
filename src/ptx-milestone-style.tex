@@ -432,17 +432,20 @@
       \edef\rule@wid{\the\dimexpr \@@result\hsize\relax}%
     \fi
     \getp@ram{bordercolour}{zrule}{\styst@k}\let\b@drcol\p@ram
-    \get@ttribute{thick}%A
+    \get@ttribute{thick}%
     \ifx\attr@b\relax
       \getp@ram{borderwidth}{zrule}{\styst@k}%
       \ifx\p@ram\relax
         \def\rule@thk{0.5pt}%
+        \def\@thinlinedesc{Default zrule thickness of \rule@thk}%
       \else
         \edef\rule@thk{\the\dimexpr \p@ram\FontSizeUnit\relax}%
+        \def\@thinlinedesc{Style sheet 'BorderWidth \p@ram'}%
         %\def\rule@thk{0.5pt}%
       \fi
     \else
       \m@kenumber{\attr@b}%
+      \def\@thinlinedesc{zrule attribute}%
       \let\rule@thk\@@result%
     \fi
     \get@ttribute{raise}%A
@@ -485,12 +488,10 @@
   \lastdepth=\prevdepth
 }
 
-\x@\def\csname drawzrule-plain\endcsname{%
-  \ifx\b@drcol\relax
-    \def\bc@l{}\def\endbc@l{}%
-  \else
-    \def\bc@l{\special{color push rgb \b@drcol}}\def\endbc@l{\special{color pop}}%
-  \fi
+\x@\def\csname drawzrule-plain\endcsname{% 
+  \bc@lsetup
+  \let\thinlin@type\tlt@R
+  \thinlinecheck{\rule@thk}{}{zrule}{\@thinlinedesc}%
   \hbox{\raise \rule@adjust\hbox to \hsize{\hskip\leftskip\ifx\rule@pos\@lignLeft\else\hfil\fi
     \bc@l\vrule height \rule@thk depth 0pt width \rule@wid \endbc@l
     \ifx\rule@pos\@lignRight\else\hfil\fi\hskip\rightskip}}%

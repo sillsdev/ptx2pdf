@@ -79,7 +79,7 @@
         \getsbp@ram{borderbpadding}%
         \global\let\bpp@ram\p@ram
         \getsbp@ram{borderwidth}%
-        \global\let\bwp@ram\p@ram
+        \ifx\p@ram\relax\gdef\bwp@ram{0}\else\global\let\bwp@ram\p@ram\fi
       \else
         \getsbp@ram{borderbpadding}%
         \global\let\bpp@ram\p@ram
@@ -134,7 +134,7 @@
       \message{\cp@ram => \pdf@aa / \pdf@ab}%
       \ifnum \pdf@aa=0 
 	\global\rotatespinetrue
-        \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+        \getsbp@ram{borderwidth}\ifx\p@ram\relax\gdef\b@drwidth{0}\else\global\let\b@drwidth\p@ram\fi
         \getsbp@ram{bordertpadding}\xdef\spine@tpaddingcorn{\the\dimexpr -\b@drwidth pt\ifx\cp@ram\relax\else - \the\dimexpr \cp@ram pt\fi \relax\relax}%
         \trace{cov}{border t correction for rotated spine is \spine@tpaddingcorn}%
         \ifnum \pdf@ab=1
