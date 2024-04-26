@@ -13820,6 +13820,9 @@ settings will remain unchanged.</property>
                                   </packing>
                                 </child>
                                 <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
                                   <object class="GtkButton" id="btn_requestPermission">
                                     <property name="label" translatable="yes"> Request Permission... </property>
                                     <property name="width-request">110</property>
@@ -13840,7 +13843,6 @@ After filling in any remaining details, you will need to
 submit the Google form and wait for a response.</property>
                                     <property name="halign">center</property>
                                     <property name="valign">end</property>
-                                    <property name="margin-left">6</property>
                                     <property name="margin-start">6</property>
                                     <property name="margin-end">6</property>
                                     <property name="margin-top">3</property>
@@ -13849,7 +13851,7 @@ submit the Google form and wait for a response.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">4</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13869,7 +13871,7 @@ submit the Google form and wait for a response.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="position">5</property>
+                                    <property name="position">6</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13878,7 +13880,6 @@ submit the Google form and wait for a response.</property>
                                     <property name="can-focus">False</property>
                                     <property name="halign">center</property>
                                     <property name="valign">start</property>
-                                    <property name="margin-left">6</property>
                                     <property name="margin-start">3</property>
                                     <property name="margin-top">3</property>
                                     <child>
@@ -13930,7 +13931,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">6</property>
+                                    <property name="position">7</property>
                                   </packing>
                                 </child>
                               </object>
@@ -14247,31 +14248,6 @@ found at all.</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="c_cropborders">
-                                                <property name="label" translatable="yes">Remove Image Borders</property>
-                                                <property name="name">Pictures: Remove Image Borders</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">Some images have a thin line on
-one or more of the edges of the
-picture. Enable this option to
-automatically crop these unwanted
-lines from the edge of pictures.
-Note that this setting affects ALL
-images, not just those with lines.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="margin-top">10</property>
-                                                <property name="xalign">0</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
                                               <object class="GtkLabel" id="lb_selectFigureFolder">
                                                 <property name="width-request">350</property>
                                                 <property name="visible">True</property>
@@ -14420,6 +14396,84 @@ references without the captions.</property>
                                                 <property name="left-attach">2</property>
                                                 <property name="top-attach">0</property>
                                                 <property name="height">4</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_cropborders">
+                                                    <property name="label" translatable="yes">Remove Image Borders</property>
+                                                    <property name="name">Pictures: Remove Image Borders</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">Some images have a thin line on
+one or more of the edges of the
+picture. Enable this option to
+automatically crop these unwanted
+lines from the edge of pictures.
+Note that this setting affects ALL
+images, not just those with lines.</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="margin-top">10</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="draw-indicator">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkLabel">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="hexpand">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">True</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">1</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkButton" id="btn_requestIllustrations">
+                                                    <property name="label" translatable="yes">Request Publishing 
+Quality Illustrations... </property>
+                                                    <property name="width-request">100</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="focus-on-click">False</property>
+                                                    <property name="receives-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Request for Access to High Quality Illustrations/Maps
+in the SIL repository.
+
+Click this button to fill in the form requesting access
+to the illustrations used in the current publication.
+
+After completing and sumitting the online form
+you should receive an immediate response by email.</property>
+                                                    <property name="halign">end</property>
+                                                    <property name="valign">end</property>
+                                                    <property name="margin-top">3</property>
+                                                    <signal name="clicked" handler="onFillRequestIllustrationsForm" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">False</property>
+                                                    <property name="pack-type">end</property>
+                                                    <property name="position">2</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">0</property>
+                                                <property name="width">2</property>
                                               </packing>
                                             </child>
                                           </object>
@@ -31132,7 +31186,7 @@ the text. This may be useful for precise measuring.</property>
             <property name="margin-bottom">3</property>
             <child>
               <object class="GtkButton" id="btn_getImageSet">
-                <property name="label" translatable="yes">Download Image Set...</property>
+                <property name="label" translatable="yes">Download Sample Image Set...</property>
                 <property name="name">Download an Image Set from an online source</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
@@ -31145,7 +31199,6 @@ publications from one of the links.</property>
                 <property name="halign">start</property>
                 <property name="valign">end</property>
                 <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
                 <property name="margin-top">4</property>
                 <property name="margin-bottom">4</property>
                 <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
@@ -31154,6 +31207,34 @@ publications from one of the links.</property>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
                 <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_requestIllustrations2">
+                <property name="label" translatable="yes">Request Publishing 
+Quality Illustrations... </property>
+                <property name="width-request">100</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Request for Access to High Quality Illustrations/Maps
+in the SIL repository.
+
+Click this button to fill in the form requesting access
+to the illustrations used in the current publication.
+
+After completing and sumitting the online form
+you should receive an immediate response by email.</property>
+                <property name="halign">start</property>
+                <property name="valign">center</property>
+                <signal name="clicked" handler="onFillRequestIllustrationsForm" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="pack-type">end</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -31168,18 +31249,19 @@ publications from one of the links.</property>
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
                 <property name="non-homogeneous">True</property>
               </packing>
             </child>
             <child>
               <object class="GtkButton" id="btn_imagePicker_ok">
-                <property name="label">Import Images to PicList</property>
+                <property name="label">Add Images to PicList</property>
+                <property name="name">Add Images to Current Configuration's PicList</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
                 <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Import the selected images
-to the current Configuration
+                <property name="tooltip-text" translatable="yes">Add the selected images to
+the current Configuration
 where an appropriate caption
 should be added and other
 image properties selected.</property>
@@ -31192,7 +31274,7 @@ image properties selected.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">3</property>
               </packing>
             </child>
             <child>
@@ -31208,7 +31290,7 @@ image properties selected.</property>
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">3</property>
+                <property name="position">4</property>
               </packing>
             </child>
           </object>
@@ -31712,11 +31794,10 @@ used on websites. </property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="vexpand">True</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
+                    <property name="fill">False</property>
                     <property name="position">1</property>
                   </packing>
                 </child>
@@ -31725,9 +31806,8 @@ used on websites. </property>
                   <object class="GtkGrid">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="valign">end</property>
-                    <property name="margin-left">12</property>
-                    <property name="margin-right">6</property>
+                    <property name="double-buffered">False</property>
+                    <property name="valign">start</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">6</property>
                     <property name="row-spacing">3</property>
@@ -31833,10 +31913,13 @@ of the chapter.</property>
                     </child>
                     <child>
                       <object class="GtkLabel">
+                        <property name="width-request">74</property>
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">end</property>
                         <property name="label" translatable="yes">ID, Artist:</property>
+                        <property name="single-line-mode">True</property>
+                        <property name="xalign">1</property>
                       </object>
                       <packing>
                         <property name="left-attach">0</property>
@@ -31845,7 +31928,7 @@ of the chapter.</property>
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">True</property>
+                    <property name="expand">False</property>
                     <property name="fill">False</property>
                     <property name="position">2</property>
                   </packing>
@@ -31854,11 +31937,12 @@ of the chapter.</property>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="double-buffered">False</property>
                     <property name="valign">end</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
-                    <property name="fill">True</property>
+                    <property name="fill">False</property>
                     <property name="position">3</property>
                   </packing>
                 </child>

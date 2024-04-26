@@ -269,7 +269,9 @@ _sensitivities = {
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
     "r_xrpos": {
-        "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
+        "r_xrpos_centre" :     ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
+    "r_pictureRes": {
+        "r_pictureRes_High" :  ["btn_requestIllustrations"]}, 
         
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
@@ -380,7 +382,8 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "c_createDiff", "c_quickRun"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", 
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -5398,6 +5401,49 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()
 
+    def onFillRequestIllustrationsForm(self, btn):
+        # These 3 are intentionally NOT filled in. They will need 
+        # to be filled in manually on the form before submission
+        # &entry.404873931=email@address.org
+        # &entry.1412507746=Supervisor+name
+        # &entry.1562752049=Supervisor+email
+        _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScCAOsNhonkU8H9msz7eUncVVme4MvtJ7Tnzjgl9s-KAtL3oA/viewform?usp=pp_url'
+        entries = []
+        pics = []
+
+        if self.artpgs is not None:
+            for artist in self.artpgs.keys():
+                for series in self.artpgs[artist].keys():
+                    for a,v in self.artpgs[artist][series]:
+                        pics += [v]
+        picount = len(pics)
+        if picount == 0:
+            _errText = _("No illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
+            self.doError("Request Illustrations Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+            return
+
+        prjName = self.ptsettings.get('FullName', "") if self.ptsettings is not None else ""
+        entries.append(f"&entry.344966571={prjName}")                       # Paratext Project Name
+        entries.append(f"&entry.732448545={self.getvar('requester', '')}")  # Paratext Registration Name
+        entries.append(f"&entry.751047469={self.getvar('pubentity', '')}")  # Organization
+        entries.append(f"&entry.920891476={',+'.join(pics)}")               # List of Illustrations
+        
+        ans1 = "1. I am requesting access to a specific set of illustrations to be used in one translation project."
+        entries.append(f"&entry.1554405631={ans1}")
+        entries.append(f"&entry.634072881={ans1}")
+        ans2 = "2. Typesetting for print publications using PTXprint."
+        entries.append(f"&entry.75078676={ans2}")
+        ans3 = "Yes, I agree."
+        entries.append(f"&entry.1763079060={ans3}")
+        entries.append(f"&entry.646337528={ans3}")
+        ans4 = "Yes"
+        entries.append(f"&entry.580369903={ans4}")
+
+        url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
+        logger.debug(f"Opening Pre-populated Request for Illustrations Form: {url}")
+        self.openURL(url)
+            
     def onFillPicturePermissionForm(self, btn):
         _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScGc_jhYmu2KrVzlX8oL0-Iw32-0UY6kzD6j_wm5j-VD6RsAw/viewform?usp=pp_url'
         entries = []
