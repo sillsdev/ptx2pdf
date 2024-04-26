@@ -4476,7 +4476,7 @@ class GtkViewModel(ViewModel):
                     return
             else:
                 zfile = self.get("btn_locateImageSet")
-            imgsetname = unpackImageset(zfile)
+            imgsetname = unpackImageset(zfile, os.path.join(self.settings_dir, self.prjid))
             if imgsetname is not None:
                 uddir = extraDataDir("imagesets", imgsetname, create=False)
                 if not self.displayReadmeFile(imgsetname, uddir):
@@ -4498,6 +4498,8 @@ class GtkViewModel(ViewModel):
                         else:
                             lsp.append_text(imgsetname)
                     self.set("ecb_artPictureSet", imgsetname)
+            elif imgsetname == "":
+                pass
             else:
                 if self.get("c_downloadImages"):
                     self.doError("Failed Image Set", secondary="The Image Set failed to download and/or install.")
@@ -5409,23 +5411,15 @@ class GtkViewModel(ViewModel):
         # &entry.1562752049=Supervisor+email
         _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScCAOsNhonkU8H9msz7eUncVVme4MvtJ7Tnzjgl9s-KAtL3oA/viewform?usp=pp_url'
         entries = []
-        pics = []
 
-        if self.artpgs is not None:
-            for artist in self.artpgs.keys():
-                for series in self.artpgs[artist].keys():
-                    for a,v in self.artpgs[artist][series]:
-                        pics += [v]
-        picount = len(pics)
-        if picount == 0:
-            _errText = _("No illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
-            self.doError("Request Illustrations Error", secondary=_errText, \
-                      title="PTXprint", copy2clip=False, show=True)
+        booklist = set(self.getBooks())
+        pics = self.getPicsInConfig(booklist)
+        if not len(pics):
             return
 
         prjName = self.ptsettings.get('FullName', "") if self.ptsettings is not None else ""
         entries.append(f"&entry.344966571={prjName}")                       # Paratext Project Name
-        entries.append(f"&entry.732448545={self.getvar('requester', '')}")  # Paratext Registration Name
+        entries.append(f"&entry.732448545={self.getUserName()}")            # Paratext Registration Name
         entries.append(f"&entry.751047469={self.getvar('pubentity', '')}")  # Organization
         entries.append(f"&entry.920891476={',+'.join(pics)}")               # List of Illustrations
         
@@ -5443,7 +5437,23 @@ class GtkViewModel(ViewModel):
         url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
         logger.debug(f"Opening Pre-populated Request for Illustrations Form: {url}")
         self.openURL(url)
-            
+        
+    def getUserName(self):
+        unfpath = os.path.join(self.settings_dir, "localUsers.txt")
+        ptregname = ""
+        if os.path.exists(unfpath):
+            with open(unfpath, 'r') as file:
+                ptregname = file.readline().strip()  # Read the first line and strip any extra whitespace
+        return ptregname
+
+    def getPicsInConfig(self, booklist):
+        pics = [x["src"][:-5].lower() for x in self.picinfos.values() if x["anchor"][:3] in booklist]
+        if len(pics) == 0:
+            _errText = _("No illustrations were detected for this configuration.")
+            self.doError("Request Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+        return pics
+
     def onFillPicturePermissionForm(self, btn):
         _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScGc_jhYmu2KrVzlX8oL0-Iw32-0UY6kzD6j_wm5j-VD6RsAw/viewform?usp=pp_url'
         entries = []
@@ -5455,34 +5465,20 @@ class GtkViewModel(ViewModel):
                     "englishtitle" : "<Title in English>",
                     "pubtype":       "<[Portion|NT|Bible]>",
                     "copiesprinted": "<99>",
-                    "requester":     "<Requester's Name>", 
                     "pubentity":     "<Publishing Entity>"}
+        entryIDs = {"1044245222": "pubentity",       #Organization
+                    "1280052018": "country",         #Country Name
+                    "1836240032": "languagename",    #Language Name
+                    "117154869" : "langiso",         #Language Identifier
+                    "1711096593": "maintitle",       #Vernacular Publication Title
+                    "670351452" : "englishtitle",    #English Publication Title
+                    "1279725472": "copiesprinted"}   #Number of Copies
 
-        entryIDs = {"1518194895": "requester",       #Your+Name(As+Known+By+Paratext+Mark+Penny)
-                    "1044245222": "pubentity",       #Organization(SIL+SAG)
-                    "1280052018": "country",         #Country+Name(India)
-                    "1836240032": "languagename",    #Language+Name(Adilabad+Gondi)
-                    "117154869" : "langiso",         #Language+Identifier(WSG)
-                    "1765920399": "registryid",      #Project+Registry+ID(5qd8Wcnav7WcDgsgT)
-                    "1928747119": "pubtype",         #Scope+of+Publication(Portion|NT|Bible)
-                    "1711096593": "maintitle",       #Vernacular+Publication+Title(Mark+is+testing+the+pre-filled+form)
-                    "670351452" : "englishtitle",    #English+Publication+Title(Good+news+for+Modern+Typesetters)
-                    "1279725472": "copiesprinted"}   #Number+of+Copies(51)
-
-        if self.artpgs is not None:
-            for artist in self.artpgs.keys():
-                # if artist == "co":
-                for series in self.artpgs[artist].keys():
-                    for a,v in self.artpgs[artist][series]:
-                        pics += [v]
-        picount = len(pics)
-        if picount == 0:
-            _errText = _("No illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
-            self.doError("Request Permission Error", secondary=_errText, \
-                      title="PTXprint", copy2clip=False, show=True)
+        booklist = set(self.getBooks())
+        pics = self.getPicsInConfig(booklist)
+        if not len(pics):
             return
-        # See if any of the meta-data fields are missing in the zvars, and if so
-        # add them and ask the user to fill them in.
+        # If meta-data fields are missing, ask the user to fill them in.
         missing = False
         for k, v in metadata.items():
             if self.getvar(k, default=None) is None:
@@ -5496,7 +5492,7 @@ class GtkViewModel(ViewModel):
             self.doError("Missing details for permission request form", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
-        
+        entries.append(f"&entry.1518194895={self.getUserName()}")
         validRegKey = False
         if self.ptsettings is not None:
             regKey = self.ptsettings.get('ParatextRegistryId', "")
@@ -5513,15 +5509,53 @@ class GtkViewModel(ViewModel):
 
         sensitive = "Yes" if self.get('c_sensitive') else "No"
         entries.append(f"&entry.912917069={sensitive}")
-        entries.append(f"&entry.1060720564=Scripture,+including+Study+Bible")   #Publication+Type()
+        entries.append(f"&entry.1060720564=Scripture,+including+Study+Bible")                     #Publication Type()
+        entries.append(f"&entry.1928747119={self.getvar('pubtype', '')} ({' '.join(booklist)})")  #Scope of Publication
         entries.append(f"&entry.667305653={',+'.join(pics)}")
         entries.append(f"&entry.933375377=print")
         entries.append(f"&entry.882233224=No")                                  #Reprint(Yes/No)
-        # entries.append(f"&entry.437213008" : "",           #Questions+or+Comments
+        # entries.append(f"&entry.437213008" : "",           #Questions or Comments
         # entries.append(f"&entry.1059397738": "",           #Sign(get them to fill it in manually!)
-        url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
-        logger.debug(f"Opening Pre-populated Permission Request Form: {url}")
-        self.openURL(url)
+        
+        if self.noInt is None or self.noInt:
+            # If the user has internet access disabled, draft an e-mail and put it on the clipboard.
+            if self.get('c_sensitive'):
+                sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
+                "(© DCC, or © BFBS) in the copyright statement for these illustration.\n"
+            else:
+                sensitive = ""
+            _permissionRequest = """
+TO: International Publishing Services Coordinator
+7500 West Camp Wisdom Road
+Dallas, TX 75236 USA\n
+I am writing to request permission to use the following illustrations in a publication.\n
+1. The name of the country, language, Ethnologue code:
+\t{}, {}, {}\n
+2. The title of the book in the vernacular:
+\t{}\n
+3. The title of the book in English:
+\t{}\n
+4. The kind of book:
+\t{}\n
+5. The number of books to be printed:
+\t{} copies\n
+6. The number of illustrations and specific catalog number(s) of the illustrations/pictures:
+\t{} illustrations:\n{}\n{}
+Thank you,
+{}
+{}
+""".format(self.getvar("country", ""), self.getvar("languagename",  ""), \
+           self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
+           self.getvar("englishtitle", ""), self.getvar("pubtype", "") + " (" + ' '.join(booklist) + ")", \
+           self.getvar("copiesprinted", ""), len(pics), ', '.join(pics), sensitive, \
+           self.getUserName(), self.getvar("pubentity", ""))
+            self.doError("Illustration Usage Permission Request", secondary=_permissionRequest, \
+                          title="PTXprint", copy2clip=True, show=True, \
+                          who2email="scripturepicturepermissions_intl@sil.org")
+        else:
+            url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
+            logger.debug(f"Opening Pre-populated Permission Request Form: {url}")
+            self.openURL(url)
             
     def onOverridePageCountClicked(self, btn):
         override = self.sensiVisible('c_overridePageCount')

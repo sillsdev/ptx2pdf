@@ -12,13 +12,18 @@ logger = logging.getLogger(__name__)
 from ptxprint.utils import _, extraDataDir
 from ptxprint.reference import RefList
 
-def unpackImageset(filename):
+def unpackImageset(filename, prjdir):
     # print(f"{filename=}")
     with zipfile.ZipFile(filename) as zf:
-        with zf.open("illustrations.json") as zill:
-            zdat = json.load(zill)
-        dirname = zdat.get('id', "Unknown")
-        uddir = extraDataDir("imagesets", dirname, create=True)
+        if "illustrations.json" in zf.namelist():
+            with zf.open("illustrations.json") as zill:
+                zdat = json.load(zill)
+            dirname = zdat.get('id', "Unknown")
+            uddir = extraDataDir("imagesets", dirname, create=True)
+        else:
+            uddir = os.path.join(prjdir,"local","figures")
+            os.makedirs(uddir, exist_ok=True)
+            dirname = ""
         if uddir is None:
             return None
         zf.extractall(path=uddir)
