@@ -13820,61 +13820,6 @@ settings will remain unchanged.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <placeholder/>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_requestPermission">
-                                    <property name="label" translatable="yes"> Request Permission... </property>
-                                    <property name="width-request">110</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">If you are publishing (i.e. more than 50 copies) any
-material with illustrations that require prior permission
-to be obtained before publishing, then click this button
-to automatically fill in the form requesting permission.
-
-Note that any missing information will need to be
-filled in on the Peripherals tab before the form can
-be submitted.
-
-After filling in any remaining details, you will need to
-submit the Google form and wait for a response.</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">end</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">3</property>
-                                    <signal name="clicked" handler="onFillPicturePermissionForm" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">5</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkButton" id="btn_getPictures">
-                                    <property name="label" translatable="yes">Get Pictures...</property>
-                                    <property name="width-request">110</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">6</property>
-                                    <property name="margin-end">6</property>
-                                    <property name="margin-top">3</property>
-                                    <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">6</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkBox" id="bx_showImage">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
@@ -13931,7 +13876,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">7</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                               </object>
@@ -13972,7 +13917,7 @@ odd/right-hand page of a spread.</property>
                                     <property name="baseline-position">top</property>
                                     <child>
                                       <object class="GtkFrame" id="fr_inclPictures">
-                                        <property name="width-request">590</property>
+                                        <property name="width-request">540</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="double-buffered">False</property>
@@ -13981,7 +13926,6 @@ odd/right-hand page of a spread.</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">12</property>
                                         <property name="margin-bottom">6</property>
-                                        <property name="hexpand">False</property>
                                         <property name="label-xalign">0.019999999552965164</property>
                                         <child>
                                           <!-- n-columns=5 n-rows=5 -->
@@ -13993,58 +13937,18 @@ odd/right-hand page of a spread.</property>
                                             <property name="margin-start">6</property>
                                             <property name="margin-end">6</property>
                                             <property name="margin-bottom">6</property>
-                                            <property name="row-spacing">3</property>
-                                            <property name="column-spacing">12</property>
+                                            <property name="row-spacing">6</property>
                                             <property name="row-homogeneous">True</property>
                                             <child>
-                                              <object class="GtkRadioButton" id="r_pictureRes_Low">
-                                                <property name="label" translatable="yes">Low Resolution
-(Smaller File)</property>
-                                                <property name="name">Use low-resolution pictures</property>
+                                              <object class="GtkSeparator" id="rule_pictures">
                                                 <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">Paratext stores low resolution .JPG versions of
-illustrations in the project's "Figures" folder. If
-these are used, the file size of the resulting PDF
-will be relatively small, and therefore easy to
-share, but the image quality will be low.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                                <property name="group">r_pictureRes_High</property>
-                                                <signal name="clicked" handler="onPicRescan" swapped="no"/>
-                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                                <property name="can-focus">False</property>
+                                                <property name="halign">center</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">4</property>
+                                                <property name="left-attach">2</property>
                                                 <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_figplaceholders">
-                                                <property name="label" translatable="yes">Only Show Empty Place-holders
-(Smallest File)</property>
-                                                <property name="name">Pictures: Only show empty place-holders</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">Use this option to include an empty box wherever
-illustrations would be placed in the final PDF. 
-
-WHY would someone want to do this?
-It is sometimes necessary to generate the smallest
-possible PDF file (usually in order to send by
-e-mail) or to produce a PDF to be printed
-without illustrations.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">1</property>
-                                                <property name="width">2</property>
+                                                <property name="height">4</property>
                                               </packing>
                                             </child>
                                             <child>
@@ -14067,221 +13971,71 @@ therefore difficult to share electronically, but
 the image quality will be as good as possible.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
+                                                <property name="active">True</property>
                                                 <property name="draw-indicator">True</property>
-                                                <property name="group">r_pictureRes_Low</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                                 <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">0</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkButton" id="btn_selectFigureFolder">
-                                                <property name="label" translatable="yes">Select Folder...</property>
-                                                <property name="name">Select the folder which contains pictures</property>
-                                                <property name="width-request">120</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">True</property>
-                                                <property name="tooltip-text" translatable="yes">PTXprint will scan the selected folder 
-(and all its sub-folders) looking for
-all the required illustrations.</property>
-                                                <property name="halign">start</property>
-                                                <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">4</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_skipmissingimages">
-                                                <property name="label" translatable="yes">Omit Missing Pictures           ...</property>
-                                                <property name="name">Omit Missing Pictures</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">Rather than aborting the PDF export process, pre-process
-the list of illustrations and skip/ignore/remove any which
-are not found in the specified location of image files.
-
-If Pictures are missing after preparing a PDF, then
-they will be listed in the section below.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="xalign">0</property>
-                                                <property name="active">True</property>
-                                                <property name="draw-indicator">True</property>
-                                              </object>
-                                              <packing>
                                                 <property name="left-attach">0</property>
-                                                <property name="top-attach">3</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkCheckButton" id="c_useCustomFolder">
-                                                <property name="label" translatable="yes">Use Pictures
-From Folder: </property>
-                                                <property name="name">Use pictures from a particular folder</property>
+                                              <object class="GtkRadioButton" id="r_pictureRes_Low">
+                                                <property name="label" translatable="yes">Low Resolution
+(Smaller File)</property>
+                                                <property name="name">Use low-resolution pictures</property>
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">True</property>
                                                 <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">If this option is selected, PTXprint will scan 
-the selected folder (and ALL its sub-folders)
-for the required illustrations. This might slow
-down processing slightly. If the needed images
-are all located in the same folder, then check the
-'Exclusively Use Selected Folder' option as well.</property>
+                                                <property name="tooltip-text" translatable="yes">Paratext stores low resolution .JPG versions of
+illustrations in the project's "Figures" folder. If
+these are used, the file size of the resulting PDF
+will be relatively small, and therefore easy to
+share, but the image quality will be low.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
                                                 <property name="draw-indicator">True</property>
-                                                <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="l_imageTypeOrder">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="tooltip-text" translatable="yes">You can specify your preference for which kinds
-of images are used. PTXprint will search multiple
-locations for any matching images, and use the
-one that best matches your preferences (if found).
-
-If the box is left empty, it will default to the 
-following search sequences:
-   jpg &gt; png &gt; tif &gt; bmp &gt; pdf   - for smallest file size
-or
-   tif &gt; png &gt; jpg &gt; bmp &gt; pdf   - for largest file size</property>
-                                                <property name="halign">end</property>
-                                                <property name="label" translatable="yes">Preferred Image Types:</property>
-                                                <property name="justify">right</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">3</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkEntry" id="t_imageTypeOrder">
-                                                <property name="name">Pictures: Preferred image types</property>
-                                                <property name="width-request">120</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="tooltip-text" translatable="yes">If multiple versions of an image are located
-(hk12345B.jpg, hk12345C.png or hk12345B.tif)
-then which one of these different image types
-should be used in the publication?
-
-If in doubt, leave this box empty. Then it will
-use one of two defaults:
-
-1. Low Resolution Default Order:
-JPG PNG TIF BMP PDF  (use JPGs first, if none then PNGs, TIFs etc.)
-
-2. High Resolution Default Order:
-TIF PNG JPG BMP PDF (use TIFs first, if none then PNGs, JPGs etc.)
-
-Or manually type in a custom order, for example:
-PDF TIF PNG (use PDFs first, otherwise TIFs, or PNGs)
-  or
-JPG  (only use JPGs - ignore all other file types)
-  or
-TIF  (only use TIFs - ignore all other file types)
-
-NOTE: TIF files are converted internally to hi-res JPGs.</property>
-                                                <property name="width-chars">16</property>
-                                                <signal name="focus-out-event" handler="onPrefImageTypeFocusOut" swapped="no"/>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">4</property>
-                                                <property name="top-attach">2</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkCheckButton" id="c_exclusiveFiguresFolder">
-                                                <property name="label" translatable="yes">Exclusively Use Selected Folder:</property>
-                                                <property name="name">Pictures: Exclusively Use Selected Folder</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">True</property>
-                                                <property name="receives-default">False</property>
-                                                <property name="tooltip-text" translatable="yes">PTXprint normally searches in multiple locations
-to locate the needed illustrations (including "figures",
-"local/figures" and in the folder specified on the left).
-
-By default it also searches all the sub-folders of these
-locations.
-
-If you would prefer that it only searches in the folder
-specified directly (and NOT look in any subfolders)
-then select this option. This should speed up searches
-for images, but may result in some images not being
-found at all.</property>
-                                                <property name="halign">start</property>
-                                                <property name="valign">center</property>
-                                                <property name="xalign">0</property>
-                                                <property name="draw-indicator">True</property>
+                                                <property name="group">r_pictureRes_High</property>
                                                 <signal name="clicked" handler="onPicRescan" swapped="no"/>
+                                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>
-                                                <property name="top-attach">4</property>
+                                                <property name="top-attach">0</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkLabel" id="l_missingPictureCount">
+                                              <object class="GtkCheckButton" id="c_figplaceholders">
+                                                <property name="label" translatable="yes">Use Place-holders
+(Smallest PDF File)</property>
+                                                <property name="name">Pictures: Only show empty place-holders</property>
                                                 <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">start</property>
-                                                <property name="label" translatable="yes">(0 Missing)</property>
-                                                <property name="single-line-mode">True</property>
-                                                <property name="track-visited-links">False</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">3</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel" id="lb_selectFigureFolder">
-                                                <property name="width-request">350</property>
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="opacity">0.80</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="tooltip-text" translatable="yes">Use this option to include an empty box wherever
+illustrations would be placed in the final PDF. 
+
+WHY would someone want to do this?
+It is sometimes necessary to generate the smallest
+possible PDF file (usually in order to send by
+e-mail) or to produce a PDF to be printed
+without illustrations.</property>
                                                 <property name="halign">start</property>
                                                 <property name="valign">center</property>
-                                                <property name="wrap">True</property>
-                                                <property name="wrap-mode">word-char</property>
-                                                <property name="ellipsize">middle</property>
-                                                <property name="max-width-chars">60</property>
-                                                <property name="xalign">0</property>
+                                                <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">1</property>
-                                                <property name="top-attach">4</property>
-                                                <property name="width">4</property>
-                                              </packing>
-                                            </child>
-                                            <child>
-                                              <object class="GtkLabel">
-                                                <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="width-chars">12</property>
-                                              </object>
-                                              <packing>
-                                                <property name="left-attach">1</property>
-                                                <property name="top-attach">0</property>
+                                                <property name="top-attach">1</property>
                                               </packing>
                                             </child>
                                             <child>
                                               <object class="GtkBox">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
+                                                <property name="halign">start</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_figexclwebapp">
                                                     <property name="label" translatable="yes">Omit Pictures Only Meant for Web or App</property>
@@ -14326,8 +14080,8 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                                 </child>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">1</property>
+                                                <property name="left-attach">3</property>
+                                                <property name="top-attach">0</property>
                                                 <property name="width">2</property>
                                               </packing>
                                             </child>
@@ -14335,6 +14089,7 @@ attribute.  Note: w= web, a=app, p=print.</property>
                                               <object class="GtkBox">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
+                                                <property name="halign">start</property>
                                                 <child>
                                                   <object class="GtkCheckButton" id="c_fighidecaptions">
                                                     <property name="label" translatable="yes">Omit Captions </property>
@@ -14370,6 +14125,7 @@ it is not possible to just have the
 references without the captions.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
+                                                    <property name="margin-left">25</property>
                                                     <property name="margin-start">25</property>
                                                     <property name="draw-indicator">True</property>
                                                   </object>
@@ -14381,46 +14137,175 @@ references without the captions.</property>
                                                 </child>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">0</property>
-                                                <property name="top-attach">2</property>
+                                                <property name="left-attach">3</property>
+                                                <property name="top-attach">1</property>
                                                 <property name="width">2</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkSeparator" id="rule_pictures">
+                                              <object class="GtkCheckButton" id="c_skipmissingimages">
+                                                <property name="label" translatable="yes">Omit Missing Pictures ...</property>
+                                                <property name="name">Omit Missing Pictures</property>
                                                 <property name="visible">True</property>
-                                                <property name="can-focus">False</property>
-                                                <property name="halign">center</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="tooltip-text" translatable="yes">Rather than aborting the PDF export process, pre-process
+the list of illustrations and skip/ignore/remove any which
+are not found in the specified location of image files.
+
+If Pictures are missing after preparing a PDF, then
+they will be listed in the section below.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="xalign">0</property>
+                                                <property name="active">True</property>
+                                                <property name="draw-indicator">True</property>
                                               </object>
                                               <packing>
-                                                <property name="left-attach">2</property>
-                                                <property name="top-attach">0</property>
-                                                <property name="height">4</property>
+                                                <property name="left-attach">3</property>
+                                                <property name="top-attach">2</property>
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkBox">
+                                              <object class="GtkLabel" id="l_missingPictureCount">
                                                 <property name="visible">True</property>
                                                 <property name="can-focus">False</property>
-                                                <child>
-                                                  <object class="GtkCheckButton" id="c_cropborders">
-                                                    <property name="label" translatable="yes">Remove Image Borders</property>
-                                                    <property name="name">Pictures: Remove Image Borders</property>
-                                                    <property name="visible">True</property>
-                                                    <property name="can-focus">True</property>
-                                                    <property name="receives-default">False</property>
-                                                    <property name="tooltip-text" translatable="yes">Some images have a thin line on
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">(0 Missing)</property>
+                                                <property name="single-line-mode">True</property>
+                                                <property name="track-visited-links">False</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">4</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkCheckButton" id="c_cropborders">
+                                                <property name="label" translatable="yes">Remove Image Borders</property>
+                                                <property name="name">Pictures: Remove Image Borders</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">False</property>
+                                                <property name="tooltip-text" translatable="yes">Some images have a thin line on
 one or more of the edges of the
 picture. Enable this option to
 automatically crop these unwanted
 lines from the edge of pictures.
 Note that this setting affects ALL
 images, not just those with lines.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="draw-indicator">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">3</property>
+                                                <property name="top-attach">3</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_requestIllustrations">
+                                                <property name="label" translatable="yes">Request Access... </property>
+                                                <property name="width-request">100</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="focus-on-click">False</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Request Access to High Quality Illustrations/Maps
+in the SIL repository.
+
+Click this button to fill in the form requesting access
+to the illustrations used in the current publication.
+
+After completing and sumitting the online form
+you should receive an immediate response by email
+with a link to download the illustrations (if approved).</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <property name="margin-start">22</property>
+                                                <signal name="clicked" handler="onFillRequestIllustrationsForm" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_getPictures">
+                                                <property name="label" translatable="yes">Catalogue...</property>
+                                                <property name="width-request">110</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">Browse the catalogue of commonly
+used Bible illustrations from a range
+of different artists.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onGetPicturesClicked" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkButton" id="btn_requestPermission">
+                                                <property name="label" translatable="yes">Get Permission...</property>
+                                                <property name="width-request">110</property>
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">True</property>
+                                                <property name="focus-on-click">False</property>
+                                                <property name="receives-default">True</property>
+                                                <property name="tooltip-text" translatable="yes">If you are publishing (i.e. more than 50 copies) any
+material with illustrations that require prior permission
+to be obtained before publishing, then click this button
+to automatically fill in the form requesting permission.
+
+Note that any missing information will need to be
+filled in on the Peripherals tab before the form can
+be submitted.
+
+After filling in any remaining details, you will need to
+submit the Google form and wait for a response.</property>
+                                                <property name="halign">start</property>
+                                                <property name="valign">center</property>
+                                                <signal name="clicked" handler="onFillPicturePermissionForm" swapped="no"/>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">1</property>
+                                                <property name="top-attach">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="margin-start">18</property>
+                                                <property name="spacing">3</property>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_useCustomFolder">
+                                                    <property name="label" translatable="yes">Use Other
+Location: </property>
+                                                    <property name="name">Use pictures from a particular folder</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">The following locations are scanned for pictures:
+  My Paratext ... Projects\&lt;prjID&gt;\figures
+  My Paratext ... Projects\&lt;prjID&gt;\local\figures
+  Users\...\AppData\Local\SIL\ptxprint\imagesets
+
+If your pictures are in a different folder, then enable
+this option and select a Picture Folder to be scanned
+in addition to the folders listed above. Note that ALL
+subfolders also getted scanned unless you explicity
+enable the 'Exclude Subfolders' option.</property>
                                                     <property name="halign">start</property>
                                                     <property name="valign">center</property>
-                                                    <property name="margin-top">10</property>
-                                                    <property name="xalign">0</property>
                                                     <property name="draw-indicator">True</property>
+                                                    <signal name="clicked" handler="onUseCustomFolderclicked" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -14429,52 +14314,154 @@ images, not just those with lines.</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkLabel">
+                                                  <object class="GtkButton" id="btn_selectFigureFolder">
+                                                    <property name="label" translatable="yes">Picture Folder...</property>
+                                                    <property name="name">Select the folder which contains pictures</property>
+                                                    <property name="width-request">120</property>
                                                     <property name="visible">True</property>
-                                                    <property name="can-focus">False</property>
-                                                    <property name="hexpand">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="receives-default">True</property>
+                                                    <property name="tooltip-text" translatable="yes">Select another folder which contains pictures.
+PTXprint will also scan the selected folder 
+(and all its sub-folders) looking for all the
+required illustrations in the Picture List.</property>
+                                                    <property name="halign">start</property>
+                                                    <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
-                                                    <property name="expand">True</property>
+                                                    <property name="expand">False</property>
                                                     <property name="fill">True</property>
                                                     <property name="position">1</property>
                                                   </packing>
                                                 </child>
                                                 <child>
-                                                  <object class="GtkButton" id="btn_requestIllustrations">
-                                                    <property name="label" translatable="yes">Request Publishing 
-Quality Illustrations... </property>
-                                                    <property name="width-request">100</property>
+                                                  <object class="GtkLabel" id="lb_selectFigureFolder">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="opacity">0.80</property>
+                                                    <property name="valign">center</property>
+                                                    <property name="hexpand">False</property>
+                                                    <property name="wrap">True</property>
+                                                    <property name="wrap-mode">word-char</property>
+                                                    <property name="ellipsize">middle</property>
+                                                    <property name="xalign">0</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">2</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkCheckButton" id="c_exclusiveFiguresFolder">
+                                                    <property name="label" translatable="yes">Exclude
+Subfolders</property>
+                                                    <property name="name">Pictures: Exclusively Use Selected Folder</property>
                                                     <property name="visible">True</property>
                                                     <property name="can-focus">True</property>
-                                                    <property name="focus-on-click">False</property>
-                                                    <property name="receives-default">True</property>
-                                                    <property name="tooltip-text" translatable="yes">Request for Access to High Quality Illustrations/Maps
-in the SIL repository.
+                                                    <property name="receives-default">False</property>
+                                                    <property name="tooltip-text" translatable="yes">PTXprint normally searches all the sub-folders of the
+specified folder locations for the pictures it needs.
 
-Click this button to fill in the form requesting access
-to the illustrations used in the current publication.
-
-After completing and sumitting the online form
-you should receive an immediate response by email.</property>
+If you would prefer that it only searches in the folder
+specified directly (and NOT look in any subfolders)
+then select this option. This should speed up searches
+for images, but may result in some images not being
+found at all.</property>
                                                     <property name="halign">end</property>
-                                                    <property name="valign">end</property>
-                                                    <property name="margin-top">3</property>
-                                                    <signal name="clicked" handler="onFillRequestIllustrationsForm" swapped="no"/>
+                                                    <property name="valign">center</property>
+                                                    <property name="xalign">0</property>
+                                                    <property name="draw-indicator">True</property>
+                                                    <signal name="clicked" handler="onPicRescan" swapped="no"/>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
                                                     <property name="fill">False</property>
-                                                    <property name="pack-type">end</property>
-                                                    <property name="position">2</property>
+                                                    <property name="position">3</property>
                                                   </packing>
                                                 </child>
                                               </object>
                                               <packing>
                                                 <property name="left-attach">0</property>
-                                                <property name="top-attach">0</property>
+                                                <property name="top-attach">4</property>
+                                                <property name="width">5</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkBox">
+                                                <property name="visible">True</property>
+                                                <property name="can-focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="spacing">12</property>
+                                                <child>
+                                                  <object class="GtkLabel" id="l_imageTypeOrder">
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">False</property>
+                                                    <property name="tooltip-text" translatable="yes">You can specify your preference for which kinds
+of images are used. PTXprint will search multiple
+locations for any matching images, and use the
+one that best matches your preferences (if found).
+
+If the box is left empty, it will default to the 
+following search sequences:
+   jpg &gt; png &gt; tif &gt; bmp &gt; pdf   - for smallest file size
+or
+   tif &gt; png &gt; jpg &gt; bmp &gt; pdf   - for largest file size</property>
+                                                    <property name="halign">start</property>
+                                                    <property name="margin-start">22</property>
+                                                    <property name="label" translatable="yes">Image Types:</property>
+                                                    <property name="justify">right</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                                <child>
+                                                  <object class="GtkEntry" id="t_imageTypeOrder">
+                                                    <property name="name">Pictures: Preferred image types</property>
+                                                    <property name="visible">True</property>
+                                                    <property name="can-focus">True</property>
+                                                    <property name="tooltip-text" translatable="yes">If multiple versions of an image are located
+(hk12345B.jpg, hk12345C.png or hk12345B.tif)
+then which one of these different image types
+should be used in the publication?
+
+If in doubt, leave this box empty. Then it will
+use one of two defaults:
+
+1. Low Resolution Default Order:
+JPG PNG TIF BMP PDF  (use JPGs first, if none then PNGs, TIFs etc.)
+
+2. High Resolution Default Order:
+TIF PNG JPG BMP PDF (use TIFs first, if none then PNGs, JPGs etc.)
+
+Or manually type in a custom order, for example:
+PDF TIF PNG (use PDFs first, otherwise TIFs, or PNGs)
+  or
+JPG  (only use JPGs - ignore all other file types)
+  or
+TIF  (only use TIFs - ignore all other file types)
+
+NOTE: TIF files are converted internally to hi-res JPGs.</property>
+                                                    <signal name="focus-out-event" handler="onPrefImageTypeFocusOut" swapped="no"/>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="fill">True</property>
+                                                    <property name="position">1</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="left-attach">0</property>
+                                                <property name="top-attach">3</property>
                                                 <property name="width">2</property>
                                               </packing>
+                                            </child>
+                                            <child>
+                                              <placeholder/>
                                             </child>
                                           </object>
                                         </child>
@@ -14506,13 +14493,13 @@ the Header+Footer tab for details).
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
-                                        <property name="fill">True</property>
+                                        <property name="fill">False</property>
                                         <property name="position">0</property>
                                       </packing>
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="l_missingPictureString">
-                                        <property name="width-request">592</property>
+                                        <property name="width-request">550</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="halign">start</property>
@@ -14534,6 +14521,8 @@ the Header+Footer tab for details).
                                     </child>
                                   </object>
                                   <packing>
+                                    <property name="tab-expand">True</property>
+                                    <property name="tab-fill">False</property>
                                     <property name="detachable">True</property>
                                   </packing>
                                 </child>
@@ -15443,6 +15432,7 @@ rotate=binding page=2</property>
                                   <packing>
                                     <property name="position">1</property>
                                     <property name="tab-expand">True</property>
+                                    <property name="tab-fill">False</property>
                                     <property name="detachable">True</property>
                                   </packing>
                                 </child>
@@ -16257,6 +16247,7 @@ in ALL publications of this project (not just THIS one).</property>
                                   <packing>
                                     <property name="position">2</property>
                                     <property name="tab-expand">True</property>
+                                    <property name="tab-fill">False</property>
                                     <property name="detachable">True</property>
                                   </packing>
                                 </child>
