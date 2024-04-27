@@ -1,9 +1,27 @@
 PTXprint 2.4.20 Release Notes
-22 Apr 2024
+27 Apr 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.21 (27 Apr 2024)
+
+  * Chapter numbers should occur on their own line
+  
+  * Having + in tag_escapes stops parsing of nested markers, treating them as text.
+  
+  * Update test standards after table-column controls added (4a8e0df)
+  
+  * Add functionality to pre-populate the following Google Forms before submission:
+    a) Request hi-res illustrations from SIL's repository of illustrations and maps
+    b) Get Permission to use (mostly) David C Cook illustrations 
+  
+  * Improve glossary filtering
+  
+  * Add ink saturation limiting to cmyk pdf generation
+  
+  * Re-work the Global Options tab of the Pictures Page to improve usability
+  
 Bug fixes and Improvements in 2.4.20 (22 Apr 2024)
 
   * Add another example for range of verses to print non-contiguous in same chapter
