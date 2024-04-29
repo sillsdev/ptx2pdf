@@ -78,11 +78,10 @@
   \ifdim #1 pt = #2pt \ifdim #2 pt = #3 pt \ifdim #1pt=0pt
         \let\thinlinest@ndard\tls@black
       \else\ifdim #1pt=1pt
-          \let\thinlinest@ndard\tls@nochk % White
+          \let\thinlinest@ndard\tls@white % 1 1 1 = White
         \else
           \let\thinlinest@ndard\tls@colour % Grey
-        \fi
-      \fi
+      \fi\fi
     \else
       \let\thinlinest@ndard\tls@colour % Colour
     \fi
@@ -93,6 +92,7 @@
 
 \newdimen\minblackline \minblackline=0.25pt
 \newdimen\mincolourline \mincolourline=0.5pt
+\newdimen\minwhiteline \minwhiteline=0.5pt
 \def\OverThinRule{warn}
 \def\OverThinCurve{warn}
 %\newdimen\mingreyline 

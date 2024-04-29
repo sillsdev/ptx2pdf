@@ -559,6 +559,9 @@
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%
+  \ifdim\dimen0 < \minfontsize
+    \message{Warning: <\f@ntstyle> = \typef@ce\space at \the\dimen0 is smaller than specified minimum font size (first met on page \the\pageno)}%
+  \fi
   \x@\global\x@\font
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0  %(+)
   \ifLogFonts
@@ -594,6 +597,7 @@
     \dimen0=\p@ram\FontSizeUnit
     \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0 \fi
+    \ifdim\dimen0 < \minfontsize \message{Warning: <\f@ntstyle> = \typef@ce\space at \the\dimen0 is smaller than specified minimum font size (first met on page \the\pageno)}\fi
     \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
     \trace{sa}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
   \fi
