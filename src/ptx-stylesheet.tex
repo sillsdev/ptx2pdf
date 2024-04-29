@@ -1839,6 +1839,14 @@
    \fi
    \egroup
  \fi
+ % Check supplied line thicknesses (user might change them, e.g. after FRT):
+ \let\thinlinest@ndard\tls@black\let\thinlin@type\tlt@R % Plain boring black lines
+ \thinlinecheck{\EndNoteRuleThickness}{}{End Notes}{}%
+ \thinlinecheck{\StudyNoteRuleThickness}{}{Study Notes}{}%
+ \thinlinecheck{\FootNoteRuleThickness}{}{Footnotes}{}%
+ \thinlinecheck{\UnderlineThickness}{}{Underlines}{}%
+ \thinlinecheck{\RuleThickness}{\space}{Below header and separating columns}{}%
+ \thinlinecheck{\PlaceHolderRule}{\space}{Missing/skipped figure placeholder}{}%
  \ifdiglot
    \global\let\gridb@x\diglotgr@db@x
  \else

@@ -97,7 +97,7 @@
 \def\OverThinCurve{warn}
 %\newdimen\mingreyline 
 \def\thinlinecheck#1#2#3#4{%
-  \ifx\thinlinest@ndard\tls@nochk\else
+  \ifx\thinlinest@ndard\tls@nochk\else\ifdim #1#2 =0pt\else 
     \ifdim #1#2 < \csname min\thinlinest@ndard line\endcsname\relax
       \x@\let\x@\@@rule\csname OverThin\thinlin@type\endcsname
       \ifcsname overthin@\@@rule\endcsname
@@ -106,19 +106,22 @@
         \message{!! Undefined action '\@@rule' wanted by \msl@sh OverThin\thinlin@type. (#3) near \c@rref. (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname - #4) Issue ignored!}%
       \fi
     \fi
-  \fi
+  \fi\fi
 }
 
-\def\overthin@fix#1#2#3#4{%
+\def\overthin@fix#1#2#3#4{% If #2 is a space, then use = assignment, else use edef, (maybe with units)
   \tracingassigns=1
   \def\tmp{#2}\ifx\tmp\empty
     \edef#1{\the\csname min\thinlinest@ndard line\endcsname}%
   \else
-    \ifx\tmp\@pt@
-      \edef#1{\strip@pt{\dimexpr \csname min\thinlinest@ndard line\endcsname \relax}}%
-    \else
-      \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
-    \fi
+    \ifx\tmp\space
+      #1=\csname min\thinlinest@ndard line\endcsname
+    \else\ifx\tmp\@pt@
+        \edef#1{\strip@pt{\dimexpr \csname min\thinlinest@ndard line\endcsname \relax}}%
+      \else
+        % TODO! Generic unit conversion? Fortunately not needed so far
+        \message{!! The \thinlinest@ndard\space\thinlin@type\space specified for #3 is thinner than the supplied limit (#4 = #1#2 < \the\csname min\thinlinest@ndard line\endcsname) near \c@rref. Cannot fix because of unexpected units.}%
+    \fi\fi
   \fi
   \tracingassigns=0
 }

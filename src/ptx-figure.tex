@@ -623,13 +623,14 @@
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
+\def\PlaceHolderRule{0.5pt}% Thickness of rule around skipped figures
 \def\m@kepl@ceholder#1#2#3{%
 \vbox to #2{\offinterlineskip
   \trace{g}{makeplaceholder #3}%
-  \hrule height .2pt \kern-.2pt
-  \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
+  \hrule height \PlaceHolderRule\kern-\PlaceHolderRule
+  \hbox to #1{\vrule height #2 width \PlaceHolderRule\vrule width \PlaceHolderRule}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
-  \kern-.2pt \hrule height .2pt}}
+  \kern-\PlaceHolderRule\relax \hrule height \PlaceHolderRule\relax}}
 
 \newif\ifSkipMissingFig \SkipMissingFigfalse
 \newif\iffigf@und
