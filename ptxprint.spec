@@ -14,6 +14,7 @@ from subprocess import call
 #    for a in ('Analysis', 'PYZ', 'EXE', 'COLLECT'):
 #        setattr(__builtins__, a, printme)
 
+# hunt around for the latest version of a file (where the version is at the end of the filename)
 def anyver(p, path=".", ext=".dll"):
     spath = os.path.join(path, p)
     s = spath + "*{}".format(ext)
@@ -37,6 +38,8 @@ def anyver(p, path=".", ext=".dll"):
 # Run this every time until a sysadmin adds it to the agent
 # call([r'echo "y" | C:\msys64\usr\bin\pacman.exe -S mingw-w64-x86_64-python-numpy'], shell=True)
 
+# add all the library dependency dlls (not python ones, but the dlls they typically call)
+# including GTK, etc.
 mingwb = r'C:\msys64\mingw64\bin'
 if sys.platform in ("win32", "cygwin"):
     binaries = [('C:\\msys64\\mingw64\\lib\\girepository-1.0\\{}.typelib'.format(x),
@@ -54,6 +57,8 @@ else:
 
 a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
              pathex =   ['python/lib'],
+                # all the binary files from the source tree that are used by the application.
+                # These end up where specified (each entry is a 2 tuple: (source, target dir)
              binaries = binaries
                       + [('python/lib/ptxprint/PDFassets/border-art/'+y, 'ptxprint/PDFassets/border-art') for y in 
                             ('A5 section head border.pdf', 'A5 section head border 2 column.pdf', 'A5 section head border(RTL).pdf',
@@ -81,6 +86,7 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('src/contrib/ornaments/*.*', 'ptx2pdf/contrib/ornaments')]
                       + [('src/contrib/QRcode.tex', 'ptx2pdf/contrib')],
 #                     + [('python/lib/ptxprint/mo/' + y +'/LC_MESSAGES/ptxprint.mo', 'mo/' + y + '/LC_MESSAGES') for y in os.listdir('python/lib/ptxprint/mo')]
+                # data files are considered text and end up where specified by the tuple.
              datas =    [('python/lib/ptxprint/'+x, 'ptxprint') for x in 
                             ('ptxprint.glade', 'template.tex', 'picCopyrights.json', 'codelets.json', 'sRGB.icc', 'default_cmyk.icc', 'default_gray.icc', 'eng.vrs')]
                       + sum(([('python/lib/ptxprint/{}/*.*y'.format(x), 'ptxprint/{}'.format(x))] for x in ('sfm', 'pdf', 'pdfrw', 'pdfrw/objects')), [])
@@ -89,9 +95,11 @@ a1 = Analysis(['python/scripts/ptxprint', 'python/scripts/pdfdiff'],
                       + [('docs/inno-docs/*.txt', 'ptxprint')]
                       + [('src/*.tex', 'ptx2pdf'), ('src/ptx2pdf.sty', 'ptx2pdf'),
                          ('src/usfm_sb.sty', 'ptx2pdf'), ('src/standardborders.sty', 'ptx2pdf')],
+                # The registry tends not to get included
              hiddenimports = ['_winreg'],
              hookspath = [],
              runtime_hooks = [],
+                # These can drift in from the analysis and we don't want them
              excludes = ['tkinter', 'scipy'],
              win_no_prefer_redirects = False,
              win_private_assemblies = False,
@@ -114,6 +122,7 @@ exe1 = EXE(pyz1,
           console = False,
           icon="icon/Google-Noto-Emoji-Objects-62859-open-book.ico")
 
+# one has to do an analysis and exe for every application (what a pain)
 a2 = Analysis(['python/lib/ptxprint/runsplash.py'],
              pathex = ['python/lib'],
              binaries = binaries,
@@ -141,6 +150,7 @@ exe2 = EXE(pyz2,
           windowed=True,
           console = False)
 
+# Then bring all the bits together here for the final build
 coll = COLLECT(exe1,
                a1.binaries,
                a1.zipfiles,

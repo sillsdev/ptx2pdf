@@ -77,7 +77,7 @@ def rgb_vecto_cmyk(img, black=0., maxsat=0.):
     m = (omk - img[...,1]) / (omk + .001)
     y = (omk - img[...,2]) / (omk + .001)
     if maxsat > 1.:     # we don't want fixer to go negative
-        fixer = (maxsat - omk) / (c + m + y) 
+        fixer = (maxsat - 1 + omk) / (c + m + y) 
         np.clip(fixer, 0, 1., out=fixer)
         c = c * fixer
         m = m * fixer
