@@ -477,6 +477,14 @@ _map = {
                                  if (w.impSourcePDF is not None and w.impSourcePDF != 'None') else ""),
     "import/project":           ("fcb_impProject", None, None),
     "import/config":            ("ecb_impConfig", None, None),
+    
+    "import/imptarget":         ("r_impTarget", None, None),
+    "import/imptgtfolder":      ("btn_tgtFolder", None, lambda w,v: w.impTargetFolder.as_posix()  \
+                                 if (w.impTargetFolder is not None and w.impTargetFolder != 'None') else ""),
+    "import/tgtproject":        ("ecb_targetProject", None, None),
+    "import/tgtconfig":         ("ecb_targetConfig", None, None),
+    
+    "import/everything":        ("c_impEverything", None, None),
     "import/layout":            ("c_impLayout", None, None),
     "import/fontsscript":       ("c_impFontsScript", None, None),
     "import/styles":            ("c_impStyles", None, None),

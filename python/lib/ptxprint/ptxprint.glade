@@ -336,8 +336,8 @@ THE SOFTWARE.
   <object class="GtkAdjustment" id="a_inclSectionScale">
     <property name="upper">10</property>
     <property name="value">1</property>
-    <property name="step-increment">0.10</property>
-    <property name="page-increment">1</property>
+    <property name="step-increment">0.05</property>
+    <property name="page-increment">0.10</property>
   </object>
   <object class="GtkAdjustment" id="a_inclSectionShift">
     <property name="lower">-50</property>
@@ -17716,11 +17716,11 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="name">Decorative section headings: Scale</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="text">1.0</property>
+                                            <property name="text">1.00</property>
                                             <property name="xalign">1</property>
                                             <property name="adjustment">a_inclSectionScale</property>
-                                            <property name="climb-rate">0.10</property>
-                                            <property name="digits">1</property>
+                                            <property name="climb-rate">0.05</property>
+                                            <property name="digits">2</property>
                                             <property name="value">1</property>
                                           </object>
                                           <packing>
@@ -18169,7 +18169,7 @@ fit within the graphic.</property>
                                             <property name="name">Verse border graphic: Scale</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">True</property>
-                                            <property name="text">1.0</property>
+                                            <property name="text">1.00</property>
                                             <property name="xalign">1</property>
                                             <property name="adjustment">a_verseDecoratorScale</property>
                                             <property name="climb-rate">0.05</property>
@@ -26963,7 +26963,7 @@ and select the USX download option.</property>
             <property name="margin-bottom">3</property>
             <property name="layout-style">end</property>
             <child>
-              <object class="GtkButton" id="button1">
+              <object class="GtkButton" id="btn_removeSBimage">
                 <property name="label" translatable="yes">Remove Image</property>
                 <property name="name">Sidebar FG/BG: Remove image</property>
                 <property name="visible">True</property>
@@ -27722,7 +27722,7 @@ maintains its proportions.</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="-5">button1</action-widget>
+      <action-widget response="-5">btn_removeSBimage</action-widget>
       <action-widget response="-5">btn_image_ok</action-widget>
       <action-widget response="-6">btn_image_cancel</action-widget>
     </action-widgets>
@@ -28983,7 +28983,7 @@ technology, then enable this.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="c_fontFeatures">
+                  <object class="GtkButton" id="btn_fontFeatures">
                     <property name="label" translatable="yes">Select Features...</property>
                     <property name="name">Font Selection Dialog: Select font features</property>
                     <property name="visible">True</property>
@@ -32025,7 +32025,7 @@ of the chapter.</property>
   </object>
   <object class="GtkDialog" id="dlg_importSettings">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Import Settings Into Current Configuration...</property>
+    <property name="title" translatable="yes">PTXprint: Import Settings...</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
     <property name="type-hint">dialog</property>
     <property name="transient-for">ptxprint</property>
@@ -32041,12 +32041,13 @@ of the chapter.</property>
             <property name="margin-end">6</property>
             <property name="margin-top">3</property>
             <property name="margin-bottom">3</property>
+            <property name="hexpand">True</property>
             <child type="center">
               <object class="GtkLabel">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
                 <property name="hexpand">True</property>
-                <property name="width-chars">50</property>
+                <property name="width-chars">65</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -32063,7 +32064,7 @@ of the chapter.</property>
                 <property name="receives-default">True</property>
                 <property name="tooltip-text" translatable="yes">Warning!
 This will reset ALL the UI settings 
-for the current configuration to
+for the CURRENT configuration to
 their default values.
 
 Note that it will NOT reset the Style 
@@ -32134,33 +32135,40 @@ settings stored in the .sty files.</property>
             <property name="margin-bottom">6</property>
             <property name="orientation">vertical</property>
             <child>
-              <object class="GtkFrame">
+              <object class="GtkBox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label-xalign">0.029999999329447746</property>
+                <property name="spacing">6</property>
+                <property name="homogeneous">True</property>
                 <child>
-                  <object class="GtkAlignment">
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="left-padding">12</property>
+                    <property name="label-xalign">0.029999999329447746</property>
                     <child>
-                      <!-- n-columns=4 n-rows=5 -->
-                      <object class="GtkGrid">
+                      <object class="GtkAlignment">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="margin-start">6</property>
-                        <property name="margin-end">6</property>
-                        <property name="margin-bottom">12</property>
-                        <property name="row-spacing">6</property>
-                        <property name="column-spacing">6</property>
+                        <property name="left-padding">12</property>
                         <child>
-                          <object class="GtkRadioButton" id="r_impSource_pdf">
-                            <property name="label" translatable="yes">PDF file (with embedded settings) or ZIP archive file</property>
-                            <property name="name">Import: From existing PDF file or ZIP archive</property>
+                          <!-- n-columns=2 n-rows=5 -->
+                          <object class="GtkGrid">
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">It is possible to import settings from an
+                            <property name="can-focus">False</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">12</property>
+                            <property name="row-spacing">6</property>
+                            <property name="column-spacing">6</property>
+                            <child>
+                              <object class="GtkRadioButton" id="r_impSource_pdf">
+                                <property name="label" translatable="yes">PDF file (with embedded settings) or ZIP archive file</property>
+                                <property name="name">Import: From existing PDF file or ZIP archive</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">It is possible to import settings from an
 existing PDF file which was produced earlier
 by PTXprint. But this only works if the settings
 are embedded within the PDF. (This is enabled
@@ -32168,198 +32176,412 @@ on the Finishing tab).
 
 Importing from a PTXprint ZIP archive 
 (created on the Help tab) is also possible.</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="active">True</property>
-                            <property name="draw-indicator">True</property>
-                            <property name="group">r_impSource_config</property>
-                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">0</property>
-                            <property name="width">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="r_impSource_config">
-                            <property name="label" translatable="yes">A Previously Saved Configuration:</property>
-                            <property name="name">Import: From Saved Configuration</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">center</property>
-                            <property name="margin-top">8</property>
-                            <property name="draw-indicator">True</property>
-                            <property name="group">r_impSource_pdf</property>
-                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
-                            <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">2</property>
-                            <property name="width">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBox" id="fcb_impProject">
-                            <property name="name">Import: Project name</property>
-                            <property name="width-request">120</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="can-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Select the project from which the
-settings will be imported.</property>
-                            <property name="halign">start</property>
-                            <property name="model">ls_digprojects</property>
-                            <property name="wrap-width">1</property>
-                            <property name="has-entry">True</property>
-                            <property name="entry-text-column">0</property>
-                            <property name="id-column">0</property>
-                            <signal name="changed" handler="onimpProjectChanged" swapped="no"/>
-                            <child internal-child="entry">
-                              <object class="GtkEntry">
-                                <property name="can-focus">True</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="active">True</property>
+                                <property name="draw-indicator">True</property>
+                                <property name="group">r_impSource_config</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
                               </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                                <property name="width">2</property>
+                              </packing>
                             </child>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkComboBoxText" id="ecb_impConfig">
-                            <property name="name">Import: Project configuration</property>
-                            <property name="width-request">250</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Select a configuration from the
+                            <child>
+                              <object class="GtkRadioButton" id="r_impSource_config">
+                                <property name="label" translatable="yes">A Previously Saved Configuration:</property>
+                                <property name="name">Import: From Saved Configuration</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-top">8</property>
+                                <property name="draw-indicator">True</property>
+                                <property name="group">r_impSource_pdf</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="fcb_impProject">
+                                <property name="name">Import: Project name</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="can-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Select the project from which the
+settings will be imported.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="model">ls_digprojects</property>
+                                <property name="wrap-width">1</property>
+                                <property name="has-entry">True</property>
+                                <property name="entry-text-column">0</property>
+                                <property name="id-column">0</property>
+                                <signal name="changed" handler="onimpProjectChanged" swapped="no"/>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="can-focus">False</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="ecb_impConfig">
+                                <property name="name">Import: Project configuration</property>
+                                <property name="width-request">200</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select a configuration from the
 selected project from which the
 settings will be imported.</property>
-                            <property name="halign">start</property>
-                            <property name="active">0</property>
-                            <property name="active-id">0</property>
-                            <items>
-                              <item translatable="yes">(None)</item>
-                            </items>
-                            <signal name="changed" handler="onimpConfigChanged" swapped="no"/>
-                          </object>
-                          <packing>
-                            <property name="left-attach">2</property>
-                            <property name="top-attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_impProject">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Select the project from which the
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="active">0</property>
+                                <property name="active-id">0</property>
+                                <items>
+                                  <item translatable="yes">(None)</item>
+                                </items>
+                                <signal name="changed" handler="onimpConfigChanged" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_impProject">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select the project from which the
 settings will be imported.</property>
-                            <property name="halign">end</property>
-                            <property name="label" translatable="yes">Project:</property>
-                            <property name="justify">right</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="l_impConfig">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="tooltip-text" translatable="yes">Select a configuration from the
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Project:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_impConfig">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select a configuration from the
 selected project from which the
 settings will be imported.</property>
-                            <property name="halign">end</property>
-                            <property name="valign">center</property>
-                            <property name="label" translatable="yes">Configuration:</property>
-                            <property name="xalign">1</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">4</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="btn_impSource_pdf">
-                            <property name="label" translatable="yes">Select...</property>
-                            <property name="name">Select PDF to import settings from</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <property name="tooltip-text" translatable="yes">Select either a PTXprint PDF or ZIP archive
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Configuration:</property>
+                                <property name="xalign">1</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_impSource_pdf">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="ellipsize">middle</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#5e5e5c5c6464"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_impSource_pdf">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="name">Select PDF to import settings from</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Select either a PTXprint PDF or ZIP archive
 to import the settings from.
 
 Importing from a PDF will only work if the
 PDF contains the PTXprint configuration
 settings (as enabled on the Finishing tab).</property>
-                            <property name="halign">end</property>
-                            <property name="valign">center</property>
-                            <signal name="clicked" handler="onSelectPDForZIPfileToImport" swapped="no"/>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin-start">20</property>
+                                <signal name="clicked" handler="onSelectPDForZIPfileToImport" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
                           </object>
-                          <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lb_impSource_pdf">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="halign">start</property>
-                            <property name="valign">start</property>
-                            <property name="ellipsize">middle</property>
-                            <attributes>
-                              <attribute name="foreground" value="#5e5e5c5c6464"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
-                            <property name="width">3</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="width-request">60</property>
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="halign">start</property>
-                          </object>
-                          <packing>
-                            <property name="left-attach">0</property>
-                            <property name="top-attach">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                     </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Source of Settings</property>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
-                <child type="label">
-                  <object class="GtkLabel">
+                <child>
+                  <object class="GtkFrame">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="label" translatable="yes">Source of Settings</property>
+                    <property name="label-xalign">0.029999999329447746</property>
+                    <child>
+                      <object class="GtkAlignment">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="left-padding">12</property>
+                        <child>
+                          <!-- n-columns=3 n-rows=5 -->
+                          <object class="GtkGrid">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="margin-left">6</property>
+                            <property name="margin-right">6</property>
+                            <property name="margin-start">6</property>
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">12</property>
+                            <property name="row-spacing">6</property>
+                            <property name="column-spacing">6</property>
+                            <child>
+                              <object class="GtkRadioButton" id="r_impTarget_folder">
+                                <property name="label" translatable="yes">An External Folder of Settings</property>
+                                <property name="name">Extract settings to an external folder</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="tooltip-text" translatable="yes">Settings can be extracted to an external folder.
+
+This may be useful when examining settings from
+a different user, or when there is a need to recover
+lost settings from a known good PDF or Zip archive.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="draw-indicator">True</property>
+                                <property name="group">r_impTarget_prjcfg</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">0</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkRadioButton" id="r_impTarget_prjcfg">
+                                <property name="label" translatable="yes">A New/Existing Project and/or Configuration:</property>
+                                <property name="name">Import: From Saved Configuration</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="margin-top">8</property>
+                                <property name="draw-indicator">True</property>
+                                <property name="group">r_impTarget_folder</property>
+                                <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                <signal name="clicked" handler="setImportButtonOKsensitivity" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">2</property>
+                                <property name="width">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBox" id="ecb_targetProject">
+                                <property name="name">Import: Project name</property>
+                                <property name="width-request">120</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="can-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Select an existing project into which
+the settings will be imported.
+  OR
+Enter a NEW project name which
+causes a (temporary) project to be
+created in the normal Paratext folder.</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="model">ls_digprojects</property>
+                                <property name="wrap-width">1</property>
+                                <property name="has-entry">True</property>
+                                <property name="entry-text-column">0</property>
+                                <property name="id-column">0</property>
+                                <signal name="changed" handler="ontgtProjectChanged" swapped="no"/>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry">
+                                    <property name="can-focus">True</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">3</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_tgtProject">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select the project from which the
+settings will be imported.</property>
+                                <property name="halign">end</property>
+                                <property name="label" translatable="yes">Project:</property>
+                                <property name="justify">right</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">3</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="l_tgtConfig">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Select a configuration from the
+selected project from which the
+settings will be imported.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="label" translatable="yes">Configuration:</property>
+                                <property name="xalign">1</property>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="lb_tgtFolder">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">start</property>
+                                <property name="valign">center</property>
+                                <property name="ellipsize">middle</property>
+                                <attributes>
+                                  <attribute name="foreground" value="#5e5e5c5c6464"/>
+                                </attributes>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">1</property>
+                                <property name="width">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkButton" id="btn_tgtFolder">
+                                <property name="label" translatable="yes">Select...</property>
+                                <property name="name">Select target folder for extracted settings</property>
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="receives-default">True</property>
+                                <property name="tooltip-text" translatable="yes">Select a folder to save the settings in.
+This could be in a temporary location
+from where just the needed settings
+can be accessed and copied into the
+appropriate place of an existing config.</property>
+                                <property name="halign">end</property>
+                                <property name="valign">center</property>
+                                <property name="margin-left">20</property>
+                                <property name="margin-start">20</property>
+                                <signal name="clicked" handler="onSelectTargetFolderClicked" swapped="no"/>
+                              </object>
+                              <packing>
+                                <property name="left-attach">0</property>
+                                <property name="top-attach">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkComboBoxText" id="ecb_targetConfig">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="tooltip-text" translatable="yes">Choose a configuration from the
+selected project into which the
+settings will be imported.
+  OR
+Enter a NEW config name which
+causes a new configuration to be
+created for the current/new project.</property>
+                                <property name="active">0</property>
+                                <property name="has-entry">True</property>
+                                <property name="active-id">0</property>
+                                <items>
+                                  <item translatable="yes">Default</item>
+                                </items>
+                                <signal name="changed" handler="ontgtConfigChanged" swapped="no"/>
+                                <child internal-child="entry">
+                                  <object class="GtkEntry" id="t_targetConfig">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+
+Longer descriptions may be typed into
+the Notes field below.</property>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">4</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <placeholder/>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="label">
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Target</property>
+                      </object>
+                    </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -32598,6 +32820,7 @@ settings (as enabled on the Finishing tab).</property>
                 <child type="tab">
                   <object class="GtkCheckButton" id="c_impPictures">
                     <property name="label" translatable="yes">Pictures</property>
+                    <property name="name">Import Picture Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -32646,6 +32869,7 @@ column-layout, margins, header and footer, and related settings.</property>
                 <child type="tab">
                   <object class="GtkCheckButton" id="c_impLayout">
                     <property name="label" translatable="yes">Layout</property>
+                    <property name="name">Import Layout Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -32694,6 +32918,7 @@ settings. (Note: It will not alter any fonts that have been directly set within 
                 <child type="tab">
                   <object class="GtkCheckButton" id="c_impFontsScript">
                     <property name="label" translatable="yes">Fonts+Script</property>
+                    <property name="name">Import Fonts and Script Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -32766,6 +32991,7 @@ modified locally, then enable this option.</property>
                 <child type="tab">
                   <object class="GtkCheckButton" id="c_impStyles">
                     <property name="label" translatable="yes">Styles</property>
+                    <property name="name">Import Styles Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -32809,7 +33035,7 @@ modified locally, then enable this option.</property>
                       </packing>
                     </child>
                     <child>
-                      <!-- n-columns=4 n-rows=4 -->
+                      <!-- n-columns=6 n-rows=4 -->
                       <object class="GtkGrid" id="gr_impOther">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
@@ -32970,6 +33196,45 @@ and Customized Styles (custom.sty).</property>
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkSeparator">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="orientation">vertical</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">4</property>
+                            <property name="top-attach">0</property>
+                            <property name="height">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_oth_customScript">
+                            <property name="label" translatable="yes">Custom Script</property>
+                            <property name="visible">True</property>
+                            <property name="sensitive">False</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This includes the Custom Script processing
+defined on the Advanced tab.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">5</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
+                          <placeholder/>
+                        </child>
+                        <child>
                           <placeholder/>
                         </child>
                         <child>
@@ -32993,6 +33258,7 @@ and Customized Styles (custom.sty).</property>
                 <child type="tab">
                   <object class="GtkCheckButton" id="c_impOther">
                     <property name="label" translatable="yes">Other</property>
+                    <property name="name">Import Other Settings</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">False</property>
@@ -33005,6 +33271,58 @@ and Customized Styles (custom.sty).</property>
                   </object>
                   <packing>
                     <property name="position">4</property>
+                    <property name="tab-fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox" id="tb_impEverything">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="orientation">vertical</property>
+                    <child>
+                      <object class="GtkLabel">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="halign">end</property>
+                        <property name="valign">start</property>
+                        <property name="margin-left">20</property>
+                        <property name="margin-right">20</property>
+                        <property name="margin-start">20</property>
+                        <property name="margin-end">20</property>
+                        <property name="margin-top">15</property>
+                        <property name="margin-bottom">15</property>
+                        <property name="label" translatable="yes">This option is automatically enabled when the target 
+Project or Configuration does not already exist.</property>
+                        <property name="wrap">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">5</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkCheckButton" id="c_impEverything">
+                    <property name="label" translatable="yes">Everything</property>
+                    <property name="name">Import All Settings</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="receives-default">False</property>
+                    <property name="margin-left">6</property>
+                    <property name="margin-right">6</property>
+                    <property name="margin-start">20</property>
+                    <property name="margin-end">20</property>
+                    <property name="image-position">right</property>
+                    <property name="draw-indicator">True</property>
+                    <signal name="clicked" handler="onImportSegmentClicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="position">5</property>
                     <property name="tab-fill">False</property>
                   </packing>
                 </child>

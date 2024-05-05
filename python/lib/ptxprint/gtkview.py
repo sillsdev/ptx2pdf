@@ -213,12 +213,14 @@ fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name 
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
+r_impTarget_folder btn_tgtFolder
+r_impTarget_prjcfg l_tgtProject ecb_targetProject l_tgtConfig ecb_targetConfig t_targetConfig
 nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
-c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
+c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
 
 _ui_experimental = """
@@ -346,6 +348,9 @@ _sensitivities = {
     "r_impSource": {
         "r_impSource_pdf":     ["btn_impSource_pdf", "lb_impSource_pdf"],
         "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
+    "r_impTarget": {
+        "r_impTarget_folder":  ["btn_tgtFolder", "lb_tgtFolder"],
+        "r_impTarget_prjcfg":  ["ecb_targetProject", "ecb_targetConfig", "l_tgtProject", "l_tgtConfig", ]},
     "c_impPictures":           ["tb_impPictures"],
     "r_impPics": {
         "r_impPics_elements":  ["gr_picElements"]},
@@ -701,6 +706,7 @@ class GtkViewModel(ViewModel):
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
+        self.ecb_targetConfig = self.builder.get_object("ecb_targetConfig")
         for k, v in _object_classes.items():
             for a in v:
                 w = self.builder.get_object(a)
@@ -1787,11 +1793,21 @@ class GtkViewModel(ViewModel):
         if imprj is None:
             return
         impConfigs = self.getConfigList(imprj)
-        self.ecb_impConfig.remove_all()
         if len(impConfigs):
             for cfgName in sorted(impConfigs):
                 self.ecb_impConfig.append_text(cfgName)
             self.set("ecb_impConfig", "Default")
+
+    def updatetgtProjectConfigList(self):
+        self.ecb_targetConfig.remove_all()
+        tgtprj = self.get("ecb_targetProject")
+        if tgtprj is None:
+            return
+        tgtConfigs = self.getConfigList(tgtprj)
+        if len(tgtConfigs):
+            for cfgName in sorted(tgtConfigs):
+                self.ecb_targetConfig.append_text(cfgName)
+            self.set("ecb_targetConfig", "Default")
 
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
@@ -3702,6 +3718,19 @@ class GtkViewModel(ViewModel):
             if self.picListView is not None and self.picListView.picinfo is not None:
                 self.picListView.picinfo.build_searchlist()
                 self.picListView.onRadioChanged()
+                
+    def onSelectTargetFolderClicked(self, btn_tgtFolder):
+        targetFolder = self.fileChooser(_("Select a folder to extract the settings into"),
+                filters = None, multiple = False, folder = True)
+        if targetFolder is not None:
+            if len(targetFolder):
+                self.targetFolder = targetFolder[0]
+                self.set("lb_tgtFolder", str(targetFolder[0]))
+            else:
+                self.targetFolder = None
+                self.set("lb_tgtFolder", "")
+                self.builder.get_object("btn_tgtFolder").set_sensitive(False)
+        self.setImportButtonOKsensitivity(None)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
         folderattr = getattr(self, attr, None)
@@ -3739,13 +3768,26 @@ class GtkViewModel(ViewModel):
         name = Gtk.Buildable.get_name(w)[2:]
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
+        self.setImportButtonOKsensitivity(None)
 
     def setImportButtonOKsensitivity(self, w):
         status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
+                 (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') == "") or \
                  (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
-                                                           (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
-                                                            str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig')))))
-        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status)
+                 (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
+                  str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig'))))) or \
+                 (self.get('r_impTarget') == 'prjcfg' and (not len(self.get('ecb_targetProject')) or not len(self.get('ecb_targetConfig'))))
+        
+        # Also turn on Everything setting under certain conditions:
+        somethingON = False
+        turnONall = (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') != "")
+        if turnONall: # Or IF a new project/config combo is selected. MH please help FIX ME!
+            self.set("c_impEverything", turnONall)
+        for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']:
+            somethingON = somethingON or self.get("c_imp"+c, False)
+            self.builder.get_object("c_imp"+c).set_sensitive(not turnONall)
+
+        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status and somethingON)
 
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
@@ -3999,6 +4041,15 @@ class GtkViewModel(ViewModel):
         
     def onimpConfigChanged(self, btn):
         self.set("r_impSource", "config")
+        self.setImportButtonOKsensitivity(None)
+        
+    def ontgtProjectChanged(self, btn):
+        self.set("r_impTarget", "prjcfg")
+        self.updatetgtProjectConfigList()
+        self.setImportButtonOKsensitivity(None)
+        
+    def ontgtConfigChanged(self, btn):
+        self.set("r_impTarget", "prjcfg")
         self.setImportButtonOKsensitivity(None)
         
     def ondiglotSecProjectChanged(self, btn):
