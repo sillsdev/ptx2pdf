@@ -79,6 +79,7 @@ class ViewModel:
         "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "import/impsourcepdf":      ("impSourcePDF", False, "lb_impSource_pdf"),
+        "import/imptgtfolder":      ("impTargetFolder", False, "lb_tgtFolder"),
         "covergen/imagefile":       ("coverImage", False, "lb_coverImageFilename"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }

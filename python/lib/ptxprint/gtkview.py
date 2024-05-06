@@ -3790,6 +3790,8 @@ class GtkViewModel(ViewModel):
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
         self.setImportButtonOKsensitivity(None)
+        self.set("ecb_targetProject", self.prjid)
+        self.set("ecb_targetConfig", self.configName())
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             zipinf = None
@@ -3809,15 +3811,27 @@ class GtkViewModel(ViewModel):
                 zipdata = UnzipDir(dpath)
             else:
                 zipdata = None
-            if zipdata is not None:
-                self.importConfig(zipdata)
-                zipdata.close()
+            statMsg = None
+            if self.get("r_impTarget") == "folder" and zipdata is not None:
+                # outdir = self.get('lb_tgtFolder', None)
+                outdir = str(getattr(self, "impTargetFolder", None))
+                if outdir is not None:
+                    os.makedirs(outdir, exist_ok=True)
+                    zipdata.extractall(outdir)
+                    statMsg = _("Exported Settings to: {}").format(outdir)
+                else:
+                    statMsg = _("Undefined target folder. Could not export settings!")
+            elif zipdata is not None:
+                self.importConfig(zipdata, tgtPrj=self.get('ecb_targetProject',None), \
+                                           tgtCfg=self.get('ecb_targetConfig',None))
+                statMsg = _("Imported Settings")
             if zipinf is not None:
                 zipinf.close()
-            if self.get("c_impPictures"):
+            if self.get("c_impPictures") or self.get("c_impEverything"):  # MH - FIX ME!
                 self.updatePicList()
             self.onViewerChangePage(None, None, 0, forced=True)
-            self.doStatus(_("Imported Settings!"))
+            if statMsg is not None:
+                self.doStatus(statMsg)
         dialog.hide()
 
     def onResetCurrentConfigClicked(self, btn):
