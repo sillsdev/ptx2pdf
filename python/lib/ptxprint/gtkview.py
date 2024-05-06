@@ -387,7 +387,7 @@ _nonsensitivities = {
 _object_classes = {
     "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", 
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
@@ -401,7 +401,7 @@ _object_classes = {
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
-                    "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
+                    "btn_plGenerate", "btn_downloadPics", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", 
                     "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
 }
@@ -2539,8 +2539,8 @@ class GtkViewModel(ViewModel):
         super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
 
-    def onSavePicListEdits(self, btn):
-        self.savePics()
+    # def onSavePicListEdits(self, btn):
+        # self.savePics()
 
     def onSaveEdits(self, btn, pgid=None):
         if pgid is not None:
@@ -4472,11 +4472,11 @@ class GtkViewModel(ViewModel):
         page = nbk_PicList.get_nth_page(pgnum)
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
-        self.builder.get_object("bx_activeRefresh").set_visible(False)
+        # self.builder.get_object("bx_activeRefresh").set_visible(False)
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
         self.builder.get_object("fr_plChecklistFilter").set_visible(filterSensitive)
         self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
-        self.builder.get_object("bx_activeRefresh").set_visible(True)
+        # self.builder.get_object("bx_activeRefresh").set_visible(True)
         for w in _allcols:
             if w in _selcols[pgid]:
                 self.builder.get_object("col_{}".format(w)).set_visible(True)

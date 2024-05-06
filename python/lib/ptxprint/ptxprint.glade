@@ -13591,28 +13591,6 @@ picture. No confirmation will be asked for!</property>
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="btn_plSaveEdits">
-                                        <property name="label">gtk-save</property>
-                                        <property name="name">Save the PicList</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">PTXprint will save the PicList when you click
-on Print, but if you are doing a lot of work to
-manipulate the PicList and want to be sure to
-save your changes, then use this Save button
-from time to time.   Shortcut key: &lt;Ctrl-S&gt;</property>
-                                        <property name="use-stock">True</property>
-                                        <property name="always-show-image">True</property>
-                                        <signal name="clicked" handler="onSavePicListEdits" swapped="no"/>
-                                        <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                                      </object>
-                                      <packing>
-                                        <property name="left-attach">1</property>
-                                        <property name="top-attach">1</property>
-                                      </packing>
-                                    </child>
-                                    <child>
                                       <object class="GtkButton" id="btn_plGenerate">
                                         <property name="label" translatable="yes">Generate...</property>
                                         <property name="name">Generate the PicList</property>
@@ -13648,6 +13626,30 @@ will need to fill in all the details in the area below.</property>
                                       <packing>
                                         <property name="left-attach">0</property>
                                         <property name="top-attach">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_refreshCaptions">
+                                        <property name="label" translatable="yes">Refresh List</property>
+                                        <property name="name">Refresh (reload) picture captions from Paratext</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Refresh Captions:
+If you have edited the picture captions
+within the Paratext USFM files but those
+changes are not being reflected here, 
+then click this button to refresh the captions.
+
+Note that only the Captions and Verse Refs
+will be updated. All other size and position
+settings will remain unchanged.</property>
+                                        <property name="halign">start</property>
+                                        <signal name="clicked" handler="onUpdatePicCaptionsClicked" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="left-attach">1</property>
+                                        <property name="top-attach">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -13743,63 +13745,23 @@ any items that match.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkBox" id="bx_activeRefresh">
+                                  <object class="GtkCheckButton" id="c_filterPicList">
+                                    <property name="label" translatable="yes">Show Active Books</property>
+                                    <property name="name">Only show pictures used in the set of active books</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">end</property>
-                                    <child>
-                                      <object class="GtkCheckButton" id="c_filterPicList">
-                                        <property name="label" translatable="yes">Only Show
-Active Books</property>
-                                        <property name="name">Only show pictures in the active books</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">The details of ALL the pictures are stored in a single list.
-Select this option to only display the pictures from the
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">False</property>
+                                    <property name="tooltip-text" translatable="yes">Select this option to only display the pictures from the
 books that are currently in focus to be printed. 
 When unchecked, then the list will show pictures from
 ALL the books in the project that have been added to
 the PicList. If pictures of a certain book are missing, 
 then you may need to select that book and Generate
 the PicList details just for *that* book.</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">start</property>
-                                        <property name="draw-indicator">True</property>
-                                        <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                    <child>
-                                      <object class="GtkButton" id="btn_refreshCaptions">
-                                        <property name="label" translatable="yes">↺</property>
-                                        <property name="name">Refresh (reload) picture captions from Paratext</property>
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">True</property>
-                                        <property name="receives-default">True</property>
-                                        <property name="tooltip-text" translatable="yes">Refresh Captions:
-If you have edited the picture captions
-within the Paratext USFM files but those
-changes are not being reflected here, 
-then click this button to refresh the captions.
-
-Note that only the Captions and Verse Refs
-will be updated. All other size and position
-settings will remain unchanged.</property>
-                                        <property name="opacity">0.80</property>
-                                        <property name="halign">start</property>
-                                        <signal name="clicked" handler="onUpdatePicCaptionsClicked" swapped="no"/>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="fill">True</property>
-                                        <property name="position">1</property>
-                                      </packing>
-                                    </child>
+                                    <property name="halign">center</property>
+                                    <property name="valign">start</property>
+                                    <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onFilterPicListClicked" swapped="no"/>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -13817,6 +13779,31 @@ settings will remain unchanged.</property>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
                                     <property name="position">3</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkButton" id="btn_downloadPics">
+                                    <property name="label" translatable="yes">Download/Install Pics...</property>
+                                    <property name="name">Download Image Set (or install High Resolution images)</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">If you don't already have appropriate
+scripture illustrations, an Image Set 
+containing low-resolution illustrations
+for trial publications may be downloaded.
+
+Or if you have already downloaded a set
+of images, you can install them in an
+appropriate location using this feature.</property>
+                                    <property name="valign">end</property>
+                                    <signal name="clicked" handler="onImageSetClicked" swapped="no"/>
+                                    <accelerator key="s" signal="activate" modifiers="GDK_CONTROL_MASK"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">4</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -13876,7 +13863,7 @@ odd/right-hand page of a spread.</property>
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">False</property>
-                                    <property name="position">4</property>
+                                    <property name="position">5</property>
                                   </packing>
                                 </child>
                               </object>
@@ -14326,6 +14313,7 @@ PTXprint will also scan the selected folder
 (and all its sub-folders) looking for all the
 required illustrations in the Picture List.</property>
                                                     <property name="halign">start</property>
+                                                    <property name="valign">center</property>
                                                     <signal name="clicked" handler="onSelectFigureFolderClicked" swapped="no"/>
                                                   </object>
                                                   <packing>
@@ -31202,8 +31190,7 @@ publications from one of the links.</property>
             </child>
             <child>
               <object class="GtkButton" id="btn_requestIllustrations2">
-                <property name="label" translatable="yes">Request Publishing 
-Quality Illustrations... </property>
+                <property name="label" translatable="yes">Request Accesss... </property>
                 <property name="width-request">100</property>
                 <property name="visible">True</property>
                 <property name="can-focus">True</property>
