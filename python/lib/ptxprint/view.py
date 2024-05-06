@@ -1210,6 +1210,11 @@ class ViewModel:
     def editFile_delayed(self, *a):
         pass
 
+    def saveConfig(self):
+        self.writeConfig(force=force)
+        self.savePics(force=force)
+        self.saveStyles(force=force)
+
     def saveStyles(self, force=False):
         if not force and self.configLocked():
             return
@@ -1616,6 +1621,12 @@ class ViewModel:
         res.update(ptres)
         return (res, cfgchanges, tmpfiles)
 
+    def createView(self, prjid, cfgid):
+        res = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
+        res.setPrjid(prjid)
+        res.setConfigId(cfgid)
+        return res
+
     def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
         prjid = self.get("fcb_diglotSecProject")
@@ -1808,8 +1819,12 @@ set stack_size=32768""".format(self.configName())
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
 
-    def importConfig(self, fzip):
-        ''' Imports another config into this one based on import settings '''
+    def importConfig(self, fzip, tgtPrj=None, tgtCfg=None):
+        ''' Imports another config into this or another view, based on import settings '''
+        if tgtPrj != self.prjid or tgtCfg != self.configName():
+            view = self.createView(tgtPrj, tgtCfg)
+        else:
+            view = self
         # assemble list of categories to import from ptxprint.cfg
         hasOther = self.get("c_impOther")
         useCats = set()
@@ -1827,20 +1842,20 @@ set stack_size=32768""".format(self.configName())
         except (KeyError, FileNotFoundError):
             pass
         (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
-        self.loadingConfig = True
-        self.localiseConfig(config)
-        self.loadConfig(config, updatebklist=False, categories=useCats)
+        view.loadingConfig = True
+        view.localiseConfig(config)
+        view.loadConfig(config, updatebklist=False, categories=useCats)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
         grabfront = False
         if config.get("fancy", "enableOrnaments", fallback=False):
-            self.set("c_useOrnaments", True)
+            view.set("c_useOrnaments", True)
         exclfields = None if self.get("c_impFontsScripts") else \
                 ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
 
         # import pictures according to import settings
         if self.get("c_impPictures"):
-            otherpics = PicInfo(self.picinfos.model)
+            otherpics = PicInfo(view.picinfos.model)        # will this work for a new view?
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
                 with zipopentext(fzip, picfile) as inf:
@@ -1848,7 +1863,7 @@ set stack_size=32768""".format(self.configName())
             except (KeyError, FileNotFoundError) as e:
                 pass
             if self.get("r_impPics") == "entire":
-                self.picinfos = otherpics
+                view.picinfos = otherpics
             else:
                 fields = set()
                 for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
@@ -1857,8 +1872,8 @@ set stack_size=32768""".format(self.configName())
                             fields.add(f)
                 addNewPics = self.get("c_impPicsAddNew")
                 delOldPics = self.get("c_impPicsDelOld")
-                self.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
-            self.picinfos.out(os.path.join(self.configPath(self.configName()), "{}-{}.piclist".format(self.prjid, self.configName())))
+                view.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
+            view.picinfos.out(os.path.join(view.configPath(self.configName()), "{}-{}.piclist".format(view.prjid, view.configName())))
 
         # merge ptxprint.sty adding missing
         if self.get("c_impStyles") or self.get("c_oth_Cover"):
@@ -1869,12 +1884,12 @@ set stack_size=32768""".format(self.configName())
             except (KeyError, FileNotFoundError):
                 pass
             if self.get("c_impStyles"):
-                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+                view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
 
         if self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
             if config.getboolean("project", "ifusemodssty", fallback=False):
-                localmodsty = os.path.join(self.configPath(self.configName()), "ptxprint-mods.sty")
+                localmodsty = os.path.join(view.configPath(view.configName()), "ptxprint-mods.sty")
                 try:
                     zipsty = zipopentext(fzip, "ptxprint-mods.sty")
                 except (KeyError, FileNotFoundError):
@@ -1904,8 +1919,8 @@ set stack_size=32768""".format(self.configName())
                     zipmod = zipopentext(fzip, a[1])
                 except (KeyError, FileNotFoundError):
                     continue
-                localmod = os.path.join(self.configPath(self.configName()), a[1])
-                mode = "a" if self.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                localmod = os.path.join(view.configPath(view.configName()), a[1])
+                mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
                 with open(localmod, mode, encoding="utf-8") as outf:
                     outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
@@ -1915,16 +1930,16 @@ set stack_size=32768""".format(self.configName())
         # merge cover and import has cover
         if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
             # self.set("c_useSectIntros", True)
-            self.set("c_useOrnaments", True)
+            view.set("c_useOrnaments", True)
             # override cover styles
-            allstyles = self.styleEditor.allStyles()
+            allstyles = view.styleEditor.allStyles()
             for k, v in newse.sheet.items():
                 if k.startswith("cat:cover"):
                     if k not in allstyles:
-                        self.styleEditor.addMarker(k, v['Name'])
+                        view.styleEditor.addMarker(k, v['Name'])
                     for a in v.keys():
                         if exclfields is None or k not in exclfields:
-                            self.styleEditor.setval(k, a, newse.getval(k, a))
+                            view.styleEditor.setval(k, a, newse.getval(k, a))
             grabfront = True
             
         if self.get("c_oth_FrontMatter"):
@@ -1942,7 +1957,7 @@ set stack_size=32768""".format(self.configName())
                                 m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                                 if m:
                                     if periphcapture is not None:
-                                        self.periphs[periphid] = "".join(periphcapture)
+                                        view.periphs[periphid] = "".join(periphcapture)
                                     fullname = m.group(1).strip().lower()
                                     periphid = m.group(2) or _periphids.get(fullname, fullname)
                                     if periphid.startswith("cover") and self.get("c_oth_Cover"):
@@ -1955,8 +1970,8 @@ set stack_size=32768""".format(self.configName())
                             elif periphcapture is not None:
                                 periphcapture.append(l)
                         if periphcapture is not None:
-                            self.periphs[periphid] = "".join(periphcapture)
-                self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
+                            view.periphs[periphid] = "".join(periphcapture)
+                view.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
             except (KeyError, FileNotFoundError):
                 pass
 
@@ -1967,7 +1982,7 @@ set stack_size=32768""".format(self.configName())
                 return
             for v in allvars:
                 if v not in self.pubvarlist:
-                    self.setvar(v, config.get("vars", v))
+                    view.setvar(v, config.get("vars", v))
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

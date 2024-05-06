@@ -1651,9 +1651,7 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
-        self.writeConfig(force=force)
-        self.savePics(force=force)
-        self.saveStyles(force=force)
+        self.saveConfig()
         self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
