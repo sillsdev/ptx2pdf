@@ -1623,6 +1623,7 @@ class ViewModel:
         return (res, cfgchanges, tmpfiles)
 
     def createView(self, prjid, cfgid):
+        # import pdb; pdb.set_trace()
         res = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
         res.setPrjid(prjid)
         res.setConfigId(cfgid)
@@ -1983,8 +1984,9 @@ set stack_size=32768""".format(self.configName())
             except configparser.NoSectionError:
                 return
             for v in allvars:
-                if v not in view.pubvarlist:
+                if v not in getattr(view, 'pubvarlist', []):
                     view.setvar(v, config.get("vars", v))
+        view.saveConfig()
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

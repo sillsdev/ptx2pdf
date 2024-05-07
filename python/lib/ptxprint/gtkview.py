@@ -3843,7 +3843,8 @@ class GtkViewModel(ViewModel):
                     tc = self.get('ecb_targetConfig',  None)
                     self.importConfig(zipdata, tgtPrj=tp, \
                                                tgtCfg=tc)
-                    self.updateAllConfigLists()
+                    if tp == self.prjid:
+                        self.updateAllConfigLists()
                     statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
                 zipdata.close()
             if zipinf is not None:
