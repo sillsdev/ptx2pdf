@@ -150,7 +150,7 @@
         {
           "Type": "insert",
           "Label": "\\zNeedEvenPage",
-          "Description": "Insert an “empty” page if the current page is off"
+          "Description": "Insert an “empty” page if the current page is odd"
         },
         {
           "Type": "insert",

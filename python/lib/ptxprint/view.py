@@ -1843,7 +1843,7 @@ set stack_size=32768""".format(self.configName())
                 config.read_file(inf)
         except (KeyError, FileNotFoundError):
             pass
-        (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
+        (oldversion, forcerewrite) = view.versionFwdConfig(config, None)
         view.loadingConfig = True
         view.localiseConfig(config)
         view.loadConfig(config, updatebklist=False, categories=useCats)
@@ -1879,7 +1879,7 @@ set stack_size=32768""".format(self.configName())
 
         # merge ptxprint.sty adding missing
         if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
-            newse = StyleEditor(self)
+            newse = StyleEditor(view)
             try:
                 with zipopentext(fzip, "ptxprint.sty") as inf:
                     newse.loadfh(inf, base="")
@@ -1983,7 +1983,7 @@ set stack_size=32768""".format(self.configName())
             except configparser.NoSectionError:
                 return
             for v in allvars:
-                if v not in self.pubvarlist:
+                if v not in view.pubvarlist:
                     view.setvar(v, config.get("vars", v))
 
     def updateThumbLines(self):
