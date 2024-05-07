@@ -4,6 +4,7 @@ import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
+from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
@@ -666,6 +667,17 @@ class UnzipDir:
         with open(os.path.join(self.filename, name), 'r') as inf:
             res = inf.read()
         return res
+
+    def extract(self, member, path=None, pwd=None):
+        copy2(os.path.join(os.filename, member), os.path.join(path, member) if path is not None else member)
+
+    def extractall(self, path=None, members=None, pwd=None):
+        for dp, dn, fn in os.walk(self.filename):
+            for f in fn:
+                fp = os.path.join(dp, f)
+                if members is not None and fp not in members:
+                    continue
+                self.extract(fp, path=path)
 
     def close(self):
         pass
