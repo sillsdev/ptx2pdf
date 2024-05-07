@@ -3859,15 +3859,14 @@ the Notes field below.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click this to open the Import Settings dialog
-where you may select various options to import 
-settings from other PDFs, ZIP archives or from 
-a different project configuration into the current
-configuration.
+                                    <property name="tooltip-text" translatable="yes">Open the Import Settings dialog to select options 
+for importing settings from other PDFs, ZIP archives, 
+or different project configurations.
 
-Warning! This may overwrite some settings, so it
-is advisable to create a different Configuration
-first into which the settings can be imported.</property>
+By default, imported settings are applied to the 
+current project and configuration. However, you 
+can also choose to import them into other projects 
+or export them to an external folder.</property>
                                     <property name="halign">start</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
@@ -32284,9 +32283,10 @@ settings will be imported.</property>
                               <object class="GtkLabel" id="lb_impSource_pdf">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="ellipsize">middle</property>
+                                <property name="single-line-mode">True</property>
+                                <property name="max-width-chars">40</property>
                                 <attributes>
                                   <attribute name="foreground" value="#5e5e5c5c6464"/>
                                 </attributes>
@@ -32478,6 +32478,7 @@ settings will be imported.</property>
                                 <property name="halign">start</property>
                                 <property name="valign">center</property>
                                 <property name="ellipsize">middle</property>
+                                <property name="max-width-chars">40</property>
                                 <attributes>
                                   <attribute name="foreground" value="#5e5e5c5c6464"/>
                                 </attributes>
@@ -33116,8 +33117,8 @@ modified locally, then enable this option.</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">3</property>
+                            <property name="left-attach">5</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -33202,14 +33203,18 @@ and Customized Styles (custom.sty).</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
                             <property name="tooltip-text" translatable="yes">This includes the Custom Script processing
-defined on the Advanced tab.</property>
+defined on the Advanced tab.
+
+Note that it is not possible to extract a
+custom script from a PDF file, which is
+why this option is sometimes disabled.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
                             <property name="left-attach">5</property>
-                            <property name="top-attach">0</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>

@@ -219,7 +219,7 @@ nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impCon
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
 gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
-c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
+c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
 
@@ -385,7 +385,8 @@ _nonsensitivities = {
 }
 
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
+                    "btn_refreshCaptions"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
     "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
                     "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
@@ -1651,7 +1652,7 @@ class GtkViewModel(ViewModel):
         self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
-        self.saveConfig()
+        self.saveConfig(force=force)
         self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
@@ -1806,7 +1807,13 @@ class GtkViewModel(ViewModel):
             for cfgName in sorted(tgtConfigs):
                 self.ecb_targetConfig.append_text(cfgName)
             self.set("ecb_targetConfig", "Default")
-
+            
+    def updateAllConfigLists(self):
+        self.updateSavedConfigList()
+        self.updateimpProjectConfigList()
+        self.updatetgtProjectConfigList()
+        self.updateDiglotConfigList()
+    
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
         if clearvars:
@@ -2123,6 +2130,7 @@ class GtkViewModel(ViewModel):
         newpics.threadUsfms(self, pref, nosave=True)
         self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True, captionpre="")
         self.updatePicList()
+        self.doStatus(_("Done! Picture Captions have been updated."))
 
     def onGeneratePicListClicked(self, btn):
         bks2gen = self.getBooks()
@@ -3718,14 +3726,14 @@ class GtkViewModel(ViewModel):
                 self.picListView.onRadioChanged()
                 
     def onSelectTargetFolderClicked(self, btn_tgtFolder):
-        targetFolder = self.fileChooser(_("Select a folder to extract the settings into"),
+        impTargetFolder = self.fileChooser(_("Select a folder to extract the settings into"),
                 filters = None, multiple = False, folder = True)
-        if targetFolder is not None:
-            if len(targetFolder):
-                self.targetFolder = targetFolder[0]
-                self.set("lb_tgtFolder", str(targetFolder[0]))
+        if impTargetFolder is not None:
+            if len(impTargetFolder):
+                self.impTargetFolder = impTargetFolder[0]
+                self.set("lb_tgtFolder", str(impTargetFolder[0]))
             else:
-                self.targetFolder = None
+                self.impTargetFolder = None
                 self.set("lb_tgtFolder", "")
                 self.builder.get_object("btn_tgtFolder").set_sensitive(False)
         self.setImportButtonOKsensitivity(None)
@@ -3772,9 +3780,11 @@ class GtkViewModel(ViewModel):
         status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
                  (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') == "") or \
                  (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
-                 (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
-                  str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig'))))) or \
+                 (str(self.get('fcb_impProject')) == str(self.get("ecb_targetProject")) and \
+                  str(self.get('ecb_impConfig'))  == str(self.get('ecb_targetConfig'))))) or \
                  (self.get('r_impTarget') == 'prjcfg' and (not len(self.get('ecb_targetProject')) or not len(self.get('ecb_targetConfig'))))
+                 # (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
+                 #  str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig'))) or \
         
         # Also turn on Everything setting under certain conditions:
         somethingON = False
@@ -3784,6 +3794,14 @@ class GtkViewModel(ViewModel):
         for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']:
             somethingON = somethingON or self.get("c_imp"+c, False)
             self.builder.get_object("c_imp"+c).set_sensitive(not turnONall)
+        
+        # The Custom Script file is NOT stored in a PDF file, so don't offer importing it as an option
+        fname = str(getattr(self, "impSourcePDF", None))
+        cstmScr = self.builder.get_object("c_oth_customScript")
+        csStat = self.get("r_impSource") == "pdf" and fname.endswith(".pdf")
+        cstmScr.set_sensitive(not csStat)
+        if csStat:
+            cstmScr.set_active(False)
 
         self.builder.get_object("btn_importSettingsOK").set_sensitive(not status and somethingON)
 
@@ -3796,7 +3814,6 @@ class GtkViewModel(ViewModel):
         if response == Gtk.ResponseType.OK:
             zipinf = None
             if self.get("r_impSource") == "pdf":
-                # fname = self.get("lb_impSource_pdf")
                 fname = str(getattr(self, "impSourcePDF", None))
                 if fname.endswith(".pdf"):
                     confstream = getPDFconfig(fname)
@@ -3813,7 +3830,6 @@ class GtkViewModel(ViewModel):
                 zipdata = None
             statMsg = None
             if self.get("r_impTarget") == "folder" and zipdata is not None:
-                # outdir = self.get('lb_tgtFolder', None)
                 outdir = str(getattr(self, "impTargetFolder", None))
                 if outdir is not None:
                     os.makedirs(outdir, exist_ok=True)
@@ -3822,9 +3838,12 @@ class GtkViewModel(ViewModel):
                 else:
                     statMsg = _("Undefined target folder. Could not export settings!")
             elif zipdata is not None:
-                self.importConfig(zipdata, tgtPrj=self.get('ecb_targetProject',None), \
-                                           tgtCfg=self.get('ecb_targetConfig',None))
-                statMsg = _("Imported Settings")
+                tp = self.get('ecb_targetProject', None)
+                tc = self.get('ecb_targetConfig',  None)
+                self.importConfig(zipdata, tgtPrj=tp, \
+                                           tgtCfg=tc)
+                self.updateAllConfigLists()
+                statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
             if zipinf is not None:
                 zipinf.close()
             if self.get("c_impPictures") or self.get("c_impEverything"):  # MH - FIX ME!
