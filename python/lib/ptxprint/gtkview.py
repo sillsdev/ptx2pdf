@@ -3829,21 +3829,23 @@ class GtkViewModel(ViewModel):
             else:
                 zipdata = None
             statMsg = None
-            if self.get("r_impTarget") == "folder" and zipdata is not None:
-                outdir = str(getattr(self, "impTargetFolder", None))
-                if outdir is not None:
-                    os.makedirs(outdir, exist_ok=True)
-                    zipdata.extractall(outdir)
-                    statMsg = _("Exported Settings to: {}").format(outdir)
+            if zipdata is not None:
+                if self.get("r_impTarget") == "folder":
+                    outdir = str(getattr(self, "impTargetFolder", None))
+                    if outdir is not None:
+                        os.makedirs(outdir, exist_ok=True)
+                        zipdata.extractall(outdir)
+                        statMsg = _("Exported Settings to: {}").format(outdir)
+                    else:
+                        statMsg = _("Undefined target folder. Could not export settings!")
                 else:
-                    statMsg = _("Undefined target folder. Could not export settings!")
-            elif zipdata is not None:
-                tp = self.get('ecb_targetProject', None)
-                tc = self.get('ecb_targetConfig',  None)
-                self.importConfig(zipdata, tgtPrj=tp, \
-                                           tgtCfg=tc)
-                self.updateAllConfigLists()
-                statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
+                    tp = self.get('ecb_targetProject', None)
+                    tc = self.get('ecb_targetConfig',  None)
+                    self.importConfig(zipdata, tgtPrj=tp, \
+                                               tgtCfg=tc)
+                    self.updateAllConfigLists()
+                    statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
+                zipdata.close()
             if zipinf is not None:
                 zipinf.close()
             if self.get("c_impPictures") or self.get("c_impEverything"):  # MH - FIX ME!
