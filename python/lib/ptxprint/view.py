@@ -1829,13 +1829,16 @@ set stack_size=32768""".format(self.configName())
             view = self
         # assemble list of categories to import from ptxprint.cfg
         impAll = self.get("c_impEverything", False)
-        hasOther = impAll or self.get("c_impOther")
+        hasOther = self.get("c_impOther")
         useCats = set()
         for k, v in ImportCategories.items():
-            if not hasOther and k.startswith("c_oth_"):
-                continue
-            if self.get(k):
+            if impAll:
                 useCats.add(v)
+            else:
+                if not hasOther and k.startswith("c_oth_"):
+                    continue
+                if self.get(k):
+                    useCats.add(v)
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
@@ -1847,6 +1850,8 @@ set stack_size=32768""".format(self.configName())
         (oldversion, forcerewrite) = view.versionFwdConfig(config, None)
         view.loadingConfig = True
         view.localiseConfig(config)
+        # loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, 
+        #            lock=False, clearvars=True, categories=None)
         view.loadConfig(config, updatebklist=False, categories=useCats)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
@@ -1916,16 +1921,18 @@ set stack_size=32768""".format(self.configName())
                       ("project/ifusemodstex", "ptxprint-mods.tex", "%"),
                       ("project/ifusepremodstex", "ptxprint-premods.tex", "%")):
                 configb = a[0].split("/")
-                if not config.getboolean(*configb, fallback=False):
+                if not impAll and not config.getboolean(*configb, fallback=False):
                     continue
                 try:
                     zipmod = zipopentext(fzip, a[1])
                 except (KeyError, FileNotFoundError):
+                    print(f"Maybe KeyError; more likely just ignoring missing file: {a[1]}")
                     continue
                 localmod = os.path.join(view.configPath(view.configName()), a[1])
                 mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
                 with open(localmod, mode, encoding="utf-8") as outf:
-                    outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
+                    if fzip.filename is not None:
+                        outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
                 zipmod.close()

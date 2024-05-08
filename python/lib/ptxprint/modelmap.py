@@ -439,7 +439,6 @@ _map = {
     "thumbtabs/length":         ("s_thumblength", "tabsborders", None),
     "thumbtabs/height":         ("s_thumbheight", "tabsborders", None),
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
-    "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/rotate":         ("c_thumbrotate", "tabsborders", None),
     "thumbtabs/tabsoddonly":    ("c_tabsOddOnly", "tabsborders", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", "tabsborders", None),
