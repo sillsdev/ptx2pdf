@@ -553,8 +553,8 @@
 \def\GraphPaperXoffset{0.0cm}
 \def\GraphPaperYoffset{0.0cm}
 \def\GraphPaperMajorDiv{5} % How many minor divisions are there between major ones?
-\def\GraphPaperLineMajor{0.3pt}
-\def\GraphPaperLineMinor{0.1pt}
+\def\GraphPaperLineMajor{0.4pt}
+\def\GraphPaperLineMinor{0.25pt}
 \def\GraphPaperColMajor{0.8 1.0 0.8} % Colour (R G B)
 \def\GraphPaperColMinor{0.9 1.0 1.0} % Colour (R G B)
 \def\GridPaperLineMajor{0.6pt}
@@ -728,9 +728,9 @@
     \else\dimen2=0pt \fi
     \divide\dimen2 by 2
     \ifdiglot
-      \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \if R\g@tterside  * -1\fi\fi \ifdiglotSwap *-1\fi\relax
+      \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1\fi\fi \ifdiglotSwap *-1\fi\relax
         \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
-      \MSG{side \the\pageno, gs:\g@tterside, t:\tmp}%
+      \MSG{side \the\pageno, gs:\g@tterside, at:\atmp}%
       \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
     \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
