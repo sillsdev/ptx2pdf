@@ -29,6 +29,13 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 <fontconfig>
     {fontsdirs}
     <cachedir prefix="xdg">fontconfig</cachedir>
+    <selectfont>
+        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont>
+    </selectfont>
 </fontconfig>
 """
 
