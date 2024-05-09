@@ -357,6 +357,7 @@ _sensitivities = {
     "c_impOther":              ["gr_impOther"],
     "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
     "c_oth_Cover":             ["c_oth_OverwriteFrtMatter"],
+    "c_impEverything":         ["c_impPictures", "c_impLayout", "c_impFontsScript", "c_impStyles", "c_impOther"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],

@@ -33022,14 +33022,14 @@ modified locally, then enable this option.</property>
                       </packing>
                     </child>
                     <child>
-                      <!-- n-columns=6 n-rows=4 -->
+                      <!-- n-columns=8 n-rows=4 -->
                       <object class="GtkGrid" id="gr_impOther">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
                         <property name="margin-top">3</property>
                         <property name="row-spacing">3</property>
-                        <property name="column-spacing">20</property>
+                        <property name="column-spacing">15</property>
                         <child>
                           <object class="GtkSeparator">
                             <property name="visible">True</property>
@@ -33071,7 +33071,7 @@ modified locally, then enable this option.</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
-                            <property name="top-attach">1</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -33087,7 +33087,7 @@ modified locally, then enable this option.</property>
                           </object>
                           <packing>
                             <property name="left-attach">1</property>
-                            <property name="top-attach">2</property>
+                            <property name="top-attach">1</property>
                           </packing>
                         </child>
                         <child>
@@ -33117,7 +33117,7 @@ modified locally, then enable this option.</property>
                           </object>
                           <packing>
                             <property name="left-attach">5</property>
-                            <property name="top-attach">2</property>
+                            <property name="top-attach">3</property>
                           </packing>
                         </child>
                         <child>
@@ -33134,13 +33134,13 @@ and Customized Styles (custom.sty).</property>
                             <property name="draw-indicator">True</property>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
-                            <property name="top-attach">1</property>
+                            <property name="left-attach">5</property>
+                            <property name="top-attach">0</property>
                           </packing>
                         </child>
                         <child>
                           <object class="GtkLabel">
-                            <property name="width-request">60</property>
+                            <property name="width-request">30</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
@@ -33162,7 +33162,7 @@ and Customized Styles (custom.sty).</property>
                             <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">3</property>
+                            <property name="left-attach">5</property>
                             <property name="top-attach">2</property>
                           </packing>
                         </child>
@@ -33178,8 +33178,8 @@ and Customized Styles (custom.sty).</property>
                             <signal name="clicked" handler="onCoverFrontBackClicked" swapped="no"/>
                           </object>
                           <packing>
-                            <property name="left-attach">1</property>
-                            <property name="top-attach">3</property>
+                            <property name="left-attach">3</property>
+                            <property name="top-attach">2</property>
                           </packing>
                         </child>
                         <child>
@@ -33207,6 +33207,78 @@ defined on the Advanced tab.
 Note that it is not possible to extract a
 custom script from a PDF file, which is
 why this option is sometimes disabled.</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">7</property>
+                            <property name="top-attach">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_oth_Decorate">
+                            <property name="label" translatable="yes">Text Decorations</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">3</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_oth_Variables">
+                            <property name="label" translatable="yes">Variables + Meta Data</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">3</property>
+                            <property name="top-attach">3</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSeparator">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="orientation">vertical</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">6</property>
+                            <property name="top-attach">0</property>
+                            <property name="height">4</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_oth_Texpert">
+                            <property name="label" translatable="yes">Texpert Hacks</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
+                            <property name="halign">start</property>
+                            <property name="valign">center</property>
+                            <property name="draw-indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="left-attach">7</property>
+                            <property name="top-attach">1</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="c_oth_Finish">
+                            <property name="label" translatable="yes">Finishing settings</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
