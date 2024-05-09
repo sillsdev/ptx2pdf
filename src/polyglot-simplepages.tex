@@ -303,27 +303,7 @@
   \x@\each@col\diglot@list\E
 }
 
-\def\@do@jointcalc@simplepages{%
-    % step 1: max height of the last box 
-    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
-    \dimen1=0pt
-    \let\col@do=\max@val
-    \x@\each@col\diglot@list\E % Find height of lastchunk
-    \edef\@maxht{\the\dimen1}%
-    %\let\col@do=\delta@val\def\v@lopfx{@}\def\v@losfx{egap}%
-    %\x@\each@col\diglot@list\E % Find 'skip' after each chunk
-    \dimen1=0pt
-    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
-    \let\col@do=\max@val
-    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
-    \edef\@maxb@seline{\the\dimen1}%
-    \dimen1=0pt
-    % step 2: position of the ideal next baseline (below last box)
-    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
-    \let\col@do=\maxjoint@val
-    \x@\each@col\cts@list\E
-    \trace{dP}{do@joint@calc : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1}%
-}
+\let\@do@jointcalc@simplepages\@do@jointcalc@simplecols
 
 \def\@preswap@simplepages#1{%
   \let\log@ut\empty\def\v@lpfx{}\def\v@lsfx{box}%

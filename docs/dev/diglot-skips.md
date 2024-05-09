@@ -61,3 +61,15 @@ This should be *added* at the top of the page. At the top of a normal page,
 `\baselineskip` should be added.
 
 
+Some dependencies:
+
+thisjointDelta= ([maxjoint@val] - @maxht - @maxb@seline), or 0pt if that's <0pt
+  maxjoint@val returns max(curXht-b@selineskipX)
+  @maxb@seline= max(b@selineskipX) (per-column values set by s@tb@dyb@seline, but this only checks columns with content) 
+  @maxht = max (@curXht)
+    @curXht values set by set@ht, taking on values of @nxtchunkXht
+      set@ht is called from @after@add@n@xtpartial@...
+      iftemp is set (by check@nxtht- also from @after@add@n@xtpartial@...)  if there's a non height=0 box, and alters set@ht behaviour to also include max(nxtht) in curXht. TESTME: the logic looks a bit odd if there's a blank column, then - curXht for maxXht column ends up as 2x old value.
+
+  
+
