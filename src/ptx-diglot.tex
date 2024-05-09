@@ -54,6 +54,8 @@
 \newif\ifunprintable % The 'correct' logic results in a page that won't fit. Something breaks.
 \newif\ifdiglotDebugFollowContents% Fill the log with showboxes
 \newif\ifdiglotcolh@scontent % Set false at start of column, made true by \everyparhooks
+\newif\ifdiglot@pos@top % Set if the current chunk is at the top of the page.
+\newif\ifdiglot@ecols % set if there are any empty columns
 \addtoeveryparhooks{\global\diglotcolh@scontenttrue}
 \useLeftMarkstrue
 \useRightMarkstrue
@@ -341,11 +343,20 @@
    \global\advance\availht by -\ht\n@xtpartial\relax %
    \global\advance\availht by -\dp\n@xtpartial\relax %
    \trace{Dh}{after part1:\the\availht}%
-   \ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
-     %\global\advance\availht by -\baselineDelta\relax%
-   \else
-     \global\advance\availht by +\baselineDelta\relax%
+   \ifcsname @nxtchunkLht\endcsname
+     {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
+       \x@\def\x@\tmsg\x@{\tmsg}%
+       \trace{Dh}{dglt@calc@vailht: \tmsg}
+     }%
+     \ifcsname cts@list\endcsname \else\let\cts@list\diglot@list\fi
+     \csname @do@jointcalc@\diglotlayout\endcsname{@nxtchunk}%
+     \global\advance\availht by -\thisjointDelta \relax%
    \fi
+   %\ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
+     %%\global\advance\availht by -\baselineDelta\relax%
+   %\else
+     %\global\advance\availht by +\baselineDelta\relax%
+   %\fi
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
@@ -848,7 +859,7 @@
     \showbox255
   \fi
   \ifm@rksonpage\else
-    \tempfalse{
+    \tempfalse{%
     \ifvoid\trialbox %This is the 1st box
       \setbox0\copy255
     \else
@@ -1398,6 +1409,12 @@
   \let\col@do=\lAd@do
 }
 
+\let\@lApfx\relax
+\let\@lAsfx\relax
+\def\@l@gvals#1{\edef\tmsg{\tmsg\space#1: \the\dimexpr \csname \@lApfx #1\@lAsfx\endcsname\relax}}
+\def\l@gvals#1#2{\def\@lApfx{#1}\def\@lAsfx{#2}\let\col@do=\@l@gvals
+    \x@\each@col\diglot@list\E
+}
 \def\joinboxes#1#2#3#4{%Join 2 vtops together and preserve baselineskip%
  \traceNum{d}{joinboxes #1(\l@gdims{#1}) #2(\l@gdims{#2}) called from locn #3, with penalty #4}%
  \ifnum\TRACEcount=\diglotDbgJoinboxes
@@ -1553,24 +1570,39 @@
   %\columnRwidth=\DiglotRightFraction\dimen0
 }
 
-\def\@do@jointcalc@simplecols{%
+\def\@do@jointcalc@simplecols#1{%
+    % step 0 what maxbaselineskip applies?
+    {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht}\ifcsname @nxtchunkLht\endcsname \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}\fi%
+    \x@\def\x@\tmsg\x@{\tmsg}%
+    \trace{dP}{do@joint@calc: \tmsg}
+    }%
+    \dimen1=0pt
+    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
+    \let\col@do=\max@val
+    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text WHICH ARE ACTIVE. I.e. yes it does need to be here.
+    \edef\@maxb@seline{\the\dimen1}%
     % step 1: max height of the last box 
-    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
+    \def\v@lpfx{#1}\def\v@lsfx{ht}%
     \dimen1=0pt
     \let\col@do=\max@val
     \x@\each@col\diglot@list\E % Find height of lastchunk
     \edef\@maxht{\the\dimen1}%
     \dimen1=0pt
-    \def\v@lpfx{b@selineskip}\def\v@lsfx{}%
-    \let\col@do=\max@val
-    \x@\each@col\cts@list\E % Find biggest baseline skip of those bits of text which are active.
-    \edef\@maxb@seline{\the\dimen1}%
-    \dimen1=0pt
     % step 2: position of the ideal next baseline (below last box)
-    \def\v@lpfx{@cur}\def\v@lsfx{ht}%
     \let\col@do=\maxjoint@val
     \x@\each@col\cts@list\E
-    \trace{dP}{do@joint@calc : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1}%
+    \thisjointDelta=0pt %Do we need extra space?
+    \ifdim\dimen1>0pt
+      \thisjointDelta=\dimen1
+      \advance\thisjointDelta by -\@maxht\relax
+    %  \advance\thisjointDelta by -\topskip %remove topskip 
+      \advance\thisjointDelta by -\@maxb@seline\relax
+      \ifdim \thisjointDelta > \@maxb@seline  %sanity check
+        \trace{d}{Unacceptable jointDelta (\the\thisjointDelta > \@maxb@seline) reduced to 0pt}%
+        \thisjointDelta=0pt
+      \fi
+    \fi
+    \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 jd:\space\the\thisjointDelta}%
 }
 
 \def\@prepare@layout@simplecols{%
@@ -1581,25 +1613,12 @@
       \let\col@do\sum@val
       \x@\each@col\cts@list\E
       \divide \dimen1 by \curactivecols % dimen1 is now average of Lht, Rht, heights.
-      \dimen0=\chunkDelta
-      %\message{c255: \the\dimen0}%
       \let\col@do\update@cumulative@delta % Add (Lht - dimen1) to cumulativeDeltaL
       \x@\each@col\cts@list\E
     \egroup
-    \thisjointDelta=0pt %Do we need extra space?
     %Calculate how much extra space we need:
-    \csname @do@jointcalc@\diglotlayout\endcsname
+    \csname @do@jointcalc@\diglotlayout\endcsname{@cur}%
     % Returns the ideal next baseline posltion below previous sync line.
-    \ifdim\dimen1>0pt
-      \thisjointDelta=\dimen1
-      \advance\thisjointDelta by -\@maxht\relax
-    %  \advance\thisjointDelta by -\topskip %remove topskip 
-      \advance\thisjointDelta by -\@maxb@seline\relax
-    \fi
-    \ifdim \thisjointDelta > \@maxb@seline  %sanity check
-      \trace{d}{Unacceptable jointDelta (\the\thisjointDelta > \@maxb@seline) reduced to 0pt}%
-      \thisjointDelta=0pt
-    \fi
     \trace{dP}{Join delta gives \the\dimen1 -\@maxht -\@maxb@seline = \the\thisjointDelta}%
     \global\chunkDelta=\Rht
     \global\advance\chunkDelta by -\Lht\relax
@@ -1618,12 +1637,12 @@
     \x@\each@col\diglot@list\E
     \dimen9=\dimen1
     % apply columngutterruleskip?
-    \tempfalse
+    \diglot@pos@topfalse
     \ifdim\ht\partial=0pt \ifdim\dp\partial=0pt
       \advance\dimen8 by -\ColumnGutterRuleSkip\relax
       \ifdim\ColumnGutterRuleSkip < 0pt
        \ifColumnGutterRule
-          \temptrue
+          \diglot@pos@toptrue
        \fi
       \fi
     \fi\fi
@@ -1648,7 +1667,7 @@
   \let\col@do=\@@simplecols
   % Skip calculations:
   \dimen6=0pt
-  \iftemp % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
+  \ifdiglot@pos@top % Is this the top of the page? If so, (only) apply skip based on columngutterruleskip (set by @prepare@layout...
     \dimen6=\ColumnGutterRuleSkip
   \else
     \ifdim\thisjointDelta<0pt
@@ -1825,10 +1844,11 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \dglt@calc@vailht
-  \ifdim\availht<\baselineskip %
+  \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
-    \trace{D}{Page full}%
+    \trace{D}{Declaring page full}%
   \else%
+    \trace{D}{Page not full (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline)}%
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -2398,9 +2418,9 @@
   \fi 
 }
 
-\def\check@nxtht#1{%Is the nxtchunk#1 height =0? Set iftemp if yes , unchanged otherwise
+\def\check@nxtht#1{%Is the nxtchunk#1 height =0? Set iftemp if yes, unchanged otherwise
   \x@\ifdim\csname @nxtchunk#1ht\endcsname=0pt 
-    \temptrue
+    \diglot@ecolstrue
   \fi
 }
 \def\check@pen#1{%Is the relevant boxpenalty a pagebreak?
@@ -2410,16 +2430,17 @@
   \fi
 }
 \def\set@ht#1{%Set the values of curXht, adding or resetting based on \iftemp  (anything on the page is current by definition)
+  % ifdiglot@ecols is set up by check@nxtht
   \def\errt@st{#1}\ifx\errt@st\empty\errmessage{set@ht passed null value}\fi
   \x@\dimen1\x@=\csname @nxtchunk#1ht\endcsname
-  \x@\xdef\csname @old#1ht\endcsname{\the\dimen0}%
-  \iftemp %one at least is empty
+  \ifdiglot@ecols %one at least is empty
     \ifdim \dimen1 =0pt
-      \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old hright
+      \x@\dimen1\x@=\csname @cur#1ht\endcsname % new height = old height
     \else
       \advance\dimen1 by \m@xht\relax
     \fi
   \fi
+  \trace{dP}{set@ht @cur#1ht set to \the\dimen1 \space \ifdiglot@ecols d@ecolstrue m@xht=\m@xht\else d@ecolsfalse\fi}%
   \x@\xdef\csname @cur#1ht\endcsname{\the\dimen1}%
 }
 
@@ -2614,11 +2635,11 @@
       \dglt@calc@vailht
     \fi\fi
     % Column height (depth) calcs:
-    \tempfalse
+    \diglot@ecolsfalse
     \trace{Df}{Checking for empty boxes}%
     \let\col@do=\check@nxtht %sets iftemp=true if any box is empty
     \x@\each@col\diglot@list\E
-    \iftemp
+    \ifdiglot@ecols
       \def\v@lpfx{@nxtchunk}\def\v@lsfx{ht}%
       \trace{Df}{Finding max \v@lpfx X\v@lsfx}%
       \let\col@do=\max@val\dimen1=0pt
@@ -2818,7 +2839,7 @@
   %\check@and@update
 }
 \def\after@after@a@trial{%
-  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  \the\triall@@pcount, pf:\ifpagefull true\else false\fi}%
+  \trace{d}{after@after@a@trial iftrialfailed\iftrialfailed true\else false\fi,  tlc=\the\triall@@pcount, pf:\ifpagefull true\else false\fi}%
   % Check if the run failed (or didn't even run), and update page if that's 
   % appropriate.
   \iftrialfailed
@@ -2843,7 +2864,7 @@
     \fi
   \fi
   %\showlists
-  \trace{D}{tri@llist: \tri@llist}%
+  \trace{D}{tri@llist: \tri@llist, tlc=\the\triall@@pcount}%
   \ifx\tri@llist\empty
     \advance\triall@@pcount by 1\relax
     \check@and@update %May trigger a refilling of \tri@llist
