@@ -13,6 +13,7 @@ responses = {
     "T": "Contact programming team (TeX)",
     "Y": "Contact programming team (python)",
     "E": "Configuration environment (including ptxprint-mods.tex, file locations, etc)"
+    # "F": "Use a different font which is not a Variable Font."
 }
 
 messages = [
@@ -111,6 +112,7 @@ messages = [
     ("W","U", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
     ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
     ("W","A", r'\*\* WARNING: adjustlist entries should not contain space.+'),
+    # ("E","F", r"xdvipdfmx:fatal: Invalid font:"),
     ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.

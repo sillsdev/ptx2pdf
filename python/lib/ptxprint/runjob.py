@@ -497,10 +497,12 @@ class RunJob:
             if os.path.exists(logpath):
                 with open(logpath) as inf:
                     loglines = inf.readlines()
+                    if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
+                        loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
             else:
                 loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(loglines[-10:]),
+                    secondary="".join(loglines[-12:]),
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
