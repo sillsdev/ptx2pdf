@@ -1119,14 +1119,12 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
-                elif categories is not None:
-                    continue
-                elif sect in ("vars", "strongsvar"):
+                elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
                     else:
                         setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, None)
-                elif sect in FontModelMap:
+                elif sect in FontModelMap and (categories is None or 'fontscript' in categories):
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
@@ -1832,13 +1830,12 @@ set stack_size=32768""".format(self.configName())
         hasOther = self.get("c_impOther")
         useCats = set()
         for k, v in ImportCategories.items():
-            if impAll:
+            if not hasOther and k.startswith("c_oth_"):
+                continue
+            if self.get(k):
                 useCats.add(v)
-            else:
-                if not hasOther and k.startswith("c_oth_"):
-                    continue
-                if self.get(k):
-                    useCats.add(v)
+        if self.get("c_impVariables", False):
+            useCats.add("variables")
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
