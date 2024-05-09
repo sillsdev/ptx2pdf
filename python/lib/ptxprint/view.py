@@ -1142,7 +1142,7 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
-        if categories is None:
+        if categories is None or 'texpert' in categories:
             TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
             if categories is not None and ModelMap[k].category not in categories:
@@ -1836,6 +1836,7 @@ set stack_size=32768""".format(self.configName())
                 useCats.add(v)
         if self.get("c_impVariables", False):
             useCats.add("variables")
+            useCats.add("meta")
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)

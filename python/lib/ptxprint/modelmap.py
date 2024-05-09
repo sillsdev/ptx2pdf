@@ -510,6 +510,8 @@ _map = {
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {
+# 'variables' is an extra entry
+# missing: 'diglot', 'strongs', 'meta', 'uirefs'
     'c_oth_Body': 'body',
     'c_oth_NotesRefs': 'noteref',
     'c_oth_HeaderFooter': 'headfoot',
@@ -517,6 +519,9 @@ ImportCategories = {
     'c_oth_TabsBorders': 'tabsborders',
     'c_oth_Advanced': 'advanced',
     'c_oth_Cover': 'cover',
+    'c_oth_Finish': 'finish',
+    'c_oth_Texpert': 'texpert',
+    'c_oth_Decorate': 'decorate',
     'c_impFontsScript': 'fontscript',
     'c_impLayout': 'layout',
     'c_impPictures': 'pictures'
