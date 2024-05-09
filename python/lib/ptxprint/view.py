@@ -1837,6 +1837,7 @@ set stack_size=32768""".format(self.configName())
         if self.get("c_impVariables", False):
             useCats.add("variables")
             useCats.add("meta")
+        logger.debug(f"Importing Categories: {useCats}")
 
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
@@ -1850,7 +1851,7 @@ set stack_size=32768""".format(self.configName())
         view.localiseConfig(config)
         # loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, 
         #            lock=False, clearvars=True, categories=None)
-        view.loadConfig(config, updatebklist=False, categories=useCats)
+        view.loadConfig(config, updatebklist=False, categories=useCats if not impAll else None)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
         grabfront = False
