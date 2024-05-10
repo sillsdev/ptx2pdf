@@ -1152,7 +1152,7 @@ class ViewModel:
                 val = config.get(sect, name)
             except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k].widget, self.ptsettings.dict.get(v, ""))
-        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'tabsborders' in categories):
+        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'thumbtabs' in categories):
             self.updateThumbLines()
         self.updateFont2BaselineRatio()
 

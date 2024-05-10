@@ -33091,8 +33091,8 @@ modified locally, then enable this option.</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkCheckButton" id="c_oth_TabsBorders">
-                            <property name="label" translatable="yes">Tabs+Borders settings</property>
+                          <object class="GtkCheckButton" id="c_oth_ThumbTabs">
+                            <property name="label" translatable="yes">Thumb Tabs settings</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
@@ -33172,6 +33172,10 @@ and Customized Styles (custom.sty).</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This includes most of the settings on
+the Peripherals tab, but not the Variables
+and Values. Front Matter and also Section
+Introductions are included in this.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -33218,10 +33222,14 @@ why this option is sometimes disabled.</property>
                         </child>
                         <child>
                           <object class="GtkCheckButton" id="c_oth_Decorate">
-                            <property name="label" translatable="yes">Text Decorations</property>
+                            <property name="label" translatable="yes">Borders + Decorations</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This includes the various decorative
+borders and other ornamental features
+including section headers, end-of-book
+and verse number decorators.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -33279,6 +33287,7 @@ why this option is sometimes disabled.</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
+                            <property name="tooltip-text" translatable="yes">This includes everything on the Finishing tab.</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
@@ -33355,7 +33364,8 @@ why this option is sometimes disabled.</property>
                         <property name="margin-top">15</property>
                         <property name="margin-bottom">15</property>
                         <property name="label" translatable="yes">This option is automatically enabled when the target 
-Project or Configuration does not already exist.</property>
+Project or Configuration does not already exist; or
+when exporting to an external folder of settings.</property>
                         <property name="wrap">True</property>
                       </object>
                       <packing>

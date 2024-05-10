@@ -218,7 +218,7 @@ r_impTarget_prjcfg l_tgtProject ecb_targetProject l_tgtConfig ecb_targetConfig t
 nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
-gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
+gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs 
 c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
 c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
