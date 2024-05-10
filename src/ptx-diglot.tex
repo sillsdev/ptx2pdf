@@ -1411,7 +1411,7 @@
 
 \let\@lApfx\relax
 \let\@lAsfx\relax
-\def\@l@gvals#1{\edef\tmsg{\tmsg\space#1: \the\dimexpr \csname \@lApfx #1\@lAsfx\endcsname\relax}}
+\def\@l@gvals#1{\x@\let\x@\@l\csname \@lApfx #1\@lAsfx\endcsname \ifx\@l\relax \x@\xdef\csname \@lApfx#1\@lAsfx\endcsname{0pt}\edef\tmsg{\tmsg\space #1:undefined}\else\edef\tmsg{\tmsg\space#1: \the\dimexpr \@l\relax}\fi}
 \def\l@gvals#1#2{\def\@lApfx{#1}\def\@lAsfx{#2}\let\col@do=\@l@gvals
     \x@\each@col\diglot@list\E
 }
