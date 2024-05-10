@@ -226,6 +226,7 @@ class Diglot(Snippet):
 \def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
 \def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
 \def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
+\IndentUnit{s_}={diglot[indentunit]}in
 \newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
 \def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
