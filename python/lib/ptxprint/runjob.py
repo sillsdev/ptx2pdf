@@ -152,6 +152,7 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
+"diglot/indentunit":        "document/indentunit",
 "diglot/xrlocation" :       "notes/xrlocation",
 
 "diglot/copyright":         "project/copyright",

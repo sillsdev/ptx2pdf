@@ -21,6 +21,11 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+<!--        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont> -->
     </selectfont>
 </fontconfig>
 """
@@ -29,13 +34,13 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 <fontconfig>
     {fontsdirs}
     <cachedir prefix="xdg">fontconfig</cachedir>
-    <selectfont>
+<!--    <selectfont>
         <rejectfont>
             <pattern>
                 <patelt name="variable"/>
             </pattern>
         </rejectfont>
-    </selectfont>
+    </selectfont> -->
 </fontconfig>
 """
 
