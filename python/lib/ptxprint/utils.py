@@ -630,11 +630,11 @@ class Path(pathlib.Path):
             return self.as_posix()
 
 
-def zipopentext(zf, fname):
+def zipopentext(zf, fname, prefix=""):
     if isinstance(zf, UnzipDir):
-        return zf.open(fname, mode="rt", encoding="utf-8")
+        return zf.open(prefix+fname, mode="rt", encoding="utf-8")
     else:
-        zp = zipfile.Path(zf, fname)
+        zp = zipfile.Path(zf, prefix+fname)
         return zp.open(encoding="utf-8")
 
 class UnzipDir:

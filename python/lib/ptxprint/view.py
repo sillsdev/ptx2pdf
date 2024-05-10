@@ -1819,8 +1819,12 @@ set stack_size=32768""".format(self.configName())
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
 
-    def importConfig(self, fzip, tgtPrj=None, tgtCfg=None):
+    def importConfig(self, fzip, prefix="", tgtPrj=None, tgtCfg=None):
         ''' Imports another config into this or another view, based on import settings '''
+        if prefix is None:
+            prefix = ""
+        elif not prefix.endswith("/"):
+            prefix += "/"
         if tgtPrj != self.prjid or tgtCfg != self.configName():
             view = self.createView(tgtPrj, tgtCfg)
         else:
@@ -1838,11 +1842,10 @@ set stack_size=32768""".format(self.configName())
             useCats.add("variables")
             useCats.add("meta")
         logger.debug(f"Importing Categories: {useCats}")
-
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
         try:
-            with zipopentext(fzip, "ptxprint.cfg") as inf:
+            with zipopentext(fzip, "ptxprint.cfg", prefix=prefix) as inf:
                 config.read_file(inf)
         except (KeyError, FileNotFoundError):
             pass
@@ -1865,7 +1868,7 @@ set stack_size=32768""".format(self.configName())
             otherpics = PicInfo(view.picinfos.model)        # will this work for a new view?
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
-                with zipopentext(fzip, picfile) as inf:
+                with zipopentext(fzip, picfile, prefix=prefix) as inf:
                     otherpics.read_piclist(inf, "B")
             except (KeyError, FileNotFoundError) as e:
                 pass
@@ -1886,7 +1889,7 @@ set stack_size=32768""".format(self.configName())
         if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
             newse = StyleEditor(view)
             try:
-                with zipopentext(fzip, "ptxprint.sty") as inf:
+                with zipopentext(fzip, "ptxprint.sty", prefix=prefix) as inf:
                     newse.loadfh(inf, base="")
             except (KeyError, FileNotFoundError):
                 pass
@@ -1898,7 +1901,7 @@ set stack_size=32768""".format(self.configName())
             if config.getboolean("project", "ifusemodssty", fallback=False):
                 localmodsty = os.path.join(view.configPath(view.configName()), "ptxprint-mods.sty")
                 try:
-                    zipsty = zipopentext(fzip, "ptxprint-mods.sty")
+                    zipsty = zipopentext(fzip, "ptxprint-mods.sty", prefix=prefix)
                 except (KeyError, FileNotFoundError):
                     zipsty = None
                 if zipsty is not None and (impAll or self.get("c_useModsSty")) and os.path.exists(localmodsty):
@@ -1923,7 +1926,7 @@ set stack_size=32768""".format(self.configName())
                 if not impAll and not config.getboolean(*configb, fallback=False):
                     continue
                 try:
-                    zipmod = zipopentext(fzip, a[1])
+                    zipmod = zipopentext(fzip, a[1], prefix=prefix)
                 except (KeyError, FileNotFoundError):
                     print(f"Maybe KeyError; more likely just ignoring missing file: {a[1]}")
                     continue
@@ -1959,7 +1962,7 @@ set stack_size=32768""".format(self.configName())
             periphcapture = None
             forcenames = set()
             try:
-                with zipopentext(fzip, 'FRTlocal.sfm') as inf:
+                with zipopentext(fzip, 'FRTlocal.sfm', prefix=prefix) as inf:
                     if inf is not None:
                         for l in inf.readlines():
                             if l.strip().startswith(r"\periph"):

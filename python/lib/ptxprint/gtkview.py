@@ -3806,6 +3806,30 @@ class GtkViewModel(ViewModel):
 
         self.builder.get_object("btn_importSettingsOK").set_sensitive(not status and somethingON)
 
+    def _findProjectInArchive(self, zf):
+        trials = [f for f in zf.namelist() if 'ptxprint.cfg' in f and 'shared' in f]
+        respath = None
+        if len(trials) > 1:
+            for t in trials:
+                with zf.open(t) as inf:
+                    for l in inf.readlines():
+                        s = l.decode("utf-8")
+                        if s.lstrip().startswith("ifdiglot"):
+                            if s.rstrip().endswith("True"):
+                                # this is our answer
+                                respath = t
+                                break
+        if respath is None:
+            if len(trials) == 1:
+                respath = trials[0]
+            else:
+                respath = None
+        if respath is not None:
+            res = os.path.dirname(respath)
+        else:
+            res = None
+        return res
+
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
         self.setImportButtonOKsensitivity(None)
@@ -3814,6 +3838,7 @@ class GtkViewModel(ViewModel):
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             zipinf = None
+            prefix = None
             if self.get("r_impSource") == "pdf":
                 fname = str(getattr(self, "impSourcePDF", None))
                 if fname.endswith(".pdf"):
@@ -3822,6 +3847,8 @@ class GtkViewModel(ViewModel):
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
                 elif os.path.exists(fname):
                     zipdata = ZipFile(fname)
+                    import pdb; pdb.set_trace()
+                    prefix = self._findProjectInArchive(zipdata)
                 else:
                     zipdata = None
             elif self.get("fcb_impProject"):
@@ -3842,8 +3869,7 @@ class GtkViewModel(ViewModel):
                 else:
                     tp = self.get('ecb_targetProject', None)
                     tc = self.get('ecb_targetConfig',  None)
-                    self.importConfig(zipdata, tgtPrj=tp, \
-                                               tgtCfg=tc)
+                    self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
                     if tp == self.prjid:
                         self.updateAllConfigLists()
                     statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
