@@ -287,6 +287,7 @@
     \empty@cseq{ch@plabel#1}% Chapter label
     \empty@cseq{@ch@pter#1}% Chapter Nuber
     \empty@cseq{@v@rse#1}% verse label
+    \empty@cseq{BelowBaseline#1}% If not empty, fraction of baselineskip due to interlinear lines
     %\newsideSpecificIf{OmitChapterNumber#1} % global config option
     \newsideSpecificIf{OmitVerseNumberOne#1} % global config option
     \xdef@cseq{@cur#1ht}{0pt}% 
@@ -332,6 +333,7 @@
 
 \newif\ifrunLtrial % logic test in diglotLeft
 \newif\ifintrial %flag to let setbox know...
+\newif\ifloc@lht % loc@lhttrue when local column height tweaks should apply, false when this is for page full calcns, etc.
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
@@ -361,7 +363,7 @@
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
    \iff@rstnote\else
-      \advance\availht by -\AboveNoteSpace\relax
+      \global\advance\availht by -\AboveNoteSpace\relax
    \fi
    \trace{Dh}{after notes:\the\availht}%
    \ifunprintable\else 
@@ -388,13 +390,22 @@
    \ch@ckiftextborderadj
    \iftemp
      \trace{Dh}{Border: \pretextb@rderskip, \posttextb@rderskip}%
-     \advance\availht -\pretextb@rderskip  % Space reserved for text border.
-     \advance\availht -\posttextb@rderskip 
+     \global\advance\availht -\pretextb@rderskip  % Space reserved for text border.
+     \global\advance\availht -\posttextb@rderskip 
+   \fi
+   \ifloc@lht
+     \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
    \trace{D}{final:\the\availht}%
 }
 
+\def\dglt@calc@vailht@mods{%
+   \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty\else
+     \advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
+     \trace{Dh}{BelowBaseline: \csname BelowBaseline\c@rrdstat\endcsname x \csname b@selineskip\c@rrdstat\endcsname -> \the\availht}%
+   \fi
+}
 \newif\ifnastybox  % Signal that box must be treated specially
 % The \lastpenalty before a \lefttext or \righttext issues a fake one,
 % or similarly penalty to apply at end of trial text, and scratch space
@@ -875,7 +886,7 @@
       \m@rksonpagetrue %here are marks in this trial column. Don't set it globally as it might not stick.
     \fi
   \fi
-  \dglt@calc@vailht
+  \loc@lhttrue\dglt@calc@vailht
   \TempDim=\availht
   \trace{dP}{bld:\the\baselineDelta}%
   {% Don't autmatically remove baselinedelta... that'd be wrong for titles, etc.
@@ -1843,7 +1854,7 @@
   }%
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
-  \dglt@calc@vailht
+  \loc@lhtfalse\dglt@calc@vailht
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
@@ -2632,7 +2643,7 @@
     \let\col@do=\p@rtialmarks
     \x@\each@col\diglot@list\E
     \ifm@rksonpage \ifoldm@rksonpage\else
-      \dglt@calc@vailht
+      \loc@lhtfalse\dglt@calc@vailht
     \fi\fi
     % Column height (depth) calcs:
     \diglot@ecolsfalse
@@ -2684,7 +2695,7 @@
   \x@\ifvoid\csname \c@rrdstat box\endcsname \else
     \trace{D}{side \c@rrdstat\space has material to put on the page}%
     \global\not@emptytrue
-    \dglt@calc@vailht
+    \loc@lhttrue\dglt@calc@vailht
     \ifnum 1 = \ifboxmoved 1 \else \ifdim \availht<-2pt 1 \else 0 \fi\fi
       \late@stage@reflowtrue
       \xdef\refl@wlist{\refl@wlist\c@rrdstat}%
@@ -2819,7 +2830,7 @@
   \ifx\c@rrdstat\empty %End of the loop.
   \else
     \ifnum 1=\x@\ifvoid\csname excess\c@rrdstat\endcsname \x@\ifvoid\csname partial\c@rrdstat\endcsname 0\else 1\fi\else 1\fi
-      \dglt@calc@vailht
+      \loc@lhttrue\dglt@calc@vailht
       %\ifnum\triall@@pcount=1
         %\showbox\partialL\showbox\excessL
       %\fi
