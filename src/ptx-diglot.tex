@@ -337,28 +337,26 @@
 
 % Not the same as \c@lcavailht from paratext2.tex
 \def\dglt@calc@vailht{%
-   \trace{D}{dglt@calc@vailht \c@rrdstat \number\partial, \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
+   \trace{D}{dglt@calc@vailht \ifloc@lht loc@lht \else page \fi \c@rrdstat (\number\partial), \the\dimexpr \ht\partial+\dp\partial\relax + \the\dimexpr \ht\n@xtpartial+\dp\n@xtpartial\relax}%
    \global\availht=\textheight %
-   \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \global\advance\availht by -\ht\partial\relax %
    \global\advance\availht by -\dp\partial\relax %
    \global\advance\availht by -\ht\n@xtpartial\relax %
    \global\advance\availht by -\dp\n@xtpartial\relax %
+   \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
-     {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
-       \x@\def\x@\tmsg\x@{\tmsg}%
-       \trace{Dh}{dglt@calc@vailht: \tmsg}
-     }%
-     \ifcsname cts@list\endcsname \else\let\cts@list\diglot@list\fi
-     \csname @do@jointcalc@\diglotlayout\endcsname{@nxtchunk}%
-     \global\advance\availht by -\thisjointDelta \relax%
+     \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
+      
+       {\edef\tmsg{@cur}\empty\l@gvals{@cur}{ht} \edef\tmsg{\tmsg\space @nxtchunk}\l@gvals{@nxtchunk}{ht}%
+         \x@\def\x@\tmsg\x@{\tmsg}%
+         \trace{Dh}{dglt@calc@vailht:  \tmsg}
+       }%
+       \ifcsname cts@list\endcsname \else\let\cts@list\diglot@list\fi
+       \csname @do@jointcalc@\diglotlayout\endcsname{@nxtchunk}%
+       \global\advance\availht by -\thisjointDelta \relax%
+     \fi
    \fi
-   %\ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
-     %%\global\advance\availht by -\baselineDelta\relax%
-   %\else
-     %\global\advance\availht by +\baselineDelta\relax%
-   %\fi
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
@@ -393,7 +391,15 @@
      \global\advance\availht -\pretextb@rderskip  % Space reserved for text border.
      \global\advance\availht -\posttextb@rderskip 
    \fi
+   \x@\global\x@\csname availht@com\endcsname=\availht
    \ifloc@lht
+     %\ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
+       %%\global\advance\availht by -\baselineDelta\relax%
+     %\else
+       %\global\advance\availht by +\baselineDelta\relax%
+     %\fi
+     %\trace{Dh}{Bld mod: \the\csname baselineDelta\c@rrdstat\endcsname}%
+     %\global\advance\availht by -\dimexpr \csname baselineDelta\c@rrdstat\endcsname\relax%
      \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
@@ -402,7 +408,7 @@
 
 \def\dglt@calc@vailht@mods{%
    \x@\ifx\csname BelowBaseline\c@rrdstat\endcsname\empty\else
-     \advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
+     \global\advance\availht by -\dimexpr \csname BelowBaseline\c@rrdstat\endcsname\dimexpr \csname b@selineskip\c@rrdstat\endcsname\relax\relax
      \trace{Dh}{BelowBaseline: \csname BelowBaseline\c@rrdstat\endcsname x \csname b@selineskip\c@rrdstat\endcsname -> \the\availht}%
    \fi
 }
@@ -548,7 +554,7 @@
 
 \def\run@a@trial{%
   \x@\global\x@\endtri@lpen@lty\x@=\csname dgl@tPen\c@rrdstat trialEnd\endcsname
-  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\the\baselineskip?, etp:\the\endtri@lpen@lty}%
+  \traceNum{d}{run@a@trial \show@dstat, \the\availht>\csname b@selineskip\c@rrdstat\endcsname?, etp:\the\endtri@lpen@lty}%
   \x@\let\x@\p@rtl\csname partial\c@rrdstat\endcsname %last galley
   \x@\let\x@\@xcs\csname excess\c@rrdstat\endcsname %source
   \trace{D}{partial\c@rrdstat: \the\ht\p@rtl+\the\dp\p@rtl x\the\wd\p@rtl}% The contents of the galley that went to page last time
@@ -613,9 +619,8 @@
       \showbox3
       \showbox\p@rtl
     \fi
-    \global\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
-    \global\vsize=\availht
-    \global\advance\availht by -\baselineskip\relax % avoid underfull box in case of footnote
+    {\advance\availht by \baselineskip \relax% avoid underfull box in case of footnote
+    \global\vsize=\availht}% let grouping undo addition
     \ifvoid\@xcs\else
       \global\setbox\@xcs=\vbox{\vskip\ht3\penalty10000\unvbox\@xcs}% %TeX will not split at glue with a penalty after it.
       \ifdiglotDebugFollowContents
@@ -983,7 +988,7 @@
     \iftrialfailed
       \global\advance\trialheight by -1\baselineskip\relax
       \ifdim\trialheight<0.5\baselineskip
-        \trace{D}{Abandoning trial, no space for galley at all}%
+        \trace{D}{Abandoning trial for \c@rrdstat, no space for galley at all}%
         %\ifdiglotDebugFollowContents
           %\ifp@rtlset \showbox\p@rtl\fi
         %\fi
@@ -994,7 +999,7 @@
         \global\setbox255=\box\voidb@x
         \let\after@this=\whichtrial% 
       \else 
-        \traceNum{D}{Backing up and trying again (\the\trialheight)}%
+        \traceNum{D}{Backing up \the\baselineskip \space and trying again (\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
         \let\after@this=\d@resplit@galley
@@ -1206,6 +1211,7 @@
 \newdimen\columnRwidth%
 \newdimen\availhtL
 \newdimen\availhtR
+\newdimen\availht@com % Common 
 \newdimen\chunkDelta % Difference between the last boxes prepared for the page (-ve=left longer)
 \newdimen\p@geChunkDelta \p@geChunkDelta=0pt %as above, but *added* to the page.
 \newdimen\baselineDelta % semi-constant: largest difference between any  baselines and \topskip.  
@@ -1725,9 +1731,9 @@
   \let\ac@col@do=\col@do
   \ifVisTrace
     \ifx\b@xtype\vbox %boxtype is set on discovery of whether this is a heading or not
-      \doVisTraceT{L}% sets box0, used @do@layout@... in lines below
+      \doVisTraceT{\ifcsname m@x@at@col\endcsname\m@x@at@col\else L\fi}% sets box0, used @do@layout@... in lines below
     \else
-      \doVisTrace{L}% sets box0, used  @do@layout@... lines below
+      \doVisTrace{\ifcsname m@x@at@col\endcsname\m@x@at@col\else L\fi}% sets box0, used  @do@layout@... lines below
     \fi
   \fi
   \ifnum \curactivecols>0
@@ -1855,11 +1861,17 @@
   \diglot@arrange@cols
   \TempDim=\dimexpr \ht\n@xtpartial + \dp\n@xtpartial\relax
   \loc@lhtfalse\dglt@calc@vailht
+  \edef\v@lpfx{BelowBaseline}\let\v@lsfx\empty
+  \dimen1=0pt \let\col@do\max@bbl
+  %\tracingassigns=1
+  \x@\each@col\diglot@list\E% 
+  \advance\availht by -\dimen1
+  %\tracingassigns=0
   \ifdim\availht<\@maxb@seline %
     \global\pagefulltrue%
     \trace{D}{Declaring page full}%
   \else%
-    \trace{D}{Page not full (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline)}%
+    \trace{D}{Page not full (\the\availht\space left, bls=\the\baselineskip, mbls=\@maxb@seline, mbbl=\the\dimen1)}%
   \fi%
   \ifdim\TempDim>0.1pt
     \global\deadcycles=0 %Reset deadcycles only if there's actual matter being added.
@@ -2457,6 +2469,14 @@
 
 \def\mkrev@list#1{\x@\xdef\csname rev@\list@type @list\endcsname{#1\csname rev@\list@type @list\endcsname}}
 
+\def\max@bbl#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
+  \ifx\t@st\empty\else
+    \dimen0=\t@st\dimexpr \csname b@selineskip#1\endcsname\relax\relax
+    \ifdim\dimen1< \dimen0
+      \dimen1=\dimen0
+    \fi
+  \fi
+}
 \def\max@val#1{\x@\let\x@\t@st\csname \v@lpfx#1\v@lsfx\endcsname
   \ifx\t@st\relax\else
     \ifdim\dimen1<\t@st
@@ -2627,9 +2647,21 @@
   \setdiglotN@rmal
   \pickn@xtpartial
   \ifvoid\partial
-    \global\setbox\partial=\box\n@xtpartial
+    \ifVisTrace
+      \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}
+        %\ifpagefull
+          %\vbox to 0pt{\vrule width 2pt height \availht \vss}%
+        %\fi
+      }}%
+    \else
+      \global\setbox\partial=\box\n@xtpartial
+    \fi
   \else
-    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}}}%
+    \global\setbox\partial=\vtop{{\baselineskip=0pt \joinb@xes{\partial}{\n@xtpartial}
+    %\ifVisTrace\ifpagefull
+      %\vbox to 0pt{\hbox{\vrule width 2pt height \availht} \vss}%
+    %\fi\fi
+    }}%
   \fi
   \ifnum\diglotDbgJoinboxes=\TRACEcount
     \showbox\partial
