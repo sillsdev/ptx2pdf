@@ -343,7 +343,6 @@
    \global\advance\availht by -\dp\partial\relax %
    \global\advance\availht by -\ht\n@xtpartial\relax %
    \global\advance\availht by -\dp\n@xtpartial\relax %
-   \global\advance\availht by \adjustp@ge\relax % Panic measure..
    \trace{Dh}{after part1:\the\availht}%
    \ifcsname @nxtchunkLht\endcsname
      \ifdim\availht=\textheight\relax \else % joint calcs only apply if the page has content!
@@ -357,6 +356,7 @@
        \global\advance\availht by -\thisjointDelta \relax%
      \fi
    \fi
+   \global\advance\availht by \adjustp@ge\relax % Panic measure.. Needs to be applied after checking for content.
    \trace{Dh}{after part2:\the\availht}%
    \f@rstnotetrue
    \let\\=\reduceavailht \the\n@tecl@sses % reduce it by the space needed for each note class
@@ -1913,7 +1913,7 @@
 
 \def\try@print@unprintable#1\E{%
   \trace{u}{try@print@unprintable #1}%
-  \IfTr@ce{u}{\tracingassigns=1 }% \tracingmacros=1}%
+  \IfTr@ce{u}{\tracingassigns=1 }% \tracingmacros=1%
   \x@\let\x@\s@mebox\csname #1\endcsname
   \ifx\pagecontents\empty\else
     \ifdim\dimexpr \ht\s@mebox+\dp\s@mebox + \dimen0 > \textheight
@@ -2099,7 +2099,7 @@
 
 
 \def\@do@writep@ge@simplecols{
-  \trace{d}{@do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
+  \trace{d}{do@writep@ge@simplecols \the\pageno (\the\MaxPages)}%
   \IfTr@ce{gI}{%
     \let\d@=\sh@winsertdim\edef\v@lpfx{}\edef\v@lsfx{}\x@\cstackdown\ins@rts\E
   }%
@@ -2257,6 +2257,10 @@
   \s@veallnotes{2}%
   \resetc@rdstat%reset the current diglotstatus
   \nextshipout
+  \trace{oh}{pagehook for page-\the\pageno \ifcsname page-\the\pageno\endcsname exists\else missing\fi}%
+  \ifcsname page-\the\pageno\endcsname
+    \csname page-\the\pageno\endcsname
+  \fi
   %\nonstopmode
   %\showthe\output
   %%somejunk
