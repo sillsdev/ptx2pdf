@@ -1806,10 +1806,11 @@
    %\gdef\atn@xtptxfile{}% This can't carry over.
    \ifdiglot
      \diglots@tup
-     \global\topskip=2\baselineskip
+     \global\topskip=2\baselineskip % try to Avoid problems from chars hitting the top. 
      \global\splittopskip=0pt
      \message{Setting up column-specific values for columns: \diglot@list}%
      \global\baselineDelta=-\maxdimen
+     \xdef\@minb@seline{\the\baselineskip}%
      \def\col@do##1{% Per-column setup
        \setc@rdstat{##1}%
        \showLRspecific
@@ -1817,6 +1818,9 @@
        \x@\global\csname baselineDelta##1\endcsname=\dimexpr \baselineskip - \topskip\relax
        \ifdim\baselineDelta<\csname baselineDelta##1\endcsname
          \global\baselineDelta=\csname baselineDelta##1\endcsname
+       \fi
+       \ifdim\baselineskip<\@minb@seline
+         \xdef\@minb@seline{\the\baselineskip}%
        \fi
        \saveLRspecificSide{##1}%
        \bgroup 

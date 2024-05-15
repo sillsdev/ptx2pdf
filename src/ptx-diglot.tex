@@ -393,13 +393,14 @@
    \fi
    \x@\global\x@\csname availht@com\endcsname=\availht
    \ifloc@lht
+     \@bls=\csname b@selineskip\c@rrdstat\endcsname
      %\ifdim\baselineDelta<0pt %Account for space (falsely) lost to topskip FIXME, shouldn't this be side-dependent?
-       %%\global\advance\availht by -\baselineDelta\relax%
+     %  \global\advance\availht by -\baselineDelta\relax%
      %\else
-       %\global\advance\availht by +\baselineDelta\relax%
+     %  \global\advance\availht by +\baselineDelta\relax%
      %\fi
-     %\trace{Dh}{Bld mod: \the\csname baselineDelta\c@rrdstat\endcsname}%
-     %\global\advance\availht by -\dimexpr \csname baselineDelta\c@rrdstat\endcsname\relax%
+     \global\advance\availht by \dimexpr -\@minb@seline-\baselineDelta\relax% 
+     \trace{Dh}{Bld mod: -\@minb@seline - \the\baselineDelta -> \the\availht}%
      \dglt@calc@vailht@mods
    \fi
    \x@\global\x@\csname availht\c@rrdstat\endcsname=\availht
@@ -489,7 +490,7 @@
 }
 
 \def\d@resplit@galley{%Old diglot@backingup's use of input stack caused needless problems.
-  \traceNum{d}{d@resplit@galley \the\trialheight}%
+  \traceNum{d}{d@resplit@galley \c@rrdstat\space\the\trialheight\space bls:\the\baselineskip\space @bls:\the\@bls}%
   \dimen0=\vfuzz
   \vfuzz=\maxdimen
   \global\setbox\galleyexc@ss\vbox{\undog@lley}%
@@ -506,7 +507,7 @@
     \trace{D}{Nothing wants to split from top of box: trial failed}%
     \ifdiglotDebugFollowContents\showbox\galleyexc@ss \fi
     \trialfailedtrue
-    \global\trialheight=-\baselineskip
+    \global\trialheight=-\@bls
     \global\setbox\galley\box\voidb@x
     \vfuzz=\dimen0
     \let\after@this=\whichtrial
@@ -632,7 +633,7 @@
     \fi
     \global\galleypenalty=0
     \global\setbox\galley=\vbox{\x@\unvcopy\p@rtl\unpenalty\penalty\endtri@lpen@lty}%
-    \trace{D}{Running trial \the\trialheight, \the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
+    \trace{D}{Running trial th:\the\trialheight, galley:\the\ht\galley+\the\dp\galley (\the\ht\@xcs+\the\dp\@xcs left for next time)}%
     \ifdim\ht\galley=0pt \ifdim\dp\galley=0pt
       \trace{D}{How come galley has no size? (check with  scrollmode) \the\interactionmode}%
       \ifnum\interactionmode=2
@@ -853,6 +854,7 @@
 }
 
 
+\newdimen\@bls % Temp baselineskip
 \def\diglot@any@trial{%output routine for any column
  % Handles calling d@resplit@galley
  %Stashes set material in \trialbox, discards extra,
@@ -860,7 +862,8 @@
  %it calls whichtrial 
  %as though it hadn't been here.
  %Assumptions: holdinginserts=1 material in \galley and \galleyexc@ss
-  \traceNum{d}{diglot@any@trial \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
+  \traceNum{d}{diglot@any@trial \c@rrdstat\space \the\ht255+\the\dp255 \space hIns=\the\holdinginserts(==0 1st time) op=\the\outputpenalty, etp=\the\endtri@lpen@lty, dc=\the\deadcycles, xs:\the\ht\galleyexc@ss+\the\dp\galleyexc@ss, th:\the\trialheight, p:\the\ht\p@rtl}%
+  \@bls=\csname b@selineskip\c@rrdstat\endcsname
   \ifnum\holdinginserts=0\relax\else
     \ifvoid\trialbox
       \MSG{*** Internal error caught. Incorrect internal state found in during trial run. Text or footnotes may have been lost.}%
@@ -905,22 +908,11 @@
       \message{+++Uh oh. Didn't expect this. Now what? Discards \the\dimen1 > topskip \the\topskip}%
     \fi
     \dimen3=\csname gridding@scent\c@rrdstat\endcsname
-    \trace{D}{Topskip glue was \the\ht3, basic line is \the\dimen3\space high.  bls:\the\baselineskip}%
-    \advance\dimen3 by -\baselineskip
-    \ifdim\dimen3 < 0pt
-      \dimen3=0pt
-    \fi
+    \trace{D}{Topskip glue was \the\ht3, basic line is \the\dimen3\space high.  bls:\the\@bls}%
     \dimen0=\baselineDelta
     %\showbox3
     \ifdim\dimen1=0pt 
       \dimen0=0pt %No adjustment, it's too tall and already been gridded, we hope
-    % This just breaks things.
-    %\else
-      %\advance \dimen1 by \dimen0
-      %\loop\ifdim\dimen1 < -\dimen3
-        %\advance\dimen0 by \csname b@selineskip\c@rrdstat\endcsname
-        %\advance\dimen1 by \csname b@selineskip\c@rrdstat\endcsname
-      %\repeat
     \fi
     \xdef\@djustskip{\the\dimen0}%
     \trace{D}{Adjusted topskip correction \the\dimen0}%
@@ -942,20 +934,20 @@
       \showbox\trialbox
     \fi
     \update@marks@partone
-    \ifdim\TempDim<-0.3\baselineskip % Coarse test. main trial routine can be pickier if it wants
+    \ifdim\TempDim<-0.3\@bls % Coarse test. main trial routine can be pickier if it wants
       \trace{D}{Initial Content does not fit (\the\trialheight, \the\TempDim, \the\availht)}%
       \global\holdinginserts=1
       \global\trialfailedtrue
     \else
       \trace{D}{Initial content fits(th:\the\trialheight, av:\the\availht, box:\the\ht\trialbox d:\the\TempDim)}%
-      \ifdim \TempDim > 2\baselineskip
+      \ifdim \TempDim > 2\@bls
         \vsize=\TempDim
       \fi
     \fi
   \else
     \advance\TempDim by -\ht\trialbox\relax
     \advance\TempDim by -\dp\trialbox\relax
-    \ifdim\TempDim<-0.3\baselineskip 
+    \ifdim\TempDim<-0.3\@bls 
       \trace{D}{Extra content found before end of trial, \the\ht255+\the\dp255}%
       \ifnum\outputpenalty=\endtri@lpen@lty\relax\else
         %\showbox\trialbox
@@ -971,12 +963,13 @@
       \iftrialfailed
         \global\setbox255\box\voidb@x
       \else
-        \dimen1=\baselineDelta\relax
+        \dimen1=\csname baselineDelta\c@rrdstat\endcsname 
+        \advance\dimen1 -\baselineDelta
         \global\extr@contenttrue
-        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255) \the\TempDim remaining. \show@dstat}%
-        \setbox255=\vbox{\x@\vskip\x@\dimexpr \csname baselineDelta\c@rrdstat\endcsname - \dimen1\relax\unvbox255}%
+        \trace{d}{Extra material found, which also fits (\the\ht255+\the\dp255) - \the\dimen1 \space \the\TempDim remaining. \show@dstat}%
+        \setbox255=\vbox{\vskip\dimen1\unvbox255}%
         \global\setbox\trialbox=\vbox{\joinboxes{\trialbox}{255}{5}{0}}%
-        \ifdim \TempDim > 2\baselineskip
+        \ifdim \TempDim > 2\@bls
           \vsize=\TempDim
         \fi
       \fi
@@ -986,8 +979,8 @@
   \ifnum\outputpenalty=\endtri@lpen@lty\relax
     \global\intrialfalse
     \iftrialfailed
-      \global\advance\trialheight by -1\baselineskip\relax
-      \ifdim\trialheight<0.5\baselineskip
+      \global\advance\trialheight by -1\@bls\relax
+      \ifdim\trialheight<0.5\@bls
         \trace{D}{Abandoning trial for \c@rrdstat, no space for galley at all}%
         %\ifdiglotDebugFollowContents
           %\ifp@rtlset \showbox\p@rtl\fi
@@ -999,7 +992,7 @@
         \global\setbox255=\box\voidb@x
         \let\after@this=\whichtrial% 
       \else 
-        \traceNum{D}{Backing up \the\baselineskip \space and trying again (\the\trialheight)}%
+        \traceNum{D}{Backing up \the\@bls \space and trying again (\the\trialheight)}%
         \r@storenotes{\g@tndstat}{1}%
         \r@storeinserts{col}
         \let\after@this=\d@resplit@galley
@@ -1215,8 +1208,8 @@
 \newdimen\chunkDelta % Difference between the last boxes prepared for the page (-ve=left longer)
 \newdimen\p@geChunkDelta \p@geChunkDelta=0pt %as above, but *added* to the page.
 \newdimen\baselineDelta % semi-constant: largest difference between any  baselines and \topskip.  
-\newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
-\newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (-ve=topskip longer) 
+\newdimen\baselineDeltaL % semi-constant: difference between the L baseline and \topskip.  Set in ptx-stylesheet (should be -ve=topskip longer) 
+\newdimen\baselineDeltaR % semi-constant: difference between the R baseline and \topskip.  Set in ptx-stylesheet (should be -ve=topskip longer) 
 \newdimen\thisjointDelta % difference between the L and R boxes (-ve=left longer)
 \newcount\cumulativeDeltaL % Sum of \chunkDelta values, in points
 \newcount\cumulativeDeltaR % Sum of \chunkDelta values, in points
@@ -1619,7 +1612,7 @@
         \thisjointDelta=0pt
       \fi
     \fi
-    \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 jd:\space\the\thisjointDelta}%
+    \trace{dP}{do@joint@calc(#1) : col:\m@x@at@col\space mh:\@maxht\space mb:\@maxb@seline\space mjv:\the\dimen1 \space jd:\the\thisjointDelta}%
 }
 
 \def\@prepare@layout@simplecols{%
