@@ -1488,6 +1488,7 @@ class GtkViewModel(ViewModel):
             print_count = int(print_count_str)
         else:
             print_count = 0
+        print_count += 1
         self.set("_printcount", print_count, skipmissing=True)
 
         jobs = self.getBooks(files=True)
