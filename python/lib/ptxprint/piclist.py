@@ -398,36 +398,38 @@ class PicInfo(dict):
             res = ("p", "", "{:03d}".format(i+1))
         return res
 
-    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent):
+    def _readpics(self, txt, bk, suffix, c, lastv, isperiph, parent, parcount=0):
         # logger.debug(f"Reading pics for {bk} + {suffix}")
-        for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
-                  (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
-            m = list(regex.finditer(b[0], txt))
-            if len(m):
-                for i, f in enumerate(m):     # usfm 2
-                    if bk == "GLO":
-                        a = self._getanchor(f, txt, i)
-                    else:
-                        a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
-                    r = "{}{} {}{}{}".format(bk, suffix, *a)
-                    pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
-                    if bk == 'GLO':
-                        pic.update(pgpos="p", scale="0.7")
-                    key = self.newkey(suffix)
-                    self[key] = pic
-                    if b[1]:    # usfm 3
-                        labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
-                        for l in labelParams:
-                            k,v = l.split("=")
-                            pic[k.strip()] = v.strip('"')
-                        if 'media' not in pic:
-                            default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
-                            pic['media'] = 'paw' if default is None else default
-                    else:       # usfm 2
-                        for j, v in enumerate(f.groups()):
-                            pic[posparms[j]] = v
-                        self._fixPicinfo(pic)
-                break
+        for s in re.split(r"\\(?:m[st][e]?|i(?:mt[e]?|ex|[bemopqs])|s[dpr]|c[ld]|[pqrs])\d?", txt):
+            parcount += 1
+            for b in ((r"(?ms)\\fig (.*?)\|(.+?\.....?)\|(....?)\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\|([^\\]+?)?\\fig\*", False),
+                      (r'(?ms)\\fig ([^\\]*?)\|([^\\]+)\\fig\*', True)):
+                m = list(regex.finditer(b[0], s))
+                if len(m):
+                    for i, f in enumerate(m):     # usfm 2
+                        if bk == "GLO":
+                            a = self._getanchor(f, txt, i)
+                        else:
+                            a = ("p", "", "{:03d}".format(i+1)) if isperiph else (c, ".", lastv)
+                        r = "{}{} {}{}{}{}".format(bk, suffix, *a, ("="+str(parcount)) if parcount > 1 else "")
+                        pic = {'anchor': r, 'caption':(f.group(1 if b[1] else 6) or "").strip()}
+                        if bk == 'GLO':
+                            pic.update(pgpos="p", scale="0.7")
+                        key = self.newkey(suffix)
+                        self[key] = pic
+                        if b[1]:    # usfm 3
+                            labelParams = re.findall(r'([a-z]+?="[^\\]+?")', f.group(2))
+                            for l in labelParams:
+                                k,v = l.split("=")
+                                pic[k.strip()] = v.strip('"')
+                            if 'media' not in pic:
+                                default, limit = parent.picMedia(pic.get('src', ''), pic.get('loc', ''))
+                                pic['media'] = 'paw' if default is None else default
+                        else:       # usfm 2
+                            for j, v in enumerate(f.groups()):
+                                pic[posparms[j]] = v
+                            self._fixPicinfo(pic)
+                    break
 
     def read_sfm(self, bk, fname, parent, suffix="", media=None):
         isperiph = bk in nonScriptureBooks
@@ -439,6 +441,10 @@ class PicInfo(dict):
             else:
                 blocks = ["0"] + re.split(r"\\c\s+(\d+)", dat)
                 for c, t in zip(blocks[0::2], blocks[1::2]):
+                    m = re.match("(.*?)\\v ", t, re.S)
+                    if m is not None:
+                        s = m.group(1)
+                        self._readpics(s, bk, suffix, c, 0, isperiph, parent)
                     for v in re.findall(r"(?s)(?<=\\v )(\d+[abc]?(?:[,-]\d+?[abc]?)?) ((?:.(?!\\v ))+)", t):
                         lastv = v[0]
                         s = v[1]
