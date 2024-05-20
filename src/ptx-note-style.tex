@@ -873,21 +873,9 @@
   \let\disc@rdkern\disc@rdkern@rhh
   \let\disc@rdpenalty\disc@rdpenalty@rhh
   \baselineskip=#2\relax
-  \ifdim#2<16pt
-    \dimen0=#2\multiply \dimen0 by 1024 % assumes baselineskip < 32pt
-    \divide \dimen0 by \n@tewidth \multiply \dimen0 by 64 
-  \else
-    \ifdim#2<32pt
-      \dimen0=#2\multiply \dimen0 by 512 % assumes baselineskip < 32pt
-      \divide \dimen0 by \n@tewidth \multiply \dimen0 by 128 
-    \else
-      \dimen0=#2\multiply \dimen0 by 256 % assumes baselineskip < 64pt
-      \divide \dimen0 by \n@tewidth \multiply \dimen0 by 256 
-    \fi
-  \fi
-  \count255=\dimen0
   %\showbox#1
-  \edef\reheightfactor{\strip@pt{\dimen0}}%
+  \r@tio{\the\baselineskip}{\the\n@tewidth}%
+  \let\reheightfactor\@@r@tio
   \trace{n}{Before adjustment, \the\ht#1. Note-width to baselineskip ratio (\the\baselineskip/\the\n@tewidth) is \reheightfactor  (\c@rref)}%
   \unvbox#1
   \disc@rds{rhh}%

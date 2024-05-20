@@ -3072,6 +3072,8 @@
   \fi
   \let\ins@name=\undefined
 }
+\def\SetBelowBaseline#1#2#3{% Column #1 has #2 [dimension] below the baseline (which is  #3) of 
+  \r@tio{#2}{#3}\trace{d}{BelowBaseline Calculated for #1 as \@@r@tio}\x@\let\csname BelowBaseline#1\endcsname\@@r@tio}
 
 \x@\let\csname polyglot-simplecols@plugin@loaded\endcsname\empty 
 \endinput

@@ -116,6 +116,38 @@
   \fi
 }
 
+\def\r@tio#1#2{{% find the fractional ratio #1/#2, trying to get to the limit of TeX's fixed-point maths. Assumption is that both values are "reasonable" font/line/page dimenstions.
+  \dimen1=#1 \dimen2=1pt \count255=16384 % maxdimen=16384pt-1sp. 
+  \loop
+    \ifdim \dimen1>\dimen2
+      \divide\count255 by 2
+      \multiply\dimen2 by 2
+      \repeat
+  \ifdim\dimen1=\dimen2 % can't sensibly do >=, so check the = case here.
+    \multiply\dimen2 by 2
+    \divide\count255 by 2
+  \fi
+  \multiply\dimen1 by \count255 % left-shift numerator as much as possible.
+  \dimen3=#2
+  \count255=\dimen2 
+  \divide\count255 by 32768 %dimen2 is an integer number of pt. 1pt=65536sp => 65536 when put into a count.
+  \dimen4=1pt
+  \divide\dimen4 by \count255 \relax
+  %\message{\the\dimen3, \the\dimen4, \the\numexpr\dimen3/\dimen4\relax}%
+  \ifnum 1 = \ifdim \dimen3> 4pt 1 \else \ifdim \dimen3 >4092\dimen4 1 \else 0 \fi\fi % ensure there'll be a reasnonable number left after shifting
+    %\message{strategy1}
+    \divide\dimen3 by \count255 %right-shifting the denominator saves multiplying the result later. Both lose accuracy.
+    \divide\dimen1 by \dimen3 
+    \multiply\dimen1 by 2% Scale to factor 1 = 1pt. 
+  \else
+    %\message{strategy2}
+    \divide\dimen1 by \dimen3 
+    \multiply\count255 by 2
+    \multiply\dimen1 by \count255
+  \fi
+  \xdef\@@r@tio{\strip@pt{\dimen1}}%
+}}
+
 \def\decod@lastnode#1{\ifnum #1<0 none\else \ifcase #1
     char%0
 \or hlist\or vlist\or rule\or ins\or mark%5
