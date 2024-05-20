@@ -1956,6 +1956,7 @@
   \closeadjlist
    \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
  \fi
+ \gdef\id@@@{UNK}%
 }
 %-csty_ptxfile_end
 \newread\t@stread
@@ -2225,6 +2226,7 @@
 
 
 \def\s@tupsizes{
+ \trace{s}{s@tupsizes called from book: \id@@@}%
  \s@tb@dyb@seline{}%
  %\tracingifs=1
  \ifdim\lineskiplimit<0pt\else\lineskiplimit=-9\le@dingunit\fi
