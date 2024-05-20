@@ -3848,7 +3848,7 @@ class GtkViewModel(ViewModel):
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
                 elif os.path.exists(fname):
                     zipdata = ZipFile(fname)
-                    import pdb; pdb.set_trace()
+                    # import pdb; pdb.set_trace()
                     prefix = self._findProjectInArchive(zipdata)
                 else:
                     zipdata = None

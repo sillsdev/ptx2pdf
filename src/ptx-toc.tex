@@ -184,7 +184,7 @@
   \fi
   \edef\t@mpd{tc\ifRTL\else r\fi\the\t@ccount}
   \csname\t@mpd\endcsname #5\@ndcell\@ndrow
-  \trace{t}{\noexpand\tcr\the\t@ccount \space \t@mpd}
+  \trace{t}{\noexpand\tc\ifRTL\else r\fi\the\t@ccount \space \t@mpd}
   \ifcsname l@drs\endcsname
     \trace{t}{Refactor for last column \the\t@ccount}
     \deftocalign{\the\t@ccount}{r}

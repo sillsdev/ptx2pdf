@@ -410,6 +410,7 @@
 }
 
 \def\kill@cache #1\E{%Remove listed item
+   \trace{sa}{Killing #1}%
    \x@\global\x@\let\csname #1\endcsname\relax}
 
 \def\p@ssParamCached{}
