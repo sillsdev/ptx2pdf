@@ -1188,6 +1188,7 @@
       \seriesdiglottrue %
       \@setside{#1}%
       \@@switchstyles{#1}%
+      \x@\the\csname diglot#1ho@ks\endcsname\relax
     \else
       \diglotfalse
       \gdef\atn@xtptxfile{\monoglotcolumn{#1}}%
