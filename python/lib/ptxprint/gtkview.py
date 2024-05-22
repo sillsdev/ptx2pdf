@@ -3889,8 +3889,7 @@ class GtkViewModel(ViewModel):
 
     def onSelectPDForZIPfileToImport(self, btn_importPDF):
         pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf", "default": True},
-                           "ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                filters = {"PDF/ZIP files": {"patterns": ["*.pdf", "*.zip"], "mime": "application/pdf", "default": True}},
                 multiple = False, basedir=os.path.join(self.working_dir, ".."))
 
         if pdfORzipFile == None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
