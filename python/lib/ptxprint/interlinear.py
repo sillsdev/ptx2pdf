@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
+_refre = re.compile(r"^(\d?\D+?)\s+(\d+):(\S+)\s*$")
 
 class Interlinear:
     def __init__(self, lang, prjdir):

@@ -346,7 +346,7 @@ class TexModel:
             dat = []
             if a[1] is not None:
                 pos = int(self.dict['notes/{}ruleposn'.format(a[1])] or 0)
-                left = "\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
+                left = r"\hskip {:.2f} mm".format(float(self.dict['notes/{}ruleindent'.format(a[1])] or 0.))
                 right = r"\hss"
                 if pos == 2 or pos == 4:      # Right or Outer
                     right, left = (left, right)
@@ -473,9 +473,9 @@ class TexModel:
             pass
         else:
             if pri:
-                t = "\headfootL{{{}}}".format(t)
+                t = r"\headfootL{{{}}}".format(t)
             else:
-                t = "\headfootR{{{}}}".format(t)
+                t = r"\headfootR{{{}}}".format(t)
         return t
 
     def mirrorHeaders(self, h, dig=False):
@@ -1449,7 +1449,7 @@ class TexModel:
                 dat = inf.read()
 
             # \figonpage{304}{56}{cn01617.jpg}{tl}{© David C. Cook Publishing Co, 1978.}{x170.90504pt}
-            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + "|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
+            rematch = r"(?i)\\figonpage\{(\d+)\}\{\d+\}\{(?:" + self.printer.getPicRe() + r"|(.*?))\.[^}]+\}\{.*?\}\{(.*?)?\}\{.+?\}"
             m = re.findall(rematch, dat)
             msngPgs = []
             customStmt = []

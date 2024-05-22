@@ -188,7 +188,7 @@ class PDFx1aOutput(Snippet):
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
-            res += "\XeTeXgenerateactualtext=1\n"
+            res += "\\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):

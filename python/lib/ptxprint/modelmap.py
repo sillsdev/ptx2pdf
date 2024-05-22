@@ -104,8 +104,8 @@ _map = {
     "paper/fontfactor":         ("s_fontsize", "fontscript", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 
-    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\doGridLines" if v else ""),
-    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\doGraphPaper" if v else ""),
+    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", "finish", None),
     "majorcolor_":              ("col_gridMajor", "finish", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "grid/minorcolor":          ("col_gridMinor", "finish", None),

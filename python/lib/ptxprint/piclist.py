@@ -31,7 +31,7 @@ def newBase(fpath):
     if cl:
         return cl[0].lower()
     else:
-        return re.sub('[()&+,.;: \-]', '_', f.lower())
+        return re.sub(r'[()&+,.;: \-]', '_', f.lower())
 
 
 _checks = {

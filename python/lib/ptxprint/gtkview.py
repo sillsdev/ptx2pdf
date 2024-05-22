@@ -1666,9 +1666,9 @@ class GtkViewModel(ViewModel):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
-            t = re.sub("\([cC]\)", "\u00a9 ", t)
-            t = re.sub("\([rR]\)", "\u00ae ", t)
-            t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+            t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+            t = re.sub(r"\([rR]\)", "\u00ae ", t)
+            t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
             if len(t) < 100:
                 t = re.sub(r"</?p>", "", t)
                 self.builder.get_object("t_copyrightStatement").set_text(t)
@@ -3065,7 +3065,7 @@ class GtkViewModel(ViewModel):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
                 v = opt[1]
-                tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+                tiptext = "\\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             elif wname.startswith("s_"):
                 x = opt[1]
                 # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
@@ -3879,7 +3879,7 @@ class GtkViewModel(ViewModel):
                 zipinf.close()
             if self.get("c_impPictures") or self.get("c_impEverything"):  # MH - FIX ME!
                 self.updatePicList()
-            self.onViewerChangePage(None, None, 0, forced=True)
+            self.onRefreshViewerTextClicked(None)
             if statMsg is not None:
                 self.doStatus(statMsg)
         dialog.hide()
@@ -4390,9 +4390,9 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(btname)
         t = w.get_text()
         t = re.sub("</?p>", "", t)
-        t = re.sub("\([cC]\)", "\u00a9 ", t)
-        t = re.sub("\([rR]\)", "\u00ae ", t)
-        t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+        t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+        t = re.sub(r"\([rR]\)", "\u00ae ", t)
+        t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
         if btname == 't_plCreditText' and len(t) == 3:
             if self.get('c_sensitive'):
                 t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
@@ -4470,7 +4470,7 @@ class GtkViewModel(ViewModel):
         # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "Phrase with spaces:"\k*
         #                                                   which gets converted to k.Phrasewithspaces:
         a = a[:5] + re.sub(' ', '', a[5:])
-        a = re.sub('\\\+?[a-z0-9\-]+\*? ', '', a)
+        a = re.sub(r'\\\+?[a-z0-9\-]+\*? ', '', a)
         self.set("t_plAnchor", a)
 
     def resetParam(self, btn, foo):
@@ -4925,7 +4925,7 @@ class GtkViewModel(ViewModel):
         # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite,
         # but if there are no \periphs relating to the cover, then turn it ON and disable control.
         coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
-        lt = _(" \periphs in Front Matter")
+        lt = _(" \\periphs in Front Matter")
         hasCoverPeriphs = self.isPeriphInFrontMatter(periphnames=coverPeriphs)
         w = self.builder.get_object("c_coverOverwritePeriphs")
         w.set_sensitive(True if hasCoverPeriphs else False)

@@ -831,7 +831,7 @@ class Module:
                 if not isinstance(rep, sfm.Element) or rep.name != "rep":
                     break
                 # parse rep
-                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
+                m = re.match(r"^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
                 if m:
                     reps.append((None,
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),

@@ -421,7 +421,7 @@ class StrongsXrefs(XMLXrefs):
                 if a is not None:
                     a = s
                     s += r"\s+" + b
-                    b = s + "r\s+" + a
+                    b = s + r"\s+" + a
                     pending += r + b + p + "|"
                 pending += r + s + p
             reg.append(pending)

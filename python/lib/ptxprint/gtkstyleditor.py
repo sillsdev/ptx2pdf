@@ -399,7 +399,7 @@ class StyleEditorView(StyleEditor):
                 if data.get('Endmarker', None):
                     val += " ... \\" + data['Endmarker']
                     if urlmkr not in noEndmarker:
-                        urlmkr += "-" + data['Endmarker'].strip('\*')
+                        urlmkr += "-" + data['Endmarker'].strip(r'\*')
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')

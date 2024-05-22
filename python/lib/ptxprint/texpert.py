@@ -50,13 +50,13 @@ texpertOptions = {
     "lastnotewidowpenalty":  ["lastnotewidowp", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: widowpenalty"), _("Extra penalty for breaking at the last line of the last footnote.")],
     "lastnoteclubpenalty":  ["lastnoteclubp", (10000, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: clubpenalty"), _("Extra penalty for breaking at the first line of the last footnote.")],
     "lastnoteparpenalty":  ["lastnoteparp", (100, -9999, 10000, 10, 100), "{0}={1}", _("Last Note: penalty at par"), _("Penalty for breaking at an explicit footnote-paragraph in the last footnote.")],
-    "NoteShaveShortest":  ["nshaveshort", (2, 0, 100, 1, 1), "\def{0}{{{1}}}", _("Split notes: Shortest note to shave"), _("If footnotes might be shaved, how many lines must it be?")],
-    "NoteShaveMin":  ["nshavemin", (1, 0, 100, 1, 1), "\def{0}{{{1}}}", _("Split notes: min lines to move."), _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")],
-    "NoteShaveStay":  ["nshavestay", (1, 0, 100, 1, 1), "\def{0}{{{1}}}", _("Split notes: note lines to stay"), _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")],
-    "FootnoteMulS":  ["footnotemuls", (100, 0, 2100, 1, 1), "\def{0}{{{1}}}", _("Footnote factor-Single column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")],
-    "FootnoteMulT":  ["footnotemult", (100, 0, 2100, 1, 1), "\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")],
-    "FootnoteMulD":  ["footnotemuld", (500, 0, 2100, 1, 1), "\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")],
-    "FootnoteMulC":  ["footnotemulc", (0, 0, 2100, 1, 1), "\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")]
+    "NoteShaveShortest":  ["nshaveshort", (2, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: Shortest note to shave"), _("If footnotes might be shaved, how many lines must it be?")],
+    "NoteShaveMin":  ["nshavemin", (1, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: min lines to move."), _("If a footnote is being shaved (split onto next page), what is the minimum number of lines to move?")],
+    "NoteShaveStay":  ["nshavestay", (1, 0, 100, 1, 1), r"\def{0}{{{1}}}", _("Split notes: note lines to stay"), _("If a footnote is being shaved (split onto next page), how many lines of (all) notes must remain on the page?")],
+    "FootnoteMulS":  ["footnotemuls", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Single column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in single-column mode? (100=10percent)")],
+    "FootnoteMulT":  ["footnotemult", (100, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Two column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering input in two-column mode? (100=10percent)")],
+    "FootnoteMulD":  ["footnotemuld", (500, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Diglot"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering diglot input? (100=10percent)")],
+    "FootnoteMulC":  ["footnotemulc", (0, 0, 2100, 1, 1), r"\def{0}{{{1}}}", _("Footnote factor-Centre column"), _("To avoid needless cylces/underful pages, what portion of a note's height-estimate should TeX apply when gathering centre-column notes? (100=10percent)")]
 }
 
 def widgetName(opt):

@@ -38,7 +38,7 @@ _errmsghelp = {
                                            "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
                                            "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
-"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \Color definition, not a color name. (e.g. \Color xff7f7f)"),
+"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \\Color definition, not a color name. (e.g. \\Color xff7f7f)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                            "Try running 'Basic Checks' in Paratext to validate markers.\n" +\
@@ -55,12 +55,12 @@ _errmsghelp = {
                                            "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
                                            "  in blue if these features are currently enabled)."),
 "! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
-"! File ended while scanning use of \iotableleader.": _("Problem with Formatting Intro Outline\n" +\
-                                           "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab"),
+"! File ended while scanning use of \\iotableleader.": _("Problem with Formatting Intro Outline\n" +\
+                                           "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"),
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
                                            "Try turning off Hyphenate option located on the Fonts+Scripts tab"),
-"! Font \extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
+"! Font \\extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
                                           "the selected font has not been installed for all users. See FAQ."),
@@ -591,7 +591,7 @@ class RunJob:
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
-            if len(set(mrkrs) & set([r"\ef", "\ex", "\cat", "\esb"])):
+            if len(set(mrkrs) & set([r"\ef", r"\ex", r"\cat", r"\esb"])):
                 finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))

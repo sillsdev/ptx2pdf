@@ -592,9 +592,7 @@ varpaths = (
     ('workingdir', ('working_dir',)),
 )
 
-class Path(pathlib.Path):
-
-    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath):
 
     @staticmethod
     def create_varlib(aView):

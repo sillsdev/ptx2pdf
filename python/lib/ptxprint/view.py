@@ -1288,7 +1288,7 @@ class ViewModel:
 
     def getPicRe(self):
         r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
-                + ")(\d+)([^.]*)"
+                + r")(\d+)([^.]*)"
         return r
 
     def getDraftFilename(self, bk, ext=".piclist"):
@@ -1762,7 +1762,7 @@ set stack_size=32768""".format(self.configName())
         for t in texfiles:
             if t.endswith("_FRT.SFM"):
                 continue
-            batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\..\..'.format(os.path.basename(t))
+            batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\\..\\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
 
     def createSettingsZip(self, outf):
