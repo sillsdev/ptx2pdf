@@ -65,6 +65,7 @@ _map = {
     "project/autotaghebgrk":    ("c_autoTagHebGrk", "advanced", None),
     "project/interlinear":      ("c_interlinear", "advanced", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", "advanced", None),
+    "project/interpunc":        ("c_usePunctuation", "advanced", None),
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", "meta", None),
