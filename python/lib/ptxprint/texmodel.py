@@ -922,7 +922,7 @@ class TexModel:
             (dat, doc) = self._getDoc(dat, doc, bk)
             if doc is not None:
                 doc.calc_PToffsets()
-                self.interlinear.convertBk(bk, doc, linelengths)
+                self.interlinear.convertBk(bk, doc, linelengths, keep_punct = self.dict.get("project/interpunc", True))
                 if len(self.interlinear.fails):
                     refs = RefList(self.interlinear.fails)
                     refs.simplify()
