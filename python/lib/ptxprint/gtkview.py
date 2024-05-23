@@ -3521,7 +3521,7 @@ class GtkViewModel(ViewModel):
             self.fileViews[pgnum][0].set_text(txt)
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
-            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
+            self.fileViews[pgnum][0].set_text(_("# This file doesn't exist yet!\n# Edit here and Click 'Save' to create it."))
 
     def editFile_delayed(self, *a):
         GLib.idle_add(self.editFile, *a)

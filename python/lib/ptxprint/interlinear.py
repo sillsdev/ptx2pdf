@@ -122,7 +122,7 @@ class Interlinear:
                         else:
                             for v in vrange:
                                 notdones.add((curref[0], v))
-                    if e.tag == skipping:
-                        skipping = None
+                elif event == "end" and e.tag == skipping:
+                    skipping = None
         self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
 

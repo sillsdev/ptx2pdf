@@ -1122,7 +1122,7 @@ class TexModel:
                             break
                     continue
                 elif len(l):
-                    logger.warning(f"Faulty change line found at {i}:\n{l}")
+                    logger.warning(f"Faulty change line found in {fname} at line {i}:\n{l}")
         return changes
 
     def makelocalChanges(self, printer, bk, chaprange=None):
