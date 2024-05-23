@@ -21471,6 +21471,28 @@ e.g. polyglot-simplepages</property>
                                         <property name="position">1</property>
                                       </packing>
                                     </child>
+                                    <child>
+                                      <object class="GtkCheckButton" id="c_usePunctuation">
+                                        <property name="label" translatable="yes">Use Interlinear Punctuation</property>
+                                        <property name="name">Place Ruby text above words </property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">False</property>
+                                        <property name="tooltip-text" translatable="yes">Include specifically modified
+interlinearized punctuation.</property>
+                                        <property name="double-buffered">False</property>
+                                        <property name="halign">start</property>
+                                        <property name="valign">center</property>
+                                        <property name="margin-left">6</property>
+                                        <property name="margin-start">6</property>
+                                        <property name="draw-indicator">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">0</property>
