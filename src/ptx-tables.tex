@@ -137,7 +137,14 @@
   \def\t@blecell#1#2{%
     \@ndcell
     \st@rtcell
-    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{#2}%
+    \edef\tmpa{#2}
+    \getp@ram{justification}{#1}{tr}%
+    \ifx\p@ram\c@nter \edef\tmpa{c}\else
+    \ifx\p@ram\l@ftb@l \edef\tmpa{l}\else
+    \ifx\p@ram\l@ft \edef\tmpa{l}\else
+    \ifx\p@ram\r@ght \edef\tmpa{r}%
+    \fi\fi\fi\fi
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\tmpa}%
     \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2 in style #1}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%

@@ -152,7 +152,7 @@
       \edef\t@mpd{tc\the\t@ccount}%
     \fi
     \trace{t}{\t@mpd \space \t@mpa}%
-    \csname \t@mpd\endcsname \t@mpa
+    \csname \t@mpd\ifdiglot \c@rrdstat\fi \endcsname \t@mpa
     \ifcsname cat:toc|tc\the\t@ccount :fill\endcsname\else\d@ftoc{tc\the\t@ccount :fill}{\hfill}\fi
     \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
     \global\advance\t@ccount by 1
