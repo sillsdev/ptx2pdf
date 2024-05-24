@@ -137,15 +137,16 @@
   \def\t@blecell#1#2{%
     \@ndcell
     \st@rtcell
-    \edef\tmpa{#2}
-    \getp@ram{justification}{#1}{tr}%
-    \ifx\p@ram\c@nter \edef\tmpa{c}\else
-    \ifx\p@ram\l@ftb@l \edef\tmpa{l}\else
-    \ifx\p@ram\l@ft \edef\tmpa{l}\else
-    \ifx\p@ram\r@ght \edef\tmpa{r}%
+    \edef\tmp{#2}%
+    \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram}%
+    \ifx\p@ram\c@nter \edef\tmp{c}\else
+    \ifx\p@ram\l@ftb@l \edef\tmp{l}\else
+    \ifx\p@ram\l@ft \edef\tmp{l}\else
+    \ifx\p@ram\r@ght \edef\tmp{r}%
     \fi\fi\fi\fi
-    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\tmpa}%
-    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2 in style #1}%
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\tmp}%
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \tmp\space in style #1}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
 }

@@ -727,7 +727,7 @@ class RunJob:
                 texfiles += [outFile, logFile]
 
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
-        if info['project/iffrontmatter'] != '%' or info["project/sectintros"]:
+        if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
             texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
         
         if not len(donebooks) or not len(digdonebooks):
