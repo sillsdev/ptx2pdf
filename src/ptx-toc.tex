@@ -135,12 +135,14 @@
   \ifx\toc@C\empty \else \let\n@xt\maket@cline \fi
   \n@xt}
 
+\newif\ifTOCRTL
 \def\fnname{doTOCline}
 \newcount\t@ccount %unique count, as there are \globals around.
 \x@\def\csname\fnname\endcsname#1#2#3#4#5{%
 % ID, cell1, cell2, cell3, pagenum
   \trace{t}{\fnname\space #1 #2 #3 #4 #5}%
   \def\tablecategory{toc}\tr
+  \ifRTL\TOCRTLtrue\else\TOCRTLfalse\fi
   \def\t@mpa{#2}%
   \def\t@mpb{#3}%
   \def\t@mpc{#4}%
@@ -257,10 +259,10 @@
     \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
     \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\l@drs}
     \fi
     \ifx\the@lign\cell@r \else
-      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\leftskip=0pt\rightskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\l@drs}
     \fi
     \d@ftoc{tc\the\t@ccount :fill}{\l@drs}
     \advance\t@ccount by 1

@@ -248,7 +248,6 @@
     \let\tablecategory\empty
   \fi}
 
-\newif\ifTOCRTL
 \def\endt@blewrap{%
   \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize}%
   % calculate column widths as:
@@ -305,12 +304,10 @@
 %      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
 %        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
 %  }%
-  \ifRTL\TOCRTLtrue\else\TOCRTLfalse\fi
   \getp@ram{justification}{tr}{\styst@k}%
   \ifx\p@ram\r@ght
-    \ifRTL\TOCRTLfalse\else\TOCRTLtrue\fi
+    \ifRTL\RTLfalse\else\RTLtrue\fi
   \fi
-  \trace{t}{tr justification=\p@ram \space so TOCRTL\ifTOCRTL true\else false\fi}%
   \f@reachcol{\wr@pcolumn}%
   \dimen0=0pt \dimen1=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
@@ -364,7 +361,7 @@
   \setbox0=\vbox{\parfillskip=0pt\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \leftskip=0pt\rightskip=0pt
-    \ifTOCRTL\beginR\fi
+    \ifRTL\beginR\fi
     \edef\tc@ll{tc\the\@col}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit \kern \p@ram \IndentUnit\fi
@@ -373,7 +370,7 @@
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
-    \trace{t}{Pre... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{Pre(RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \ifx\the@lign\cell@r
       \ifRTL \let\n@xt=\rightskip \else
         \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
@@ -384,14 +381,16 @@
     \else
       \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
-      \else\let\n@xt=\rightskip\fi
+      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\fi
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifcsname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname\hfil\fi
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL r\fi\else\ifTOCRTL\else r\fi\fi \the\@col}%
+    \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
     \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
-    \x@\ifcsname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
-    \par}%
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL\else r\fi\else\ifTOCRTL r\fi\fi \the\@col}%
+    \x@\ifcsname \mytmp\endcsname\nobreak\csname \mytmp\endcsname\hfil\fi
+    \ifRTL\endR\fi\par}%
   \wd0=\c@rrentcolwidth
   \box0}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
