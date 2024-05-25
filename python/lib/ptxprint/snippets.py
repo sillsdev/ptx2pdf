@@ -223,6 +223,7 @@ class Diglot(Snippet):
 \def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
 \def\bolditalic{s_}{{"{diglot[fontbolditalic]}{diglot[docscript]}"}}
 \FontSizeUnit{s_}={diglot[fontfactor]}pt
+\RTL{s_}{diglot[ifrtl]}
 \def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
 \def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
 \def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}

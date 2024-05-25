@@ -137,16 +137,16 @@
   \def\t@blecell#1#2{%
     \@ndcell
     \st@rtcell
-    \edef\tmp{#2}%
+    \xdef\mytmp{#2}%
     \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
-    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram}%
-    \ifx\p@ram\c@nter \edef\tmp{c}\else
-    \ifx\p@ram\l@ftb@l \edef\tmp{l}\else
-    \ifx\p@ram\l@ft \edef\tmp{l}\else
-    \ifx\p@ram\r@ght \edef\tmp{r}%
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \ifx\p@ram\c@nter \edef\mytmp{c}\else
+    \ifx\p@ram\l@ftb@l \edef\mytmp{l}\else
+    \ifx\p@ram\l@ft \edef\mytmp{l}\else
+    \ifx\p@ram\r@ght \edef\mytmp{r}%
     \fi\fi\fi\fi
-    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\tmp}%
-    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \tmp\space in style #1}%
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\mytmp}%
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
 }
@@ -248,6 +248,7 @@
     \let\tablecategory\empty
   \fi}
 
+\newif\ifTOCRTL
 \def\endt@blewrap{%
   \trace{t}{endt@blewrap \the\maxtablec@l, rows=\the\tabler@ws, hsize=\the\hsize}%
   % calculate column widths as:
@@ -304,6 +305,12 @@
 %      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
 %        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
 %  }%
+  \ifRTL\TOCRTLtrue\else\TOCRTLfalse\fi
+  \getp@ram{justification}{tr}{\styst@k}%
+  \ifx\p@ram\r@ght
+    \ifRTL\TOCRTLfalse\else\TOCRTLtrue\fi
+  \fi
+  \trace{t}{tr justification=\p@ram \space so TOCRTL\ifTOCRTL true\else false\fi}%
   \f@reachcol{\wr@pcolumn}%
   \dimen0=0pt \dimen1=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
@@ -320,7 +327,7 @@
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
       \line{\hskip\dimen0
-        \ifRTL
+        \ifTOCRTL
           \hfil\lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}\hfil
         \else
           \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
@@ -357,32 +364,31 @@
   \setbox0=\vbox{\parfillskip=0pt\hsize=\c@rrentcolwidth
     \everypar={}\resetp@rstyle\noindent
     \leftskip=0pt\rightskip=0pt
-    \ifRTL\beginR\fi
+    \ifTOCRTL\beginR\fi
     \edef\tc@ll{tc\the\@col}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
+    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit \kern \p@ram \IndentUnit\fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \kern \p@ram\IndentUnit\fi
+    \ifx\p@ram\relax \else \kern \p@ram \IndentUnit\fi
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \trace{t}{Pre... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \ifx\the@lign\cell@r
-      \ifRTL\let\n@xt=\rightskip\else
-        \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+      \ifRTL \let\n@xt=\rightskip \else
+        \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
       \fi
-      %\let\n@xt=\leftskip
     \else\ifx\the@lign\cell@c
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
-      \ifRTL \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+      \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
       \else\let\n@xt=\rightskip\fi
-      %\let\n@xt=\rightskip
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
     \ifcsname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname\hfil\fi
-    \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \unhbox0\unskip\unkern \parfillskip=0pt
     \x@\ifcsname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
     \par}%
