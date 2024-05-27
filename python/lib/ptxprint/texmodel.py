@@ -138,9 +138,9 @@ class TexModel:
 
     _tocleaders = [
         "",
-        r"\hskip .5pt .\hskip .5pt",
-        r"\hskip 3pt .\hskip 3pt",
-        r"\hskip 6pt \emdash\hskip 3pt",
+        r"\s@tfont{ldrs}{ldrs+p}\hskip .5pt .\hskip .5pt",
+        r"\s@tfont{ldrs}{ldrs+p}\hskip 3pt .\hskip 3pt\ldrs*",
+        r"\s@tfont{ldrs}{ldrs+p}\hskip 6pt \emdash\hskip 3pt\ldrs*",
         r"\hrule"
     ]
 
@@ -292,6 +292,7 @@ class TexModel:
             self.dict['document/tocleaders'] = 0
         self.dict['document/iftocleaders'] = '' if int(self.dict['document/tocleaders'] or 0) > 0 else '%'
         self.dict['document/tocleaderstyle'] = self._tocleaders[int(self.dict['document/tocleaders'] or 0)]
+        self.dict['document/tocleaderrule'] = "hrule" if int(self.dict['document/tocleaders'] or 0) == 4 else ""
         self.calcRuleParameters()
         if self.asBool('cover/includespine'):
             self.dict['cover/spinewidth_'] = float((self.dict.get("cover/spinewidth") or "0mm").replace("mm", ""))

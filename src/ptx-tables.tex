@@ -324,7 +324,7 @@
     \@@LOOP \ifnum\nth@line<\linec@unt
       \advance\nth@line by 1
       \line{\hskip\dimen0
-        \ifTOCRTL
+        \ifRTL
           \hfil\lochcaer@f{\csname \c@tprefix tc\the\@col :fill\endcsname\getnth@line}\hfil
         \else
           \hfil\f@reachcol{\getnth@line\csname \c@tprefix tc\the\@col :fill\endcsname}\hfil
@@ -364,13 +364,13 @@
     \ifRTL\beginR\fi
     \edef\tc@ll{tc\the\@col}%
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit \kern \p@ram \IndentUnit\fi
+    \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \kern \p@ram \IndentUnit\fi
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
-    \trace{t}{Pre(RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{Pre(\tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \ifx\the@lign\cell@r
       \ifRTL \let\n@xt=\rightskip \else
         \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
@@ -384,11 +384,13 @@
       \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\fi
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL r\fi\else\ifTOCRTL\else r\fi\fi \the\@col}%
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL r\fi\else\ifTOCRTL r\fi\fi \the\@col}%
+    \skip1=\leftskip \leftskip=0pt
     \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
     \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
-    \unhbox0\unskip\unkern \parfillskip=0pt
-    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL\else r\fi\else\ifTOCRTL r\fi\fi \the\@col}%
+    %\hskip\skip1
+    \unhbox0\unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL\else r\fi\else\ifTOCRTL\else r\fi\fi \the\@col}%
     \x@\ifcsname \mytmp\endcsname\nobreak\csname \mytmp\endcsname\hfil\fi
     \ifRTL\endR\fi\par}%
   \wd0=\c@rrentcolwidth
@@ -432,8 +434,8 @@
     \fi
   \egroup
   \trace{t}{bls:\the\baselineskip}%
-  \ifh@lfrow\lower 0.5\baselineskip\fi \box1%
-  %\box1
+  \ifh@lfrow\lower 0.5\baselineskip\fi
+  \box1%
 }
 \newcount\nth@line
 

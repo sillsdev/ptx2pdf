@@ -193,7 +193,7 @@
     \d@ftoc{tc\the\t@ccount :fill}{}
     \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
     \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{}
-    \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\l@drs}
+    \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
     \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
     \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi
   \fi
@@ -232,12 +232,11 @@
     \x@\def\x@\tocf@@t\x@{\the\tmpt@ks}%
   \fi
 }
-\def\tocleaders#1#2{
-  \if#1\hrule
-    \gdef\l@drs{\xleaders #1 \hfill}
-  \else
-    \gdef\l@drs{\xleaders\hbox{#1}\hfill}
-  \fi
+
+\newbox\l@drsbox
+\def\tocleadersrule#1#2{\gdef\l@drs{\xleaders #1 \hfill}\t@cleaders{#1}{#2}}
+\def\tocleaders#1#2{\global\setbox\l@drsbox=\hbox{#1}\gdef\l@drs{\xleaders\copy\l@drsbox\hfill}\t@cleaders{#1}{#2}}
+\def\t@cleaders#1#2{
   \Marker cat:toc|tc1\relax
   \StyleType Character\relax
   \Marker cat:toc|tc2\relax
@@ -259,10 +258,10 @@
     \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
     \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
     \fi
     \ifx\the@lign\cell@r \else
-      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\l@drs}
+      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
     \fi
     \d@ftoc{tc\the\t@ccount :fill}{\l@drs}
     \advance\t@ccount by 1
