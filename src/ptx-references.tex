@@ -369,12 +369,12 @@
 \def\RFtitleright{\empty}
 
 \def\HEADFOOTset#1#2#3#4#5#6#7#8{%
-  \x@\def\csname R#1#2evenleft\endcsname{#3}%
-  \x@\def\csname R#1#2evencenter\endcsname{#4}%
-  \x@\def\csname R#1#2evenright\endcsname{#5}%
-  \x@\def\csname R#1#2oddleft\endcsname{#6}%
-  \x@\def\csname R#1#2oddcenter\endcsname{#7}%
-  \x@\def\csname R#1#2oddright\endcsname{#8}}%
+  \x@\gdef\csname R#1#2evenleft\endcsname{#3}%
+  \x@\gdef\csname R#1#2evencenter\endcsname{#4}%
+  \x@\gdef\csname R#1#2evenright\endcsname{#5}%
+  \x@\gdef\csname R#1#2oddleft\endcsname{#6}%
+  \x@\gdef\csname R#1#2oddcenter\endcsname{#7}%
+  \x@\gdef\csname R#1#2oddright\endcsname{#8}}%
 %usage: #1 H or F (head or foot)
 % #2 {}, {title} {noV}
 % #3-#8 Left,centre,right / left, centre,right for even,odd pages.

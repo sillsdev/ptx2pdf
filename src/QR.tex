@@ -28,6 +28,7 @@
 
 \x@\def\csname MS:zqrcode\endcsname{%
   \bgroup\everypar{}%
+    \let\pic@lign\relax%
     \get@ttribute{cat}%
     \ifx\attr@b\relax\else\x@\s@tc@tprefix\x@{\attr@b}\fi
     \get@ttribute{size}%
@@ -55,7 +56,7 @@
         \immediate\closeout\QRtmpfile
         \input "QRtmp.tex"\relax%
       \else
-        \x@\m@kenumb@r\attr@b=%
+        \x@\m@kenumb@rE\attr@b\END%
         \trace{m}{QRcode rescanned as '\@@result'}%
         \x@\QRdata"\@@result"\relax%
       \fi

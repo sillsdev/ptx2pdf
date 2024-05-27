@@ -414,9 +414,10 @@
 \def\attrid{}
 \notlocation{zvar}
 %\notlocation{zuseperiph}
-\def\m@kenumberns#1{\m@kedigitsother\x@\m@kenumb@r #1=} % real numbers are terminated by a training space. But if we have mixed text, a space may not be wanted.
+\def\m@kenumberns#1{\m@kedigitsother\x@\m@kenumb@rE #1\END} % real numbers are terminated by a training space. But if we have mixed text, a space may not be wanted.
 \def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}
 \def\m@kenumb@r#1={\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
+\def\m@kenumb@rE#1\END{\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
 \x@\def\csname MS:zrule\endcsname{%
   \endgraf
@@ -539,15 +540,15 @@
 
 \x@\def\csname MS:zcustombotmark\endcsname{%
   \getcustomm@rknum
-  \botmarks\custommarknum
+  \botmarks\m@rknum
 }
 \x@\def\csname MS:zcustomfirstmark\endcsname{%
   \getcustomm@rknum
-  \firstmarks\custommarknum
+  \firstmarks\m@rknum
 }
 \x@\def\csname MS:zcustomtopmark\endcsname{%
   \getcustomm@rknum
-  \topmarks\custommarknum
+  \topmarks\m@rknum
 }
 
 \x@\def\csname MS:zgap\endcsname{%
