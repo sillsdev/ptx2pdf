@@ -316,7 +316,8 @@ parameters.
 ### x-edgeadjust Attribute
  `x-edgeadjust` moves the image relative to the margin, like indentation does to text.  As the same units are used, a figure 
 with `x-edgeadjust="0.25"`and  `pgpos="hl"` will align with the left-hand edge of a paragraph with an indentation of 0.25. 
-Negative numbers will cause the image to extend into the respective margin.
+Negative numbers will cause the image to extend into the respective margin. Note that sidebars can be similarly adjusted 
+via their `\FirstLineIndent` parameter
 
 ### x-xetex Attribute - Rotation control and PDF page selection 
 #### Rotation
