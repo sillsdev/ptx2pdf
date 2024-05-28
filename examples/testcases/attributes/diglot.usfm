@@ -71,7 +71,7 @@ dignissimos ducimus \w qui \w* blanditiis praesentium voluptatum deleniti atque 
 \p Et harum quidem rerum facilis est et expedita distinctio.
 \p
 \righttext
-\s A test \w foo|demo\w* of word attributes
+\s A~test \rb foo|demo \rb* of word attributes
 \p
 \v 4 At vero eos \bd et \+w gratuitous slash-w|akkumulator\+w* et iusto odio \bd*
 dignissimos ducimus \w qui \w* blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.

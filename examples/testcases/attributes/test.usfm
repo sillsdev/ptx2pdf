@@ -38,7 +38,7 @@ So is this bit, after a non-matching break.
 \v 3 James said \qt1-s|who="James"\* "Fred said \qt2-s|Fred\* 'quisquam est,'\qt2-e\* menacingly"\qt1-e\*, But really Fred
 said \qt-s|Fred\* "qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"\qt-e\*, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
 \qt3-e\*
-\p \cat insb\cat* This is a categorized paragraph in a sidebar\f + \fr 1:3 \ft What about footnotes?\f*
+\p \cat insb\cat* This is a categorized \bd paraGraph\bd* in a sidebar\f + \fr 1:3 \ft What about footnotes?\f*
 \p This is a normal paragraph in a sidebar
 \esbe
 
