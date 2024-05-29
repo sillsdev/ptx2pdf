@@ -1283,7 +1283,7 @@ class TexModel:
             self.localChanges.append(makeChange(r"\\xo \d+[:.](\d+)", r"\\xo \1"))
 
         # Paratext marks no-break space as a tilde ~, but the TeX handles it.
-        #self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
+        # self.localChanges.append((None, regex.compile(r"~", flags=regex.M), r"\u00A0")) 
 
         # Paratext marks forced line breaks as //
         # self.localChanges.append((None, regex.compile(r"//", flags=regex.M), r"\u2028"))  

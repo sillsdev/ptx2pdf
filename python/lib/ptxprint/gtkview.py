@@ -5018,7 +5018,7 @@ class GtkViewModel(ViewModel):
                     self.builder.get_object("nbk_Main").set_current_page(mpgnum)
                     _errText = _("Please fill in any missing <Values> on") + "\n" + \
                                _("the Peripherals tab before proceeding.") + "\n" + \
-                               _("Update the ISBN number or deleted the entry.")
+                               _("Update the ISBN number or delete the entry.")
                     self.doError("Missing details for cover page", secondary=_errText, \
                               title="PTXprint", copy2clip=False, show=True)
                     self.warnedMissingZvars = True
