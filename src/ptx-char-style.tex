@@ -232,6 +232,10 @@
     \getmcp@ram{underline}%
     \ifx\p@ram\tru@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
     \ifx\p@ram\tw@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \getmcp@ram{outline}%
+    \ifx\p@ram\relax\else\temptrue\fi
+    \getmcp@ram{shadow}%
+    \ifx\p@ram\relax\else\temptrue\fi
     \iftemp\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
@@ -331,6 +335,8 @@
         \global\let\ulp@ram\relax
        \fi
      \fi
+     \getmcp@ramR{shadow}\global\let\shdwp@ram\p@ram
+     \getmcp@ramR{outline}\global\let\outln@ram\p@ram
      \global\tmpt@ks{}%
      \ifbox@run
        \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\temptrue
