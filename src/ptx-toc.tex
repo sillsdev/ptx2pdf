@@ -192,7 +192,7 @@
     \d@ftoc{tc\the\t@ccount :fill}{}
     \ifcsname cat:toc|tc\the\t@ccount :verticalalign\endcsname\else\d@ftoc{tc\the\t@ccount :verticalalign}{b}\fi
     \d@ftoc{leaders-tc\ifTOCRTL\else r\fi\the\t@ccount}{}
-    \d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
+    \d@ftoc{leaders-tc\ifTOCRTL r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \relax\l@drs}
     \ifRTL\d@ftoc{tc\the\t@ccount :leftmargin}{0}
     \else\d@ftoc{tc\the\t@ccount :rightmargin}{0}\fi
   \fi
@@ -248,7 +248,7 @@
   \Marker cat:toc|tc4\relax
   \StyleType Character\relax
   \dimen0=\IndentUnit \dimen1=#2 \divide\dimen0 by \dimen1
-  \ifdim\dimen0>1sp \dimen1=1pt \divide\dimen1 by \dimen0\else\dimen0=0pt\fi
+  \ifdim\dimen0>1sp \dimen1=1pt \divide\dimen1 by \dimen0\else\dimen0=0pt \fi
   \edef\rm@{\strip@pt{\dimen1}}
   \t@ccount=1
   \loop
@@ -260,7 +260,7 @@
     \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
     \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \relax\l@drs}
     \fi
     \ifx\the@lign\cell@r \else
       \trace{t}{Setting leaders-tc\the\t@ccount, with RTL\ifRTL true\else false\fi}%

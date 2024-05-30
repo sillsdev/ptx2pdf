@@ -265,6 +265,10 @@
 \x@\newcount\csname curr@djparR\endcsname % Used for adjust list
 \x@\newcount\csname p@rnumL\endcsname % Used for triggers
 \x@\newcount\csname p@rnumR\endcsname % Used for triggers
+\newcount\@numcutsL % Used for cutouts
+\newcount\@numcutsR % Used for cutouts
+\newcount\dropped@ther@linesL % Used for cutouts
+\newcount\dropped@ther@linesR % Used for cutouts
 
 \def\xdef@cseq#1#2{\x@\xdef\csname #1\endcsname{#2}}% Helper function
 \def\def@cseq#1#2{\x@\def\csname #1\endcsname{#2}}% Helper function
@@ -3042,6 +3046,8 @@
     \header@defs{#1}% All the possible header contents
     \x@\n@wif\csname ifinp@r-#1\endcsname % Used for parlocs analysis
     \x@\newc@unt\csname p@rlinesgone-#1\endcsname % Used for parlocs analysis
+    \x@\newc@unt\csname @numcuts#1\endcsname % Used for parlocs analysis
+    \x@\newc@unt\csname dropped@ther@lines#1\endcsname % Used for parlocs analysis
     \initcolumndef@ults{#1}%
 %TODO:
 %FIXMEs needing for polyglot processing:
