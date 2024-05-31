@@ -138,9 +138,9 @@ class TexModel:
 
     _tocleaders = [
         "",
-        r"\s@tfont{ldrs}{ldrs+p}\hskip .5pt .\hskip .5pt",
-        r"\s@tfont{ldrs}{ldrs+p}\hskip 3pt .\hskip 3pt\ldrs*",
-        r"\s@tfont{ldrs}{ldrs+p}\hskip 6pt \emdash\hskip 3pt\ldrs*",
+        r"\hskip .5pt .\hskip .5pt",
+        r"\hskip 3pt .\hskip 3pt\ldrs*",
+        r"\hskip 6pt \emdash\hskip 3pt\ldrs*",
         r"\hrule"
     ]
 

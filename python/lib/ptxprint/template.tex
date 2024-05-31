@@ -316,7 +316,7 @@
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
 \NoBodytrue
-{document/iftocleaders}\tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}}
+{document/iftocleaders}\addtoinithooks{{\relax \tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}} \relax}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {frontincludes_}
 {document/ifdiglot}\diglotfalse

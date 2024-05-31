@@ -205,8 +205,8 @@
 \let\tocf@@t=\empty
 \let\tocaft@r=\empty
 \let\tocb@fore=\empty
-\def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\xdef\csname cat:toc|#1\endcsname{#2}}
-\def\d@fiftoc#1#2{\should@xist{cat:toc|#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\xdef\csname cat:toc|#1\endcsname{#2}\fi}
+\def\d@ftoc#1#2{\should@xist{cat:toc|#1}\expandafter\gdef\csname cat:toc|#1\endcsname{#2}}
+\def\d@fiftoc#1#2{\should@xist{cat:toc|#1}\ifcsname cat:toc|#1\endcsname\else\expandafter\gdef\csname cat:toc|#1\endcsname{#2}\fi}
 \def\defTOC#1#2{%
   \ifRTL\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLtrue\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
   \else\x@\def\csname ms:ztoc=#1\endcsname{\TOCRTLfalse\gentoche@dfoot\global\keeptriggertrue \toch@ad \tocb@fore #2\tocaft@r \tocf@@t \endt@ble\global\let\tocf@@t\empty\global\let\tocaft@r\empty}%
@@ -237,8 +237,9 @@
 }
 
 \newbox\l@drsbox
-\def\tocleadersrule#1#2{\gdef\l@drs{\xleaders #1 \hfill}\t@cleaders{#1}{#2}}
-\def\tocleaders#1#2{\global\setbox\l@drsbox=\hbox{#1}\gdef\l@drs{\xleaders\copy\l@drsbox\hfill}\t@cleaders{#1}{#2}}
+\def\l@drscts
+\def\tocleadersrule#1#2{\global\let\l@drscts\relax\gdef\l@drs{\xleaders #1 \hfill}\t@cleaders{#1}{#2}}
+\def\tocleaders#1#2{\gdef\l@drscts{#1}\gdef\l@drs{\xleaders\copy\l@drsbox\hfill}\t@cleaders{#1}{#2}}
 \def\t@cleaders#1#2{
   \Marker cat:toc|tc1\relax
   \StyleType Character\relax
@@ -261,13 +262,15 @@
     \d@ftoc{tc\the\t@ccount :rightmargin}{\rm@}
     \ifnum\t@ccount>1 \d@ftoc{tc\the\t@ccount :leftmargin}{\rm@}\fi
     \ifnum \ifx\the@lign\cell@r 1\else\ifx\the@lign\cell@c 1\else 0\fi\fi =1
-      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \relax\l@drs}
+      %\d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount}\l@drscts}\rightskip=0pt \leftskip=0pt \relax\l@drs}
+      \d@ftoc{leaders-tc\ifRTL r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \ifx\l@drscts\relax\l@drs\else\xleaders\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount}\l@drscts}\hfil\fi}
     \fi
     \ifx\the@lign\cell@r \else
       \trace{t}{Setting leaders-tc\the\t@ccount, with RTL\ifRTL true\else false\fi}%
-      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt\leftskip=0pt\l@drs}
+      %\d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL\else r\fi\the\t@ccount}\l@drscts}\l@drs}
+      \d@ftoc{leaders-tc\ifRTL\else r\fi\the\t@ccount}{\rightskip=0pt \leftskip=0pt \global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL\else r\fi\the\t@ccount}\l@drscts}\l@drs}
     \fi
-    \d@ftoc{tc\the\t@ccount :fill}{\l@drs}
+    \d@ftoc{tc\the\t@ccount :fill}{\global\setbox\l@drsbox\hbox{\s@tfont{ldrs}{ldrs+tc\ifRTL r\fi\the\t@ccount}\l@drscts}\l@drs}
     \advance\t@ccount by 1
   \ifnum\t@ccount<5\repeat
 }
