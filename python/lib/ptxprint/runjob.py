@@ -231,6 +231,8 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         pass
     elif ispdfxa in _pdfmodes['rgb']:
         colour = "rgbx4"
+    elif ispdfxa in _pdfmodes['cmyk']:
+        colour = "cmyk"
     else:
         colour = ispdfxa.lower()
     if colour is not None:
