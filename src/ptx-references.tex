@@ -176,7 +176,7 @@
  \s@tfont{h}{h}%
  \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark -> \p@gebotmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
+ \trace{h}{page \the\pageno (h), first mark=\t@st \space p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
   \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
@@ -194,9 +194,9 @@
       \global\rhr@lefalse
     \else
       \ifodd\pageno
-	\the\oddhead
+        \the\oddhead
       \else
-	\ifDoubleSided \the\evenhead \else \the\oddhead\fi
+        \ifDoubleSided \the\evenhead \else \the\oddhead\fi
       \fi
     \fi
 %  \fi

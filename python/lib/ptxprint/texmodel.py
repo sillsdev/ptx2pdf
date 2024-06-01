@@ -607,12 +607,11 @@ class TexModel:
                             if len(insertnames):
                                 if digtexmodel is not None:
                                     res.append(r"\diglotfalse")
-                                res.append(r"\prepusfm")
                                 for ins in insertnames:
                                     res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
-                                            (r"\pb" if self.dict['project/periphpagebreak'] else "")
-                                            + r"\zgetperiph|{}\*", ""))
-                                res.append(r"\unprepusfm")
+                                            ("\\intropages{{{}}}\n" 
+                                                if self.dict['project/periphpagebreak']
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm\n"), ""))
                                 if digtexmodel is not None:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
@@ -736,13 +735,14 @@ class TexModel:
                     currperiphs = []
                     currk = None
                     for l in inf.readlines():
-                        ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))', l)
+                        ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
                         if ma:
                             if mode == 1:    # already collecting so save
                                 self.frontperiphs[currk] = "\n".join(currperiphs)
                             currk = ma[2] or ma[3]
                             if not currk:
-                                currk = _periphids.get(m[1].lower(), m[1].lower())
+                                t = ma[1].strip().lower()
+                                currk = _periphids.get(t, t)
                             currperiphs = [l.rstrip()]
                             mode = 1
                         elif mode == 1:
@@ -753,6 +753,7 @@ class TexModel:
                     if currk is not None:
                         self.frontperiphs[currk] = "\n".join(currperiphs)
                         # print(f"{currk=}\n{self.frontperiphs[currk]=}")
+            logger.debug(f"Contains periphs: {sorted(self.frontperiphs.keys())}")
         return self.frontperiphs.get(k, "")
 
     def createFrontMatter(self, outfname):
@@ -784,14 +785,21 @@ class TexModel:
         if intfname is None or not len(intfname):
             return
         intfile = os.path.join(self.printer.settings_dir, self.printer.prjid, intfname)
+        def addperiphid(m):
+            if m.group(2).lower() in _periphids:
+                return m.group(1) + f'|id="{_periphids[m.group(2).lower()]}"\n'
+            else:
+                return m.group(1)+"\n"
         if os.path.exists(intfile):
             self.dict['project/intfile'] = "\\ptxfile{{{}}}".format(os.path.basename(outfname))
             with open(intfile, encoding="utf-8") as inf:
                 dat = inf.read()
             dat = runChanges(self.changes, "INT", dat)
             dat = runChanges(self.localChanges, "INT", dat)
+            dat = regex.sub(r"(\\periph\s*([^\n|]+))\n", addperiphid, dat)
             with open(outfname, "w", encoding="utf-8") as outf:
                 outf.write(dat)
+        logger.debug(f"INT file {intfname} processed to {outfname}")
         return outfname
 
     def flattenModule(self, infpath, outdir, usfm=None):
