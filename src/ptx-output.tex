@@ -76,7 +76,9 @@
 \def\p@geendcontent{%
   \traceifset{p@geendcontent}%
   \tempfalse
-  \ifdefined\border@bpadding\kern\dimexpr\fb@bpadding + \border@bpadding \ifx\b@drbottom\tr@e + \b@drwidth pt\fi\fi\relax
+  \iftextborder
+    \ifdefined\textb@dr@bot@pad\kern\textb@dr@bot@pad\fi 
+  \fi
   \def\tmpwrite##1{\beginL\pdfsavepos\write\p@rlocs{\noexpand\@parpageend{\the\pdflastxpos}{\the\pdflastypos}{##1}}\endL}%
   \trace{b}{botomins=\the\ht\bottomins + \the\dp\bottomins, +\the\skip\bottomins}%
   \ifdim\ht\bottomins>0pt \vfil \temptrue\tmpwrite{bottomins}\kern-\lastd@pth

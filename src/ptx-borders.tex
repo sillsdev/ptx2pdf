@@ -34,6 +34,7 @@
 \newif\ifhorizb@rder
 \newif\ifhasb@rder
 \newif\ifearlybgimage
+\newif\iftextborder
 \def\borderstylelist{plain, double}
 
 \let\b@drcol\relax
@@ -164,8 +165,9 @@
  \fi
 }
 
-\def\s@ttextb@rderdims{%
+\def\s@ttextb@rderdims{%Called per book
   \trace{et}{s@ttextb@rderdims}%
+  \global\textborderfalse
   \testm@rkerexists{textborder}%
   \iftemp
     \t@stpublishability{textborder}%
@@ -179,10 +181,12 @@
       \ch@ckhasb@rder
       \@prepVb@rderdims
       \ifhasb@rder
+        \global\textbordertrue
         \getsbp@ram{spacebefore}%
-        \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}
+        \xdef\pretextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@top@pad\relax}%
         \getsbp@ram{spaceafter}%
-        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}
+        \xdef\posttextb@rderskip{\the\dimexpr \ifx\p@ram\relax 0pt\else \p@ram\verticalsp@ceunit\fi + \b@dr@bot@pad\relax}%
+        \global\let\textb@dr@bot@pad\b@dr@bot@pad
       \else
         \xdef\pretextb@rderskip{0pt}%
         \xdef\posttextb@rderskip{0pt}%
