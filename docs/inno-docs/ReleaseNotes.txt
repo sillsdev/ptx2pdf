@@ -59,6 +59,10 @@ Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
   
   * Page end textborder kern should only happen when page border in effect
   
+  * Add intropages. Support periphs with no ids in INT
+  
+  * Fix nonpublishable UI linkage
+  
   * Fix gridline-column separator for left-opening (RTL-binding) diglots
   
   * Fix QR bug when there was an = in the URL, make keywords set marks
