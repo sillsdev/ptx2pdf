@@ -1,9 +1,79 @@
-PTXprint 2.4.21 Release Notes
-27 Apr 2024
+PTXprint 2.4.22 Release Notes
+4 Jun 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
 
+Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
+
+  * Re-work import/unpack configuration settings to be more powerful
+    ** Add UI elements for setting TARGET of import/unpack settings
+    ** Enable importing from PDF/ZIP to a new/different config
+    ** Allow extracting settings to a folder
+    ** Added more import categories and also allow "Import Everything"
+    ** Updated tooltips for clarification on import settings dialog
+    ** Added logic to detect main project from a diglot archive
+
+  * Improved diglot interlinears
+    ** First implementation of \BelowBaselineX for diglot balancing
+    ** Make pagehooks work for diglots
+    ** Add punctuation controls to interlinear (on Advanced tab)
+  
+  * Table of Contents improvements
+    ** Fix RTL and LTR Table of Contents generation and improve leaders
+    ** Make toc leaders "fully" stylable
+    ** Define toc fill in context, not before
+    ** Allow disable TOC writing
+  
+  * White lines should use minwhiteline, not get ignored
+    ** Standard rules should also be checked
+  
+  * Implement minimum line widths for borders and zrules
+  
+  * Improved layout and functionality of the Picture tab
+  
+  * Add more helpful tip to font-related error message
+  
+  * Exclude variable fonts (need to use static fonts instead)
+  
+  * Diglot availht calcs need to consider joint calcs.
+  
+  * Add per side IndentUnit in diglots
+  
+  * Increment print counter when we hit print
+  
+  * Improve handling of pics within Intro matter
+    ** On generate create picture anchors with paragraph counts
+
+  * Character style colouring fix
+  
+  * Avoid problems from id@@@ continuing after end of the book
+  
+  * Trigger side-hooks for mongolot sections of a diglot text
+  
+  * Add labelling of tracing lines, fix? table alignment controls
+  
+  * Side-dependant numcuts and dropotherlines need to be counts
+  
+  * Make utility to get improved division accuracy
+  
+  * Page end textborder kern should only happen when page border in effect
+  
+  * Fix gridline-column separator for left-opening (RTL-binding) diglots
+  
+  * Fix QR bug when there was an = in the URL, make keywords set marks
+  
+  * Fix linebreak at \k and Update standards
+  
+  * Fix thumbtabvadj in texperthacks to work, rather than print
+  
+  * Fix Digital CMYK to actually be CMYK
+  
+  * Various python 3.12 cleanups (mostly affecting Regex)
+  
+  * Various Documentation improvements
+    ** Document ptxprint.spec a bit [Tech]
+  
 Bug fixes and Improvements in 2.4.21 (27 Apr 2024)
 
   * Chapter numbers should occur on their own line

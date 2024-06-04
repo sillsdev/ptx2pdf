@@ -77,7 +77,7 @@ APP = 'ptxprint'
 
 chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
 # Other generic project-wide changes can be specified in PrintDraftChanges.txt).
-# Note that the 'inlcude' statement on the next line imports those (legacy/generic) project-wide changes.
+# Note that the 'include' statement on the next line imports those (legacy/generic) project-wide changes.
 include "../../../PrintDraftChanges.txt"
 """
 
