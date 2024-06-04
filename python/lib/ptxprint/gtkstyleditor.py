@@ -403,12 +403,16 @@ class StyleEditorView(StyleEditor):
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
-                props = data.get('TextProperties', set())
-                if not isinstance(props, set):
-                    props = set(props.split())
-                val = 'nonpublishable' in (x.lower() for x in props)
+                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', ["nonpublishable"]))
+                props = data.get('TextProperties', None)
+                if props is None:
+                    val = oldval
+                else:
+                    if not isinstance(props, set):
+                        props = set(props.split())
+                    val = 'nonpublishable' in (x.lower() for x in props)
                 # oldval = 'nonpublishable' in old.get('TextProperties', '')
-                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', []))
+                logger.debug(f"{self.marker} is {'not' if oldval else ''}publishable")
             elif k.startswith("_"):
                 basekey = v[3](v[2])        # default data key e.g. "FontSize"
                 obasekey = v[3](not v[2])   # non-default data key e.g. "FontScale"
