@@ -379,6 +379,7 @@ _nonsensitivities = {
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
     "c_inclSpine":             ["c_coverCropMarks"],
+    "c_lockLayoutMode":        ["fr_pageSetup", "c_doublecolumn", "s_colgutterfactor", "fr_margins", "gr_spacingAdj"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -5756,3 +5757,11 @@ Thank you,
             self.thumbnails.set_imageset(imgset)
         except AttributeError:
             pass
+
+    def onlockLayoutModeClicked(self, wid):
+        status = self.sensiVisible('c_lockLayoutMode')
+        if status:
+            pass
+        else:
+            pass
+            
