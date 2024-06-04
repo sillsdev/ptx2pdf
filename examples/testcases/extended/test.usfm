@@ -1,6 +1,6 @@
 \id TST Test file
 \h small test file
-\mt1 Test case 
+\mt1 \bd Test case\bd*
 \c 1
 \s This is a title\f + \ft Footnote from title\f*
 \sr 1:1-5

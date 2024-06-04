@@ -274,7 +274,6 @@
 %Parse key="value" or value.
 \def\default@ttrkey{} % What unnamed attributes get saved 
 \def\thisdefault@ttrkey{} % What do unnamed attributes get saved as?
-\def\relaxval{\relax}
 \def\spaceval{ }
 \def\s@tattr@val #1 #2\E{\edef\test{#2}\ifx\test\empty\else\edef\attr@val{\ifx\attr@val\empty\else\attr@val\space\fi#1}\x@\s@tattr@val \test\E\fi}% Remove trailing space(s)
 \def\milestoneJoinChar{ } % While replacing ' ' with '_' is  nice for styling things like \qt-s |the crowd\*, this then breaks equivalence with ... who="the crowd"

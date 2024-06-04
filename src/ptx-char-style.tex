@@ -282,7 +282,7 @@
 \def\bgsp@ce{\bgc@l\leaders\hrule depth\dimen0 height \dimen1\hskip 1ex plus 0.2ex minus 0.2ex\endbgc@l}
 \def\@@do@background#1{\hbox to 0pt{\kern-\BackgroundOverrun\bgc@l\vrule height \dimen1 depth\dimen0 width \dimen2 \endbgc@l\hss}\box#1}%
 \def\@do@background{\let\@@@do\@do@background\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox 0}\dimen2=\wd0\advance\dimen2 by \dimexpr \BackgroundOverrun*2\relax\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@background{0}\ifvoid\ulb@x\else\@bgsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
-\def\d@background#1#2{\showboxbreadth=99
+\def\d@background#1#2{%\showboxbreadth=99
   \let\@bgsp@ce\bgsp@ce
   \setbox\ulb@x\box\voidb@x
   \setbgc@l{#1}%
@@ -297,6 +297,44 @@
   \setbox#2\box\ulb@x
 }
 
+\def\shdwmul#1 #2\E{%
+  \edef\tmp{#1}\ifx\tmp\relaxval
+    \let\@@shdw@x\relax\let\@@shdw@y\relax
+  \else
+    \edef\@@shdw@x{\the\dimexpr #1\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
+  \fi
+  \def\tmp{#2}\ifx\tmp\empty\let\shdw@y\shdw@x\else
+    \edef\@@shdw@y{\the\dimexpr #2\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
+  \fi
+  \trace{Fe}{Shadow dims \@@shdw@x x \@@shdw@y}%
+}
+
+\def\@@do@shadow#1{\trace{Fe}{Chunk is \the\wd#1 wide, so far \the\wd\ulb@x}\hbox{%
+  \special{pdf:code q}\ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
+  \ifx\@@shdw@x\relax\else\kern\@@shdw@x \relax\raise\@@shdw@y\copy#1 \kern-\dimexpr \wd#1+\@@shdw@x\relax\fi
+  \ifdim \@@outlinw pt>0pt \special{pdf:code Q q \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
+  \ifx\@@fgcol\relax\else \special{pdf:code \@@fgcol\space rg}\fi%
+  \copy#1
+  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \@@fgcol\space rg}\kern-\wd#1\box#1\fi
+  \special{pdf:code Q}}}
+\def\@do@shadow{\let\@@@do\@do@shadow\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@shadow{0}\ifvoid\ulb@x\else { }\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\d@shadow#1#2#3#4#5#6{%\showboxbreadth=99
+  \trace{Fe}{Shadow/Outline called: #1 / #2/ #3 / #4 / #5 / #6}%
+  {\setbox\ulb@x\box\voidb@x
+  \x@\shdwmul#2 \E
+  \edef\@@outlinw{\strip@pt{\dimexpr #4\FontSizeUnit \relax}}%
+  \edef\@@outcol{#5}\edef\@@shadcol{#3}\edef\@@fgcol{#6}% 
+  \nonstopmode
+  \tracingassigns=1
+  \everypar={}\everyhbox={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf
+  \@do@shadow}%
+  \ifdim \wd#1=0pt \else \showbox#1 \setbox#1\hbox{\@@do@shadow{#1}}%
+    \unhbox#1\fi
+  \tracingassigns=0
+  }%
+  \showbox\ulb@x
+  \setbox#1\box\ulb@x
+}
 \newif\ifAlwaysCheckAttributes \AlwaysCheckAttributesfalse
 %+cchar_endcharstyle
 %\lccode`\|=`\\ % for printing backslash in error message
@@ -320,7 +358,7 @@
      \getmcp@ramR{raise}%
      \tempfalse
      \global\let\char@raise\p@ram
-     \ifx\p@ram\relax\else \temptrue\fi
+     \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \temptrue\fi\fi
      \getmcp@ramR{background}%
      \global\let\char@background\p@ram
      \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
@@ -335,8 +373,17 @@
         \global\let\ulp@ram\relax
        \fi
      \fi
-     \getmcp@ramR{shadow}\global\let\shdwp@ram\p@ram
-     \getmcp@ramR{outline}\global\let\outln@ram\p@ram
+     \global\let\outlncolp@ram\empty\global\let\shdwcolp@ram\empty
+     \getmcp@ram{p@rsedcol}\global\let\p@rsedcol\p@ram
+     \getmcp@ram{shadow}\global\let\shdwp@ram\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\shdwp@ram\relax\else
+       \getmcp@ram{shadowcol}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
+       \temptrue
+     \fi\fi
+     \getmcp@ram{outline}\global\let\outlnp@ram\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\outlnp@ram\relax\else\temptrue
+       \getmcp@ram{outlinecol}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
+     \fi\fi
      \global\tmpt@ks{}%
      \ifbox@run
        \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\temptrue
@@ -344,13 +391,25 @@
        \global\tmpt@ks{}%
      \fi
      \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
-     \iftemp\egroup
+     \iftemp\egroup%<----------EGROUP HERE---------->
        \let\newch@rstyle\@newch@rstyle
        \the\tmpt@ks
        \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{0}\else
          \ifx\ulp@ram\tw@ \let\@do@underline\@do@Dunderline\d@underline{0}%
          \message{Double underline  for \newch@rstyle}%
        \fi\fi
+       \tempfalse% d@shadow applies both outline and shadow, as they are closely linked. Test for either.
+       \ifx\shdwp@ram\relax\def\shdwp@ram{\relax}\else\temptrue\fi
+       \ifx\outlnp@ram\relax\def\outlnp@ram{0}\else\temptrue\fi
+       \iftemp
+         \ifx\p@rsedcol\z@ros\let\p@rsedcol\relax\fi
+         \ifx\p@rsedcol\relax\else
+            %\tracingmacros=1 \tracingassigns=1
+            \x@\h@xsixtotripple\x@ x\p@rsedcol\end \let\p@rsedcol\rgb@out% Convert hexadecimal to R G B spec
+            %\tracingmacros=0 \tracingassigns=0
+          \fi
+         \d@shadow{0}{\shdwp@ram}{\shdwcolp@ram}{\outlnp@ram}{\outlncolp@ram}{\ifx\p@rsedcol\relax\else\p@rsedcol\fi}%
+       \fi
        \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
        \ifx\@ttributes\empty\else% If there are actually attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
@@ -369,7 +428,7 @@
        \fi
        \ifx\char@raise\relax
          \unhbox0
-       \else\dimen9=\char@raise\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
+       \else\dimen9=\char@raise \relax\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
        \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}{\h@@kstyst@k}% discover any <after> hooks
@@ -559,7 +618,16 @@
   \fi
   \getp@ram{color}{#1}{#2}%                                                %(+)
   \ifColorFonts\ifx\p@ram\relax\else
-    \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
+    \let\colp@ram\p@ram
+    \x@\ParseColor\colp@ram\end
+    \temptrue % Apply here?
+    \getp@ram{shadow}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
+    \getp@ram{outline}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
+    \iftemp
+      \ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
+    \else
+      \setp@ram{p@rsedcol}{#2}{\r@s}% remember for later
+    \fi
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
   \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style 

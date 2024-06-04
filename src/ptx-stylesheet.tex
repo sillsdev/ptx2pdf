@@ -138,6 +138,12 @@
 \def \Regular        {\defp@ram{regular}{true}\defp@ram{italic}{false}\defp@ram{bold}{false}\defp@ram{superscript}{false}\defp@ram{smallcaps}{false}}
 \let \superscript\Superscript
 \def \SpaceBefore    #1\relax{\defp@ram{spacebefore}{#1}}
+\def \Shadow    #1\relax{\defp@ram{shadow}{#1}} % X Y (ratios to fontsize)
+\def \Outline    #1\relax{\defp@ram{outline}{#1}} % Thickness (fontsizeunits)
+\def \ShadowColour #1\relax{\x@\checkh@x #1\end\edefp@ram{shadowcol}{\rgb@out}}
+\let\ShadowColor\ShadowColour
+\def \OutlineColour #1\relax{\x@\checkh@x #1\end\edefp@ram{outlinecol}{\rgb@out}}
+\let\OutlineColor\OutlineColour
 \let \Spacebefore\SpaceBefore
 \def \SpaceAfter     #1\relax{\defp@ram{spaceafter}{#1}}
 \let \Spaceafter\SpaceAfter
