@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 # for s_, (value, min, max, step increment, page increment)
 texpertOptions = {
 #    "versehyphen":        ["vhyphen", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")],
-    "ptxversion":         ["ptxversion", (0, 0, 10, 1, 1), "\\def{0}{{{1}}}", _("Maximum layout version"), _("Maximum layout version to use or 0 for any")],
+    "ptxversion":         ["ptxversion", (0, 0, 10, 1, 1), "\\def{0}{{{1}}}", _("Maximum layout version"), _("Maximum layout version to use or 0 for any. Used to maintain backward compatibility when the TeX macros have been changed in newer versions of PTXprint.")],
     "bookresetcallers":   ["bookresetcallers", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")],
     "notesEachBook":      ["neachbook", True, "", _("Endnotes at Each Book"), _("Output endnotes at the end of each book")],
     "FinalNotesDown":     ["fnotesdown", False, "", _("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page")],
@@ -40,7 +40,6 @@ texpertOptions = {
     "tildenbsp":          ["tildenbsp", True, "", _("Tilde is No Break Space"), _("Treat ~ as non breaking space")],
     "lastbooknoeject":          ["lastnoeject", False, "", _("Suppress pagebreak after bookend-final"), _("Revert to old behaviour of not ensuring that the whole of the last book is output before back-matter PDFs")],
     # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
-    "LayoutModeVer":      ["layoutmode", (0, 0, 99, 1, 1), r"\def{0}{{{1}}}", _("Layout Mode Version"), _("Sets the Layout Mode to maintain backward compatibility even when the TeX macros are changed significantly. 0=use latest layout mode (default)")],
     "pretolerance":       ["pretolerance", (100, -1, 10000, 10, 100), "{0}={1}", _("Hyphenation threshold"), _("Paragraph badness threshold before trying hyphenation. Set to -1 to always hyphenate")],
     "hyphenpenalty":      ["hyphenpenalty", (50, -9999, 10000, 10, 100), "{0}={1}", _("Penalty for inserting hyphen"), _("Hyphenation penalty")],
     "doublehyphendemerits":      ["doublehyphendemerits", (10000, 0, 1000000, 1000, 10000), "{0}={1}", _("Double hyphenation penalty"), _("Penalty for consecutive hyphenation across two lines")],
