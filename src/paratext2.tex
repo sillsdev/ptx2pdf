@@ -172,6 +172,13 @@
 \let\newins@rt=\newinsert
 \let\n@wif=\newif
 
+\newif\ifresult
+\def\ptxversion{0}
+\def\ifversion#1{\resultfalse
+  \ifnum\ptxversion=0 \resulttrue\else
+    \ifnum\ptxversion < #1 \else\resulttrue\fi
+  \fi\ifresult}
+
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading
 \def\s@tbaseline#1#2{% Setbaseline-normal

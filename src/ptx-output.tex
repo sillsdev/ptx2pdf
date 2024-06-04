@@ -1280,6 +1280,7 @@
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
+  %\savem@rks
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
@@ -1380,6 +1381,7 @@
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
     \trace{o}{spdd: s@ved=\the\ht\s@vedpage+\the\dp\s@vedpage, op=\the\outputpenalty \the\output}%
+    %\unsavem@rks
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
     \inendbookfalse
   \else
@@ -1508,7 +1510,7 @@
     \def\pagecontents{%
       \trace{o}{Topins=\the\ht\topins, Bottomins=\the\ht\bottomins, tlins=\the\ht\topleftins, blins=\the\ht\bottomleftins, trins=\the\ht\toprightins, brins=\the\ht\bottomrightins, boxA=\the\ht\colA, boxB=\the\ht\colB, colbox=\the\ht\xr@fbox}%
       \dimen1=\textwidth\advance\dimen1 by -\ExtraRMargin
-      \dimen2=\availht\advance\dimen2\bmg@p
+      \dimen2=\availht%\advance\dimen2\bmg@p
       \ifvoid\partial\else %\msg{2colout partial: \the\ht\partial}\hskip\columnshift
         \vbox{\hbox to \dimen1{\box\partial}}\fi % output partial page % \vskip -2\dimen5
       \ifvoid\topins\else \hbox{\lshiftc@lumn{0}\box\topins} \vskip\skip\topins \fi % output top spanning pictures
@@ -1523,7 +1525,9 @@
           \makecolumngutter{\the\dimen3}{\the\availht}{\the\lastd@pth}{\the\dimen3}{3}\lshiftc@lumn{1}%
           \vbox to \dimen3{\box\colB\vfil}\hbox to \ExtraRMargin{}\rshiftc@lumn{1}\fi}
       \doTextB@rder{\colA}%
-      \dimen4=\dimexpr \dimen2 - \dimen3 \dp\colA=\dimen4\box\colA
+      \dimen4=\dimexpr \dimen2 - \dimen3 
+      \trace{o}{textbox height=\the\ht\colA, depth=\the\dp\colA, newdepth=\the\dimen4}\dp\colA=\dimen4
+      \box\colA
       \p@geendcontent
       \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
     }%

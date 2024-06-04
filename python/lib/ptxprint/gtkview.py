@@ -5761,7 +5761,6 @@ Thank you,
     def onlockLayoutModeClicked(self, wid):
         status = self.sensiVisible('c_lockLayoutMode')
         if status:
-            pass
+            self.set("s_ptxversion", str(TexModel._ptxversion))
         else:
-            pass
-            
+            self.set("s_ptxversion", "0")
