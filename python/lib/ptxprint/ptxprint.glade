@@ -21985,7 +21985,11 @@ without a confirmation check.</property>
 the size of the text on the
 View+Edit tab as well as
 in other locations that use 
-a specialized font or script.</property>
+a specialized font or script.
+
+Keyboard Shortcuts:
+  Ctrl-Minus - shrink text size
+  Ctrl-Plus - grow text size</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
                             <property name="adjustment">a_viewEditFontSize</property>
@@ -22085,7 +22089,30 @@ MRK 3.20 -1   (i.e. shrink the para at Mark 3:20 by one line)
 MRK 5.8 +2    (i.e. expand the para at Mark 5.8 by two lines)
 MRK 6.23 +1[2]  (expand the paragraph AFTER the paragraph 
                               which contains MRK 6.23 e.g. a heading.)
-etc.
+
+Diglot AdjList also need R or L to be specified after the book code
+and it is important that L comes before R for the same verse.
+MATL 3.4 +1
+MATR 3.4 -1
+MATR 3.11 +2
+
+Keyboard Shortcuts:
+  Ctrl-1 - makes the current line +1
+  Ctrl-2 - makes the 2nd para of current line +1[2]
+    ... etc ...
+  Ctrl-9 - makes the 9th para of current line +1[9]
+
+  Ctrl-I - shrink current line -1
+  Ctrl-Grave - ` same as above
+
+  Ctrl-0 - % Comment (or uncomment) the line [it toggles]
+  Ctrl-Comma - same as above
+
+  Ctrl-D - Duplicate the current line
+  Ctlr-L - deLete the current line
+  Ctrl-Up - move the current line up one line
+  Ctrl-Down - move the current line down one line
+
 Note that adjusting paragraphs needs to be done right at the
 end when all other settings have been finalized. Otherwise you
 are likely to have to re-do it all again.</property>

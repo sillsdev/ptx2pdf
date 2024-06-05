@@ -38,12 +38,7 @@
           "CodeSnippet": "\\zgap|2.3cm\\*"
         }
       ],
-      "Legal": [
-        {
-          "Type": "insert",
-          "Label": "\\zcopyright",
-          "Description": "Insert project copyright statement"
-        },
+      "Image": [
         {
           "Type": "insert",
           "Label": "\\zfiga|anchor\\*",
@@ -55,11 +50,18 @@
           "Label": "\\fig |src=\"path/to/filename.png\" size=\"size\" pgpos=\"pgpos\" scale=\"0.2\" copy=\"None\"",
           "Description": "Insert an image copy=\"None\"",
           "CodeSnippet": "\\fig |src=\"C:/Users/Jim/Dropbox/orglogo.png\" size=\"col\" pgpos=\"pc\" scale=\"0.15\" copy=\"None\"\\fig*"
+        }
+      ],
+      "Legal": [
+        {
+          "Type": "insert",
+          "Label": "\\zcopyright",
+          "Description": "Insert project copyright statement"
         },
         {
           "Type": "insert",
           "Label": "\\zccimg by-nd|size=\"size\" pgpos=\"pgpos\" scale=\"scale\"\\*",
-          "Description": "Insert Create Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
+          "Description": "Insert Creative Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
           "CodeSnippet": "\\zccimg by-nc-nd|size=\"col\" pgpos=\"pc\" scale=\"0.2\"\\*"
         },
         {
@@ -211,8 +213,8 @@
       "Diglot": [
         {
           "Type": "insert",
-          "Label": "\\zglot|[col]\\*",
-          "Description": "Use formatting for diglot column col, in a monoglot section. Return to normal formatting with \\zglot|\\*",
+          "Label": "\\zglot|[L|R]\\*",
+          "Description": "Use formatting for diglot L or R, in a monoglot section. Return to normal formatting with \\zglot|\\*",
           "CodeSnippet": "\\zglot|R\\*"
         },
         {
@@ -241,13 +243,13 @@
         },
         {
           "Type": "insert",
-          "Label": "\\onebody",
-          "Description": "Set \\BodyColumns=1 for single column body text"
+          "Label": "\\singlecolumn",
+          "Description": "Set \\singlecolumn for single column text"
         },
         {
           "Type": "insert",
-          "Label": "\\twobody",
-          "Description": "Set \\BodyColumns=2 for double column body text"
+          "Label": "\\doublecolumns",
+          "Description": "Set \\doublecolumns for double column text"
         },
         {
           "Type": "insert",

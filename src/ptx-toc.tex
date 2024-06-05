@@ -239,8 +239,8 @@
 }
 
 \newbox\l@drsbox
-\def\l@drscts
-\def\tocleadersrule#1#2{\global\let\l@drscts\relax\gdef\l@drs{\xleaders #1 \hfill}\t@cleaders{#1}{#2}}
+\def\l@drscts{\relax}
+\def\tocleadershrule#1#2{\global\let\l@drscts\relax\gdef\l@drs{\xleaders #1 \hfill}\t@cleaders{#1}{#2}}
 \def\tocleaders#1#2{\gdef\l@drscts{#1}\global\setbox\l@drsbox\hbox{#1}\gdef\l@drs{\xleaders\copy\l@drsbox\hfill}\t@cleaders{#1}{#2}}
 \def\t@cleaders#1#2{%
   \trace{t}{t@cleaders #1 #2}%

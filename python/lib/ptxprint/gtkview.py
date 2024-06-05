@@ -758,6 +758,7 @@ class GtkViewModel(ViewModel):
 
         # Keep this tooltip safe for later
         self.frtMatterTooltip = self.builder.get_object("btn_infoViewEdit").get_tooltip_text()
+        self.adjListTooltip = self.builder.get_object("l_AdjList").get_tooltip_text()
 
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
@@ -2338,7 +2339,6 @@ class GtkViewModel(ViewModel):
                   "scroll_SettingsOld": ("", "")}
 
         if pgid == "scroll_FrontMatter":
-            ibtn = self.builder.get_object("btn_infoViewEdit")
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
@@ -2374,6 +2374,8 @@ class GtkViewModel(ViewModel):
                     else:
                         fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgid == "scroll_AdjList":
+                ibtn.set_tooltip_text(self.adjListTooltip)
+                ibtn.set_sensitive(True)
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
                     # self.builder.get_object("btn_removeZeros").set_visible(True)

@@ -140,8 +140,8 @@ class TexModel:
     _tocleaders = [
         "",
         r"\hskip .5pt .\hskip .5pt",
-        r"\hskip 3pt .\hskip 3pt\ldrs*",
-        r"\hskip 6pt \emdash\hskip 3pt\ldrs*",
+        r"\hskip 3pt .\hskip 3pt",
+        r"\hskip 6pt \emdash\hskip 3pt",
         r"\hrule"
     ]
 
