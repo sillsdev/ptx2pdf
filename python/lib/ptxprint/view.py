@@ -281,7 +281,7 @@ class ViewModel:
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
-                    elif b.first.book == "INT":
+                    elif b.first.book == "INT" and self.get("c_useSectIntros"):
                         pass
                     else:
                         res.append(b)

@@ -387,11 +387,13 @@
     \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL r\fi\else\ifTOCRTL r\fi\fi \the\@col}%
     \skip1=\leftskip \leftskip=0pt
     \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
-    \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     %\hskip\skip1
-    \unhbox0\unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
+    \unhbox0
     \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL\else r\fi\else\ifTOCRTL\else r\fi\fi \the\@col}%
-    \x@\ifcsname \mytmp\endcsname\nobreak\csname \mytmp\endcsname\hfil\fi
+    \x@\ifcsname \mytmp\endcsname
+      \unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
+      \nobreak\csname \mytmp\endcsname\hfil\fi
     \ifRTL\endR\fi\par}%
   \wd0=\c@rrentcolwidth
   \box0}
