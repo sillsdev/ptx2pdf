@@ -78,6 +78,11 @@ def nonbody(fn, bj, dat):
         res.append(fn(l))
     return "\n".join(res)
 
+def notattrib(fn, bj, dat):
+    b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
+    for i, w in enumerate(b[1::2]):
+        b[2*i+1] = fn(w)
+    return "".join(b)
 
 class Indic(ScriptSnippet):
     dialogstruct = [
@@ -104,7 +109,7 @@ class mymr(ScriptSnippet):
                makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', re.S),
                makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', re.S),
                makeChange('/([\\s\u104A\u104B])', r'\1', re.S),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange('\u200B', "", context=nonbody)]
         if view.get("c_scrmymrSyllable"):
             cons = "[\u1000-\u102A\u103F\u104C-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081" + \
@@ -122,7 +127,7 @@ class thai(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u0E46])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u0E00-\u0E7F])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u0E00-\u0E7F])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
@@ -133,7 +138,7 @@ class laoo(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u0EC6])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u0E80-\u0EFF])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u0E80-\u0EFF])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
@@ -144,7 +149,7 @@ class lana(ScriptSnippet):
     def regexes(cls, view):
         res = [makeChange(r'(\s)/', r'\1'),
                makeChange('/([\\s\u1AA7])', r'\1'),
-               makeChange(r'/', "\u200B"),
+               makeChange(r'/', "\u200B", context=notattrib),
                makeChange(r'([^\u1A20-\u1A7F])\u200B', r'\1'),
                makeChange(r'\u200B([^\\\u1A20-\u1A7F])', r'\1'),
                makeChange('\u200B', "", context=nonbody)]
