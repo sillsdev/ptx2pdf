@@ -530,13 +530,14 @@
         \ifnoinkinmargin\ifdim\ht14>0pt \vfil\box14\fi\fi
       }\plainoutput\trace{p}{plainoutput for large partial in savepartialpage}\notst@dynotesfalse\clearn@tes\s@tpage 
     \else
+      \unsavem@rks
       \trace{o}{savepartial noeject partial=\the\ht\partial, \ifm@rksonpage :\botmark: \else no\fi marksonpage}%
       \ifm@rksonpage
-	\edef\mktmp{\botmark}%
-	\ifx\mktmp\t@tle\else
-	   \trace{o}{Placing border on partial page}%
-	   \doTextB@rder{\partial}%
-	\fi
+        \edef\mktmp{\botmark}%
+        \ifx\mktmp\t@tle\else
+            \trace{o}{Placing border on partial page}%
+            \doTextB@rder{\partial}%
+        \fi
       \fi
     \fi
     \fin@lverybottom
@@ -1160,7 +1161,7 @@
 \def\c@lcavailht{
   \traceifset{c@lcavailht}%
   \edef\t@st{\p@gefirstmark}%
-  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
+  \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
   \edef\t@st{\p@gebotmark}%
   \ifx\t@st\empty\xdef\p@gebotmark{\botmark}\fi
   %NOT HERE! \global\trialheight=\textheight \global\advance\trialheight by -\ht\partial
@@ -1280,7 +1281,6 @@
 \def\savepartialpaged{%Double columnn version of save partial page
   \trace{o}{savepartialpaged. hIns=\the\holdinginserts, iflevel=\the\currentiflevel}%
   \traceifset{savepartialpaged}%
-  %\savem@rks
   \ifnum\holdinginserts=0 \else\message{INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!}\fi
   \s@ttrialheight
   \setbox14=\makefootbox\ifvoid14\else
@@ -1381,7 +1381,7 @@
       \ifColNotes\notst@dynotestrue\clearn@tes\notst@dynotesfalse\fi
     \fi
     \trace{o}{spdd: s@ved=\the\ht\s@vedpage+\the\dp\s@vedpage, op=\the\outputpenalty \the\output}%
-    %\unsavem@rks
+    \unsavem@rks
     \unvbox\s@vedpage\penalty\ifnum\outputpenalty=10000 0 \else \outputpenalty \fi
     \inendbookfalse
   \else
