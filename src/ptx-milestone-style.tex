@@ -499,15 +499,16 @@
 }
 
 \def\getcustommarknum#1{%
+  \ifcsname m@rknum#1\endcsname\trace{ma}{Already got #1}\else\addnewm@rk{#1}\fi
   \getm@rknum{#1}%
   \let\custommarknum\m@rknum
 }
 \def\getcustomm@rknum{%
   \get@ttribute{type}% 
   \ifx\attr@b\relax
-    \getm@rknum{user}%
+    \getcustommarknum{user}%
   \else
-    \getm@rknum{\attr@b}%
+    \getcustommarknum{\attr@b}%
   \fi
 }
 
@@ -515,6 +516,7 @@
   \ifnum\currentgrouptype>0
     \savingmarks
   \fi
+  \trace{ma}{zcustommark}%
   \getcustomm@rknum
   \get@ttribute{value}%
   \trace{m}{zcustommark(\m@rknum) \attr@b}%
