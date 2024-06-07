@@ -102,7 +102,7 @@ be overwritten by the value of ```\SuperscriptRaise```
 ### What Style properties are there?
 
 This is a list of the various style properties and some notes on how they are used.
-Only those markers that do something and are not simply ignored, by the ptx macros are listed.
+Only those markers that do something and are not simply ignored by the ptx macros are listed.
 Notice that markers are case dependent.
 
  Marker       | Description
@@ -136,6 +136,13 @@ Notice that markers are case dependent.
 \\StyleType   | "paragraph", "character", "note"
 \\ztexFontFeatures | TeX style font feature settings to append to the font name specification when a font is instantiated
 \\ztexFontGrSpace | the \XeTeXinterwordspaceshaping value to use when this marker is active.
+\\Underline    | We don't recommend underlining, it's not pretty. If set to 2, then double underlining is applied.  (Only works for character styles)
+\\Background   | Apply a background colour 'highlight'. (Only works for character styles)
+\\Outline      | Draw the outline of letters. A line of (this * \\FontSizeUnit) is drawn on all stroke-lines in the font, and then the normal 'fill' is then reapplied, as some fonts have strokes that cross fills. Final outline thickness will thus be half the given thickness.
+\\OutlineColour| Colour for the outlining. As \\Colour
+\\Shadow       | x-shift y-shift, offset of 'shadow', as a ration to the font size. (E.g. \\Shadow 0.05 -0.05)
+\\ShadowColour | Colour for the shadow. As \\Colour
+
 
 <b id="f1">[1]</b>: Because the default mapping of fontsize to linespacing is hardwired to \\LineSpaceBase /12, a full line is \\LineSpaceBase * fontsize units (* \\LineSpacingFactor).
 This is all calculated internally to the macros. LineSpacing of 1.0 is the same as the default linespacing. [↩](#a1)
@@ -148,7 +155,6 @@ These styles are used by other programs but have no action in the macros:
  \\Description  | Descriptive text of the marker
  \\OccursUnder  | List of markers, this marker may nest under
  \\Rank         |
- \\Underline    | We don't do underlining. It's not pretty
  \\NotRepeatable |
  \\ColorName    | Color names are not supported. Use \\Color instead
 
