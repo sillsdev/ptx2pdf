@@ -2418,7 +2418,7 @@ class GtkViewModel(ViewModel):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
-                if len(txt) > 60000:
+                if len(txt) > 60000 and pgid not in ("scroll_AdjList",):
                     txt = txt[:60000]+_("\n\n------------------------------------- \
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")

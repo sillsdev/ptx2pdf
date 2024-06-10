@@ -460,7 +460,7 @@
   % and check if it all fit; if not, we'll have to back up and try again
   \und@rfill=\availht \advance\und@rfill -\dimen3 % from c@lcboxheights
   %\underf@ll{\ht\colA}{\availht}{A}%
-  \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255}%
+  \trace{o}{savepartialpage \the\dimen3 \space rem=\the\ht255, topskip=\the\topskip , \the\splittopskip}%
   \ifvoid255 \fitonpagetrue \else \fitonpagefalse \fi
   \iffitonpage
     \locs@startstop{\colA}{\colA}{A}%
@@ -1706,9 +1706,9 @@
 
 %+c_twocolpageout
 \def\twocolp@geout{%This gets used a few times
-  \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
+  \trace{o}{twocolp@geout cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins : topskip=\the\topskip , \the\splittopskip}%
   \def\pagecontents{
-    \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins}%
+    \trace{b}{BALANCE pageout: cols=1: partial=\the\ht\partial , \the\dp\partial : topins=\the\ht\topins : bottomins=\the\ht\bottomins  : topskip=\the\topskip , \the\splittopskip}%
     \setbox0\vbox{\dimen1=\textwidth \advance\dimen1 -\ExtraRMargin
       \doTextB@rder{\partial}%1
       \ifvoid\partial\else \vbox{\hbox to \dimen1{\box\partial}} \fi

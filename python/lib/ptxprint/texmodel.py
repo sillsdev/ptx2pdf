@@ -610,9 +610,9 @@ class TexModel:
                                     res.append(r"\diglotfalse")
                                 for ins in insertnames:
                                     res.extend(self._doptxfile(ins, None if digtexmodel is None else ins, 
-                                            ("\\intropages{{{}}}\n" 
+                                            ("\\intropages{{{}}}" 
                                                 if self.dict['project/periphpagebreak']
-                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm\n"), ""))
+                                                else "\\prepusfm\\zgetperiph|{}\\*\\unprepusfm"), ""))
                                 if digtexmodel is not None:
                                     res.append(r"\diglottrue")
                         if i == len(self.dict['project/bookids']) - 1: 
@@ -1318,7 +1318,7 @@ class TexModel:
             # Only do this IF the auto Table of Contents is enabled AND there is more than one book
             for c in range(1,4): # Remove any \toc lines that we don't want appearing in the ToC
                 if not self.asBool("document/usetoc{}".format(c)):
-                    self.localChanges.append(makeChange(r"(\\toc{} .+)".format(c), "", flags=regex.M))
+                    self.localChanges.append(makeChange(r"(\\toc{} [^\n]+\n)".format(c), "", flags=regex.M | regex.S))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
         if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
