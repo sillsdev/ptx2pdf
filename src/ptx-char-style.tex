@@ -32,6 +32,7 @@
 
 \newwrite\f@ntl@g
 \newif\ifLogFonts
+\newif\ifb@xedstyle % Some styles need putting in a box and reformatting, e.g. underline
 \newtoks\end@box@run
 \newtoks\start@box@run
 \newdimen\minfontsize \minfontsize=4pt
@@ -220,28 +221,32 @@
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
     \t@gstart{Span}{\newch@rstyle}%
-    \getmcp@ram{raise}%
-    \tempfalse % do we box the text?
-    \ifx\p@ram\relax\else \temptrue\fi
-    \ifAlwaysCheckAttributes\temptrue\fi % Linking attributes are possibly universally applicable.
-    \getmcp@ramR{background}%
-    \def\xtr@{}% Any extra code to run at the start of the group
-    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
+    \b@xedstylefalse % do we box the text?
+    \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-    \ifx\@ttriblist\empty\else\temptrue\fi 
-    \getmcp@ram{underline}%
-    \ifx\p@ram\tru@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \ifx\p@ram\tw@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \getmcp@ram{outline}%
-    \ifx\p@ram\relax\else\temptrue\fi
-    \getmcp@ram{shadow}%
-    \ifx\p@ram\relax\else\temptrue\fi
-    \iftemp\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
+    \ifx\@ttriblist\empty\else\b@xedstyletrue\fi 
+    \ch@ckb@xedstyle
+    \ifb@xedstyle\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
+  \trace{s}{Actual start of \styst@k (b@xedstyle\ifb@xedstyle true\else false\fi)}%
 }
 %-cchar_startcharstyle
+\def\ch@ckb@xedstyle{%Check parameters that need a style to be boxed and reprocessed
+    \getmcp@ram{raise}%
+    \ifx\p@ram\relax\else \b@xedstyletrue\fi
+    \getmcp@ramR{background}%
+    \def\xtr@{}% Any extra code to run at the start of the group
+    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+    \getmcp@ram{underline}%
+    \ifx\p@ram\tru@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \getmcp@ram{outline}%
+    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+    \getmcp@ram{shadow}%
+    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+}
 \newbox\ulb@x
 \newif\ifUnderlineSpaces\UnderlineSpacestrue
 
@@ -316,7 +321,8 @@
   \ifx\@@fgcol\relax\else \special{pdf:code \@@fgcol\space rg}\fi%
   \copy#1
   \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \@@fgcol\space rg}\kern-\wd#1\box#1\fi
-  \special{pdf:code Q}}}
+  \special{pdf:code Q}}%
+}
 \def\@do@shadow{\let\@@@do\@do@shadow\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@shadow{0}\ifvoid\ulb@x\else { }\unhbox\ulb@x\fi}\fi\@@@do}%
 \def\d@shadow#1#2#3#4#5#6{%\showboxbreadth=99
   \trace{Fe}{Shadow/Outline called: #1 / #2/ #3 / #4 / #5 / #6}%
