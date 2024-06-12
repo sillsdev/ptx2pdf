@@ -416,8 +416,9 @@
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
  \ifb@xedparstyle \trace{s}{b@xedstyle met in endlastp@rstyle! \styst@k}%
-  \unskip\set@endb@xedstyle\egroup\showbox\tmpctsb@x\apply@endb@xedstyle{\tmpctsb@x}%
-  \showbox\tmpctsb@x
+  \unskip\set@endb@xedstyle\egroup%\showbox\tmpctsb@x
+  \apply@endb@xedstyle{\tmpctsb@x}%
+  %\showbox\tmpctsb@x
   \unhbox\tmpctsb@x
   \b@xedparstylefalse
  \fi
