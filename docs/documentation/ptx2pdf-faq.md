@@ -136,16 +136,20 @@ Notice that markers are case dependent.
 \\StyleType   | "paragraph", "character", "note"
 \\ztexFontFeatures | TeX style font feature settings to append to the font name specification when a font is instantiated
 \\ztexFontGrSpace | the \XeTeXinterwordspaceshaping value to use when this marker is active.
-\\Underline    | We don't recommend underlining, it's not pretty. If set to 2, then double underlining is applied.  (Only works for character styles)
-\\Background   | Apply a background colour 'highlight'. (Only works for character styles)
-\\Outline      | Draw the outline of letters. A line of (this * \\FontSizeUnit) is drawn on all stroke-lines in the font, and then the normal 'fill' is then reapplied, as some fonts have strokes that cross fills. Final outline thickness will thus be half the given thickness.
-\\OutlineColour| Colour for the outlining. As \\Colour
-\\Shadow       | x-shift y-shift, offset of 'shadow', as a ration to the font size. (E.g. \\Shadow 0.05 -0.05)
-\\ShadowColour | Colour for the shadow. As \\Colour
+\\Underline    | We don't recommend underlining, it's not pretty. If set to 2, then double underlining is applied. <sup id="a2">[2](#f2)</sup> 
+\\Background   | Apply a background colour 'highlight'. <sup>[2](#f2)</sup> 
+\\Outline      | Draw the outline of letters. A line of (this * \\FontSizeUnit) is drawn on all stroke-lines in the font, and then the normal 'fill' is then reapplied, as some fonts have strokes that cross fills. Final outline thickness will thus be half the given thickness.p<sup>[2](#f2)</sup> 
+\\OutlineColour| Colour for the outlining. As \\Colour<sup>[2](#f2)</sup> 
+\\Shadow       | x-shift y-shift, offset of 'shadow', as a ration to the font size. (E.g. \\Shadow 0.05 -0.05)<sup>[2](#f2)</sup> 
+\\ShadowColour | Colour for the shadow. As \\Colour<sup>[2](#f2)</sup> 
 
 
 <b id="f1">[1]</b>: Because the default mapping of fontsize to linespacing is hardwired to \\LineSpaceBase /12, a full line is \\LineSpaceBase * fontsize units (* \\LineSpacingFactor).
 This is all calculated internally to the macros. LineSpacing of 1.0 is the same as the default linespacing. [↩](#a1)
+<b id="f2">[2]</b>: The Underline, Background, Outline and Shadow effects are *not* for general use. They prevent any hyphenation and are *best* applied to character styles rather than paragraph styles. Also, they interact very badly with verse numbers, footnotes, any special spacing, or other formatting.
+ They **may** be applied to paragraph styles, but it should be understood that at present when applied at a paragraph level, the effects are applied to each word after it has been typeset and colour has been applied. Expect unintuitive results, e.g. if the character settings specify a colour, then there is no way for paragraph-level settings to override that, and the colour will apply to both outline and shadow. 
+If the outline and shadow are instead set as part of the character style, then the code can make appropriate adjustments.
+
 
 These styles are used by other programs but have no action in the macros:
 

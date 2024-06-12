@@ -590,6 +590,18 @@
   \let\d@\d@gettheparam
 }
 
+\def\getthep@ramObeyRegularTopChar#1{%Called with p@ssParams set up. work down through possParam list, stopping on value or \Regular in the stylesheet, and not decending from char to paragaph style
+  \let\d@gettheparam=\d@
+  \let\@@metC\relax
+  \trace{sa}{getthep@ramObeyRegularTopChar{#1}}%
+  \def\d@##1\E{\edef\tmpstylen@me{##1}\trace{sa}{inside getthep@raObeyRegularTopChar ##1 \@@metC}%
+    \x@\let\x@\tmpstyt@pe\csname stylet@pe-##1\endcsname\ifx\tmpstyt@pe\ss@Para\ifx\@@metC\relax\else\let\d@\cstackrelax\let\p@ram\relax\fi\else\ifx\tmpstyt@pe\ss@Char\let\@@metC\tr@e\fi\fi
+    \ifx\d@\cstackrelax\else
+      \getp@r@m{regular}{\tmpstylen@me}\ifx\p@ram\relax\getp@r@m{#1}{\tmpstylen@me}\ifx\p@ram\relax\else\let\d@\cstackrelax\fi\else\let\t@preset\tmpstylen@me\global\let\p@ram\relax\let\d@\cstackrelax\fi
+    \fi}%
+  \x@\cstackdown\p@ssParams,\E
+  \let\d@\d@gettheparam
+}
 
 \def\r@setparam{=[]}
 \let\f@ntextend\empty
@@ -773,6 +785,13 @@
 %\x@\let\csname getthep@ram-fontfeatures\endcsname\getthep@ramObeyRegularTop
 \x@\let\csname getthep@ram-smallcaps\endcsname\getthep@ramObeyRegularTop
 \x@\let\csname getthep@ram-fontfactor\endcsname\getthep@ramObeyRegularTop
+% If a paragraph setting exists for the following parameters, don't fall back to it from a char style
+\x@\let\csname getthep@ram-shadow\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-outline\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-shadowcol\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-outlinecol\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-underline\endcsname\getthep@ramObeyRegularTopChar
+\x@\let\csname getthep@ram-background\endcsname\getthep@ramObeyRegularTopChar
 
 \def\getmcp@ram#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}
 \def\getmcp@ramR#1{\getp@ram{#1}{\styst@kfirst}{\styst@k}}

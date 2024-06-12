@@ -261,10 +261,16 @@
 \newif\ifdoingt@ble
 \newdimen\lastdepth
 \newif\ifrotate \rotatefalse
+\newif\ifb@xedparstyle
 %+cpar_par
-% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
+% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
 \def\par{%
   \ifhmode
+   \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
+    \set@endb@xedstyle\egroup\apply@endb@xedstyle{\tmpctsb@x}%
+    \unhbox\tmpctsb@x
+    \b@xedparstylefalse
+   \fi
    \makecutouts
    \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
@@ -409,6 +415,12 @@
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
+ \ifb@xedparstyle \trace{s}{b@xedstyle met in endlastp@rstyle! \styst@k}%
+  \unskip\set@endb@xedstyle\egroup\showbox\tmpctsb@x\apply@endb@xedstyle{\tmpctsb@x}%
+  \showbox\tmpctsb@x
+  \unhbox\tmpctsb@x
+  \b@xedparstylefalse
+ \fi
  \end@llpoppedstyles{P}%
  \ifdebugthispar\global\debugthisparfalse\showlists\fi
  \trace{s}{endlastp@rstyle #1 stack=\mcstack, styst@k:\styst@k}%
@@ -672,6 +684,11 @@
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
+  \b@xedstylefalse
+  \ch@ckb@xedstyle
+  \trace{s}{parstyle: \styst@k, (b@xedstyle\ifb@xedstyle true\else false\fi)}%
+  \ifb@xedstyle
+    \global\b@xedparstyletrue\else\global\b@xedparstylefalse\fi
   \p@rstyle@everypar{#1}%
   \traceifcheck{p@rstyle}%
  \fi}
@@ -815,6 +832,10 @@
      \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
    \startparafalse\first@fterheadingfalse
+   \ifb@xedparstyle
+      \trace{s}{Par settings requesting boxing}%
+      \setbox\tmpctsb@x\hbox\bgroup
+   \fi
   }% end everypar
 }
 %-cpar_parstyle_final
@@ -1308,6 +1329,7 @@
 }
 \newcount\pr@vdelay \newcount\th@sdelay
 \newif\ifsk@pping \newbox\j@nkbox
+\newbox\tmpctsb@x
 %-cpar_writedelayed
 
 % Create the drop-cap in \ch@pterbox

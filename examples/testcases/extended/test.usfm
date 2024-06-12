@@ -1,6 +1,6 @@
 \id TST Test file
 \h small test file
-\mt1 \bd Test case\bd*
+\mt1 Test \bd case\bd* 
 \c 1
 \s This is a title\f + \ft Footnote from title\f*
 \sr 1:1-5
@@ -10,9 +10,9 @@ after. \add The \+nd Lord\+nd*'s good!\add*  I'm putting little NIV-style angle 
 and d\endadd\ to show how close they ought to be when they get put in by the hooks.
 The sequence ought to be before..start..text..end..after.
 \p And that was a  new  parargaph.\f hello \fr 1:1 \ft This is a footnote <<\fq hello\ft >> goodbye\f*
-\p And that was a p class paragraph \nd NDbreak 
+\p And that was a p class paragraph \nd break
 \qt-s | foo \*
-now inside a qt-s..qt-e block \nd*
+now inside a qt-s..qt-e \nd* block 
 \p with a paragraph break
 \qt-e\* And out of the block again
 \p And yet another p class break
@@ -146,7 +146,8 @@ formatting.
 \q1 \cat 0.5w\cat*
 \v 19 This is a first q // to see what we can do
 \b
-
+\q2 This is another test
+\p
 \s Testing
 \p Can we \testpoint really put a sidebar in a sidebar?
 \p
