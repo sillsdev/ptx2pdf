@@ -93,6 +93,7 @@
 
 \def\runtrigg@rscv{%after the verse number
   \p@rnum=1
+  {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \settrig@refcv
   \ifMarkTriggerPoints\trigg@rmark{TV}\fi
   \trace{T}{running (cv) triggers \c@rref}%
@@ -114,6 +115,7 @@
 \def\runtrigg@rspar{%Paragraph trigger
   \trace{T}{runtrigg@rspar[\m@rker ]}%
   \global\advance\p@rnum by 1
+  {\let\\=\clearn@tecount \the\n@tecl@sses}%
   \ifx\v@rse\empty\else
     \settrig@refcv
   \fi

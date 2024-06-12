@@ -69,7 +69,11 @@
 	\x@\n@winsert\csname note-#1\endcsname
 	\x@\newb@x\csname notesave1-#1\endcsname
 	\x@\newb@x\csname notesave2-#1\endcsname
+        \x@\newc@unt\csname refn@te-#1\endcsname
 }
+\def\clearn@tecount#1{\global\csname refn@te-#1\endcsname=0 }
+\def\incn@tecount#1{\global\advance\csname refn@te-#1\endcsname by 1 }
+
 \let\n@winsert=\newinsert % work around the \outer nature of \newinsert
 %-cnote_makenote
 \def\FootnoteMulC{1} % Centrecolumn text
@@ -294,7 +298,11 @@
   %\ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \ifx\th@sins\relax \d@note{\x@\insert\csname note-\n@tetype\endcsname}%
   \else \d@note{\th@sins}\fi
+  \x@\let\x@\currn@tenum\csname refn@te-#1\endcsname
+  \global\advance\currn@tenum by 1
+  \xdef\currn@tetype{#1}%
   \trace{f}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
+  \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
   \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
       \XeTeXuseglyphmetrics=3 % so that notes sit on the baseline based on content and not font descender
@@ -308,7 +316,6 @@
     \fi
 %%% single-column notes:
     \interlinepenalty\interfootnotelinepenalty % set penalty to break lines
-    \floatingpenalty\@MM % make sure note does not float away from caller to another page
     \let\styst@k\empty
     \parfillskip=0pt plus 1fil
     \leftskip=0pt \rightskip=0pt
@@ -338,7 +345,7 @@
     \fi
     \ifp@ranotes\else
       \prevdepth=0pt % Ensure that we start with a baselineskip.
-      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
+      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
@@ -371,6 +378,7 @@
   \t@gstart{Note}{\n@tetype}%
   %\getp@ram{fontsize}{#2}\edef\c@rrfontsize{\ifx\p@ram\relax12\else\p@ram\fi}%
   \s@tfont{#2}{#2}%
+  \ifp@ranotes\else\@ch@ckadjustments\fi
   %\ifnum\interactionmode=1\showlists\fi
   \futurelet\next\fo@t}% use plain.tex footnote processor, see plain.tex 1166. It ensures that @foot after the following group.
 %-c_vmakenote
@@ -478,7 +486,7 @@
   \par
   %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
-    \ifx\p@ram\relax\penalty0\else\vskip\p@ram\verticalsp@ceunit\fi
+    \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
     % surely we don't want a strut above and below?
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
