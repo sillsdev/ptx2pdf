@@ -587,6 +587,111 @@
 \newdimen\lastd@pth
 %-c_twocols
 
+% for measuring the space needed for each class of notes;
+% this will decrease \availht by the space needed for the given class
+%+c_reduceavailht
+\def\reduceavailht#1{%
+  \checkp@ranotes{#1}%
+  %\TRACE{av: \the\availht =>}
+  \ifp@ranotes\let\n@xt=\reduceavailht@para
+    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@para@bal\fi\fi\fi
+  \else\let\n@xt=\reduceavailht@sep
+    \ifdiglot\ifdiglotSepNotes\ifdiglotBalNotes\let\n@xt=\reduceavailht@sep@bal\fi\fi\fi
+  \fi
+  \iff@rstnote\else\global\noteseentrue\fi\n@xt{#1}}
+%-c_reduceavailht
+
+%+c_reduceavailht_para
+\def\reduceavailht@para#1{
+  \def\cl@sss{#1\g@tndstat}%
+  \trace{n}{class \cl@sss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \ifvoid\th@cl@ss\trace{f}{ParaNotes[#1] empty}\else
+    \setbox0=\copy\th@cl@ss
+    \setbox0=\vbox{\maken@tepara{0}{#1}}%
+    \global\advance\availht by -\ht0
+    \global\advance\availht by -\dp0
+    \iff@rstnote
+      \global\advance\availht by -\AboveNoteSpace
+      \f@rstnotefalse
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\AboveNoteSpace + \BelowFootNoteRuleSpace}%
+    \else
+      \global\advance\availht by -\InterNoteSpace
+      \trace{f}{ParaNotes[#1] cost \the\ht0+\the\dp0 + \the\InterNoteSpace}%
+    \fi
+    %\getp@ram{baseline}{#1}\ifx\p@ram\relax\else\advance\availht-\p@ram\fi
+    \ifnum\DEBUGnotes=\the\pageno \showbox0 \fi
+  \fi}
+%-c_reduceavailht_para
+
+\def\max@boxpara#1{%paragraph notes of type \v@lpfx#1 and find the max height amongst them
+  \trace{n}{max@boxpara \v@lpfx\if #1L\else #1\fi}%
+  \x@\let\x@\t@st\csname \v@lpfx\if #1L\else #1\fi\endcsname
+  \ifvoid\t@st \else
+    \setbox0=\copy\t@st
+    \let\t@mpdstat\c@rrdstat
+    \edef\c@rrdstat{#1}% make sure that maken@tepara can work with the right width
+    \setbox0=\vbox{\maken@tepara{0}{\v@lpfx}}%
+    \dimen0=\ht0 \advance\dimen0 by \dp0
+    \ifdim\dimen1<\dimen0
+      \dimen1=\dimen0
+    \fi
+    \let\c@rrdstat\t@mpdstat %don't forget to restore value
+    \trace{n}{\the\dimen0, \the\dimen1}%
+  \fi
+}
+
+\def\reduceavailht@para@bal#1{%
+  \TRACE{reduceavailht@para@bal #1}%
+  \bgroup%leave dimen0 etc unchanged
+  \dimen0=0pt
+  \edef\v@lpfx{note-#1}\edef\v@lsfx{}%
+  \let\col@do=\max@boxpara\dimen1=0pt
+  \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
+  \ifdim\dimen1>0pt
+    \global\advance\availht by -\dimen1
+    \iff@rstnote\global\advance\availht by -\AboveNoteSpace 
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
+      \f@rstnotefalse
+    \else \global\advance\availht by -\InterNoteSpace\fi
+    \trace{n}{reduced by=\the\dimen1}%
+  \fi\egroup}
+
+%+c_reduceavailhtsep
+\def\reduceavailht@sep#1{
+  \def\cl@sss{#1\g@tndstat}%
+  \TRACE{class \cl@sss}%
+  \x@\let\x@\th@cl@ss\csname note-\cl@sss\endcsname
+  \ifvoid\th@cl@ss\trace{f}{Notes[#1] empty}\else
+    \f@rstnotefalse
+    \global\advance\availht by -\ht\th@cl@ss
+    \global\advance\availht by -\dp\th@cl@ss
+    \iff@rstnote\advance\availht by -\AboveNoteSpace
+      \global\advance\availht by -\BelowFootNoteSpace
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss+\the\dp\th@cl@ss + \dp\pstr@t + 2*\the\AboveNoteSpace}%
+     \global\advance\availht -\dp\pstr@t \f@rstnotefalse % ensure we don't impinge on the depth
+    \else
+      \global\advance\availht by -\InterNoteSpace
+      \trace{f}{Notes[#1] cost \the\ht\th@cl@ss0+\the\dp\th@cl@ss + \the\InterNoteSpace + \the\AboveNoteSpace}%
+    \fi
+  \fi}
+%-c_reduceavailhtsep
+
+\def\reduceavailht@sep@bal#1{%
+  \TRACE{reduceavailht@sep@bal}%
+  \edef\v@lpfx{note-#1}\edef\v@lsfx{}%
+  \let\col@do=\max@boxszB\dimen1=0pt
+  \x@\each@col\diglot@list\E % max@boxsz sets dimen1 to max ht+dp
+  \ifdim\dimen1>0pt 
+    \advance\availht by -\dimen1
+    \iff@rstnote\advance\availht by -\AboveNoteSpace
+      \ifnoinkinmargin \advance\availht by -\lastd@pth\fi
+      \f@rstnotefalse
+      \advance\availht -\dp\pstr@t  % ensure we don't impinge on the depth
+    \else \advance\availht by -\InterNoteSpace\fi
+  \fi}
+
 %+c_clearnoteclass
 
 \def\cle@rn@tecl@ss#1{%
