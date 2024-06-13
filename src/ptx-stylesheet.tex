@@ -1982,8 +1982,12 @@
     {\everypar={}\ZWSP\baselineskip=0pt\noindent}\eject\fi%\noindent\eject\fi
   \iflastptxfile\closepiclist\fi
   \closeadjlist
-   \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
+  \xdef\p@gefirstmark{}\rerunsavepartialpagedfalse
  \fi
+ \trace{oh}{hook for bookafter-\id@@@ \ifcsname bookafter-\id@@@\endcsname exists \x@\meaning\csname bookafter-\id@@@\endcsname\else missing\fi}%
+ \ifx\book\relax\else\csname bookafter-\id@@@\endcsname\relax\fi
+ \trace{oh}{hook for bookafter-all \ifcsname bookafter-all\endcsname exists \x@\meaning\csname bookafter-all\endcsname\else missing\fi}%
+ \csname bookafter-all\endcsname
  \gdef\id@@@{UNK}%
 }
 %-csty_ptxfile_end
