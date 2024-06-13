@@ -192,7 +192,7 @@
 %-cnote_startnote
 
 %+cnote_endnote
-\def\endn@testyle*{\trace{f}{endn@testyle}%
+\def\endn@testyle*{\trace{n}{endn@testyle}%
  \end@llpoppedstyles{N*}%end any character styles within the note
  \ifskipn@testyle \else
   \csname end-\newn@testyle\endcsname % execute <end> hook
@@ -266,7 +266,7 @@
       \else\edef\@wrap{}%
         \x@\ifx\csname ch@pter\g@tdstat waiting\endcsname\relax #3
         \else % there is a chapter number waiting
-          \trace{f}{Note will be saved for chapter number}%
+          \trace{n}{Note will be saved for chapter number}%
           \everypar={}\x@\let\csname ch@pter\g@tdstat waiting\endcsname\relax
           \global\setbox\ch@pternote=\hbox{\box\ch@pternote #3}%
         \fi % output caller
@@ -301,7 +301,7 @@
   \x@\let\x@\currn@tenum\csname refn@te-#1\endcsname
   \global\advance\currn@tenum by 1
   \xdef\currn@tetype{#1}%
-  \trace{f}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
+  \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
   \the\d@note\bgroup\setbox9=\vbox\bgroup% insert note-f (or note-x)
     \ifFootNoteGlyphMetrics
@@ -333,7 +333,7 @@
     \ifx\p@ram\relax \else \advance \ifRTL\rightskip\else\leftskip\fi\p@ram \IndentUnit \fi
     \getp@ram{rightmargin}{#1}{#1}%
     \ifx\p@ram\relax \else \advance \ifRTL\leftskip\else\rightskip\fi\p@ram \IndentUnit \fi
-    \trace{f}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
+    \trace{n}{note(#1) justification=\p@ram, leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip}%
     \ifx\th@sins\relax
       \s@tbaseline{#1}{#1}%
     \else
@@ -345,7 +345,7 @@
     \fi
     \ifp@ranotes\else
       \prevdepth=0pt % Ensure that we start with a baselineskip.
-      \getp@ram{spacebefore}{#1}{#1}\trace{f}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
+      \getp@ram{spacebefore}{#1}{#1}\trace{n}{note(#1) spacebefore: \p@ram}\ifx\p@ram\relax\else\ifdim\p@ram\verticalsp@ceunit=0pt\else\penalty10004\kern\p@ram\verticalsp@ceunit\penalty10003\fi\fi
 %      \setbox0=\hbox{\XeTeXuseglyphmetrics=0 \char32}\dimen0=\ht0
 %      \ifdim\dimen0<\baselineskip
 %        \dimen1=\baselineskip\advance\dimen1 by -\dimen0
@@ -360,11 +360,11 @@
     \fi
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
-    \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{f}{note(#1) firstindent: \p@ram}%
+    \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
       \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
     % if note omitting caller from note (i.e. all callers are *'s)
     \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
-    \testomitc@ller{#2}\ifomitc@ller\trace{f}{Omitting caller}\else
+    \testomitc@ller{#2}\ifomitc@ller\trace{n}{Omitting caller}\else
     % save copy of caller in temporary box, if non-empty add a little space
     \setbox0=\hbox{#3}%
     \ifdim\wd0>0pt \ifdim\wd0 <\NoteCallerWidth% Allow for wide callers, but standardise normal callers to \NoteCallerWidth, for better alignment
@@ -485,14 +485,14 @@
   \t@gend{Note}%
   \par
   %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
-  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{f}{note(\n@tetype) spaceafter: \p@ram}%
+  \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
     \setbox0=\hbox to 0pt{\XeTeXuseglyphmetrics=0 \char32 \hss}%
     % surely we don't want a strut above and below?
     %\dimen0=\baselineskip \advance\dimen0 by -\ht0 \advance\dimen0 by -\prevdepth
     %\vskip \dimen0
   \fi
-  \xdef\n@tebls{\the\baselineskip}%
+  \x@\xdef\csname n@te-\n@tetype-bls\endcsname{\the\baselineskip}%
   \egroup\end@llpoppedstyles{N*}%
   \def\d@##1+##2\E{\if ##1N\else\MSG{Bad marker ##2\space but expected a closing note marker}\fi}\mctopnoms
   \ifp@ranotes\setbox8=\copy9\setbox7=\vbox{\unvbox8\global\setbox6=\lastbox}\setbox8=\hbox{\unhbox6}%
@@ -507,7 +507,7 @@
       \unvbox9 % Simple normal-height boxes.
     \else
       \ifp@ranotes
-        \reheighthboxes{9}{\n@tebls}%
+        \reheighthboxes{9}{\csname n@te-\n@tetype-bls\endcsname}%
       \else
         \unvbox9 % Simple normal-height boxes.
       \fi
@@ -536,7 +536,7 @@
   \def\cl@ss{#1\g@tndstat}%
   \edef\tmp{#1}\ifx\tmp\l@stnoteclass\lastn@tetrue\else\lastn@tefalse\fi
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
-  \trace{n}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
+  \trace{f}{seperateins@rtn@tecl@ss \ifkeepn@tes keep \fi\cl@ss\space \the\ht\th@cl@ss}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\TRACE{no note}\else%
     \trace{f}{Noteclass #1: dim:\the\ht\th@cl@ss+\the\dp\th@cl@ss, \the\skip\th@cl@ss, \the\count\th@cl@ss.}%
@@ -544,22 +544,26 @@
       %\showbox\th@cl@ss
     %\fi
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
-    \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi
-    \hbox{\vbox{\ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
-      \iflastn@te
-        \unpenalty\dimen0=\lastkern\unkern
-        %{\count255=\lastnodetype \message{lnt:\the\count255 \decod@lastnode{\count255}}}%
-        \setbox0\lastbox\penalty\lastnoteinterlinepenalty \box0\kern\dimen0
+    \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi\penalty10000
+    \vbox{%
+    \ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
+      \iflastn@te%\showlists
+        {\count255=\lastnodetype \trace{fp}{separateins@rtn@tecl@ss lnt:\the\count255 \space \decod@lastnode{\count255}}}%
+        \count255=\lastpenalty
+        \unpenalty
+        \trace{fp}{pen:\the\count255}\dimen0=\lastkern\unkern
+        \setbox0\lastbox\penalty\lastnoteclubpenalty \box0\kern\dimen0
         \xdef\l@stnotebls{\the\baselineskip}%
       \fi
-    }}\fi}% output notes
+    }\setbox0\lastbox\unvbox0% \showlists
+    \fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
 \def\parains@rtn@tecl@ss#1{%
   \def\cl@ss{#1\g@tndstat}%
   \dimen0=\prevdepth
   \x@\let\x@\th@cl@ss\csname note-\cl@ss\endcsname % make \th@cl@ss be a synonym for the current note class
-  \trace{n}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
+  \trace{f}{parains@rtn@tecl@ss \cl@ss, pd=\the\dimen0, c:\the\count\th@cl@ss.}%
   % if the noteclass has content to output ...
   \ifvoid\th@cl@ss\else
     \iff@rstnote%\ifvoid\verybottomins\vfill\fi %\kern-\lastd@pth\vfil % ignore depth of body text; fill space
@@ -567,6 +571,7 @@
     \else
       \kern\InterNoteSpace
     \fi
+    \penalty10000
     %\ifnum\pagenumber=8\showbox\th@cl@ss\fi
     {\maken@tepara{\th@cl@ss}{#1}}%
   \fi}
@@ -819,6 +824,7 @@
     \unvbox3
     %\kern -\dimen1
   \else
+    \penalty 10000 % Prevent breaking before par!
     \noindent % starting making new paragraph
     \ifNoteTracing\tracingparagraphs=1\fi
     %\ifnum\pagenumber=8\showbox0\fi
@@ -924,6 +930,7 @@
 % Rather than make a single hbox, make vbox of hboxes
 
 \def\makevboxofhboxes{%
+  \trace{f}{makevboxofhboxes}%
   \traceifset{vboxofhboxes}%
   \setbox3=\vbox{}% Build up from processed content(new paragraphs prepended)
   \setbox5=\box\voidb@x % The final line of the paragaph.

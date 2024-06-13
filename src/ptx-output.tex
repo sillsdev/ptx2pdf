@@ -894,8 +894,9 @@
   \fi
   \sh@vedim=0pt
 } 
-\def\bal@shavedn@tes{%
+\def\bal@shavedn@tes{%Try rebalancing with shaved footnotes
   \sh@vedim=0pt
+  \trace{fp}{Shaving candidates: \the\sh@venotes}%
   \let\\=\@bal@shavedn@tes\the\sh@venotes 
   \ifdim\sh@vedim=0pt\else
     \applysh@ven@tes
@@ -1158,7 +1159,7 @@
  \advance\colwidth by \XrefNotesMargin}
 
 \newdimen\bestavailht \bestavailht=0pt
-\def\c@lcavailht{
+\def\c@lcavailht{%
   \traceifset{c@lcavailht}%
   \edef\t@st{\p@gefirstmark}%
   \ifx\t@st\empty\xdef\p@gefirstmark{\firstmark}\savem@rks\trace{H}{Loading firstmark \p@gefirstmark}\fi% remember first, if not already set
