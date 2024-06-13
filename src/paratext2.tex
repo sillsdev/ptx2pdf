@@ -114,7 +114,7 @@
 %+c_evenpage
 % Some things need to start on an odd-numbered page, others on an even numbered page
 \def\TPILB{}
-\def\zEmptyPage{\message{Blank page for \the\pageno}\bgroup\m@rksonpagefalse\def\pagecontents{\vfill\TPILB}\plainoutput\egroup}
+\def\zEmptyPage{\message{Blank page for \the\pageno}\ifp@geone\temptrue\else\tempfalse\fi\bgroup\m@rksonpagefalse\def\pagecontents{\vfill\TPILB}\plainoutput\egroup\iftemp\global\p@geonetrue\fi}
 \def\need@evenpage{\endgraf\ifodd\pageno\zEmptyPage\fi}
 \def\need@oddpage{\endgraf\ifodd\pageno\else\zEmptyPage\fi}
 \def\need@quadpage{\endgraf\ifodd\pageno\zEmptyPage\need@quadpage\fi \ifodd\numexpr \pageno/2\relax \zEmptyPage\zEmptyPage\fi}
