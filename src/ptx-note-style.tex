@@ -142,7 +142,7 @@
     \setbox0=\hbox\bgroup \skipn@testyletrue
     \global\n@tenesting=1\relax
     \ifdim\lastskip>0pt \sp@cebeforetrue \else \sp@cebeforefalse \fi % was there a preceding space?
-%-cnote_startnote_start
+    %-cnote_startnote_start
 %+cnote_startnote
   \else
     \leavevmode
@@ -282,6 +282,7 @@
 \newif\ifFootNoteGlyphMetrics %Relationship between the margin and the last footnote: does the note use the descender or the actual bottom of the glyph. If the former, then the bottom of notes have a common baseline. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text. 
 \FootNoteGlyphMetricsfalse
   
+\newcount\currn@tetparnum
 \def\vm@kenote#1#2#3{%
   \inn@tetrue%
   \global\advance\n@teid by 1 %
@@ -300,6 +301,7 @@
   \else \d@note{\th@sins}\fi
   \x@\let\x@\currn@tenum\csname refn@te-#1\endcsname
   \global\advance\currn@tenum by 1
+  \global\currn@tetparnum=1
   \xdef\currn@tetype{#1}%
   \trace{n}{Footnote (\n@tetype) [\ch@pter:\v@rse] will be \the\n@tewidth \space wide (page is \the\hsize)}%
   \global\floatingpenalty\@MM % make sure note does not float away from caller to another page
@@ -361,6 +363,8 @@
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
+      \dimen0=0pt \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
+      \xdef\n@tefli{\the\dimen0}%
       \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
     % if note omitting caller from note (i.e. all callers are *'s)
     \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
@@ -545,6 +549,7 @@
     %\fi
     \iff@rstnote\ifvoid\verybottomins\vfill\fi\fi % ignore depth of body text; fill space
     \iff@rstnote\footnoterule\global\f@rstnotefalse\else\kern\InterNoteSpace\fi\penalty10000
+    \setbox0\box\voidb@x
     \vbox{%
     \ifkeepn@tes\unvcopy\else\unvbox\fi \th@cl@ss
       \iflastn@te%\showlists
@@ -555,7 +560,8 @@
         \setbox0\lastbox\penalty\lastnoteclubpenalty \box0\kern\dimen0
         \xdef\l@stnotebls{\the\baselineskip}%
       \fi
-    }\setbox0\lastbox\unvbox0% \showlists
+    }% This would permit breaking the last paragraph. Unfortunately it also permits breaking before the last note.: \setbox0\lastbox\unvbox0 %\showlists
+      \showlists
     \fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -927,6 +933,7 @@
     \disc@rds{mvb}%
 }
 
+\def\s@t@@adj{\ifdim\dimen0<14sp \ifdim\dimen0>6sp \edef\@@adj{\looseness\the\numexpr \dimen0 -10\relax \relax}\dimen0=0sp \fi\fi}
 % Rather than make a single hbox, make vbox of hboxes
 
 \def\makevboxofhboxes{%
@@ -969,16 +976,18 @@
     \fi
     \tmpcount=\lastnodetype
     \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount}) lastn@te\iflastn@te true\else false\fi}%
+    \let\@@adj\empty
+    \s@t@@adj
     \ifdim\dimen0=1sp % Special value - footnote paragraph
       \getp@ram{firstindent}{fp}{fp}%
       \advance\linec@unt by \count255
       \dimen0=3pt
       \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
-      \trace{f}{firstlineindent is \the\dimen0, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2}%
+      \xdef\n@tefli{\the\dimen0}%
+      \trace{f}{firstlineindent is \n@tefli, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2, b5=\the\wd5}%
       \iflastn@te
         \xdef\l@stnotebls{\the\baselineskip}%
         \xdef\lastn@tewid{\the\hsize}%Force no join
-        \setbox5\box\voidb@x
       \fi
       \setbox3=\vbox{%
         \iflastn@te
@@ -998,7 +1007,7 @@
         \fi
         %\showbox2
         \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
-        \noindent\leavevmode\hbox{}\kern\dimen0\unhbox2 \unhbox1{\removehboxes}\endgraf
+        \noindent\leavevmode\hbox{}\kern\n@tefli\unhbox2 \unhbox1{\removehboxes}\endgraf
         \ifdim\ht3>0pt \dimen0=\prevdepth
         \ifdim\dimen0=0pt \else\kern-\dimen0\fi\fi
         \unvbox3}%
@@ -1017,6 +1026,7 @@
             \setbox5\box2\setbox2\hbox{}%
             \trace{fp}{Saved last footnotebox}%
           \fi %
+          \lastn@tefalse
         \fi
         \interlinepenalty=\interfootnotelinepenalty % set penalty to break lines
         \ifnum\tmpcount=1\else\lastn@tefalse\fi
@@ -1055,7 +1065,7 @@
        \else % interline kern means a lastnotepar
          \penalty\lastnoteparpenalty
        \fi
-       \unhbox 1{\removehboxes}\unhbox5}%
+       \unhbox 1{\removehboxes}\internotespace \unhbox5}%
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
   %\showbox3

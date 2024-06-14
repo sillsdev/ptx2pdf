@@ -136,10 +136,10 @@
  \ifx\adjc@rref\@djref%
    \ifnum\@djparindex=\curr@djpar 
      \ifinn@te 
-      \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)?}%
-       \ifx\@djnotetyp\currn@tetype \ifnum\@djnotenum=\the\currn@tenum \relax
+      \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)? and (\@djnotepar=\the\currn@tetparnum)}%
+       \ifx\@djnotetyp\currn@tetype \ifnum\@djnotenum=\the\currn@tenum \ifnum\@djnotepar=\the\currn@tetparnum \relax
          \do@dj 
-       \fi\fi
+       \fi\fi\fi
      \else
        \ifx\@djnotetyp\empty
          \do@dj
