@@ -172,12 +172,9 @@
 \let\newins@rt=\newinsert
 \let\n@wif=\newif
 
-\newif\ifresult
 \def\ptxversion{0}
-\def\ifversion#1{\resultfalse
-  \ifnum\ptxversion=0 \resulttrue\else
-    \ifnum\ptxversion < #1 \else\resulttrue\fi
-  \fi\ifresult}
+\def\ifversion#1#2#3{\ifnum\ptxversion=0\relax #2\else
+    \ifnum\ptxversion < #1\relax #3 \else #2\fi\fi}
 
 % set baseline appropriately for the given style (may be using much smaller font than body)
 % baselineskip = leading

@@ -47,6 +47,9 @@
   \ver@djlinesub #1.\E}
 
 \def\@djustment{}
+\def\@djnotetyp{}
+\def\@djnotenum{}
+\def\@djnotepar{}
 \def\parse@djline #1 #2 #3[#4]#5\end{%
  \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}\gdef\@djustment{#3}%
   \warnspace #3 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi

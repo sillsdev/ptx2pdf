@@ -638,7 +638,7 @@
   \FootNoteRuleRightIndent}\penalty10000\hrule height 0pt depth 0pt width 0pt}% 
 
 \def\noterule#1#2#3#4{\trace{f}{noterule #1=\the#1 #2 #3 #4}{\dimen1=#1
-  \ifversion{2}\advance\dimen1 -#2 \fi
+  \ifversion{2}{\advance\dimen1 -#2}{}%
   \kern 0pt \penalty10000 \vskip\dimen1 minus 0.5 \dimen1
   \dimen1=#2 % what's this for? \kern -\dimen1
   \t@gstart{Layout}{\cl@ss}%
