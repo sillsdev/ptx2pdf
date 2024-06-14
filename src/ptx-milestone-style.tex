@@ -767,13 +767,14 @@
 %  Call barcode using stripped down version
 \def\bcode#1-{\count@rgs{#1}%
   \lineskip=10pt \lineskiplimit=0pt
-  \ifnum\num@rgs=13 \barcode#1\relax\else
+  \ifnum\num@rgs=13 \barcode#1\relax
+    \else
     \ifnum\num@rgs=10 \count255=0 %\tracingmacros=1\tracingassigns=1 
       \let\r@code\empty\r@encodeten 978#1\relax\relax
      \else
       \MSG{*** ISBN Barcodes can have 10 or 13 digits (\the\num@rgs\space were supplied)}%
      \fi
-  \fi\ifversion{2}\else\space \fi}%
+  \fi\ifversion{2}\else\ifnum \num@rgs=10 \else \space\fi \fi}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
