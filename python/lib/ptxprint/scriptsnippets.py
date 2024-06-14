@@ -79,9 +79,11 @@ def nonbody(fn, bj, dat):
     return "\n".join(res)
 
 def notattrib(fn, bj, dat):
+    #if "/" in dat:
+    #    import pdb; pdb.set_trace()
     b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
-    for i, w in enumerate(b[1::2]):
-        b[2*i+1] = fn(w)
+    for i, w in enumerate(b[0::2]):
+        b[2*i] = fn(w)
     return "".join(b)
 
 class Indic(ScriptSnippet):
