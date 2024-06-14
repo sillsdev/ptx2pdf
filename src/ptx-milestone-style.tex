@@ -774,7 +774,7 @@
      \else
       \MSG{*** ISBN Barcodes can have 10 or 13 digits (\the\num@rgs\space were supplied)}%
      \fi
-  \fi\ifversion{2}\else\ifnum \num@rgs=10 \else \space\fi \fi}%
+  \fi\ifversion{2}{}{\ifnum \num@rgs=10 \else \space\fi}}%
 % strip off minuses one by one. There's probably a more efficient way, but this seems to work
 % Call with \isbn _code_-\emptything-
 \def\emptything{}
