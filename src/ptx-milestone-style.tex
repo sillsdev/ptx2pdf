@@ -415,7 +415,7 @@
 \notlocation{zvar}
 %\notlocation{zuseperiph}
 \def\m@kenumberns#1{\m@kedigitsother\x@\m@kenumb@rE #1\END} % real numbers are terminated by a training space. But if we have mixed text, a space may not be wanted.
-\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1=}
+\def\m@kenumber#1{\m@kedigitsother\x@\m@kenumb@r #1 =}% The version with a space to stop premature expansion.
 \def\m@kenumb@r#1={\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
 \def\m@kenumb@rE#1\END{\p@sheof\edef\@@result{\scantokens{#1\noexpand}}\p@peof\m@kedigitsletters}
 \def\defzvar#1#2{\x@\def\csname ms:zvar=#1\endcsname{#2}}
@@ -838,7 +838,7 @@
       \fi
     \fi
   \fi
-  \m@kenumber{\attr@b}%
+  \m@kenumberns{\attr@b}%
   \hbox{\ISBN{\@@result}%
     \get@ttribute{price}%
     \ifx\attr@b\relax
@@ -862,7 +862,7 @@
       \fi
     \fi
     \ifx\attr@b\relax\else
-      \m@kenumber{\attr@b}%
+      \m@kenumberns{\attr@b}%
       \belowISBN\x@\barcodeV \@@result{\@price}\relax\relax\relax\relax%
     \fi
   }\egroup}

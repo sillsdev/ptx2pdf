@@ -1141,16 +1141,14 @@
     \ifx\attr@b\relax
       \edef\ornamentheight{\the\dimexpr \c@rrfontsize\dimexpr 0.7\FontSizeUnit\relax\relax}%
     \else
-      \m@kenumber{\attr@b}%
-      \x@\n@endsp@ce\@@result \E
+      \m@kenumberns{\attr@b}%
       \edef\ornamentheight{\@@@result}%
     \fi
     \get@ttribute{pattern}%
     \ifx\attr@b\relax
       \message{! zornament milestone must have a valid pattern="..." set}%
     \else
-      \m@kenumber{\attr@b}%
-      \x@\n@endsp@ce\@@result \E
+      \m@kenumberns{\attr@b}%
       \hbox{\beginL\doOrnament{\@@@result}\endL}%prevent reordering of specials in RTL mode!
       \relax
     \fi
