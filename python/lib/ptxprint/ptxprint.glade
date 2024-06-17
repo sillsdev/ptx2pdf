@@ -28822,9 +28822,10 @@ padding.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparator" id="iT">
+                  <object class="GtkSeparator" id="tT">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
                     <property name="valign">center</property>
                   </object>
                   <packing>
@@ -28834,9 +28835,10 @@ padding.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparator" id="iB">
+                  <object class="GtkSeparator" id="tB">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
                     <property name="valign">center</property>
                   </object>
                   <packing>
@@ -28846,9 +28848,10 @@ padding.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparator" id="iL">
+                  <object class="GtkSeparator" id="tL">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
                     <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                   </object>
@@ -28859,9 +28862,10 @@ padding.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkSeparator" id="iR">
+                  <object class="GtkSeparator" id="tR">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
                     <property name="halign">center</property>
                     <property name="orientation">vertical</property>
                   </object>
@@ -28869,60 +28873,6 @@ padding.</property>
                     <property name="left-attach">6</property>
                     <property name="top-attach">3</property>
                     <property name="height">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="sT">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="valign">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.10000000000000001"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="left-attach">3</property>
-                    <property name="top-attach">2</property>
-                    <property name="width">4</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="sL">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">2</property>
-                    <property name="top-attach">2</property>
-                    <property name="height">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="sR">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="halign">center</property>
-                  </object>
-                  <packing>
-                    <property name="left-attach">7</property>
-                    <property name="top-attach">2</property>
-                    <property name="height">6</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkLabel" id="sB">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="valign">center</property>
-                    <attributes>
-                      <attribute name="scale" value="0.10000000000000001"/>
-                    </attributes>
-                  </object>
-                  <packing>
-                    <property name="left-attach">3</property>
-                    <property name="top-attach">7</property>
-                    <property name="width">4</property>
                   </packing>
                 </child>
                 <child>
@@ -28936,8 +28886,8 @@ padding.</property>
                       <object class="GtkLabel" id="l_box">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="hexpand">False</property>
-                        <property name="vexpand">False</property>
+                        <property name="halign">center</property>
+                        <property name="valign">center</property>
                         <property name="justify">fill</property>
                         <attributes>
                           <attribute name="foreground" value="#000000000000"/>
@@ -28957,24 +28907,14 @@ padding.</property>
                   <object class="GtkLabel" id="l_box1">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-start">8</property>
-                    <property name="margin-end">8</property>
-                    <property name="margin-top">8</property>
-                    <property name="margin-bottom">8</property>
-                    <property name="hexpand">False</property>
-                    <property name="vexpand">False</property>
-                    <property name="xpad">0</property>
-                    <property name="ypad">0</property>
+                    <property name="halign">center</property>
+                    <property name="valign">center</property>
                     <property name="label" translatable="yes">This preview actively illustrates the box and border
 padding with respect to the text. As you change the
 various settings above, you should be able to see
 how the border settings affect the final outcome.</property>
                     <property name="justify">fill</property>
-                    <property name="xalign">0.5</property>
-                    <property name="yalign">0.5</property>
-                    <attributes>
-                      <attribute name="background" value="#f3e9ffff68f5"/>
-                    </attributes>
+                    <property name="track-visited-links">False</property>
                     <style>
                       <class name="graybox"/>
                     </style>
@@ -29038,6 +28978,60 @@ how the border settings affect the final outcome.</property>
                     <property name="left-attach">1</property>
                     <property name="top-attach">9</property>
                     <property name="width">8</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="iT">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">3</property>
+                    <property name="top-attach">2</property>
+                    <property name="width">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="iB">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
+                    <property name="valign">center</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">3</property>
+                    <property name="top-attach">7</property>
+                    <property name="width">4</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="iL">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
+                    <property name="halign">center</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">2</property>
+                    <property name="top-attach">2</property>
+                    <property name="height">6</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSeparator" id="iR">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="opacity">0.40</property>
+                    <property name="halign">center</property>
+                    <property name="orientation">vertical</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">7</property>
+                    <property name="top-attach">2</property>
+                    <property name="height">6</property>
                   </packing>
                 </child>
               </object>

@@ -5514,11 +5514,6 @@ Thank you,
                     outside = thickness + v
                     setattr(self, "x"+w, outside * -1.0 if outside < 0.0 else 0.0)
 
-        self.builder.get_object("sT").set_visible(False)
-        self.builder.get_object("sL").set_visible(False)
-        self.builder.get_object("sR").set_visible(False)
-        self.builder.get_object("sB").set_visible(False)
-        
         self.builder.get_object("oT").set_visible(self.get('c_sbBorder_top'))
         self.builder.get_object("oB").set_visible(self.get('c_sbBorder_bot'))
         self.builder.get_object("oL").set_visible(self.get('c_sbBorder_lhs') or self.get('c_sbBorder_inn'))
@@ -5537,10 +5532,15 @@ Thank you,
         self.builder.get_object("e_box").set_property("height-request", self.iL + (self.oT / 2))
         self.builder.get_object("e_box").set_property("width-request", self.iT + (self.oL / 2))
 
-        self.builder.get_object("l_box1").set_property("margin-top", self.oT)
-        self.builder.get_object("l_box1").set_property("margin-bottom", self.oB)
-        self.builder.get_object("l_box1").set_property("margin-left", self.oL)
-        self.builder.get_object("l_box1").set_property("margin-right", self.oR)        
+        # self.builder.get_object("l_box1").set_property("margin-top", self.oT)
+        # self.builder.get_object("l_box1").set_property("margin-bottom", self.oB)
+        # self.builder.get_object("l_box1").set_property("margin-left", self.oL)
+        # self.builder.get_object("l_box1").set_property("margin-right", self.oR)        
+
+        self.builder.get_object("tT").set_size_request(-1, self.oT)
+        self.builder.get_object("tB").set_size_request(-1, self.oB)
+        self.builder.get_object("tL").set_size_request(self.oL, -1)
+        self.builder.get_object("tR").set_size_request(self.oR, -1)
 
         for w in "TLR":
             self.builder.get_object(f"o{w}").set_property("margin-top", 0) # self.oT)
