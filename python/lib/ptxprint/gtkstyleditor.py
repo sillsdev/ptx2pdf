@@ -739,12 +739,23 @@ class StyleEditorView(StyleEditor):
             sb.removeStyle(self, self.marker)
 
     def sidebarBorderDialog(self):
-        sb = borderStyleFromStyle(self, self.marker)
-        if sb is None:
-            sb = BorderStyle()
-        res = sb.run(self.model)
+        self.sb = borderStyleFromStyle(self, self.marker)
+        if self.sb is None:
+            self.sb = BorderStyle()
+        res = self.sb.run(self.model)
         if res:
-            sb.toStyle(self, self.marker)
+            self.sb.toStyle(self, self.marker)
+        self.sb = None
+
+    def onSBborderSettingsChanged(self):
+        self.sb.onSBborderSettingsChanged()
+        
+        
+    def boxPaddingUniformClicked(self):
+        self.sb.boxPaddingUniformClicked()
+        
+    def bdrPaddingUniformClicked(self):
+        self.sb.bdrPaddingUniformClicked()
 
     def delKey(self, key=None):
         if key is None:
@@ -780,3 +791,4 @@ class StyleEditorView(StyleEditor):
                 self._setFieldVal(k, stylemap[newk], newval, newval)
         oldval = self.getval(self.marker, k, v[2], baseonly=True)
         self._setFieldVal(k, v, oldval, oldval)
+

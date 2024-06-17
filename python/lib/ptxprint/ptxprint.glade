@@ -546,6 +546,12 @@ THE SOFTWARE.
     <property name="step-increment">0.5</property>
     <property name="page-increment">10</property>
   </object>
+  <object class="GtkAdjustment" id="a_sbBorderLineWidth">
+    <property name="upper">5</property>
+    <property name="value">0.29999999999999999</property>
+    <property name="step-increment">0.05</property>
+    <property name="page-increment">1</property>
+  </object>
   <object class="GtkAdjustment" id="a_sbBorderWidth">
     <property name="lower">0.10</property>
     <property name="upper">200</property>
@@ -27823,7 +27829,7 @@ maintains its proportions.</property>
             <property name="margin-bottom">6</property>
             <property name="label-xalign">0.029999999329447746</property>
             <child>
-              <!-- n-columns=3 n-rows=5 -->
+              <!-- n-columns=3 n-rows=6 -->
               <object class="GtkGrid" id="gr_sbBorders">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -28027,16 +28033,18 @@ maintains its proportions.</property>
                   </object>
                   <packing>
                     <property name="left-attach">0</property>
-                    <property name="top-attach">3</property>
+                    <property name="top-attach">4</property>
                     <property name="height">2</property>
                   </packing>
                 </child>
                 <child>
                   <object class="GtkSpinButton" id="s_sbBorderWidth">
-                    <property name="name">Borders dialog: Border thickness</property>
+                    <property name="name">Borders dialog: Border width</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
-                    <property name="tooltip-text" translatable="yes">The thickness of the rule.</property>
+                    <property name="tooltip-text" translatable="yes">Specify how wide the border should be.
+Note that for ornamental borders this
+value needs to be at least 10pt.</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="width-chars">6</property>
@@ -28044,11 +28052,11 @@ maintains its proportions.</property>
                     <property name="xalign">1</property>
                     <property name="input-purpose">number</property>
                     <property name="adjustment">a_sbBorderWidth</property>
-                    <property name="climb-rate">1</property>
+                    <property name="climb-rate">0.5</property>
                     <property name="digits">1</property>
                     <property name="numeric">True</property>
                     <property name="update-policy">if-valid</property>
-                    <property name="value">2</property>
+                    <property name="value">10</property>
                     <signal name="value-changed" handler="onSBborderSettingsChanged" swapped="no"/>
                   </object>
                   <packing>
@@ -28065,7 +28073,7 @@ maintains its proportions.</property>
                     <property name="valign">center</property>
                     <property name="margin-start">8</property>
                     <property name="margin-end">15</property>
-                    <property name="label" translatable="yes">Border Thickness (pt):</property>
+                    <property name="label" translatable="yes">Border Width (pt):</property>
                     <property name="track-visited-links">False</property>
                   </object>
                   <packing>
@@ -28075,18 +28083,18 @@ maintains its proportions.</property>
                 </child>
                 <child>
                   <object class="GtkColorButton" id="col_sbBorderColor">
-                    <property name="name">Borders dialog: Border color</property>
+                    <property name="name">Borders dialog: Border line color</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Sets the background color for this Sidebar.</property>
+                    <property name="tooltip-text" translatable="yes">Sets the line color for this border.</property>
                     <property name="halign">start</property>
-                    <property name="title" translatable="yes">Border Color</property>
+                    <property name="title" translatable="yes">Border Line Color</property>
                     <property name="rgba">rgb(0,0,0)</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
-                    <property name="top-attach">3</property>
+                    <property name="top-attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -28098,7 +28106,7 @@ maintains its proportions.</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">3</property>
+                    <property name="top-attach">4</property>
                   </packing>
                 </child>
                 <child>
@@ -28172,23 +28180,24 @@ be applied.</property>
                   </object>
                   <packing>
                     <property name="left-attach">1</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">5</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkColorButton" id="col_sbBorderColor1">
-                    <property name="name">Borders dialog: Border color</property>
+                  <object class="GtkColorButton" id="col_sbBorderFillColor">
+                    <property name="name">Borders dialog: Border fill color</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Sets the background color for this Sidebar.</property>
+                    <property name="tooltip-text" translatable="yes">Sets the fill color for this border.</property>
                     <property name="halign">start</property>
-                    <property name="title" translatable="yes">Border Color</property>
-                    <property name="rgba">rgb(178,237,237)</property>
+                    <property name="resize-mode">immediate</property>
+                    <property name="title" translatable="yes">Border Fill Color</property>
+                    <property name="rgba">rgb(84,247,172)</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
-                    <property name="top-attach">4</property>
+                    <property name="top-attach">5</property>
                   </packing>
                 </child>
                 <child>
@@ -28209,6 +28218,49 @@ of the various Ornamental Borders (pgs 4-7).</property>
                   <packing>
                     <property name="left-attach">0</property>
                     <property name="top-attach">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="halign">end</property>
+                    <property name="valign">center</property>
+                    <property name="margin-start">8</property>
+                    <property name="margin-end">15</property>
+                    <property name="label" translatable="yes">Line Thickness of Ornaments (pt):</property>
+                    <property name="track-visited-links">False</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">0</property>
+                    <property name="top-attach">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkSpinButton" id="s_sbBorderLineWidth">
+                    <property name="name">Borders dialog: Border Line Thickness</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="tooltip-text" translatable="yes">Specify the thickness of the lines
+which make up the ornamental
+border.</property>
+                    <property name="halign">start</property>
+                    <property name="valign">start</property>
+                    <property name="width-chars">6</property>
+                    <property name="text">2.0</property>
+                    <property name="xalign">1</property>
+                    <property name="input-purpose">number</property>
+                    <property name="adjustment">a_sbBorderLineWidth</property>
+                    <property name="climb-rate">0.05</property>
+                    <property name="digits">2</property>
+                    <property name="numeric">True</property>
+                    <property name="update-policy">if-valid</property>
+                    <property name="value">0.29999999999999999</property>
+                  </object>
+                  <packing>
+                    <property name="left-attach">1</property>
+                    <property name="top-attach">3</property>
+                    <property name="width">2</property>
                   </packing>
                 </child>
               </object>
@@ -28455,7 +28507,6 @@ Top, Bottom, Left, and Right
 padding.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="boxPaddingUniformClicked" swapped="no"/>
                       </object>
@@ -28697,7 +28748,6 @@ Top, Bottom, Left, and Right
 padding.</property>
                         <property name="halign">start</property>
                         <property name="valign">center</property>
-                        <property name="active">True</property>
                         <property name="draw-indicator">True</property>
                         <signal name="toggled" handler="bdrPaddingUniformClicked" swapped="no"/>
                       </object>
