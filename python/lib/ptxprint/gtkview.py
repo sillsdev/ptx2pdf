@@ -824,6 +824,7 @@ class GtkViewModel(ViewModel):
             .mainnb tab:checked {background-color: lightsteelblue}
             .mainnb tab:checked label {font-weight: bold}
             .viewernb {background-color: #d3d3d3}
+            .graybox {background-color: #ecebea}
             .viewernb tab {min-height: 0pt; margin: 0pt; padding-bottom: 3pt}
             .smradio {font-size: 11px; padding: 1px 1px}
             .changed {font-weight: bold}
@@ -5500,26 +5501,38 @@ Thank you,
             pass
 
     def onSBborderSettingsChanged(self, btn):
+        thickness = float(self.get('s_sbBorderWidth'))
         for x in ['ox', 'dr']:
             if self.get(f"c_b{x}PadSymmetrical"):
                 for w in "LRB":
                     self.set(f"s_sbB{x}Pad{w}", self.get(f"s_sbB{x}PadT"))
-                    print(f"s_sbB{x}Pad{w} = s_sbB{x}PadT")
             oi = "o" if x == 'ox' else 'i'
             for w in "TBLR":
                 v = float(self.get(f's_sbB{x}Pad{w}'))
                 setattr(self, oi+w, v) # if v >= 0 else 0)
-                print(f"{oi+w} = {v}")
+                if oi == "o":
+                    outside = thickness + v
+                    setattr(self, "x"+w, outside * -1.0 if outside < 0.0 else 0.0)
 
+        self.builder.get_object("sT").set_visible(False)
+        self.builder.get_object("sL").set_visible(False)
+        self.builder.get_object("sR").set_visible(False)
+        self.builder.get_object("sB").set_visible(False)
+        
         self.builder.get_object("oT").set_visible(self.get('c_sbBorder_top'))
         self.builder.get_object("oB").set_visible(self.get('c_sbBorder_bot'))
         self.builder.get_object("oL").set_visible(self.get('c_sbBorder_lhs') or self.get('c_sbBorder_inn'))
         self.builder.get_object("oR").set_visible(self.get('c_sbBorder_rhs') or self.get('c_sbBorder_out'))
-        thickness = float(self.get('s_sbBorderWidth'))
         self.builder.get_object("oT").set_size_request(-1, thickness)
         self.builder.get_object("oB").set_size_request(-1, thickness)
         self.builder.get_object("oL").set_size_request(thickness, -1)
         self.builder.get_object("oR").set_size_request(thickness, -1)
+
+        # xTBLR is the [colored] box area OUTSIDE of the border 
+        self.builder.get_object("xT").set_size_request(-1, self.xT)
+        self.builder.get_object("xB").set_size_request(-1, self.xB)
+        self.builder.get_object("xL").set_size_request(self.xL, -1)
+        self.builder.get_object("xR").set_size_request(self.xR, -1)
 
         self.builder.get_object("e_box").set_property("height-request", self.iL + (self.oT / 2))
         self.builder.get_object("e_box").set_property("width-request", self.iT + (self.oL / 2))
