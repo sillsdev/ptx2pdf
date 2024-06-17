@@ -2,13 +2,16 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk
 import re
+import logging
+
+logger = logging.getLogger(__name__)
 
 def onTextEditKeypress(widget, event, bufView):
     i, buffer, view, model = bufView
-    
+    logger.debug(f"KeyPress {event.keyval} in {event.state} in buffer {i}")
     state = event.state
     keyval = event.keyval
-    if state == Gdk.ModifierType.CONTROL_MASK:
+    if (state & Gdk.ModifierType.CONTROL_MASK) != 0:
         if i < len(bindings) and keyval in bindings[i]:
             info = bindings[i][keyval]
             info[0](buffer, view, model, info[1:])
@@ -47,10 +50,10 @@ def commentOut(buffer, view, model, *a): # ^/
     buffer.insert(line_start_iter, new_line_text)
 
 def justPlusOne(buffer, view, model, *a): # ^1
-    processLine(buffer, r"\+0", "+1")
+    processLine(buffer, r"\+(\d)", lambda m:"+" + ("1" if m.group(1) == "0" else "0"))
 
 def shrinkLine(buffer, view, model, *a): # ^i
-    processLine(buffer, r"\+.*?(-\d)", r"-1")
+    processLine(buffer, r"\+.*?(-\d)", r"+-1")
 
 def removeUntilNum(buffer, view, model, *a): # ^1 ^2 ... ^8 ^9
     num = str(a[0][0])
