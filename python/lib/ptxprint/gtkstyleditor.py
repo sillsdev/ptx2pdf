@@ -44,10 +44,31 @@ stylemap = {
     '_publishable': ('c_styTextProperties',      'c_styTextProperties', False, None, None)
 }
 
-topLevelOrder = (_('Identification'), _('Introduction'), _('Chapters & Verses'), _('Paragraphs'), _('Poetry'),
-    _('Titles & Headings'), _('Tables'), _('Lists'), _('Footnotes'), _('Cross References'), _('Special Text'),
-    _('Character Styling'), _('Breaks'), _('Module'), _('Peripheral Materials'), _('Peripheral References'),
-    _('Extended Study Content'), _("Strong's Index"), _('Milestones'), _('Other'), _('Obsolete & Deprecated'))
+topLevelOrder = (
+    _('Identification'), 
+    _('Introduction'), 
+    _('Chapters & Verses'), 
+    _('Paragraphs'), 
+    _('Poetry'), 
+    _('Titles & Headings'), 
+    _('Tables'), 
+    _('Lists'), 
+    _('Footnotes'), 
+    _('Cross References'), 
+    _('Special Text'), 
+    _('Character Styling'), 
+    _('Cover'), 
+    _('Diglot'), 
+    _('Module'), 
+    _('Peripheral Materials'), 
+    _('Peripheral References'), 
+    _('Extended Study Content'), 
+    _("Strong's Index"), 
+    _('Milestones'), 
+    _('Conditional text'), 
+    _('Breaks'), 
+    _('Other'), 
+    _('Obsolete & Deprecated'))
 catorder = {k: i for i, k in enumerate(topLevelOrder)}
 
 noEndmarker = ('fr', 'fq', 'fqa', 'fk', 'fl', 'fw', 'fp', 'ft', 'xo', 'xk', 'xq', 'xt', 'xta')
@@ -749,7 +770,6 @@ class StyleEditorView(StyleEditor):
 
     def onSBborderSettingsChanged(self):
         self.sb.onSBborderSettingsChanged()
-        
         
     def boxPaddingUniformClicked(self):
         self.sb.boxPaddingUniformClicked()

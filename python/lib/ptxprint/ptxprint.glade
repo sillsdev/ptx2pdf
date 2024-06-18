@@ -27842,7 +27842,7 @@ maintains its proportions.</property>
                 <property name="column-spacing">8</property>
                 <child>
                   <!-- n-columns=5 n-rows=4 -->
-                  <object class="GtkGrid">
+                  <object class="GtkGrid" id="gr_bdrSides">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
@@ -28066,7 +28066,7 @@ value needs to be at least 10pt.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_sbBorderWidth">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
@@ -28090,7 +28090,7 @@ value needs to be at least 10pt.</property>
                     <property name="tooltip-text" translatable="yes">Sets the line color for this border.</property>
                     <property name="halign">start</property>
                     <property name="title" translatable="yes">Border Line Color</property>
-                    <property name="rgba">rgb(0,0,0)</property>
+                    <property name="rgba">rgb(16,86,27)</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
@@ -28098,7 +28098,7 @@ value needs to be at least 10pt.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_sbBorderColor">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
@@ -28172,7 +28172,7 @@ be applied.</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_sbBorderFillColor">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
@@ -28193,7 +28193,7 @@ be applied.</property>
                     <property name="halign">start</property>
                     <property name="resize-mode">immediate</property>
                     <property name="title" translatable="yes">Border Fill Color</property>
-                    <property name="rgba">rgb(84,247,172)</property>
+                    <property name="rgba">rgb(249,240,107)</property>
                   </object>
                   <packing>
                     <property name="left-attach">2</property>
@@ -28221,14 +28221,14 @@ of the various Ornamental Borders (pgs 4-7).</property>
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkLabel">
+                  <object class="GtkLabel" id="lb_sbBorderLineWidth">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="halign">end</property>
                     <property name="valign">center</property>
                     <property name="margin-start">8</property>
                     <property name="margin-end">15</property>
-                    <property name="label" translatable="yes">Line Thickness of Ornaments (pt):</property>
+                    <property name="label" translatable="yes">Line Thickness (pt):</property>
                     <property name="track-visited-links">False</property>
                   </object>
                   <packing>
@@ -28242,8 +28242,7 @@ of the various Ornamental Borders (pgs 4-7).</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="tooltip-text" translatable="yes">Specify the thickness of the lines
-which make up the ornamental
-border.</property>
+which make up the border.</property>
                     <property name="halign">start</property>
                     <property name="valign">start</property>
                     <property name="width-chars">6</property>
@@ -28280,7 +28279,7 @@ border.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkFrame">
+          <object class="GtkFrame" id="fr_padding">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="margin-start">6</property>
@@ -28806,7 +28805,7 @@ padding.</property>
           </packing>
         </child>
         <child>
-          <object class="GtkFrame">
+          <object class="GtkFrame" id="fr_previewBorder">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <property name="halign">center</property>

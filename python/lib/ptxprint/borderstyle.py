@@ -18,6 +18,23 @@ fieldmap = {
     "BorderColor":         "col_sbBorderColor",
     "BorderFillColor":     "col_sbBorderFillColor",
 }
+
+styVals = {"none": 0, "plain": 1, "double": 2, "ornaments": 4}
+sensitivity = {
+    "lb_openOrnamentsCatalog": 4,
+    "fcb_sbBorderOrnament": 4,
+    "lb_sbBorderWidth": 7,
+    "s_sbBorderWidth": 7,
+    "lb_sbBorderLineWidth": 6,
+    "s_sbBorderLineWidth": 6,
+    "lb_sbBorderColor": 7,
+    "col_sbBorderColor": 7,
+    "lb_sbBorderFillColor": 6,
+    "col_sbBorderFillColor": 6,
+    "gr_bdrSides": 7,
+    "fr_padding": 7,
+    "fr_previewBorder": 7,
+}
 bordermap = {
     "top":        "c_sbBorder_top",
     "bottom":     "c_sbBorder_bot",
@@ -49,6 +66,10 @@ def borderStyleFromStyle(tgt, mkr):
         else:
             setattr(self, k, False)
     # unpack BoxVPadding, BoxHPadding, BorderVPadding, BorderHPadding
+    # remember to set c_boxPadSymmetrical and/or c_bdrPadSymmetrical
+    # if the 4 values are identical when unpacking.
+    # Note that BoxPadding and BorderPadding are also possible values 
+    # coming back from the stylesheet.
     return self
 
 
@@ -110,10 +131,19 @@ class BorderStyle:
             bitfield = 128
         values = [brdrs[i].title() for i in range(len(brdrs)) if bitfield & (1<<i) != 0]
         tgt.setval(mkr, "Border", " ".join(values))
+        # if all 4 are identical then just set BoxPadding and/or BorderPadding
+        # if T&B identical, set BoxVPadding; if L&R (or I&O) idential, set BoxHPadding
         # pack BoxVPadding, BoxHPadding, BorderVPadding, BorderHPadding
 
     def onSBborderSettingsChanged(self):
         builder = self.view.builder
+        bdrType = self.view.get('fcb_sbBorderStyle')
+        borderVal = styVals[bdrType]
+        print(f"{bdrType=} {borderVal=}")
+        for w, bits in sensitivity.items():
+            sensitive = (borderVal & bits) != 0
+            builder.get_object(w).set_sensitive(sensitive)
+        
         thickness = float(self.view.get('s_sbBorderWidth'))
         for x in ['ox', 'dr']:
             if self.view.get(f"c_b{x}PadSymmetrical"):

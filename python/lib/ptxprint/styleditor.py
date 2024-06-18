@@ -246,6 +246,7 @@ _fieldmap = {
     'textproperties':   (fromSet, toSet, None),
     'occursunder':      (fromSet, toSet, None),
     'bordercolor':      (fromOneMax, toOneMax, None),
+    'borderfillcolor':  (fromOneMax, toOneMax, None),
     'bgimagecolor':     (fromOneMax, toOneMax, None),
     'bgcolor':          (fromOneMax, toOneMax, None),
     'bgimage':          (fromFileName, toFileName, None),
