@@ -266,6 +266,7 @@
 \newif\iffiglocleft \figloclefttrue
 \newif\ifpicUsesIns \picUsesInstrue
 \newif\ifpicNarrow \picNarrowfalse
+\newif\ifpicTall \picTallfalse
 \newif\ifrotimage
 \newif\ift@mp %because just one temp isn't enough
 
@@ -325,6 +326,11 @@
     \let\l@cspec@a\loc@Inl
   \else
     \InlBelowfalse
+  \fi
+  \ifx\l@cspec@a\loc@InText
+    \trace{g}{Experimental intext \w@tsit in \m@rker, \the\dimexpr 1em\relax, \the\dimexpr \c@rrfontsize\FontSizeUnit\relax}%
+    \global\let\picl@c\loc@InText\xdef\pic@lign{\l@cspec@b}\global\picUsesInsfalse\p@cinswid=\hsize
+    \picNarrowtrue
   \fi
   \ifx\l@cspec@a\loc@Inl
     \trace{g}{Experimental inline \w@tsit}%
@@ -617,21 +623,22 @@
 \setp@ram{fontsize}{x-credit|fig}{7}
 %-cfig_hex
 
+\def\PlaceHolderRule{0.5pt}% Thickness of rule around skipped figures
 \def\m@kepl@ceholder#1#2#3{%
 \vbox to #2{\offinterlineskip
   \trace{g}{makeplaceholder #3}%
-  \hrule height .2pt \kern-.2pt
-  \hbox to #1{\vrule height #2 width .2pt \hfil \vrule width .2pt}%
+  \hrule height \PlaceHolderRule\kern-\PlaceHolderRule
+  \hbox to #1{\vrule height #2 width \PlaceHolderRule\vrule width \PlaceHolderRule}%
   \vbox to 0pt{\kern-#2 \vss \hbox to #1{\hss\idf@nt #3\hss}\vss}%
-  \kern-.2pt \hrule height .2pt}}
+  \kern-\PlaceHolderRule\relax \hrule height \PlaceHolderRule\relax}}
 
 \newif\ifSkipMissingFig \SkipMissingFigfalse
 \newif\iffigf@und
 
-\def\ins@rtpic#1#2#3#4#5#6#7{%
+\def\ins@rtpic#1#2#3#4#5#6#7{%Figure name #1 already has quotes.
  \edef\tmpfile{\mapinputfile{#1}}%
  \trace{g}{ins@rtpic #1 -> \tmpfile #7 #2 #3 (#4) #5 #6}%
- \openin\t@stread=#1
+ \openin\t@stread=#1\relax
    \ifeof\t@stread
      \message{MISSING IMAGE: #1 -> \tmpfile}%
      \global\figf@undfalse
@@ -659,6 +666,7 @@
     \hsize=\colwidth
   \fi
   \trace{g}{In d@figure #1 (hsz=\the\hsize)}\usfmthreefalse
+  \t@gempty{Anchor}{fig}%
   \rotimagefalse
   \figh@scaptionfalse
   \def\pr@penalty{10}\def\p@stpenalty{10}%
@@ -728,6 +736,7 @@
   \gdef\picl@c{}% location code for in-line (non-insert) pictures
   % By default, set the insert width to full span
   \p@cinswid=\textwidth\advance\p@cinswid by -\columnshift
+  \picTallfalse
   \ifx\size@ption\size@COL \p@cwidth=\hsize
   \else\ifx\size@ption\size@SPAN
     \else\ifx\size@ption\size@WIDTH
@@ -742,7 +751,13 @@
           \p@cwidth=\PaperWidth\p@cheight=\PaperHeight
           \p@cinswid=\PaperWidth
         \else
-           \errmessage{Unknown picture size "\size@ption", expected "col", "span", "width", "page" or "full"}\fi\fi\fi\fi\fi
+          \ifx\size@ption\size@FONT \p@cwidth=\c@rrfontsize\FontSizeUnit
+            \p@cinswid=\p@cwidth \picTalltrue
+          \else
+            \ifx\size@ption\size@LINE \p@cwidth=\baselineskip
+              \p@cinswid=\baselineskip \picTalltrue
+            \else
+             \errmessage{Unknown picture size "\size@ption", expected "col", "span", "width", "page", "full", "font" or "line"}\fi\fi\fi\fi\fi\fi\fi
   \let\p@cins=\relax
 %-cfig_dofigure_1
   % --------- Parse the location option -----------
@@ -861,7 +876,7 @@
     \let\picp@ge\empty
     \x@\p@rsextra{\csname figparam-x-xetex\endcsname}%See if there are any key=val parameters in the x-xetex parameter
     %what are we scaling on the image? Width or height?
-    \ifrotimage
+    \ifnum \ifrotimage 1\else 0\fi = \ifpicTall 0 \else 1 \fi
       %If there's rotation, fit the image height to width instead of the normal way:
       \def\picdim@n{height}\def\picaltdim@n{width}%
     \else
@@ -890,10 +905,12 @@
       \setbox\newpicb@x=\m@kepl@ceholder{\wd\newpicb@x}{\ht\newpicb@x}{\csname figparam-src\endcsname}%
     \fi
     \trace{g}{Object going into hbox \sizem@ltiple x \the\p@cwidth}%
-    \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss
-      \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
-      \x@\writefigp@gelog\x@{\l@gstring}%
-      \box\newpicb@x\hss}%
+    \edef\l@gstring{{\the\im@gecount}{\f@lename}{\csname figparam-pgpos\endcsname}{\csname figparam-copy\endcsname}{\picdim@n:\the\wd\newpicb@x x\the\ht\newpicb@x}}% Fully expand figure parameters, but leave page no. to be expanded later.
+    \ifpicTall %Tall boxes don't get centred.
+      \setbox\newpicb@x=\hbox{\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x}%
+    \else
+      \setbox\newpicb@x=\hbox to \sizem@ltiple\p@cwidth{\hss\x@\writefigp@gelog\x@{\l@gstring}\box\newpicb@x\hss}%
+    \fi
 %-cfig_dofigure_3
     % FIXME: Something like this?
 %+cfig_dofigure_4
@@ -922,7 +939,12 @@
         \add@credit%
     \fi
     %Align image left/right or centre
+    \ifx\picl@c\loc@InText % InTextBoxes get their natural width + spacebeside 
+      \p@cinswid=\wd\newpicb@x
+      \advance\p@cinswid\sp@cebeside
+    \fi
     \trace{g}{Object aligned into hbox \the\p@cinswid}%
+    \t@gstartfull{Figure}{fig}{width="\the\wd\newpicb@x" height="\the\ht\newpicb@x" pgpos="\csname figparam-pgpos\endcsname" size="\size@ption" loc="\loc@ption"}%
     \ifx\pic@lign\@lignRight\hbox to \p@cinswid{\hss\box\newpicb@x}%
     \else
       \ifx\pic@lign\@lignLeft \hbox to \p@cinswid{\box\newpicb@x\hss}%
@@ -936,6 +958,7 @@
     \fi
     \ifdim\sp@ceafter pt =0pt \else\vskip \sp@ceafter\onel@neunit\fi
     \trace{g}{Spacing: \sp@cebefore,  \sp@ceafter (\sp@cebeside)}%
+    \t@gend{Figure}%
   }% END of box0
   \temptrue
   \iffigf@und\else\ifSkipMissingFig
@@ -949,7 +972,7 @@
 }
 
 \def\pl@cefigure{%Acutally place the figure
-  \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\pic@lign}%
+  \trace{g}{Picture height=\the\ht0, vs:\the\vsize, \the\partialLpenalty,  pg:\the\pagegoal, pt:\the\pagetotal, av:\the\availht, aligned:\csname pic@lign\endcsname}%
 %-cfig_dofigure_4
 %+cfig_dofigure_5
   \trace{b}{BALANCE fig: height=\the\ht0: baselineskip=\the\baselineskip}%
@@ -995,6 +1018,9 @@
     \dimen2=\count255\baselineskip %space reserved...
     \trace{g}{Inline \w@tsit\space takes \the\dimen0, reserving \the\dimen2}%
     %
+    \ifx\picl@c\loc@InText
+      \d@figureInText 0%
+    \fi
     \ifx\picl@c\loc@Inl
       \headingtopspace=0pt
       \d@figureInl 0%
@@ -1022,12 +1048,17 @@
 \def\@lignpic#1{%Align pic (or whatever) according to pic@lign
   \def\l@ftedge{\hss}\def\r@ghtedge{\hss}%
   \ifx\pic@lign\@lignLeft\def\l@ftedge{\kern\p@chshift}\fi
-  \ifx\pic@lign\@lignRight\def\r@ghtedge{}\fi
+  \ifx\pic@lign\@lignRight\def\r@ghtedge{\kern\p@chshift}\fi
   \ifRTL\let\t@mp\r@ghtedge\let\r@ghtedge\l@ftedge\let\l@ftedge\t@mp\fi
   \setbox#1\vbox{\hbox to \p@cinswid{\l@ftedge\box#1\r@ghtedge}}%
 }
 \newif\ifInlBelow \InlBelowfalse
 \newif\ifAdjustInlBelow \AdjustInlBelowfalse
+\def\d@figureInText#1{%
+  %\showbox #1
+  %\vrule height 10pt depth 0pt width 10pt
+  \leavevmode\hbox{\box #1}%
+}
 \def\d@figureInl#1{%
   \let\curmode\empty
   \ifhmode \edef\curmode{\curmode, in HMODE}\fi %Can't test for these inside a write
@@ -1236,7 +1267,7 @@
     \advance\dimen1 by \count255\baselineskip
   \fi
   \setbox#1\vbox to 0pt{\kern\dimen1\vbox to 0pt{\vss\box#1}\vss}%
-  \advance\tmpcount by \c@tskip
+  \advance\tmpcount by \c@tskip\relax
   \ifx\l@cspec\@lignLeft
     \let\c@tcmd\leftcutout
     \edef\thing@side{L}%

@@ -1,0 +1,8 @@
+; FC ... 
+LHSName "Hyphens"
+RHSName "Simple Hyphens"
+
+pass(Unicode)
+U+2010 <> U+002D ;
+U+2011  > U+002D ;
+

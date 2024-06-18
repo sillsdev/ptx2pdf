@@ -14,6 +14,7 @@ allchaps = ['GEN'] + sum([[b] * int(chaps[b]) for b in allbooks if 0 < int(chaps
 # b64codes are irregular from MIME64 to make them sortable
 b64codes = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
 b64lkup = {b:i for i, b in enumerate(b64codes)}
+subversecodes = "!@#$%^&*()"
 
 def readvrs(fname):
     ''' res[book number] [0] versenum of start of book from start of Bible
@@ -191,10 +192,11 @@ class Reference:
         return res
 
     def astag(self):
+        subverse = ""
         if self.subverse:
-            subverse = str(ord(self.subverse.lower()) - 0x61)
-        else:
-            subverse = ""
+            subind = ord(self.subverse) - 0x61
+            if subind < 10:
+                subverse = subversecodes[subind]
         if self.book == "PSA" and self.chap == 119 and self.verse > 126:
             c = startbooks["special"] + 1
             v = self.verse - 126
@@ -228,8 +230,8 @@ class Reference:
 
     @classmethod
     def fromtag(cls, s, remainder=False):
-        if s[0] in "0123456789":
-            subverse = chr(0x61 + int(s[0]))
+        if s[0] in subversecodes:
+            subverse = chr(subversecodes.index(s[0]) + 0x61)
             s = s[1:]
         else:
             subverse = None
@@ -372,9 +374,7 @@ class RefRange:
         return hash((self.first, self.last))
 
     def __contains__(self, r):
-        if isinstance(r, RefRange):
-            return self.first <= r.first and r.last <= self.last
-        return self.first <= r <= self.last
+        return self.first <= r.last and r.first <= self.last
 
     def __len__(self):
         return self.last.asint() - self.first.asint()
@@ -546,6 +546,8 @@ class RefList(list):
                     v = int(m.group(1))
                     if m.group(2) or curr.verse >= 0 or curr.book in oneChbooks:
                         if curr.book in oneChbooks:
+                            if mode == "v":
+                                (curr, currmark) = self._addRefOrRange(start, curr, currmark, nextmark)
                             curr.chap = 1
                             mode = "c"
                         if m.group(2) and curr.chap < 0:
@@ -632,7 +634,7 @@ class RefList(list):
             if lastref.first < t <= lastref.last:
                 t = n
             if t > u:
-                print("{} inside {}".format(r, lastref))
+                # print("{} inside {}".format(r, lastref))
                 continue
             if t == n and lastref.last.book is not None:
                 count += len(r) + 1
@@ -725,8 +727,6 @@ def tests():
         init = a.asint()
         end = b.asint()
         for r in res.allrefs():
-            if r.verse == 0 and r.chap != res[0].first.chap:
-                init += 1
             if r.asint() != init:
                 raise TestException("{} in {} is out of order".format(r, s))
             if init > end:
@@ -742,19 +742,49 @@ def tests():
             raise TestException("{} simplified to {} instead of {}".format(s, res, base))
         print("{} -> {}".format(s, res))
 
-    t("GEN 1:1", "ACB", r("GEN", 1, 1))
+    def o(a, b, res):
+        x = RefList.fromStr(a)[0]
+        y = RefList.fromStr(b)[0]
+        if (isinstance(res,tuple)):
+          restup=res
+          restupd=f"x<y {restup[0]}, y<x {restup[1]}, x in y {restup[2]}"
+        else:
+          restup=(res,res,res)
+          restupd=res
+        a=(y<x)
+        b=(x<y)
+        #print(f"y<x :{a} x<y:{b}")
+        if restup[0] != b:
+            raise TestException(f"{x} should be < {y} [expect: {restupd}]")
+        if restup[1] != a:
+            raise TestException(f"{y} should not be < {x} [expect: {restupd}]")
+        if (x in y) != restup[2]:
+            raise TestException(f"{x} in {y} should be {res}")
+        print("{} <-> {} ({})".format(x, y,restupd))
+
+    t("GEN 1:1", "021", r("GEN", 1, 1))
     testrange("PSA 23-25", r("PSA", 23, 0), r("PSA", 25, 200))
-    t("JHN 3", "fQA", r("JHN", 3, 0))
-    t("3JN 3", "kcD", r("3JN", 1, 3))
-    t("1CO 6:5a", "0hYF", r("1CO", 6, 5, "a"))
+    t("JHN 3", "VG0", r("JHN", 3, 0))
+    t("3JN 3", "aS3", r("3JN", 1, 3))
+    t("1CO 6:5a", "!XO5", r("1CO", 6, 5, "a"))
     testrange("LEV 13:0-4", r("LEV", 13, 0), r("LEV", 13, 4))
-    t("MAT 5:1-7", "dMB-dMH", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
-    t("MAT 7:1,2; 8:6b-9:4", "dQBdQC1dSG-dUE", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
-    t("LUK 3:35-end", "egj-eh/", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
+    t("MAT 5:1-7", "TC1-TC7", RefRange(r("MAT", 5, 1), r("MAT", 5, 7)))
+    t("MAT 7:1,2; 8:6b-9:4", "TG1TG2@TI6-TK4", r("MAT", 7, 1), r("MAT", 7, 2), RefRange(r("MAT", 8, 6, "b"), r("MAT", 9, 4)))
+    t("LUK 3:35-end", "UWZ-UX~", RefRange(r("LUK", 3, 35), r("LUK", 3, 200)))
     testrange("PSA 125:4-128:4", r("PSA", 125, 4), r("PSA", 128, 4))
     testlist("ROM 1; MAT 3:4-11; ROM 1:3-2:7", "MAT 3:4-11; ROM 1-2:7")
-    t("GEN 1:1-3; 3:2-11; LUK 4:5", "ACB-ACDAGC-AGLeiF", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
-
+    t("GEN 1:1-3; 3:2-11; LUK 4:5", "021-023062-06BUY5", RefRange(r("GEN", 1, 1), r("GEN", 1, 3)), RefRange(r("GEN", 3, 2), r("GEN", 3, 11)), r("LUK", 4, 5))
+    t("JUD 1,2,4", "aU1aU2aU4", r("JUD", 1, 1), r("JUD", 1, 2), r("JUD", 1, 4))
+    o("GEN 1:1", "EXO 2:3", (True,False,False))
+    o("EXO 2:4", "EXO 2", (False,True,True))
+    o("EXO 2:4-5", "EXO 2", (False,True,True))
+    o("EXO 2:4-5", "EXO 3", (True,False,False))
+    o("EXO 2:1-2", "EXO 2:1-5", (False,False,True))
+    o("EXO 2:1-2", "EXO 2:2-7", (True,False,True))
+    o("EXO 2:1-2", "EXO 2:3-6", (True,False,False))
+    o("GEN 2:1-2", "EXO 2:3-6", (True,False,False))
+    o("DEU 2:1-2", "EXO 2:3-6", (False,True,False))
+    o("EXO 2:2-3", "EXO 2:1-5", (False,False,True))
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:

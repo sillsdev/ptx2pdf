@@ -76,7 +76,7 @@
 \vfuzz=0.1pt
 
 % INSTALLED FONTS
-\def\regular{"Gentium"}
+\def\regular{"Gentium Plus"}
 \def\bold{"Charis SIL/B"}
 \def\italic{"Charis SIL/I"}
 \def\bolditalic{"Charis SIL/BI"}
@@ -97,6 +97,8 @@
 \stylesheet{default-custom.sty}
 \tracing{sc}
 \tracing{orn}
+\def\OverThinRule{warnfix}
+\def\OverThinCurve{warnfix}
 %\tracing{sC}
 \stylesheet{test.sty}
 \stylesheet{cover.sty}
@@ -189,7 +191,7 @@
 \tracingoutput=1
 \newbox\myorn
 \setbookhook{start}{all}{\setbox\myorn\hbox{\zornament|pattern="1|||" \*}}%showbox\myorn}
-\sethook{start}{p}{\leavevmode xx\copy\myorn}% 
+\sethook{start}{p}{\leavevmode \copy\myorn}% 
 
 \ptxfile{test.usfm}
 \zNeedEvenPage

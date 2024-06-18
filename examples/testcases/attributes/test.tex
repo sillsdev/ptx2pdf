@@ -56,6 +56,7 @@
 \BodyColumns=1
 \IntroColumns=1
 \sethook{first}{c}{\zrule|width="0.6" raise="-5pt"\*}
+\sethook{start}{ft}{\leavevmode\catcode`\|=11}
 \makeatother
 \showboxbreadth=99
 \showboxdepth=99
@@ -64,7 +65,7 @@
 \defzvar{isbn}{987-654-3210-123}
 \noScaleAboveISBNtextfalse
 %\AlwaysCheckAttributestrue
-\def\|{\char"7C}
+%\def\|{\char"7C}
 \AlwaysCheckAttributestrue
 \ptxfile{test.usfm}
 \bye

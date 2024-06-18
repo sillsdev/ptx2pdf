@@ -44,9 +44,10 @@
 % | ebi | Border style inheritance
 % | eh | sidebar-headings
 % | et | textborders
-% | f | footnotes
+% | f | footnotes (output)
 % | fp | footnote reparagraphing
 % | F | fonts
+% | Fe | font effects
 % | g | figures
 % | G | Shipping pages
 % | gI | figure inserts - tracking saving / restoring of inserts
@@ -60,7 +61,7 @@
 % | mx | milestones: expand content
 % | M | markers
 % | ma | mark accounting
-% | n | notes
+% | n | notes creation/save/restore
 % | nS | note saving / restoring
 % | o | output routines / rebalancing
 % | oh | other(not stylesheet) hooks
@@ -103,11 +104,11 @@
         \let\TRnext=\notr@ceout
       \fi
     \fi
-    \TRnext{#2}}%
-\def\tr@ceout#1{%
-    \immediate\write-1{#1}}%
+    \TRnext{#1}{#2}}%
+\def\tr@ceout#1#2{%
+    \immediate\write-1{#1> #2}}%
 \def\traceNum#1#2{\global\advance\TRACEcount by 1\trace{#1}{+\the\TRACEcount: #2}}
-\def\notr@ceout#1{\relax}%
+\def\notr@ceout#1#2{\relax}%
 \let\trace=\notr@cer
 \def\IfTr@ce#1#2{\x@\ifx\csname tr@cemode-#1\endcsname\y@s #2\fi}
 %-tracing

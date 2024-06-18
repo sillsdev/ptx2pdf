@@ -4,7 +4,7 @@
 \is1 This is an introductory title\f + \ft And a footnote on an introductory title\f*
 \ip And this is an introductory paragraph\f + \ft With a footnote on it\f*
 \c 1 \f + \ft a footnote on a chapter number\f*
-\s This is a title\f + \ft And this is a footnote on a title. \fp It's quite long so that we can see if the linespacing is actually consistent, or if the callers make a difference or not.  \fp Footnotes with paragraph breaks used to always be a really big problem when the note style was paragraphed.\f*
+\s This is a title\f + \ft And this is a footnote on a title. \fp It's quite long so that we can see if the linespacing is actually consistent, or if the callers make a difference or not.  \fp\fp* Footnotes with paragraph breaks used to always be a really big problem when the note style was paragraphed.\f*
 \p
 \v 1 This is normal \wj text.\wj*\f + \fr 1:1 \ft Supposedly\f*  There are 4 hook positions: before, start, end,
 after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
@@ -15,7 +15,7 @@ after.  But this is about footnotes\fe + \ft and endnotes \fe*, not hooks.
 \zplaceallnotes
 \esbe
 \p
-\v 2 Endnotes should\fe + \ft normally\fe*  appear
+\v 2 Endnotes should\x + \xo 1:2 \xt Exod 20:1\x*\fe + \ft normally\fe*  appear
 after the text in the page\fe + \ft Unless they are
 manually inserted. In either case they might be a different dimension to the body text\fe* with a centred line above them.
 The grid spacing relative to other line items ought to be preserved.
@@ -33,15 +33,8 @@ Nobis ipsam est veritatis enim nihil debitis. Qui delectus possimus eveniet arch
 Omnis laboriosam molestiae corrupti. Explicabo cumque quo eos. Quas quisquam et beatae perspiciatis inventore. Accusamus dolore repellendus vero autem eum est id corporis.
 
 \p
-\v 5
-Voluptate quo consectetur perferendis. Ex illum cum dolorem facilis itaque doloribus repudiandae voluptatem. Officiis unde dolores enim. Doloremque hic vel quis et quia et libero. Distinctio voluptatum ratione amet atque voluptas sunt quam voluptatem. Voluptatum nemo sunt soluta quia iure.
-This should generate a warning:
 
 \zplacenotes-f
-
-\p
-\v 6
-Nostrum eaque repellat assumenda nesciunt est non alias. Earum nemo laborum eos recusandae atque. Rerum aliquam dolor fuga impedit. Blanditiis ullam asperiores est enim ullam cupiditate. Fugiat id nam recusandae sequi illo enim occaecati.
 
 \is1 Outroduction
 \ip This is another intro paragraph\f + \ft An uninformative note\f*. I need to make it long enough so we can see how wide it is.

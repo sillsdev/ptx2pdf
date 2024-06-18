@@ -1,0 +1,12 @@
+[DEFAULT]
+picclear = unknown
+picaccept = Unknown
+picreverse = OK
+piccreditbox = 
+piccredit = 
+approved = false
+
+[image]
+piccreditbox = br,90,None
+piccredit = IM
+

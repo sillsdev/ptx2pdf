@@ -188,7 +188,7 @@ class PDFx1aOutput(Snippet):
         for a in ('author', 'title', 'subject'):
             extras['_gtf'+a] = htmlprotect(model.dict['document/'+a])
         if model['document/printarchive']:
-            res += "\XeTeXgenerateactualtext=1\n"
+            res += "\\XeTeXgenerateactualtext=1\n"
         return res.format(**{**model.dict, **extras}) + "\n"
     
 class FancyIntro(Snippet):
@@ -209,6 +209,8 @@ class Diglot(Snippet):
 {notes/includefootnotes}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {notes/includexrefs}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
 \let\language{s_}=\langund
+\should@xist{{f{s_}}}
+\should@xist{{x{s_}}}
 \catcode `@=12
 
 """
@@ -221,15 +223,21 @@ class Diglot(Snippet):
 \def\italic{s_}{{"{diglot[fontitalic]}{diglot[docscript]}"}}
 \def\bolditalic{s_}{{"{diglot[fontbolditalic]}{diglot[docscript]}"}}
 \FontSizeUnit{s_}={diglot[fontfactor]}pt
+\RTL{s_}{diglot[ifrtl]}
 \def\LineSpacingFactor{s_}{{{diglot[linespacingfactor]}}}
 \def\AfterChapterSpaceFactor{s_}{{{diglot[afterchapterspace]}}}
 \def\AfterVerseSpaceFactor{s_}{{{diglot[afterversespace]}}}
+\IndentUnit{s_}={diglot[indentunit]}in
 \newskip\intercharskip{s_} \intercharskip{s_}=0pt plus {diglot[letterstretch]:.2f}em minus {diglot[lettershrink]:.2f}em
 \def\letterspace{s_}{{\leavevmode\nobreak\hskip\intercharskip{s_}}}
 {diglot[ifincludefootnotes_]}\expandafter\def\csname f{s_}:properties\endcsname{{nonpublishable}}
 {diglot[ifincludexrefs_]}\expandafter\def\csname x{s_}:properties\endcsname{{nonpublishable}}
+\makeatletter
+\should@xist{{f{s_}}}
+\should@xist{{x{s_}}}
 \newlanguage\language{s_} \language\language{s_}
 {diglot[ifhavehyphenate_]}{diglot[ifhyphenate_]}\bgroup\liter@lspecials\input "{diglot[cfgrpath]}/hyphen-{diglot[prjid_]}.tex" \egroup
+\makeatother
 """
 
         res = baseCode.format(s_="L", **model.dict)
@@ -254,6 +262,7 @@ class FancyBorders(Snippet):
 {fancy/endofbook}\newbox\decorationbox
 {fancy/endofbook}\setbox\decorationbox=\hbox{{\XeTeXpdffile "{fancy/endofbookpdf}"\relax}}
 {fancy/endofbook}\def\z{{\par\nobreak\vskip 16pt\centerline{{\copy\decorationbox}}}}
+{fancy/endofbook}\addtoendptxhooks{{\z}}
 
 """
         if texmodel.dict.get("_isDiglot", False):

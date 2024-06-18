@@ -6,7 +6,7 @@ from difflib import context_diff
 import configparser, os, sys, shutil
 from ptxprint.ptsettings import ParatextSettings
 from collections import namedtuple
-from filelock import FileLock
+# from filelock import FileLock
 
 def w2u(path, endwithslash=True):
     """Windows to Unix filepath converter"""
@@ -22,7 +22,7 @@ def quote(path):
     else:
         return path
     
-if sys.platform == "win32":
+if False and sys.platform == "win32":
     import winreg
     def queryvalue(base, value):
         return winreg.QueryValueEx(base, value)[0]
@@ -63,7 +63,7 @@ def check_output(*a, **kw):
 def make_paths(projectsdir, project, config, logging):
     testsdir = os.path.dirname(__file__)
     ptxcmd = [os.path.join(testsdir, "..", "python", "scripts", "ptxprint"),
-                "--nofontcache", "-l", "info", f"--logfile=ptxprint_{project}_{config}.log",
+                "--testsuite", "--nofontcache", "-l", "info", f"--logfile=ptxprint_{project}_{config}.log",
                 "-p", projectsdir, "-f", os.path.join(testsdir, "fonts")]
     if config is not None:
         ptxcmd += ['-c', config]

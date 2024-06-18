@@ -8,7 +8,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-_refre = re.compile("^(\d?\D+?)\s+(\d+):(\S+)\s*$")
+_refre = re.compile(r"^(\d?\D+?)\s+(\d+):(\S+)\s*$")
 
 class Interlinear:
     def __init__(self, lang, prjdir):
@@ -36,6 +36,7 @@ class Interlinear:
                         self.lexicon.setdefault(currlex, {})[currsense] = e.text or ""
 
     def makeref(self, s):
+        # use Reference here and do it properly
         m = _refre.match(s)
         if m:
             return (int(m[2]), m[3])
@@ -79,7 +80,7 @@ class Interlinear:
                 res.append(e[i:])
             e.data = str("".join(str(s) for s in res))
 
-    def convertBk(self, bkid, doc, linelengths, mrk="+rb"):
+    def convertBk(self, bkid, doc, linelengths, mrk="+rb", keep_punct=True):
         intname = "Interlinear_{}".format(self.lang)
         intfile = os.path.join(self.prjdir, intname, "{}_{}.xml".format(intname, bkid))
         if not os.path.exists(intfile):
@@ -88,9 +89,10 @@ class Interlinear:
 
         dones = set()
         notdones = set()
+        skipping = None
         with open(intfile, "r", encoding="utf-8", errors="ignore") as inf:
             for (event, e) in et.iterparse(inf, ("start", "end")):
-                if event == "start":
+                if event == "start" and skipping is None:
                     if e.tag == "Range":
                         currange = (int(e.get('Index').strip()), int(e.get('Length').strip()))
                     elif e.tag == "Lexeme":
@@ -101,10 +103,12 @@ class Interlinear:
                             lexemes.append((currange, str(wd)))
                     elif e.tag == "AfterText":
                         lexemes.append((currange, e.text))
-                elif event == "end":
+                    if e.tag == "Punctuation" and not keep_punct:
+                        skipping = e.tag
+                elif event == "end" and (skipping is None or e.tag != skipping):
                     if e.tag == "string":
                         curref = self.makeref(e.text)
-                        m = re.match(r"(\d+)-(\d+)", curref[1])
+                        m = re.match(r"(\d+)[-,](\d+)", curref[1])
                         if m:
                             vrange = list(range(int(m.group(1)), int(m.group(2))+1))
                         else:
@@ -118,5 +122,7 @@ class Interlinear:
                         else:
                             for v in vrange:
                                 notdones.add((curref[0], v))
+                elif event == "end" and e.tag == skipping:
+                    skipping = None
         self.fails.extend([Reference(bkid, a[0], a[1]) for a in notdones if a not in dones])
 

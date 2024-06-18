@@ -34,7 +34,10 @@
 \newif\ifLogFonts
 \newtoks\end@box@run
 \newtoks\start@box@run
-\newif\ifbox@run
+\newdimen\minfontsize \minfontsize=4pt
+
+\newif\ifbox@run % Advanced-use hook, activates end@box@run toklist
+\newif\ifb@xedstyle % Some styles need putting in a box and reformatting, e.g. underline
 \newif\ifCharstyleExtend\CharstyleExtendtrue  % Does \ft^130 get processed as 130%, or a mal-formed \ft ^130?
 
 
@@ -217,24 +220,33 @@
     \s@tfont{\thisch@rstyle}{\styst@k}% set up font attributes
     \ifnum\n@tenesting>0 \global\advance\n@tenesting by 1 % record nesting level in para or note
     \else \global\advance\p@ranesting by 1 \fi
-    \getmcp@ram{raise}%
-    \tempfalse % do we box the text?
-    \ifx\p@ram\relax\else \temptrue\fi
-    \ifAlwaysCheckAttributes\temptrue\fi % Linking attributes are possibly universally applicable.
-    \getmcp@ramR{background}%
-    \def\xtr@{}% Any extra code to run at the start of the group
-    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
+    \t@gstart{Span}{\newch@rstyle}%
+    \b@xedstylefalse % do we box the text?
+    \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
     \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-    \ifx\@ttriblist\empty\else\temptrue\fi 
-    \getmcp@ram{underline}%
-    \ifx\p@ram\tru@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \ifx\p@ram\tw@\temptrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
-    \iftemp\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
+    \ifx\@ttriblist\empty\else\b@xedstyletrue\fi 
+    \getmcp@ram{raise}%
+    \ifx\p@ram\relax\else \b@xedstyletrue\fi
+    \ch@ckb@xedstyle
+    \ifb@xedstyle\setbox0=\hbox\bgroup\xtr@ \fi                     %(3)
     \op@ninghooks{start}{\thisch@rstyle}{\styst@k}%% execute any <start> hook
   \fi
   \csname init@ttribs\endcsname %If ptx-attribute is in use, use it... 
+  \trace{s}{Actual start of \styst@k (b@xedstyle\ifb@xedstyle true\else false\fi)}%
 }
 %-cchar_startcharstyle
+\def\ch@ckb@xedstyle{%Check parameters that need a style to be boxed and reprocessed
+    \getmcp@ram{background}%
+    \def\xtr@{}% Any extra code to run at the start of the group
+    \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+    \getmcp@ram{underline}%
+    \ifx\p@ram\tru@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \ifx\p@ram\tw@\b@xedstyletrue\def\xtr@{\ifnum\XeTeXuseglyphmetrics=0 \XeTeXuseglyphmetrics=3\fi}\fi
+    \getmcp@ram{outline}%
+    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+    \getmcp@ram{shadow}%
+    \ifx\p@ram\relax\else\b@xedstyletrue\fi
+}
 \newbox\ulb@x
 \newif\ifUnderlineSpaces\UnderlineSpacestrue
 
@@ -268,19 +280,25 @@
   \bgroup\XeTeXuseglyphmetrics=0\relax
   \setbox1=\hbox{~}%
   \xdef\b@ckgroundlower{\the\dp1}%
-  \trace{sa}{Set background lower to \b@ckgroundlower}%
+  \xdef\b@ckgroundht{\the\dimexpr \baselineskip-\dp1\relax}%
+  \ifhe@dings
+    \ifdim\b@ckgroundht<\ht1
+      \xdef\b@ckgroundht{\the\ht1}%
+    \fi
+  \fi
+  \trace{sa}{Set background lower to \b@ckgroundlower, ht:\b@ckgroundht, bls:\the\baselineskip}%
   \egroup
 }
 \def\BackgroundOverrun{0.25pt}
 \def\bgsp@ce{\bgc@l\leaders\hrule depth\dimen0 height \dimen1\hskip 1ex plus 0.2ex minus 0.2ex\endbgc@l}
 \def\@@do@background#1{\hbox to 0pt{\kern-\BackgroundOverrun\bgc@l\vrule height \dimen1 depth\dimen0 width \dimen2 \endbgc@l\hss}\box#1}%
 \def\@do@background{\let\@@@do\@do@background\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox 0}\dimen2=\wd0\advance\dimen2 by \dimexpr \BackgroundOverrun*2\relax\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@background{0}\ifvoid\ulb@x\else\@bgsp@ce\unhbox\ulb@x\fi}\fi\@@@do}%
-\def\d@background#1#2{\showboxbreadth=99
+\def\d@background#1#2{%\showboxbreadth=99
   \let\@bgsp@ce\bgsp@ce
   \setbox\ulb@x\box\voidb@x
   \setbgc@l{#1}%
   \s@tb@kgroundlower
-  {\dimen1=\baselineskip\advance\dimen1-\b@ckgroundlower\dimen0=\b@ckgroundlower\everypar={}\setbox#2=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#2 \endgraf\@do@background}%
+  {\dimen1=\b@ckgroundht \dimen0=\b@ckgroundlower\everypar={}\setbox#2=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#2 \endgraf\@do@background}%
   %\showbox#1
   %\showbox\ulb@x
   \ifdim \wd#2=0pt \else\setbox#2\hbox{\@@do@background{#2}}%
@@ -290,9 +308,98 @@
   \setbox#2\box\ulb@x
 }
 
+\def\shdwmul#1 #2\E{%
+  \edef\tmp{#1}\ifx\tmp\relaxval
+    \let\@@shdw@x\relax\let\@@shdw@y\relax
+  \else
+    \edef\@@shdw@x{\the\dimexpr #1\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
+  \fi
+  \def\tmp{#2}\ifx\tmp\empty\let\shdw@y\shdw@x\else
+    \edef\@@shdw@y{\the\dimexpr #2\dimexpr \c@rrfontsize\FontSizeUnit\relax\relax}%
+  \fi
+  \trace{Fe}{Shadow dims \@@shdw@x x \@@shdw@y}%
+}
+
+\def\@@do@shadow#1{\trace{Fe}{Chunk is \the\wd#1 wide, so far \the\wd\ulb@x}\hbox{%
+  \special{pdf:code q}\ifx\@@shadcol\empty\else\special{pdf:code \@@shadcol\space rg}\fi%
+  \ifx\@@shdw@x\relax\else\kern\@@shdw@x \relax\raise\@@shdw@y\copy#1 \kern-\dimexpr \wd#1+\@@shdw@x\relax\fi
+  \ifdim \@@outlinw pt>0pt \special{pdf:code Q q \@@outlinw\space w 2 Tr \@@outcol\space RG}\fi
+  \ifx\@@fgcol\empty\else \special{pdf:code \@@fgcol\space rg}\fi%
+  \copy#1
+  \ifdim \@@outlinw pt >0pt \special{pdf:code Q q \ifx\@@fgcol \@@fgcol\empty 0 0 0\else \@@fgcol\fi\space rg}\kern-\wd#1\box#1\fi
+  \special{pdf:code Q}}%
+}
+\def\@do@shadow{\let\@@@do\@do@shadow\unskip\unpenalty\setbox0\lastbox\setbox0\hbox{\unhbox0}\ifdim\wd0=0pt \let\@@@do\relax\else\global\setbox\ulb@x=\hbox{\@@do@shadow{0}\ifvoid\ulb@x\else { }\unhbox\ulb@x\fi}\fi\@@@do}%
+\def\d@shadow#1#2#3#4#5#6{%\showboxbreadth=99
+  \trace{Fe}{Shadow/Outline called: #1 / #2/ #3 / #4 / #5 / #6}%
+  {\setbox\ulb@x\box\voidb@x
+  \x@\shdwmul#2 \E
+  \edef\@@outlinw{\strip@pt{\dimexpr #4\FontSizeUnit \relax}}%
+  \edef\@@outcol{#5}\edef\@@shadcol{#3}\edef\@@fgcol{#6}% 
+  \nonstopmode
+  \tracingassigns=1
+  \everypar={}\everyhbox={}\setbox#1=\vbox{\hfuzz=\maxdimen \hsize=1em \hyphenpenalty=10000 \leftskip=0pt \rightskip=0pt \unhbox#1 \endgraf
+  \@do@shadow}%
+  \ifdim \wd#1=0pt \else %\showbox#1 
+    \setbox#1\hbox{\@@do@shadow{#1}}%
+    \unhbox#1\fi
+  \tracingassigns=0
+  }%
+  %\showbox\ulb@x
+  \setbox#1\box\ulb@x
+}
 \newif\ifAlwaysCheckAttributes \AlwaysCheckAttributesfalse
 %+cchar_endcharstyle
 %\lccode`\|=`\\ % for printing backslash in error message
+\def\set@endb@xedstyle{%
+  \b@xedstylefalse
+  \getmcp@ramR{raise}%
+  \global\let\char@raise\p@ram
+  \ifx\p@ram\relax\else\ifdim\char@raise=0pt \else \b@xedstyletrue\fi\fi
+     \getmcp@ramR{background}%
+     \global\let\char@background\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\b@xedstyletrue\fi\fi
+     \getmcp@ramR{underline}%
+     \ifx\p@ram\tru@\b@xedstyletrue\global\let\ulp@ram\p@ram
+     \else
+       \ifx\p@ram\tw@\b@xedstyletrue\global\let\ulp@ram\p@ram
+       \else
+        \global\let\ulp@ram\relax
+       \fi
+     \fi
+     \global\let\outlncolp@ram\empty\global\let\shdwcolp@ram\empty
+     \getmcp@ram{p@rsedcol}\global\let\p@rsedcol\p@ram
+     \getmcp@ram{shadow}\global\let\shdwp@ram\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\shdwp@ram\relax\else
+       \getmcp@ram{shadowcol}\ifx\p@ram\relax\xdef\shdwcolp@ram{0 0 0}\else\global\let\shdwcolp@ram\p@ram\fi
+       \b@xedstyletrue
+     \fi\fi
+     \getmcp@ram{outline}\global\let\outlnp@ram\p@ram
+     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\global\let\outlnp@ram\relax\else\b@xedstyletrue
+       \getmcp@ram{outlinecol}\ifx\p@ram\relax\xdef\outlncolp@ram{0 0 0}\else\global\let\outlncolp@ram\p@ram\fi
+     \fi\fi
+}
+
+\def\apply@endb@xedstyle#1{%
+  \tempfalse% d@shadow applies both outline and shadow, as they are closely linked. Test for either.
+  \ifx\shdwp@ram\relax\def\shdwp@ram{\relax}\else\temptrue\fi
+  \ifx\outlnp@ram\relax\def\outlnp@ram{#1}\else\temptrue\fi
+  \iftemp
+    \ifx\p@rsedcol\z@ros\let\p@rsedcol\relax\fi
+    \ifx\p@rsedcol\relax\else
+       %\tracingmacros=1 \tracingassigns=1
+       \x@\h@xsixtotripple\x@ x\p@rsedcol\end \let\p@rsedcol\rgb@out% Convert hexadecimal to R G B spec
+       %\tracingmacros=0 \tracingassigns=0
+     \fi
+    \d@shadow{#1}{\shdwp@ram}{\shdwcolp@ram}{\outlnp@ram}{\outlncolp@ram}{\ifx\p@rsedcol\relax\else\p@rsedcol\fi}%
+  \fi
+  \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{#1}\else
+    \ifx\ulp@ram\tw@ \let\@do@underline\@do@Dunderline\d@underline{#1}%
+    \message{Double underline  for \newch@rstyle}%
+  \fi\fi
+  \ifx\char@background\relax\else\d@background{\char@background}{#1}\fi
+}
+
 %\lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
@@ -309,40 +416,22 @@
    \else
     \ifskipch@rstyle\egroup\else%
      \cl@singhooks{end}{\oldch@rstyle}{\h@@kstyst@k}% discover and execute any <end> hook
+     \set@endb@xedstyle
      \x@\let\x@\@ttriblist\csname @ttriblist-\oldch@rstyle\endcsname
-     \getmcp@ramR{raise}%
-     \tempfalse
-     \global\let\char@raise\p@ram
-     \ifx\p@ram\relax\else \temptrue\fi
-     \getmcp@ramR{background}%
-     \global\let\char@background\p@ram
-     \ifx\p@ram\relax\else\ifx\p@ram\h@phen\else\temptrue\fi\fi
      \ifx\@ttriblist\relax\let\@ttriblist\empty\fi
-     \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\temptrue\trace{A}{Attributes: \@ttriblist}\fi
-     \ifAlwaysCheckAttributes\temptrue\fi % Linking attributes are possibly universally applicable.
-     \getmcp@ramR{underline}%
-     \ifx\p@ram\tru@\temptrue\global\let\ulp@ram\p@ram
-     \else
-       \ifx\p@ram\tw@\temptrue\global\let\ulp@ram\p@ram
-       \else
-        \global\let\ulp@ram\relax
-       \fi
-     \fi
+     \ifx\@ttriblist\empty\trace{s}{No attributes expected}\else\b@xedstyletrue\trace{A}{Attributes: \@ttriblist}\fi
+     \ifAlwaysCheckAttributes\b@xedstyletrue\fi % Linking attributes are possibly universally applicable.
      \global\tmpt@ks{}%
      \ifbox@run
-       \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\temptrue
+       \x@\global\x@\tmpt@ks\x@{\the\end@box@run}\b@xedstyletrue
      \else
        \global\tmpt@ks{}%
      \fi
      \global\let\@newch@rstyle\newch@rstyle %Preserve newch@rstyle past egroup
-     \iftemp\egroup
+     \ifb@xedstyle\egroup%<----------EGROUP HERE---------->
        \let\newch@rstyle\@newch@rstyle
        \the\tmpt@ks
-       \ifx\ulp@ram\tru@ \let\@do@underline\@do@Sunderline\d@underline{0}\else
-         \ifx\ulp@ram\tw@ \let\@do@underline\@do@Dunderline\d@underline{0}%
-         \message{Double underline  for \newch@rstyle}%
-       \fi\fi
-       \ifx\char@background\relax\else\d@background{\char@background}{0}\fi
+       \apply@endb@xedstyle{0}%
        \ifx\@ttributes\empty\else% If there are actually attributes, call an appropriate hook	
 	     \let\d@\apply@attr@specials
 	     \x@\cstackdown \attribsus@d,\E
@@ -360,7 +449,7 @@
        \fi
        \ifx\char@raise\relax
          \unhbox0
-       \else\dimen9=\char@raise\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
+       \else\dimen9=\char@raise \relax\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
        \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}{\h@@kstyst@k}% discover any <after> hooks
@@ -372,6 +461,7 @@
      \let\newch@rstyle\@newch@rstyle
      \the\afterh@@ks%\global\afterh@@ks{} % execute all the <after>-hook, if there was one
     \fi
+    \t@gend{Span}%
     \trace{sa}{ending charstyle \newch@rstyle}%
     \mcpop
     \trace{sa}{end char style, stack now: \mcstack (\styst@kfirst)}%
@@ -424,7 +514,11 @@
 %
 \let\SpaceStretchFactor=\empty %default, do-nothing value
 \let\SpaceShrinkFactor=\empty %default, do-nothing value
-
+\def\t@@stid#1id:#2|#3\relax{\edef\tmp{#2}\ifx\tmp\tmpa\t@mptrue\fi}%
+\def\t@stid#1#2{% See if #2 contains id:#1
+  \edef\tmpa{#1}\t@mpfalse
+  \x@\t@@stid #2id:|\relax
+}
 \def\g@tfontname#1#2{%
  \trace{F}{Font request for (\c@tegory)(\mspr@fix)#1[#2](\c@rrdstat)[\styst@k]}%
  \x@\stystacksplit#2+\E% Cut split the stylestack between head and body 
@@ -441,10 +535,16 @@
    %\getp@ram{fontsize}{#1}{#1\ifx\tmp\empty\else +\tmp\fi}\ifx\p@ram\relax\xdef\c@rrfontsize{12}%
      %\else\global\let\c@rrfontsize=\p@ram\fi\fi}%
  %\mctop
+ \trace{F}{id: `\id@@@`. after fontsize: p@ssp@rams \p@ssParams}%
  \let\d@=\d@@
+ \let\idpfx\empty
+ \ifx\id@@@\empty\else
+   \x@\t@stid\x@{\id@@@}{\p@ssParams}%
+   \ift@mp\edef\idpfx{id:\id@@@|}\fi
+ \fi
  \ifx\p@ram\relax\xdef\c@rrfontsize{12}\else\global\let\c@rrfontsize=\p@ram\fi
  \x@\stystacksplit#2+\E% redo the split because it's not preserved.
- \edef\f@ntstyle{\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
+ \edef\f@ntstyle{\idpfx\f@ntstyle-\c@rrfontsize\ifx\tmpstyst@kbody\empty\else+\tmpstyst@kbody\fi\ifx\f@ntextend\empty\else @\f@ntextend\fi}%
  \trace{F}{Font style name is \f@ntstyle (\tmpstyst@kfirst | \tmpstyst@kbody}%
 }
 
@@ -537,9 +637,18 @@
   \ifx\p@ram\tru@
     \edef\typef@ce{\typef@ce\SmallCapsSuffix}%
   \fi
-  \getFp@ram{color}{#1}{#2}%                                                %(+)
+  \getp@ram{color}{#1}{#2}%                                                %(+)
   \ifColorFonts\ifx\p@ram\relax\else
-    \x@\ParseColor\p@ram\end\ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
+    \let\colp@ram\p@ram
+    \x@\ParseColor\colp@ram\end
+    \temptrue % Apply here?
+    \getp@ram{shadow}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
+    \getp@ram{outline}{#1}{#2}\ifx\p@ram\relax\else\tempfalse\fi
+    \iftemp
+      \ifx\r@s\z@ros\else\edef\typef@ce{\typef@ce :color=\r@s}\fi%
+    \else
+      \setp@ram{p@rsedcol}{#2}{\r@s}% remember for later
+    \fi
   \fi\fi%
   \dimen0=\c@rrfontsize\FontSizeUnit                                    %(+)
   \getp@ram{fontfactor}{#1}{#2}% scale down by \SuperscriptFactor if superscripted style 
@@ -547,6 +656,9 @@
   %\edef\f@ntstyle{\f@ntstyle-\c@rrfontsize}%
   % create the font identifier for this style
   \trace{F}{font<\f@ntstyle>=\typef@ce\space at \the\dimen0}%
+  \ifdim\dimen0 < \minfontsize
+    \message{Warning: <\f@ntstyle> = \typef@ce\space at \the\dimen0 is smaller than specified minimum font size (first met on page \the\pageno)}%
+  \fi
   \x@\global\x@\font
     \csname font<\f@ntstyle>\endcsname=\typef@ce\space at \the \dimen0  %(+)
   \ifLogFonts
@@ -582,6 +694,7 @@
     \dimen0=\p@ram\FontSizeUnit
     \getp@ram{fontfactor}{#1}{\@xfname}% scale down by \SuperscriptFactor if superscripted style
     \ifx\p@ram\relax\else \dimen0=\p@ram\dimen0 \fi
+    \ifdim\dimen0 < \minfontsize \message{Warning: <\f@ntstyle> = \typef@ce\space at \the\dimen0 is smaller than specified minimum font size (first met on page \the\pageno)}\fi
     \x@\global\x@\font\csname extrafont<\@xfname>\endcsname=\typef@ce\space at \dimen0
     \trace{sa}{define extrafont<\@xfname> \typef@ce\space at \the\dimen0}%
   \fi

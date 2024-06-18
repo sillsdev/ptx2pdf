@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<language id="adjlist" _name="Adjlist" version="2.0" _section="Other">
+  <metadata>
+    <property name="globs">*.adjlist</property>
+  </metadata>
+
+  <styles>
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="shrink" _name="Shrinkable" map-to="def:complex"/>
+    <style id="error" name="Bad" map-to="def:error"/>
+    <style id="default" name="Default"/>
+  </styles>
+
+  <definitions>
+    <context id="adjlist">
+      <include>
+        <context id="adj" style-ref="default">
+          <match>^[A-Z0-9]{3}[LR]?\s+\d+\.\d+(-\d+|[a-z])?\s+((\+?\-\s*\d+(\s*\[\d+\])?)|\+?\s*\d+(\s*\[\d+\])?)?\s*(%.*)?$</match>
+          <include>
+            <context id="shrinkable" style-ref="shrink" sub-pattern="3"/>
+          </include>
+        </context>
+        <context id="comment" style-ref="comment" end-at-line-end="true">
+          <start>^\s*%</start>
+        </context>
+        <context id="bad" style-ref="error">
+          <match>^\s*\S+.*</match>
+        </context>
+      </include>
+    </context>
+  </definitions>
+</language>

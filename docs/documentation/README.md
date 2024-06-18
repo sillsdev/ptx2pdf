@@ -313,7 +313,20 @@ Literal text can also be included (e.g., to add dashes around a centered page nu
 *   \OmitCallerInNote{```x```} – To omit callers from the note class at the bottom of the page (specify f _or_ x)
 *   \ParagraphedNotes{```x```} – Format the note class as a single paragraph, with larger space between note items (specify f _or_ x)
 *   \NoteCallerWidth=```1.2ex``` - Adjust 'standard' width of a footnote-caller in notes area. A small amount of space is added to narrow callers, centering them in a space of this width, so that they and their note text align nicely in the footer. Wider callers take their natural size, without any padding. (default ```1.1ex```) (Control added 22 Sept. 2020)
+ * `\ifFootnoteGlyphMetrics` Does the note use the font's descender design parameter, or the actual bottom of the glyph. If the former, then the bottom of notes have a common baseline. If the latter, then the glyphs sit as close to the bottom margin as they can, which may permit an extra line of text.
 
+### New Paragraphed notes
+There are two sorts of paragraphed footnotes, old-style and new-style. As they produce different results, with spacing differences and subsequent changes in layout, new style notes are not currently active by default.  Activate with `\newparnotestrue`. Differences are as below:
+
+* `\fp` behaviour: with new style notes, this starts produces a new paragraph, indented by the note-style's *first line indent*.  In old style notes, this causes a medium-long, possibly very long space.
+* Footnote  validation. Old style paragraphed notes are incompatible with the technique used to write `\@noteid` entries into the `.parlocs` file, which are then used to verify that a footnote caller and footnote text are on the correct page. 
+* Control over various spaces (the defaults provide the closest results to old-style paragraph notes):
+    - `\ifparnoteskillprevdepth` (true) Kern away (kill) the glyph/font depth of earlier footnotes, via TeX's internal `\prevdepth` value
+    -  `\fparnoteskilldepth` (false) Kern away (kill) the glyph/font depth of each footnote as it is added. If true this positions the bottom note's baseline on the margin.
+    - `\ifparnotesruletopskip` (false) If true, the footnote rule is positioned relative to the hypothetical baseline above the topmost footnote, rather than relative to the glyph/font height.
+    - `\ifparnotesmidtopskip` (true) If true, then the hypothetical baseline above the topmost entry in a given style is used as the basis for the vertical `\InterNoteSpace`, rather than the glyph/font height
+* **Incompatability**: No baseline correction between the overflow of center-column notes and footnotes. Old style paragraphed notes automatically apply this correction, it has not proven possible to replicate this yet. This leads to some significant spacing differences in a font with a high ascent, or with GlyphMetrics turned on.
+ 
 ### End notes
 *   \NoteAtEnd{```f```} – To make the specified note class an endnote (default: only ```fe``` 'endnotes' are endnotes). 
 *   \notesEachBook```false``` – To place endnotes at the end of the entire volume rather than (default) the end of individual books.(default=true)

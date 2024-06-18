@@ -4,6 +4,7 @@
 
 import argparse, os
 from struct import unpack
+from ptxprint.font import TTFont
 
 opcodes = [("setchar", [], i) for i in range(128)]
 opcodes += [
@@ -77,11 +78,12 @@ opcodes += [
 packings = ("bhxi", "BHxI")
 
 class XDviType:
-    def __init__(self, fname, diffable=False):
+    def __init__(self, fname, diffable=False, glyphnames=False):
         self.fonts = {}
         self.file = open(fname, "rb")
         self.stack = []
         self.diffable = diffable
+        self.glyphnames = glyphnames
         self.pageno = 0
         self.dviratio = 1.
         self.h = 0      # all in dvi units
@@ -90,6 +92,8 @@ class XDviType:
         self.x = 0
         self.y = 0
         self.z = 0
+        self.currfont = -1
+        self.ttfonts = {}
 
     def readbytes(self, num):
         return self.file.read(num)
@@ -180,6 +184,7 @@ class XDviType:
         val = data[0]
         if val in self.fonts:
             self.out("font({}) [{:04x}]".format(opcode, self.fonts[data[0]][0]))
+        self.currfont = val
 
     def xxx(self, opcode, parm, data):
         txt = self.readbytes(data[0])
@@ -221,10 +226,23 @@ class XDviType:
         self.out('xfontdef[{}]->{} "{}", size={}, flags={:04X}, color={:08X}, vars={}, ext={}, slant={}, embolden={}'.format(
                 k, ident, font_name, points, flags, color, variations, ext, slant, embolden))
 
+    def _getfont(self, k):
+        if k not in self.fonts:
+            return None
+        if k in self.ttfonts:
+            return self.ttfonts[k]
+        f = self.fonts[k][1]
+        res = getattr(f, 'ttfont', None)
+        if res is None:
+            res = TTFont(None, style=None, filename=f)
+            res.loadttfont()
+            self.ttfonts[k] = res
+        return res
+
     def xglyphs(self, opcode, parm, data):
         if parm == 0:
             tlen = self.readval(2)
-            txt = self.readbytes(2*tlen)
+            txt = self.readbytes(2*tlen).decode("utf-16be")
         else:
             txt = ""
         width = self.readval(4)
@@ -234,8 +252,13 @@ class XDviType:
         #else:
         #    pos = [(self.readval(4), 0) for i in range(slen)]
         glyphs = [self.readval(2) for i in range(slen)]
+        if self.glyphnames:
+            ttf = self._getfont(self.currfont)
+            if ttf is not None:
+                glyphs = [ttf.ttfont.getGlyphName(g) for g in glyphs]
         res = ["{}@({}={},{})".format(glyphs[i], pos[i][0], self.asdimen(pos[i][0]), pos[i][1]) for i in range(slen)]
         self.out('xglyphs[{}@{}]: "{}" {}'.format(width, slen, txt, res))
+        self.h += width
 
     def xpic(self, opcode, parm, data):
         box = data.pop(0)
@@ -248,7 +271,8 @@ class XDviType:
 parser = argparse.ArgumentParser()
 parser.add_argument("infile",help="Input xdvi file")
 parser.add_argument("-d","--diffable",action="store_true",help="Output a diffable structure")
+parser.add_argument("-n","--glyphnames",action="store_true",help="Output glyph names rather than ids")
 args = parser.parse_args()
 
-dviparser = XDviType(args.infile, args.diffable)
+dviparser = XDviType(args.infile, args.diffable, args.glyphnames)
 dviparser.parse()

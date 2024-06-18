@@ -85,10 +85,21 @@
     \ifnum\BodyColumns=\c@rrentcols
       \count255=\lastpenalty
       \vskip\baselineskip
-      \penalty\count255
     \else
       \tob@dytrue\ifnum\BodyColumns=2 \doublecolumns\else\singlecolumn\fi
-      \penalty10000
+      \count255=10000
+    \fi
+    \ifPBOnBody\vfill\eject
+    \else
+      \penalty\count255
+    \fi
+  \else
+    \ifPBOnBody
+      \ifdiglot 
+        \trace{d}{Page Break on starting body - \c@rrdstat}%
+        \@diglot@pagebreak
+        %\if L\c@rrdstat\relax \@writep@ge\fi
+      \fi
     \fi
   \fi
   \tob@dyfalse
@@ -141,6 +152,7 @@
         %\showboxbreadth=99\showlists
     \fi\fi % Disable gridding of headings box if no gridding here
     \ifdim\ht\he@dingbox>0pt 
+      \setbox\he@dingbox\vbox{\t@gstart{H}{heading}\unvbox\he@dingbox\t@gend{H}}%
       \gridb@x\he@dingbox
       \ifinextended\sb@rsavegriddims\fi
     \fi%
@@ -215,7 +227,7 @@
         \setbox0=\vbox{\box0\doVisTraceT{G}\box0}%
       \fi
       \ift@tle\lastdepth=0pt \fi
-      \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth}%
+      \trace{h}{before gridbox: ht0=\the\ht0; dp0=\the\dp0; spacebefore=\the\headingtopspace; lastdepth=\the\lastdepth; upwardsHackDiff=\the\upwardsHackDiff}%
       \baselineskip=\onel@neunit%\s@tbaseline{p}{p}
       \dimen1=\ht0 \dimen0=\baselineskip \m@d \dimen2=\dimen0 % dimen2 is grid space
       \dimen1=\ht0 \advance\dimen1 by -\headingtopspace
@@ -249,10 +261,16 @@
 \newif\ifdoingt@ble
 \newdimen\lastdepth
 \newif\ifrotate \rotatefalse
+\newif\ifb@xedparstyle
 %+cpar_par
-% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook
+% end a paragraph, handling cutouts (shaping around drop-cap) if any, and the <end> hook. Normally called from inside endlastp@rstyle
 \def\par{%
   \ifhmode
+   \ifb@xedparstyle \trace{s}{b@xedstyle met in par! \styst@k}%
+    \set@endb@xedstyle\egroup\apply@endb@xedstyle{\tmpctsb@x}%
+    \unhbox\tmpctsb@x
+    \b@xedparstylefalse
+   \fi
    \makecutouts
    \cl@singhooks{end}{\m@rker}{\styst@k}%
    \ifx\ForcedLooseness\empty\else\looseness=\ForcedLooseness\fi
@@ -281,7 +299,7 @@
      %\fi
    \fi\fi\fi\fi
    \ifinn@te\else\ifdoingt@ble\else
-     \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
+     \edef\t@mpp{\string\@parlen{\lastc@rref}{\lastc@rradj}{\the\prevgraf}{\m@rker}{\the\curr@djpar}}\x@\write\x@\p@rlocs\x@{\t@mpp}%
    \fi\fi
    \cutoutcarryover 
  \fi
@@ -351,7 +369,7 @@
 \def\endit@P{%Called by whileitp@ps, to end a paragraph style
  \let\p@r=\par % end the paragraph
  \ifhmode\unskip % remove any trailing space
-   \beginL\pdfsavepos
+   \beginL\pdfsavepos\t@gendfull{P}{id="\adjc@rref[\the\curr@djpar]"}%
    \write\p@rlocs{\noexpand\@parend{\the\pdflastxpos}{\the\pdflastypos}}\endL       %(1)
    %\ifnum\pagetracing>0\tracingparagraphs=1\ifnum\pagetracing>1\looseness=-1%\emergencystretch=1sp
    %  \fi\else\tolerance=10\fi
@@ -362,7 +380,7 @@
      %\lastdepth=0pt
      \ifinner\trace{sa}{Inner mode at end of paragraph style \m@rker}\fi
    \fi
-   \trace{C}{enditP: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items}%
+   {\count255=\prevgraf \trace{C}{endit@P: \the\dropped@ther@lines, \ifdr@ppednumber dropped num\fi, \pending@items, pgrf:\the\count255}}%
    \ifnum\pagetracing>0\tracingparagraphs=0\fi
    \ifnum 0\ifdr@ppednumber 1\else\ifnum\dropped@ther@lines>0 1\fi\ifx\pending@items\cstackempty\else1\fi\fi>0 % the preceding par had a dropped number or other cutout;                       %(2)
                     % add \nobreak if it was a single line, else clear the flag
@@ -382,7 +400,7 @@
 
 \def\writep@rstart#1#2{%Call with #1 = fully expanded baselineskip
    \getp@ram{type}{#2}{#2}%
-   \beginL\pdfsavepos
+   \beginL\pdfsavepos\t@gstartfull{P}{#2}{lspace="#1" id="\adjc@rref[\the\curr@djpar]"}%
    \x@\write\x@\p@rlocs\x@{\x@\noexpand\x@\@parstart\x@{\p@ram}{#2}{#1}{\the\pdflastxpos}{\the\pdflastypos}}\endL
 }
 
@@ -397,6 +415,13 @@
  \ifsk@pping \egroup \fi % if we were skipping nonpublishable text, end that mode
  \let\p@r=\par
  \the\p@rstylehooks % allow other modules to hook in here
+ \ifb@xedparstyle \trace{s}{b@xedstyle met in endlastp@rstyle! \styst@k}%
+  \unskip\set@endb@xedstyle\egroup%\showbox\tmpctsb@x
+  \apply@endb@xedstyle{\tmpctsb@x}%
+  %\showbox\tmpctsb@x
+  \unhbox\tmpctsb@x
+  \b@xedparstylefalse
+ \fi
  \end@llpoppedstyles{P}%
  \ifdebugthispar\global\debugthisparfalse\showlists\fi
  \trace{s}{endlastp@rstyle #1 stack=\mcstack, styst@k:\styst@k}%
@@ -602,7 +627,6 @@
   \fi
   \mcpushunderms{P}{#1}%
   \trace{s}{Pushed P+#1,  stack now: \mcstack [\styst@k]}%
-  \op@ninghooks{before}{\m@rker}{\styst@k}%
   \let\styst@k=\empty
   \def\d@##1+##2+##3\E{\d@code{##1}{##2}\let\t@pstyle\tmp}\mctop
   \s@tstyst@k%
@@ -652,6 +676,7 @@
     \let\thisp@rclass\P@ra
     \s@tbaseline{\m@rker}{\styst@k}%
   \fi
+ \op@ninghooks{before}{\m@rker}{\styst@k}%
  \let\stylet@pe\ss@Para % Thus must come this late, or grouping gives odd results sometimes..
   \ifdim\headingmidspace=0pt \else
     \ifhe@dings\nobreak\fi
@@ -660,6 +685,11 @@
   \global\startparatrue
   \resetp@rstyle
 %-cpar_parstyle_transition
+  \b@xedstylefalse
+  \ch@ckb@xedstyle
+  \trace{s}{parstyle: \styst@k, (b@xedstyle\ifb@xedstyle true\else false\fi)}%
+  \ifb@xedstyle
+    \global\b@xedparstyletrue\else\global\b@xedparstylefalse\fi
   \p@rstyle@everypar{#1}%
   \traceifcheck{p@rstyle}%
  \fi}
@@ -669,10 +699,11 @@
 \def\preservesettings{\let\epch@rstyle\newch@rstyle}
 \def\restoresettings{\let\newch@rstyle\epch@rstyle}
 \def\ch@pterc@tnum{}
+%\newtoks\Flag
 \def\p@rstyle@everypar#1{%
   \trace{sP}{Redefined everypar}%
   \everypar={%
-   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname'}%
+   \trace{sP}{everypar! ch@pter\g@tdstat waiting:'\csname ch@pter\g@tdstat waiting\endcsname' (\the\ch@pterwd), \ifdr@ppednumber dr@ppednumber\fi}%
    %
    % \everypar will be triggered when the paragraph actually starts (normally at the first character of text,
    % or something like a verse number); then we'll set up margins/indents and font
@@ -743,12 +774,13 @@
     \ifdr@ppednumber % second line of chapter number, need to check indent/cutout
      \ifRTL\let\c@tcmd=\rightcutout\else\let\c@tcmd=\leftcutout\fi
      \getp@ram{leftmargin}{\styst@kfirst}{\styst@k}%
+     \trace{C}{leftmargin? '\p@ram', \styst@kfirst, \styst@k}%
      \ifx\p@ram\relax % simple case - no left indent
        \ifx\ch@pterc@tnum\empty
          \trace{C}{New cutout needed}%
          \x@\c@tcmd\x@{\the\ch@pterwd}{0}{1}% No pre-existing cutout
        \else
-         \trace{C}{Modifying existing cutout }%
+         \trace{C}{Modifying existing cutout \ch@pterc@tnum}%
          \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
        \fi
      \else % probably \q or something like that;
@@ -756,23 +788,27 @@
        \dimen0=\p@ram\IndentUnit \dimen2=\dimen0
        \ifx\f@rstindent\relax \else \advance\dimen0 by \f@rstindent\IndentUnit \fi
        % now \dimen0 is the real indent of the 1st line
-       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0
-       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd}%
+       \dimen4=\ch@pterwd \advance\dimen4 by -\dimen0 \relax
+       \trace{C}{Modified cutout needed (paragraph is \the\dimen0 / \the\dimen2, chapnum \the\ch@pterwd, \the\dimen4}%
        \ifdim\dimen4>0pt % if the chapter number doesn't fit there...
          \ifx\ch@pterc@tnum\empty
-           \trace{C}{New cutout needed}%
+           \trace{C}{New cutout needed (\ch@pterc@tnum)}%
            \x@\c@tcmd\x@{\the\dimen4}{0}{1}% No pre-existing cutout
          \else
+           \trace{C}{modifying (\ch@pterc@tnum)}%
            \m@difychapcut{\ch@pterc@tnum}{\the\ch@pterwd}% modify current chapternumber cutout.
+           %\Flag{\MSG{FLAG!}M\Flag{}}%
          \fi
        \else % the indent is already big enough, so just use it as is
        \fi
       \ifIndentAtChapter\else \allowp@rindentfalse \fi
      \fi
      \dr@ppednumberfalse
+     \trace{hv}{Setting new chapter spacefactor (ep1)}%
      \spacefactor=\n@wchaptersf % prevent hanging verse number here
     \fi
    \fi\fi
+   %\the\Flag
    \run@pending
 %-cpar_parstyle_drop
 %+cpar_parstyle_final
@@ -793,9 +829,14 @@
    \let\tmpn@xtparstart\n@xtparstart\gdef\n@xtparstart{}% Allow n@xtparstart to re-trigger itself
    \tmpn@xtparstart
    \op@ninghooks{start}{\m@rker}{\styst@k}%handle <start> hook
-   \ifdr@ppednumber \spacefactor=0\n@wchaptersf \fi
+   \ifdr@ppednumber \trace{hv}{Setting new chapter spacefactor (ep2)}%
+     \spacefactor=0\n@wchaptersf \fi
    % set special \spacefactor if we're at a chapter number, so \v 1 can omit the verse number here
    \startparafalse\first@fterheadingfalse
+   \ifb@xedparstyle
+      \trace{s}{Par settings requesting boxing}%
+      \setbox\tmpctsb@x\hbox\bgroup
+   \fi
   }% end everypar
 }
 %-cpar_parstyle_final
@@ -812,7 +853,6 @@
 \dr@ppedotherfalse
 \newif\ifIndentAtChapter
 \newif\ifIndentAfterHeading \IndentAfterHeadingtrue
-\newif\ifOmitVerseNumberOne \OmitVerseNumberOnefalse
 \newif\ifOmitVerses \OmitVersesfalse
 \newif\ifDropActions \DropActionsfalse
 \def\n@wchaptersf{998}
@@ -907,7 +947,7 @@
   \immediate\openout\p@rlocs="\j@bname.parlocs"
 }
 \addtoinithooks{\initp@rlocs}
-\def\locs@startstop#1#2{%
+\def\locs@startstop#1#2#3{%
   %\showboxdepth=99
   %\showboxbreadth=99
   \let\old@ep=\everypar
@@ -917,8 +957,10 @@
     \edef\dc@ref@rgs{\string\@colstart{\the\ht#2}{\the\dp#2}{\the\wd#2}}%
     \pdfsavepos
     \x@\write\x@\p@rlocs\x@{\dc@ref@rgs{\the\pdflastxpos}{\the\pdflastypos}}%
+    \edef\dc@ref@rgs{avail="\the\availht" width="\the\wd#2"}%
+    \t@gstartfull{Column}{#3}{\dc@ref@rgs}%
     \unvbox#1%
-    \pdfsavepos
+    \pdfsavepos\t@gend{Column}%
     \write\p@rlocs{\string\@colstop{\the\pdflastxpos}{\the\pdflastypos}}%
     %\MSG{\dc@ref@rgs (\the\hsize) ->}%
     }%
@@ -995,9 +1037,11 @@
   \csname inp@r-\c@rrdstat false\endcsname
 }
 
-\def\@parlen#1#2#3{}
+\def\@parlen#1#2#3#4#5{}
+\def\@noteid#1#2#3#4#5#6{}
 \def\@parpageend#1#2#3{}
 \def\@parnote#1#2#3{}
+\def\@notebox#1#2#3{}
 
 \def\@nontextstart#1#2{\xdef\n@ntextstart{#2}}%
 \def\@nontextstop#1#2{%
@@ -1010,7 +1054,7 @@
   \fi\fi
 }%
 
-\def\@pgstart#1{%
+\def\@pgstart#1#2{%
   \edef\this@pgno{#1}}
 
 \newif\ifp@rlengthimportant
@@ -1286,6 +1330,7 @@
 }
 \newcount\pr@vdelay \newcount\th@sdelay
 \newif\ifsk@pping \newbox\j@nkbox
+\newbox\tmpctsb@x
 %-cpar_writedelayed
 
 % Create the drop-cap in \ch@pterbox
@@ -1299,7 +1344,27 @@
  \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}\XeTeXuseglyphmetrics=3%
  \edef\printchapter{\ch@ptert@xt}%
  \csname PrepChapterNumber\endcsname
- \setbox\ch@pterbox=\hbox{\s@tfont{c}{c}\printchapter}%
+ \getp@ram{rightmargin}{c}{c}%
+ \let\ch@pterrmargin\p@ram
+ \ifx\ch@pterrmargin\relax\else\ifdim 0pt=\ch@pterrmargin\IndentUnit \let\ch@pterrmargin\relax\fi\fi
+ \getp@ram{leftmargin}{c}{c}%
+ \let\ch@pterlmargin\p@ram
+ \ifx\ch@pterlmargin\relax\else\ifdim 0pt=\ch@pterlmargin\IndentUnit \let\ch@pterlmargin\relax\fi\fi
+ \getp@ram{justification}{c}{c}%
+ \setbox\ch@pterbox=\hbox{%
+    \ifx\p@ram\r@ght
+      \s@tfont{c}{c}\printchapter
+    \else
+      \ifx\ch@pterlmargin\relax\else\kern \ch@pterlmargin\IndentUnit\fi
+      \s@tfont{c}{c}\printchapter
+    \fi
+ }%
+ \ifx\p@ram\r@ght
+   \ifx\ch@pterrmargin\relax\let\ch@pterrmargin\ch@pterlmargin\fi
+   \ifx\ch@pterrmargin\relax\def\ch@pterrmargin{0}\fi
+   \trace{sP}{chapterbox right-aligned}%
+   \setbox\ch@pterbox=\hbox to \ch@pterrmargin\IndentUnit{\hss\unhbox\ch@pterbox}%
+ \fi
  \ifrotate
   \dimen0=1.0\ht\ch@pterbox
   \dimen1=\ht\ch@pterbox \advance\dimen1 by \dp\ch@pterbox\advance\dimen1 by \AfterChapterSpaceFactor\FontSizeUnit
@@ -1319,6 +1384,7 @@
  \fi
  \XeTeXuseglyphmetrics=\@seglyphmetrics
  \ch@pterwd=\wd\ch@pterbox
+ \trace{sP}{box width=\the\ch@pterwd}%
  \dp\ch@pterbox=0pt
 }
 %-cpar_makechapterbox
@@ -1416,7 +1482,27 @@
  \parfillskip=0pt plus 1fil
  %\emergencystretch=11in
  \parindent=0pt }
-
 %-cpar_resetparstyle
+
+\newif\iftaggedPDF \taggedPDFfalse
+\newcount\tagCount
+\def\t@gstart#1#2{\t@gstartfull{#1}{#2}{}}
+\def\t@gstartfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@gt@mp{ptxp:tagstart #1 #2 \the\tagCount\space #3}%
+    \special{\t@gt@mp}%
+  \fi
+}
+\def\t@gempty#1#2{\t@gemptyfull{#1}{#2}{}}
+\def\t@gemptyfull#1#2#3{%
+  \iftaggedPDF
+    \global\advance\tagCount by 1
+    \edef\t@t@mp{ptxp:tag #1 #2 \the\tagCount\space #3}%
+    \special{\t@t@mp}%
+  \fi
+}
+\def\t@gend#1{\t@gendfull{#1}{}}
+\def\t@gendfull#1#2{\iftaggedPDF\special{ptxp:tagend #1 #2}\fi}
 
 \endinput

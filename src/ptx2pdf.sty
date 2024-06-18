@@ -396,6 +396,7 @@
 
 \Marker rb
 \StyleType Character
+\TextProperties publishable vernacular
 \LineSpacing 0.5
 
 \Marker it
@@ -568,7 +569,7 @@
 \Marker zthumbtab
 \Name zthumbtab - File - ThumbTab text
 \Description Book abbreviation for Thumb Tabs
-\OccursUnder h h1 h2 h3
+\OccursUnder id
 \Rank 1
 \TextType Other
 \TextProperties paragraph publishable vernacular
@@ -578,10 +579,8 @@
 \Italic
 \Color 128
 
-\Category colophon
-\Marker esb
+\Marker cat:colophon|esb
 \Position B
-\EndCategory
 
 \Marker zimagecopyrights
 \Name zimagecopyrights - Auxiliary - Image copyrights statements
@@ -665,7 +664,7 @@
 \OccursUnder *
 \StyleType Milestone
 \TextProperties vernacular publishable
-#Show a 10 or 13digit ISBN as an EAN-13 barcode
+%Show a 10 or 13digit ISBN as an EAN-13 barcode
 \Attributes isbn height? var? font? fontheight? price? pricecode?
 
 \Marker x-credit
@@ -823,11 +822,27 @@
 \StyleType Milestone
 
 \Marker textborder
-\Name textborder - Other - Exeperimental border around verse text of page
+\Name textborder - Other - Border around verse text of page
 \Description When publishable this puts a border around the main portion of the page. BorderStyle can be set to plain, double or ornamental styles from standardborders.sty can be used, with the ornaments plugin.
 \TextProperties nonpublishable nonvernacular
 \OccursUnder id
+\Border All
+\BorderStyle Vectorian2
+\BorderWidth 14
+\BoxPadding 0
+\BorderTPadding 5
+\BorderBPadding 10
+\BorderHPadding 3
+\BorderLineWidth 0.3
+\BorderFillColour 1.0 0.7 0.0
+\BorderColour 0 0.6 0
 \TextType Other
+
+\Marker id:INT|textborder
+\TextProperties nonpublishable 
+
+\Marker id:GLO|textborder
+\TextProperties nonpublishable 
 
 
 \Marker strong-s
@@ -939,7 +954,7 @@
 \Marker th8 
 \RightMargin 0.1
 \Marker tc1 
-\RightMargin 0.1
+\RightMargin 0
 \Marker tc2 
 \RightMargin 0.1
 \Marker tc3 
@@ -954,6 +969,24 @@
 \RightMargin 0.1
 \Marker tc8 
 \RightMargin 0.1
+
+\Marker toc1
+\OccursUnder id
+
+\Marker toc2
+\OccursUnder id
+
+\Marker toc3
+\OccursUnder id
+
+\Marker ldrs
+\Endmarker ldrs*
+\Name ldrs...ldrs* - Tables - Table of Contents leaders styling
+\Description Styling for leaders in table of contents
+\OccursUnder p
+\TextType Other
+\TextProperties publishable vernacular
+\StyleType Character
 
 # Typesetting extensions
 
@@ -1013,7 +1046,7 @@
 \BoxHPadding 5
 \BoxVPadding 5
 \BorderRPadding 0
-\Scale 0.6
+#\Scale 0.6
 \Alpha 1.0
 \Border All
 
@@ -1026,6 +1059,8 @@
 \StyleType Milestone
 \Attributes syncaddr 
 \FontSize 12
+
+
 
 \Marker cat:coverfront|mt1
 \Name cat:coverfront|mt1 - Cover - Styling the main title of the front cover 

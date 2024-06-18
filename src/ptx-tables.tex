@@ -137,8 +137,16 @@
   \def\t@blecell#1#2{%
     \@ndcell
     \st@rtcell
-    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{#2}%
-    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = #2 in style #1}%
+    \xdef\mytmp{#2}%
+    \getp@ram{justification}{#1\ifdiglot \c@rrdstat\fi}{#1+tr}%
+    \trace{t}{justification of #1\ifdiglot \c@rrdstat\fi = \p@ram fallback \mytmp}%
+    \ifx\p@ram\c@nter \edef\mytmp{c}\else
+    \ifx\p@ram\l@ftb@l \edef\mytmp{l}\else
+    \ifx\p@ram\l@ft \edef\mytmp{l}\else
+    \ifx\p@ram\r@ght \edef\mytmp{r}%
+    \fi\fi\fi\fi
+    \x@\xdef\csname align-\the\tabler@ws-\the\tablec@l\endcsname{\mytmp}%
+    \trace{t}{Define cell [\the\tabler@ws, \the\tablec@l] = \mytmp\space in style #1}%
     \ifnum\tablec@l>\maxtablec@l \global\maxtablec@l=\tablec@l \fi
     \ch@rstyle{#1}~\ignorespaces}%
 }
@@ -260,7 +268,13 @@
     \ifdim\wd\c@rrentcolbox>\thr@shold
       \advance\exc@ss by \wd\c@rrentcolbox \advance\exc@ss by -\thr@shold
     \else
-      \ifdim \c@rrentcolwidth=-1sp\relax \c@rrentcolwidth=\wd\c@rrentcolbox
+      \ifdim \c@rrentcolwidth=-1sp\relax
+        \c@rrentcolwidth=\wd\c@rrentcolbox
+        \edef\tc@ll{tc\the\@col}%
+        \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
+        \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
+        \ifx\p@ram\relax \else \advance \c@rrentcolwidth\p@ram \IndentUnit\fi
       \else
         \bgroup\count255=\c@rrentcolwidth \trace{t}{c@rrentcolwidth is \the\count255 sp}\egroup%
       \fi
@@ -290,6 +304,10 @@
 %      \ifdim\c@rrentcolwidth<\wd\c@rrentcolbox
 %        (wrapped, natural was \the\wd\c@rrentcolbox)\fi}%
 %  }%
+  \getp@ram{justification}{tr}{\styst@k}%
+  \ifx\p@ram\r@ght
+    \ifRTL\RTLfalse\else\RTLtrue\fi
+  \fi
   \f@reachcol{\wr@pcolumn}%
   \dimen0=0pt \dimen1=0pt
   \getp@ram{leftmargin}{tr}{\styst@k}%
@@ -348,30 +366,35 @@
     \getp@ram{leftmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \leftskip\p@ram \IndentUnit\fi
     \getp@ram{firstindent}{\tc@ll}{\tc@ll}%
-    \ifx\p@ram\relax \else \kern \p@ram\IndentUnit\fi
+    \ifx\p@ram\relax \else \kern \p@ram \IndentUnit\fi
     \getp@ram{rightmargin}{\tc@ll}{\tc@ll}%
     \ifx\p@ram\relax \else \advance \rightskip\p@ram \IndentUnit\fi
     \x@\let\x@\the@lign\csname align-\the\@row-\the\@col\endcsname
+    \trace{t}{Pre(\tc@ll, RTL\ifRTL true\else false\fi,TOCRTL\ifTOCRTL true\else false\fi) \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
     \ifx\the@lign\cell@r
-      \ifRTL\let\n@xt=\rightskip\else
-        \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+      \ifRTL \let\n@xt=\rightskip \else
+        \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
       \fi
-      %\let\n@xt=\leftskip
     \else\ifx\the@lign\cell@c
       \let\n@xt=\rightskip \advance\leftskip by 0pt plus 1fil
     \else
-      \ifRTL \skip0=\rightskip\rightskip=\leftskip\leftskip=\skip0
+      \ifRTL \skip0=\rightskip \rightskip=\leftskip \leftskip=\skip0
         \let\n@xt=\leftskip
-      \else\let\n@xt=\rightskip\fi
-      %\let\n@xt=\rightskip
+      \else\let\n@xt=\rightskip\trace{t}{n@xt=rightskip}\fi
     \fi\fi
     \advance\n@xt by 0pt plus 1fil
-    \ifcsname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname \nobreak\csname \c@tprefix leaders-tc\ifRTL r\fi\the\@col\endcsname\hfil\fi
-    \trace{t}{\c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders. leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
-    \unhbox0\unskip\unkern \parfillskip=0pt
-    \x@\ifcsname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\nobreak\csname \c@tprefix leaders-tc\ifRTL\else r\fi\the\@col\endcsname\hfil\fi
-    \par}%
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL r\fi\else\ifTOCRTL r\fi\fi \the\@col}%
+    \skip1=\leftskip \leftskip=0pt
+    \ifcsname \mytmp\endcsname \nobreak\csname \mytmp\endcsname\hfil\fi%
+    \trace{t}{Post... \c@tprefix cell(\the@lign)[\the\@row, \the\@col]: leaders:\mytmp . leftskip=\the\leftskip, rightskip=\the\rightskip, parfillskip=\the\parfillskip, width=\the\c@rrentcolwidth}%
+    %\hskip\skip1
+    \unhbox0
+    \edef\mytmp{\c@tprefix leaders-tc\ifRTL\ifTOCRTL\else r\fi\else\ifTOCRTL\else r\fi\fi \the\@col}%
+    \x@\ifcsname \mytmp\endcsname
+      \unskip\unkern \parfillskip=0pt \hskip\rightskip \rightskip=0pt
+      \nobreak\csname \mytmp\endcsname\hfil\fi
+    \ifRTL\endR\fi\par}%
   \wd0=\c@rrentcolwidth
   \box0}
 \def\extractl@stcell{% delete last cell from box \c@rrentcolbox and return it in \c@rrentcell
@@ -413,8 +436,8 @@
     \fi
   \egroup
   \trace{t}{bls:\the\baselineskip}%
-  \ifh@lfrow\lower 0.5\baselineskip\fi \box1%
-  %\box1
+  \ifh@lfrow\lower 0.5\baselineskip\fi
+  \box1%
 }
 \newcount\nth@line
 

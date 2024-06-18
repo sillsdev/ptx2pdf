@@ -65,6 +65,25 @@ Note that it is *not* the name of `\zcolsync` that helps with merging, but the '
 \TextProperties  nonpublishable diglotsync
 ```
 
+## Page and column-breaks
+Page breaks are a challenge in diglot processing. What does the user actually
+*want*? (a) To break *that* column, not process any others, and output
+everything read  so-far, or (b) end the column there, continuing on the next page, 
+but process other columns, expecting them to have their own pagebreaks if that's what is wanted.
+Interpretation (a) seems more likley to cause problems than to be of use in a
+parallel diglot, and interpretation (b) is how the code attempts to processes
+things. 
+
+A third type of break exists that is more like type (a): the clearing to output of
+everything ready for the page so-far. This is used internally by automatic page-breaks,
+such as those between introductory material and body text used to cause a
+bigger problem, as the 'body text' transition (should) happen only once, and
+trigger the output of the formed column-chunks processed until that point. This type 
+ensures that the currently-processed chunk (and its friends) appear at the top 
+of the next page. 
+While not normally of any use at all to the end-user, it is noted here that 
+`\csname @diglot@pagebreak\endcsname` will trigger this event.
+
 ## Diglot-specific configuration items to go in custom stylesheets:
 
 Any ```\Marker```  can (theortically) be generic (e.g. 'p') or apply to a single column only ('pL' or 'pR' for left and right versions of 'p').

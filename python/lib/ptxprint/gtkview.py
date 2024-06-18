@@ -38,8 +38,11 @@ from ptxprint.minidialog import MiniDialog
 from ptxprint.dbl import UnpackDBL
 from ptxprint.texpert import TeXpert
 from ptxprint.picselect import ThumbnailDialog, unpackImageset, getImageSets
+from ptxprint.hyphen import Hyphenation
+from ptxprint.accelerate import onTextEditKeypress
 import ptxprint.scriptsnippets as scriptsnippets
 import configparser, logging
+import webbrowser
 from threading import Thread
 from base64 import b64encode, b64decode
 from io import BytesIO
@@ -53,39 +56,56 @@ ssl._create_default_https_context = ssl._create_unverified_context
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
 # xmlstarlet sel -t -m '//iso_15924_entry' -o '"' -v '@alpha_4_code' -o '" : "' -v '@name' -o '",' -n /usr/share/xml/iso-codes/iso_15924.xml
-_allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Afak" : "Afaka", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
-    "Arab" : "Arabic", "Aran" : "Arabic (Nastaliq)", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan", "Bali" : "Balinese",
-    "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Blis" : "Blissymbols", "Bopo" : "Bopomofo",
-    "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid", "Cakm" : "Chakma", "Cans" : "Canadian Aboriginal Syllabics",
-    "Cari" : "Carian", "Cham" : "Cham", "Cher" : "Cherokee", "Cirt" : "Cirth", "Copt" : "Coptic", "Cprt" : "Cypriot", "Cyrl" : "Cyrillic",
-    "Cyrs" : "Cyrillic (Old Church Slavonic)", "Deva" : "Devanagari", "Dsrt" : "Deseret (Mormon)", "Egyd" : "Egyptian demotic", 
-    "Egyh" : "Egyptian hieratic", "Elba" : "Elbasan", "Ethi" : "Ethiopic (Geʻez)", "Geok" : "Khutsuri (Asomtavruli & Nuskhuri)", 
+# but remove everything not in the range 100-499
+_allscripts = { "Zyyy" : "Default", "Adlm" : "Adlam", "Aghb" : "Caucasian Albanian", "Ahom" : "Ahom, Tai Ahom", 
+    "Arab" : "Arabic", "Armi" : "Imperial Aramaic", "Armn" : "Armenian", "Avst" : "Avestan",
+    "Bali" : "Balinese",
+    "Bamu" : "Bamum", "Bass" : "Bassa Vah", "Batk" : "Batak", "Beng" : "Bengali", "Bhks" : "Bhaiksuki", "Bopo" : "Bopomofo",
+    "Brah" : "Brahmi", "Brai" : "Braille", "Bugi" : "Buginese", "Buhd" : "Buhid",
+    "Cakm" : "Chakma", "Cans" : "Canadian Aboriginal Syllabics",
+    "Cari" : "Carian", "Cham" : "Cham", "Cher" : "Cherokee", "Chrs" : "Chorasmian", "Copt" : "Coptic", 
+    "Cpmn" : "Cypro-Minoan", "Cprt" : "Cypriot", "Cyrl" : "Cyrillic",
+    "Deva" : "Devanagari", "Diak" : "Dives Akuru",  "Dogr" : "Dogra", "Dsrt" : "Deseret (Mormon)",
+    "Elba" : "Elbasan", "Elym" : "Elymiac", "Ethi" : "Ethiopic (Geʻez)",
     "Geor" : "Georgian (Mkhedruli)", "Glag" : "Glagolitic", "Gong" : "Gunjala-Gondi", "Gonm" : "Masaram-Gondi",
     "Goth" : "Gothic", "Gran" : "Grantha", "Grek" : "Greek", "Gujr" : "Gujarati", "Guru" : "Gurmukhi",
-    "Hanb" : "Han with Bopomofo", "Hang" : "Hangul (Hangŭl, Hangeul)", "Hani" : "Han (Hanzi, Kanji, Hanja)",
-    "Hano" : "Hanunoo (Hanunóo)", "Hans" : "Han (Simplified)", "Hant" : "Han (Traditional)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
-    "Hira" : "Hiragana", "Hmng" : "Pahawh-Hmong", "Hrkt" : "Japanese (Hiragana+Katakana)", "Hung" : "Old Hungarian (Runic)",
-    "Ital" : "Old Italic (Etruscan, Oscan)", "Jamo" : "Jamo (subset of Hangul)", "Java" : "Javanese",
-    "Jpan" : "Japanese (Han+Hiragana+Katakana)", "Jurc" : "Jurchen", "Kali" : "Kayah-Li", "Kana" : "Katakana", "Khar" : "Kharoshthi",
-    "Khmr" : "Khmer", "Khoj" : "Khojki", "Kitl" : "Khitan (large)", "Kits" : "Khitan (small)", "Knda" : "Kannada", "Kore" : "Korean (Hangul+Han)",
-    "Kpel" : "Kpelle", "Kthi" : "Kaithi", "Lana" : "Tai Tham (Lanna)", "Laoo" : "Lao", "Latf" : "Latin (Fraktur)",
-    "Latg" : "Latin (Gaelic)", "Latn" : "Latin", "Leke" : "Leke", "Lepc" : "Lepcha (Róng)", "Limb" : "Limbu", "Lina" : "Linear A",
-    "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Loma" : "Loma", "Lyci" : "Lycian", "Lydi" : "Lydian", "Mahj" : "Mahajani", 
-    "Mand" : "Mandaic, Mandaean", "Mani" : "Manichaean", "Marc" : "Marchen", "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive",
-    "Mlym" : "Malayalam", "Modi" : "Modi", "Mong" : "Mongolian", "Mroo" : "Mro, Mru", "Mtei" : "Meitei-Mayek", "Mult" : "Multani", 
-    "Mymr" : "Myanmar (Burmese)", "Narb" : "North Arabian (Ancient)", "Nbat" : "Nabataean", "Newa" : "New (Newar, Newari)",
-    "Nkgb" : "Nakhi Geba (Naxi Geba)", "Nkoo" : "N’Ko", "Nshu" : "Nüshu", "Ogam" : "Ogham", "Olck" : "Ol Chiki (Ol Cemet’, Santali)", 
-    "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya", "Palm" : "Palmyrene",
+    "Hang" : "Hangul (Hangŭl, Hangeul)",
+    "Hano" : "Hanunoo (Hanunóo)", "Hatr" : "Hatran", "Hebr" : "Hebrew",
+    "Hira" : "Hiragana", "Hmng" : "Pahawh-Hmong",
+    "Hung" : "Old Hungarian (Runic)",
+    "Ital" : "Old Italic (Etruscan, Oscan)",
+    "Java" : "Javanese",
+    "Kali" : "Kayah-Li", "Kana" : "Katakana", "Kawi" : "Kawi", "Khar" : "Kharoshthi",
+    "Khmr" : "Khmer", "Khoj" : "Khojki", "Kits" : "Khitan (small)", "Knda" : "Kannada",
+    "Kthi" : "Kaithi",
+    "Lana" : "Tai Tham (Lanna)", "Laoo" : "Lao",
+    "Latn" : "Latin", "Leke" : "Leke", "Lepc" : "Lepcha (Róng)", "Limb" : "Limbu", "Lina" : "Linear A",
+    "Linb" : "Linear B", "Lisu" : "Lisu (Fraser)", "Lyci" : "Lycian", "Lydi" : "Lydian",
+    "Mahj" : "Mahajani", "Maka" : "Makasar", 
+    "Mand" : "Mandaic, Mandaean", "Mani" : "Manichaean", "Marc" : "Marchen", "Medf" : "Medefaidrin",
+    "Mend" : "Mende Kikakui", "Merc" : "Meroitic Cursive", "Mero" : "Meroitic Hieroglyphs", 
+    "Mlym" : "Malayalam", "Mong" : "Mongolian", "Mroo" : "Mro, Mru", "Mtei" : "Meitei-Mayek", "Mult" : "Multani", 
+    "Mymr" : "Myanmar (Burmese)",
+    "Nagm" : "Nag Mundari", "Nand" : "Nandinagari", "Narb" : "North Arabian (Ancient)", "Nbat" : "Nabataean", "Newa" : "New (Newar, Newari)",
+    "Nkoo" : "N’Ko", "Nshu" : "Nüshu",
+    "Ogam" : "Ogham", "Olck" : "Ol Chiki (Ol Cemet’, Santali)", 
+    "Orkh" : "Old Turkic, Orkhon Runic", "Orya" : "Oriya", "Osge" : "Osage", "Osma" : "Osmanya", "Ougr" : "Old Uyghur", 
+    "Palm" : "Palmyrene",
     "Pauc" : "Pau Cin Hau", "Perm" : "Old Permic", "Phag" : "Phags-pa", "Phli" : "Inscriptional Pahlavi", "Phlp" : "Psalter Pahlavi",
-    "Phlv" : "Book Pahlavi", "Phnx" : "Phoenician", "Plrd" : "Miao (Pollard)", "Prti" : "Inscriptional Parthian",
-    "Rjng" : "Rejang (Redjang, Kaganga)", "Roro" : "Rongorongo",
-    "Runr" : "Runic", "Samr" : "Samaritan", "Sara" : "Sarati", "Sarb" : "Old South Arabian", "Saur" : "Saurashtra", "Shaw" : "Shavian (Shaw)", 
-    "Shrd" : "Sharada", "Sidd" : "Siddham, Siddhamātṛkā", "Sind" : "Sindhi, Khudawadi", "Sinh" : "Sinhala", "Sora" : "Sora-Sompeng",
-    "Sund" : "Sundanese", "Sylo" : "Syloti Nagri", "Syrc" : "Syriac", "Syre" : "Syriac (Estrangelo)", "Syrj" : "Syriac (Western)",
-    "Syrn" : "Syriac (Eastern)", "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭāṅkrī", "Tale" : "Tai Le", "Talu" : "New-Tai-Lue", 
-    "Taml" : "Tamil", "Tang" : "Tangut", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Teng" : "Tengwar", "Tfng" : "Tifinagh (Berber)",
-    "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Ugar" : "Ugaritic",
-    "Vaii" : "Vai", "Wara" : "Warang-Citi", "Wole" : "Woleai", "Xpeo" : "Old Persian", "Yiii" : "Yi", "Zzzz" : "Uncoded script"
+    "Phnx" : "Phoenician", "Plrd" : "Miao (Pollard)", "Prti" : "Inscriptional Parthian",
+    "Rjng" : "Rejang (Redjang, Kaganga)", "Rohg" : "Hanifi Rohingya",
+    "Runr" : "Runic",
+    "Samr" : "Samaritan", "Sarb" : "Old South Arabian", "Saur" : "Saurashtra", "Shaw" : "Shavian (Shaw)", 
+    "Shrd" : "Sharada", "Sidd" : "Siddham, Siddhamātṛkā", "Sind" : "Sindhi, Khudawadi", "Sinh" : "Sinhala",
+    "Sogd" : "Sogdian", "Sogo" : "Old Sogdian", "Sora" : "Sora-Sompeng",
+    "Sund" : "Sundanese", "Sylo" : "Syloti Nagri", "Syrc" : "Syriac",
+    "Tagb" : "Tagbanwa", "Takr" : "Takri, Ṭāṅkrī", "Tale" : "Tai Le", "Talu" : "New-Tai-Lue", 
+    "Taml" : "Tamil", "Tavt" : "Tai Viet", "Telu" : "Telugu", "Tfng" : "Tifinagh (Berber)",
+    "Tglg" : "Tagalog (Baybayin, Alibata)", "Thaa" : "Thaana", "Thai" : "Thai", "Tibt" : "Tibetan", "Tirh" : "Tirhuta", "Tnsa" : "Tangsa",
+    "Vaii" : "Vai", "Vith" : "Vithkuqi",
+    "Wara" : "Warang-Citi", "Wcho" : "Wancho", "Xpeo" : "Old Persian",
+    "Yezi" : "Yezidi", "Yiii" : "Yi",
+    "Zanb" : "Zanabazar Square", "Zzzz" : "Uncoded script"
 }
 _cjkLangs = {
     "Hang" : "zh",  # "Hangul (Hangŭl, Hangeul)",
@@ -96,16 +116,16 @@ _cjkLangs = {
     "Hrkt" : "ja",  # "Japanese (Hiragana+Katakana)",
     "Jamo" : "ja",  # "Jamo (subset of Hangul)",
     "Jpan" : "ja",  # "Japanese (Han+Hiragana+Katakana)"
-    "Kore" : "ko"   # "Korean (Hangul+Han)"
+    "Kore" : "ko"   # "Korean (Hangul+Han)",
 
   # "Hanb" : "zh",  # "Han with Bopomofo",
   # "Khmr" : "km",  # "Khmer",
-  # "Mymr" : "my",  # "Myanmar (Burmese)"    
+  # "Mymr" : "my",  # "Myanmar (Burmese)",    
   # "Thai" : "th"   # "Thai"
 }
 # Note that ls_digits (in the glade file) is used to map these "friendly names" to the "mapping table names" (especially the non-standard ones)
 _alldigits = [ "Default", "Adlam", "Ahom", "Arabic-Indic", "Balinese", "Bengali", "Bhaiksuki", "Brahmi", "Chakma", "Cham", "Devanagari", 
-    "Ethiopic", "Extended-Arabic", "Fullwidth", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Hebrew", "Javanese", "Kannada", 
+    "Ethiopic", "Extended-Arabic", "Fullwidth", "FixHyphens-Non", "Gujarati", "Gunjala-Gondi", "Gurmukhi", "Hanifi-Rohingya", "Hebrew", "Javanese", "Kannada", 
     "Kayah-Li", "Khmer", "Khudawadi", "Lao", "Lepcha", "Limbu", "Malayalam", "Masaram-Gondi", "Meetei-Mayek", "Modi", "Mongolian", 
     "Mro", "Myanmar", "Myanmar-Shan", "Myanmar-Tai-Laing", "New-Tai-Lue", "Newa", "Nko", "Nyiakeng-Puachue-Hmong", "Ol-Chiki", "Oriya", 
     "Osmanya", "Pahawh-Hmong", "Rumi", "Saurashtra", "Sharada", "Sinhala-Lith", "Sora-Sompeng", "Sundanese", "Tai-Tham-Hora", 
@@ -121,7 +141,7 @@ _progress = {
 
 _ui_minimal = """
 btn_menu bx_statusBar t_find
-btn_menu_level btn_menu_lang l_menu_level l_menu_uilang
+btn_menu_level btn_menu_lang btn_menu_feedback l_menu_level l_menu_uilang
 fcb_filterXrefs c_quickRun
 tb_Basic lb_Basic
 fr_projScope l_project fcb_project l_projectFullName r_book_single ecb_book 
@@ -129,7 +149,7 @@ l_chapfrom l_chapto t_chapfrom t_chapto
 r_book_multiple btn_chooseBooks ecb_booklist 
 fr_SavedConfigSettings l_cfgName ecb_savedConfig t_savedConfig btn_saveConfig btn_lockunlock t_password
 tb_Layout lb_Layout
-fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize l_linespacing s_linespacing 
+fr_pageSetup l_pageSize ecb_pagesize l_fontsize s_fontsize
 fr_2colLayout c_doublecolumn gr_doubleColumn c_verticalrule 
 tb_Font lb_Font
 fr_FontConfig l_fontR bl_fontR tv_fontFamily fcb_fontFaces t_fontSearch 
@@ -193,17 +213,18 @@ fr_variables gr_frontmatter scr_zvarlist tv_zvarEdit col_zvar_name cr_zvar_name 
 tb_Finishing fr_pagination l_pagesPerSpread fcb_pagesPerSpread l_sheetSize ecb_sheetSize
 fr_compare l_selectDiffPDF btn_selectDiffPDF c_onlyDiffs lb_diffPDF c_createDiff
 btn_importSettings btn_importSettingsOK btn_importCancel r_impSource_pdf btn_impSource_pdf lb_impSource_pdf
+r_impTarget_folder btn_tgtFolder
+r_impTarget_prjcfg l_tgtProject ecb_targetProject l_tgtConfig ecb_targetConfig t_targetConfig
 nbk_Import r_impSource_config l_impProject fcb_impProject l_impConfig ecb_impConfig
 btn_resetConfig tb_impPictures tb_impLayout tb_impFontsScript tb_impStyles tb_impOther
 bx_impPics_basic c_impPicsAddNew c_impPicsDelOld c_sty_OverrideAllStyles 
-gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_TabsBorders 
-c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover
-c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther
+gr_impOther c_oth_Body c_oth_NotesRefs c_oth_HeaderFooter c_oth_ThumbTabs 
+c_oth_Advanced c_oth_FrontMatter c_oth_OverwriteFrtMatter c_oth_Cover 
+c_impPictures c_impLayout c_impFontsScript c_impStyles c_impOther c_oth_customScript
 """.split()
 
 _ui_experimental = """
 """.split()
-# btn_menu
 
 # removed from list above: 
 # r_pictureRes_High r_pictureRes_Low
@@ -218,7 +239,7 @@ _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition"
 _ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
-_ui_keepHidden = ["btn_download_update ", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
+_ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
                   "c_customOrder", "t_mbsBookList", "bx_statusMsgBar", "fr_plChecklistFilter", 
                   "l_thumbVerticalL", "l_thumbVerticalR", "l_thumbHorizontalL", "l_thumbHorizontalR"]  # "bx_imageMsgBar", 
 
@@ -250,7 +271,9 @@ _sensitivities = {
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
     "r_xrpos": {
-        "r_xrpos_centre" :    ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
+        "r_xrpos_centre" :     ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
+    "r_pictureRes": {
+        "r_pictureRes_High" :  ["btn_requestIllustrations"]}, 
         
     "c_mainBodyText" :         ["gr_mainBodyText"],
     "c_doublecolumn" :         ["gr_doubleColumn", "r_fnpos_column"],
@@ -325,12 +348,16 @@ _sensitivities = {
     "r_impSource": {
         "r_impSource_pdf":     ["btn_impSource_pdf", "lb_impSource_pdf"],
         "r_impSource_config":  ["fcb_impProject", "ecb_impConfig", "l_impProject", "l_impConfig", ]},
+    "r_impTarget": {
+        "r_impTarget_folder":  ["btn_tgtFolder", "lb_tgtFolder"],
+        "r_impTarget_prjcfg":  ["ecb_targetProject", "ecb_targetConfig", "l_tgtProject", "l_tgtConfig", ]},
     "c_impPictures":           ["tb_impPictures"],
     "r_impPics": {
         "r_impPics_elements":  ["gr_picElements"]},
     "c_impOther":              ["gr_impOther"],
     "c_oth_FrontMatter":       ["c_oth_OverwriteFrtMatter"],
     "c_oth_Cover":             ["c_oth_OverwriteFrtMatter"],
+    "c_impEverything":         ["c_impPictures", "c_impLayout", "c_impFontsScript", "c_impStyles", "c_impOther"],
     "r_sbiPosn": {
         "r_sbiPosn_above":     ["fcb_sbi_posn_above"],
         "r_sbiPosn_beside":    ["fcb_sbi_posn_beside"],
@@ -352,6 +379,7 @@ _nonsensitivities = {
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
     "c_inclSpine":             ["c_coverCropMarks"],
+    "c_lockLayoutMode":        ["fr_pageSetup", "c_doublecolumn", "s_colgutterfactor", "fr_margins", "gr_spacingAdj"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -361,9 +389,11 @@ _nonsensitivities = {
 }
 
 _object_classes = {
-    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate"),
+    "printbutton": ("b_print", "btn_refreshFonts", "btn_adjust_diglot", "btn_createZipArchiveXtra", "btn_Generate",
+                    "btn_refreshCaptions"),
     "sbimgbutton": ("btn_sbFGIDia", "btn_sbBGIDia"),
-    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "c_createDiff", "c_quickRun"),
+    "smallbutton": ("btn_dismissStatusLine", "btn_imgClearSelection", "btn_requestPermission", "btn_downloadPics",
+                    "btn_requestIllustrations", "btn_requestIllustrations2", "c_createDiff", "c_quickRun"),
     "fontbutton":  ("bl_fontR", "bl_fontB", "bl_fontI", "bl_fontBI"),
     "mainnb":      ("nbk_Main", ),
     "viewernb":    ("nbk_Viewer", "nbk_PicList"),
@@ -376,7 +406,7 @@ _object_classes = {
     "stybutton":   ("btn_resetCopyright", "btn_rescanFRTvars", "btn_resetColophon", 
                     "btn_resetFNcallers", "btn_resetXRcallers", "btn_styAdd", "btn_styEdit", "btn_styDel", 
                     "btn_styReset", "btn_refreshFonts", "btn_plAdd", "btn_plDel", 
-                    "btn_plGenerate", "btn_plSaveEdits", "btn_resetTabGroups", "btn_adjust_spacing", 
+                    "btn_plGenerate", "btn_downloadPics", "btn_resetTabGroups", "btn_adjust_spacing", 
                     "btn_adjust_top", "btn_adjust_bottom", "btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2", 
                     "btn_resetGrid", "btn_refreshCaptions", "btn_sb_rescanCats") # "btn_reloadConfig", 
 }
@@ -546,13 +576,14 @@ def getsign(b, v, a):
 class GtkViewModel(ViewModel):
 
     def __init__(self, settings_dir, workingdir, userconfig, scriptsdir, args=None):
-        logger.debug("Starting init in gtkview")
+        # logger.debug("Starting init in gtkview")
         super(GtkViewModel, self).__init__(settings_dir, workingdir, userconfig, scriptsdir, args)
         self.lang = args.lang if args.lang is not None else 'en'
         self.args = args
         self.initialised = False
 
     def setup_ini(self):
+        # logger.debug("Starting setup_ini in gtkview")
         if sys.platform.startswith("win"):
             # import ctypes
             from ctypes import windll
@@ -629,10 +660,13 @@ class GtkViewModel(ViewModel):
             # self.builder.get_object("tb_Cover").set_no_show_all(False)
         logger.debug("Glade loaded in gtkview")
 
-        self.lastUpdatetime = time.time()
+        self.startedtime = time.time()
+        self.lastUpdatetime = time.time() - 3600
         self.isDisplay = True
         self.searchWidget = []
-        self.uilevel = 0
+        self.uilevel = int(self.userconfig.get('init', 'userinterface', fallback='4'))
+        self.set("c_quickRun", self.userconfig.getboolean('init', 'quickrun', fallback=False))
+        logger.debug(f"Loaded UI level from user config: {self.uilevel}")
         self.painted = set()
         self.locked = set()
         self.config_dir = None
@@ -678,6 +712,7 @@ class GtkViewModel(ViewModel):
         self.cb_savedConfig = self.builder.get_object("ecb_savedConfig")
         self.ecb_diglotSecConfig = self.builder.get_object("ecb_diglotSecConfig")
         self.ecb_impConfig = self.builder.get_object("ecb_impConfig")
+        self.ecb_targetConfig = self.builder.get_object("ecb_targetConfig")
         for k, v in _object_classes.items():
             for a in v:
                 w = self.builder.get_object(a)
@@ -726,6 +761,7 @@ class GtkViewModel(ViewModel):
 
         # Keep this tooltip safe for later
         self.frtMatterTooltip = self.builder.get_object("btn_infoViewEdit").get_tooltip_text()
+        self.adjListTooltip = self.builder.get_object("l_AdjList").get_tooltip_text()
 
         logger.debug("Create PicList")
         self.picListView = PicList(self.builder.get_object('tv_picListEdit'), self.builder, self)
@@ -854,6 +890,10 @@ class GtkViewModel(ViewModel):
         self.updateDialogTitle()
 
         logger.debug("Creating source views")
+        lm = GtkSource.LanguageManager()
+        langpath = os.path.join(os.path.dirname(__file__), "syntax")
+        logger.debug(f"Setting syntax files path to {langpath}")
+        lm.set_search_path([langpath])
         for i,k in enumerate(["FrontMatter", "AdjList", "FinalSFM", "TeXfile", "XeTeXlog", "Settings", "SettingsOld"]):
             self.buf.append(GtkSource.Buffer())
             self.cursors.append((0,0))
@@ -872,9 +912,14 @@ class GtkViewModel(ViewModel):
             view.connect("focus-in-event", self.onViewerFocus)
             if not i in [2,3,4]: # Ignore the uneditable views
                 # Set up signals to pick up any edits in the TextView window
-                for evnt in ["key-press-event", "key-release-event", "delete-from-cursor", 
+                for evnt in ["key-release-event", "delete-from-cursor", 
                              "backspace", "cut-clipboard", "paste-clipboard"]:
-                    view.connect(evnt, self.onViewEdited) 
+                    view.connect(evnt, self.onViewEdited)
+            view.connect("key-press-event", onTextEditKeypress, tuple([i]+list(self.fileViews[i])+[self]))
+            if k == "AdjList":
+                l = lm.get_language("adjlist")
+                logger.debug(f"Loaded language adjlist {l}")
+                self.buf[i].set_language(l)
 
         logger.debug("Setting project")
         if self.pendingPid is not None:
@@ -894,6 +939,7 @@ class GtkViewModel(ViewModel):
 
         self.mw.resize(830, 594)
         self.mw.show_all()
+        self.set_uiChangeLevel(self.uilevel)
         GObject.timeout_add(1000, self.monitor)
         if self.args is not None and self.args.capture is not None:
             self.logfile = open(self.args.capture, "w")
@@ -972,7 +1018,6 @@ class GtkViewModel(ViewModel):
             self.doFind(None)
 
     def doFind(self, txt):
-        # if txt is None:   # keep track of recent finds
         for wid in self.searchWidget:
             self.highlightwidget(wid, highlight=False)
         self.searchWidget = []
@@ -1125,7 +1170,6 @@ class GtkViewModel(ViewModel):
         self.colorTabs()
 
     def menu_inner_closed(self, widget):
-        # print("Closing popover")
         mw = self.builder.get_object("menu_main")
         mw.popdown()
 
@@ -1157,7 +1201,7 @@ class GtkViewModel(ViewModel):
                 levelname = " ".join(r[0].split(" ")[:-1])
                 break
         self.set("l_menu_level", _("View Level\n({})").format(levelname) if levelname is not None else _("View Level"))
-                
+
         if ui < 6:
             for w in reversed(sorted(self.allControls)):
                 self.toggleUIdetails(w, False)
@@ -1197,11 +1241,10 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(pgId)
         return True
 
-    def get_uiChangeLevel(self):
+    def get_uiChangeLevel(self):  # Is this method supposed to be doing something more?
         return self.uilevel
 
     def toggleUIdetails(self, w, state):
-        # print(w)
         if w in _ui_noToggleVisible:
             self.builder.get_object(w).set_sensitive(state)
         else:
@@ -1217,7 +1260,7 @@ class GtkViewModel(ViewModel):
         for w in ["l_url_usfm", "lb_DBLdownloads", "lb_openBible", 
                    "l_homePage",  "l_community", "l_pdfViewer",  "l_reportBugs",
                   "lb_homePage", "lb_community", "lb_pdfViewer", "lb_reportBugs", 
-                  "btn_about"]:
+                  "l_giveFeedback", "lb_giveFeeback", "btn_about"]:
             self.builder.get_object(w).set_visible(not val)
         newval = self.get("c_noInternet")
         self.noInt = newval
@@ -1231,6 +1274,37 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_visible(not newval and adv)
         for w in ["btn_DBLbundleDiglot1", "btn_DBLbundleDiglot2"]:
             self.builder.get_object(w).set_visible(not newval)
+        self.i18nizeURIs()
+
+    def i18nizeURIs(self):
+        self.builder.get_object("l_url_usfm").set_label(_('More Info...'))
+        tl = self.lang if not self.get("c_useEngLinks") and \
+           self.lang in ['ar_SA', 'my', 'zh', 'fr', 'hi', 'hu', 'id', 'ko', 'pt', 'ro', 'ru', 'es', 'th'] else ""
+        for u in "homePage community pdfViewer techFAQ reportBugs".split(): # lb_DBLdownloads lb_openBible ?as well?
+            w = self.builder.get_object("lb_" + u)
+            if "translate.goog" in w.get_uri():
+                continue
+            site = w.get_uri()
+            partA, partB = self.splitURL(site)
+            partA = re.sub(r"\.", r"-", partA)
+            
+            if len(tl) and "/tree/" not in site:
+                site = "{}.translate.goog/{}?_x_tr_sl=en&_x_tr_tl={}&_x_tr_hl=en&_x_tr_pto=wapp&_x_tr_hist=true".format(partA, partB, tl)
+            w.set_uri(f'{site}')
+            
+    def splitURL(self, url):
+        # Find the index of the first '/' after the initial '//'
+        index = url.find('/', url.find('//') + 2)
+
+        if index != -1:
+            partA = url[:index]
+            partB = url[index + 1:].rstrip('/')
+        else:
+            partA = url
+            partB = ''
+        # print(f"1: {url=}\n{partA=} / {partB=}")
+
+        return partA, partB
 
     def addCR(self, name, index):
         if "|" in name:
@@ -1249,10 +1323,7 @@ class GtkViewModel(ViewModel):
 
     def parse_fontname(self, font):
         m = re.match(r"^(.*?)(\d+(?:\.\d+)?)$", font)
-        if m:
-            return [m.group(1), int(m.group(2))]
-        else:
-            return [font, 0]
+        return [m.group(1), int(m.group(2))] if m else [font, 0]
 
     def get(self, wid, default=None, sub=0, asstr=False, skipmissing=False):
         w = self.builder.get_object(wid)
@@ -1416,6 +1487,16 @@ class GtkViewModel(ViewModel):
         if isLocked():
             self.doStatus(_("Printing busy"))
             return
+
+        # self.set("_printcount", int(self.get("_printcount", 0)), skipmissing=True)
+        print_count_str = self.get("_printcount", "")
+        if print_count_str:
+            print_count = int(print_count_str)
+        else:
+            print_count = 0
+        print_count += 1
+        self.set("_printcount", print_count, skipmissing=True)
+
         jobs = self.getBooks(files=True)
         if not len(jobs) or jobs[0] == '':
             self.doStatus(_("No books to print"))
@@ -1461,9 +1542,11 @@ class GtkViewModel(ViewModel):
             if not exists:
                 os.remove(pdfname)
         self.onSaveConfig(None)
+        self.checkUpdates()
 
         self._incrementProgress(val=0.)
         self.builder.get_object("t_find").set_placeholder_text(_("Processing..."))
+        self.builder.get_object("t_find").set_text("")
         try:
             self.callback(self)
         except Exception as e:
@@ -1572,13 +1655,12 @@ class GtkViewModel(ViewModel):
             self.updateDialogTitle()
         self.userconfig.set("init", "project", self.prjid)
         self.userconfig.set("init", "nointernet", "true" if self.get("c_noInternet") else "false")
+        self.userconfig.set("init", "quickrun",   "true" if self.get("c_quickRun")   else "false")
         self.noInt = self.get("c_noInternet")
-        self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
+        self.userconfig.set("init", "englinks",  "true" if self.get("c_useEngLinks") else "false")
         if getattr(self, 'configId', None) is not None:
             self.userconfig.set("init", "config", self.configId)
-        self.writeConfig(force=force)
-        self.savePics(force=force)
-        self.saveStyles(force=force)
+        self.saveConfig(force=force)
         self.onSaveEdits(None)
 
     def writeConfig(self, cfgname=None, force=False):
@@ -1590,9 +1672,9 @@ class GtkViewModel(ViewModel):
         pts = self._getPtSettings()
         if pts is not None:
             t = pts.get('Copyright', "")
-            t = re.sub("\([cC]\)", "\u00a9 ", t)
-            t = re.sub("\([rR]\)", "\u00ae ", t)
-            t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+            t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+            t = re.sub(r"\([rR]\)", "\u00ae ", t)
+            t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
             if len(t) < 100:
                 t = re.sub(r"</?p>", "", t)
                 self.builder.get_object("t_copyrightStatement").set_text(t)
@@ -1613,7 +1695,7 @@ class GtkViewModel(ViewModel):
         delCfgPath = self.configPath(cfgname=cfg)
         sec = ""
         if cfg == 'Default':
-            ui = self.get_uiChangeLevel()
+            ui = self.get_uiChangeLevel() # Why not just use: ui = self.uilevel  ???
             self.resetToInitValues()
             self.set_uiChangeLevel(ui)
             try:
@@ -1662,7 +1744,8 @@ class GtkViewModel(ViewModel):
         # if self.ptsettings is not None:
         bks = self.getAllBooks()
         for b in bks:
-            if b not in ("FRT", "INT"): # We no longer list the FRT book in the book chooser(s)
+            # if b not in ("FRT", "INT"):
+            if b != "FRT": # We no longer list the FRT book in the book chooser(s)
                 # ind = books.get(b, 0)-1
                 # if 0 <= ind <= len(bp) and bp[ind - 1 if ind > 39 else ind] == "1":
                 lsbooks.append([b])
@@ -1718,12 +1801,28 @@ class GtkViewModel(ViewModel):
         if imprj is None:
             return
         impConfigs = self.getConfigList(imprj)
-        self.ecb_impConfig.remove_all()
         if len(impConfigs):
             for cfgName in sorted(impConfigs):
                 self.ecb_impConfig.append_text(cfgName)
             self.set("ecb_impConfig", "Default")
 
+    def updatetgtProjectConfigList(self):
+        self.ecb_targetConfig.remove_all()
+        tgtprj = self.get("ecb_targetProject")
+        if tgtprj is None:
+            return
+        tgtConfigs = self.getConfigList(tgtprj)
+        if len(tgtConfigs):
+            for cfgName in sorted(tgtConfigs):
+                self.ecb_targetConfig.append_text(cfgName)
+            self.set("ecb_targetConfig", "Default")
+            
+    def updateAllConfigLists(self):
+        self.updateSavedConfigList()
+        self.updateimpProjectConfigList()
+        self.updatetgtProjectConfigList()
+        self.updateDiglotConfigList()
+    
     def loadConfig(self, config, clearvars=True, **kw):
         self.updateBookList()
         if clearvars:
@@ -2040,6 +2139,7 @@ class GtkViewModel(ViewModel):
         newpics.threadUsfms(self, pref, nosave=True)
         self.picinfos.merge(pref, pref, indat=newpics, mergeCaptions=True, bkanchors=True, captionpre="")
         self.updatePicList()
+        self.doStatus(_("Done! Picture Captions have been updated."))
 
     def onGeneratePicListClicked(self, btn):
         bks2gen = self.getBooks()
@@ -2182,16 +2282,16 @@ class GtkViewModel(ViewModel):
                         else:
                             t = getsign(*sv)
                             if t != "":
-                                vals.append("{}[{}]".format(t, sk))
+                                vals.append("{}1[{}]".format(t, sk))
                     if s == "0" and not len(vals):
                         continue
                     # if r[1] != 0: # This was preventing Intro matter vals from appearing
                     outs = "{} {}.{} {}".format(bk+r[3], r[1], str(r[2]) + r[5], s)
                     if p > 0:
-                        outs += "[{}]".format(p)
+                        outs += "1[{}]".format(p)
                     if len(vals):
-                        outs += "% " + " ".join(vals)
-                    outf.write(outs+"\n")
+                        outs += "% " + " %".join(vals)
+                    outf.write(outs.replace("+01[", "+0[")+"\n")
 
     def onChangedMainTab(self, nbk_Main, scrollObject, pgnum=-1):
         pgid = Gtk.Buildable.get_name(nbk_Main.get_nth_page(pgnum))
@@ -2244,7 +2344,6 @@ class GtkViewModel(ViewModel):
                   "scroll_SettingsOld": ("", "")}
 
         if pgid == "scroll_FrontMatter":
-            ibtn = self.builder.get_object("btn_infoViewEdit")
             ibtn.set_sensitive(True)
             ibtn.set_tooltip_text(self.frtMatterTooltip)
             fpath = self.configFRT()
@@ -2280,6 +2379,8 @@ class GtkViewModel(ViewModel):
                     else:
                         fpath = fpath[:doti] + "-" + (self.configName() or "Default") + fpath[doti:] + fndict[pgid][1]
             if pgid == "scroll_AdjList":
+                ibtn.set_tooltip_text(self.adjListTooltip)
+                ibtn.set_sensitive(True)
                 if self.get("t_invisiblePassword") == "":
                     genBtn.set_sensitive(True)
                     # self.builder.get_object("btn_removeZeros").set_visible(True)
@@ -2321,7 +2422,7 @@ class GtkViewModel(ViewModel):
             set_tooltip(fpath)
             with open(fpath, "r", encoding="utf-8", errors="ignore") as inf:
                 txt = inf.read()
-                if len(txt) > 60000:
+                if len(txt) > 60000 and pgid not in ("scroll_AdjList",):
                     txt = txt[:60000]+_("\n\n------------------------------------- \
                                            \n[File has been truncated for display] \
                                            \nClick on View/Edit... button to see more.")
@@ -2454,8 +2555,8 @@ class GtkViewModel(ViewModel):
         super().loadPics(mustLoad=mustLoad, fromdata=fromdata, force=force)
         self.updatePicList()
 
-    def onSavePicListEdits(self, btn):
-        self.savePics()
+    # def onSavePicListEdits(self, btn):
+        # self.savePics()
 
     def onSaveEdits(self, btn, pgid=None):
         if pgid is not None:
@@ -2541,12 +2642,13 @@ class GtkViewModel(ViewModel):
         fontr = self.get("bl_fontR", skipmissing=True)
         if fontr is None:
             return
-        fallbacks = ['Empties', 'Sans']
+        fallbacks = ['Droid Sans']
         if self.diglotView is not None:
             digfontr = self.diglotView.get("bl_fontR")
             fallbacks.append(digfontr.name)
         pangostr = fontr.asPango(fallbacks, fsize)
         p = Pango.FontDescription(pangostr)
+        logger.debug(f"{pangostr=}, {p}")
         for w in ("t_clHeading", "t_tocTitle", "t_configNotes", \
                   "scroll_FinalSFM", "scroll_AdjList", "scroll_FrontMatter", "scroll_Settings", "scroll_SettingsOld", \
                   "ecb_ftrcenter", "ecb_hdrleft", "ecb_hdrcenter", "ecb_hdrright", "t_fncallers", "t_xrcallers", \
@@ -2971,7 +3073,7 @@ class GtkViewModel(ViewModel):
                 obj = Gtk.CheckButton()
                 self.btnControls.add(wname)
                 v = opt[1]
-                tiptext = "\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
+                tiptext = "\\if{5}:\t[{1}]\n\n{4}".format(*opt[:5], k)
             elif wname.startswith("s_"):
                 x = opt[1]
                 # Tuple for spinners: (default, lower, upper, stepIncr, pageIncr)
@@ -3386,9 +3488,7 @@ class GtkViewModel(ViewModel):
             self.onFontChanged(None)
 
     def updateDialogTitle(self):
-        # print("in updateDialogTitle")
         titleStr = super(GtkViewModel, self).getDialogTitle()
-        # print("{titleStr=}")
         self.builder.get_object("ptxprint").set_title(titleStr)
 
     def _locFile(self, file2edit, loc, fallback=False):
@@ -3442,7 +3542,7 @@ class GtkViewModel(ViewModel):
             self.fileViews[pgnum][0].set_text(txt)
             self.onViewerFocus(self.fileViews[pgnum][1], None)
         else:
-            self.fileViews[pgnum][0].set_text(_("\nThis file doesn't exist yet!\n\nEdit here and Click 'Save' to create it."))
+            self.fileViews[pgnum][0].set_text(_("# This file doesn't exist yet!\n# Edit here and Click 'Save' to create it."))
 
     def editFile_delayed(self, *a):
         GLib.idle_add(self.editFile, *a)
@@ -3527,11 +3627,11 @@ class GtkViewModel(ViewModel):
         self.onRefreshViewerTextClicked(None)
 
     def onEditCustomSty(self, btn):
-        self.editFile("custom.sty", "prj")
+        self._editProcFile("custom.sty", "prj", intro="# This file is currently empty\n")
         self.onRefreshViewerTextClicked(None)
 
     def onEditModsSty(self, btn):
-        self.editFile("ptxprint-mods.sty", "cfg")
+        self._editProcFile("ptxprint-mods.sty", "cfg", intro="# This file is currently empty\n")
         self.onRefreshViewerTextClicked(None)
 
     def onExtraFileClicked(self, btn):
@@ -3647,6 +3747,19 @@ class GtkViewModel(ViewModel):
             if self.picListView is not None and self.picListView.picinfo is not None:
                 self.picListView.picinfo.build_searchlist()
                 self.picListView.onRadioChanged()
+                
+    def onSelectTargetFolderClicked(self, btn_tgtFolder):
+        impTargetFolder = self.fileChooser(_("Select a folder to extract the settings into"),
+                filters = None, multiple = False, folder = True)
+        if impTargetFolder is not None:
+            if len(impTargetFolder):
+                self.impTargetFolder = impTargetFolder[0]
+                self.set("lb_tgtFolder", str(impTargetFolder[0]))
+            else:
+                self.impTargetFolder = None
+                self.set("lb_tgtFolder", "")
+                self.builder.get_object("btn_tgtFolder").set_sensitive(False)
+        self.setImportButtonOKsensitivity(None)
 
     def _onPDFClicked(self, title, isSingle, basedir, ident, attr, btn, chkbx=True):
         folderattr = getattr(self, attr, None)
@@ -3684,22 +3797,71 @@ class GtkViewModel(ViewModel):
         name = Gtk.Buildable.get_name(w)[2:]
         mpgnum = self.notebooks['Import'].index("tb_"+name)
         self.builder.get_object("nbk_Import").set_current_page(mpgnum)
+        self.setImportButtonOKsensitivity(None)
 
     def setImportButtonOKsensitivity(self, w):
         status = (self.get('r_impSource') == 'pdf' and self.get('lb_impSource_pdf') == "") or \
+                 (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') == "") or \
                  (self.get('r_impSource') == 'config' and ((self.get('fcb_impProject') is None or self.get('ecb_impConfig') is None) or \
-                                                           (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
-                                                            str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig')))))
-        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status)
+                 (str(self.get('fcb_impProject')) == str(self.get("ecb_targetProject")) and \
+                  str(self.get('ecb_impConfig'))  == str(self.get('ecb_targetConfig'))))) or \
+                 (self.get('r_impTarget') == 'prjcfg' and (not len(self.get('ecb_targetProject')) or not len(self.get('ecb_targetConfig'))))
+                 # (str(self.get('fcb_impProject')) == str(self.get("fcb_project")) and \
+                 #  str(self.get('ecb_impConfig'))  == str(self.get('ecb_savedConfig'))) or \
+        
+        # Also turn on Everything setting under certain conditions:
+        somethingON = False
+        turnONall = (self.get('r_impTarget') == 'folder' and self.get('lb_tgtFolder') != "")
+        if turnONall: # Or IF a new project/config combo is selected. MH please help FIX ME!
+            self.set("c_impEverything", turnONall)
+        for c in ['Pictures', 'Layout', 'FontsScript', 'Styles', 'Other', 'Everything']:
+            somethingON = somethingON or self.get("c_imp"+c, False)
+            self.builder.get_object("c_imp"+c).set_sensitive(not turnONall)
+        
+        # The Custom Script file is NOT stored in a PDF file, so don't offer importing it as an option
+        fname = str(getattr(self, "impSourcePDF", None))
+        cstmScr = self.builder.get_object("c_oth_customScript")
+        csStat = self.get("r_impSource") == "pdf" and fname.endswith(".pdf")
+        cstmScr.set_sensitive(not csStat)
+        if csStat:
+            cstmScr.set_active(False)
+
+        self.builder.get_object("btn_importSettingsOK").set_sensitive(not status and somethingON)
+
+    def _findProjectInArchive(self, zf):
+        trials = [f for f in zf.namelist() if 'ptxprint.cfg' in f and 'shared' in f]
+        respath = None
+        if len(trials) > 1:
+            for t in trials:
+                with zf.open(t) as inf:
+                    for l in inf.readlines():
+                        s = l.decode("utf-8")
+                        if s.lstrip().startswith("ifdiglot"):
+                            if s.rstrip().endswith("True"):
+                                # this is our answer
+                                respath = t
+                                break
+        if respath is None:
+            if len(trials) == 1:
+                respath = trials[0]
+            else:
+                respath = None
+        if respath is not None:
+            res = os.path.dirname(respath)
+        else:
+            res = None
+        return res
 
     def onImportClicked(self, btn_importPDF):
         dialog = self.builder.get_object("dlg_importSettings")
         self.setImportButtonOKsensitivity(None)
+        self.set("ecb_targetProject", self.prjid)
+        self.set("ecb_targetConfig", self.configName())
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             zipinf = None
+            prefix = None
             if self.get("r_impSource") == "pdf":
-                # fname = self.get("lb_impSource_pdf")
                 fname = str(getattr(self, "impSourcePDF", None))
                 if fname.endswith(".pdf"):
                     confstream = getPDFconfig(fname)
@@ -3707,6 +3869,8 @@ class GtkViewModel(ViewModel):
                     zipdata = ZipFile(zipinf, compression=ZIP_DEFLATED)
                 elif os.path.exists(fname):
                     zipdata = ZipFile(fname)
+                    # import pdb; pdb.set_trace()
+                    prefix = self._findProjectInArchive(zipdata)
                 else:
                     zipdata = None
             elif self.get("fcb_impProject"):
@@ -3714,15 +3878,31 @@ class GtkViewModel(ViewModel):
                 zipdata = UnzipDir(dpath)
             else:
                 zipdata = None
+            statMsg = None
             if zipdata is not None:
-                self.importConfig(zipdata)
+                if self.get("r_impTarget") == "folder":
+                    outdir = str(getattr(self, "impTargetFolder", None))
+                    if outdir is not None:
+                        os.makedirs(outdir, exist_ok=True)
+                        zipdata.extractall(outdir)
+                        statMsg = _("Exported Settings to: {}").format(outdir)
+                    else:
+                        statMsg = _("Undefined target folder. Could not export settings!")
+                else:
+                    tp = self.get('ecb_targetProject', None)
+                    tc = self.get('ecb_targetConfig',  None)
+                    self.importConfig(zipdata, prefix=prefix, tgtPrj=tp, tgtCfg=tc)
+                    if tp == self.prjid:
+                        self.updateAllConfigLists()
+                    statMsg = _("Imported Settings into: {}::{}").format(tp, tc)
                 zipdata.close()
             if zipinf is not None:
                 zipinf.close()
-            if self.get("c_impPictures"):
+            if self.get("c_impPictures") or self.get("c_impEverything"):  # MH - FIX ME!
                 self.updatePicList()
-            self.onViewerChangePage(None, None, 0, forced=True)
-            self.doStatus(_("Imported Settings!"))
+            self.onRefreshViewerTextClicked(None)
+            if statMsg is not None:
+                self.doStatus(statMsg)
         dialog.hide()
 
     def onResetCurrentConfigClicked(self, btn):
@@ -3730,8 +3910,7 @@ class GtkViewModel(ViewModel):
 
     def onSelectPDForZIPfileToImport(self, btn_importPDF):
         pdfORzipFile = self.fileChooser(_("Select a PDF (or ZIP archive) to import the settings from"),
-                filters = {"PDF files": {"pattern": "*.pdf", "mime": "application/pdf", "default": True},
-                           "ZIP files": {"pattern": "*.zip", "mime": "application/zip"}},
+                filters = {"PDF/ZIP files": {"patterns": ["*.pdf", "*.zip"], "mime": "application/pdf", "default": True}},
                 multiple = False, basedir=os.path.join(self.working_dir, ".."))
 
         if pdfORzipFile == None or not len(pdfORzipFile) or str(pdfORzipFile[0]) == "None":
@@ -3946,6 +4125,15 @@ class GtkViewModel(ViewModel):
         self.set("r_impSource", "config")
         self.setImportButtonOKsensitivity(None)
         
+    def ontgtProjectChanged(self, btn):
+        self.set("r_impTarget", "prjcfg")
+        self.updatetgtProjectConfigList()
+        self.setImportButtonOKsensitivity(None)
+        
+    def ontgtConfigChanged(self, btn):
+        self.set("r_impTarget", "prjcfg")
+        self.setImportButtonOKsensitivity(None)
+        
     def ondiglotSecProjectChanged(self, btn):
         self.updateDiglotConfigList()
         self.updateDialogTitle()
@@ -3978,7 +4166,13 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("c_addSyllableBasedHyphens").set_sensitive(sylbrk)
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
-            self.generateHyphenationFile(inbooks=self.get("c_hyphenLimitBooks"), addsyls=self.get("c_addSyllableBasedHyphens"))
+            prjdir = os.path.join(self.settings_dir, self.prjid)
+            self.hyphenation = Hyphenation.fromPTXFile(self, self.prjid, prjdir,
+                                            inbooks=self.get("c_hyphenLimitBooks"),
+                                            addsyls=self.get("c_addSyllableBasedHyphens"),
+                                            strict=self.get("c_hyphenApprovedWords"),
+                                            hyphen="\u2011" if self.get('c_nonBreakingHyphens') else "\u2010")
+            self.doError(self.hyphenation.m1, secondary=self.hyphenation.m2)
         dialog.hide()
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
@@ -4015,9 +4209,8 @@ class GtkViewModel(ViewModel):
             os.startfile(fldrpath)
 
     def finished(self):
-        # print("Reset progress bar")
         GLib.idle_add(lambda: self._incrementProgress(val=0.))
-        # enable/disable the Permission Letter button
+        # TO DO: enable/disable the Permission Letter button
 
     def _incrementProgress(self, val=None):
         wid = self.builder.get_object("t_find")
@@ -4217,9 +4410,9 @@ class GtkViewModel(ViewModel):
         w = self.builder.get_object(btname)
         t = w.get_text()
         t = re.sub("</?p>", "", t)
-        t = re.sub("\([cC]\)", "\u00a9 ", t)
-        t = re.sub("\([rR]\)", "\u00ae ", t)
-        t = re.sub("\([tT][mM]\)", "\u2122 ", t)
+        t = re.sub(r"\([cC]\)", "\u00a9 ", t)
+        t = re.sub(r"\([rR]\)", "\u00ae ", t)
+        t = re.sub(r"\([tT][mM]\)", "\u2122 ", t)
         if btname == 't_plCreditText' and len(t) == 3:
             if self.get('c_sensitive'):
                 t = re.sub(r"(?i)dcc", "\u00a9 DCC", t)
@@ -4297,7 +4490,7 @@ class GtkViewModel(ViewModel):
         # Make sure there are no spaces after the _bk_ code (easy to paste in a \k "Phrase with spaces:"\k*
         #                                                   which gets converted to k.Phrasewithspaces:
         a = a[:5] + re.sub(' ', '', a[5:])
-        a = re.sub('\\\+?[a-z0-9\-]+\*? ', '', a)
+        a = re.sub(r'\\\+?[a-z0-9\-]+\*? ', '', a)
         self.set("t_plAnchor", a)
 
     def resetParam(self, btn, foo):
@@ -4361,11 +4554,11 @@ class GtkViewModel(ViewModel):
         page = nbk_PicList.get_nth_page(pgnum)
         pgid = Gtk.Buildable.get_name(page).split('_')[-1]
         filterSensitive = True if pgid == "checklist" else False
-        self.builder.get_object("bx_activeRefresh").set_visible(False)
+        # self.builder.get_object("bx_activeRefresh").set_visible(False)
         self.builder.get_object("fr_plChecklistFilter").set_sensitive(filterSensitive)
         self.builder.get_object("fr_plChecklistFilter").set_visible(filterSensitive)
         self.builder.get_object("gr_picButtons").set_visible(not filterSensitive)
-        self.builder.get_object("bx_activeRefresh").set_visible(True)
+        # self.builder.get_object("bx_activeRefresh").set_visible(True)
         for w in _allcols:
             if w in _selcols[pgid]:
                 self.builder.get_object("col_{}".format(w)).set_visible(True)
@@ -4416,7 +4609,7 @@ class GtkViewModel(ViewModel):
                     return
             else:
                 zfile = self.get("btn_locateImageSet")
-            imgsetname = unpackImageset(zfile)
+            imgsetname = unpackImageset(zfile, os.path.join(self.settings_dir, self.prjid))
             if imgsetname is not None:
                 uddir = extraDataDir("imagesets", imgsetname, create=False)
                 if not self.displayReadmeFile(imgsetname, uddir):
@@ -4438,6 +4631,8 @@ class GtkViewModel(ViewModel):
                         else:
                             lsp.append_text(imgsetname)
                     self.set("ecb_artPictureSet", imgsetname)
+            elif imgsetname == "":
+                pass
             else:
                 if self.get("c_downloadImages"):
                     self.doError("Failed Image Set", secondary="The Image Set failed to download and/or install.")
@@ -4527,6 +4722,8 @@ class GtkViewModel(ViewModel):
         self.lang = lang
         self.builder.get_object("ptxprint").destroy()
         self.onDestroy(None)
+        print("Calling i18nize from changeInterfaceLang")
+        self.i18nizeURIs()
             
     def onRHruleClicked(self, btn):
         status = self.get("c_rhrule")
@@ -4748,7 +4945,7 @@ class GtkViewModel(ViewModel):
         # if Front Matter contains one or more cover periphs, then turn OFF the auto-overwrite,
         # but if there are no \periphs relating to the cover, then turn it ON and disable control.
         coverPeriphs = ['coverfront', 'coverspine', 'coverback', 'coverwhole']
-        lt = _(" \periphs in Front Matter")
+        lt = _(" \\periphs in Front Matter")
         hasCoverPeriphs = self.isPeriphInFrontMatter(periphnames=coverPeriphs)
         w = self.builder.get_object("c_coverOverwritePeriphs")
         w.set_sensitive(True if hasCoverPeriphs else False)
@@ -4842,7 +5039,7 @@ class GtkViewModel(ViewModel):
                     self.builder.get_object("nbk_Main").set_current_page(mpgnum)
                     _errText = _("Please fill in any missing <Values> on") + "\n" + \
                                _("the Peripherals tab before proceeding.") + "\n" + \
-                               _("Update the ISBN number or deleted the entry.")
+                               _("Update the ISBN number or delete the entry.")
                     self.doError("Missing details for cover page", secondary=_errText, \
                               title="PTXprint", copy2clip=False, show=True)
                     self.warnedMissingZvars = True
@@ -4901,9 +5098,11 @@ class GtkViewModel(ViewModel):
 
     def checkUpdates(self, background=True):
         wid = self.builder.get_object("btn_download_update")
-        wid.set_visible(False)
-        if time.time() - self.lastUpdatetime < 1800: # i.e. checked less than 30 mins ago
-            logger.debug("Check for updates didn't run as it hasn't been 30 mins since startup or last check")
+        if time.time() - self.startedtime < 300: # i.e. started less than 5 mins ago
+            logger.debug("Check for updates didn't run as it hasn't been 5 mins since startup")
+            return
+        elif time.time() - self.lastUpdatetime < 3600: # i.e. checked less than an hour ago
+            logger.debug("Check for updates didn't run as it hasn't been an hour since the last check")
             return
         else:
             logger.debug(f"check for updates at {getcaller()}. OS is {sys.platform}")
@@ -4930,6 +5129,7 @@ class GtkViewModel(ViewModel):
         currv = [int(x) for x in VersionStr.split('.')]
         logger.debug(f"{newv=}, {currv=}")
         if newv <= currv:
+            wid.set_visible(False)
             return
         def enabledownload():
             tip = _("A newer version of PTXprint ({}) is available.\nClick to visit download page on the website.".format(version))
@@ -4944,14 +5144,14 @@ class GtkViewModel(ViewModel):
         if self.noInt is None or self.noInt:
             self.deniedInternet()
             return
-        if sys.platform == "win32":
-            os.system("start \"\" {}".format(url))
-        elif sys.platform == "linux":
-            os.system("xdg-open \"\" {}".format(url))
+        webbrowser.open(url)
 
     def onUpdateButtonClicked(self, btn):
         self.openURL("https://software.sil.org/ptxprint/download")
 
+    def onGiveFeedbackClicked(self, btn):
+        self.openURL(r"http://tiny.cc/ptxprintfeedback")
+                    
     def deniedInternet(self):
         self.doError(_("Internet Access Disabled"), secondary=_("All Internet URLs have been disabled \nusing the option on the Advanced Tab"))
 
@@ -4986,6 +5186,7 @@ class GtkViewModel(ViewModel):
     def onEnglishClicked(self, btn):
         self.styleEditor.editMarker()
         self.userconfig.set("init", "englinks", "true" if self.get("c_useEngLinks") else "false")
+        self.i18nizeURIs()
         
     def onvarEdit(self, tv, path, text): #cr, path, text, tv):
         model = tv.get_model()
@@ -5051,10 +5252,8 @@ class GtkViewModel(ViewModel):
 
     def grab_notify_event(self, widget, event, data=None):
         pass
-        # print("Got it!")
-        # widget.get_style_context().add_class("inactivewidget")
 
-    def onCatListAdd(self, btn): # Copied from 'onzvarAdd'
+    def onCatListAdd(self, btn):
         def responseToDialog(entry, dialog, response):
             dialog.response(response)
         dialog = Gtk.MessageDialog(parent=None, message_type=Gtk.MessageType.QUESTION,
@@ -5337,7 +5536,61 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Main").set_current_page(mpgnum)
         self.wiggleCurrentTabLabel()
 
-    def onRequestPicturePermission(self, btn):
+    def onFillRequestIllustrationsForm(self, btn):
+        # These 3 are intentionally NOT filled in. They will need 
+        # to be filled in manually on the form before submission
+        # &entry.404873931=email@address.org
+        # &entry.1412507746=Supervisor+name
+        # &entry.1562752049=Supervisor+email
+        _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScCAOsNhonkU8H9msz7eUncVVme4MvtJ7Tnzjgl9s-KAtL3oA/viewform?usp=pp_url'
+        entries = []
+
+        booklist = set(self.getBooks())
+        pics = self.getPicsInConfig(booklist)
+        if not len(pics):
+            return
+
+        prjName = self.ptsettings.get('FullName', "") if self.ptsettings is not None else ""
+        entries.append(f"&entry.344966571={prjName}")                       # Paratext Project Name
+        entries.append(f"&entry.732448545={self.getUserName()}")            # Paratext Registration Name
+        entries.append(f"&entry.751047469={self.getvar('pubentity', '')}")  # Organization
+        entries.append(f"&entry.920891476={',+'.join(pics)}")               # List of Illustrations
+        
+        ans1 = "1. I am requesting access to a specific set of illustrations to be used in one translation project."
+        entries.append(f"&entry.1554405631={ans1}")
+        entries.append(f"&entry.634072881={ans1}")
+        ans2 = "2. Typesetting for print publications using PTXprint."
+        entries.append(f"&entry.75078676={ans2}")
+        ans3 = "Yes, I agree."
+        entries.append(f"&entry.1763079060={ans3}")
+        entries.append(f"&entry.646337528={ans3}")
+        ans4 = "Yes"
+        entries.append(f"&entry.580369903={ans4}")
+
+        url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
+        logger.debug(f"Opening Pre-populated Request for Illustrations Form: {url}")
+        self.openURL(url)
+        
+    def getUserName(self):
+        unfpath = os.path.join(self.settings_dir, "localUsers.txt")
+        ptregname = ""
+        if os.path.exists(unfpath):
+            with open(unfpath, 'r') as file:
+                ptregname = file.readline().strip()  # Read the first line and strip any extra whitespace
+        return ptregname
+
+    def getPicsInConfig(self, booklist):
+        pics = [x["src"][:-5].lower() for x in self.picinfos.values() if x["anchor"][:3] in booklist]
+        if len(pics) == 0:
+            _errText = _("No illustrations were detected for this configuration.")
+            self.doError("Request Error", secondary=_errText, \
+                      title="PTXprint", copy2clip=False, show=True)
+        return pics
+
+    def onFillPicturePermissionForm(self, btn):
+        _formURL = 'https://docs.google.com/forms/d/e/1FAIpQLScGc_jhYmu2KrVzlX8oL0-Iw32-0UY6kzD6j_wm5j-VD6RsAw/viewform?usp=pp_url'
+        entries = []
+        pics = []
         metadata = {"country":       "<Country>", 
                     "langiso":       "<Ethnologue code>", 
                     "languagename":  "<Language>", 
@@ -5345,25 +5598,20 @@ class GtkViewModel(ViewModel):
                     "englishtitle" : "<Title in English>",
                     "pubtype":       "<[Portion|NT|Bible]>",
                     "copiesprinted": "<99>",
-                    "requester":     "<Requester's Name>", 
                     "pubentity":     "<Publishing Entity>"}
+        entryIDs = {"1044245222": "pubentity",       #Organization
+                    "1280052018": "country",         #Country Name
+                    "1836240032": "languagename",    #Language Name
+                    "117154869" : "langiso",         #Language Identifier
+                    "1711096593": "maintitle",       #Vernacular Publication Title
+                    "670351452" : "englishtitle",    #English Publication Title
+                    "1279725472": "copiesprinted"}   #Number of Copies
 
-        pics = []
-        if self.artpgs is not None:
-            for artist in self.artpgs.keys():
-                if artist == "co":
-                    for series in self.artpgs[artist].keys():
-                        for a,v in self.artpgs[artist][series]:
-                            pics += [v]
-        picount = len(pics)
-        if picount == 0:
-            _errText = _("This feature is limited to permission requests for David C Cook illustrations. ") + \
-                       _("No DCC illustrations were detected. Click 'Print (Make PDF)' first and then try again.")
-            self.doError("Request Permission Error", secondary=_errText, \
-                      title="PTXprint", copy2clip=False, show=True)
+        booklist = set(self.getBooks())
+        pics = self.getPicsInConfig(booklist)
+        if not len(pics):
             return
-        # See if any of the meta-data fields are missing in the zvars, and if so
-        # add them and ask the user to fill them in.
+        # If meta-data fields are missing, ask the user to fill them in.
         missing = False
         for k, v in metadata.items():
             if self.getvar(k, default=None) is None:
@@ -5374,20 +5622,46 @@ class GtkViewModel(ViewModel):
             self.builder.get_object("nbk_Main").set_current_page(mpgnum)
             _errText = _("Please fill in any missing <Values> on") + "\n" + \
                        _("the Peripherals tab before proceeding.")
-            self.doError("Missing details for request letter", secondary=_errText, \
+            self.doError("Missing details for permission request form", secondary=_errText, \
                       title="PTXprint", copy2clip=False, show=True)
             return
-        picturelist = ", ".join(pics)
-        if self.get('c_sensitive'):
-            sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
-            "(© DCC) in the copyright statement and for the credit text on each illustration.\n"
+        entries.append(f"&entry.1518194895={self.getUserName()}")
+        validRegKey = False
+        if self.ptsettings is not None:
+            regKey = self.ptsettings.get('ParatextRegistryId', "")
+            if len(regKey):
+                validRegKey = True
+        if validRegKey:
+            entries.append(f"&entry.1337767606=Yes")
+            entries.append(f"&entry.1765920399=https://registry.paratext.org/projects/{regKey}")
         else:
-            sensitive = ""
-        _permissionRequest = """
+            entries.append(f"&entry.1337767606=No")
+
+        for k, v in entryIDs.items():
+            entries.append(f"&entry.{k}={self.getvar(v, '')}")
+
+        sensitive = "Yes" if self.get('c_sensitive') else "No"
+        entries.append(f"&entry.912917069={sensitive}")
+        entries.append(f"&entry.1060720564=Scripture,+including+Study+Bible")                     #Publication Type()
+        entries.append(f"&entry.1928747119={self.getvar('pubtype', '')} ({' '.join(booklist)})")  #Scope of Publication
+        entries.append(f"&entry.667305653={',+'.join(pics)}")
+        entries.append(f"&entry.933375377=print")
+        entries.append(f"&entry.882233224=No")                                  #Reprint(Yes/No)
+        # entries.append(f"&entry.437213008" : "",           #Questions or Comments
+        # entries.append(f"&entry.1059397738": "",           #Sign(get them to fill it in manually!)
+        
+        if self.noInt is None or self.noInt:
+            # If the user has internet access disabled, draft an e-mail and put it on the clipboard.
+            if self.get('c_sensitive'):
+                sensitive = "\nDue to regional sensitivities, we plan to use the abbreviated form " + \
+                "(© DCC, or © BFBS) in the copyright statement for these illustration.\n"
+            else:
+                sensitive = ""
+            _permissionRequest = """
 TO: International Publishing Services Coordinator
 7500 West Camp Wisdom Road
 Dallas, TX 75236 USA\n
-I am writing to request permission to use the following David C Cook illustrations in a publication.\n
+I am writing to request permission to use the following illustrations in a publication.\n
 1. The name of the country, language, Ethnologue code:
 \t{}, {}, {}\n
 2. The title of the book in the vernacular:
@@ -5405,13 +5679,17 @@ Thank you,
 {}
 """.format(self.getvar("country", ""), self.getvar("languagename",  ""), \
            self.getvar("langiso", ""), self.getvar("maintitle",     ""), \
-           self.getvar("englishtitle", ""), self.getvar("pubtype", ""), \
-           self.getvar("copiesprinted", ""), picount, picturelist, sensitive, \
-           self.getvar("requester", ""), self.getvar("pubentity", ""))
-        self.doError("SIL Illustration Usage Permission Request", secondary=_permissionRequest, \
-                      title="PTXprint", copy2clip=True, show=True, \
-                      who2email="scripturepicturepermissions_intl@sil.org")
-
+           self.getvar("englishtitle", ""), self.getvar("pubtype", "") + " (" + ' '.join(booklist) + ")", \
+           self.getvar("copiesprinted", ""), len(pics), ', '.join(pics), sensitive, \
+           self.getUserName(), self.getvar("pubentity", ""))
+            self.doError("Illustration Usage Permission Request", secondary=_permissionRequest, \
+                          title="PTXprint", copy2clip=True, show=True, \
+                          who2email="scripturepicturepermissions_intl@sil.org")
+        else:
+            url = f"{_formURL}{''.join(entries)}".replace(" ", "+")
+            logger.debug(f"Opening Pre-populated Permission Request Form: {url}")
+            self.openURL(url)
+            
     def onOverridePageCountClicked(self, btn):
         override = self.sensiVisible('c_overridePageCount')
         if not override:
@@ -5509,4 +5787,9 @@ Thank you,
     def bdrPaddingUniformClicked(self, btn):
         self.styleEditor.bdrPaddingUniformClicked()
 
-        
+    def onlockLayoutModeClicked(self, wid):
+        status = self.sensiVisible('c_lockLayoutMode')
+        if status:
+            self.set("s_ptxversion", str(TexModel._ptxversion))
+        else:
+            self.set("s_ptxversion", "0")

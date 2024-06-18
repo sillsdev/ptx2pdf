@@ -1,0 +1,77 @@
+\input paratext2.tex
+%\let\TRACEdiglot=\doTRACEdiglot% Generate (numbered) trace
+%\VisTracetrue% Every chunk joined, mark with the current trace number
+\diglotDbgJoinboxes=6876 % And if that's not enough, assuming trace entry 1246
+%\nonstopmode
+%\scrollmode
+%is from joinboxes (which pastes 2 left or 2 right columns together) show the
+%boxes joined.
+\showboxdepth=100 %.... In all their gory detail
+\showboxbreadth=100
+%\tracingifs=1
+%\tracingoutput=1
+%\diglotInnerOutertrue
+\XeTeXuseglyphmetrics=0
+\ColumnGutterRuletrue
+%\def\BelowFootNoteRuleSpace{5pt}
+\ColorFontstrue
+\AboveNoteSpace=15pt
+\JoinGutterRuletrue
+\NoteGutterRuletrue
+%\diglotDebugFollowContentstrue %create 500k debug lines...
+
+\input Galatians-setup.tex
+\iftrue
+% \tracing{H}
+ \tracing{d}
+ %\tracing{dP}
+\tracing{F}
+% \tracing{dP}
+ \tracing{s}
+ \tracing{n}
+ \tracing{V}
+ %\tracing{S}
+% \tracing{sC}
+ \VisTracetrue
+ %\VisTraceExtratrue
+ %\tracing{D}
+\fi
+
+\XeTeXuseglyphmetrics=0
+\def\LineSpaceBase{12}
+\def\LineSpacingFactorL{1.15}
+\ParallelNoteNumbering{f}
+\FontSizeUnitL=.85pt
+\FontSizeUnitR=.85pt
+\def\LineSpacingFactorR{1.15}
+\pageno=-1
+%\tracing{s}\tracing{S}
+%\uselanguage{british}
+\diglotfalse
+\singlecolumn
+%\ptxfile{intro.usfm}
+\def\doLines{\doGridLines}
+\def\tighter{\looseness=-1}
+\pageno=1
+%\tracingmacros 1
+%\diglotcolumns
+%\addToLeftHooks{\RTLfalse}
+%\addToRightHooks{\RTLtrue}
+\diglotSepNotestrue
+\diglotBalNotestrue
+\ParallelNoteNumbering{f}
+%\DistinctNoteNumbering{f}
+\diglottrue
+\ptxfile{egmerged.usfm}
+\diglotcolumns
+\diglotSepNotesfalse
+
+%\shipout\vbox{\hbox{partial}\unvbox\partial}
+%\shipout\vbox{\hbox{partialL}\unvbox\partialL}
+%\shipout\vbox{\hbox{partialR}\unvbox\partialR}
+%\shipout\vbox{\hbox{excessL}\unvbox\excessL}
+%\shipout\vbox{\hbox{excessR}\unvbox\excessR}
+%\output={\unvbox\partial\shipout\box255}
+%\pagebreak
+%\tracingall
+\end

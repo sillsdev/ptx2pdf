@@ -48,10 +48,10 @@
   \ifx\t@st\t@tle\else\ifx\t@st\intr@\else
     \trace{H}{Extracting 1st ref from "\t@st"}\x@\extr@ctfirst\t@st\relax
     \edef\@@firstref{\ifx\@book\empty\else
-      \ifOmitBookRef\else\@book\ \fi
-      \ifOmitChapterNumberRH\else\@chapter\fi
+      \ifOmitBookRef\else\@book\fi
+      \ifOmitChapterNumberRH\else\ \@chapter\fi
       \ifVerseRefs
-        \ifOmitChapterNumberRH\else\cvs@p\fi
+        \ifOmitChapterNumberRH\ \else\cvs@p\fi
         \@verse
       \fi
     \fi}%
@@ -69,21 +69,22 @@
    \x@\extr@ctlast\t@st\relax
      \ifx\@@book\empty\else
        \ifx\@@book\t@tle\else
-         \ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
+         \ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\fi\ifVerseRefs\ifOmitChapterNumberRH\ \else\cvs@p\fi\@@verse\fi\fi\fi\fi\fi\fi}
 
 %
 % Print the range of references from a pair of marks
 %
 \edef\emptym@rk{::}
 \def\r@ngerefs#1#2{%
+ %\tracingassigns=1
  \edef\t@st{#1}\ifx\t@st\t@tle\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctfirst\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctfirst\t@st\relax\fi\fi\fi
  \edef\t@st{#2}\ifx\t@st\t@tle\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\empty\x@\extr@ctlast\emptym@rk\relax\else\ifx\t@st\intr@\x@\extr@ctfirst\emptym@rk\relax\else\x@\extr@ctlast\t@st\relax\fi\fi\fi
  \trace{v}{r@ngerefs \@book=\@chapter\cvs@p\@verse, \@@book=\@@chapter\cvs@p\@@verse}%
  \ifx\@book\empty\else
-  \ifOmitBookRef\else\@book\ \fi
+  \ifOmitBookRef\else\@book\fi
   \ifVerseRefs
    \ifOmitChapterNumberRH\else
-    \ifx\@chapter\empty\else\@chapter\cvs@p\fi\@verse
+    \ifx\@chapter\empty\else\ \@chapter\cvs@p\fi\@verse
     \ifx\@book\@@book
      \ifx\@chapter\@@chapter
       \ifx\@verse\@@verse\else\ranges@p\@@verse\fi
@@ -91,24 +92,34 @@
       \ranges@p\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
      \fi
     \else
-     \ranges@p\ifOmitBookRef\else\@@book\ \fi\ifOmitChapterNumberRH\else\@@chapter\cvs@p\@@verse\fi
+     \ranges@p\ifOmitBookRef\else\@@book\fi\ifOmitChapterNumberRH\else\ \@@chapter\cvs@p\@@verse\fi
     \fi
    \fi
   \else
-   \ifOmitChapterNumberRH\else
-    \ifx\@chapter\empty\else
-     \@chapter
-     \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
-      \setbox0=\hbox{\tracinglostchars=0
-      \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
-      \advance\c@untA by 1
-      \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
-      \@@chapter
-     \fi\fi
+   \ifx\@book\@@book
+    \ifOmitChapterNumberRH\else
+     \ifx\@chapter\empty\else
+      \ \@chapter
+      \ifx\@chapter\@@chapter\else\ifx\@@chapter\empty\else
+       \setbox0=\hbox{\tracinglostchars=0
+       \global\c@untA=0\@chapter \global\c@untB=0\@@chapter}%
+       \advance\c@untA by 1
+       \ifnum\c@untA=\c@untB \pairs@p \else \ranges@p \fi
+       \@@chapter
+      \fi\fi
+     \fi
+    \fi
+   \else
+    \ifOmitChapterNumberRH
+      \ranges@p \@@book
+    \else
+      \ \@chapter \ranges@p \@@book \ \@@chapter
     \fi
    \fi
   \fi
- \fi}
+ \fi
+ %\tracingassigns=0
+}
 \newcount\c@untA \newcount\c@untB
 
 %
@@ -163,9 +174,9 @@
 \headline={\hbox to \textwidth{%
  \mcpush{P}{h}%
  \s@tfont{h}{h}%
- \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
+ \ifm@rksonpage\trace{H}{marks on page pfm:\p@gefirstmark -> \p@gebotmark}\else\trace{H}{No marks on page. old pfm:\p@gefirstmark}\gdef\p@gefirstmark{}\fi
  \edef\t@st{\p@gefirstmark}% check first mark on page to see if this is a "title" page
- \trace{h}{page \the\pageno (h), first mark=\t@st p@geone\ifp@geone true\else false\fi}%
+ \trace{h}{page \the\pageno (h), first mark=\t@st \space p@geone\ifp@geone true\else false\fi}%
  \global\rhr@letrue
  \ifnum\ifx\t@st\empty\ifp@geone 0\else 1\fi\else\ifx\t@st\intr@\ifp@geone 0\else 1\fi\else 0\fi\fi =1
   \trace{h}{no p@gefirstmark (\t@st). Page 1 is \ifp@geone True\else False\fi}%
@@ -183,9 +194,9 @@
       \global\rhr@lefalse
     \else
       \ifodd\pageno
-	\the\oddhead
+        \the\oddhead
       \else
-	\ifDoubleSided \the\evenhead \else \the\oddhead\fi
+        \ifDoubleSided \the\evenhead \else \the\oddhead\fi
       \fi
     \fi
 %  \fi
@@ -358,12 +369,12 @@
 \def\RFtitleright{\empty}
 
 \def\HEADFOOTset#1#2#3#4#5#6#7#8{%
-  \x@\def\csname R#1#2evenleft\endcsname{#3}%
-  \x@\def\csname R#1#2evencenter\endcsname{#4}%
-  \x@\def\csname R#1#2evenright\endcsname{#5}%
-  \x@\def\csname R#1#2oddleft\endcsname{#6}%
-  \x@\def\csname R#1#2oddcenter\endcsname{#7}%
-  \x@\def\csname R#1#2oddright\endcsname{#8}}%
+  \x@\gdef\csname R#1#2evenleft\endcsname{#3}%
+  \x@\gdef\csname R#1#2evencenter\endcsname{#4}%
+  \x@\gdef\csname R#1#2evenright\endcsname{#5}%
+  \x@\gdef\csname R#1#2oddleft\endcsname{#6}%
+  \x@\gdef\csname R#1#2oddcenter\endcsname{#7}%
+  \x@\gdef\csname R#1#2oddright\endcsname{#8}}%
 %usage: #1 H or F (head or foot)
 % #2 {}, {title} {noV}
 % #3-#8 Left,centre,right / left, centre,right for even,odd pages.

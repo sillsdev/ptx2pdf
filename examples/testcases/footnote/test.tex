@@ -6,11 +6,14 @@
 \stylesheet{default-custom.sty}
 \stylesheet{test.sty}
 \input "usfmTex-settings.tex"
-%\input "usfmTex-ext.tex"
+\input "usfmTex-ext.tex"
 %\input "hooks.tex"
 %\tracingmacros=1
 %\tracingassigns=1
+\tracingoutput=1
+%\nonstopmode
 \tracing{f}
+\tracing{fp}
 \tracing{sP}
 \tracing{n}
 \tracing{nS}
@@ -30,11 +33,20 @@
 \def\notebreak{\endgraf\kern 1sp}
 \tracing{s}
 \tracing{j}
+\parnotesmidtopskiptrue
+\parnotesruletopskipfalse
+\parnoteskillprevdepthfalse
+\global\AboveNoteSpace=5pt
+\def\BelowFootNoteRuleSpace{5.2pt}
+\XeTeXuseglyphmetrics=3
+%\FootNoteGlyphMetricstrue
 \newparnotestrue
 \ptxfile{test.usfm}
-\ParagraphedNotes{fe}
+\ParagraphedNotes{f}
+\ptxfile{test.usfm}
 \newparnotesfalse
 \ptxfile{test.usfm}
+\ParagraphedNotes{fe}
 \unbalancedtrue
 \tracing{t}
 %\tracingassigns=1
@@ -48,5 +60,7 @@
 \tracing{p}
 \global\lastptxfiletrue
 %\expandafter\def\csname bookend-all\endcsname{\message{ENDOFBOOK}==END+OF+BOOK}%
+\newparnotestrue
 \ptxfile{table.usfm}
+\message{ANS: \the\AboveNoteSpace}
 \bye

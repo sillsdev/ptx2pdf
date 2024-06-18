@@ -3,8 +3,9 @@
 \c 1 
 \s Test file for trigger-based text inclusion
 \p
-\v 1 Labore nobis\f * \fr 1.1\fr* \ft this footnote is in the text.\f* suscipit aut qui aut et. Quia quia ex qui ex quia illo. Sunt occaecati quasi libero omnis distinctio accusamus cumque ullam. Eum at dignissimos occaecati expedita ut libero quidem.
+\v 1 Labore nobis\f * \fr 1.1\fr* \ft this footnote is in the text.\f* suscipit aut qui aut et. Quia quia ex qui ex quia illo. Sunt occaecati quasi libero omnis distinctio accusamus cumque ullam. Eum at dignissimos occaecati expedita ut libero quidem.\ef + \ft This is a longer footnote that will demonstrate that we can use adjustpar on it when it spreads to a longer line than it would have normally.\ef*
 \p
+
 \v 2 Mollitia \add quo\add* totam nihil est dignissimos et dolores. Aperiam et natus aut illum aspernatur. Ea voluptas qui placeat praesentium qui voluptatibus consectetur. Debitis nobis neque velit laudantium dolorum deserunt. Voluptates ad nihil ad vel blanditiis. Cupiditate in laborum necessitatibus quaerat qui quidem.
 \v 3 Enim placeat est et blanditiis nobis maiores dolore eum. 
 \p 
@@ -29,6 +30,7 @@ Culpa et aperiam quis aut eos. Et reprehenderit enim quasi est et sunt. Consecte
 \p
 \k Word\k* Is a part of speech that could be uttered in isolation. Consult a linguist for lots of technical extra bits we won't bother with.
 
-\p \zfiga|Word\*This is the second paragraph in the definition of word.  \zvar|test\*. \zvar|test\*!
+\p 
+ This is the second paragraph in the definition of \zfiga|Word\* word.  \zvar|test\*. \zvar|test\*!
 
 \p This is the next  paragraph after the milestone.

@@ -151,7 +151,9 @@ class Element(list):
         endmarker = self.meta.get('Endmarker', '')
         body = ''.join(map(str, self))
         sep = ''
-        if len(self) > 0:
+        if self.name == "c":
+            marker += "\n"
+        elif len(self) > 0:
             if not body.startswith(('\r\n', '\n')):
                 sep = ' '
         elif self.meta.get('StyleType') == 'Character':
@@ -664,7 +666,7 @@ class parser(collections.abc.Iterable):
         tok = tok[1:]
         extindex = tok.find("^")
         ttok = tok[:extindex] if extindex >= 0 else tok
-        tag = Tag(ttok.lstrip('+'), tok[0] == '+', tok.lstrip('+'))
+        tag = Tag(ttok.lstrip('+'), len(tok) and tok[0] == '+', tok.lstrip('+'))
         if parent is None:
             return tag
         stype = self._sty.get(ttok.lstrip('+'),{}).get('StyleType', None)

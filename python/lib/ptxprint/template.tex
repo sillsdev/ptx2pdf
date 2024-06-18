@@ -4,11 +4,11 @@
 \input paratext2.tex
 \input ptx-ptxprint.tex
 \csname idf@nt\endcsname % use a locally available font (we ship this one)
-
 {fancy/enableornaments}\stylesheet{{standardborders.sty}}
 {fancy/enableornaments}\SwitchOrnamentsFamily{{pgfhan}}
 {fancy/enableornaments}\SwitchOrnamentsFamily{{vectorian}}
 {project/ifusepremodstex}\includeifpresent{{{/premodspath}}}
+\PiclistLitPcttrue
 %%%%% Aligned Diglot Switches
 {document/ifdiglot}\diglottrue
 {document/ifndiglot}\diglotfalse
@@ -106,6 +106,7 @@
 %%%%% Layout %%%%%
 {document/ifhidehboxerrors}\overfullrule=0pt
 \RTL{document/ifrtl}   % Use right-to-left layout mode?
+\RTL{L_}{document/ifrtl}
 {document/toptobottom}\XeTeXupwardsmode=1     % Top-to-Bottom and Left-to-Right layout
 {document/toptobottom}\rotatetrue
 % Specify ISO 639-1 language code.
@@ -117,7 +118,7 @@
 %\XeTeXlinebreakskip=0em plus 0.1em minus 0.01em
 \JustifyPars{paragraph/ifjustify}
 \IndentAfterHeading{document/firstparaindent}
-\IndentUnit={document/indentunit}in
+\IndentUnit{L_}={document/indentunit}in
 
 %%% Chapters & Verses %%%
 \OmitVerseNumberOne{document/ifomitverseone}
@@ -203,8 +204,8 @@
 \def\HeaderPosition{{{paper/headerposition}}}
 \def\FooterPosition{{{paper/footerposition}}}
 {header/ifrhrule}\RHruleposition={paper/ruleposition}pt
-\def\RangeSeparator{{\kern.1em\char"2013\kern.1em}} % what to put between first - last of a reference range
-\def\ChapterVerseSeparator{{\kern.02em{header/chvseparator}\kern.02em}} % what to put between chapter:verse
+\def\RangeSeparator{{\kern.1em{rangesep_}\kern.1em}} % what to put between first - last of a reference range
+\def\ChapterVerseSeparator{{\kern.02em{chvssep_}\kern.02em}} % what to put between chapter:verse
 
 %% Even Header
 \def\RHevenleft{{{header/evenleft}}}
@@ -269,8 +270,9 @@
 \def\b{{\the\p@rstylehooks \par\bgroup\s@tbaseline{{b}}\vskip\baselineskip\egroup}}
 %%%%% Hyphenation %%%%%
 \newlanguage\langund \language\langund
+\catcode`\@=11
 {paragraph/ifhavehyphenate}{paragraph/ifhyphenate}\bgroup\liter@lspecials\input "{/ptxrpath}/{project/id}/shared/ptxprint/hyphen-{project/id}.tex" \egroup
-{paragraph/ifomithyphen}\defaulthyphenchar=8203
+{paragraph/ifomithyphen}\defaulthyphenchar=8203 % \u200B
 {paragraph/ifnothyphenate}\hyphenpenalty=10000 \exhyphenpenalty=10000
 \catcode`\@=12
 \let\pb=\pagebreak
@@ -293,6 +295,8 @@
 {document/imageCopyrights}
 %\snippets
 
+\exhyphenpenalty=\hyphenpenalty
+
 {project/ifcolophon}\expandafter\def\csname bookend-final\endcsname{{
 {project/ifcolophon}\layoutstylebreak
 {project/ifcolophon}\singlecolumn
@@ -312,7 +316,7 @@
 \BodyColumns=1     % Temporarily set this to Single Column for the ToC page(s)
 
 \NoBodytrue
-{document/iftocleaders}\tocleaders{{{document/tocleaderstyle}}}{{3pt}}
+{document/iftocleaders}\addtoinithooks{{\relax \tocleaders{document/tocleaderrule}{{{document/tocleaderstyle}}}{{3pt}} \relax}}
 {document/toc}\includeifpresent{{{jobname}.toc}}
 {frontincludes_}
 {document/ifdiglot}\diglotfalse

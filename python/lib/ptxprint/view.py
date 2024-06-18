@@ -15,6 +15,7 @@ from ptxprint.styleditor import StyleEditor
 from ptxprint.xrefs import StrongsXrefs
 from ptxprint.reference import RefList, RefRange, Reference
 from ptxprint.texpert import TeXpert
+from ptxprint.hyphen import Hyphenation
 import ptxprint.scriptsnippets as scriptsnippets
 import ptxprint.pdfrw.errors
 import os, sys
@@ -31,8 +32,8 @@ from base64 import b64encode, b64decode
 
 logger = logging.getLogger(__name__)
 
-VersionStr = "2.4"
-GitVersionStr = "2.4"
+VersionStr = "2.4.22"
+GitVersionStr = "2.4.22"
 ConfigVersion = "2.16"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
@@ -78,6 +79,7 @@ class ViewModel:
         "document/diffPDF":         ("diffPDF", False, "lb_diffPDF"),
         "document/customfigfolder": ("customFigFolder", False, "lb_selectFigureFolder"),
         "import/impsourcepdf":      ("impSourcePDF", False, "lb_impSource_pdf"),
+        "import/imptgtfolder":      ("impTargetFolder", False, "lb_tgtFolder"),
         "covergen/imagefile":       ("coverImage", False, "lb_coverImageFilename"),
         "document/customoutputfolder": ("customOutputFolder", False, None)
     }
@@ -107,7 +109,7 @@ class ViewModel:
         # importPDFsettings  (removed from list below)
         for v in ("""ptsettings FrontPDFs BackPDFs diffPDF customScript customXRfile 
                      moduleFile DBLfile watermarks pageborder sectionheader endofbook versedecorator 
-                     customFigFolder customOutputFolder impSourcePDF coverImage
+                     customFigFolder customOutputFolder impSourcePDF impTargetFolder coverImage
                      prjid configId diglotView usfms picinfos bookrefs""").split():
             setattr(self, v, None)
         self.isDiglot = False
@@ -127,6 +129,7 @@ class ViewModel:
         self.spine = 0
         self.periphs = {}
         self.digSuffix = None
+        self.hyphenation = None
 
         # private to this implementation
         self.dict = {}
@@ -278,7 +281,7 @@ class ViewModel:
                 if os.path.exists(os.path.join(self.settings_dir, self.prjid, bname)):
                     if b.first.book == "FRT":
                         self.switchFRTsettings()
-                    elif b.first.book == "INT":
+                    elif b.first.book == "INT" and self.get("c_useSectIntros"):
                         pass
                     else:
                         res.append(b)
@@ -619,6 +622,7 @@ class ViewModel:
             self.picChecksView.init(basepath=self.configPath(cfgname=None), configid=self.configId)
             self.picinfos = None
             self.loadPics(mustLoad=False, force=True)
+            self.hyphenation = None
             pts = self._getPtSettings()
             if pts is not None:
                 lngCode = "-".join((x for x in pts.get("LanguageIsoCode", ":").split(":") if x))
@@ -1115,14 +1119,12 @@ class ViewModel:
                                 self.paintLock(v.widget, lock, editableOverride)
                         except AttributeError:
                             pass # ignore missing keys
-                elif categories is not None:
-                    continue
-                elif sect in ("vars", "strongsvar"):
+                elif sect in ("vars", "strongsvar") and (categories is None or 'variables' in categories):
                     if opt is not None and editableOverride:
                         setvar(opt[1:], val, "strongs" if sect == "strongsvar" else None, True, varcolour)
                     else:
                         setvar(opt or "", val, "strongs" if sect == "strongsvar" else None, not lock, None)
-                elif sect in FontModelMap:
+                elif sect in FontModelMap and (categories is None or 'fontscript' in categories):
                     v = FontModelMap[sect]
                     if v[0].startswith("bl_") and opt == "name":    # legacy
                         vname = re.sub(r"\s*,?\s+\d+\s*$", "", val) # strip legacy style and size
@@ -1140,7 +1142,7 @@ class ViewModel:
                         setv(FontModelMap[sect][0], vf)
                 if key in self._activekeys:
                     getattr(self, self._activekeys[key])()
-        if categories is None:
+        if categories is None or 'texpert' in categories:
             TeXpert.loadConfig(config, self)
         for k, v in self._settingmappings.items():
             if categories is not None and ModelMap[k].category not in categories:
@@ -1150,7 +1152,7 @@ class ViewModel:
                 val = config.get(sect, name)
             except (configparser.NoOptionError, configparser.NoSectionError):
                 setv(ModelMap[k].widget, self.ptsettings.dict.get(v, ""))
-        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'tabsborders' in categories):
+        if not dummyload and self.get("c_thumbtabs") and (categories is None or 'thumbtabs' in categories):
             self.updateThumbLines()
         self.updateFont2BaselineRatio()
 
@@ -1196,9 +1198,21 @@ class ViewModel:
         else:
             self.styleEditor.setval('x', 'NoteBlendInto', None)
 
+    def loadHyphenation(self):
+        if self.hyphenation:
+            return
+        if self.get("c_hyphenate"):
+            self.hyphenation = Hyphenation.fromTeXFile(self.prjid, os.path.join(self.settings_dir, self.prjid))
+        else:
+            self.hyphenation = None
 
     def editFile_delayed(self, *a):
         pass
+
+    def saveConfig(self, force=False):
+        self.writeConfig(force=force)
+        self.savePics(force=force)
+        self.saveStyles(force=force)
 
     def saveStyles(self, force=False):
         if not force and self.configLocked():
@@ -1274,7 +1288,7 @@ class ViewModel:
 
     def getPicRe(self):
         r = r"_?(" + "|".join(sorted(self.copyrightInfo['copyrights'].keys(), key=lambda x:(-len(x), x))) \
-                + ")(\d+)([^.]*)"
+                + r")(\d+)([^.]*)"
         return r
 
     def getDraftFilename(self, bk, ext=".piclist"):
@@ -1357,100 +1371,6 @@ class ViewModel:
                             if periphid in periphnames:
                                 return True
         return False
-
-    def generateHyphenationFile(self, inbooks=False, addsyls=False):
-        listlimit = 63929
-        prjid = self.get("fcb_project")
-        prjdir = os.path.join(self.settings_dir, self.prjid)
-        infname = os.path.join(self.ptsettings.basedir, prjid, 'hyphenatedWords.txt')
-        outfname = os.path.join(self.ptsettings.basedir, prjid, "shared", "ptxprint", 'hyphen-{}.tex'.format(prjid))
-        hyphenatedWords = []
-        if not os.path.exists(infname):
-            m1 = _("Failed to Generate Hyphenation List")
-            m2 = _("{} Paratext Project's Hyphenation file not found:\n{}").format(prjid, infname)
-            self.doError(m1, secondary=m2)
-            return
-        z = 0
-        m2b = ""
-        m2c = ""
-        m2d = ""
-        nohyphendata = []
-        with universalopen(infname) as inf:
-            for l in inf.readlines()[8:]: # Skip over the Paratext header lines
-                l = l.strip().replace(u"\uFEFF", "")
-                l = re.sub(r"[*\",;:!?']", "", l) # to be continued...
-                l = re.sub(r"-", "\u2010", l)
-                l = re.sub(r"=", "-", l)
-                # Paratext doesn't seem to allow segments of 1 character to be hyphenated  (for example: a-shame-d) 
-                # (so there's nothing to filter them out, because they don't seem to exist!)
-                # Also need to strip out words with punctuation chars (eg. Burmese \u104C .. \u104F)
-                if "-" in l:
-                    if regex.search(r'[^\p{L}\p{M}\-]', l):
-                        z += 1
-                    else:
-                        if l[0] != "-" and len(l) > 5:
-                            hyphenatedWords.append(l)
-                elif "\u2010" not in l:
-                    lng = len(l)
-                    if lng > 9:
-                        nohyphendata.append(l)
-        snippet = self.getScriptSnippet()
-        scriptregs = snippet.regexes(self)
-        c = len(hyphenatedWords)
-        if c >= listlimit or len(scriptregs) or inbooks:
-            hyphwords = set([x.replace("-", "") for x in hyphenatedWords])
-            acc = {}
-            usfms = self.get_usfms()
-            for bk in self.getBooks():
-                u = self.get_usfm(bk)
-                if u is None:
-                    continue
-                u.getwords(init=acc)
-            if inbooks: # cut the list down to only include words that are actually in the text
-                hyphenatedWords = [w for w in hyphenatedWords if w.replace("-","") in acc]
-                c = len(hyphenatedWords)
-            if c >= listlimit:
-                hyphcounts = {k:acc.get(k.replace("-",""), 0) for k in hyphenatedWords}
-                hyphenatedWords = [k for k, v in sorted(hyphcounts.items(), key = lambda x: (-x[1], -len(x[0])))][:listlimit]
-                m2b = _("\n\nThat is too many for XeTeX! List truncated to longest {} words found in the active sources.").format(len(hyphenatedWords))
-            elif addsyls and len(scriptregs):
-                moreWords = []
-                incnthyphwords = 0
-                for w in sorted(acc.keys(), key=lambda x:-acc[x]):
-                    if len(w) < 7:
-                        continue
-                    if w in hyphwords:
-                        incnthyphwords += 1
-                        continue
-                    if regex.search(r'[^\p{L}\p{M}\-]', w):
-                        z += 1
-                        continue
-                    a = runChanges(scriptregs, None, w)
-                    if len(a) == len(w):
-                        continue
-                    moreWords.append(re.sub("[\u00AD\u200B]", "-", a))
-                    if len(moreWords) + c >= listlimit:
-                        break
-                moreWords.sort(key=len, reverse=True)
-                hyphenatedWords.extend(moreWords)
-                m2b = _("\n{} additional words were added using syllable-based rules.").format(len(moreWords)) + \
-                        _("\nResulting in a total of {} words in the hyphenation list.").format(len(hyphenatedWords))
-                
-        # hyphenatedWords.sort(key = lambda s: s.casefold())
-        outlist = '\\catcode"200C=12\n\\catcode"200D=12\n\\hyphenation{' + "\n".join(hyphenatedWords) + "}"
-        with open(outfname, "w", encoding="utf-8") as outf:
-            outf.write(outlist)
-        if len(hyphenatedWords) > 1:
-            m1 = _("Hyphenation List Generated")
-            m2a = _("{} words were gathered from Paratext's hyphenation word list.").format(c)
-            if z > 0:
-                m2c = _("\n\nNote: {} words containing non-Letters and non-Marks").format(z) + \
-                        _("\n(ZWJ, ZWNJ, etc.) have not been included in the hyphenation list.")
-            m2 = m2a + m2b + m2c
-        else:
-            m1 = _("Hyphenation List was NOT Generated")
-            m2 = _("No valid words were found in Paratext's Hyphenation List")
-        self.doError(m1, secondary=m2)
 
     def onFindMissingCharsClicked(self, btn_findMissingChars):
         count = collections.Counter()
@@ -1700,6 +1620,13 @@ class ViewModel:
         res.update(ptres)
         return (res, cfgchanges, tmpfiles)
 
+    def createView(self, prjid, cfgid):
+        # import pdb; pdb.set_trace()
+        res = ViewModel(self.settings_dir, self.working_dir, self.userconfig, self.scriptsdir)
+        res.setPrjid(prjid)
+        res.setConfigId(cfgid)
+        return res
+
     def createDiglotView(self, suffix="R"):
         self.setPrintBtnStatus(2)
         prjid = self.get("fcb_diglotSecProject")
@@ -1835,7 +1762,7 @@ set stack_size=32768""".format(self.configName())
         for t in texfiles:
             if t.endswith("_FRT.SFM"):
                 continue
-            batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\..\..'.format(os.path.basename(t))
+            batfile += '\nif exist "%truetex%" "%truetex%" {}\ncd ..\\..\\..'.format(os.path.basename(t))
         zf.writestr("{}/runtex.txt".format(self.prjid), batfile)
 
     def createSettingsZip(self, outf):
@@ -1892,9 +1819,18 @@ set stack_size=32768""".format(self.configName())
                                     logger.debug(f"Unable to delete file: {newadjf} due to {E}") 
                                 os.rename(oldadjf, newadjf)
 
-    def importConfig(self, fzip):
-        ''' Imports another config into this one based on import settings '''
+    def importConfig(self, fzip, prefix="", tgtPrj=None, tgtCfg=None):
+        ''' Imports another config into this or another view, based on import settings '''
+        if prefix is None:
+            prefix = ""
+        elif not prefix.endswith("/"):
+            prefix += "/"
+        if tgtPrj != self.prjid or tgtCfg != self.configName():
+            view = self.createView(tgtPrj, tgtCfg)
+        else:
+            view = self
         # assemble list of categories to import from ptxprint.cfg
+        impAll = self.get("c_impEverything", False)
         hasOther = self.get("c_impOther")
         useCats = set()
         for k, v in ImportCategories.items():
@@ -1902,73 +1838,78 @@ set stack_size=32768""".format(self.configName())
                 continue
             if self.get(k):
                 useCats.add(v)
-
+        if self.get("c_impVariables", False):
+            useCats.add("variables")
+            useCats.add("meta")
+        logger.debug(f"Importing Categories: {useCats}")
         # import settings with those categories
         config = configparser.ConfigParser(interpolation=None)
         try:
-            with zipopentext(fzip, "ptxprint.cfg") as inf:
+            with zipopentext(fzip, "ptxprint.cfg", prefix=prefix) as inf:
                 config.read_file(inf)
         except (KeyError, FileNotFoundError):
             pass
-        (oldversion, forcerewrite) = self.versionFwdConfig(config, None)
-        self.loadingConfig = True
-        self.localiseConfig(config)
-        self.loadConfig(config, updatebklist=False, categories=useCats)
+        (oldversion, forcerewrite) = view.versionFwdConfig(config, None)
+        view.loadingConfig = True
+        view.localiseConfig(config)
+        # loadConfig(self, config, setv=None, setvar=None, dummyload=False, updatebklist=True, 
+        #            lock=False, clearvars=True, categories=None)
+        view.loadConfig(config, updatebklist=False, categories=useCats if not impAll else None)
         cfgid = config.get("config", "name", fallback=None)
         prjid = config.get("project", "id", fallback=None)
         grabfront = False
         if config.get("fancy", "enableOrnaments", fallback=False):
-            self.set("c_useOrnaments", True)
-        exclfields = None if self.get("c_impFontsScripts") else \
+            view.set("c_useOrnaments", True)
+        exclfields = None if impAll or self.get("c_impFontsScripts") else \
                 ('fontname', 'ztexfontfeatures', 'ztexfontgrspace') # 'fontsize'
 
         # import pictures according to import settings
-        if self.get("c_impPictures"):
-            otherpics = PicInfo(self.picinfos.model)
+        if impAll or self.get("c_impPictures"):
+            otherpics = PicInfo(view.picinfos.model)        # will this work for a new view?
             picfile = "{}-{}.piclist".format(prjid, cfgid)
             try:
-                with zipopentext(fzip, picfile) as inf:
+                with zipopentext(fzip, picfile, prefix=prefix) as inf:
                     otherpics.read_piclist(inf, "B")
             except (KeyError, FileNotFoundError) as e:
                 pass
-            if self.get("r_impPics") == "entire":
-                self.picinfos = otherpics
+            if impAll or self.get("r_impPics") == "entire":
+                view.picinfos = otherpics
             else:
                 fields = set()
                 for n, v in [(x.widget[6:], self.get(x.widget)) for x in ModelMap.values() if x.widget is not None and x.widget.startswith("c_pic_")]:
                     if v:
                         for f in self._picFields.get(n, (n.lower(), )):
                             fields.add(f)
-                addNewPics = self.get("c_impPicsAddNew")
-                delOldPics = self.get("c_impPicsDelOld")
-                self.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
-            self.picinfos.out(os.path.join(self.configPath(self.configName()), "{}-{}.piclist".format(self.prjid, self.configName())))
+                addNewPics = impAll or self.get("c_impPicsAddNew")
+                delOldPics = impAll or self.get("c_impPicsDelOld")
+                view.picinfos.merge_fields(otherpics, fields, extend=addNewPics, removeOld=delOldPics)
+            view.picinfos.out(os.path.join(view.configPath(view.configName()), "{}-{}.piclist".format(view.prjid, view.configName())))
 
         # merge ptxprint.sty adding missing
-        if self.get("c_impStyles") or self.get("c_oth_Cover"):
-            newse = StyleEditor(self)
+        if impAll or self.get("c_impStyles") or self.get("c_oth_Cover"):
+            newse = StyleEditor(view)
             try:
-                with zipopentext(fzip, "ptxprint.sty") as inf:
+                with zipopentext(fzip, "ptxprint.sty", prefix=prefix) as inf:
                     newse.loadfh(inf, base="")
             except (KeyError, FileNotFoundError):
                 pass
-            if self.get("c_impStyles"):
-                self.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+            if impAll or self.get("c_impStyles"):
+                view.styleEditor.mergein(newse, force=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
 
-        if self.get("c_oth_Advanced"):
+        if impAll or self.get("c_oth_Advanced"):
             # merge ptxprint-mods.sty
             if config.getboolean("project", "ifusemodssty", fallback=False):
-                localmodsty = os.path.join(self.configPath(self.configName()), "ptxprint-mods.sty")
+                localmodsty = os.path.join(view.configPath(view.configName()), "ptxprint-mods.sty")
                 try:
-                    zipsty = zipopentext(fzip, "ptxprint-mods.sty")
+                    zipsty = zipopentext(fzip, "ptxprint-mods.sty", prefix=prefix)
                 except (KeyError, FileNotFoundError):
                     zipsty = None
-                if zipsty is not None and self.get("c_useModsSty") and os.path.exists(localmodsty):
+                if zipsty is not None and (impAll or self.get("c_useModsSty")) and os.path.exists(localmodsty):
                     with open(localmodsty, encoding="utf-8") as inf:
                         localmods = simple_parse(inf, categories=True)
                     othermods = simple_parse(zipsty, categories=True)
                     zipsty.close()
-                    merge_sty(localmods, othermods, forced=self.get("c_sty_OverrideAllStyles"), exclfields=exclfields)
+                    merge_sty(localmods, othermods, forced=(impAll or self.get("c_sty_OverrideAllStyles")), exclfields=exclfields)
                     with open(localmodsty, "w", encoding="utf-8") as outf:
                         out_sty(localmods, outf)
                 elif zipsty is not None:
@@ -1982,36 +1923,38 @@ set stack_size=32768""".format(self.configName())
                       ("project/ifusemodstex", "ptxprint-mods.tex", "%"),
                       ("project/ifusepremodstex", "ptxprint-premods.tex", "%")):
                 configb = a[0].split("/")
-                if not config.getboolean(*configb, fallback=False):
+                if not impAll and not config.getboolean(*configb, fallback=False):
                     continue
                 try:
-                    zipmod = zipopentext(fzip, a[1])
+                    zipmod = zipopentext(fzip, a[1], prefix=prefix)
                 except (KeyError, FileNotFoundError):
+                    print(f"Maybe KeyError; more likely just ignoring missing file: {a[1]}")
                     continue
-                localmod = os.path.join(self.configPath(self.configName()), a[1])
-                mode = "a" if self.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
+                localmod = os.path.join(view.configPath(view.configName()), a[1])
+                mode = "a" if view.get(ModelMap[a[0]].widget[0]) and os.path.exists(a[1]) else "w"
                 with open(localmod, mode, encoding="utf-8") as outf:
-                    outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
+                    if fzip.filename is not None:
+                        outf.write(f"\n{a[2]} Imported from {fzip.filename}\n")
                     dat = zipmod.read()
                     outf.write(dat)
                 zipmod.close()
 
         # merge cover and import has cover
-        if self.get("c_oth_Cover") and config.getboolean("cover", "makecoverpage", fallback=False):
+        if (impAll or self.get("c_oth_Cover")) and config.getboolean("cover", "makecoverpage", fallback=False):
             # self.set("c_useSectIntros", True)
-            self.set("c_useOrnaments", True)
+            view.set("c_useOrnaments", True)
             # override cover styles
-            allstyles = self.styleEditor.allStyles()
+            allstyles = view.styleEditor.allStyles()
             for k, v in newse.sheet.items():
                 if k.startswith("cat:cover"):
                     if k not in allstyles:
-                        self.styleEditor.addMarker(k, v['Name'])
+                        view.styleEditor.addMarker(k, v['Name'])
                     for a in v.keys():
                         if exclfields is None or k not in exclfields:
-                            self.styleEditor.setval(k, a, newse.getval(k, a))
+                            view.styleEditor.setval(k, a, newse.getval(k, a))
             grabfront = True
             
-        if self.get("c_oth_FrontMatter"):
+        if impAll or self.get("c_oth_FrontMatter"):
             grabfront = True
 
         if grabfront:
@@ -2019,14 +1962,14 @@ set stack_size=32768""".format(self.configName())
             periphcapture = None
             forcenames = set()
             try:
-                with zipopentext(fzip, 'FRTlocal.sfm') as inf:
+                with zipopentext(fzip, 'FRTlocal.sfm', prefix=prefix) as inf:
                     if inf is not None:
                         for l in inf.readlines():
                             if l.strip().startswith(r"\periph"):
                                 m = re.match(r'\\periph ([^|]+)\s*(?:\|.*?id\s*=\s*"([^"]+?)")?', l)
                                 if m:
                                     if periphcapture is not None:
-                                        self.periphs[periphid] = "".join(periphcapture)
+                                        view.periphs[periphid] = "".join(periphcapture)
                                     fullname = m.group(1).strip().lower()
                                     periphid = m.group(2) or _periphids.get(fullname, fullname)
                                     if periphid.startswith("cover") and self.get("c_oth_Cover"):
@@ -2039,8 +1982,8 @@ set stack_size=32768""".format(self.configName())
                             elif periphcapture is not None:
                                 periphcapture.append(l)
                         if periphcapture is not None:
-                            self.periphs[periphid] = "".join(periphcapture)
-                self.updateFrontMatter(force=self.get("c_oth_OverwriteFrontMatter"), forcenames=forcenames)
+                            view.periphs[periphid] = "".join(periphcapture)
+                view.updateFrontMatter(force=(impAll or self.get("c_oth_OverwriteFrontMatter")), forcenames=forcenames)
             except (KeyError, FileNotFoundError):
                 pass
 
@@ -2050,8 +1993,9 @@ set stack_size=32768""".format(self.configName())
             except configparser.NoSectionError:
                 return
             for v in allvars:
-                if v not in self.pubvarlist:
-                    self.setvar(v, config.get("vars", v))
+                if v not in getattr(view, 'pubvarlist', []):
+                    view.setvar(v, config.get("vars", v))
+        view.saveConfig()
 
     def updateThumbLines(self):
         munits = float(self.get("s_margins"))

@@ -71,7 +71,7 @@
 \setsbp@ram{bgfigpos}{pc}%Horizontally centred
 \setsbp@ram{hascol}{F}%No default colour.
 \setsbp@ram{alpha}{0.2}% 1=solid 0=invisible
-\setsbp@ram{borderwidth}{0.5}% in pt
+%\setsbp@ram{borderwidth}{0.5}% in pt
 \setsbp@ram{posn}{b}
 \setsbp@ram{fgfigspec}{}%Normally no picture.
 \setsbp@ram{bgfigspec}{}%Normally no picture.
@@ -80,15 +80,16 @@
 %\setsbp@ram{borderfillcolour}{NONE} % For double. (Should match fill@none)
 \def\m@rker{textborder}
 \setsbp@ram{properties}{nonpublishable}
-\setsbp@ram{borderlinewidth}{0.05}
-\setsbp@ram{borderwidth}{8}
-\setsbp@ram{borderrpadding}{2}
-\setsbp@ram{borderlpadding}{2}
-\setsbp@ram{bordertpadding}{2}
-\setsbp@ram{borderbpadding}{2}
-\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
-\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
-\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
+% These should all be inherited from stdborders, normally.
+%\setsbp@ram{borderlinewidth}{0.05}
+%\setsbp@ram{borderwidth}{8}
+%\setsbp@ram{borderrpadding}{2}
+%\setsbp@ram{borderlpadding}{2}
+%\setsbp@ram{bordertpadding}{2}
+%\setsbp@ram{borderbpadding}{2}
+%\setsbp@ram{borderoddleft}{T}\setsbp@ram{borderevenleft}{T}
+%\setsbp@ram{borderoddright}{T}\setsbp@ram{borderevenright}{T}
+%\setsbp@ram{bordertop}{T}\setsbp@ram{borderbottom}{T}
 \setsbp@ram{sbargrid}{\gr@dorig}
 \S@tCat{}
 \let\c@tegory\empty
@@ -205,9 +206,11 @@
 }
 \def\sb@leftedge{}\def\sb@rightedge{}% Contents of left/right edge boxes
 \edef\sb@leftshift{0pt}\edef\sb@rightshift{0pt}%
+\def\fig@lskip{0pt}\def\fig@rskip{0pt}%
 \newif\ifsbar@rotated
 \newdimen\sb@rwidth
 \def\@@setsbp@cinswid{% get the width of the insert (or column) that the figure will go into
+  \def\fig@lskip{0pt}\def\fig@rskip{0pt}%
   \dimen1=\ifnum \c@rrentcols=1 \textwidth \else \colwidth\fi
   %we need to distingiush between things like c,p,h which have sub-specifications and t, tl, tr, etc (which don't)
   \x@\let\csname sb@onlypure-t\endcsname\tr@e
@@ -266,22 +269,7 @@
     \fi
   \fi
 }
-\def\s@tsb@rwidth{%Set default / specific width of esb box
-  %h*,c*,p* take the current page width as their base
-  %tX,bX take the column width 
-  %t,b,B take the text width
-  %F* takes the whole paper.
-  %F* and P* might need to fill the vertical dimension.
-  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \c@tprefix\m@rker}%
-  \sbar@rotatedfalse
-  \ch@ckr@tation
-  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
-  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
-  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
-  \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
-  \@get@Hborder@style@params
-  \@get@Vborder@style@params
-  \getsbp@ram{posn}%
+\def\getwh@chpage{
   \ifcsname fig\sb@rnum p@ge\endcsname
     \x@\let\x@\pgn@\csname fig\sb@rnum p@ge\endcsname
   \else
@@ -294,6 +282,25 @@
     \whichp@ge=\pgn@
     \trace{e}{Sidebar \sb@rnum\space was on page \pgn@ last time. [\the\pageno]}%
   \fi
+}
+\def\defaultBorderWidth{0}
+\def\s@tsb@rwidth{%Set default / specific width of esb box
+  %h*,c*,p* take the current page width as their base
+  %tX,bX take the column width 
+  %t,b,B take the text width
+  %F* takes the whole paper.
+  %F* and P* might need to fill the vertical dimension.
+  \trace{e}{setsb@rwidth c:\the\colwidth, t:\the\textwidth, h:\the\hsize, \the\c@rrentcols, \c@tprefix\m@rker}%
+  \sbar@rotatedfalse
+  \ch@ckr@tation
+  \gdef\sb@leftedge{}\gdef\sb@rightedge{}%
+  \gdef\sb@rtopedge{}\gdef\sb@rbotedge{}%
+  \xdef\sb@leftshift{0pt}\xdef\sb@rightshift{0pt}%
+  \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
+  \getwh@chpage % Necessary for accurate border measurements
+  \@get@Hborder@style@params
+  \@get@Vborder@style@params
+  \getsbp@ram{posn}%
   \ifx\cp@ram\relax
     \gdef\sb@rpos{b}%
     \setsbp@ram{posn}{\sb@rpos}%
@@ -315,9 +322,9 @@
       \trace{e}{Sidebar width will be \cp@ram x\sb@rpos: \the\dimen1}%
       \edef\sb@rrefwid{\the\dimen1}%
     \fi
-    \getsbp@ram{\ifodd\pageno borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
-    \getsbp@ram{\ifodd\pageno borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
-    \getsbp@ram{borderwidth}\let\b@drwidth\cp@ram
+    \getsbp@ram{\ifodd\whichp@ge borderoddleft\else borderevenleft\fi}\let\b@drleft\cp@ram
+    \getsbp@ram{\ifodd\whichp@ge borderoddright\else borderevenright\fi}\let\b@drright\cp@ram
+    \getsbp@ram{borderwidth}\ifx\cp@ram\relax\let\b@drwidth\defaultBorderWidth\else\let\b@drwidth\cp@ram\fi
     % And shrink further if s has been specified for the fg picture
     \ifx\fgfigsp@c\relax\else
       \prepb@rderdims
@@ -343,14 +350,15 @@
         \ifx\l@cspec@b\@lignLeft
           \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
           \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
-          \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
+          \xdef\sb@leftedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |0pt|0pt\noexpand\E\noexpand\let\noexpand\sb@leftedge\noexpand\empty\b@tedge}%
           \trace{e}{leftedge defined to sb@ins@rtpic\fgfigsp@c...}%
           \advance\dimen0 by \fb@lpadding
           \xdef\sb@leftshift{\the\dimen0}%
         \else
           \ifx\l@cspec@c\@lignTop\def\t@pedge{}\fi
           \ifx\l@cspec@c\@lignBot\def\b@tedge{}\fi
-          \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
+          \xdef\sb@rightedge{\t@pedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\noexpand\let\noexpand\sb@rightedge\noexpand\empty\b@tedge}%
+          \trace{e}{right edge:\meaning\sb@rightedge}%
           \advance\dimen0 by \fb@rpadding
           \xdef\sb@rightshift{\the\dimen0}%
         \fi
@@ -375,10 +383,10 @@
           \fi
         \fi
         \ifx\tempa\@lignTop
-          \xdef\sb@rtopedge{\hbox to \hsize{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}}%
+          \xdef\sb@rtopedge{\hbox to \hsize{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\hfil}}%
         \fi
         \ifx\tempa\@lignBot
-          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \noexpand\E\hfil}}%
+          \xdef\sb@rbotedge{\noexpand\@@sb@rbotedge{\l@ftedge\noexpand\sb@ins@rtpic\fgfigsp@c|\the\dimen0 |\fig@lskip|\fig@rskip\noexpand\E\hfil}}%
         \fi
         \x@\x@\x@\p@rseLoc\x@\tempa\tempb\end
         \ifx\tempa\loc@Cut
@@ -393,7 +401,7 @@
             \g@nbox{\sb@rboxname}%
           \fi
           \x@\let\x@\this@pic\csname\sb@rboxname\endcsname
-          \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0 \E}%
+          \global\setbox\this@pic\hbox{\x@\sb@ins@rtpic\fgfigsp@c|\the\dimen0|\fig@lskip|\fig@rskip \E}%
           \trace{e}{Saved box \the\wd\this@pic x\the\ht\this@pic top:\b@drtop}%
           \global\let\fgfig@cutout\tr@e
           \xdef\l@cspec{\l@cspec@b}%
@@ -738,12 +746,15 @@
    \global\let\c@t@gory=\c@tegory
    \global\let\@@sb@rfirstskip\sb@rfirstskip
    \global\let\@@sb@rgrid\sb@rgrid
+   %\getwh@chpage % Needed?
+   \xdef\@@whichp@ge{\the\whichp@ge}%
    \edef\l@gstring{{\sb@rnum}{Sidebar-\c@tegory}{\cp@ram}{\c@rref}{\the\hsize}}% Fully expand figure parameters, but leave page no. to be expanded later.
    \x@\writefigp@gelog\x@{\l@gstring}%
    \egroup 
   \message{\the\ht\extb@x+\the\dp\extb@x * \the\wd\extb@x}%
   % ^^^ END OF GROUP! ^^^
   %
+  \whichp@ge=\@@whichp@ge
   \global\sm@rtgridfalse
   \ifx\@@sb@rgrid\gr@dsmart
     \bgroup\dimen1=\ht\extb@x\dimen0=\onel@neunit\m@d %\m@d makes dimen3 the offset
@@ -833,7 +844,7 @@
     \trace{e}{Sidebar has image}%
     \p@rsefigscale{bg}%
     \edef\t@mpfigspec{\bgf@gsp@c \bgfig@scale@ht \bgfig@scale@wd|\scale@width}%
-    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
+    \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
     \ch@ckfigdim
     \iftemp% It doesn't fit
       \trace{e}{Image oversize}%
@@ -846,7 +857,7 @@
         \fi
       \fi
       \iftemp
-        \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec\E}%
+        \setbox\newpicb@x=\hbox{\x@\sb@ins@rtpic\t@mpfigspec|\fig@lskip|\fig@rskip\E}%
       \fi
     \fi
     \ifdim\wd\newpicb@x >\wd\extb@x
@@ -1254,6 +1265,7 @@
 \def\BoxBPadding #1\relax{\initc@t\setsbp@ram{boxbpadding}{#1}}
 \def\BoxVPadding #1\relax{\initc@t\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
 \def\BoxPadding #1\relax{\initc@t\setsbp@ram{boxlpadding}{#1}\setsbp@ram{boxrpadding}{#1}\setsbp@ram{boxtpadding}{#1}\setsbp@ram{boxbpadding}{#1}}
+\def\BoxPaddingInnerOuter #1\relax{\initc@t\uppercase{\def\t@st{#1}}\setsbp@ram{boxpadinnerouter}{\t@st}}
 \def\Rotation  #1\relax{\initc@t\setsbp@ram{sbarrotation}{#1}}
 \def\SidebarGridding #1\relax{\initc@t\lowercase{\setsbp@ram{sbargrid}{#1}}}
 \def\GenC@tFig#1{%
@@ -1272,20 +1284,21 @@
    \fi
  \fi
 }
-\def\sb@ins@rtpic#1|#2|#3\E{%
-  \trace{e}{Figure #1|#2|#3}%
+\def\sb@ins@rtpic#1|#2|#3|#4|#5\E{%
+  \trace{e}{Figure #1|#2|#3|#4|#5}% #1 is filename (without quotes). #4, #5 are l/r skips.
   \dimen0=#3\relax
-  \openin\t@stread=#1 
+  \def\@fig@lskip{#4}\def\@fig@rskip{#5}%
+  \openin\t@stread="#1"\relax 
    \ifeof\t@stread 
      \m@kepl@ceholder{\dimen0}{0.618 \dimen0}{#1}%
    \else\closein\t@stread
     \let\picfilecomm@nd=\XeTeXpicfile
     \expandafter\ch@ckpdf#1..\endf@lename
-    \setbox0\hbox{\picfilecomm@nd #1 #2}%
+    \setbox0\hbox{\picfilecomm@nd "#1" #2}%
     \global\dimen3=\wd0
     \global\dimen4=\ht0
     \trace{e}{Image dims: \the\dimen3 x \the\dimen4}%
-    \hbox{\hskip\sb@leftshift\hbox to #3{\hskip\fig@lskip\box0\hskip\fig@rskip}\hskip\sb@rightshift}%
+    \hbox{\hskip\sb@leftshift\hbox to #3{\hskip\@fig@lskip\box0\hskip\@fig@rskip}\hskip\sb@rightshift}%
    \fi}
 
 \def\sb@rsavegriddims{% Called after gridding a heading

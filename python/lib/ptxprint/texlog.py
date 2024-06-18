@@ -13,6 +13,7 @@ responses = {
     "T": "Contact programming team (TeX)",
     "Y": "Contact programming team (python)",
     "E": "Configuration environment (including ptxprint-mods.tex, file locations, etc)"
+    # "F": "Use a different font which is not a Variable Font."
 }
 
 messages = [
@@ -23,6 +24,7 @@ messages = [
     ("W","T", r"set@ht passed null value"),
     ("W","T", r"dimension .+? does not exist"),
     ("W","T", r"\*\* Probable typo: if.+? does not exist in side-specific switching"),
+    ("W","SY", r"\\[a-z1-9]+ unknown style type"),
     ("W","SY", r"unknown style type .+"),
     ("E","SUYT", r"! ERROR! Improper state; '.+?' should be 'L' 'R' or some other defined column\. Maybe there was output before columns were set up?"),
     ("E","EY", r"@pgfornamentDim not defined\. Probably the path from the TEXINPUTS environment variable does not include \\pgfOrnamentsObject"),
@@ -42,14 +44,16 @@ messages = [
     ("W","S", r"Warning! periph is set nonpublishable \(hidden\) in general\. This may be a mistake!"),
     ("E","T", r"INTERNAL ERROR! Foonotes/figures shouldn't be held, or they'll get lost!"),
     ("W","S", r"Warning: Using xy or XY as part of a 2 part .+? OrnamentScaleRef makes no sense \(given: .+?\)"),
-    ("W","RUP", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
+    # Quieten this noisy message as it always shows up!
+    ("I","R", r"\*\*\* Figures have changed\. It may be necessary to re-run the job"),
     ("E","P", r"Placement for image .+? \(at .+?\) could not be understood\. Image Lost!"),
+    ("W","P", r"Warning: No copyright statement found for: .+? on pages .+? "),
     ("E","T", r"Number of bits does not correspond to the computed value"),
     ("I","ST", r"Image crop not supported"),
     ("W","P", r"Expected rotate=.+? or similar in definition of picture .+"),
     ("W","T", r"Eh? .+? called for .+? and empty parameter"),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
-    ("W","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide \(.+?\) for tab height \(.+?\)'),
+    ("WS","EU", r'Thumb tab contents \".+?\" too wide for tab width'),
     ("E","S", r"Error in stylesheet: Stylesheet changed category from '.+?' to '.+?\'\. Resetting to '.+?'"),
     ("E","UY", r"polyglotcolumn may not be called with an empty argument"),
     ("W","S", r"No side defined for foreground image in sidebar class '.+?\. Assuming outer\."),
@@ -107,6 +111,8 @@ messages = [
     ("W","US", r"unrecognised rule style '.+?' near .+"),
     ("W","U", r"valid options for pagenums attribute of zfillsignature are 'do' and 'no'"),
     ("W","S", r'converted sidebar placement \".+?\" to \".+?\" in single-column layout'),
+    ("W","A", r'\*\* WARNING: adjustlist entries should not contain space.+'),
+    # ("E","F", r"xdvipdfmx:fatal: Invalid font:"),
     ("W","U", r"WARNING: p\..+?:.+? used in text when .+? is a footnote, not an endnote\.")]
 
 # These (below) have not been added to the list above (yet) as they seems to require some further knowledge as to how to 'fish' for them.
@@ -143,23 +149,59 @@ def summarizeTexLog(logText):
     # Create dictionaries to count occurrences of each category
     category_counts = {"I": 0, "W": 0, "E": 0}
     messageSummary = []
+    allmsgs = set()
 
     # Iterate through the messages and check for matches
-    for i, (category, response, pattern) in enumerate(messages, start=1):
-        # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
+    for category, response, pattern in messages:
         matches = re.finditer(pattern, logText)
-        for match in matches:
-            category_counts[category] += 1
-            if category in ["W", "E"]:
-                messageSummary.append(f"{categories[category]}: {match.group(0)}")
-                for i, r in enumerate(response, start=1):
-                    if i == 1:
-                        messageSummary.append(f"  To fix it, try:")
-                    messageSummary.append(f"  {i}. {responses[r]}")
+        for i, match in enumerate(matches):
+            category_counts[category[0]] += 1
+            # print(f"{category}:{pattern}") # good for figuring out which message is causing it to crash!
+            if category[0] in ["W", "E"]:
+                msg = f"{categories[category[0]]}: {match.group(0)}"
+                if msg in allmsgs:
+                    continue
+                allmsgs.add(msg)
+                messageSummary.append(msg)
+                if i < 1 or len(category) < 2 or 'S' not in category:
+                    for j, r in enumerate(response, start=1):
+                        if j == 1:
+                            messageSummary.append(f"  To fix it, try:")
+                        messageSummary.append(f"  {j}. {responses[r]}")
+
+    # Look for Unbalanced or Unfilled pages (only show up if \tracing{b} is enabled in ptxprint-mods.tex)
+    uf_matches = re.findall(r'Underfill\[(A|B)\]: \[(\d+)\]', logText)
+    if len(uf_matches):
+        # Extract unique page numbers and sort them in ascending order
+        unique_page_numbers = sorted(set(int(match[1]) for match in uf_matches), key=int)
+        category_counts["W"] += 1
+        messageSummary.append(f"{len(unique_page_numbers)} underfilled pages: {shorten_ranges(unique_page_numbers)}")
+
     if __name__ == "__main__":
         print(category_counts, '\n'.join(messageSummary))
     else:
         return category_counts, messageSummary
+
+def shorten_ranges(numbers):
+    ranges = []
+    current_range = [numbers[0]]
+
+    for i in range(1, len(numbers)):
+        if numbers[i] - numbers[i-1] == 1:
+            current_range.append(numbers[i])
+        else:
+            if len(current_range) > 1:
+                ranges.append(f"{current_range[0]}-{current_range[-1]}")
+            else:
+                ranges.append(str(current_range[0]))
+            current_range = [numbers[i]]
+
+    if len(current_range) > 1:
+        ranges.append(f"{current_range[0]}-{current_range[-1]}")
+    else:
+        ranges.append(str(current_range[0]))
+
+    return ", ".join(ranges)
 
 # Function to search for and summarize recent *ptxp.log files
 def search_and_summarize_recent_logs(root_folder):

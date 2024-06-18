@@ -4,6 +4,7 @@ import os, sys, re, pathlib, zipfile
 import xml.etree.ElementTree as et
 from ptxprint.pdfrw.pdfreader import PdfReader
 from ptxprint.pdfrw.uncompress import uncompress
+from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
@@ -76,7 +77,7 @@ APP = 'ptxprint'
 
 chgsHeader = """# This (changes.txt) file is for configuration-specific changes (which will not affect other saved configurations).
 # Other generic project-wide changes can be specified in PrintDraftChanges.txt).
-# Note that the 'inlcude' statement on the next line imports those (legacy/generic) project-wide changes.
+# Note that the 'include' statement on the next line imports those (legacy/generic) project-wide changes.
 include "../../../PrintDraftChanges.txt"
 """
 
@@ -479,24 +480,27 @@ def ustr(x):
     return res
 
 def runChanges(changes, bk, dat):
-    def wrap(t):
+    def wrap(t, l):
         def proc(m):
             res = m.expand(t) if isinstance(t, str) else t(m)
-            logger.log(5, "match({0},{1})={2}->{3}".format(m.start(), m.end(), m.string[m.start():m.end()], res))
+            logger.log(5, "match({0},{1})={2}->{3} at {4}".format(m.start(), m.end(), m.string[m.start():m.end()], res, l))
             return res
         return proc
     for c in changes:
         if bk is not None:
             logger.debug("at {} Change: {}".format(bk, c))
-        if c[0] is None:
-            dat = c[1].sub(wrap(c[2]), dat)
-        elif isinstance(c[0], str):
-            if c[0] == bk:
-                dat = c[1].sub(wrap(c[2]), dat)
-        else:
-            def simple(s):
-                return c[1].sub(wrap(c[2]), s)
-            dat = c[0](simple, bk, dat)
+        try:
+            if c[0] is None:
+                dat = c[1].sub(wrap(c[2], c[3]), dat)
+            elif isinstance(c[0], str):
+                if c[0] == bk:
+                    dat = c[1].sub(wrap(c[2], c[3]), dat)
+            else:
+                def simple(s):
+                    return c[1].sub(wrap(c[2], c[3]), s)
+                dat = c[0](simple, bk, dat)
+        except TypeError as e:
+            raise TypeError(str(e) + "\n at "+c[3])
     return dat
 
 _htmlentities = {
@@ -588,9 +592,7 @@ varpaths = (
     ('workingdir', ('working_dir',)),
 )
 
-class Path(pathlib.Path):
-
-    _flavour = pathlib._windows_flavour if os.name == "nt" else pathlib._posix_flavour
+class Path(pathlib.PureWindowsPath if os.name == "nt" else pathlib.PurePosixPath):
 
     @staticmethod
     def create_varlib(aView):
@@ -626,11 +628,11 @@ class Path(pathlib.Path):
             return self.as_posix()
 
 
-def zipopentext(zf, fname):
+def zipopentext(zf, fname, prefix=""):
     if isinstance(zf, UnzipDir):
-        return zf.open(fname, mode="rt", encoding="utf-8")
+        return zf.open(prefix+fname, mode="rt", encoding="utf-8")
     else:
-        zp = zipfile.Path(zf, fname)
+        zp = zipfile.Path(zf, prefix+fname)
         return zp.open(encoding="utf-8")
 
 class UnzipDir:
@@ -663,6 +665,17 @@ class UnzipDir:
         with open(os.path.join(self.filename, name), 'r') as inf:
             res = inf.read()
         return res
+
+    def extract(self, member, path=None, pwd=None):
+        copy2(os.path.join(os.filename, member), os.path.join(path, member) if path is not None else member)
+
+    def extractall(self, path=None, members=None, pwd=None):
+        for dp, dn, fn in os.walk(self.filename):
+            for f in fn:
+                fp = os.path.join(dp, f)
+                if members is not None and fp not in members:
+                    continue
+                self.extract(fp, path=path)
 
     def close(self):
         pass

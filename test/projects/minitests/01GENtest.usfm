@@ -3,10 +3,10 @@
 \c 1
 \s This is a title
 \p
-\v 1 This is normal text.  There should probably be some\f + \ft Needless\f* footnotes, since this is a test of footnotes.
+\v 1 This is normal text.  There should probably be some\f + \ft Needless, but nevertheless quite long (so that they are can demonstrate that even the first one correctly wrap)\f* footnotes, since this is a test of footnotes.
 Distinctio ut quis et optio. Natus nobis quas aperiam et. Accusantium consequatur occaecati optio est eum.
 
-Enim quam perspiciatis eveniet. Est ut ratione nesciunt quo excepturi cum nemo quia. Ut ut repellendus officiis. Et voluptas temporibus rerum omnis commodi consequatur reprehenderit.
+Enim quam perspiciatis eveniet. Est ut ratione nesciunt quo excepturi cum nemo quia. \| Ut ut repellendus officiis. Et voluptas temporibus rerum omnis commodi consequatur reprehenderit.
 
 Quam nostrum perspiciatis tenetur. Doloremque sed aut minus saepe. Et ea et aliquid quis eaque similique. Asperiores qui reiciendis aut porro earum tenetur. Enim aut eligendi magni in aut sunt. Incidunt quasi similique ex iste quia sint dolor quod.
 
@@ -21,6 +21,7 @@ In eius iste blanditiis impedit qui rem repellendus eos. Mollitia delectus qui a
 \zpostendnoterule
 \p
 The first end-note\x + \xt But not the last\x* was placed above here.
-\v 3 This is verse three.
+\v 3 This is verse three. with a link to \xt verse 4|GEN 1:4\xt* and one to \xt vv4-5|GEN 1:4-5\xt*
+\v 4-5 This is a target for the link
 
 

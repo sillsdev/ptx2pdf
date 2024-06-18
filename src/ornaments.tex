@@ -621,7 +621,7 @@
 \egroup}
 \def\doOrnament#1{%
   \begingroup
-    %\orn@setup
+    \orn@setup
     \x@\ornament@parse#1|||||\E
     \setorn@scale
     \orn@do@ornament
@@ -1141,16 +1141,14 @@
     \ifx\attr@b\relax
       \edef\ornamentheight{\the\dimexpr \c@rrfontsize\dimexpr 0.7\FontSizeUnit\relax\relax}%
     \else
-      \m@kenumber{\attr@b}%
-      \x@\n@endsp@ce\@@result \E
+      \m@kenumberns{\attr@b}%
       \edef\ornamentheight{\@@@result}%
     \fi
     \get@ttribute{pattern}%
     \ifx\attr@b\relax
       \message{! zornament milestone must have a valid pattern="..." set}%
     \else
-      \m@kenumber{\attr@b}%
-      \x@\n@endsp@ce\@@result \E
+      \m@kenumberns{\attr@b}%
       \hbox{\beginL\doOrnament{\@@@result}\endL}%prevent reordering of specials in RTL mode!
       \relax
     \fi
@@ -1319,12 +1317,14 @@
 \def\DefaultOrnament{-1}
 \def\mkb@rder@ornaments{% Plugin for sidebars
   \trace{eb}{mkb@rder@ornaments}%
+  \bc@lsetup
   \def\ornamentheight{\b@drwidth}%
   \getsbp@ram{borderfillcolour}\ifx\cp@ram\relax\edef\ornamentfillcol{\fill@none}\else\let\ornamentfillcol\cp@ram\fi
   \trace{eb}{Colour:\meaning\b@drcol, Fill:\meaning\ornamentfillcol}%
   \ifx\b@drcol\relax
     \def\ornamentlinecol{0 0 0}\else
     \let\ornamentlinecol\b@drcol
+    \let\thinlinest@ndard\tls@black
   \fi
   \getsbp@ram{borderstyleextra}\ifx\cp@ram\relax\else\x@\SwitchOrnamentsFamily\x@{\cp@ram}\fi
   \getsbp@ram{borderpatterntop}\ifx\cp@ram\relax\edef\patternT{\DefaultOrnament||-}\else\let\patternT\cp@ram\fi
@@ -1332,9 +1332,13 @@
   \getsbp@ram{borderpatternleft}\ifx\cp@ram\relax\edef\patternL{\DefaultOrnament|l|-}\else\let\patternL\cp@ram\fi
   \getsbp@ram{borderpatternright}\ifx\cp@ram\relax\edef\patternR{\DefaultOrnament|r|-}\else\let\patternR\cp@ram\fi
   %\tracingassigns=1
-  \getsbp@ram{ornamentscaleref}\ifx\cp@ram\relax\else\x@\p@rsescaleref \cp@ram,\E\fi
+  \getsbp@ram{ornamentscaleref}\ifx\cp@ram\relax\else\x@\p@rsescaleref \cp@ram,\E\fi\relax
   %\tracingassigns=0
   \edef\ornamentlinewidth{\strip@pt{\dimexpr\b@drlinewidth\FontSizeUnit\relax}}%
+  \let\thinlin@type\tlt@C
+  \trace{orn}{Checking line width}%
+  \thinlinecheck{\ornamentlinewidth}{pt}{border line width for ornamental border (\c@tprefix\sb@rmarker)}{Stylesheet value \b@drlinewidth, scaled like fonts}%
+  \trace{orn}{Checked line width, now \ornamentlinewidth}%
   \OrnamentBorder{\b@drwidth\FontSizeUnit}%
   %\setbox\b@rderbox\vbox{\trybox{\b@rderbox@width}{\b@rderbox@height}{\b@drwidth\FontSizeUnit}}%
   \trace{orn}{ORNAMENTS box \the\ht\b@rderbox+\the\dp\b@rderbox * \the\wd\b@rderbox}%
@@ -1357,14 +1361,22 @@
   \getp@ram{borderlinewidth}{zrule}{\styst@k}%
   \ifx\p@ram\relax
     \edef\ornamentlinewidth{0.5}%
+    \edef\@thinlinedesc{Default BorderLineWidth}%
   \else
     \edef\ornamentlinewidth{\p@ram}%
+    \edef\@thinlinedesc{BorderLineWidth from stylesheet}%
   \fi
   \getp@ram{bordercolour}{zrule}{\styst@k}%
   \ifx\p@ram\relax
     \def\ornamentlinecol{0 0 0}%
+    \let\thinlinest@ndard\tls@black
   \else 
     \let\ornamentlinecol\p@ram
+    \ifx\ornamentlinecol\fill@none
+      \let\thinlinest@ndard\tls@nochk
+    \else
+      \x@\chk@colortype\ornamentlinecol\E
+    \fi
   \fi
   \getp@ram{borderfillcolour}{zrule}{\styst@k}%
   \ifx\p@ram\relax
@@ -1372,6 +1384,8 @@
   \else 
     \let\ornamentfillcol\p@ram
   \fi
+  \let\thinlin@type\tlt@C
+  \thinlinecheck{\ornamentlinewidth}{pt}{border line width for ornamental zrule (\c@tprefix zrule)}{\@thinlinedesc}%
   \edef\ornamentheight{\dimexpr\rule@thk \relax}%
   \edef\ornamentwidth{}%
   \getp@ram{verticalalign}{zrule}{\styst@k}%

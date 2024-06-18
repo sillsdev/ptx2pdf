@@ -38,12 +38,7 @@
           "CodeSnippet": "\\zgap|2.3cm\\*"
         }
       ],
-      "Legal": [
-        {
-          "Type": "insert",
-          "Label": "\\zcopyright",
-          "Description": "Insert project copyright statement"
-        },
+      "Image": [
         {
           "Type": "insert",
           "Label": "\\zfiga|anchor\\*",
@@ -55,11 +50,18 @@
           "Label": "\\fig |src=\"path/to/filename.png\" size=\"size\" pgpos=\"pgpos\" scale=\"0.2\" copy=\"None\"",
           "Description": "Insert an image copy=\"None\"",
           "CodeSnippet": "\\fig |src=\"C:/Users/Jim/Dropbox/orglogo.png\" size=\"col\" pgpos=\"pc\" scale=\"0.15\" copy=\"None\"\\fig*"
+        }
+      ],
+      "Legal": [
+        {
+          "Type": "insert",
+          "Label": "\\zcopyright",
+          "Description": "Insert project copyright statement"
         },
         {
           "Type": "insert",
           "Label": "\\zccimg by-nd|size=\"size\" pgpos=\"pgpos\" scale=\"scale\"\\*",
-          "Description": "Insert Create Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
+          "Description": "Insert Creative Commons logo: by, by-nc, by-nc-nd, by-nc-sa, by-nd, by-sa; pgpos=p.",
           "CodeSnippet": "\\zccimg by-nc-nd|size=\"col\" pgpos=\"pc\" scale=\"0.2\"\\*"
         },
         {
@@ -150,7 +152,7 @@
         {
           "Type": "insert",
           "Label": "\\zNeedEvenPage",
-          "Description": "Insert an “empty” page if the current page is off"
+          "Description": "Insert an “empty” page if the current page is odd"
         },
         {
           "Type": "insert",
@@ -211,8 +213,8 @@
       "Diglot": [
         {
           "Type": "insert",
-          "Label": "\\zglot|[col]\\*",
-          "Description": "Use formatting for diglot column col, in a monoglot section. Return to normal formatting with \\zglot|\\*",
+          "Label": "\\zglot|[L|R]\\*",
+          "Description": "Use formatting for diglot L or R, in a monoglot section. Return to normal formatting with \\zglot|\\*",
           "CodeSnippet": "\\zglot|R\\*"
         },
         {
@@ -241,13 +243,13 @@
         },
         {
           "Type": "insert",
-          "Label": "\\onebody",
-          "Description": "Set \\BodyColumns=1 for single column body text"
+          "Label": "\\singlecolumn",
+          "Description": "Set \\singlecolumn for single column text"
         },
         {
           "Type": "insert",
-          "Label": "\\twobody",
-          "Description": "Set \\BodyColumns=2 for double column body text"
+          "Label": "\\doublecolumns",
+          "Description": "Set \\doublecolumns for double column text"
         },
         {
           "Type": "insert",
@@ -326,25 +328,25 @@
           "Type": "comment#",
           "Label": "Insert line break within Intro Outline",
           "Description": "Within the \\io1 line, break the line between 'some' and 'words'.",
-          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\LINESEP words'"
+          "CodeSnippet": "in '\\\\io1 .+?\\n': 'some words' > 'some\\\\LINESEP words'"
         },
         {
           "Type": "comment#",
           "Label": "Insert a rule before \\c 1 starts",
           "Description": "Insert a rule after the intro (for all books)",
-          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c 1 ?\\r?\\n)' > '\\\\zrule\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
           "Label": "Insert a shorter rule before any chapter starts",
           "Description": "Insert a shorter and thinner rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|width=\".3\" thick=\".5pt\"\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|width=\".3\" thick=\".5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
           "Label": "Insert an ornamental rule before any chapter starts",
           "Description": "Insert an ornamental rule before a chapter begins (for all books)",
-          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\*\\r\\n\\1 '"
+          "CodeSnippet": "'(\\\\c \\d+ ?\\r?\\n)' > '\\\\zrule|cat=\"ornaments3\" width=\".5\" align=\"c\" thick=\"5pt\"\\\\*\\r\\n\\1 '"
         },
         {
           "Type": "comment#",
@@ -362,7 +364,7 @@
           "Type": "comment#",
           "Label": "Insert book separator pages",
           "Description": "Insert book separator pages using heading information",
-          "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\*\\4\\\\pb\\4\\5'"
+          "CodeSnippet": "'(?ms)(\\\\h )(.+?\\r?\\n)(.+?)(\\r?\\n)(\\\\mt)' > '\\1\\2\\3\\4\\\\zgap|2in\\\\*\\4\\\\mt \\2\\\\is The New Testament in Wakawaka\\4\\\\zrule\\\\*\\4\\\\pb\\4\\5'"
         }
       ],
       "Format": [
@@ -370,13 +372,13 @@
           "Type": "comment#",
           "Label": "Add 3-letter book codes to headers (temporarily)",
           "Description": "When typesetting in another script it is useful to temporarily add readable headers using the 3-letter book code. To make these generated \\h1 codes to appear in the header, use the 'Book Alt (\\h1)' option on the Header+Footer tab.",
-          "CodeSnippet": "(\\\\id (...).*\\n) > '\\1\\\\h1 \\2\\r\\n'"
+          "CodeSnippet": "'(\\\\id (...).*\\n)' > '\\1\\\\h1 \\2\\n'"
         },
         {
           "Type": "comment#",
           "Label": "Allow linebreaks after in-word hyphens",
           "Description": "This will insert a zero-width space after in-word hyphens allowing the line to break there if needed.",
-          "CodeSnippet": "'(?<=\\s[^\\]*\\D)-(?=\\D)' > '-\\u200B'"
+          "CodeSnippet": "'(?<=\\s[^\\\\]*\\D)-(?=\\D)' > '-\\u200B'"
         },
         {
           "Type": "comment#",
@@ -432,7 +434,7 @@
           "Type": "comment#",
           "Label": "Change spaces before final punctuation into no-break narrow space",
           "Description": "To prevent sentence-final punctuation dropping onto the next line as an orphan, use a no-break narro space instead.",
-          "CodeSnippet": "'\\s([\\u0964\\u0965৿௿۔。·׃ฃ])'   >   '\\202f\\1'"
+          "CodeSnippet": "'\\s([\\u0964\\u0965৿௿۔。·׃ฃ])'   >   '\\u202F\\1'"
         }
       ],
       "Other": [
@@ -665,6 +667,11 @@
       ],
       "Tracing": [
         {
+          "Type": "insert",
+          "Label": "B - Balancing",
+          "Description": "\\tracing{B}\n(alerts you of any unfilled or unbalanced pages which will be listed as a Warning status message)",
+          "CodeSnippet": "\\tracing{B}"
+        },        {
           "Type": "insert",
           "Label": "f - footnotes",
           "Description": "\\tracing{f}",

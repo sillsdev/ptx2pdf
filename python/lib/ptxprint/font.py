@@ -7,6 +7,7 @@ from threading import Thread
 import logging
 
 logger = logging.getLogger(__name__)
+debug = os.getenv("PTXPRINTBADFONTS", default=False)
 
 fontconfig_template = """<?xml version="1.0"?>
 <fontconfig>
@@ -20,6 +21,11 @@ fontconfig_template = """<?xml version="1.0"?>
         <rejectfont>
             <glob>*.woff</glob>
         </rejectfont>
+<!--        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont> -->
     </selectfont>
 </fontconfig>
 """
@@ -28,19 +34,25 @@ fontconfig_template_nofc = """<?xml version="1.0"?>
 <fontconfig>
     {fontsdirs}
     <cachedir prefix="xdg">fontconfig</cachedir>
+<!--    <selectfont>
+        <rejectfont>
+            <pattern>
+                <patelt name="variable"/>
+            </pattern>
+        </rejectfont>
+    </selectfont> -->
 </fontconfig>
 """
 
-def writefontsconf(extras, archivedir=None):
+def writefontsconf(extras, archivedir=None, testsuite=None):
     inf = {}
-    notpytest=1 # Set to 0 to avoid font-related xfails on  pytest (we hope)
     dirs = []
     if sys.platform.startswith("win") or archivedir is not None:
         dirs.append(os.path.join(os.getenv("LOCALAPPDATA", "/"), "Microsoft", "Windows", "Fonts"))
         dirs.append(os.path.abspath(os.path.join(os.getenv("WINDIR", "/"), "Fonts")))
         fname = os.path.join(os.getenv("LOCALAPPDATA", "/"), "SIL", "ptxprint", "fonts.conf")
     if archivedir is not None or not sys.platform.startswith("win"):
-        if (notpytest):
+        if (not testsuite):
           dirs.append("/usr/share/fonts")
         fname = os.path.expanduser("~/.config/ptxprint/fonts.conf")
     dirs.append("../../../shared/fonts")
@@ -49,10 +61,10 @@ def writefontsconf(extras, archivedir=None):
         logger.debug(f'{fdir=}')
         if hasattr(sys, '_MEIPASS'):
             logger.debug(f'{sys._MEIPASS=}')
-        if notpytest:
-          testlist=[['fonts'], ['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]
-        else:
+        if testsuite:
           testlist=[]
+        else:
+          testlist=[['fonts'], ['..', 'fonts'], ['..', '..', 'fonts'], ['/usr', 'share', 'ptx2pdf', 'fonts']]
         for a in testlist:
             fpath = os.path.join(fdir, *a)
             if os.path.exists(fpath):
@@ -69,10 +81,10 @@ def writefontsconf(extras, archivedir=None):
                 dirs.append(abse)
     os.makedirs(os.path.dirname(fname), exist_ok=True)
     inf['fontsdirs'] = "\n    ".join('<dir prefix="cwd">{}</dir>'.format(d) for d in dirs)
-    if notpytest:
-      res = fontconfig_template.format(**inf)
-    else:
+    if testsuite:
       res = fontconfig_template_nofc.format(**inf)
+    else:
+      res = fontconfig_template.format(**inf)
     if archivedir is not None:
         return res
     else:
@@ -833,14 +845,36 @@ class TTFont:
         if self.ttfont is None:
             self.ttfont = ttLib.TTFont(self.filename)
 
-    def testcmap(self, chars):
+    def _getcmap(self):
         self.loadttfont()
         try:
             cmap = self.ttfont['cmap']
         except KeyError:
             return []
-        b=cmap.getBestCmap()
+        b = cmap.getBestCmap()
+        return b
+
+    def testcmap(self, chars):
+        b = self._getcmap()
         return [c for c in chars if ord(c) not in b and ord(c) > 32]
+
+    def getgids(self, unis, gnames, gids):
+        logger.debug(f"Font({self.filename}) gids {unis=} {gnames=} {gids=}")
+        res = set(gids)
+        b = self._getcmap()
+        if b is not None and len(unis):
+            uninames = [b.get(u, None) for u in unis]
+            gnames = gnames | set(uninames)
+        if len(gnames):
+            for n in gnames:
+                try:
+                    i = self.ttfont.getGlyphID(n)
+                except (KeyError, TypeError):
+                    continue
+                res.add(i)
+        res.discard(None)
+        return res
+
 
 _fontstylemap = {
     '': '',
@@ -1191,7 +1225,7 @@ class FontRef:
 
     def asPango(self, fallbacks, size=None):
         fb = ("," + ",".join(fallbacks)) if len(fallbacks) else ""
-        res = "{}{} {}".format(self.name, fb, self._getstyle())
+        res = "{}{} {}".format(self.name if not debug else "", fb, self._getstyle())
         return res + (" "+size if size is not None else "")
 
     

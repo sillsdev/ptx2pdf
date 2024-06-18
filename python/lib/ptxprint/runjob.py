@@ -21,6 +21,7 @@ from ptxprint.toc import TOC, generateTex
 from ptxprint.unicode.ducet import tailored
 from ptxprint.reference import RefList
 from ptxprint.transcel import transcel, outtriggers
+from ptxprint.xdv.colouring import procxdv
 import numpy as np
 from datetime import datetime
 import logging
@@ -37,7 +38,7 @@ _errmsghelp = {
                                            "If you have specified one or more Front/Back matter PDFs or a Watermark PDF\n" +
                                            "then ensure that the PDF(s) exist(s); OR uncheck those options (Advanced tab)."),
 "! Missing control sequence inserted.":  _("Fallback font probably being applied to text in a footnote (not permitted!)"),
-"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \Color definition, not a color name. (e.g. \Color xff7f7f)"),
+"\\colorhex #1->\\count 1=#1":           _("Expecting a number for \\Color definition, not a color name. (e.g. \\Color xff7f7f)"),
 "! Missing number, treated as zero.":    _("Related to USFM3 illustration markup"),
 "! Undefined control sequence.":         _("This might be related to a USFM marker error (using an unsupported marker).\n" +\
                                            "Try running 'Basic Checks' in Paratext to validate markers.\n" +\
@@ -54,12 +55,12 @@ _errmsghelp = {
                                            "  from a previous session (Pictures, Diglot, Borders - which will show\n" +\
                                            "  in blue if these features are currently enabled)."),
 "! Paratext stylesheet":                 _("Try turning off the ptxprint-mods stylesheet"),
-"! File ended while scanning use of \iotableleader.": _("Problem with Formatting Intro Outline\n" +\
-                                           "Try disabling option 'Right-Align \ior with tabbed leaders' on the Body tab"),
+"! File ended while scanning use of \\iotableleader.": _("Problem with Formatting Intro Outline\n" +\
+                                           "Try disabling option 'Right-Align \\ior with tabbed leaders' on the Body tab"),
 "! Emergency stop.":                     _("Probably a TeX macro problem - contact support, or post a bug report"),
 "! Not a letter.":                       _("Possible fault in the hyphenation file\n" +\
                                            "Try turning off Hyphenate option located on the Fonts+Scripts tab"),
-"! Font \extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
+"! Font \\extrafont":                     _("Fallback Font issue - set a font on the Fonts+Scripts tab.\n" +\
                                            "(Turn off the option 'Use Fallback Font' or specify a valid font)"),
 "! Font":                                _("Font related issue. The most likely reason for this error is that\n" +\
                                           "the selected font has not been installed for all users. See FAQ."),
@@ -151,6 +152,8 @@ _diglot = {
 "diglot/fontitalic" :       "document/fontitalic",
 "diglot/fontbolditalic" :   "document/fontbolditalic",
 "diglot/ifshowversenums" :  "document/ifshowversenums",
+"diglot/indentunit":        "document/indentunit",
+"diglot/ifrtl":             "document/ifrtl",
 "diglot/xrlocation" :       "notes/xrlocation",
 
 "diglot/copyright":         "project/copyright",
@@ -228,6 +231,8 @@ def procpdf(outfname, pdffile, info, ispdfxa, **kw):
         pass
     elif ispdfxa in _pdfmodes['rgb']:
         colour = "rgbx4"
+    elif ispdfxa in _pdfmodes['cmyk']:
+        colour = "cmyk"
     else:
         colour = ispdfxa.lower()
     if colour is not None:
@@ -327,6 +332,7 @@ class RunJob:
         if self.printer.ptsettings is None:
             self.fail(_("Illegal Project"))
             return
+        self.printer.loadHyphenation()
         self.printer.incrementProgress(True, stage="pr")
         info = TexModel(self.printer, self.args.paratext, self.printer.ptsettings, self.printer.prjid, inArchive=self.inArchive)
         info.debug = self.args.debug
@@ -374,6 +380,7 @@ class RunJob:
             joblist = [[j] for j in jobs]
 
         if self.printer.diglotView is not None:
+            self.printer.diglotView.loadHyphenation()
             digfraction = info.dict["document/diglotprifraction"]
             digprjid = info.dict["document/diglotsecprj"]
             digcfg = info.dict["document/diglotsecconfig"]
@@ -459,9 +466,19 @@ class RunJob:
                     msgs = "\n".join(msgList)
                     print("{}\n{}".format(summaryLine, msgs))
                     if not self.noview and not self.args.print:
-                        sl.set_text(summaryLine)
-                        sl.set_tooltip_text(msgs)
-                        self.printer.set("l_statusLine", summaryLine)
+                        if len(msgList) == 1 and "underfilled" in msgs:
+                            if "," not in msgs and "-" not in msgs:
+                                msgs = re.sub(_("pages"), _("page"), msgs)
+                            sl.set_text(msgs)
+                            sl.set_tooltip_text(msgs)
+                            chkmsg = _("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ..." if len(msgs) > 30 else msgs
+                            if "," not in chkmsg and "-" not in chkmsg:
+                                chkmsg = re.sub(_("pages"), _("page"), chkmsg)
+                            self.printer.set("l_statusLine", chkmsg)
+                        else:
+                            sl.set_text(summaryLine)
+                            sl.set_tooltip_text(msgs)
+                            self.printer.set("l_statusLine", summaryLine)
                     with open(fname, "a", encoding="utf-8", errors="ignore") as logfile:
                         logfile.write(f"\n{summaryLine}\n{msgs}")
             
@@ -484,10 +501,12 @@ class RunJob:
             if os.path.exists(logpath):
                 with open(logpath) as inf:
                     loglines = inf.readlines()
+                    if "xdvipdfmx:fatal: Invalid font: -1 (0)\n" in loglines:
+                        loglines.append("\n" + _("To fix this error: Use a different font which is not a Variable Font."))
             else:
                 loglines = [_("Bad xdvi file, probably failed to load a picture or font")]
             self.printer.doError(_("Failed to create: ")+re.sub(r"\.tex",r".pdf",outfname),
-                    secondary="".join(loglines[-10:]),
+                    secondary="".join(loglines[-12:]),
                     title="PTXprint [{}] - Error!".format(VersionStr), threaded=True)
         elif not self.noview and not self.args.print: # We don't want pop-up messages if running in command-line mode
             finalLogLines = self.parseLogLines()
@@ -495,7 +514,7 @@ class RunJob:
                     secondary="".join(finalLogLines[:30]), title="PTXprint [{}] - Error!".format(VersionStr),
                     threaded=True, copy2clip=True)
             self.printer.onIdle(self.printer.showLogFile)
-        if len(self.rerunReasons):
+        if len(self.rerunReasons) and self.printer.get("l_statusLine") == "":
             self.printer.set("l_statusLine", _("Rerun to fix: ") + ", ".join(self.rerunReasons))
         self.printer.finished()
         self.busy = False
@@ -570,12 +589,12 @@ class RunJob:
         if len(refs):
             finalLogLines.append("References to check{}: {}".format(book, " ".join(refs)))
 
-        texmrkrs = [r"\fi", "\if", "\ifx", "\box", "\hbox", "\vbox", "\else", "\book", "\par",
-                     "\edef", "\gdef", "\dimen" "\hsize", "\relax"]
+        texmrkrs = [r"\fi", r"\if", r"\ifx", r"\box", r"\hbox", r"\vbox", r"\else", r"\book", r"\par",
+                     r"\edef", r"\gdef", r"\dimen", r"\hsize", r"\relax"]
         allmrkrs = re.findall(r"(\\[a-z0-9]{0,5})[ *\r\n.]", "".join(finalLogLines[-8:]))
         mrkrs = [x for x in allmrkrs if x not in texmrkrs]
         if 0 < len(mrkrs) < 7:
-            if len(set(mrkrs) & set([r"\ef", "\ex", "\cat", "\esb"])):
+            if len(set(mrkrs) & set([r"\ef", r"\ex", r"\cat", r"\esb"])):
                 finalLogLines.append(_("There might be a marker issue in the Extended Study Notes"))
 
         files = re.findall(r'(?i)([^\\/\n."= ]*?\.(?=jpg|jpeg|tif|tiff|bmp|png|pdf)....?)', "".join(finalLogLines))
@@ -699,8 +718,10 @@ class RunJob:
                 if "-" in mode:
                     (mode, sync) = mode.split("-")
                 logger.debug(f"usfmerge2({inputfiles}) -> {outFile} with {logFile=} {mode=} {sync=}")
+                # Do we ask the merge process to write verification files? (use diff -Bws to confirm they are they same as the input)
+                debugmerge = logger.getEffectiveLevel() <= 5 
                 #try:
-                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync)
+                usfmerge2(inputfiles, keyarr, outFile, stylesheetsa=sheetsa, stylesheetsb=sheetsb, mode=mode, synchronise=sync, debug=debugmerge)
                 #except SyntaxError as e:
                 #    syntaxErrors.append("{} {} line: {}".format(self.prjid, b, str(e).split('line', maxsplit=1)[1]))
                 #except Exception as e:
@@ -709,7 +730,7 @@ class RunJob:
                 texfiles += [outFile, logFile]
 
         outfname = info.printer.baseTeXPDFnames([r[0][0].first.book if r[1] else r[0] for r in jobs])[0] + ".tex"
-        if info['project/iffrontmatter'] != '%' or info["project/sectintros"]:
+        if diginfo['project/iffrontmatter'] != '%' or diginfo["project/sectintros"]:
             texfiles.append(diginfo.addInt(os.path.join(self.tmpdir, outfname.replace(".tex", "_INTR.SFM"))))
         
         if not len(donebooks) or not len(digdonebooks):
@@ -847,6 +868,16 @@ class RunJob:
         unlockme()
         return self.res
 
+    def getxdvname(self, texfname, info):
+        if info["finishing/extraxdvproc"]:
+            res = texfname.replace(".tex", "_proc.xdv")
+        else:
+            res = texfname.replace(".tex", ".xdv")
+        return res
+
+    def processxdv(self, inxdv, outxdv, info):
+        procxdv(inxdv, outxdv)
+
     def run_xetex(self, outfname, pdffile, info):
         numruns = 0
         cachedata = {}
@@ -925,12 +956,15 @@ class RunJob:
         if not self.noview and not self.args.testing and not self.res:
             self.printer.incrementProgress(stage="xp")
             tmppdf = self.procpdfFile(outfname, pdffile, info)
+            if info["finishing/extraxdvproc"]:
+                self.processxdv(outfname.replace(".tex", ".xdv"), self.getxdvname(outfname, info), info)
             cmd = ["xdvipdfmx", "-E", "-V", str(self.args.pdfversion / 10.), "-C", "16", "-v", "-o", tmppdf]
             #if self.ispdfxa == "PDF/A-1":
             #    cmd += ["-z", "0"]
-            #cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)) if self.args.extras & 7 else "-q")
+            if self.args.extras & 7:
+                cmd.insert(-2, "-" + ("v" * (self.args.extras & 7)))
             with open(outfname.replace(".tex", ".xdvi_log"), "w") as outf:
-                runner = call(cmd + [outfname.replace(".tex", ".xdv")], cwd=self.tmpdir, stdout=outf, stderr=outf)
+                runner = call(cmd + [self.getxdvname(outfname, info)], cwd=self.tmpdir, stdout=outf, stderr=outf)
             logger.debug(f"Running: {cmd} for {outfname}")
             if self.args.extras & 1:
                 print(f"Subprocess return value: {runner}")

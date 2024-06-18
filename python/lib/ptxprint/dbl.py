@@ -150,20 +150,27 @@ def usx2usfm(fname, outf):
 
 
 _dblMapping = {
-    'Name':             ('meta', 'identification/systemId[@type="paratext"]/name'),
-    'Language':         ('meta', 'language/name'),
-    'Encoding':         ('string', '65001'),
-    'Copyright':        ('metamulti', 'copyright/fullStatement/statementContent/p'),
-    'DefaultFont':      ('styles', 'property[@name="font-family"]'),
-    'DefaultFontSize':  ('styles', 'property[@name="font-size"]'),
-    'FileNamePostPart': ('eval', lambda info: info['prjid']+".USFM"),
-    'FileNameBookNameForm': ('string', '41MAT'),
-    'FileNamePrePart':  ('string', ''),
-    'StyleSheet':       ('string', "usfm.sty"),
-    'MinParatextVersion': ('string', '8.0.63.1'),
-    'FullName':         ('meta', 'identification/systemId[@type="paratext"]/fullName'),
-    'Editable':         ('string', 'F'),
-    'BooksPresent':     ('eval', lambda info: info['bookspresent'])
+    'Name':                         ('meta', 'identification/systemId[@type="paratext"]/name'),
+    'Language':                     ('meta', 'language/name'),
+    'Encoding':                     ('string', '65001'),
+    'Copyright':                    ('metamulti', 'copyright/fullStatement/statementContent/p'),
+    'DefaultFont':                  ('styles', 'property[@name="font-family"]'),
+    'DefaultFontSize':              ('styles', 'property[@name="font-size"]'),
+    'FileNamePostPart':             ('eval', lambda info: info['prjid']+".USFM"),
+    'FileNameBookNameForm':         ('string', '41MAT'),
+    'NoSpaceBetweenBookAndChapter': ('string', 'False'),
+    'ChapterVerseSeparator':        ('string', ':'),
+    'RangeIndicator':               ('string', '-'),
+    'SequenceIndicator':            ('string', ','),
+    'ChapterRangeSeparator':        ('string', '–'),
+    'BookSequenceSeparator':        ('string', '; '),
+    'ChapterNumberSeparator':       ('string', '; '),
+    'FileNamePrePart':              ('string', ''),
+    'StyleSheet':                   ('string', "usfm.sty"),
+    'MinParatextVersion':           ('string', '8.0.63.1'),
+    'FullName':                     ('meta', 'identification/systemId[@type="paratext"]/fullName'),
+    'Editable':                     ('string', 'F'),
+    'BooksPresent':                 ('eval', lambda info: info['bookspresent'])
 }
 
 def innertext(root, path):

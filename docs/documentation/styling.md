@@ -1,6 +1,15 @@
 
 # Application of styling in complex situations
 
+## Drop-cap styling
+If `Marker c`'s justification is set to 'right', then the right margin (or,
+since rightmargin can't be set negative in the UI, leftmargin if rightmargin is left at
+0) specifies where the right-hand edge of the chapter number sits. (relative to
+the left margin).
+
+For other justification settings, a non-zero leftmargin moves the left
+side of the chapter number relative to the margin.
+
 ## Stack-based styling
 Consider this example piece of USFM:
 

@@ -553,8 +553,8 @@
 \def\GraphPaperXoffset{0.0cm}
 \def\GraphPaperYoffset{0.0cm}
 \def\GraphPaperMajorDiv{5} % How many minor divisions are there between major ones?
-\def\GraphPaperLineMajor{0.3pt}
-\def\GraphPaperLineMinor{0.1pt}
+\def\GraphPaperLineMajor{0.4pt}
+\def\GraphPaperLineMinor{0.25pt}
 \def\GraphPaperColMajor{0.8 1.0 0.8} % Colour (R G B)
 \def\GraphPaperColMinor{0.9 1.0 1.0} % Colour (R G B)
 \def\GridPaperLineMajor{0.6pt}
@@ -727,7 +727,11 @@
       \if\XrefNotes\empty\else\advance\dimen2 by \XrefNotesWidth\advance\dimen2 -2\XrefNotesMargin\fi
     \else\dimen2=0pt \fi
     \divide\dimen2 by 2
-    \ifdiglot\dimen4=\csname column\g@tterside width\endcsname\advance\dimen4 0.5\gutter
+    \ifdiglot
+      \ifnum 1=\numexpr 1 \ifdiglotInnerOuter \ifodd\pageno\else * -1\fi\fi \ifdiglotSwap *-1\fi\relax
+        \def\atmp{L}\def\btmp{R}\else\def\atmp{R}\def\btmp{L}\fi
+      \MSG{side \the\pageno, gs:\g@tterside, at:\atmp}%
+      \dimen4=\csname column\atmp width\endcsname\advance\dimen4 0.5\gutter
     \else\dimen4=0.5\textwidth\fi
     \advance\dimen4 by -\dimen2
     \ifdim\columnshift>0pt \advance\dimen4 by -\columnshift\fi % compensate for earlier added columnshift
@@ -749,7 +753,9 @@
       \advance\dimen2\columnshift
     \fi
     \def\th@sgprule{Major}
-    \ifdiglot\dimen4=\csname column\if L\g@tterside R\else L\fi width\endcsname\else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
+    \ifdiglot
+      \dimen4=\csname column\btmp width\endcsname
+    \else\dimen4=0.5\textwidth\advance\dimen4 by -\dimen2\fi
     %\ifBindingGutter\if R\g@tterside\advance\dimen4 by -\BindingGutter\fi\fi
     \setbox0=\hbox{\unhbox0\hskip\dimen4\gp@vrule}
     \vbox to 0pt{\hbox to 0pt{\unhbox 0\hss}\vss}%
@@ -765,6 +771,9 @@
 %+c_pageborders
 \def\PageBorder{}
 \newbox\b@rder
+\def\NewPageBorder#1{\global\setbox\b@rder\box\voidb@x % Remove old border
+  \gdef\PageBorder{#1}% Set the new filename
+}
 \def\pl@ceborder{\ifx\PageBorder\empty\else % if \PageBorder is empty, this does nothing
   \ifvoid\b@rder % set up the \b@rder box the first time it's needed
     \global\setbox\b@rder=\hbox{\mapimagefile{\XeTeXpdffile}{\PageBorder}{}\relax}%
@@ -799,7 +808,7 @@
   \let\opS@ve@msprefix\mspr@fix\let\mspr@fix\empty%
   \let\opS@ve@catprefix\c@tprefix\let\c@tprefix\empty% Category and milestones have no place in determining page.
   \ifm@rksonpage\else\trace{m}{No marks on page \the\pageno}\fi
-  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}}%
+  \immediate\write\p@rlocs{\string\@pgstart\string{\the\pageno\string}{\the\availht}}%
   \trace{G}{Before shipout \the\pdfpagewidth x\the\pdfpageheight}%
   \dimen9=\pdfpagewidth \dimen8=\pdfpageheight
   \holdXobjectsfalse
@@ -817,7 +826,7 @@
 %there are footnotes/floats coming.
   \ifnum\outputpenalty>-\@MM \else\dosupereject\fi\global\m@rksonpagefalse\global\noteseenfalse
   \global\let\mspr@fix\opS@ve@msprefix
-  \global\let\c@tprefix\opS@ve@catprefix
+  \let\c@tprefix\opS@ve@catprefix % NOT global, as catprefix needs to stay grouped
   }
 %-c_plainoutput
 

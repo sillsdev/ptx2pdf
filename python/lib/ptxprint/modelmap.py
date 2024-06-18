@@ -32,7 +32,9 @@ _map = {
     "config/filterpics":        ("c_filterPicList", "meta", None),
     "config/autosave":          ("c_autoSave", "uiprefs", None),
     "config/displayfontsize":   ("s_viewEditFontSize", "uiprefs", None),
+    "config/locklayoutmode":    ("c_lockLayoutMode", "meta", None),
     "config/texperthacks":      ("c_showTeXpertHacks", "uiprefs", None),
+    "config/printcount":        ("_printcount", "meta", None),
 
     "project/id":               ("_prjid", "meta", None),
     "project/bookscope":        ("r_book", "meta", None),
@@ -64,6 +66,7 @@ _map = {
     "project/autotaghebgrk":    ("c_autoTagHebGrk", "advanced", None),
     "project/interlinear":      ("c_interlinear", "advanced", lambda w,v: "" if v else "%"),
     "project/interlang":        ("t_interlinearLang", "advanced", None),
+    "project/interpunc":        ("c_usePunctuation", "advanced", None),
     "project/ruby":             ("c_ruby", "advanced", lambda w,v : "t" if v else "b"),
     "project/plugins":          ("t_plugins", "advanced", lambda w,v: v or ""),
     "project/license":          ("ecb_licenseText", "meta", None),
@@ -103,8 +106,8 @@ _map = {
     "paper/fontfactor":         ("s_fontsize", "fontscript", lambda w,v: f2s(float(v) / 12, dp=8) if v else "1.000"),
     "paper/lockfont2baseline":  ("c_lockFontSize2Baseline", "fontscript", None),
 
-    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\doGridLines" if v else ""),
-    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\doGraphPaper" if v else ""),
+    "grid/gridlines":           ("c_gridLines", "finish", lambda w,v: "\\doGridLines" if v else ""),
+    "grid/gridgraph":           ("c_gridGraph", "finish", lambda w,v: "\\doGraphPaper" if v else ""),
     "grid/majorcolor":          ("col_gridMajor", "finish", None),
     "majorcolor_":              ("col_gridMajor", "finish", lambda w,v: "{:.2f} {:.2f} {:.2f}".format(*coltoonemax(v)) if v else "0.8 0.8 0.8"),
     "grid/minorcolor":          ("col_gridMinor", "finish", None),
@@ -149,6 +152,8 @@ _map = {
     "paragraph/ifjustify":      ("c_justify", "body", lambda w,v: "true" if v else "false"),
     "paragraph/ifhyphenate":    ("c_hyphenate", "body", lambda w,v: "" if v else "%"),
     "paragraph/ifomithyphen":   ("c_omitHyphen", "body", lambda w,v: "" if v else "%"),
+    "paragraph/ifnbhyphens":    ("c_nonBreakingHyphens", "body", None),
+    "paragraph/ifhyphapproved": ("c_hyphenApprovedWords", "body", None),
     "paragraph/ifhyphlimitbks": ("c_hyphenLimitBooks", "body", None),
     "paragraph/ifsylhyphens":   ("c_addSyllableBasedHyphens", "body", None),
     "paragraph/ifnothyphenate": ("c_hyphenate", "body", lambda w,v: "%" if v else ""),
@@ -309,6 +314,7 @@ _map = {
     "finishing/foldcutmargin":  ("s_foldCutMargin", "finish", None),
     "finishing/inclsettings":   ("c_inclSettingsInPDF", "finish", None),
     "finishing/extractinserts": ("c_extractInserts", "finish", None),
+    "finishing/extraxdvproc":   ("c_extraxdvproc", "finish", None),
     "finishing/spotcolor":      ("col_spotColor", "finish", None),
     "finishing/spottolerance":  ("s_spotColorTolerance", "finish", None),
     # The next line is redundant (I think) - check and remove
@@ -435,7 +441,6 @@ _map = {
     "thumbtabs/length":         ("s_thumblength", "tabsborders", None),
     "thumbtabs/height":         ("s_thumbheight", "tabsborders", None),
     "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
-    "thumbtabs/background":     ("col_thumbback", "tabsborders", None),
     "thumbtabs/rotate":         ("c_thumbrotate", "tabsborders", None),
     "thumbtabs/tabsoddonly":    ("c_tabsOddOnly", "tabsborders", None),
     "thumbtabs/rotatetype":     ("fcb_rotateTabs", "tabsborders", None),
@@ -473,6 +478,14 @@ _map = {
                                  if (w.impSourcePDF is not None and w.impSourcePDF != 'None') else ""),
     "import/project":           ("fcb_impProject", None, None),
     "import/config":            ("ecb_impConfig", None, None),
+    
+    "import/imptarget":         ("r_impTarget", None, None),
+    "import/imptgtfolder":      ("btn_tgtFolder", None, lambda w,v: w.impTargetFolder.as_posix()  \
+                                 if (w.impTargetFolder is not None and w.impTargetFolder != 'None') else ""),
+    "import/tgtproject":        ("ecb_targetProject", None, None),
+    "import/tgtconfig":         ("ecb_targetConfig", None, None),
+    
+    "import/everything":        ("c_impEverything", None, None),
     "import/layout":            ("c_impLayout", None, None),
     "import/fontsscript":       ("c_impFontsScript", None, None),
     "import/styles":            ("c_impStyles", None, None),
@@ -488,7 +501,7 @@ _map = {
     "import/body":              ("c_oth_Body", None, None),
     "import/notesrefs":         ("c_oth_NotesRefs", None, None),
     "import/headerfooter":      ("c_oth_HeaderFooter", None, None),
-    "import/tabsborders":       ("c_oth_TabsBorders", None, None),
+    "import/tabsborders":       ("c_oth_ThumbTabs", None, None),
     "import/advanced":          ("c_oth_Advanced", None, None),
     "import/frontmatter":       ("c_oth_FrontMatter", None, None),
     "import/overwitefrtmatter": ("c_oth_OverwriteFrtMatter", None, None),
@@ -499,13 +512,18 @@ _map = {
 ModelMap = {k: ModelInfo(k, *v) for k, v in _map.items()}
 
 ImportCategories = {
+# 'variables' is an extra entry
+# missing: 'diglot', 'strongs', 'meta', 'uirefs'
     'c_oth_Body': 'body',
     'c_oth_NotesRefs': 'noteref',
     'c_oth_HeaderFooter': 'headfoot',
     'c_oth_FrontMatter': 'front',
-    'c_oth_TabsBorders': 'tabsborders',
+    'c_oth_ThumbTabs': 'thumbtabs',
     'c_oth_Advanced': 'advanced',
     'c_oth_Cover': 'cover',
+    'c_oth_Finish': 'finish',
+    'c_oth_Texpert': 'texpert',
+    'c_oth_Decorate': 'decorate',
     'c_impFontsScript': 'fontscript',
     'c_impLayout': 'layout',
     'c_impPictures': 'pictures'

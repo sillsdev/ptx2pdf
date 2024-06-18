@@ -38,7 +38,8 @@ class ParatextSettings:
                 self.read_ldml()
                 break
         self.inferValues()
-        logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
+        if 'FileNamePrePart' in self.dict:
+            logger.debug("{FileNamePrePart} {FileNameBookNameForm} {FileNamePostPart}".format(**self.dict))
         path = os.path.join(self.basedir, self.prjid, "BookNames.xml")
         if os.path.exists(path):
             self.read_bookNames(path)
@@ -154,8 +155,8 @@ class ParatextSettings:
             self.dict['DefaultFont'] = ""
         if 'Encoding'not in self.dict:
             self.dict['Encoding'] = 65001
-        if 'BooksPrsent' not in self.dict:
-            self.calcbookspresent(inferred=True)
+        if 'BooksPresent' not in self.dict:
+            self.calcbookspresent(inferred=forced)
 
     def calcbookspresent(self, inferred=False, forced=False):
         self.bookmap = {}

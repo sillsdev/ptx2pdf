@@ -1,7 +1,11 @@
-import re
+import re, traceback
 from ptxprint.minidialog import MiniCheckButton
 from ptxprint.reference import RefSeparators
 from ptxprint.utils import _
+
+def makeChange(pattern, to, flags=0, context=None):
+    frame =  traceback.extract_stack(limit=2)[0]
+    return (context, re.compile(pattern, flags), to, f"{frame.filename} line {frame.lineno}")
 
 class ScriptSnippet:
     dialogstruct = None
@@ -42,12 +46,12 @@ class ScriptSnippet:
         syllPattern3 = "(?:[" + cls.indVowels + "][" + cls.vmodifiers + "]*)"
         gSyllPattern = "(" + syllPattern1 + "|" + syllPattern2 + "|" + syllPattern3 + ")"
 
-        res += [(onlybody, re.compile(gSyllPattern), cls.hyphenChar + r'\1')]                  # Begin by inserting a break before EVERY syllable
-        res += [(onlybody, re.compile(gNonWordChar + cls.hyphenChar), r'\1')]                  # Remove break at start of word
-        res += [(onlybody, re.compile(gNonWordChar + gSyllPattern + cls.hyphenChar), r'\1\2')] # Remove break after 1st syllable (need 2 syll before break.)
-        res += [(onlybody, re.compile(cls.hyphenChar + gSyllPattern + gNonWordChar), r'\1\2')] # Remove break before last syllable (need 2 syll after break.)
-        res += [(onlybody, re.compile(cls.hyphenChar + r"(?=[\u0d7a-\u0d7f])"), '')]           # Remove break before MAL atomic chillu  \u0d7a-\u0d7f
-        res += [(onlybody, re.compile(cls.hyphenChar + r"(?=[\u0d23\u0d28\u0d30\u0d32\u0d33\u0d15]\u0d4d\u200d)"), '')] # Remove break before MAL old-style chillu 
+        res += [makeChange(gSyllPattern, cls.hyphenChar + r'\1', context=onlybody)]                  # Begin by inserting a break before EVERY syllable
+        res += [makeChange(gNonWordChar + cls.hyphenChar, r'\1', context=onlybody)]                  # Remove break at start of word
+        res += [makeChange(gNonWordChar + gSyllPattern + cls.hyphenChar, r'\1\2', context=onlybody)] # Remove break after 1st syllable (need 2 syll before break.)
+        res += [makeChange(cls.hyphenChar + gSyllPattern + gNonWordChar, r'\1\2', context=onlybody)] # Remove break before last syllable (need 2 syll after break.)
+        res += [makeChange(cls.hyphenChar + r"(?=[\u0d7a-\u0d7f])", '', context=onlybody)]           # Remove break before MAL atomic chillu  \u0d7a-\u0d7f
+        res += [makeChange(cls.hyphenChar + r"(?=[\u0d23\u0d28\u0d30\u0d32\u0d33\u0d15]\u0d4d\u200d)", '', context=onlybody)] # Remove break before MAL old-style chillu 
         return res
 
 nonbodymarkers = ("id", "h", "h1", "toc1", "toc2", "toc3", "mt1", "mt2")
@@ -74,6 +78,13 @@ def nonbody(fn, bj, dat):
         res.append(fn(l))
     return "\n".join(res)
 
+def notattrib(fn, bj, dat):
+    #if "/" in dat:
+    #    import pdb; pdb.set_trace()
+    b = re.split(r"((?<!\\)\|.*?\\[a-z*])", dat)
+    for i, w in enumerate(b[0::2]):
+        b[2*i] = fn(w)
+    return "".join(b)
 
 class Indic(ScriptSnippet):
     dialogstruct = [
@@ -96,54 +107,54 @@ class mymr(ScriptSnippet):
 
     @classmethod
     def regexes(cls, view):
-        res = [(None, re.compile(r'(\s)/'), r'\1'),
-               (None, re.compile('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/'), r'\1', re.S),
-               (None, re.compile('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])'), r'\1', re.S),
-               (None, re.compile('/([\\s\u104A\u104B])'), r'\1', re.S),
-               (None, re.compile(r'/'), "\u200B"),
-               (nonbody, re.compile('\u200B'), "")]
+        res = [makeChange(r'(\s)/', r'\1'),
+               makeChange('([\u00AB\u2018\u201B\u201C\u201F\u2039\u2E02\u2E04\u2E09\u2E0C\u2E1C\u2E20])/', r'\1', re.S),
+               makeChange('/([\u00BB\u2019\u201D\u203A\u2E03\u2E05\u2E0A\u2E0D\u2E1D\u2E21])', r'\1', re.S),
+               makeChange('/([\\s\u104A\u104B])', r'\1', re.S),
+               makeChange(r'/', "\u200B", context=notattrib),
+               makeChange('\u200B', "", context=nonbody)]
         if view.get("c_scrmymrSyllable"):
             cons = "[\u1000-\u102A\u103F\u104C-\u1055\u105A-\u105D\u1061\u1065\u1066\u106E-\u1070\u1075-\u1081" + \
                    "\u108E\u109E\u109F\uA9E0-\uA9E4\uA9E7-\uA9EF\uA9F8-\uA9FE\uAA60-\uAA6F" + \
                    "\uAA71-\uAA7A\uAA7E\uAA7F]\uFE00?"
             ncons = "[\u102B-\u103E\u1056-\u1059\u105E-\u1060\u1062-\u1064\u1067-\u106D\u1071-\u1074" + \
                     "\u1082-\u108D\u108F\u109A-\u109D\uA9E5\uA9E6\uAA70\uAA7B-\uAA7D]|\u1039{}".format(cons)
-            res += [(onlybody, re.compile('(?<![\\s\u1039"\'\\[\\(\\{{\u2018-\u201F])({0})(?!(?:{1})*[\\s\u103A])'.format(cons, ncons)), '\u200B\\1')]
-            res += [(onlybody, re.compile('(\u103A\u1039{0})\u200B'.format(cons)), r'\1')]
-            res += [(onlybody, re.compile('(\\s{0}(?:\u1039{0})*(?:{1})*)\u200B'.format(cons, ncons)), r'\1')]
+            res += [makeChange('(?<![\\s\u1039"\'\\[\\(\\{{\u2018-\u201F])({0})(?!(?:{1})*[\\s\u103A])'.format(cons, ncons), '\u200B\\1', context=onlybody)]
+            res += [makeChange('(\u103A\u1039{0})\u200B'.format(cons), r'\1', context=onlybody)]
+            res += [makeChange('(\\s{0}(?:\u1039{0})*(?:{1})*)\u200B'.format(cons, ncons), r'\1', context=onlybody)]
         return res
 
 class thai(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [(None, re.compile(r'(\s)/'), r'\1'),
-               (None, re.compile('/([\\s\u0E46])'), r'\1'),
-               (None, re.compile(r'/'), "\u200B"),
-               (None, re.compile(r'([^\u0E00-\u0E7F])\u200B'), r'\1'),
-               (None, re.compile(r'\u200B([^\\\u0E00-\u0E7F])'), r'\1'),
-               (nonbody, re.compile('\u200B'), "")]
+        res = [makeChange(r'(\s)/', r'\1'),
+               makeChange('/([\\s\u0E46])', r'\1'),
+               makeChange(r'/', "\u200B", context=notattrib),
+               makeChange(r'([^\u0E00-\u0E7F])\u200B', r'\1'),
+               makeChange(r'\u200B([^\\\u0E00-\u0E7F])', r'\1'),
+               makeChange('\u200B', "", context=nonbody)]
         return res
 
 class laoo(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [(None, re.compile(r'(\s)/'), r'\1'),
-               (None, re.compile('/([\\s\u0EC6])'), r'\1'),
-               (None, re.compile(r'/'), "\u200B"),
-               (None, re.compile(r'([^\u0E80-\u0EFF])\u200B'), r'\1'),
-               (None, re.compile(r'\u200B([^\\\u0E80-\u0EFF])'), r'\1'),
-               (nonbody, re.compile('\u200B'), "")]
+        res = [makeChange(r'(\s)/', r'\1'),
+               makeChange('/([\\s\u0EC6])', r'\1'),
+               makeChange(r'/', "\u200B", context=notattrib),
+               makeChange(r'([^\u0E80-\u0EFF])\u200B', r'\1'),
+               makeChange(r'\u200B([^\\\u0E80-\u0EFF])', r'\1'),
+               makeChange('\u200B', "", context=nonbody)]
         return res
 
 class lana(ScriptSnippet):
     @classmethod
     def regexes(cls, view):
-        res = [(None, re.compile(r'(\s)/'), r'\1'),
-               (None, re.compile('/([\\s\u1AA7])'), r'\1'),
-               (None, re.compile(r'/'), "\u200B"),
-               (None, re.compile(r'([^\u1A20-\u1A7F])\u200B'), r'\1'),
-               (None, re.compile(r'\u200B([^\\\u1A20-\u1A7F])'), r'\1'),
-               (nonbody, re.compile('\u200B'), "")]
+        res = [makeChange(r'(\s)/', r'\1'),
+               makeChange('/([\\s\u1AA7])', r'\1'),
+               makeChange(r'/', "\u200B", context=notattrib),
+               makeChange(r'([^\u1A20-\u1A7F])\u200B', r'\1'),
+               makeChange(r'\u200B([^\\\u1A20-\u1A7F])', r'\1'),
+               makeChange('\u200B', "", context=nonbody)]
         return res
 
 class arab(ScriptSnippet):
@@ -188,7 +199,7 @@ class taml(Indic):
             cls.cmodifiers = r'\u0324'
             cls.vmodifiers = r'\u0b82'
             res = cls.indicSyls()
-            res += [(onlybody, re.compile(r"{}([\u0b95-\u0bb9]\u0bcd)".format(cls.hyphenChar)), r"\1")]
+            res += [makeChange(r"{}([\u0b95-\u0bb9]\u0bcd)".format(cls.hyphenChar), r"\1")]
         return res
             
 class sinh(Indic):

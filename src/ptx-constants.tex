@@ -54,6 +54,8 @@
 \def\size@WIDTH{width}% Full width of page
 \def\size@PAGE{page}% a page, within the margins
 \def\size@FULL{full}% the paper size
+\def\size@FONT{font}% the current font height
+\def\size@LINE{line}% the current baselineskip 
 % tA,bA  etc are reserved for the top and bottom of polyglot column A
 \def\loc@T{t}
 \def\loc@B{b}
@@ -136,6 +138,8 @@
 \x@\let\csname @gr@d@\gr@dnone\endcsname\false
 \x@\let\csname @gr@d@\gr@dheading\endcsname\false
 
+% General matching values
+\def\relaxval{\relax}
 \def\h@phen{-} % for matching
 {\catcode`+=11 
  \catcode`-=11
@@ -185,4 +189,11 @@
 \edef\dt@undefined{\detokenize{undefined}}
 \edef\dt@marker{\detokenize{marker}}
 
-
+% Thinline styles and types
+\def\tls@nochk{nocheck}
+\def\tls@black{black}
+\def\tls@white{white}
+\def\tls@colour{colour}
+\def\tlt@R{Rule}
+\def\tlt@C{Curve}
+\def\@pt@{pt}

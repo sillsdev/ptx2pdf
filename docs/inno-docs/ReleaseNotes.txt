@@ -1,7 +1,483 @@
-PTXprint 2.4 Release Notes
-1 Nov 2023
+PTXprint 2.4.22 Release Notes
+4 Jun 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
+
+  * Re-work import/unpack configuration settings to be more powerful
+    ** Add UI elements for setting TARGET of import/unpack settings
+    ** Enable importing from PDF/ZIP to a new/different config
+    ** Allow extracting settings to a folder
+    ** Added more import categories and also allow "Import Everything"
+    ** Updated tooltips for clarification on import settings dialog
+    ** Added logic to detect main project from a diglot archive
+
+  * Improved diglot interlinears
+    ** First implementation of \BelowBaselineX for diglot balancing
+    ** Make pagehooks work for diglots
+    ** Add punctuation controls to interlinear (on Advanced tab)
+  
+  * Table of Contents improvements
+    ** Fix RTL and LTR Table of Contents generation and improve leaders
+    ** Make toc leaders "fully" stylable
+    ** Define toc fill in context, not before
+    ** Allow disable TOC writing
+  
+  * White lines should use minwhiteline, not get ignored
+    ** Standard rules should also be checked
+  
+  * Implement minimum line widths for borders and zrules
+  
+  * Improved layout and functionality of the Picture tab
+  
+  * Add more helpful tip to font-related error message
+  
+  * Exclude variable fonts (need to use static fonts instead)
+  
+  * Diglot availht calcs need to consider joint calcs.
+  
+  * Add per side IndentUnit in diglots
+  
+  * Increment print counter when we hit print
+  
+  * Improve handling of pics within Intro matter
+    ** On generate create picture anchors with paragraph counts
+
+  * Character style colouring fix
+  
+  * Avoid problems from id@@@ continuing after end of the book
+  
+  * Trigger side-hooks for mongolot sections of a diglot text
+  
+  * Add labelling of tracing lines, fix? table alignment controls
+  
+  * Side-dependant numcuts and dropotherlines need to be counts
+  
+  * Make utility to get improved division accuracy
+  
+  * Page end textborder kern should only happen when page border in effect
+  
+  * Add intropages. Support periphs with no ids in INT
+  
+  * Fix nonpublishable UI linkage
+  
+  * Fix gridline-column separator for left-opening (RTL-binding) diglots
+  
+  * Fix QR bug when there was an = in the URL, make keywords set marks
+  
+  * Fix linebreak at \k and Update standards
+  
+  * Fix thumbtabvadj in texperthacks to work, rather than print
+  
+  * Fix Digital CMYK to actually be CMYK
+  
+  * Various python 3.12 cleanups (mostly affecting Regex)
+  
+  * Various Documentation improvements
+    ** Document ptxprint.spec a bit [Tech]
+  
+Bug fixes and Improvements in 2.4.21 (27 Apr 2024)
+
+  * Chapter numbers should occur on their own line
+  
+  * Having + in tag_escapes stops parsing of nested markers, treating them as text.
+  
+  * Update test standards after table-column controls added (4a8e0df)
+  
+  * Add functionality to pre-populate the following Google Forms before submission:
+    a) Request hi-res illustrations from SIL's repository of illustrations and maps
+    b) Get Permission to use (mostly) David C Cook illustrations 
+  
+  * Improve glossary filtering
+  
+  * Add ink saturation limiting to cmyk pdf generation
+  
+  * Re-work the Global Options tab of the Pictures Page to improve usability
+  
+Bug fixes and Improvements in 2.4.20 (22 Apr 2024)
+
+  * Add another example for range of verses to print non-contiguous in same chapter
+  
+  * Add Rohg script
+
+  * Simplify wording on Advanced tab for changes.txt (to make it easier to find!)
+  
+  * Solve issue on View+Edit tab when a file is not found.
+  
+  * Make sure periphs from the INT book are included even if FRT book is missing.
+  
+  * Do not save default values when picInfo.txt and picCheck.txt are written
+    (reduces the filesizes of these files significantly)
+
+  * Protect from logger crash on poor pt settings
+
+Bug fixes and Improvements in 2.4.19 (5 Apr 2024)
+
+  * Fix RTL in footnote paragraphs
+  
+  * Add keyboard shortcuts to Technical Reference Manual
+  
+  * Ensure QR spacebeside attr is a number
+  
+  * Fix QRcode with numerical pgpos
+  
+  * Create default settings for scripture refs when unpacking DBL bundles
+  
+  * Try to obey PT settings for chapterverse and range separators
+  
+Bug fixes and Improvements in 2.4.18 (26 Mar 2024)
+
+  * Make id:GEN|p style font definitions work properly
+  
+  * Fix undefined item in sidebar figure placement
+  
+  * Cope with spaces in sidebar figure names (Note: affects pics in covers)
+  
+  * Maybe fix odd interlinear alignment
+  
+  * Fix usfmerge remove problems
+  
+  * Solve diglot error with character styles in chapter-level heading paragraphs
+  
+  * Improve handling of cl in diglots
+  
+  * Dedup errors and warnings and limit remedies sometimes
+  
+  * Fix toc col width issue when > 999 pages in publication
+  
+  * Update shortcuts in the editor window:
+       Ctrl-minus  =  Shrink - size of text
+       Ctrl-equals =  Grow   + size of text
+       Ctrl-s      =  Save file
+       Ctrl-d      =  Duplicate current line
+       Ctrl-l      =  deLete current Line
+       Ctrl-0      =  Comment out/in the current line (uses \rem, #, %)
+       Ctrl-,      =  Comment out/in the current line (uses \rem, %)
+       Ctrl-Up     =  Move the current line/selection UP by one line
+       Ctrl-Down   =  Move the current line/selection DOWN by one line
+       
+    In AdjList window:
+       Ctrl-grave  =  Activate first shrink option in current paragraph
+       Ctrl-1...9  =  Activate Nth grow option in current paragraph
+  
+Bug fixes and Improvements in 2.4.17 (18 Mar 2024)
+
+  * Fix broken test cases and solve an error-loop
+  
+  * Minor tweak to AdjList generation (easier to edit)
+  
+  * Fix gloss-rb link bug
+  
+  * Make custom merge config files work
+  
+  * Add printcount to config files
+  
+  * Added shortcuts keys for editor (^d=duplicate, ^l=del Line, ^i=shrink, ^1-9=grow/shrink)
+  
+Bug fixes and Improvements in 2.4.16 (8 Mar 2024)
+
+  * Added 'Give Feedback' button and link to Google user survey form
+  
+  * Fix broken link localization with Google translate (not all are possible)
+
+  * Add control for position of drop-cap chapter numbers. **This may break existing layouts** if the default
+alignment or left/right indent factors have been changed from their defaults (Alignment centre and indents zero).
+Previously such changes were ignored, but now they have meaning.  Alignment=Right -- Use right indent (or left
+if right indent is zero)_indent to set position of right-hand edge of number (left-hand edge in right-to-left publications).
+Other alignment setings -- Left indent controls where the chapter number starts.
+
+Bug fixes and Improvements in 2.4.15 (5 Mar 2024)
+
+  * Don't report unbalanced last pages, and show page ranges in report
+  
+  * Fixed \cl in diglots
+  
+  * Minor UI tweaks - Page Size edits were in overwrite mode, enable search for drop cap
+  
+  * Add Adjlist syntax highlighting
+  
+  * Call usfmerge2() with debug flag controlled by log level (Writes test files to check that nothing got added/lost in merging)
+  
+  * Fix diglot cutout continuation problem(?)
+  
+  * Fix RefRange.__contains__
+  
+  * Add additional tests for references
+  
+  * Fix diglot vertical grid line position (#941)
+  
+Bug fixes and Improvements in 2.4.14 (28 Feb 2024)
+
+  * Fix moving notes up and down at the end of books
+  
+  * Fix tests, remove Times New Roman
+  
+  * Add some test .sty files
+  
+  * Solve bug with catprefix escaping groups
+  
+  * Silently ignore python processing if not present
+  
+  * Start working on fractional heights
+  
+  * Solve a backing-up issue
+  
+  * Fix accidental centrecolum breakage
+  
+  * Fix long-standing bug where centre column refs were stealing space from main text.
+  
+  * Update templates, Fix CenterColXrefs
+  
+  * Merge branch 'notes - changes to footnote measurements
+  
+  * Check AdjustList for odd input, warn if there's a space
+  
+  * Add UI controls for note multipliers
+  
+  * Fix alignment of book headers
+  
+  * Add all Book headers as HEADER in merge
+  
+  * Fix codelet to insert book code as \h1
+  
+  * Add resilience in usfm parser
+  
+  * Fix diglot pagebreaking on 2nd page
+  
+  * Make verse ranges valid link-targets
+  
+  * Fix problem with \|
+  
+Bug fixes and Improvements in 2.4.13 (1 Feb 2024)
+
+  * Make "font" figure size scale to the right fontsize
+  
+  * Provide status message with list of unfilled pages -- active with tracing{B}
+  
+  * Fix broken x-edgeadjust in figures, improve figure documentation
+  
+  * Don't let codelet buttons area expand when expanding parent window
+  
+  * Add more telemetry for page breaking
+  
+  * Fix hard hyphens in hyphenation
+  
+  * Another tweak to get hyphenation working just right
+  
+  * Define \reference to (a) be user-changable and (b) default to using ChapterVerseSeparator
+  
+  * Improve status line messages esp for underfilled pages
+  
+  * Check for (downloadable) updates more consistently
+
+Bug fixes and Improvements in 2.4.12 (25 Jan 2024)
+
+  * Allow letter-spaced text to be hyphenated
+  
+  * Style tab's More Info... now also link to github-docs-help-zfoo.md pages
+       For internal milestones etc. zbl, zlabel, zpage, zpmkr, zrule, etc.
+  
+  * Implement 'H' figure position (cHaracter-like HERE)
+       To go with 'H', there are 2 new sizes, 'font' and 'line', 
+       related to the font size and \baselineskip.
+  
+Bug fixes and Improvements in 2.4.11 (23 Jan 2024)
+
+  * Fix feedback loop in balanced esp. for pages with a big gap
+  
+  * Refactor hyphenation
+  
+  * Add option to force hyphens to be non-breaking
+  
+  * Added various help files to technical documentation
+  
+Bug fixes and Improvements in 2.4.10 (20 Jan 2024)
+
+  * Make Quick Run option 'sticky' - keep with user config settings
+  
+  * Undo change related to t@gging (colstart param missing / fixes extra } error)
+ 
+Bug fixes and Improvements in 2.4.9 (19 Jan 2024)
+
+  * Added t@gging (and stop footnotes blowing up)
+  
+  * Add tags for figures
+  
+  * Temporary fix verse lists in interlinear
+  
+  * Add end of book hook when end of book decoration is included (#938)
+  
+  * Fix typo in ptx-output.tex
+  
+  * Allow custom .py scripts to run with __main__ check
+
+Bug fixes and Improvements in 2.4.8 (18 Jan 2024)
+
+  * Download updates button is now smarter
+  
+  * Shaving values are now deltas
+  
+  * Fix joint of carried over and new notes
+  
+  * Solve issue of breaking in overflowed notes
+  
+  * Fix typos in texpert.py
+  
+  * Merge branch 'notebreaking'
+  
+  * Update good test results (centrecolumns still a mess)
+  
+  * Start documenting milestones
+  
+  * Mode documentation
+  
+  * Fix chapter label dropping chapter marker/number
+  
+  * Fix bad image copyrights output to .tex (#929)
+  
+  * Add warning message help for bad copyright statement in tex.log
+  
+  Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
+
+  * Improve snippet on diacritic colouring
+  
+  * Get correct UI level to show at startup
+  
+  * Internationalize URIs on Help tab via Google Translate
+  
+  * Remove preview when deleting pictures, and swapping configs
+  
+Bug fixes and Improvements in 2.4.6 (6 Dec 2023)
+
+  * Make \fp* a noop (related to #813)
+  
+  * Refactor to get diacritic colouring working
+  
+  * Add docs for diacritic colouring in snippets.md
+  
+  * Diacritic colouring refinements to allow whole book colouring.
+  
+  * Point Style links to new USFM docs site
+  
+  * Fix zfiga bug of extra backslash showing up
+  
+Bug fixes and Improvements in 2.4.5 (30 Nov 2023)
+
+  * Fix rangeref with verses off and different books
+  
+  * Avoid lost last partial-page of SFM input
+  
+  * Add space to ensure multiply vs prefix
+  
+  * Hopefully solve #915 potential insert loss
+  
+  * Fix big balancing
+  
+  * Unmerge note and output routines from paratex2.tex
+  
+  * Fix reference tests after changes to b64codes
+  
+  * Output bookendrule even when the first thing on the page is a title
+  
+  * Get diacritic colouring working (alpha)
+  
+  * Move bad fonts not switching in UI to environment variable
+  
+  * Control hanging verse at dropcap
+  
+  * Add Extra XDV Processing checkbox in UI and modelmap
+  
+  * Implement ifHangVA
+  
+  * Stitch in xdv processing
+
+Bug fixes and Improvements in 2.4.4 (17 Nov 2023)
+
+  * Fix @ issues with hyphenation and default texpert hacks values
+
+  * Implement @diglot@pagebreak (correct paragraph break behaviour for diglots)
+
+  * Document new paragraphed notes controls
+
+  * create xdv filter, seems to do unity transfer atm
+
+  * Improve logic on ommitting chapter numbers
+
+  * Ammend standard test results with running header fix
+
+  * Get new pyintaller and innosetup to work again ;;; _internal
+
+  * Get pytest to work on MSYS2 (remove option to run on Win)
+  
+  * refactor xdv stuff
+  
+  * Update Crowdin localization
+  
+  * Document and illustrate most of the new footnote options
+  
+  * Tidy up code snippets for changes, getting \ correct
+
+Bug fixes and Improvements in 2.4.3 (14 Nov 2023)
+
+  * Correct logic so noteid change applied to non-paragraphed notes
+  
+  * Make new-style paragraphed notes mimic old-style paragraphed notes
+  
+  * Make newparnotes unwrap first box (behave properly with endnotes)
+  
+  * Clean up some unnecessary dimen usage
+  
+  * Yet another parnotes option; un-break newparnotesfalse
+  
+  * Less deltas for newparnotes
+  
+  * Improve book filenames handling
+  
+  * Fix typos around clearthenbackup
+  
+  * Repair broken clearthenbackup bug
+  
+  * Make UI footnote/xref control work on diglots
+  
+  * Cope with mt1 on line after an id
+  
+  * Ensure that pagebreak-before-all-chapters doesn't crash regex
+  
+  * Fix regex bugs
+  
+  * Refactor changes to include error messages
+  
+Bug fixes and Improvements in 2.4.2 (4 Nov 2023)
+
+  * Add missing changes for bookresetcallers (Reset fn+xr callers at each book)
+  
+  * Support for footnote sanity checking via parlocs
+  
+  * Paranotes are incompatible with write nodes, at least old-style paranotes
+  
+  * Newparnotes confirmed compatible with noteid code
+  
+  * Implement Box/BorderPaddingInnerOuter (note untested for RTL)
+  
+  * Treat percent sign as literal in piclist (#912)
+  
+  * Update/add minitest files and standard
+  
+  * Fixed error on resetting UI level
+  
+Bug fixes and Improvements in 2.4.1 (2 Nov 2023)
+
+  * Ensure figures and local/figures are also in the srchlist for pictures
+  
+  * Allow ^ in parents. Stop p^95 occursunder type errors (#925)
+  
+  * Implement bookresetcallers and fix some characters / escapes (tilde, backslash, pipe)
+  
+Bug fixes and Improvements in 2.4 (1 Nov 2023)
+
+  * Make sure that the View Level is preserved when a config is reset or deleted
 _______________________________________________________________
 
 Version 2.4 release summary: (changes since last major version 2.3)
@@ -92,10 +568,6 @@ Issues Fixed:
   * Truncated first page (#914)
 _______________________________________________________________
 
-Bug fixes and Improvements in 2.4 (1 Nov 2023)
-
-  * Make sure that the View Level is preserved when a config is reset or deleted
-  
 Bug fixes and Improvements in 2.3.56 (31 Oct 2023)
 
   * Stay on Basic tab when changing Project or Configuration

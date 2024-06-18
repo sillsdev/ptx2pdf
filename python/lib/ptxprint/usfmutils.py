@@ -3,7 +3,7 @@ from ptxprint import sfm
 from ptxprint.reference import RefList, RefRange, Reference, BookNames
 import re, os, traceback, warnings
 from collections import namedtuple
-from itertools import groupby
+from itertools import groupby, accumulate
 from functools import reduce
 from copy import deepcopy
 import regex, time, logging
@@ -241,7 +241,7 @@ class Usfm:
                         self.tocs.extend([""] * (ind - len(self.tocs) + 1))
                     self.tocs[ind-1] = e[0].strip()
 
-    def getwords(self, init=None, constrain=None):
+    def getwords(self, init=None, constrain=None, lowercase=False):
         ''' Counts words found in the document. If constrain then is a set or
             list that contains words to count, ignoring all others. Returns
             a dict of words: counts. '''
@@ -253,6 +253,8 @@ class Usfm:
             if s is None:
                 return a
             for w in wre.split(str(s))[1::2]:
+                if lowercase:
+                    w = w.lower()
                 if constrain is None or w in constrain:
                     a[w] = a.get(w, 0) + 1
             return a
@@ -261,6 +263,42 @@ class Usfm:
         words = sreduce(nullelement, addwords, self.doc, init)
         return words
 
+    def hyphenate(self, hyph, nbhyphens):
+        hyph.calcChars()
+        splitre = re.compile(r"(?i)([^{}]+)".format("".join(sorted(hyph.chars))))
+        if nbhyphens:
+            hyphenchar = "\u2011"
+        elif hyph.has2010:
+            hyphenchar = "\u2010"
+        else:
+            hyphenchar = "-"
+        def isincluded(e):
+           return "nonvernacular" not in getattr(e, "meta", {}).get('TextProperties', "").lower()
+        def proc(e):
+            if isinstance(e, sfm.Element):
+                for c in e:
+                    proc(c)
+            elif isincluded(e):
+                t = str(e).replace("-", hyphenchar)
+                bits = splitre.split(t)
+                for i in range(0, len(bits), 2):
+                    s = bits[i].replace("-", hyphenchar)
+                    if s.lower() in hyph:
+                        h = hyph.get(s.lower())
+                        if s.lower() != s:
+                            hbits = h.split("-")
+                            hpos = list(accumulate([len(x) for x in hbits]))
+                            r = [s[x:y] for x, y in zip([0] + hpos, hpos)]
+                            bits[i] = "\u00AD".join(r)
+                            logger.log(6,f"hyphenating {s} at {hpos} giving {'-'.join(r)}")
+                        else:
+                            logger.log(6,f"hyphenating {s} giving {h}")
+                            bits[i] = h.replace("-", "\u00AD")
+                    else:
+                        bits[i] = s
+                e.data = "".join(bits)
+        proc(self.doc[0])
+        
     def getmarkers(self):
         ''' Return a set of all markers in the doc '''
         res = set()
@@ -793,7 +831,7 @@ class Module:
                 if not isinstance(rep, sfm.Element) or rep.name != "rep":
                     break
                 # parse rep
-                m = re.match("^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
+                m = re.match(r"^\s*(.*?)\s*=>\s*(.*?)\s*$", str(rep[0]), re.M)
                 if m:
                     reps.append((None,
                             re.compile(r"\b"+m.group(1).replace("...","[^\n\r]+")+"(\\b|(?=\\s)|$)"),

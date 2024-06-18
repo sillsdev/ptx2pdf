@@ -57,26 +57,26 @@ Note that `h` and `p` sidebars, if they have  no background colour or images, an
 horizontally
 may be permitted to break across pages.
  
-#### `\Scale` 
+#### `Size: \Scale` 
 `\Scale  value(0-1)`
 
 * Default: 1
 
 Width of the box relative to the nominal size of the containing column or box (like the scale="..." `\fig` parameter).
 
-#### `\FirstLineIndent`
+#### `Horizontal shift: \FirstLineIndent`
 
 * `\FirstLineIndent` value
 * Default: 0
 
-This measurement (directly equivalent to the paragraph parameter) allows in-line  sidebars (and images) to be shifted sideways. Negative values move the sidebar into the margin. In the image below, the automatic sidebars have a `\FirstLineIndent` of -0.125:
+This measurement (directly equivalent to the paragraph parameter, and the figure attribute x-edgeadjust) allows in-line  sidebars (and images) to be shifted sideways. Negative values move the sidebar into the margin. In the image below, the automatic sidebars have a `\FirstLineIndent` of -0.125:
  
 ![](imgs/20230929-170748.png)
 
-#### `\SpaceBeside`
+#### `Gap beside sidebar cutout: \SpaceBeside`
 `\SpaceBeside 3pt`
 
-If the sidebar is in a cutout, this is the space between the edge of the sidebar and the surrounding text. See also the use below for foreground images. 
+If the sidebar is in a cutout, this is the space between the edge of the sidebar and the surrounding text. See also the use below for foreground images in a cutout. 
 
 ### Sidebar category logo
 ####`\FgImage` 
@@ -113,7 +113,7 @@ See `\BgImageScaleto`. While scaling the foreground image to outer elements is c
 
 ![](imgs/20230929-213735.png)
 
-#### `\SpaceBeside`
+#### `Gap beside image in cutout: \SpaceBeside`
 `\SpaceBeside 3pt`
 
 If the foreground image is in a cutout, this measurement gives the 

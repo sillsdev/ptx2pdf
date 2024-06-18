@@ -2,7 +2,7 @@
 
 Figures overlap the boundary between content and publication information. A
 figure is often publication specific. For example, one might expect different
-figures in different kinds of publications. There may well be more figures in a
+figures in different kinds of publications. There may well be more or less figures in a
 print publication than a phone application.
 
 In this section we discuss the layout information in a figure. We look at USFM2
@@ -25,11 +25,11 @@ HEBR 3.9 Description of picture|co00621.jpg|col*0.5|cr2||The people worshipping 
 HEBR 3.9 The people worshipping idols having forgotten God|src="co00621.jpg" size="col*0.5" pgpos="cr2" ref="3:9" alt="Description of picture"
 ```
 
-Paratext's export to print-draft removes picture formatting information before
-it gets to XeTeX. PTXprint leaves the formatting intact, and assumes you've got
-it (mostly) right.  The USFM standard is not very useful here; for example, for
-the `loc` attribute it says "a list of verses where it might be inserted", and
-for size it offers only 'span' and 'col'. The ptx2pdf XeTeX macros give better
+Paratext's  export to print-draft (versions 9.3 and below) removed picture formatting information before it gets to XeTeX.
+PTXprint now strips out figure lines from Paratext-created files and generates a USFM-3 piclist from them. The figures are now deemed to be under the control of the (publication-specific) piclist, and modifications are neither returned to paratext nor updated from subsequent modifications in paratext.
+
+The USFM-3 standard is not very useful here; for example, for
+the `loc` attribute it says "a list of verses where it might be inserted", while paratext help suggests an entirely different use for this attribute. For size, USFM-3 only 'span' and 'col', with no scaling factor. The ptx2pdf XeTeX macros give better
 control on both of these, offering multiple positioning options and if you want
 a smaller image than full-page or column-width you can say, e.g. `span*0.6` (see
 a later discusion also). They also add the extra sizes 'width', 'page' and 'full'. 
@@ -66,7 +66,7 @@ treated as a `pgpos` attribute for backward compatibility.
 
 ### pgpos Attribute
 
-The `pgpos` attribute gives a suggestion as to where on the page a figure should
+The `pgpos` attribute gives an instruction as to where on the page a figure should
 be placed. Given that picture placement is highly specific to a particular
 publication, it is advisable not to use `pgpos` in a USFM file itself, but to
 use it in a piclist file. It can be used in a USFM file when a piclist is
@@ -79,59 +79,63 @@ after the `HEB`), the picture will be set in a cut-out on the right side of the
 column, two lines below the beginning of the paragraph starting at 3:9, with the
 picture half a column wide and the text a little distance away. 
 
-In the table below, 'left-aligned' means that the left hand edge of the image is
-lined up with the left-hand image of (unindented) paragraph text.
+In the table below, 'left-align
+#### Out of flow positions
+These positions do not depend on where the trigger-text is on the page, as they are referenced to the 
+physical page.
 
-The page positions listed below are now available. For each **position code** given
-with `l` (Left), **you may also specify**: `r` (Right), `i` (Inner) and `o` (Outer).
-`i` is replaced with `l` on odd-numbered pages, and `r` on even numbered pages. In a 
-diglot when the `mirrored` columns are in use ('left' text is always inner, the
-'right' text outer), you probably don't want to use `ti` or `to` for picture placement.
-
-#### Positions
 Code | Mnemnonic              | Position                                                      | Max. caption width 
 ---- | -----------------------|-----------------------------------------------------------|-----------------------------------------------
 t    | 'Top'                  | Above everything except the header line.                        | across both columns 
 b    | 'Bottom'               | Below all verse text (and footnotes in diglot).                 | across both columns 
+V    | 'very Bottom'               | Below everything, including footnotes.                 | across both columns 
 tl   | 'Top-Left'    [^1]      | At the top of the left-hand [^2] column                          | width of column 
 bl   | 'Bottoom-Left'    [^1]  | At the bottom of the left-hand [^2] column                          | width of column 
------|------------------------|       ***Experimental Additions***                              |----------------------------
-h    | 'Here'                 | Where defined / before the verse in piclist[^3], centred       | width of column
-hc   | 'Here',centred         | Where defined / before the verse in piclist[^3], centred       | width of column
-hl   | 'Here',Left            | Where defined / before the verse in piclist[^3], left-aligned  | same width as image
-p    | 'Post-paragraph'       | After this paragraph[^4],[^7], centred                              | width of column
-pc   | 'Post-paragraph', centred  | After this paragraph[^4], centred                            | width of column
-pl   | 'Post-paragraph, Left' | After this paragraph[^4], left-aligned                           | same width as image
-pc#  | 'Post-paragraph'       | After # paragraphs[^4],[^5], centred                                | width of column
-pl#  | 'Post-paragraph, Left' | After # paragraphs[^4],[^5], left-aligned                           | width of column
-cl   | 'Cutout Left'          | A notch/corner cut out of the text, starting at current line    | same width as image
-cl#  | 'Cutout Left'          | A notch starting # lines[^6] below the current line              | same width as image
-P    | 'Page'                 | An image that replaces the normal text on the page              | width of page
-Pc   | 'Page', centred        | An image that replaces the normal text on the page              | width of page
-Pct  | 'Page', centred, top[^8] | An image that replaces the normal text on the page              | width of page
-Pl   | 'Page', left           | An image that replaces the normal text on the page, left-aligned | width of page
-Plt  | 'Page', left, top[^8]   | An image that replaces the normal text on the page, left-aligned | width of page
-F    | 'Full page'            | The entirety of the paper [^9]                                    | width of paper, may be off the page.
-Flt | 'Full page', as above  | The entirety of the paper [^9] pushed to whatever edge is indicated   | width of paper, may be off the page.
 -----|------------------------|       ***Polyglot  Additions***                              |----------------------------
 tL   | 'Top-of-L'	      | At the top of column L (substitute L for R, A, B...)		| width of column
 bL   | 'Bottom-of-L'	      | At the top of column L						| width of column
 
-Notes:
-[^1]: Only if two columns are in use.
+[^1]: Only if two columns are in use. `tr`and `br` of course exist as well.
 
 [^2]: If a diglot is being set inner-outer rather than left/right, then the 'left' column is the inner column. 
 
-[^3]: *Here*  images need to start at a new paragraph. If the
-    specified location is not a paragraph boundary, a new paragraph will be forced.
-    
+####  PTXprint Additional Positions 
+Additional positions defined by PTXprint have a 1 or 2 letter code. Some 2 letter codes are then followed by a number, others by another letter.  The first letter can be considered the **class** or type of image placement, the second, the (horizontal) **alignment**. For some position classes, the alignment is optional, in which case the default alignment is centred.
+
+##### Alignment codes
+The alignment codes (2nd letter) are:
+
+*  `c` centred 
+*  `l` (Left)  or `r` (Right) 
+*  `i` (Inner) and `o` (Outer). Where inner means closest to the binding, and outer means furthest from the
+binding.
+
+Left and right aligned images have a caption-space the same width as the image. Centred images have a caption space equal to the width of the space they are in.
+
+##### Class codes
+In the table below, * is used to indicate any of the alignment positions above, X is used to indicate any alignment except `c`.
+The third code is always optional. `#` indicates a number (integer) e.g. 2 or (decimal) e.g. 3.2.   @ indicates that the third parameter is a vertical alignment, for which values can be `t`-top, `b`-bottom, `c`-centre or (for sidebars) `f`- fill page height if possible (stretch vertical spaces).
+
+Class | Mnemnonic              | Description
+---- | -----------------------|----------------------
+h    | 'Here'                 | Line above where defined / before the verse in piclist 
+j    | 'Just below'                 | Line below where defined / before the verse in piclist
+H | 'HERE as cHaracter' |  In the exact location, as if a character. 
+p    | 'Post-paragraph'       | After this paragraph[^4],[^7]
+p*#  | 'Post-paragraph'       | After # (integer) paragraphs[^4],[^5] 
+cX   | 'Cutout Left'          | A notch/corner cut out of the text, starting at current line 
+cX#  | 'Cutout Left'          | A notch starting #(decimal) lines[^6] below the current line
+P    | 'Page'                 | An image that replaces the normal text on the page
+P*@   | 'Page'                 |  As above, but horizontaly and vertically aligned[^8]
+F   | 'Full page'            | The entirety of the paper [^9] 
+F*@ | 'Full page'  | The entirety of the paper [^9]  but horizontally and vertically aligned.[^8]
+
+   
 [^4]: The 'insert image here' code will be activated at the end of the paragraph.
-    Counting starts at the paragraph containing the verse number or the \fig
-    definition.
     
-[^5]: pc1 'after one paragraph' is interpreted as meaning the same as p or pc (the
-    c is assumed if no number is specified, but required if supplying a number), pc2
-    means after the next paragraph. This is useful if the verse contains poetry.
+[^5]:     Counting starts at the paragraph containing the verse number or the \fig
+    definition. i.e. `pc1` 'after one paragraph' is interpreted as meaning the same as p or pc.)
+    `pc2`  means after the next paragraph. This is useful if the verse contains poetry.
     
 [^6]: Multi-digit numbers may be specified, but little sanity checking is done.
     The image will *always* be on the same page/column as the anchor (normally 
@@ -145,12 +149,12 @@ Notes:
     adjustment of -0.5lines, cr1.4999 as cr1 with an ajustment of +0.4999 lines.
     
 [^7]: Since `p` is also interpretable as a media target, `pc` should always be
-    used in SFM2 instead.
+    used in USFM-2.
     
 [^8]: Use `b` for bottom alignment, or `c` for explicit central vertical alignment. 
     If a vertical alignment is specified, then the image will be the only image
     on the page, even if another image would also fit. If no vertical
-    alignment is specified, then the image will be centred vertically,
+    alignment is specified, then the image will normally be centred vertically,
     but an additional image or images may be fitted onto the page if there is space.
     
 [^9]: If the image is not the same aspect ratio as the page, or a scaling factor is used, 
@@ -166,10 +170,10 @@ Notes:
 - p : The delayed picture is saved until the end of the Nth paragraph in a
   certain 'box'. There is no code to have an adjustable stack of boxes 
   but multiple images can now be put into the same after-paragraph box 
-  (code for this added in late March 2022).
-  Diglots have a second box for the right/outer text.
+  Diglots have a separate boxes for each column.
+  
 - F : 
-  -  If a caption is used, this will normally be off the page. It may,
+   If a caption is used, this will normally be off the page. It may,
      however, still affect the alignment of the image, preventing top / bottom alignment from 
      functioning correctly. Thus captions should *not* be used in connection with full-page 
      images that approach the page edges.
@@ -225,7 +229,9 @@ name that should be supplied to `\setCutoutSlop`.
 \RaiseItem{droppic6}{TST1.7-preverse}{2}
 \DelayedItem{droppic6}{TST1.7-preverse}{11}{(58.91803ptx8@-4)R}
 ```
-#### Do the new picture positions conform to examples in the USFM specification?
+
+ 
+## Do the new picture positions conform to examples in the USFM specification?
 In some ways, they conform better than the previously available options. USFM
 specification indicates that a picture can occur immediately after text, ending
 the previous paragraph. This works with *here* picture locations, except that the 
@@ -240,19 +246,23 @@ images in cutouts.
   from a piclist. Possibly also for some kind of decorative 'end of section'
   mark.
 - hl / hr Handy for a sponsor's or publisher's logo, perhaps?
+- H Perhaps a small logo.  Use with large sizes or with a caption is discouraged, as it could easily overwrite text above or distort the grid) 
 
 ### size Attribute
 
 Valid values for this attribute are:
-- full: the entire size of the paper, a page reserved for images.
-- page: the normal printed area of the page, on a page reserved for images.
-- col: the width of the current column (only valid for 2 column text or diglot).
-- span: the width of the normal printed area of the page.
-- width: the full width of the paper 
+
+- `full`: the entire size of the paper, a page reserved for images.
+- `page`: the normal printed area of the page, on a page reserved for images.
+- `col`: the width of the current column (only valid for 2 column text or diglot).
+- `span`: the width of the normal printed area of the page.
+- `width`: the full width of the paper 
+- `font`: the current font height (added for position H)
+- `line`: the current line height (added for position H)
 
 The `size` attribute has been extended to support scaling. Following the `col`
 or `span` values, there may be an optional `*` followed by scale factor, with
-1.0 being the unity scaling. For example in a piclist:
+1.0 being the unity scaling.  The separate `scale` attribute is to be preferred in USMF3 files. For example in a piclist:
 
 ```
 RUT 4.11 Boaz addresses the crowd|07.jpeg|span*0.6|t|Artist McArty| You are witnesses |Ruth 4:10|rotated 3|
@@ -268,7 +278,7 @@ the scale factor into its own `scale` attribute. This value is a multipler that
 scales an image after its size has been established via the `size` attribute. A
 value of `1.0` implies no size change.
 
-### x-spacebeside Attribute - cutout spacing
+### x-spacebeside Attribute 
 
 An image in a cutout needs some space beside it, so that the text does not touch the image.
 This can be controlled globally by puting a different distance in the the configuration 
@@ -276,9 +286,11 @@ parameter `\def\DefaultSpaceBeside{10pt}` If a particular figure needs a differe
 this can be controlled by setting the x-spacebeside USFM3 attribute. e.g.
 `x-spacebeside="15pt"` This attribute is only relevant for figures in cutouts.
 Sidebars in cutouts may set the `\SpaceBeside` value in the appropriate
-stylesheet. Note that the code currently assumes no one will have a cutout
-'foreground' image in a sidebar that is itself in a cutout, and uses
-`\SpaceBeside` for both cutouts.
+stylesheet. Note that the code currently assumes no one will have a cutout 'foreground' image in a sidebar that is itself in a cutout, and uses
+`\SpaceBeside` for both cutouts. The image-specific `x-spacebeside` setting can override this.
+
+#### x-spacebeside in pgpos "H"
+Similarly to cutouts, the `H` (HERE/cHaracter-like) page position normally needs some extra space so that it does not touch text. The  values  mentioned above all apply. If the pgpos is `"H"` or `"Hc"`, then that additional space is evenly distributed on both sides of the image. If pgpos is `Hl` or `Hr` then the additional space is all on one side.
 
 ### x-spacebefore and x-spaceafter Attributes - Additional whitespace
 Figures by default have a small amount of space  above or below them (0.3 and
@@ -301,7 +313,11 @@ parameters.
 \SpaceBeside 15
 ```
 
-
+### x-edgeadjust Attribute
+ `x-edgeadjust` moves the image relative to the margin, like indentation does to text.  As the same units are used, a figure 
+with `x-edgeadjust="0.25"`and  `pgpos="hl"` will align with the left-hand edge of a paragraph with an indentation of 0.25. 
+Negative numbers will cause the image to extend into the respective margin. Note that sidebars can be similarly adjusted 
+via their `\FirstLineIndent` parameter
 
 ### x-xetex Attribute - Rotation control and PDF page selection 
 #### Rotation
@@ -468,6 +484,16 @@ A piclist file takes the same filename as the USFM file being processed by the
 ptx macros but with an added extension of `.piclist` and in the Piclist folder,
 specified to the macros. Ptxprint handles all this for the user.
 
+Historically, piclists have used the TeX style comments, which meant that
+percentage signs needed to be escaped `\%` to appear in the output. More
+recently, there have been two changes to this: lines starting with a hash sign
+(`#`) are now treated as comment lines. A hash sign is *not* treated as a
+comment sign otherwise.  If, when the piclist is read `\PiclistLitPcttrue` has
+been set, then percentage signs are treated as letters. If is not set (the 
+default for the macros, but PTXprint now sets it), then
+they retain their normal meaning in TeX, i.e. ignore the rest of the line.
+Escaping a percentage sign needlessly does not cause problems.
+
 There are two methods to read a piclist, in 'slurp' mode (`\picslurptrue`, the
 default) where the entire file is read at once or the traditional mode
 (`\picslurpfalse`) where the specification for only one picture is held in
@@ -628,4 +654,3 @@ For multi-line captions, the line spacing may be controlled by modification of `
 ```
 \DoCaptionsfalse
 ```
-
