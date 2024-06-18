@@ -17659,7 +17659,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=2 n-rows=2 -->
+                          <!-- n-columns=2 n-rows=3 -->
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
@@ -17824,6 +17824,7 @@ as vertical to make sure all headings fit.</property>
                               <packing>
                                 <property name="left-attach">0</property>
                                 <property name="top-attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                             <child>
@@ -17840,7 +17841,7 @@ as vertical to make sure all headings fit.</property>
                                     <property name="can-focus">False</property>
                                     <property name="left-padding">12</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=3 -->
+                                      <!-- n-columns=3 n-rows=2 -->
                                       <object class="GtkGrid" id="gr_pageBorder">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
@@ -17907,15 +17908,6 @@ as vertical to make sure all headings fit.</property>
                                         <child>
                                           <placeholder/>
                                         </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -17941,7 +17933,7 @@ to make it fit. </property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
+                                <property name="top-attach">1</property>
                               </packing>
                             </child>
                             <child>
@@ -18053,7 +18045,7 @@ with a special graphic.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">2</property>
                               </packing>
                             </child>
                             <child>
@@ -18296,7 +18288,54 @@ either of the options shown below.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">0</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <property name="halign">end</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="tooltip-text" translatable="yes">A dynamically generated text border can
+be enabled through the \textborder style.</property>
+                                    <property name="label" translatable="yes">To Place a Border Only
+Around Scripture Text:</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkLinkButton" id="lb_style_textborder">
+                                    <property name="label">Text Border Settings</property>
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="focus-on-click">False</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Click to edit the properties of the
+\textborder style on the Styles tab.</property>
+                                    <property name="halign">center</property>
+                                    <property name="valign">center</property>
+                                    <property name="relief">none</property>
+                                    <property name="uri">Click to view the Styles tab</property>
+                                    <signal name="clicked" handler="onEditStyleClicked" swapped="no"/>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="left-attach">1</property>
+                                <property name="top-attach">0</property>
                               </packing>
                             </child>
                           </object>
