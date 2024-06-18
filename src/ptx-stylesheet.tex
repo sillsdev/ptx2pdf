@@ -1336,7 +1336,8 @@
 \def\endgr@@b{\gr@bbedspacefalse\x@\aftergr@b\x@{\the\gr@btoks}}
 \def\@fp{\futurelet\n@xt\@@fp}
 \def\@@fp@s*{}
-\def\@@fp{\ifx\n@xt\@@st@risk\let\n@xt\@@fp@s\else\let\n@xt\relax\par\kern 1sp \advance\currn@tetparnum by 1 \leavevmode\@ch@ckadjustments\kern\n@tefli \fi\n@xt}
+\def\@@fp{\ifx\n@xt\@@st@risk\let\n@xt\@@fp@s\else\let\n@xt\relax\par\kern 1sp \advance\currn@tetparnum by 1 \relax\ifp@ranotes\else \leavevmode\@ch@ckadjustments%\kern\n@tefli
+  \fi \fi\n@xt}
 \begingroup
 \obeylines%
 {\obeyspaces\gdef\@gr@bs{ }\gdef\@gr@bp{

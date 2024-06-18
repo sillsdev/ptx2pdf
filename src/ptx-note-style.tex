@@ -362,10 +362,12 @@
     \fi
     \ifdiglot \x@\the\csname diglot\c@rrdstat ho@ks\endcsname \fi%
     \ifRTL\setbox2=\lastbox\beginR\box2\fi % if RTL text this paragraph needs to be RTL
+    \xdef\n@tefli{0pt}%
     \ifp@ranotes\else\getp@ram{firstindent}{#1}{#1}\trace{n}{note(#1) firstindent: \p@ram}%
       \dimen0=0pt \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
-      \xdef\n@tefli{\the\dimen0}%
-      \ifx\p@ram\relax\else\kern\p@ram\IndentUnit\fi\fi
+      \xdef\n@tefli{\the\dimen0 }%
+      \ifx\p@ram\relax\else\kern\n@tefli\fi
+    \fi
     % if note omitting caller from note (i.e. all callers are *'s)
     \let\stylet@pe\ss@Note\mcpush{\stylet@pe}{#2}%
     \testomitc@ller{#2}\ifomitc@ller\trace{n}{Omitting caller}\else
@@ -822,6 +824,7 @@
   \fi\fi\fi\fi
   \edef\@seglyphmetrics{\the\XeTeXuseglyphmetrics}%
   \XeTeXuseglyphmetrics=3 
+  \edef\n@tetype{#2}%
   \ifnewparnotes
     \makevboxofhboxes
     %\ifnum\interactionmode=1 \showbox 3\showlists\fi
@@ -979,12 +982,11 @@
     \let\@@adj\empty
     \s@t@@adj
     \ifdim\dimen0=1sp % Special value - footnote paragraph
-      \getp@ram{firstindent}{fp}{fp}%
+      \getp@ram{firstindent}{fp}{fp}%+\n@tetype}%
+      \let\onotef@rstindent\notef@rstindent
+      \let\n@fli\p@ram
       \advance\linec@unt by \count255
-      \dimen0=3pt
-      \ifx\p@ram\relax\else\dimen0=\p@ram \IndentUnit \fi
-      \xdef\n@tefli{\the\dimen0}%
-      \trace{f}{firstlineindent is \n@tefli, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2, b5=\the\wd5}%
+      \trace{f}{firstlineindent for fp+\n@tetype+\styst@k is \notef@rstindent, baselineskip=\the\baselineskip, next back box is \the\ht2+\the\dp2, b5=\the\wd5}%
       \iflastn@te
         \xdef\l@stnotebls{\the\baselineskip}%
         \xdef\lastn@tewid{\the\hsize}%Force no join
@@ -1007,7 +1009,10 @@
         \fi
         %\showbox2
         \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
-        \noindent\leavevmode\hbox{}\kern\n@tefli\unhbox2 \unhbox1{\removehboxes}\endgraf
+        %\message{nfli:\n@tefli, ep:\the\everypar}%
+        \let\notef@rstindent\n@fli
+        \noindent\leavevmode \unhbox2 \unhbox1{\removehboxes}\endgraf%\showlists
+        \let\notef@rstindent\onotef@rstindent
         \ifdim\ht3>0pt \dimen0=\prevdepth
         \ifdim\dimen0=0pt \else\kern-\dimen0\fi\fi
         \unvbox3}%
