@@ -1116,6 +1116,12 @@ class TexModel:
                 # capture the actual change
                 m = re.match(r"^"+qreg+r"\s*>\s*"+qreg, l)
                 if m:
+                    try:
+                        r = regex.compile(m.group(1) or m.group(2), flags=regex.M)
+                        t = regex.template(m.group(3) or m.group(4) or "")
+                    except (re.error, regex._regex_core.error) as e:
+                        self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
+                        continue
                     for at in atcontexts:
                         if at is None:
                             context = self.make_contextsfn(None, *contexts) if len(contexts) else None
@@ -1123,13 +1129,7 @@ class TexModel:
                             context = self.make_contextsfn(at[0], at[1], *contexts)
                         else:
                             context = at[0]
-                        try:
-                            changes.append((context, regex.compile(m.group(1) or m.group(2), flags=regex.M),
-                                        m.group(3) or m.group(4) or "", f"{fname} line {i+1}"))
-                        except re.error as e:
-                            self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1),
-                                                 show=not self.printer.get("c_quickRun"))
-                            break
+                        changes.append((context, r, m.group(3) or m.group(4) or "", f"{fname} line {i+1}"))
                     continue
                 elif len(l):
                     logger.warning(f"Faulty change line found in {fname} at line {i}:\n{l}")
