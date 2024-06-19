@@ -273,7 +273,8 @@ class Usfm:
         else:
             hyphenchar = "-"
         def isincluded(e):
-           return "nonvernacular" not in getattr(e, "meta", {}).get('TextProperties', "").lower()
+           return "nonvernacular" not in getattr(e.parent, "meta", {}).get('TextProperties', "") \
+                    and getattr(e.parent, "meta", {}).get("TextType", "") == "VerseText"
         def proc(e):
             if isinstance(e, sfm.Element):
                 for c in e:
@@ -284,7 +285,7 @@ class Usfm:
                 for i in range(0, len(bits), 2):
                     s = bits[i].replace("-", hyphenchar)
                     if s.lower() in hyph:
-                        h = hyph.get(s.lower())
+                        h = hyph.get(s.lower()).lower()
                         if s.lower() != s:
                             hbits = h.split("-")
                             hpos = list(accumulate([len(x) for x in hbits]))
