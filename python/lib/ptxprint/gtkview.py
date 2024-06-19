@@ -323,7 +323,7 @@ _sensitivities = {
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_letterSpacing" :        ["s_letterShrink", "s_letterStretch"],
     "c_spacing" :              ["s_minSpace", "s_maxSpace"],
-    "c_inclPageBorder" :       ["btn_selectPageBorderPDF", "lb_inclPageBorder", "c_borderPageWide"],
+    "c_inclPageBorder" :       ["gr_pageBorder"], # ["btn_selectPageBorderPDF", "lb_inclPageBorder", "c_borderPageWide"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader", 
                                 "l_inclSectionShift", "l_inclSectionScale", 
                                 "s_inclSectionShift", "s_inclSectionScale"],
@@ -4244,6 +4244,13 @@ class GtkViewModel(ViewModel):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_borders")
         self.colorTabs()
+        x = "" if self.get("c_borders") and self.get("c_inclPageBorder") \
+              and self.get("r_border_text") else "non"
+        try:
+            self.styleEditor.setval("textborder", "TextProperties", "{}publishable verse".format(x))
+        except KeyError:
+            return
+        # self.styleEditor.sidebarBorderDialog()
 
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)

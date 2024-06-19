@@ -17652,21 +17652,21 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="halign">start</property>
-                        <property name="valign">end</property>
+                        <property name="valign">start</property>
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">12</property>
                         <property name="margin-bottom">6</property>
                         <property name="label-xalign">0.019999999552965164</property>
                         <child>
-                          <!-- n-columns=2 n-rows=3 -->
+                          <!-- n-columns=2 n-rows=4 -->
                           <object class="GtkGrid" id="gr_borders">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="valign">start</property>
                             <property name="margin-start">12</property>
                             <property name="margin-end">6</property>
                             <property name="margin-top">4</property>
-                            <property name="margin-bottom">10</property>
                             <property name="row-spacing">4</property>
                             <property name="column-spacing">6</property>
                             <child>
@@ -17680,14 +17680,14 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                     <property name="can-focus">False</property>
                                     <property name="left-padding">12</property>
                                     <child>
-                                      <!-- n-columns=4 n-rows=3 -->
+                                      <!-- n-columns=4 n-rows=2 -->
                                       <object class="GtkGrid" id="gr_sectionHeader">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-bottom">10</property>
                                         <property name="row-spacing">4</property>
                                         <property name="column-spacing">6</property>
                                         <child>
@@ -17714,7 +17714,7 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="opacity">0.80</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-bottom">6</property>
+                                            <property name="margin-bottom">4</property>
                                             <property name="ellipsize">middle</property>
                                             <property name="max-width-chars">40</property>
                                           </object>
@@ -17786,18 +17786,6 @@ Note: If only a single book is currently selected, it will place the Thumb Tab r
                                             <property name="top-attach">1</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
                                       </object>
                                     </child>
                                   </object>
@@ -17831,6 +17819,7 @@ as vertical to make sure all headings fit.</property>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="valign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
                                 <property name="hexpand">True</property>
@@ -17841,14 +17830,12 @@ as vertical to make sure all headings fit.</property>
                                     <property name="can-focus">False</property>
                                     <property name="left-padding">12</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=2 -->
+                                      <!-- n-columns=3 n-rows=5 -->
                                       <object class="GtkGrid" id="gr_pageBorder">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
-                                        <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
                                         <property name="row-spacing">4</property>
                                         <property name="column-spacing">4</property>
                                         <child>
@@ -17863,8 +17850,8 @@ as vertical to make sure all headings fit.</property>
                                             <signal name="clicked" handler="onPageBorderPDFclicked" swapped="no"/>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">0</property>
-                                            <property name="top-attach">0</property>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -17877,12 +17864,13 @@ as vertical to make sure all headings fit.</property>
                                             <property name="tooltip-text" translatable="yes">If set, the border is expanded to the full page. Otherwise it is expanded only to the gutter margins.</property>
                                             <property name="halign">end</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-end">6</property>
                                             <property name="hexpand">True</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">1</property>
-                                            <property name="top-attach">0</property>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -17891,10 +17879,101 @@ as vertical to make sure all headings fit.</property>
                                             <property name="can-focus">False</property>
                                             <property name="opacity">0.80</property>
                                             <property name="halign">start</property>
-                                            <property name="margin-top">4</property>
-                                            <property name="margin-bottom">4</property>
+                                            <property name="valign">start</property>
+                                            <property name="margin-top">3</property>
+                                            <property name="margin-bottom">3</property>
                                             <property name="ellipsize">middle</property>
                                             <property name="max-width-chars">30</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">1</property>
+                                            <property name="top-attach">4</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLinkButton" id="lb_style_textborder">
+                                            <property name="label">Edit Settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Click to edit the properties of the
+Text Border (which is controlled by
+the \textborder style on the Styles tab).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to Edit the Text Border settings (on the Styles tab)</property>
+                                            <signal name="clicked" handler="onEditStyleClicked" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_border_pdf">
+                                            <property name="label" translatable="yes">PDF border (Legacy)</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Use an existing PDF Border for the
+entire publication.</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">5</property>
+                                            <property name="margin-top">6</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="group">r_border_text</property>
+                                            <signal name="clicked" handler="onBorderClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">2</property>
+                                            <property name="width">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_border_text">
+                                            <property name="label" translatable="yes">Text Border</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Place a decorative border only around 
+the Scripture text (excludes introductions, 
+footnotes and other peripheral material).</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="group">r_border_pdf</property>
+                                            <signal name="clicked" handler="onBorderClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">0</property>
+                                            <property name="width">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkRadioButton" id="r_border_page">
+                                            <property name="label" translatable="yes">Page Border</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="receives-default">False</property>
+                                            <property name="tooltip-text" translatable="yes">Place a decorative border on every page
+regardless of what is contained there.</property>
+                                            <property name="valign">center</property>
+                                            <property name="margin-start">6</property>
+                                            <property name="active">True</property>
+                                            <property name="draw-indicator">True</property>
+                                            <property name="group">r_border_pdf</property>
+                                            <signal name="clicked" handler="onBorderClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onRadioChanged" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">0</property>
@@ -17903,10 +17982,48 @@ as vertical to make sure all headings fit.</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLinkButton" id="lb_style_pageborder">
+                                            <property name="label">Edit Settings</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can-focus">True</property>
+                                            <property name="focus-on-click">False</property>
+                                            <property name="receives-default">True</property>
+                                            <property name="tooltip-text" translatable="yes">Click to edit the properties of the
+Page Border (which is controlled by
+the \pageborder style on the Styles tab).</property>
+                                            <property name="halign">start</property>
+                                            <property name="valign">center</property>
+                                            <property name="relief">none</property>
+                                            <property name="uri">Click to Edit the Page Border settings (on the Styles tab)</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">2</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel">
+                                            <property name="width-request">20</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">3</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="width-request">20</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="valign">start</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">4</property>
+                                          </packing>
                                         </child>
                                       </object>
                                     </child>
@@ -17914,37 +18031,39 @@ as vertical to make sure all headings fit.</property>
                                 </child>
                                 <child type="label">
                                   <object class="GtkCheckButton" id="c_inclPageBorder">
-                                    <property name="label" translatable="yes">Page Border</property>
+                                    <property name="label" translatable="yes">Border</property>
                                     <property name="name">Enable decorative borders </property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
                                     <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select a PDF for the Border of the publication.
-Note that after setting this border, it is likely
-that you will need to adjust the page margins
-to make it fit. </property>
+                                    <property name="tooltip-text" translatable="yes">There are different kinds of borders that
+can be applied to the publication. 
+
+Note that if you use a border, it is likely
+that you will need to adjust the margins
+to make it fit.</property>
                                     <property name="halign">start</property>
                                     <property name="valign">center</property>
                                     <property name="margin-top">4</property>
                                     <property name="draw-indicator">True</property>
+                                    <signal name="clicked" handler="onBorderClicked" swapped="no"/>
                                     <signal name="clicked" handler="onSimpleClicked" swapped="no"/>
                                   </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">1</property>
+                                <property name="top-attach">0</property>
+                                <property name="height">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkFrame">
-                                <property name="height-request">106</property>
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="valign">start</property>
                                 <property name="margin-start">6</property>
                                 <property name="margin-end">6</property>
-                                <property name="margin-top">4</property>
                                 <property name="hexpand">True</property>
                                 <property name="label-xalign">0.029999999329447746</property>
                                 <child>
@@ -17953,14 +18072,14 @@ to make it fit. </property>
                                     <property name="can-focus">False</property>
                                     <property name="left-padding">12</property>
                                     <child>
-                                      <!-- n-columns=3 n-rows=3 -->
+                                      <!-- n-columns=3 n-rows=2 -->
                                       <object class="GtkGrid" id="gr_endOfBook">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
+                                        <property name="valign">start</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
                                         <property name="row-spacing">4</property>
                                         <property name="column-spacing">4</property>
                                         <child>
@@ -17975,7 +18094,7 @@ to make it fit. </property>
                                             <signal name="clicked" handler="onEndOfBookPDFclicked" swapped="no"/>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">0</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
@@ -17986,38 +18105,38 @@ to make it fit. </property>
                                             <property name="opacity">0.80</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
-                                            <property name="margin-top">4</property>
-                                            <property name="margin-bottom">4</property>
+                                            <property name="margin-top">2</property>
+                                            <property name="margin-bottom">2</property>
                                             <property name="ellipsize">middle</property>
                                             <property name="max-width-chars">30</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">0</property>
+                                            <property name="left-attach">1</property>
                                             <property name="top-attach">1</property>
                                             <property name="width">2</property>
                                           </packing>
                                         </child>
                                         <child>
                                           <object class="GtkLabel">
+                                            <property name="width-request">40</property>
                                             <property name="visible">True</property>
                                             <property name="can-focus">False</property>
                                           </object>
                                           <packing>
-                                            <property name="left-attach">1</property>
+                                            <property name="left-attach">0</property>
                                             <property name="top-attach">0</property>
                                           </packing>
                                         </child>
                                         <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
-                                        </child>
-                                        <child>
-                                          <placeholder/>
+                                          <object class="GtkLabel">
+                                            <property name="width-request">40</property>
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left-attach">0</property>
+                                            <property name="top-attach">1</property>
+                                          </packing>
                                         </child>
                                         <child>
                                           <placeholder/>
@@ -18028,7 +18147,7 @@ to make it fit. </property>
                                 </child>
                                 <child type="label">
                                   <object class="GtkCheckButton" id="c_inclEndOfBook">
-                                    <property name="label" translatable="yes">End of Book</property>
+                                    <property name="label" translatable="yes">End of Book Decoration</property>
                                     <property name="name">Enable end of book decoration</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">True</property>
@@ -18045,14 +18164,15 @@ with a special graphic.</property>
                               </object>
                               <packing>
                                 <property name="left-attach">1</property>
-                                <property name="top-attach">2</property>
+                                <property name="top-attach">3</property>
                               </packing>
                             </child>
                             <child>
                               <object class="GtkFrame">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
-                                <property name="margin-top">4</property>
+                                <property name="valign">start</property>
+                                <property name="margin-top">12</property>
                                 <property name="label-xalign">0.019999999552965164</property>
                                 <child>
                                   <object class="GtkAlignment">
@@ -18067,7 +18187,7 @@ with a special graphic.</property>
                                         <property name="margin-start">6</property>
                                         <property name="margin-end">6</property>
                                         <property name="margin-top">4</property>
-                                        <property name="margin-bottom">4</property>
+                                        <property name="margin-bottom">10</property>
                                         <property name="row-spacing">4</property>
                                         <property name="column-spacing">6</property>
                                         <child>
@@ -18081,6 +18201,7 @@ with a special graphic.</property>
 font to decorate the verse number.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-top">6</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_decorator_file</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -18104,6 +18225,7 @@ font properties to ensure the verse numbers
 fit within the graphic.</property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-top">6</property>
                                             <property name="draw-indicator">True</property>
                                             <property name="group">r_decorator_ayah</property>
                                             <signal name="clicked" handler="onRadioChanged" swapped="no"/>
@@ -18243,6 +18365,7 @@ fit within the graphic.</property>
 to the end of the verse. </property>
                                             <property name="halign">start</property>
                                             <property name="valign">center</property>
+                                            <property name="margin-top">6</property>
                                             <property name="draw-indicator">True</property>
                                           </object>
                                           <packing>
@@ -18289,53 +18412,7 @@ either of the options shown below.</property>
                               <packing>
                                 <property name="left-attach">0</property>
                                 <property name="top-attach">2</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkBox">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="halign">end</property>
-                                <child>
-                                  <object class="GtkLabel">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">A dynamically generated text border can
-be enabled through the \textborder style.</property>
-                                    <property name="label" translatable="yes">To Place a Border Only
-Around Scripture Text:</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
-                                  <object class="GtkLinkButton" id="lb_style_textborder">
-                                    <property name="label">Text Border Settings</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="focus-on-click">False</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Click to edit the properties of the
-\textborder style on the Styles tab.</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="relief">none</property>
-                                    <property name="uri">Click to view the Styles tab</property>
-                                    <signal name="clicked" handler="onEditStyleClicked" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="left-attach">1</property>
-                                <property name="top-attach">0</property>
+                                <property name="height">2</property>
                               </packing>
                             </child>
                           </object>

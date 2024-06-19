@@ -139,7 +139,6 @@ class BorderStyle:
         builder = self.view.builder
         bdrType = self.view.get('fcb_sbBorderStyle')
         borderVal = styVals[bdrType]
-        print(f"{bdrType=} {borderVal=}")
         for w, bits in sensitivity.items():
             sensitive = (borderVal & bits) != 0
             builder.get_object(w).set_sensitive(sensitive)

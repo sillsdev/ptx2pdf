@@ -34,7 +34,7 @@ logger = logging.getLogger(__name__)
 
 VersionStr = "2.4.22"
 GitVersionStr = "2.4.22"
-ConfigVersion = "2.16"
+ConfigVersion = "2.17"
 
 pdfre = re.compile(r".+[\\/](.+\.pdf)")
 
@@ -1041,6 +1041,11 @@ class ViewModel:
             if "ornaments" in plg:
                 self._configset(config, "fancy/enableornaments", True)
                 self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
+
+        if v < 2.17:
+            if config.getboolean("x", "y", fallback=False):
+                self._configset(config, "fancy/pageborder", True)
+                self._configset(config, "fancy/pagebordertype", "pdf")
 
         # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
         colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\
