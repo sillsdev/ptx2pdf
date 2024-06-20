@@ -1101,9 +1101,11 @@
        \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
        %\setbox6=\lastbox\global\prevdepth=\dp6\box6 %
        \trace{fp}{skip of \the\dimen1 before last line }%
-       \advance\dimen1 by \ht1 
-       \advance\dimen1 by -\baselineskip
-       \prevdepth=-\dimen1
+       \ifdim\ht1>0pt 
+         \advance\dimen1 by \ht1 
+         \advance\dimen1 by -\baselineskip
+         \prevdepth=-\dimen1
+       \fi
        \trace{fp}{Prevdepth \the\dimexpr -\dimen1\relax}%
        \disc@rdmvbohb
        \trace{fp}{kern of \the\dimen0 before last line}%
