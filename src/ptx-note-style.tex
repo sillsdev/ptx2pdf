@@ -490,7 +490,7 @@
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
-  \@ch@ckadjustments
+  \ifp@ranotes \@ch@ckadjustments   \fi
   %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
@@ -964,9 +964,9 @@
   \setbox0\box\voidb@x % Used to store (remains of) previous vbox content
   %\tracingassigns=1
   %\tracingrestores=1
-  %\showlists
   \linec@unt=0
   \disc@rdmvbohb % trash any trailing glue/penalties, etc.
+  \s@t@@adj
   \loop
     \setbox2=\lastbox
     \disc@rdmvbohb
@@ -1096,18 +1096,26 @@
   \lastn@tefalse 
   \ifvoid5\else
     \trace{fp}{Reinstating final line/note}%
-    \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty 
+    \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty %\baselineskip=\csname n@te-\n@tetype-bls\endcsname
+       \showbox3
        \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
-       \trace{fp}{skip of \the\dimen1 before last line}%
+       %\setbox6=\lastbox\global\prevdepth=\dp6\box6 %
+       \trace{fp}{skip of \the\dimen1 before last line }%
+       \advance\dimen1 by \ht1 
+       \advance\dimen1 by -\baselineskip
+       \prevdepth=-\dimen1
+       \trace{fp}{Prevdepth \the\dimexpr -\dimen1\relax}%
        \disc@rdmvbohb
        \trace{fp}{kern of \the\dimen0 before last line}%
        \ifdim \dimen0=0pt % A normal skip = normal paragraph
          \penalty\interfootnotelinepenalty
-         \ifdim\dimen1=0pt\else \vskip\dimen1 \fi
+         %\ifdim\dimen1=0pt\else \vskip\dimen1 \fi
        \else % interline kern means a lastnotepar
          \penalty\lastnoteparpenalty
        \fi
+       %\hrule\penalty10000
        \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\unhbox 1{\removehboxes}\internotespace \unhbox5}%
+    \showbox3
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
   %\showbox3
