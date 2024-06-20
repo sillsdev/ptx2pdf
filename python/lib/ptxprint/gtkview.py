@@ -270,6 +270,10 @@ _sensitivities = {
                                 "l_verseDecoratorShift", "l_verseDecoratorScale",
                                 "s_verseDecoratorShift", "s_verseDecoratorScale"],
         "r_decorator_ayah":    ["lb_style_v"]},
+    "r_border": {
+        "r_border_text":       ["lb_style_textborder"],
+        "r_border_page":       ["lb_style_pageborder"],
+        "r_border_pdf":        ["btn_selectPageBorderPDF", "lb_inclPageBorder", "c_borderPageWide"]},
     "r_xrpos": {
         "r_xrpos_centre" :     ["l_internote", "s_internote", "fr_colXrefs", "l_xrColWid", "s_centreColWidth"]}, 
     "r_pictureRes": {
@@ -323,7 +327,7 @@ _sensitivities = {
     "c_linebreakon" :          ["t_linebreaklocale"],
     "c_letterSpacing" :        ["s_letterShrink", "s_letterStretch"],
     "c_spacing" :              ["s_minSpace", "s_maxSpace"],
-    "c_inclPageBorder" :       ["gr_pageBorder"], # ["btn_selectPageBorderPDF", "lb_inclPageBorder", "c_borderPageWide"],
+    "c_inclPageBorder" :       ["gr_pageBorder"],
     "c_inclSectionHeader" :    ["btn_selectSectionHeaderPDF", "lb_inclSectionHeader", 
                                 "l_inclSectionShift", "l_inclSectionScale", 
                                 "s_inclSectionShift", "s_inclSectionScale"],
@@ -4241,17 +4245,29 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("nbk_Viewer").set_current_page(vpgnum)
 
     def onBorderClicked(self, btn):
+        if self.loadingConfig:
+            return
         self.onSimpleClicked(btn)
         self.sensiVisible("c_borders")
         self.colorTabs()
+        self.setPublishableTextBorder()
+
+    def onOpenTextBorderDialog(self, btn):
+        self.setPublishableTextBorder()
+        self.styleEditor.sidebarBorderDialog()
+        # mpgnum = self.notebooks['Main'].index("tb_TabsBorders")
+        # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
+
+    def setPublishableTextBorder(self):
         x = "" if self.get("c_borders") and self.get("c_inclPageBorder") \
               and self.get("r_border_text") else "non"
         try:
+            self.styleEditor.selectMarker("textborder")
             self.styleEditor.setval("textborder", "TextProperties", "{}publishable verse".format(x))
+            self.set("c_styTextProperties", True if x == "non" else False)
         except KeyError:
             return
-        # self.styleEditor.sidebarBorderDialog()
-
+            
     def onTabsClicked(self, btn):
         self.onSimpleClicked(btn)
         self.sensiVisible("c_thumbtabs")

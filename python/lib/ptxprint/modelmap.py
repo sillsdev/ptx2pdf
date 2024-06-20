@@ -121,7 +121,8 @@ _map = {
     
     "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
     "fancy/enableborders":      ("c_borders", "decorate", lambda w,v: "" if v else "%"),
-    "fancy/pageborder":         ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
+    "fancy/pageborders":        ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
+    "fancy/pageborder":         ("r_border", "fancy", lambda w,v : "" if v == "pdf" else "%"),
     "fancy/pagebordertype":     ("r_border", "decorate", None),
     "fancy/pageborderfullpage": ("c_borderPageWide", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pagebordernfullpage_": ("c_borderPageWide", "decorate", lambda w,v: "%" if v else ""),

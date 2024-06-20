@@ -17905,7 +17905,7 @@ the \textborder style on the Styles tab).</property>
                                             <property name="valign">center</property>
                                             <property name="relief">none</property>
                                             <property name="uri">Click to Edit the Text Border settings (on the Styles tab)</property>
-                                            <signal name="clicked" handler="onEditStyleClicked" swapped="no"/>
+                                            <signal name="clicked" handler="onOpenTextBorderDialog" swapped="no"/>
                                           </object>
                                           <packing>
                                             <property name="left-attach">2</property>
@@ -28106,7 +28106,7 @@ maintains its proportions.</property>
   </object>
   <object class="GtkDialog" id="dlg_borders">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">PTXprint: Sidebar Border Settings</property>
+    <property name="title" translatable="yes">PTXprint: Border Settings</property>
     <property name="window-position">center-always</property>
     <property name="default-height">150</property>
     <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>

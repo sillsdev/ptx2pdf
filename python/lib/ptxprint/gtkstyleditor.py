@@ -424,7 +424,7 @@ class StyleEditorView(StyleEditor):
                 urlmkr = re.sub(r'\d', '', urlmkr)
             elif k == '_publishable':
                 # val = 'nonpublishable' in data.get('TextProperties', '')
-                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', ["nonpublishable"]))
+                oldval = 'nonpublishable' in (x.lower() for x in old.get('TextProperties', []))  # default was "nonpublishable"
                 props = data.get('TextProperties', None)
                 if props is None:
                     val = oldval
@@ -485,7 +485,7 @@ class StyleEditorView(StyleEditor):
         self.builder.get_object("ex_styTable").set_expanded("tc" in self.marker)
         if "tc" in self.marker:
             self.builder.get_object("ex_styPara").set_expanded(True)
-        sb = self.marker.startswith("cat:") and self.marker.endswith("esb")
+        sb = (self.marker.startswith("cat:") and self.marker.endswith("esb")) or self.marker == "textborder"
         self.builder.get_object("ex_stySB").set_expanded(sb)
         if sb:
             for w in ['Para', 'Table', 'Note']:
@@ -494,7 +494,6 @@ class StyleEditorView(StyleEditor):
         for w in (('Note', 'Table', 'SB')):
             if self.builder.get_object("ex_sty"+w).get_expanded():
                 self.builder.get_object("ex_styOther").set_expanded(True)
-        # self.builder.get_object("ptxprint").resize(200, 200)
 
         if not self.model.get("c_noInternet"):
             tl = self.model.lang
