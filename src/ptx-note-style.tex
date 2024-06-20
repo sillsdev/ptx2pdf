@@ -563,7 +563,6 @@
         \xdef\l@stnotebls{\the\baselineskip}%
       \fi
     }% This would permit breaking the last paragraph. Unfortunately it also permits breaking before the last note.: \setbox0\lastbox\unvbox0 %\showlists
-      \showlists
     \fi}% output notes
 
 % insert a note class in which each note is in the same paragraph
@@ -881,7 +880,8 @@
   \let\disc@rdpenalty\empty
   \disc@rds{rhb}%
   \setbox0=\lastbox\disc@rds{Rhb}%
-  \ifhbox0{\removehboxes}\unhbox0\internotespace\fi}
+  \ifhbox0{\removehboxes}\unhbox0 %
+    \fi}
 %
 \let\disc@rdskip@mvbohb\empty % What does mkvboxofhboxes need discards to do with a skip
 \def\disc@rdkern@mvbohb{\dimen0=\lastkern\ifdim\dimen0=1sp \unkern\temptrue\fi}%
@@ -936,7 +936,22 @@
     \disc@rds{mvb}%
 }
 
-\def\s@t@@adj{\ifdim\dimen0<14sp \ifdim\dimen0>6sp \edef\@@adj{\looseness\the\numexpr \dimen0 -10\relax \relax}\dimen0=0sp \fi\fi}
+\let\@@adj\empty
+\let\@@adjP\empty
+\def\s@t@@adj{\ifdim\dimen0<14sp \ifdim\dimen0>6sp 
+    \xdef\@@adj{\looseness\the\numexpr \dimen0 -10\relax \relax}%
+    \trace{fp}{Adjustment request:\@@adj}%
+    \dimen0=\lastkern\unkern 
+  \fi\fi
+  \ifdim\dimen0=-2sp
+    \ifx\@@adj\empty\else
+      \trace{fp}{2nd Adjustment request:\@@adj}%
+      \xdef\@@adjP{\@@adj} \global\let\@@adj\empty
+    \fi
+    \dimen0=\lastkern\unkern 
+    \s@t@@adj
+  \fi
+  }
 % Rather than make a single hbox, make vbox of hboxes
 
 \def\makevboxofhboxes{%
@@ -979,8 +994,9 @@
     \fi
     \tmpcount=\lastnodetype
     \trace{fp}{Between boxes: kern of \the\dimen0, LNT=\the\tmpcount(\decod@lastnode{\the\tmpcount}) lastn@te\iflastn@te true\else false\fi}%
-    \let\@@adj\empty
+    %\let\@@adj\empty
     \s@t@@adj
+    \trace{fp}{adj: \@@adj, adjP: \@@adjP}%
     \ifdim\dimen0=1sp % Special value - footnote paragraph
       \getp@ram{firstindent}{fp}{fp}%+\n@tetype}%
       \let\onotef@rstindent\notef@rstindent
@@ -991,7 +1007,7 @@
         \xdef\l@stnotebls{\the\baselineskip}%
         \xdef\lastn@tewid{\the\hsize}%Force no join
       \fi
-      \setbox3=\vbox{%
+      \setbox3=\vbox{%box 3 is completed paragraphs.
         \iflastn@te
           \count255=\linec@unt
           \advance\count255 by  -\NoteShaveShortest
@@ -1008,10 +1024,28 @@
           \penalty12345
         \fi
         %\showbox2
-        \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
+        \ifvoid2\else
+          \vskip\dimexpr\baselineskip - \ht2\relax %reimpose topskip
+        \fi
         %\message{nfli:\n@tefli, ep:\the\everypar}%
         \let\notef@rstindent\n@fli
-        \noindent\leavevmode \unhbox2 \unhbox1{\removehboxes}\endgraf%\showlists
+        \ifvoid2 
+          \ifdim\wd1>0pt 
+            \trace{fp}{Expanding  \currn@tetype\space 1(\the\wd1)}%
+            \unhbox1  \@@adjP\global\let\@@adjP\empty
+            {\removehboxes}
+            %\showlists
+            \endgraf
+          \fi
+        \else
+          \trace{fp}{Joining \currn@tetype\space 2(\the\wd2) with 1(\the\wd1)}%
+          \noindent\leavevmode \@@adjP\global\let\@@adjP\empty
+          \unhbox2 \internotespace
+          \setbox1\hbox{\unhbox1{\removehboxes}}%
+          \unhbox1
+          \showlists
+          \endgraf
+        \fi
         \let\notef@rstindent\onotef@rstindent
         \ifdim\ht3>0pt \dimen0=\prevdepth
         \ifdim\dimen0=0pt \else\kern-\dimen0\fi\fi
@@ -1020,7 +1054,8 @@
           %\unhbox1}%
         \setbox2\hbox{}%
         %\nonstopmode
-        %\showbox3
+        %\showbox
+        %\@@adjP\global\let\@@adjP\empty
     \else
       \linec@unt=\count255
       \iflastn@te
@@ -1038,9 +1073,9 @@
       \fi
     \fi
     \ifhbox2
-      \setbox1=\hbox{\box2 \unhbox1}%\nonstopmode\showbox1
+      \setbox1=\hbox{\unhbox2 \internotespace \unhbox1}%\nonstopmode\showbox1
       \repeat
-  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid}%
+  \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
   \ifhbox1\setbox3=\vbox{\ifnum 1=
         \iftemp \ifparnotesruletopskip 1 \else 0 \fi
@@ -1052,14 +1087,15 @@
     \fi%
     %\ifvbox2 \unvbox2\fi
     \ifvbox0 \dimen0=\dp0 \box0 \penalty10000\prevdepth=\dimen0 \fi
-    \noindent\leavevmode\unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
+    \noindent\leavevmode\@@adj\global\let\@@adj\empty
+      \unhbox1{\removehboxes}\endgraf\ifdim\ht3>0pt\dimen0=\prevdepth\ifdim\dimen0=0pt\else\kern-\dimen0\fi\fi\unvbox3%
     %\nonstopmode\showbox3
   }\fi%
   %\showbox5
   \lastn@tefalse 
   \ifvoid5\else
     \trace{fp}{Reinstating final line/note}%
-    \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty
+    \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty 
        \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
        \trace{fp}{skip of \the\dimen1 before last line}%
        \disc@rdmvbohb
@@ -1070,7 +1106,7 @@
        \else % interline kern means a lastnotepar
          \penalty\lastnoteparpenalty
        \fi
-       \unhbox 1{\removehboxes}\internotespace \unhbox5}%
+       \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\unhbox 1{\removehboxes}\internotespace \unhbox5}%
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
   %\showbox3
@@ -1080,8 +1116,7 @@
 } 
 % skip between notes in paragraph. skip is good place to break.
 \def\internotepenalty{-10}
-%\def\internotespace{\hfil\hskip\intern@teskip\penalty\internotepenalty\hfilneg}
-\def\internotespace{\penalty\internotepenalty\hskip\internoteskip}%\kern 0pt after \hskip, to force gap
+\def\internotespace{\penalty\internotepenalty\hskip\internoteskip}%
 %\def\internotespace{\hfil\hskip\intern@teskip\penalty-10\hfilneg}
 
 \def\r@versevb@x#1{\setbox#1=\vbox{}\loop

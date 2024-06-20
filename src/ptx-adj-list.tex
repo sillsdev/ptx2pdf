@@ -44,6 +44,7 @@
  \global\@djparindex=0#1 \else\parse@djlinesub 0 #1.#2.\E\fi}
 \def\parse@djlinesub #1 #2.#3.#4.#5\E{\trace{j}{Subspec: par #1, typ '#2', num '#3', par '#4'}%
   \xdef\@djnotetyp{#2}\xdef\@djnotenum{#3}\xdef\@djnotepar{#4}%
+  %\ifx\@djnotenum\empty\else\@djnotepar\empty\xdef\@djnotepar{1}\fi\fi
   \ver@djlinesub #1.\E}
 
 \def\@djustment{}
@@ -132,13 +133,18 @@
  \@ch@ckadjustments
 }
 \def\@ch@ckadjustments{%
- \trace{j}{(Testing \adjc@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex.  \ifinn@te in note: \else not note\fi= \ifx\@djnotetyp\empty not \fi in note '\@djnotetyp' }%
+ \trace{j}{(Testing \adjc@rref\space against \@djref,  par \the\curr@djpar\space against \the\@djparindex.  \ifinn@te in note: \else not note\fi= \ifx\@djnotetyp\empty not in note \else in note '\@djnotetyp'\fi }%
  \ifx\adjc@rref\@djref%
    \ifnum\@djparindex=\curr@djpar 
      \ifinn@te 
-      \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)? and (\@djnotepar=\the\currn@tetparnum)}%
+       \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)? and (\@djnotepar=\the\currn@tetparnum)}%
        \ifx\@djnotetyp\currn@tetype \ifnum\@djnotenum=\the\currn@tenum \ifnum\@djnotepar=\the\currn@tetparnum \relax
-         \do@dj 
+         \ifp@ranotes
+           \kern \the\dimexpr 10sp+\@djustment sp\relax \edef\@djnotenum{-1}%Ensure we only trigger once
+           \readnext@dj
+         \else
+           \do@dj 
+         \fi
        \fi\fi\fi
      \else
        \ifx\@djnotetyp\empty
