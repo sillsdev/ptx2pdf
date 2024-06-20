@@ -1,8 +1,270 @@
 PTXprint 2.4.22 Release Notes
-4 Jun 2024
+20 Jun 2024
 
 "Bible Layout For Everyone" - Easily create scripture PDFs for trial publications
 _______________________________________________________________
+
+Version 2.5 release summary: (changes since last major version 2.4)
+
+Significant New features:
+  * Text Borders (dynamically generated) can be set up with a few clicks (Tabs+Borders)
+  * Enable diacritic colouring (primarily for decorating Arabic script)
+  * Added 'Give Feedback' button and link to Google user survey form
+
+  * Improved Global Options tab on the Pictures Page
+  * Added functionality to pre-populate Google Forms before submission:
+    a) Request hi-res illustrations from SIL's repository of illustrations and maps
+    b) Get Permission to use (primarily) David C Cook illustrations
+  
+  * Import/unpack configuration settings is much more powerful
+    ** You can now set the TARGET of import/unpacking of settings
+    ** Enable importing from PDF/ZIP to a new/different config
+    ** Allow extracting settings to a folder
+    ** Added more import categories and also allow "Import Everything"
+    ** Auto-detect main project from a diglot archive
+
+  * Table of Contents improvements
+    ** Fix RTL and LTR Table of Contents generation and improve leaders
+    ** Make toc leaders "fully" stylable
+    ** Define toc fill in context, not before
+    ** Allow disable TOC writing
+
+  * Significant improvements to how hyphenation works
+    ** Allow letter-spaced text to be hyphenated
+    ** Added option to force hyphens (in text) to be non-breaking
+
+  * Added Lock Layout Mode (stop accidental changes to layout settings
+    while doing final pageup, and locks TeX macros to a particular version)
+
+User Interface improvements:
+  * Make sure correct View Level (Mini, Basic, Full) shows at startup
+  * Provide status message with list of unfilled pages
+  * Added shortcuts keys for editor (^d=Duplicate, ^l=deLete line, ^i=shrInk, ^1-9=grow/shrink)
+  * Added control for position of drop-cap chapter numbers
+  * Add UI controls for note multipliers
+  * Add example of non-contiguous verses in a chapter for setting of the print range
+  * Simplify wording on Advanced tab for changes.txt (making it easier to find)
+  * Make Quick Run option 'sticky' - keep with user config settings
+  * Download program update button now works more consistently
+  * Remove image from preview when deleting pictures, and changing configs
+  * Internationalize URIs on Help tab via Google Translate
+  * Improvements for working with AdjLists
+    ** New format of generated AdjLists now makes lines easier to edit
+    ** Add AdjList syntax highlighting (helps highlight/fix errors quicker)
+    ** Check AdjustList for odd input, and emit warning if there's a space
+    ** Fix over-full AdjLists (which was losing the end of PSA)
+
+Diglot + Interlinear fixes and improvements:
+  * Make UI footnote/xref control work on diglots
+  * Solve diglot error with character styles in chapter-level heading paragraphs
+  * Improved diglot balancing (\BelowBaselineX)
+  * Make pagehooks work for diglots
+  * Add punctuation controls to interlinear (on Advanced tab)
+  * Add per side IndentUnit in diglots
+  * Improve handling of cl in diglots
+  * Implement @diglot@pagebreak (correct paragraph break behaviour for diglots)
+  * Diglot availht calcs need to consider joint calcs.
+  * Trigger side-hooks for mongolot sections of a diglot text
+  * Fix gridline-column separator for left-opening (RTL-binding) diglots
+  * Fix \cl in diglots
+  * Fix diglot cutout continuation problem(?)
+  * Fix diglot vertical grid line position (#941)
+  * Fix diglot pagebreaking on 2nd page
+  
+General enhancements:
+  * Add Rohg script
+  * Improved glossary filtering
+  * Nicer defaults for textborder
+  * Improve book filenames handling
+  * Added shadow and outline effects
+  * Support periphs with no ids in INT
+  * Better error handling in changes.txt
+  * Add more helpful tip to font-related error message
+  * Add ink saturation limiting to cmyk pdf generation
+  * (re-)Enable INT to be selected from the list of books
+  * Make AdjustLists work on separate notes (foototes can be stretched/shrunk)
+  * Make vectorian2 play nicer if there are very small text chunks
+  * Get accelerator keys working on linux. Make ^1 toggle +1/+0
+  * Solve issue on View+Edit tab when a file is not found.
+  * Make sure periphs from the INT book are included even if FRT book is missing.
+  * Do not save default values when picInfo.txt and picCheck.txt are written
+  * Create default settings for scripture refs when unpacking DBL bundles
+  * Try to obey PT settings for chapterverse and range separators
+  * Cope with spaces in sidebar figure names (Note: affects pics in covers)
+  * Add all Book headers as HEADER in merge
+  * Make "font" figure size scale to the right fontsize
+  * Define \reference to (a) be user-changable and (b) default to using ChapterVerseSeparator
+  * Allow custom .py scripts to run with __main__ check
+  * Add warning message help for bad copyright statement in tex.log
+  * Cope with mt1 on line after an id
+  * Improve logic on ommitting chapter numbers
+  * Ensure that pagebreak-before-all-chapters doesn't crash regex
+  * Refactor changes to include error messages
+  * Add missing changes for bookresetcallers (Reset fn+xr callers at each book)
+  * Support for footnote sanity checking via parlocs
+  * Implement Box/BorderPaddingInnerOuter (note untested for RTL)
+  * Treat percent sign as literal in piclist (#912)
+  * Ensure figures and local/figures are also in the srchlist for pictures
+  * Allow ^ in parents. Stop p^95 occursunder type errors (#925)
+  * Implement bookresetcallers and fix some characters / escapes (tilde, backslash, pipe)
+  * Improve handling of pics within Intro matter
+  * Implement 'H' figure position (cHaracter-like HERE)
+    ** To go with 'H', there are 2 new sizes, 'font' and 'line', 
+    ** related to the font size and \baselineskip.
+
+Documentation:
+  * Added various help files to technical documentation
+  * Add keyboard shortcuts to Technical Reference Manual
+  * Mode documentation
+  * Add headers example snippet
+  * Document new paragraphed notes controls
+  * Document diacritic colouring in snippets.md
+  * Document and illustrate most of the new footnote options
+  * Direct all More Info... Style links to appropriate documentation sites:
+    ** Use recently created official docs site for all USFM markers
+    ** And github-docs-help-zfoo.md pages for milestones (zbl, zlabel, zpage, zpmkr, zrule)
+
+Technical improvements:
+  * Add after book hook as last thing in processing a book before released the id
+  * Constrain / -> ZWSP to outside of attributes; Fix / -> ZWSP in scriptsnippets
+  * Get \k style marks working
+  * Separate out the box-based charstyle tests
+  * Allow box-based character styles at paragraph level too
+  * Add layout version control over fixing ISBN asymmetry
+  * Implement minimum line widths for borders and zrules
+  * Exclude variable fonts (need to use static fonts instead)
+  * Keep track of how many times user clicks Print (for each config)
+  * Avoid problems from id@@@ continuing after end of the book
+  * Add labelling of tracing lines
+  * Side-dependant numcuts and dropotherlines need to be counts
+  * Make utility to get improved division accuracy
+  * Various Documentation improvements
+  * Chapter numbers should occur on their own line
+  * Having + in tag_escapes stops parsing of nested markers, treating them as text.
+  * Protect from logger crash on poor pt settings
+  * Maybe fix odd interlinear alignment
+  * Ensure QR spacebeside attr is a number
+  * Make id:GEN|p style font definitions work properly
+  * Make custom merge config files work
+  * Solve bug with catprefix escaping groups
+  * Silently ignore python processing if not present
+  * Add resilience in usfm parser
+  * Make verse ranges valid link-targets
+  * Add more telemetry for page breaking
+  * Another tweak to get hyphenation working just right
+  * Added t@gging (and stop footnotes blowing up)
+  * Add end of book hook when end of book decoration is included (#938)
+  * Solve issue of breaking in overflowed notes
+  * Improve snippet on diacritic colouring
+  * Move bad fonts not switching in UI to environment variable
+  * Unmerge note and output routines from paratex2.tex
+  * Output bookendrule even when the first thing on the page is a title
+  * Control hanging verse at dropcap
+  * Implement ifHangVA
+  * Correct logic so noteid change applied to non-paragraphed notes
+  * Yet another parnotes option; un-break newparnotesfalse
+  * Solve #915 potential insert loss
+  * Make newparnotes unwrap first box (behave properly with endnotes)
+  * Shaving values are now deltas
+  * Add tags for figures
+  * Make \fp* a noop (related to #813)
+  * Add space to ensure multiply vs prefix
+  * Add intropages
+
+Issues Fixed:
+  * Fix ToC leader bugs, and TOC with no leaders
+  * Fix some edge-case wandering footnote bugs
+  * Fix ISBN spurious space
+  * Fix auto hyphenation
+  * Fix Character style colouring
+  * Fix table alignment controls
+  * Fix nonpublishable UI linkage
+  * Fix a bug in zEmptyPage
+  * Fix QR bug when there was an = in the URL, make keywords set marks
+  * Fix linebreak at \k and Update standards
+  * Fix thumbtabvadj in texperthacks to work, rather than print
+  * Fix Digital CMYK to actually be CMYK
+  * Fix RTL in footnote paragraphs
+  * Fix QRcode with numerical pgpos
+  * Fix undefined item in sidebar figure placement
+  * Fix usfmerge remove problems
+  * Fix toc col width issue when > 999 pages in publication
+  * Fix broken test cases and solve an error-loop
+  * Fix gloss-rb link bug
+  * Fix broken link localization with Google translate (not all are possible)
+  * Fix RefRange.__contains__
+  * Fix moving notes up and down at the end of books
+  * Fix accidental centrecolum breakage
+  * Fix long-standing bug where centre column refs were stealing space from main text.
+  * Fix alignment of book headers
+  * Fix codelet to insert book code as \h1
+  * Fix problem with \|
+  * Fix broken x-edgeadjust in figures, improve figure documentation
+  * Fix hard hyphens in hyphenation
+  * Fix feedback loop in balanced esp. for pages with a big gap
+  * Fix joint of carried over and new notes
+  * Fix chapter label dropping chapter marker/number
+  * Fix bad image copyrights output to .tex (#929)
+  * Fix zfiga bug of extra backslash showing up
+  * Fix rangeref with verses off and different books
+  * Fix big balancing
+  * Fix reference tests after changes to b64codes
+  * Fix @ issues with hyphenation and default texpert hacks values
+  * Fix CenterColXrefs
+  * Avoid lost last partial-page of SFM input
+  * Page end textborder kern should only happen when page border in effect
+  * Various python 3.12 cleanups (mostly affecting Regex)
+_______________________________________________________________
+
+Bug fixes and Improvements in 2.5 (20 Jun 2024)
+
+  * Added Lock Layout Mode (stop accidental changes to layout settings
+    while doing final page layout, and locks TeX macros to a particular
+    Maximum Layout Version to ensure stability from layout-altering changes)
+
+  * Add version layout change (2) to reduce space above note rules to regain control
+
+  * Fixed ToC leader bugs, and TOC with no leaders
+
+  * Constrain / -> ZWSP to outside of attributes; Fix / -> ZWSP in scriptsnippets
+  
+  * Get \k style marks working
+  
+  * Added shadow and outline effects
+  
+  * (re-)Enable INT to be selected from the list of books
+  
+  * Nicer defaults for textborder, and fix a bug in zEmptyPage
+  
+  * Make vectorian2 play nicer if there are very small text chunks
+  
+  * Separate out the box-based charstyle tests
+  
+  * Allow box-based character styles at paragraph level too
+  
+  * Make AdjustLists work on separate notes
+  
+  * Fix over-full AdjLists (which was losing the end of PSA)
+  
+  * Add after book hook as last thing in processing a book before released the id
+  
+  * Solve some edge-case wandering footnote bugs.
+  
+  * Fix ISBN spurious space
+  
+  * Add layout version control over fixing ISBN asymmetry
+  
+  * Put the trailing space back in m@kenumber, but check usage, and use ns version where appropriate.
+  
+  * Refactor ifversion to make correction accurate
+  
+  * Get accelerator keys working on linux. Make ^1 toggle +1/+0
+  
+  * Better error handling in changes.txt
+  
+  * Add headers example snippet. Fix auto hyphenation
+  
+  * Added UI elements to make setting dynamic text borders easier
 
 Bug fixes and Improvements in 2.4.22 (4 Jun 2024)
 
@@ -339,7 +601,7 @@ Bug fixes and Improvements in 2.4.8 (18 Jan 2024)
   
   * Add warning message help for bad copyright statement in tex.log
   
-  Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
+Bug fixes and Improvements in 2.4.7 (11 Dec 2023)
 
   * Improve snippet on diacritic colouring
   
