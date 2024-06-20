@@ -490,6 +490,7 @@
   \ifp@ranotes \parfillskip=0pt \else\parfillskip=0pt plus 1fil\fi%\else\strut\fi
   \t@gend{Note}%
   \par
+  \@ch@ckadjustments
   %\setbox0\lastbox\setbox0\hbox{\unhbox0}\xdef\l@stboxwid{\the\wd0}\box0
   \ifp@ranotes\else\getp@ram{spaceafter}{\n@tetype}{\n@tetype}\trace{n}{note(\n@tetype) spaceafter: \p@ram}%
     \ifx\p@ram\relax\penalty0 \else\vskip\p@ram\verticalsp@ceunit\fi %FIXME Penalty0??? 
@@ -1043,7 +1044,7 @@
           \unhbox2 \internotespace
           \setbox1\hbox{\unhbox1{\removehboxes}}%
           \unhbox1
-          \showlists
+          %\showlists
           \endgraf
         \fi
         \let\notef@rstindent\onotef@rstindent
