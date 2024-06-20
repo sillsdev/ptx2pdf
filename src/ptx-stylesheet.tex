@@ -1341,7 +1341,7 @@
   \ifp@ranotes \@ch@ckadjustments \fi
   \advance\currn@tetparnum by 1 \relax
   \ifp@ranotes
-  \kern -2sp \@ch@ckadjustments
+  \ifnewparnotes \kern -2sp \@ch@ckadjustments\fi
   \else \leavevmode\@ch@ckadjustments%\kern\n@tefli
   \fi \fi\n@xt}
 \begingroup

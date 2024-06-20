@@ -881,7 +881,7 @@
   \let\disc@rdpenalty\empty
   \disc@rds{rhb}%
   \setbox0=\lastbox\disc@rds{Rhb}%
-  \ifhbox0{\removehboxes}\unhbox0 %
+  \ifhbox0{\removehboxes \ifnewparnotes\else \internotespace\fi}\unhbox0 %
     \fi}
 %
 \let\disc@rdskip@mvbohb\empty % What does mkvboxofhboxes need discards to do with a skip
@@ -1115,7 +1115,7 @@
        \fi
        %\hrule\penalty10000
        \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\unhbox 1{\removehboxes}\internotespace \unhbox5}%
-    \showbox3
+    %\showbox3
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
   %\showbox3

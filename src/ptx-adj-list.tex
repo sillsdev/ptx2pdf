@@ -139,12 +139,12 @@
      \ifinn@te 
        \trace{j}{(\@djnotetyp=\currn@tetype)? and (\@djnotenum=\the\currn@tenum)? and (\@djnotepar=\the\currn@tetparnum)}%
        \ifx\@djnotetyp\currn@tetype \ifnum\@djnotenum=\the\currn@tenum \ifnum\@djnotepar=\the\currn@tetparnum \relax
-         \ifp@ranotes
-           \kern \the\dimexpr 10sp+\@djustment sp\relax \edef\@djnotenum{-1}%Ensure we only trigger once
-           \readnext@dj
-         \else
-           \do@dj 
-         \fi
+         \ifnewparnotes\ifp@ranotes
+             \kern \the\dimexpr 10sp+\@djustment sp\relax \edef\@djnotenum{-1}%Ensure we only trigger once
+             \readnext@dj
+           \else
+             \do@dj 
+         \fi\fi
        \fi\fi\fi
      \else
        \ifx\@djnotetyp\empty
