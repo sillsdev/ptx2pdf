@@ -934,6 +934,167 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
       </object>
     </child>
   </object>
+  <object class="GtkDialog" id="dlg_configName">
+    <property name="width-request">270</property>
+    <property name="height-request">100</property>
+    <property name="can-focus">False</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Save As...</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="gravity">center</property>
+    <property name="transient-for">ptxprint</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_cfg_cancel">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_cfg_ok">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="label" translatable="yes">Configuration Name:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_configName">
+                    <property name="name">Enter a name for the configuration to be saved</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="max-length">30</property>
+                    <property name="width-chars">30</property>
+                    <property name="input-purpose">terminal</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="margin-end">12</property>
+                <property name="label" translatable="yes">Do not use spaces or special characters</property>
+                <attributes>
+                  <attribute name="foreground" value="#bfbf1c1c2828"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_cfg_cancel</action-widget>
+      <action-widget response="-6">btn_cfg_ok</action-widget>
+    </action-widgets>
+  </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
@@ -975,6 +1136,12 @@ can be set.</property>
     <property name="icon_size">3</property>
   </object>
   <object class="GtkImage" id="icon_downloa">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="icon-name">document-revert-symbolic</property>
+    <property name="icon_size">3</property>
+  </object>
+  <object class="GtkImage" id="icon_downloa1">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="icon-name">document-revert-symbolic</property>
@@ -3741,36 +3908,6 @@ configuration to retrieve those settings.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="btn_deleteConfig">
-                                    <property name="label">gtk-delete</property>
-                                    <property name="name">Delete configuration</property>
-                                    <property name="width-request">80</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Delete the currently selected
-Saved Configuration immediately.
-This also deletes the corresponding subfolder 
-of temporary files in the local\ptxprint folder 
-where the created PDF files are located.
-
-If the Default configuration is selected,
-then this will RESET all the settings to
-their default values, but not Stylesheets,
-or other advanced file-based settings.</property>
-                                    <property name="margin-top">6</property>
-                                    <property name="margin-bottom">6</property>
-                                    <property name="use-stock">True</property>
-                                    <property name="always-show-image">True</property>
-                                    <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">5</property>
-                                    <property name="top-attach">1</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_notes">
                                     <property name="width-request">124</property>
                                     <property name="visible">True</property>
@@ -3802,7 +3939,7 @@ saved/shared configuration named above.</property>
                                   <packing>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">1</property>
-                                    <property name="width">4</property>
+                                    <property name="width">6</property>
                                   </packing>
                                 </child>
                                 <child>
@@ -3827,7 +3964,7 @@ for this configuration.</property>
                                     <signal name="changed" handler="onPasswordChanged" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">4</property>
+                                    <property name="left-attach">3</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -3857,7 +3994,7 @@ locked.</property>
                                     <signal name="clicked" handler="onLockUnlockSavedConfig" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">5</property>
+                                    <property name="left-attach">4</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -3886,14 +4023,7 @@ settings for a similar project.</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
                                     <property name="tooltip-text" translatable="yes">Select a previously-saved
-configuration to retrieve those settings.
-
-Or type a name for the current configuration
-to be saved as and click the Save button.
-When the Paratext project is shared through
-Send/Recv, all saved configurations will be
-also made available to other PTXprint users 
-of the same Paratext project.</property>
+configuration to retrieve those settings.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="active">0</property>
@@ -3902,7 +4032,7 @@ of the same Paratext project.</property>
                                     <items>
                                       <item translatable="yes">Default</item>
                                     </items>
-                                    <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
+                                    <signal name="changed" handler="doConfigNameChange" swapped="no"/>
                                     <child internal-child="entry">
                                       <object class="GtkEntry" id="t_savedConfig">
                                         <property name="visible">True</property>
@@ -3915,13 +4045,91 @@ parentheses, underscores and hyphens.
 
 Longer descriptions may be typed into
 the Notes field below.</property>
-                                        <signal name="focus-out-event" handler="onCfgFocusOutEvent" swapped="no"/>
-                                        <signal name="key-press-event" handler="onConfigKeyPressed" swapped="no"/>
+                                        <property name="editable">False</property>
                                       </object>
                                     </child>
                                   </object>
                                   <packing>
                                     <property name="left-attach">1</property>
+                                    <property name="top-attach">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <property name="spacing">6</property>
+                                    <property name="homogeneous">True</property>
+                                    <child>
+                                      <object class="GtkButton">
+                                        <property name="label">gtk-save-as</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Save the current settings as a new Configuration.
+
+When the Paratext project is shared through
+Send/Recv, all saved configurations will be
+also made available to other PTXprint users 
+of the same Paratext project.</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="use-stock">True</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onSaveAsNewConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_deleteConfig">
+                                        <property name="label">gtk-delete</property>
+                                        <property name="name">Delete configuration</property>
+                                        <property name="width-request">80</property>
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Delete this Saved Configuration
+
+This also deletes the corresponding subfolder 
+of temporary files in the local\ptxprint folder 
+where the created PDF files are located.</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="use-stock">True</property>
+                                        <property name="always-show-image">True</property>
+                                        <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="btn_resetDefaults">
+                                        <property name="label" translatable="yes">Reset</property>
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">This will reset all settings to their
+default values, but not Stylesheets,
+or other advanced file-based settings.</property>
+                                        <property name="margin-top">6</property>
+                                        <property name="margin-bottom">6</property>
+                                        <signal name="clicked" handler="onDeleteConfig" swapped="no"/>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">2</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="left-attach">2</property>
                                     <property name="top-attach">0</property>
                                   </packing>
                                 </child>
@@ -3946,12 +4154,9 @@ or export them to an external folder.</property>
                                     <signal name="clicked" handler="onImportClicked" swapped="no"/>
                                   </object>
                                   <packing>
-                                    <property name="left-attach">2</property>
+                                    <property name="left-attach">5</property>
                                     <property name="top-attach">0</property>
                                   </packing>
-                                </child>
-                                <child>
-                                  <placeholder/>
                                 </child>
                               </object>
                               <packing>
@@ -8234,6 +8439,12 @@ numbers then check this option.</property>
                                     <property name="left-attach">1</property>
                                     <property name="top-attach">0</property>
                                   </packing>
+                                </child>
+                                <child>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                                 <child>
                                   <placeholder/>

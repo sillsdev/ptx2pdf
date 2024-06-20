@@ -236,7 +236,7 @@ _ui_experimental = """
 _clr = {"margins" : "toporange",        "topmargin" : "topred", "headerposition" : "toppurple", "rhruleposition" : "topgreen",
         "margin2header" : "topblue", "bottommargin" : "botred", "footerposition" : "botpurple", "footer2edge" : "botblue"}
 
-_ui_noToggleVisible = ("lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
+_ui_noToggleVisible = ("btn_resetDefaults", "btn_deleteConfig", "lb_details", "tb_details", "lb_checklist", "tb_checklist", "ex_styNote") # toggling these causes a crash
                        # "lb_footnotes", "tb_footnotes", "lb_xrefs", "tb_xrefs")  # for some strange reason, these are fine!
 
 _ui_keepHidden = ["btn_download_update", "l_extXrefsComingSoon", "tb_Logging", "lb_Logging", "tb_Expert", "lb_Expert",
@@ -982,7 +982,7 @@ class GtkViewModel(ViewModel):
 
     def first_method(self):
         """ This is called first thing after the UI is set up and all is active """
-        self.doConfigNameChange()
+        self.doConfigNameChange(None)
 
     def emission_hook(self, w, *a):
         if not self.logactive:
@@ -3337,6 +3337,17 @@ class GtkViewModel(ViewModel):
             self.pendingConfig = cfgName
         return cfgName or super().configName()
 
+    def onSaveAsNewConfig(self, w):
+        dialog = self.builder.get_object("dlg_configName")
+        response = dialog.run()
+        if response == Gtk.ResponseType.OK:
+            cfg = self.get("t_configName")
+            # Need to (i) verify [see method above] and then (ii) do something with this new config name!
+        elif response == Gtk.ResponseType.CANCEL:
+            # Need to make sure config IS NOT changed/saved!
+            cfg = ""
+        dialog.hide()
+
     def setPrjid(self, prjid, saveCurrConfig=False):
         if not self.initialised:
             self.pendingPid = prjid
@@ -3448,16 +3459,18 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(False)
             self.set(w, False)
 
-    def onConfigNameChanged(self, cb_savedConfig):
-        if self.configKeypressed:
-            self.configKeypressed = False
-            return
-        self.doConfigNameChange()
+    # def onConfigNameChanged(self, cb_savedConfig):
+        # if self.configKeypressed:
+            # self.configKeypressed = False
+            # return
+        # self.doConfigNameChange()
 
-    def doConfigNameChange(self):
+    def doConfigNameChange(self, w):
         lockBtn = self.builder.get_object("btn_lockunlock")
-        if self.configName() == "Default":
-            lockBtn.set_sensitive(False)
+        isDefault = self.configName() == "Default"
+        lockBtn.set_sensitive(not isDefault)
+        self.builder.get_object("btn_deleteConfig").set_visible(not isDefault)
+        self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
         # lockBtn.set_label("Lock")
@@ -3468,19 +3481,19 @@ class GtkViewModel(ViewModel):
             if self.configName() != "Default":
                 lockBtn.set_sensitive(True)
         else:
-            self.builder.get_object("t_configNotes").set_text("")
+            self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
             lockBtn.set_sensitive(False)
         cpath = self.configPath(cfgname=self.configName(), makePath=False)
         if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName(), readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
 
-    def onConfigKeyPressed(self, btn, *a):
-        self.configKeypressed = True
+    # def onConfigKeyPressed(self, btn, *a):
+        # self.configKeypressed = True
 
-    def onCfgFocusOutEvent(self, btn, *a):
-        self.configKeypressed = False
-        self.doConfigNameChange()
+    # def onCfgFocusOutEvent(self, btn, *a):
+        # self.configKeypressed = False
+        # self.doConfigNameChange()
 
     def updateFonts(self):
         if self.ptsettings is None:
