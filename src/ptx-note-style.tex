@@ -881,7 +881,7 @@
   \let\disc@rdpenalty\empty
   \disc@rds{rhb}%
   \setbox0=\lastbox\disc@rds{Rhb}%
-  \ifhbox0{\removehboxes \ifnewparnotes\else \internotespace\fi}\unhbox0 %
+  \ifhbox0{\removehboxes}\unhbox0 \ifnewparnotes\else \internotespace\fi%
     \fi}
 %
 \let\disc@rdskip@mvbohb\empty % What does mkvboxofhboxes need discards to do with a skip
@@ -1097,7 +1097,7 @@
   \ifvoid5\else
     \trace{fp}{Reinstating final line/note}%
     \setbox3\vbox{\interlinepenalty=\lastnoteinterlinepenalty\widowpenalty=\lastnotewidowpenalty \clubpenalty=\lastnoteclubpenalty %\baselineskip=\csname n@te-\n@tetype-bls\endcsname
-       \showbox3
+       %\showbox3
        \unvbox3\setbox1\lastbox\dimen1=\lastskip\unskip
        %\setbox6=\lastbox\global\prevdepth=\dp6\box6 %
        \trace{fp}{skip of \the\dimen1 before last line }%
