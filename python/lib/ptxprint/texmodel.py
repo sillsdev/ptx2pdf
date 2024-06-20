@@ -1118,7 +1118,7 @@ class TexModel:
                 if m:
                     try:
                         r = regex.compile(m.group(1) or m.group(2), flags=regex.M)
-                        t = regex.template(m.group(3) or m.group(4) or "")
+                        # t = regex.template(m.group(3) or m.group(4) or "")
                     except (re.error, regex._regex_core.error) as e:
                         self.printer.doError("Regular expression error: {} in changes file at line {}".format(str(e), i+1))
                         continue
