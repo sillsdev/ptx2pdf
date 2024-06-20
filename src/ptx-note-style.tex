@@ -1116,7 +1116,7 @@
          \penalty\lastnoteparpenalty
        \fi
        %\hrule\penalty10000
-       \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\unhbox 1{\removehboxes}\internotespace \unhbox5}%
+       \leavevmode\unkern \@@adj\global\let\@@adj\@@adjP\global\let\@@adjP\empty\if\wd1 >0pt \unhbox 1{\removehboxes}\internotespace\fi \unhbox5}%
     %\showbox3
   \fi
   %\ifnum\pageno=3 \showbox 2\fi
