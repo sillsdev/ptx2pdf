@@ -1017,7 +1017,7 @@ class RunJob:
                 "endofbook" :      "End of Book",
                 "versedecorator" : "Verse Number"}
         warnings = []
-        if info.asBool("fancy/enableborders"):
+        if info.asBool("fancy/enableornaments"):
             for k,v in deco.items():
                 if info.asBool("fancy/"+k):
                     ftype = "fancy/{}type".format(k)

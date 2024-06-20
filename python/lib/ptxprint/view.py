@@ -1042,10 +1042,12 @@ class ViewModel:
                 self._configset(config, "fancy/enableornaments", True)
                 self._configset(config, "project/plugins", plg.replace("ornaments","").strip(" ,"))
 
-        if v < 2.17:
-            if config.getboolean("x", "y", fallback=False):
-                self._configset(config, "fancy/pageborder", True)
+        if v < 2.17: # tidying up ornaments and borders
+            if config.getboolean("fancy", "pageborder", fallback=False):
+                self._configset(config, "fancy/pageborders", True)
                 self._configset(config, "fancy/pagebordertype", "pdf")
+            if config.getboolean("fancy", "enableborders", fallback=False):
+                self._configset(config, "fancy/enableornaments", True)
 
         # ensure that the colophon text uses lowercase \zcodes (regardless of which version it comes from)
         colophontext = config.get("project", "colophontext", fallback="").replace("zCopyright", "zcopyright")\

@@ -252,7 +252,7 @@ _showActiveTabs = {
     "c_includeillustrations" : ["tb_Pictures"],
     "c_diglot" :               ["tb_Diglot", "fr_diglot", "btn_diglotSwitch"],
     "c_thumbtabs" :            ["tb_TabsBorders", "fr_tabs"],
-    "c_borders" :              ["tb_TabsBorders", "fr_borders"],
+    "c_useOrnaments" :         ["tb_TabsBorders", "fr_borders"],
     "c_inclFrontMatter" :      ["tb_Peripherals", "gr_importFrontPDF"],
     "c_inclBackMatter" :       ["tb_Peripherals", "gr_importBackPDF"],
     "c_autoToC" :              ["tb_Peripherals", "bx_ToC"],
@@ -293,7 +293,7 @@ _sensitivities = {
                                 "r_ftrCenter_Pri", "r_hdrLeft_Sec", "r_hdrCenter_Sec", "r_hdrRight_Sec", "r_ftrCenter_Sec"],
     "c_diglotSeparateNotes" :  ["c_diglotNotesRule", "c_diglotJoinVrule"],
     "c_diglotNotesRule" :      ["c_diglotJoinVrule"],
-    "c_borders" :              ["gr_borders"],
+    "c_useOrnaments" :         ["gr_borders"],
 
     "c_pagegutter" :           ["s_pagegutter", "c_outerGutter"],
     "c_verticalrule" :         ["l_colgutteroffset", "s_colgutteroffset"],
@@ -1884,7 +1884,7 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("lb_Cover").set_markup("<span{}>".format(cv)+_("Cover")+"</span>")
 
         tb = self.get("c_thumbtabs")
-        bd = self.get("c_borders")
+        bd = self.get("c_useOrnaments")
         tc = "<span color='{}'>".format(col)+_("Tabs")+"</span>" if tb \
             else _("Tabs") if self.builder.get_object("fr_tabs").get_visible() else ""
         bc = "<span color='{}'>".format(col)+_("Borders")+"</span>" if bd \
@@ -4248,7 +4248,7 @@ class GtkViewModel(ViewModel):
         if self.loadingConfig:
             return
         self.onSimpleClicked(btn)
-        self.sensiVisible("c_borders")
+        self.sensiVisible("c_useOrnaments")
         self.colorTabs()
         self.setPublishableTextBorder()
 
@@ -4259,7 +4259,7 @@ class GtkViewModel(ViewModel):
         # self.builder.get_object("nbk_Main").set_current_page(mpgnum)
 
     def setPublishableTextBorder(self):
-        x = "" if self.get("c_borders") and self.get("c_inclPageBorder") \
+        x = "" if self.get("c_useOrnaments") and self.get("c_inclPageBorder") \
               and self.get("r_border_text") else "non"
         try:
             self.styleEditor.selectMarker("textborder")

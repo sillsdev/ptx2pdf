@@ -8130,32 +8130,6 @@ be set in single-column layout.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useSectIntros">
-                                    <property name="label" translatable="yes">Use Peripheral Introductory Sections</property>
-                                    <property name="name">Use peripheral introductory sections</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Check this option if the INT book contains 
-peripheral divisions (sub-sections) which 
-need to be inserted at the appropriate position
-between books. For example:
-  \periph Old Testament Introduction|id="intot"
-  \periph New Testament Introduction|id="intnt"
-  \periph Gospels Introduction|id="intgospels"</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-start">24</property>
-                                    <property name="margin-end">3</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">2</property>
-                                    <property name="width">2</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="l_glossaryMarkupStyle">
                                     <property name="name">Define how glossary words should appear in the text</property>
                                     <property name="visible">True</property>
@@ -8262,26 +8236,10 @@ numbers then check this option.</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkCheckButton" id="c_useOrnaments">
-                                    <property name="label" translatable="yes">Enable Ornaments</property>
-                                    <property name="name">Enable ornamental borders and rules</property>
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">False</property>
-                                    <property name="tooltip-text" translatable="yes">Enable this option to make use of
-ornamental borders and rules.</property>
-                                    <property name="halign">start</property>
-                                    <property name="valign">center</property>
-                                    <property name="margin-right">3</property>
-                                    <property name="margin-start">24</property>
-                                    <property name="margin-end">3</property>
-                                    <property name="draw-indicator">True</property>
-                                  </object>
-                                  <packing>
-                                    <property name="left-attach">3</property>
-                                    <property name="top-attach">3</property>
-                                    <property name="width">2</property>
-                                  </packing>
+                                  <placeholder/>
+                                </child>
+                                <child>
+                                  <placeholder/>
                                 </child>
                               </object>
                             </child>
@@ -18418,16 +18376,18 @@ either of the options shown below.</property>
                           </object>
                         </child>
                         <child type="label">
-                          <object class="GtkCheckButton" id="c_borders">
-                            <property name="label" translatable="yes">Decorative Borders and Verses</property>
-                            <property name="name">Enable decorative borders and verses</property>
+                          <object class="GtkCheckButton" id="c_useOrnaments">
+                            <property name="label" translatable="yes">Ornamental Decorations</property>
+                            <property name="name">Ornamental Decorations: Enable decorative borders, rules and verses</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">False</property>
-                            <property name="tooltip-text" translatable="yes">Some cultures value ornamental or
-decorative features in their scripture
-publications. This option allows you
-to specify the settings for these.</property>
+                            <property name="tooltip-text" translatable="yes">Enable this option to make use of
+ornamental borders, rules &amp; verses.
+
+Some cultures place a high value on
+such decorative features in scripture
+publications.</property>
                             <property name="valign">center</property>
                             <property name="draw-indicator">True</property>
                             <signal name="clicked" handler="onBorderClicked" swapped="no"/>
@@ -22844,6 +22804,32 @@ the style of leader you wish to apply.</property>
                       </packing>
                     </child>
                     <child>
+                      <object class="GtkCheckButton" id="c_useSectIntros">
+                        <property name="label" translatable="yes">Use Peripheral Introductory Sections</property>
+                        <property name="name">Use peripheral introductory sections</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">False</property>
+                        <property name="tooltip-text" translatable="yes">Check this option if the INT book contains 
+peripheral divisions (sub-sections) which 
+need to be inserted at the appropriate position
+between books. For example:
+  \periph Old Testament Introduction|id="intot"
+  \periph New Testament Introduction|id="intnt"
+  \periph Gospels Introduction|id="intgospels"</property>
+                        <property name="halign">start</property>
+                        <property name="valign">center</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="draw-indicator">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkBox">
                         <property name="width-request">700</property>
                         <property name="visible">True</property>
@@ -22950,7 +22936,7 @@ after any front matter material).</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">2</property>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                     <child>
@@ -23160,7 +23146,7 @@ as they might vary from one publication to another.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
-                        <property name="position">3</property>
+                        <property name="position">4</property>
                       </packing>
                     </child>
                     <child>
@@ -23349,7 +23335,7 @@ on subsequent runs.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">4</property>
+                        <property name="position">5</property>
                       </packing>
                     </child>
                     <child>
@@ -23421,7 +23407,7 @@ file is selected, then these will appear in alphabetical order.</property>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="position">5</property>
+                        <property name="position">6</property>
                       </packing>
                     </child>
                   </object>

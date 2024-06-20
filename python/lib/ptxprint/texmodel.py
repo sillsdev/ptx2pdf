@@ -124,7 +124,7 @@ class TexModel:
         "snippets/fancyintro":            ("c_prettyIntroOutline", None, FancyIntro),
         "snippets/pdfoutput":             ("fcb_outputFormat", lambda x: True, PDFx1aOutput),
         "snippets/diglot":                ("c_diglot", None, Diglot),
-        "snippets/fancyborders":          ("c_borders", None, FancyBorders),
+        "snippets/fancyborders":          ("c_useOrnaments", None, FancyBorders),
         "snippets/thumbtabs":             ("c_thumbtabs", None, ThumbTabs),
         "snippets/colophon":              ("c_colophon", None, Colophon),
         "snippets/grid":                  ("c_grid", None, Grid),
@@ -1321,7 +1321,7 @@ class TexModel:
                     self.localChanges.append(makeChange(r"(\\toc{} [^\n]+\n)".format(c), "", flags=regex.M | regex.S))
 
         # Add End of Book decoration PDF to Scripture books only if FancyBorders is enabled and .PDF defined
-        if self.asBool("fancy/enableborders") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
+        if self.asBool("fancy/enableornaments") and self.asBool("fancy/endofbook") and bk not in nonScriptureBooks \
            and self.dict["fancy/endofbookpdf"].lower().endswith('.pdf'):
             self.localChanges.append(makeChange(r"\Z", r"\n", flags=regex.M))
         

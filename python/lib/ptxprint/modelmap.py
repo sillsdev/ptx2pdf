@@ -120,7 +120,6 @@ _map = {
     "grid/xyoffset":            ("fcb_gridOffset", "finish", None),
     
     "fancy/enableornaments":    ("c_useOrnaments", None, lambda w,v: "" if v else "%"),
-    "fancy/enableborders":      ("c_borders", "decorate", lambda w,v: "" if v else "%"),
     "fancy/pageborders":        ("c_inclPageBorder", "decorate", lambda w,v: "" if v else "%"), # In the UI this is "Border"
     "fancy/pageborder":         ("r_border", "fancy", lambda w,v : "" if v == "pdf" else "%"),
     "fancy/pagebordertype":     ("r_border", "decorate", None),
@@ -432,7 +431,7 @@ _map = {
     "snippets/fancyintro":      ("c_prettyIntroOutline", "body", None),
     "snippets/pdfoutput":       ("fcb_outputFormat", "finish", None),
     "snippets/diglot":          ("c_diglot", "diglot", lambda w,v: True if v else False),
-    "snippets/fancyborders":    ("c_borders", "decorate", None),
+    "snippets/fancyborders":    ("c_useOrnaments", "decorate", None),
     "snippets/adjlabelling":    ("c_markAdjPoints", "finish", None),
     # "snippets/paralabelling":   ("c_showUSFMcodes", "finish", None), # Don't save this setting so it is OFF by default
 
