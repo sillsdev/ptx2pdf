@@ -1073,7 +1073,7 @@
       \fi
     \fi
     \ifhbox2
-      \setbox1=\hbox{\unhbox2 \internotespace \unhbox1}%\nonstopmode\showbox1
+      \setbox1=\hbox{\ifdim\wd2>0pt \unhbox2 \internotespace \fi\unhbox1}%\nonstopmode\showbox1
       \repeat
   \trace{fp}{After unboxing, \the\tmpcount, h1=\the\ht1, lnw=\lastn@tewid a:\@@adj, aP:\@@adjP}%
   \tempfalse\ifnum\tmpcount=3 \temptrue\else\ifnum\tmpcount=-1 \iff@rstnote \temptrue\fi\fi\fi
