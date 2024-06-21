@@ -864,7 +864,8 @@
  \else 
    \ifx\ch@ck@result\dt@marker\else
     \ifx\ch@ck@result\dt@undefined\else
-      \MSG{* Warning: stylesheet redefines preexisting \ch@ck@result\space\m@rker}\fi\fi
+      \ifx\styl@type\St@lone\else %We don't care that the stylesheet is listing something as a standalone, as that doesn't change the definition
+        \MSG{* Warning: stylesheet redefines preexisting \ch@ck@result\space\m@rker}\fi\fi\fi
    \x@\let\csname font<\m@rker>\endcsname=\relax 
    \ifx\styl@type\P@ra \x@\defp@rstyle\x@{\m@rker}
    \else\ifx\styl@type\Ch@r \x@\defch@rstyle\x@{\m@rker}
