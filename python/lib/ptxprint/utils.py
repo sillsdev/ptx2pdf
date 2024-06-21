@@ -8,6 +8,7 @@ from shutil import copy2
 from inspect import currentframe
 from struct import unpack
 import contextlib, appdirs, pickle, gzip
+import regex
 from subprocess import check_output
 import logging
 
@@ -501,6 +502,8 @@ def runChanges(changes, bk, dat):
                 dat = c[0](simple, bk, dat)
         except TypeError as e:
             raise TypeError(str(e) + "\n at "+c[3])
+        except regex._regex_core.error as e:
+            raise regex._regex_core.error(str(e) + "\n at " + c[3])
     return dat
 
 _htmlentities = {

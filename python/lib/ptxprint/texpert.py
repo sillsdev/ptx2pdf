@@ -111,7 +111,12 @@ class TeXpert:
             logger.debug(f"TeXpert({n})={v} was {opt[1]}")
             if n.startswith("c_"):
                 if v is not None and opt[1] != v:
-                    res.append(f'\\{k}{"true" if v else "false"}')
+                    if callable(opt[2]):
+                        res.append(opt[2](k, v))
+                    elif isinstance(opt[2], str):
+                        res.append(opt[2].format("\\"+k, v))
+                    else:
+                        res.append(f'\\{k}{"true" if v else "false"}')
             elif n.startswith("s_"):
                 if v is not None and float(v) != opt[1][0]:
                     res.append(opt[2].format("\\"+k, v))
