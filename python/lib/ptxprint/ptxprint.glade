@@ -4074,7 +4074,7 @@ use ~ for places where a non-breaking space is needed
 use // where a line break needs to be forced
 but :// used in URLs will still be preserved</property>
                                 <property name="hexpand">True</property>
-                                <property name="placeholder-text" translatable="yes">&lt;Enter copyright holder here. For example, © 2021 Wycliffe Bible Translators, Inc.&gt;</property>
+                                <property name="placeholder-text" translatable="yes">&lt;Enter copyright holder here. For example, © 2024 Wycliffe Bible Translators, Inc.&gt;</property>
                                 <signal name="changed" handler="onCopyrightStatementChanged" swapped="no"/>
                               </object>
                               <packing>
@@ -4146,6 +4146,7 @@ Other special codes converted at print time:
 use ~ for places where a non-breaking space is needed
 use // where a line break needs to be forced
 but :// used in URLs will still be preserved</property>
+                                    <property name="placeholder-text" translatable="yes">Select one of the licenses or type in your own license statement.</property>
                                   </object>
                                 </child>
                               </object>
@@ -21805,7 +21806,7 @@ troubleshooting use only.</property>
                                         <property name="visible">True</property>
                                         <property name="can-focus">True</property>
                                         <property name="receives-default">False</property>
-                                        <property name="tooltip-text" translatable="yes">ptxprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
+                                        <property name="tooltip-text" translatable="yes">PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths.
 Font metrics gives more consistent results.</property>
                                         <property name="halign">start</property>
                                         <property name="valign">center</property>
@@ -29515,7 +29516,6 @@ how the border settings affect the final outcome.</property>
                 <property name="sensitive">False</property>
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
-                <property name="has-default">True</property>
                 <property name="receives-default">True</property>
                 <property name="always-show-image">True</property>
               </object>
@@ -29662,6 +29662,12 @@ Spaces are not permitted.</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
+        <property name="tooltip-text" translatable="yes">Delete this Saved Configuration
+
+This also deletes the corresponding subfolder 
+of temporary files in the local\ptxprint folder 
+but does not delete the previously created 
+PDF files which will remain in that folder.</property>
         <property name="orientation">vertical</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">

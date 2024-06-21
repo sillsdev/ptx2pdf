@@ -8,6 +8,8 @@ logger = logging.getLogger(__name__)
 texpertOptions = {
 #    "versehyphen":        ["vhyphen", True, "", _("Margin Verse Hyphens"), _("In marginal verses, do we insert a hyphen between verse ranges?")],
     "ptxversion":         ["ptxversion", (0, 0, 10, 1, 1), "\\def{0}{{{1}}}", _("Maximum layout version"), _("Maximum layout version to use or 0 for any. Used to maintain backward compatibility when the TeX macros have been changed in newer versions of PTXprint.")],
+    # "AdvCompatLineSpacing": ["linespacebase", False, "*** Help *** Need a lambda fn here ***", _("Legacy 1/14 LineSpacing"), _("In the past, SpaceAbove and SpaceBelow were, in effect units of 1/14 of the base line spacing. This has changed so they are now in units of 1/12 of the base line spacing. Enabling this compatibility reverts the units.")],
+    # "AdvCompatGlyphMetrics":  ["useglyphmetrics", False, "*** Help *** Need a lambda fn here ***", _("Use glyph metrics"), _("PTXprint can use either the actual glyph metrics in a line or the font metrics to calculate line heights and depths. Font metrics gives more consistent results.")],
     "bookresetcallers":   ["bookresetcallers", True, "", _("Reset Callers at Each Book"), _("Re-start the footnote and cross-reference callers at the start of each book")],
     "notesEachBook":      ["neachbook", True, "", _("Endnotes at Each Book"), _("Output endnotes at the end of each book")],
     "FinalNotesDown":     ["fnotesdown", False, "", _("Final Page Notes Down"), _("Push notes on the final page to the bottom of the page")],

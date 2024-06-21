@@ -383,7 +383,10 @@ _nonsensitivities = {
     "c_sbi_lockRatio" :        ["s_sbi_scaleHeight"],
     "c_styTextProperties":     ["scr_styleSettings"],
     "c_inclSpine":             ["c_coverCropMarks"],
-    "c_lockLayoutMode":        ["fr_pageSetup", "c_doublecolumn", "s_colgutterfactor", "fr_margins", "gr_spacingAdj"],
+    # "c_lockLayoutMode":        ["ecb_pagesize", "c_mirrorpages", "s_indentUnit", "s_fontsize", 
+                                # "c_lockFontSize2Baseline", "c_pagegutter", "s_pagegutter", "s_linespacing", 
+                                # "btn_adjust_spacing", "c_outerGutter", "c_doublecolumn", "s_colgutterfactor", 
+                                # "fr_margins", "tb_Font", "tb_StyleEditor"],
     "r_xrpos": {
         "r_xrpos_below" :     [],
         "r_xrpos_blend" :     ["l_internote", "s_internote"],
@@ -4440,6 +4443,13 @@ class GtkViewModel(ViewModel):
         
     def onstyTextPropertiesClicked(self, btn):
         self.onSimpleClicked(btn)
+        if self.styleEditor.marker == 'textborder':
+            if 'publishable' in self.styleEditor.getval('textborder', 'TextProperties'):
+                for w in ["c_useOrnaments", "c_inclPageBorder"]:
+                    self.set(w, True)
+                self.set("r_border", "text")
+            else:
+                self.set("c_inclPageBorder", False)
 
     def onFontStyclicked(self, btn):
         if self.getFontNameFace("bl_font_styFontName"): #, noStyles=True)
