@@ -1426,7 +1426,7 @@
     \else
       \setbox0=\lastbox
       \ifdim\wd0<\lastn@tewid % The note has been onto 2 or more lines
-        \trace{fp}{box is \the\wd0, last note was \l@stboxwid \space. Last note has been split, so making it breakable if penalties allow}%
+        \trace{fp}{box is \the\wd0, last note was \lastn@tewid \space. Last note has been split, so making it breakable if penalties allow}%
         \penalty\numexpr \lastnoteinterlinepenalty + \lastnotewidowpenalty\relax
       \fi
       \trace{i}{Inserted notes, ht \the\ht0, dp \the\dp0 (\the\lastd@pth)}%

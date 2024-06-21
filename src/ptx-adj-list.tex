@@ -44,13 +44,13 @@
  \global\@djparindex=0#1 \else\parse@djlinesub 0 #1.#2.\E\fi}
 \def\parse@djlinesub #1 #2.#3.#4.#5\E{\trace{j}{Subspec: par #1, typ '#2', num '#3', par '#4'}%
   \xdef\@djnotetyp{#2}\xdef\@djnotenum{#3}\xdef\@djnotepar{#4}%
-  %\ifx\@djnotenum\empty\else\@djnotepar\empty\xdef\@djnotepar{1}\fi\fi
+  \ifx\@djnotenum\empty\else \ifx\@djnotepar\empty\xdef\@djnotepar{1}\fi\fi
   \ver@djlinesub #1.\E}
 
 \def\@djustment{}
 \def\@djnotetyp{}
-\def\@djnotenum{}
-\def\@djnotepar{}
+\def\@djnotenum{0}
+\def\@djnotepar{0}
 \def\parse@djline #1 #2 #3[#4]#5\end{%
  \uppercase{\xdef\@djref{\detokenize{#1}}}\xdef\@djref{\@djref\detokenize{#2}}\gdef\@djustment{#3}%
   \warnspace #3 \E\ifx\@djustment\tmp\else\MSG{** WARNING: adjustlist entries should not contain spaces at #1 #2. Value given: (#3)}\fi
