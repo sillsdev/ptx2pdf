@@ -726,9 +726,9 @@ class TexModel:
 
     def _doperiph(self, k):
         if self.frontperiphs is None:
+            self.frontperiphs = {}
             for a in ('FRT', 'INT'):
                 frtfile = os.path.join(self.printer.settings_dir, self.printer.prjid, self.printer.getBookFilename(a))
-                self.frontperiphs = {}
                 if not os.path.exists(frtfile):
                     continue
                 with open(frtfile, encoding="utf-8") as inf:
@@ -736,6 +736,7 @@ class TexModel:
                     currperiphs = []
                     currk = None
                     for l in inf.readlines():
+                        l = runChanges(self.changes, "FRT", l)
                         ma = re.match(r'\\periph\s+([^|]+)(?:\|\s*(?:id\s*=\s*"([^"]+)|(\S+)))?', l)
                         if ma:
                             if mode == 1:    # already collecting so save
@@ -769,7 +770,7 @@ class TexModel:
             with open(infpath, encoding="utf-8") as inf:
                 for l in inf.readlines():
                     l = runChanges(self.changes, "FRT", l)
-                    #l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
+                    l = re.sub(r"\\zgetperiph\s*\|([^\\\s]+)\s*\\\*", lambda m:self._doperiph(m[1]), l)
                     l = re.sub(r"\\zbl\s*\|(\d+)\\\*", lambda m: "\\b\n" * int(m.group(1)), l)
                     l = re.sub(r"\\zccimg\s*(.*?)(?:\|(.*?))?\\\*",
                             lambda m: r'\fig |src="'+bydir+"/"+m.group(1)+("_cmyk" if cmyk else "") \
