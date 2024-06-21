@@ -1715,13 +1715,20 @@ class GtkViewModel(ViewModel):
             self.doStatus(_("The 'Default' config settings have been reset.") + sec)
             return
         else:
+            dialog = self.builder.get_object("dlg_confirmDelete")
+            response = dialog.run()
+            dialog.hide()
+            if response != Gtk.ResponseType.YES:
+                return # Don't delete anything!
+            msg = _("Deleted config: {}".format(cfg))
+            
             if not os.path.exists(os.path.join(delCfgPath, "ptxprint.cfg")):
                 self.doStatus(_("Internal error occurred, trying to delete a directory tree") + _("Folder: ") + delCfgPath)
                 return
             try: # Delete the entire settings folder
                 rmtree(delCfgPath)
             except OSError:
-                self.doStatus(_("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath)
+                msg = _("Cannot delete folder from disk!") + _("Folder: ") + delCfgPath
 
             if not self.working_dir.startswith(os.path.join(self.settings_dir, self.prjid, "local", "ptxprint")):
                 self.doError(_("Non-standard output folder needs to be deleted manually"), secondary=_("Folder: ")+self.working_dir)
@@ -1730,13 +1737,14 @@ class GtkViewModel(ViewModel):
             except FileNotFoundError:
                 pass
             except OSError:
-                self.doError(_("Cannot delete folder from disk!"), secondary=_("Folder: ") + self.working_dir)
+                msg = _("Cannot delete folder from disk!") + _("Folder: ") + self.working_dir
 
             self.updateSavedConfigList()
             self.set("t_savedConfig", "Default")
             self.readConfig("Default")
             self.updateDialogTitle()
             self.triggervcs = True
+            self.doStatus(msg)
         self.colorTabs()
 
     def updateBookList(self):
@@ -3338,14 +3346,14 @@ class GtkViewModel(ViewModel):
         return cfgName or super().configName()
 
     def onSaveAsNewConfig(self, w):
+        self.set("t_configName", "")
         dialog = self.builder.get_object("dlg_configName")
         response = dialog.run()
         if response == Gtk.ResponseType.OK:
             cfg = self.get("t_configName")
-            # Need to (i) verify [see method above] and then (ii) do something with this new config name!
-        elif response == Gtk.ResponseType.CANCEL:
-            # Need to make sure config IS NOT changed/saved!
-            cfg = ""
+            self.set("ecb_savedConfig", cfg)
+            self.doConfigNameChange(cfg)
+            self.onSaveConfig(None)
         dialog.hide()
 
     def setPrjid(self, prjid, saveCurrConfig=False):
@@ -3459,12 +3467,6 @@ class GtkViewModel(ViewModel):
             self.builder.get_object(w).set_sensitive(False)
             self.set(w, False)
 
-    # def onConfigNameChanged(self, cb_savedConfig):
-        # if self.configKeypressed:
-            # self.configKeypressed = False
-            # return
-        # self.doConfigNameChange()
-
     def doConfigNameChange(self, w):
         lockBtn = self.builder.get_object("btn_lockunlock")
         isDefault = self.configName() == "Default"
@@ -3473,7 +3475,6 @@ class GtkViewModel(ViewModel):
         self.builder.get_object("btn_resetDefaults").set_visible(isDefault)
         if self.configNoUpdate or self.get("ecb_savedConfig") == "":
             return
-        # lockBtn.set_label("Lock")
         self.builder.get_object("t_invisiblePassword").set_text("")
         self.builder.get_object("btn_saveConfig").set_sensitive(True)
         self.builder.get_object("btn_deleteConfig").set_sensitive(True)
@@ -3481,19 +3482,39 @@ class GtkViewModel(ViewModel):
             if self.configName() != "Default":
                 lockBtn.set_sensitive(True)
         else:
-            self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
+            # self.builder.get_object("t_configNotes").set_text("") # Why are we doing this? (it often wipes it out!)
             lockBtn.set_sensitive(False)
         cpath = self.configPath(cfgname=self.configName(), makePath=False)
         if cpath is not None and os.path.exists(cpath):
             self.updateProjectSettings(self.prjid, saveCurrConfig=False, configName=self.configName(), readConfig=True) # False means DON'T Save!
             self.updateDialogTitle()
 
-    # def onConfigKeyPressed(self, btn, *a):
-        # self.configKeypressed = True
+    def onConfigNameChanged(self, btn, *a):
+        if self.configKeypressed:
+            self.configKeypressed = False
+            return
+        # self.doConfigNameChange(None)
 
-    # def onCfgFocusOutEvent(self, btn, *a):
-        # self.configKeypressed = False
-        # self.doConfigNameChange()
+    def onConfigKeyPressed(self, btn, *a):
+        self.configKeypressed = True
+        self.builder.get_object("btn_cfg_ok").set_sensitive(False) 
+        msg = ""
+        cfg = self.get("t_configName")
+        cleanCfg = re.sub('[^-a-zA-Z0-9_()]+', '', cfg)
+        cpath = self.configPath(cfgname=cleanCfg, makePath=False)
+        if cfg != cleanCfg:
+            msg = _("Do not use spaces or special characters")
+        elif not len(cfg):
+            pass
+        elif cpath is not None and os.path.exists(cpath):
+            msg = _("That Configuration already exists.\nUse another name.")
+        else:
+            self.builder.get_object("btn_cfg_ok").set_sensitive(True) 
+        self.builder.get_object("l_configNameMsg").set_text(msg) 
+        
+    def onCfgFocusOutEvent(self, btn, *a):
+        self.configKeypressed = False
+        # self.doConfigNameChange(None)
 
     def updateFonts(self):
         if self.ptsettings is None:

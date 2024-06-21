@@ -934,167 +934,6 @@ Jonathan Kew (author of XeTeX + sfm2pdf)</property>
       </object>
     </child>
   </object>
-  <object class="GtkDialog" id="dlg_configName">
-    <property name="width-request">270</property>
-    <property name="height-request">100</property>
-    <property name="can-focus">False</property>
-    <property name="valign">start</property>
-    <property name="title" translatable="yes">PTXprint: Save As...</property>
-    <property name="resizable">False</property>
-    <property name="modal">True</property>
-    <property name="window-position">center-on-parent</property>
-    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
-    <property name="type-hint">dialog</property>
-    <property name="skip-taskbar-hint">True</property>
-    <property name="gravity">center</property>
-    <property name="transient-for">ptxprint</property>
-    <child internal-child="vbox">
-      <object class="GtkBox">
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox">
-            <property name="can-focus">False</property>
-            <property name="margin-left">6</property>
-            <property name="margin-right">6</property>
-            <property name="margin-start">6</property>
-            <property name="margin-end">6</property>
-            <property name="margin-top">6</property>
-            <property name="margin-bottom">6</property>
-            <property name="layout-style">end</property>
-            <child>
-              <object class="GtkButton" id="btn_cfg_cancel">
-                <property name="label">OK</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="btn_cfg_ok">
-                <property name="label">Cancel</property>
-                <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="always-show-image">True</property>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">False</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkBox">
-            <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="orientation">vertical</property>
-            <child>
-              <object class="GtkBox">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">center</property>
-                <property name="margin-left">6</property>
-                <property name="margin-right">6</property>
-                <property name="margin-start">6</property>
-                <property name="margin-end">6</property>
-                <property name="margin-top">10</property>
-                <property name="margin-bottom">10</property>
-                <property name="spacing">6</property>
-                <child>
-                  <object class="GtkLabel">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-Spaces are not permitted.</property>
-                    <property name="label" translatable="yes">Configuration Name:</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkEntry" id="t_configName">
-                    <property name="name">Enter a name for the configuration to be saved</property>
-                    <property name="visible">True</property>
-                    <property name="can-focus">True</property>
-                    <property name="can-default">True</property>
-                    <property name="has-default">True</property>
-                    <property name="receives-default">True</property>
-                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
-
-Note that only Roman/Latin names
-are supported using: a-z A-Z, 0-9,
-parentheses, underscores and hyphens.
-Spaces are not permitted.</property>
-                    <property name="max-length">30</property>
-                    <property name="width-chars">30</property>
-                    <property name="input-purpose">terminal</property>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="halign">end</property>
-                <property name="margin-end">12</property>
-                <property name="label" translatable="yes">Do not use spaces or special characters</property>
-                <attributes>
-                  <attribute name="foreground" value="#bfbf1c1c2828"/>
-                </attributes>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-    <action-widgets>
-      <action-widget response="-5">btn_cfg_cancel</action-widget>
-      <action-widget response="-6">btn_cfg_ok</action-widget>
-    </action-widgets>
-  </object>
   <object class="GtkEntryCompletion" id="entrycompletion1"/>
   <object class="GtkImage" id="icon_adjust_bottom">
     <property name="visible">True</property>
@@ -3888,9 +3727,7 @@ show the selected Bible module.</property>
                                     <property name="width-request">124</property>
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Type a name for the current configuration
-to be saved as and click the Save button.
-When the Paratext project is shared through
+                                    <property name="tooltip-text" translatable="yes">When the Paratext project is shared through
 Send/Recv, all saved configurations will be
 also made available to other PTXprint users 
 of the same Paratext project.
@@ -4022,8 +3859,8 @@ settings for a similar project.</property>
                                   <object class="GtkComboBoxText" id="ecb_savedConfig">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <property name="tooltip-text" translatable="yes">Select a previously-saved
-configuration to retrieve those settings.</property>
+                                    <property name="tooltip-text" translatable="yes">Select a previously-saved config
+to retrieve those settings.</property>
                                     <property name="margin-top">6</property>
                                     <property name="margin-bottom">6</property>
                                     <property name="active">0</property>
@@ -4096,7 +3933,8 @@ of the same Paratext project.</property>
 
 This also deletes the corresponding subfolder 
 of temporary files in the local\ptxprint folder 
-where the created PDF files are located.</property>
+but does not delete the previously created 
+PDF files which will remain in that folder.</property>
                                         <property name="margin-top">6</property>
                                         <property name="margin-bottom">6</property>
                                         <property name="use-stock">True</property>
@@ -4287,9 +4125,9 @@ Paratext project settings.</property>
                                 <property name="has-entry">True</property>
                                 <property name="active-id">0</property>
                                 <items>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.</item>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License.</item>
-                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License.</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License (CC BY-NC-ND).</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution-NonCommercial 4.0 International License (CC BY-NC).</item>
+                                  <item translatable="yes">This work is licensed under a Creative Commons Attribution 4.0 International License (CC BY).</item>
                                   <item translatable="yes">All Rights Reserved.</item>
                                 </items>
                                 <child internal-child="entry">
@@ -29640,6 +29478,216 @@ how the border settings affect the final outcome.</property>
       <action-widget response="-5">btn_border_ok</action-widget>
       <action-widget response="-6">btn_border_cancel</action-widget>
     </action-widgets>
+  </object>
+  <object class="GtkDialog" id="dlg_configName">
+    <property name="width-request">270</property>
+    <property name="height-request">100</property>
+    <property name="can-focus">False</property>
+    <property name="valign">start</property>
+    <property name="title" translatable="yes">PTXprint: Save Current Configuration As...</property>
+    <property name="resizable">False</property>
+    <property name="modal">True</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="icon">Google-Noto-Emoji-Objects-62859-open-book.ico</property>
+    <property name="type-hint">dialog</property>
+    <property name="skip-taskbar-hint">True</property>
+    <property name="gravity">center</property>
+    <property name="transient-for">ptxprint</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="margin-left">6</property>
+            <property name="margin-right">6</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="layout-style">end</property>
+            <child>
+              <object class="GtkButton" id="btn_cfg_ok">
+                <property name="label">OK</property>
+                <property name="visible">True</property>
+                <property name="sensitive">False</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="has-default">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="btn_cfg_cancel">
+                <property name="label">Cancel</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="always-show-image">True</property>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkBox">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">center</property>
+                <property name="margin-left">6</property>
+                <property name="margin-right">6</property>
+                <property name="margin-start">6</property>
+                <property name="margin-end">6</property>
+                <property name="margin-top">10</property>
+                <property name="margin-bottom">10</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="label" translatable="yes">Configuration Name:</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkEntry" id="t_configName">
+                    <property name="name">Enter a name for the configuration to be saved</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="can-default">True</property>
+                    <property name="has-default">True</property>
+                    <property name="receives-default">True</property>
+                    <property name="tooltip-text" translatable="yes">Enter a name for the configuration to be saved.
+
+Note that only Roman/Latin names
+are supported using: a-z A-Z, 0-9,
+parentheses, underscores and hyphens.
+Spaces are not permitted.</property>
+                    <property name="max-length">30</property>
+                    <property name="width-chars">30</property>
+                    <property name="input-purpose">terminal</property>
+                    <signal name="changed" handler="onConfigNameChanged" swapped="no"/>
+                    <signal name="focus-out-event" handler="onCfgFocusOutEvent" swapped="no"/>
+                    <signal name="key-release-event" handler="onConfigKeyPressed" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="l_configNameMsg">
+                <property name="height-request">34</property>
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="halign">end</property>
+                <property name="valign">start</property>
+                <property name="margin-end">10</property>
+                <property name="label" translatable="yes">Do not use spaces or special characters</property>
+                <property name="yalign">0</property>
+                <attributes>
+                  <attribute name="foreground" value="#bfbf1c1c2828"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="-5">btn_cfg_ok</action-widget>
+      <action-widget response="-6">btn_cfg_cancel</action-widget>
+    </action-widgets>
+  </object>
+  <object class="GtkMessageDialog" id="dlg_confirmDelete">
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">PTXprint: Please Confirm...</property>
+    <property name="resizable">False</property>
+    <property name="type-hint">dialog</property>
+    <property name="transient-for">ptxprint</property>
+    <property name="message-type">warning</property>
+    <property name="buttons">yes-no</property>
+    <property name="text" translatable="yes">You are about to REMOVE this Configuration</property>
+    <property name="secondary-text" translatable="yes">Are you sure you want to DELETE it?</property>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox">
+            <property name="can-focus">False</property>
+            <property name="valign">center</property>
+            <property name="margin-start">6</property>
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="homogeneous">True</property>
+            <property name="layout-style">end</property>
+            <child>
+              <placeholder/>
+            </child>
+            <child>
+              <placeholder/>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
   </object>
   <object class="GtkDialog" id="dlg_createHyphenList">
     <property name="can-focus">False</property>
