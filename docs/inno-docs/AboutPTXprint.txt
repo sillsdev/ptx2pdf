@@ -23,10 +23,15 @@ will OPEN PTXprint with XYZ project active and the saved configuration called "D
 will directly create a PDF from the XYJ project using the saved configuration called "NTandPsalms" (no GUI will appear)
 
 "C:\Program Files\PTXprint\PTXprint.exe" -b ROM -c SideXrefs -P XYZ
-will directly create a PDF of ROMANS from the XYJ project using the saved configuration called "SideXrefs" (no GUI will appear)
+will directly create a PDF of ROMANS from the XYZ project using the saved configuration called "SideXrefs" (no GUI will appear)
 
 "C:\Program Files\PTXprint\PTXprint.exe" -b "MAT MRK LUK JHN ACT GLO" -P XYZ
 will directly create a PDF of 4 gospels, Acts and Glossary from the XYJ project using the Default configuration (no GUI will appear)
+
+"C:\Program Files\PTXprint\PTXprint.exe" -p C:\Data\VariousUSFMprojects
+with -p (lowercase) and a folder name will run PTXprint pointing to that folder instead of the usual Paratext folder. Note that
+it expects one or more subfolders which contain the actual USFM files. The names of any subfolders containing valid .SFM files
+will appear in the Project dropdown menu once PTXprint has opened.
 
 "C:\Program Files\PTXprint\PTXprint.exe" -d "C:\Temp"
 runs PTXprint, and output PDF files will be created in C:\Temp folder instead of C:\My Paratext 9 Projects\<XYZ>\local\ptxprint
