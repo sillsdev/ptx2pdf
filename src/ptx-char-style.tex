@@ -400,6 +400,8 @@
   \ifx\char@background\relax\else\d@background{\char@background}{#1}\fi
 }
 
+\def\LimitIgnoreRaise{1.0} % How much of a baselineskip raise gets ignored in footnotes.
+
 %\lowercase{
  \def\endch@rstyle*{\TRACE{endch@rstyle}% consume the * that marked the SFM as ending a style
    \def\d@##1+##2+##3\E{\xdef\oldch@rstyle{##2}}\mctopnoms
@@ -449,7 +451,25 @@
        \fi
        \ifx\char@raise\relax
          \unhbox0
-       \else\dimen9=\char@raise \relax\ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
+       \else\dimen9=\char@raise \relax
+         \ifinn@te
+           \ifversion{2}{% Make a raised/lowered the box affect linespacing as if it were on the baseline
+             \trace{f}{Before raise-based corrections (|\the\dimen9| <\the\dimexpr \LimitIgnoreRaise\baselineskip), box is \the\ht0+\the\dp0}%
+             \ifdim\dimen9<0pt
+              \ifdim\dimen9>-\LimitIgnoreRaise\baselineskip % Put a limit on this
+                 \ht0=\the\dimexpr \ht0 + \dimen9\relax
+                 \dp0=\the\dimexpr \dp0 + \dimen9\relax
+              \fi
+             \else
+               \ifdim\dimen9<\LimitIgnoreRaise\baselineskip
+                 \ht0=\the\dimexpr \ht0 - \dimen9\relax
+                 \dp0=\the\dimexpr \dp0 - \dimen9\relax
+               \fi
+             \fi
+             \trace{f}{After any raise-based corrections, box is \the\ht0+\the\dp0}%
+             }{}%
+         \fi
+         \ifdim\dimen9<0pt \lower-\dimen9 \else\raise\dimen9 \fi\box0
        \fi
      \fi
      \cl@singhooks{after}{\oldch@rstyle}{\h@@kstyst@k}% discover any <after> hooks
