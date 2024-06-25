@@ -12,7 +12,8 @@ bkranges = {'ot':   ([b for b, i in _allbkmap.items() if 1  < i < 41], True),
             'dc':   ([b for b, i in _allbkmap.items() if 40 < i < 61], True),
             'pre':  ([b for b, i in _allbkmap.items() if 0 <= i < 2], False),
             'post': ([b for b, i in _allbkmap.items() if 87 < i], False),
-            'heb':  (_hebOrder, True)}
+            'heb':  (_hebOrder, True),
+            'bible': ([b for b, i in _allbkmap.items() if 1 < i < 88], True)}
 
 def sortToC(toc, bksorted):
     if bksorted:
@@ -67,17 +68,18 @@ class TOC:
                         
                 res[k+s] = sortToC(self.fillEmpties(ttoc), r[1])
             for i in range(3):
-                ttoc = []
-                k = "sort"+chr(97+i)+s
-                res[k] = ttoc
                 if i == 2:
                     ducet = tailored("&[first primary ignorable] << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9", ducet)
                 def makekey(txt):
                     return int(txt) if txt.isdigit() else get_sortkey(txt, variable=SHIFTTRIM, ducet=ducet)
                 def naturalkey(txt):
                     return [makekey(c) for c in reversed(re.split(r'(\d+)', txt))]
-                for e in sorted(self.fillEmpties(tocentries[:]), key=lambda x:naturalkey(x[i+1])):
-                    ttoc.append(e)
+                for a in (("sort", tocentries), ("bib", res["bible"])):
+                    ttoc = []
+                    k = a[0]+chr(97+i)+s
+                    res[k] = ttoc
+                    for e in sorted(self.fillEmpties(a[1][:]), key=lambda x:naturalkey(x[i+1])):
+                        ttoc.append(e)
         return res
 
     def fillEmpties(self, ttoc):
