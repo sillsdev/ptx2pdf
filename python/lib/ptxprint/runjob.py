@@ -472,7 +472,7 @@ class RunJob:
                                 msgs = re.sub(_("pages"), _("page"), msgs)
                             sl.set_text(msgs)
                             sl.set_tooltip_text(msgs)
-                            chkmsg = _("Check pages:") + (msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 30 else msgs
+                            chkmsg = (_("Check pages:") + msgs.split(':')[1][:50].rstrip("0123456789- ")+" ...") if len(msgs) > 50 else msgs
                             if "," not in chkmsg and "-" not in chkmsg:
                                 chkmsg = re.sub(_("pages"), _("page"), chkmsg)
                             self.printer.set("l_statusLine", chkmsg)
